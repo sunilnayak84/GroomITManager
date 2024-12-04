@@ -10,7 +10,7 @@ import { db } from "../db";
 import { eq } from "drizzle-orm";
 
 const scryptAsync = promisify(scrypt);
-const crypto = {
+export const crypto = {
   hash: async (password: string) => {
     const salt = randomBytes(16).toString("hex");
     const buf = (await scryptAsync(password, salt, 64)) as Buffer;
@@ -24,9 +24,11 @@ const crypto = {
   },
 };
 
+// Extend Express User interface with our schema's User type
 declare global {
   namespace Express {
-    interface User extends User {}
+    // eslint-disable-next-line @typescript-eslint/no-empty-interface
+    interface User extends Omit<User, 'password'> {}
   }
 }
 
@@ -77,21 +79,27 @@ export function setupAuth(app: Express) {
           return done(null, false, { message: "Invalid credentials" });
         }
 
-        return done(null, user);
+        const { password: _, ...userWithoutPassword } = user;
+        return done(null, userWithoutPassword);
       } catch (err) {
         return done(err);
       }
     })
   );
 
-  passport.serializeUser((user: User, done) => {
+  passport.serializeUser((user: Express.User, done) => {
     done(null, user.id);
   });
 
   passport.deserializeUser(async (id: number, done) => {
     try {
       const [user] = await db
-        .select()
+        .select({
+          id: users.id,
+          username: users.username,
+          role: users.role,
+          name: users.name,
+        })
         .from(users)
         .where(eq(users.id, id))
         .limit(1);
@@ -112,10 +120,9 @@ export function setupAuth(app: Express) {
       if (err) return next(err);
       if (!user) return res.status(401).json({ message: info.message });
       
-      req.logIn(user as User, (err) => {
+      req.logIn(user, (err) => {
         if (err) return next(err);
-        const { password, ...userWithoutPassword } = user as User & { password: string };
-        return res.json(userWithoutPassword);
+        return res.json(user);
       });
     })(req, res, next);
   });

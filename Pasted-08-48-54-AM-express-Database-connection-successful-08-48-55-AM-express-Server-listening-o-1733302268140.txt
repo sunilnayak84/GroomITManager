@@ -1,0 +1,152 @@
+08:48:54 AM [express] 🟢 Database connection successful
+08:48:55 AM [express] 🟢 Server listening on port 5000
+08:49:00 AM [express] 🟡 GET /api/user 401 in 3ms :: {"message":"Not authenticated"}
+
+ ERROR(TypeScript)  Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ pending: string; completed: string; cancelled: string; "in-progress": string; }'.
+ FILE  /home/runner/GroomITManager/client/src/pages/AppointmentsPage.tsx:54:27
+
+    52 |       header: "Status",
+    53 |       cell: (row: any) => (
+  > 54 |         <Badge className={statusColors[row.status.toLowerCase()]}>
+       |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    55 |           {row.status}
+    56 |         </Badge>
+    57 |       ),
+
+ ERROR(TypeScript)  Type '{ onChange: (...event: any[]) => void; onBlur: Noop; value: string | null | undefined; disabled?: boolean | undefined; name: "address"; ref: RefCallBack; }' is not assignable to type 'InputProps'.
+  Types of property 'value' are incompatible.
+    Type 'string | null | undefined' is not assignable to type 'string | number | readonly string[] | undefined'.
+      Type 'null' is not assignable to type 'string | number | readonly string[] | undefined'.
+ FILE  /home/runner/GroomITManager/client/src/pages/CustomersPage.tsx:146:26
+
+    144 |                       <FormLabel>Address</FormLabel>
+    145 |                       <FormControl>
+  > 146 |                         <Input {...field} />
+        |                          ^^^^^
+    147 |                       </FormControl>
+    148 |                     </FormItem>
+    149 |                   )}
+
+ ERROR(TypeScript)  Type '{ onChange: (...event: any[]) => void; onBlur: Noop; value: string | null | undefined; disabled?: boolean | undefined; name: "notes"; ref: RefCallBack; }' is not assignable to type 'InputProps'.
+  Types of property 'value' are incompatible.
+    Type 'string | null | undefined' is not assignable to type 'string | number | readonly string[] | undefined'.
+      Type 'null' is not assignable to type 'string | number | readonly string[] | undefined'.
+ FILE  /home/runner/GroomITManager/client/src/pages/PetsPage.tsx:148:26
+
+    146 |                       <FormLabel>Notes</FormLabel>
+    147 |                       <FormControl>
+  > 148 |                         <Input {...field} />
+        |                          ^^^^^
+    149 |                       </FormControl>
+    150 |                     </FormItem>
+    151 |                   )}
+
+ ERROR(TypeScript)  Type 'User' recursively references itself as a base type.
+ FILE  /home/runner/GroomITManager/server/auth.ts:29:15
+
+    27 | declare global {
+    28 |   namespace Express {
+  > 29 |     interface User extends User {}
+       |               ^^^^
+    30 |   }
+    31 | }
+    32 |
+
+ ERROR(TypeScript)  No overload matches this call.
+  Overload 1 of 4, '(fn: (user: User, done: (err: any, id?: unknown) => void) => void): void', gave the following error.
+    Argument of type '(user: { id: number; username: string; password: string; role: string; name: string; }, done: (err: any, id?: unknown) => void) => void' is not assignable to parameter of type '(user: User, done: (err: any, id?: unknown) => void) => void'.
+      Types of parameters 'user' and 'user' are incompatible.
+        Type 'User' is missing the following properties from type '{ id: number; username: string; password: string; role: string; name: string; }': id, username, password, role, name
+  Overload 2 of 4, '(fn: (req: IncomingMessage, user: User, done: (err: any, id?: unknown) => void) => void): void', gave the following error.
+    Argument of type '(user: { id: number; username: string; password: string; role: string; name: string; }, done: (err: any, id?: unknown) => void) => void' is not assignable to parameter of type '(req: IncomingMessage, user: User, done: (err: any, id?: unknown) => void) => void'.
+      Types of parameters 'user' and 'req' are incompatible.
+        Type 'IncomingMessage' is missing the following properties from type '{ id: number; username: string; password: string; role: string; name: string; }': id, username, password, role, name
+ FILE  /home/runner/GroomITManager/server/auth.ts:87:26
+
+    85 |   );
+    86 |
+  > 87 |   passport.serializeUser((user: User, done) => {
+       |                          ^^^^^^^^^^^^^^^^^^^^^^^
+    88 |     done(null, user.id);
+    89 |   });
+    90 |
+
+[TypeScript] Found 5 errors. Watching for file changes.
+
+8:49:09 AM [tsx] Return key Restarting...
+08:49:09 AM [express] 🟡 Received shutdown signal
+08:49:11 AM [express] 🟢 HTTP server closed
+08:49:15 AM [express] 🟢 Database connection successful
+08:49:16 AM [express] 🟢 Server listening on port 5000
+08:49:20 AM [express] 🟡 GET /api/user 401 in 3ms :: {"message":"Not authenticated"}
+
+ ERROR(TypeScript)  Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ pending: string; completed: string; cancelled: string; "in-progress": string; }'.
+ FILE  /home/runner/GroomITManager/client/src/pages/AppointmentsPage.tsx:54:27
+
+    52 |       header: "Status",
+    53 |       cell: (row: any) => (
+  > 54 |         <Badge className={statusColors[row.status.toLowerCase()]}>
+       |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    55 |           {row.status}
+    56 |         </Badge>
+    57 |       ),
+
+ ERROR(TypeScript)  Type '{ onChange: (...event: any[]) => void; onBlur: Noop; value: string | null | undefined; disabled?: boolean | undefined; name: "address"; ref: RefCallBack; }' is not assignable to type 'InputProps'.
+  Types of property 'value' are incompatible.
+    Type 'string | null | undefined' is not assignable to type 'string | number | readonly string[] | undefined'.
+      Type 'null' is not assignable to type 'string | number | readonly string[] | undefined'.
+ FILE  /home/runner/GroomITManager/client/src/pages/CustomersPage.tsx:146:26
+
+    144 |                       <FormLabel>Address</FormLabel>
+    145 |                       <FormControl>
+  > 146 |                         <Input {...field} />
+        |                          ^^^^^
+    147 |                       </FormControl>
+    148 |                     </FormItem>
+    149 |                   )}
+
+ ERROR(TypeScript)  Type '{ onChange: (...event: any[]) => void; onBlur: Noop; value: string | null | undefined; disabled?: boolean | undefined; name: "notes"; ref: RefCallBack; }' is not assignable to type 'InputProps'.
+  Types of property 'value' are incompatible.
+    Type 'string | null | undefined' is not assignable to type 'string | number | readonly string[] | undefined'.
+      Type 'null' is not assignable to type 'string | number | readonly string[] | undefined'.
+ FILE  /home/runner/GroomITManager/client/src/pages/PetsPage.tsx:148:26
+
+    146 |                       <FormLabel>Notes</FormLabel>
+    147 |                       <FormControl>
+  > 148 |                         <Input {...field} />
+        |                          ^^^^^
+    149 |                       </FormControl>
+    150 |                     </FormItem>
+    151 |                   )}
+
+ ERROR(TypeScript)  Type 'User' recursively references itself as a base type.
+ FILE  /home/runner/GroomITManager/server/auth.ts:29:15
+
+    27 | declare global {
+    28 |   namespace Express {
+  > 29 |     interface User extends User {}
+       |               ^^^^
+    30 |   }
+    31 | }
+    32 |
+
+ ERROR(TypeScript)  No overload matches this call.
+  Overload 1 of 4, '(fn: (user: User, done: (err: any, id?: unknown) => void) => void): void', gave the following error.
+    Argument of type '(user: { id: number; username: string; password: string; role: string; name: string; }, done: (err: any, id?: unknown) => void) => void' is not assignable to parameter of type '(user: User, done: (err: any, id?: unknown) => void) => void'.
+      Types of parameters 'user' and 'user' are incompatible.
+        Type 'User' is missing the following properties from type '{ id: number; username: string; password: string; role: string; name: string; }': id, username, password, role, name
+  Overload 2 of 4, '(fn: (req: IncomingMessage, user: User, done: (err: any, id?: unknown) => void) => void): void', gave the following error.
+    Argument of type '(user: { id: number; username: string; password: string; role: string; name: string; }, done: (err: any, id?: unknown) => void) => void' is not assignable to parameter of type '(req: IncomingMessage, user: User, done: (err: any, id?: unknown) => void) => void'.
+      Types of parameters 'user' and 'req' are incompatible.
+        Type 'IncomingMessage' is missing the following properties from type '{ id: number; username: string; password: string; role: string; name: string; }': id, username, password, role, name
+ FILE  /home/runner/GroomITManager/server/auth.ts:87:26
+
+    85 |   );
+    86 |
+  > 87 |   passport.serializeUser((user: User, done) => {
+       |                          ^^^^^^^^^^^^^^^^^^^^^^^
+    88 |     done(null, user.id);
+    89 |   });
+    90 |
+
+[TypeScript] Found 5 errors. Watching for file changes.

@@ -8,7 +8,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 
-const statusColors = {
+const statusColors: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-800",
   completed: "bg-green-100 text-green-800",
   cancelled: "bg-red-100 text-red-800",
@@ -50,11 +50,15 @@ export default function AppointmentsPage() {
     },
     {
       header: "Status",
-      cell: (row: any) => (
-        <Badge className={statusColors[row.status.toLowerCase()]}>
-          {row.status}
-        </Badge>
-      ),
+      cell: (row: { status: string }) => {
+        const status = row.status.toLowerCase();
+        const colorClass = statusColors[status as keyof typeof statusColors] || statusColors.pending;
+        return (
+          <Badge className={colorClass}>
+            {row.status}
+          </Badge>
+        );
+      },
     },
     {
       header: "Actions",
