@@ -9,18 +9,18 @@ import {
 } from "./table";
 import { Loader2 } from "lucide-react";
 
-interface Column {
+interface Column<T> {
   header: string;
-  cell: (row: any) => React.ReactNode;
+  cell: (row: T) => React.ReactNode;
 }
 
-interface DataTableProps {
-  columns: Column[];
-  data: any[];
+interface DataTableProps<T> {
+  columns: Column<T>[];
+  data: T[];
   isLoading?: boolean;
 }
 
-export function DataTable({ columns, data, isLoading }: DataTableProps) {
+export function DataTable<T>({ columns, data, isLoading }: DataTableProps<T>) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-48">

@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import { insertCustomerSchema, type InsertCustomer } from "@db/schema";
+import { insertCustomerSchema, type InsertCustomer, type Customer } from "@db/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DataTable } from "@/components/ui/data-table";
 import { useToast } from "@/hooks/use-toast";
@@ -29,7 +29,7 @@ export default function CustomersPage() {
   const columns = [
     {
       header: "Customer",
-      cell: (row: any) => (
+      cell: (row: Customer) => (
         <div className="flex items-center gap-2">
           <img
             src={`https://i.pravatar.cc/40?u=${row.email}`}
@@ -45,15 +45,15 @@ export default function CustomersPage() {
     },
     {
       header: "Phone",
-      cell: (row: any) => row.phone,
+      cell: (row: Customer) => row.phone,
     },
     {
-      header: "Pets",
-      cell: (row: any) => row.petCount || 0,
+      header: "Address",
+      cell: (row: Customer) => row.address || "N/A",
     },
     {
       header: "Actions",
-      cell: (row: any) => (
+      cell: (row: Customer) => (
         <Button variant="outline" size="sm">
           View Details
         </Button>
@@ -107,7 +107,7 @@ export default function CustomersPage() {
                     <FormItem>
                       <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input {...field} value={field.value || ""} />
                       </FormControl>
                     </FormItem>
                   )}
@@ -119,7 +119,7 @@ export default function CustomersPage() {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input type="email" {...field} />
+                        <Input type="email" {...field} value={field.value || ""} />
                       </FormControl>
                     </FormItem>
                   )}
@@ -131,7 +131,7 @@ export default function CustomersPage() {
                     <FormItem>
                       <FormLabel>Phone</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input {...field} value={field.value || ""} />
                       </FormControl>
                     </FormItem>
                   )}
@@ -143,7 +143,7 @@ export default function CustomersPage() {
                     <FormItem>
                       <FormLabel>Address</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input {...field} value={field.value || ""} />
                       </FormControl>
                     </FormItem>
                   )}

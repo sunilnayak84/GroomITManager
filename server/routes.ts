@@ -2,10 +2,37 @@ import { type Express } from "express";
 import { setupAuth } from "./auth";
 import { db } from "../db";
 import { appointments, customers, pets, users } from "@db/schema";
+import { crypto } from "./auth";
 import { and, eq, gte, count } from "drizzle-orm";
+
+async function createAdminUser(app: Express) {
+  try {
+    // Check if admin user already exists
+    const [existingAdmin] = await db
+      .select()
+      .from(users)
+      .where(eq(users.username, 'admin@groomery.in'))
+      .limit(1);
+
+    if (!existingAdmin) {
+      const hashedPassword = await crypto.hash('admin123');
+      const [adminUser] = await db.insert(users).values({
+        username: 'admin@groomery.in',
+        password: hashedPassword,
+        role: 'admin',
+        name: 'Admin User'
+      }).returning();
+      console.log('Admin user created successfully');
+    }
+  } catch (error) {
+    console.error('Error creating admin user:', error);
+  }
+}
 
 export function registerRoutes(app: Express) {
   setupAuth(app);
+  // Create admin user on startup
+  createAdminUser(app);
 
   // Dashboard stats
   app.get("/api/stats", async (req, res) => {
