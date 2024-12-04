@@ -26,7 +26,7 @@ const crypto = {
 
 declare global {
   namespace Express {
-    interface User extends Omit<User, 'password'> {}
+    interface User extends User {}
   }
 }
 
@@ -84,7 +84,7 @@ export function setupAuth(app: Express) {
     })
   );
 
-  passport.serializeUser((user, done) => {
+  passport.serializeUser((user: User, done) => {
     done(null, user.id);
   });
 
@@ -112,9 +112,9 @@ export function setupAuth(app: Express) {
       if (err) return next(err);
       if (!user) return res.status(401).json({ message: info.message });
       
-      req.logIn(user, (err) => {
+      req.logIn(user as User, (err) => {
         if (err) return next(err);
-        const { password, ...userWithoutPassword } = user;
+        const { password, ...userWithoutPassword } = user as User & { password: string };
         return res.json(userWithoutPassword);
       });
     })(req, res, next);
