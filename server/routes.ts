@@ -7,7 +7,7 @@ import { and, eq, gte, count } from "drizzle-orm";
 
 // Firebase handles user creation and management
 
-import { authenticateFirebase } from './middleware/auth';
+import { authenticateFirebase, requireRole } from './middleware/auth';
 
 export function registerRoutes(app: Express) {
   // Setup protected routes with Firebase authentication
@@ -85,20 +85,22 @@ export function registerRoutes(app: Express) {
   });
 
   // Customers routes
-  app.get("/api/customers", async (req, res) => {
+  app.get("/api/customers", authenticateFirebase, requireRole(['admin', 'staff']), async (req, res) => {
     try {
       const allCustomers = await db.select().from(customers);
       res.json(allCustomers);
     } catch (error) {
+      console.error('Error fetching customers:', error);
       res.status(500).json({ error: "Failed to fetch customers" });
     }
   });
 
-  app.post("/api/customers", async (req, res) => {
+  app.post("/api/customers", authenticateFirebase, requireRole(['admin', 'staff']), async (req, res) => {
     try {
       const [newCustomer] = await db.insert(customers).values(req.body).returning();
       res.json(newCustomer);
     } catch (error) {
+      console.error('Error creating customer:', error);
       res.status(500).json({ error: "Failed to create customer" });
     }
   });
