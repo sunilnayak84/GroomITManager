@@ -23,7 +23,7 @@ export default function CustomersPage() {
       lastName: "",
       email: "",
       phone: "",
-      password: "",
+      password: undefined,
       gender: undefined,
       address: "",
     },
@@ -158,30 +158,7 @@ export default function CustomersPage() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password *</FormLabel>
-                      <FormControl>
-                        <Input type="password" {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Confirm Password *</FormLabel>
-                      <FormControl>
-                        <Input type="password" {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
+                
                 <FormField
                   control={form.control}
                   name="gender"
