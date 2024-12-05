@@ -4,7 +4,11 @@ import type { Appointment, InsertAppointment } from "@db/schema";
 export function useAppointments() {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error } = useQuery<Appointment[]>({
+  const { data, isLoading, error } = useQuery<(Appointment & {
+    pet: { name: string; breed: string; image: string | null };
+    customer: { name: string };
+    groomer: { name: string };
+  })[]>({
     queryKey: ["appointments"],
     queryFn: async () => {
       const response = await fetch("/api/appointments");

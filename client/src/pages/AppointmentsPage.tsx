@@ -1,18 +1,27 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Calendar, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useAppointments } from "../hooks/use-appointments";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import AppointmentForm from "../components/AppointmentForm";
 import { DataTable } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import type { Appointment } from "@db/schema";
 
 const statusColors: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-800",
   completed: "bg-green-100 text-green-800",
   cancelled: "bg-red-100 text-red-800",
   "in-progress": "bg-blue-100 text-blue-800",
+};
+
+type AppointmentStatus = 'pending' | 'completed' | 'cancelled' | 'in-progress';
+
+type AppointmentWithRelations = Appointment & {
+  pet: { name: string; breed: string; image: string | null };
+  customer: { name: string };
+  groomer: { name: string };
 };
 
 export default function AppointmentsPage() {
@@ -22,14 +31,14 @@ export default function AppointmentsPage() {
   const columns = [
     {
       header: "Date",
-      cell: (row: any) => format(new Date(row.date), "PPp"),
+      cell: (row: AppointmentWithRelations) => format(new Date(row.date), "PPp"),
     },
     {
       header: "Pet",
-      cell: (row: any) => (
+      cell: (row: AppointmentWithRelations) => (
         <div className="flex items-center gap-2">
           <img
-            src={row.pet.image || "https://api.dicebear.com/7.x/adventurer/svg?seed=" + row.pet.name}
+            src={row.pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${row.pet.name}`}
             alt={row.pet.name}
             className="w-8 h-8 rounded-full"
           />
@@ -42,19 +51,18 @@ export default function AppointmentsPage() {
     },
     {
       header: "Customer",
-      cell: (row: any) => row.customer.name,
+      cell: (row: AppointmentWithRelations) => row.customer.name,
     },
     {
       header: "Groomer",
-      cell: (row: any) => row.groomer.name,
+      cell: (row: AppointmentWithRelations) => row.groomer.name,
     },
     {
       header: "Status",
-      cell: (row: { status: string }) => {
+      cell: (row: AppointmentWithRelations) => {
         const status = row.status.toLowerCase();
-        const colorClass = statusColors[status as keyof typeof statusColors] || statusColors.pending;
         return (
-          <Badge className={colorClass}>
+          <Badge className={statusColors[status] || statusColors['pending']}>
             {row.status}
           </Badge>
         );
@@ -62,7 +70,7 @@ export default function AppointmentsPage() {
     },
     {
       header: "Actions",
-      cell: (row: any) => (
+      cell: (row: AppointmentWithRelations) => (
         <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
           View
         </Button>
