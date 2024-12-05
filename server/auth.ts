@@ -50,11 +50,12 @@ export function setupAuth(app: Express) {
   // Enhanced session configuration
   const sessionConfig = {
     secret: process.env.REPL_ID || "groomit-secret",
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     store: new MemoryStore({
       checkPeriod: 86400000, // 24 hours
     }),
+    name: 'groomit.sid',
     cookie: {
       secure: false, // Set to false for development
       httpOnly: true,
@@ -139,11 +140,16 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/login", (req, res, next) => {
+    if (!req.body.username || !req.body.password) {
+      return res.status(400).json({ ok: false, message: "Username and password are required" });
+    }
+
     passport.authenticate("local", (err: Error | null, user: Express.User | false, info: { message: string }) => {
       if (err) {
         console.error("Login error:", err);
-        return next(err);
+        return res.status(500).json({ ok: false, message: "Internal server error" });
       }
+      
       if (!user) {
         console.log("Login failed:", info.message);
         return res.status(401).json({ ok: false, message: info.message || "Invalid credentials" });
@@ -152,9 +158,19 @@ export function setupAuth(app: Express) {
       req.logIn(user, (err) => {
         if (err) {
           console.error("Login session error:", err);
-          return next(err);
+          return res.status(500).json({ ok: false, message: "Failed to create session" });
         }
-        return res.json({ ok: true, user });
+        
+        console.log("User logged in successfully:", user.id);
+        return res.json({ 
+          ok: true, 
+          user: {
+            id: user.id,
+            username: user.username,
+            role: user.role,
+            name: user.name
+          }
+        });
       });
     })(req, res, next);
   });
