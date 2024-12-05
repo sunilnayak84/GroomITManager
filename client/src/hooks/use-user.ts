@@ -3,6 +3,12 @@ import type { User, InsertUser } from "@db/schema";
 
 type RequestResult = {
   ok: true;
+  user?: {
+    id: number;
+    username: string;
+    role: string;
+    name: string;
+  };
 } | {
   ok: false;
   message: string;
