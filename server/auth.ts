@@ -44,14 +44,14 @@ export function setupAuth(app: Express) {
   // Enhanced session configuration
   const sessionConfig: session.SessionOptions = {
     secret: process.env.REPL_ID || "groomit-secret",
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
     store: new MemoryStore({
       checkPeriod: 86400000 // 24 hours
     }),
     name: 'connect.sid',
     cookie: {
-      secure: false,
+      secure: false, // Required for development
       httpOnly: true,
       sameSite: 'lax',
       path: '/',
@@ -156,23 +156,32 @@ export function setupAuth(app: Express) {
         return res.status(401).json({ ok: false, message: info?.message || "Invalid username or password" });
       }
 
-      req.login(user, (loginErr) => {
+      req.logIn(user, (loginErr) => {
         if (loginErr) {
           console.error("Login session error:", loginErr);
           return res.status(500).json({ ok: false, message: "Failed to create session" });
         }
 
-        console.log("Login successful - User:", user.username);
-        console.log("Session ID:", req.sessionID);
-        
-        return res.json({
-          ok: true,
-          user: {
-            id: user.id,
-            username: user.username,
-            role: user.role,
-            name: user.name
+        // Set the session cookie explicitly
+        req.session.save((err) => {
+          if (err) {
+            console.error("Session save error:", err);
+            return res.status(500).json({ ok: false, message: "Failed to save session" });
           }
+
+          console.log("Login successful - User:", user.username);
+          console.log("Session ID:", req.sessionID);
+          console.log("Session:", req.session);
+          
+          return res.json({
+            ok: true,
+            user: {
+              id: user.id,
+              username: user.username,
+              role: user.role,
+              name: user.name
+            }
+          });
         });
       });
     })(req, res, next);
