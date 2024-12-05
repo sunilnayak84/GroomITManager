@@ -43,7 +43,7 @@ export default function AppointmentForm() {
     },
   });
 
-  async function onSubmit(data: InsertAppointment) {
+  async function onSubmit(data: Omit<Appointment, 'id' | 'createdAt'>) {
     try {
       await addAppointment(data);
       toast({
