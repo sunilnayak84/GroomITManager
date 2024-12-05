@@ -44,14 +44,14 @@ export function setupAuth(app: Express) {
   // Enhanced session configuration
   const sessionConfig: session.SessionOptions = {
     secret: process.env.REPL_ID || "groomit-secret",
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     store: new MemoryStore({
       checkPeriod: 86400000 // 24 hours
     }),
-    name: 'groomit.sid',
+    name: 'connect.sid',
     cookie: {
-      secure: false, // Set to false for development
+      secure: false,
       httpOnly: true,
       sameSite: 'lax',
       path: '/',
@@ -139,6 +139,8 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/login", (req, res, next) => {
+    console.log("Login attempt for username:", req.body.username);
+    
     if (!req.body.username || !req.body.password) {
       return res.status(400).json({ ok: false, message: "Username and password are required" });
     }
@@ -154,19 +156,14 @@ export function setupAuth(app: Express) {
         return res.status(401).json({ ok: false, message: info?.message || "Invalid username or password" });
       }
 
-      req.logIn(user, (loginErr) => {
+      req.login(user, (loginErr) => {
         if (loginErr) {
           console.error("Login session error:", loginErr);
           return res.status(500).json({ ok: false, message: "Failed to create session" });
         }
 
-        console.log("Login successful for user:", user.username);
-        res.cookie('connect.sid', req.sessionID, {
-          httpOnly: true,
-          secure: false,
-          sameSite: 'lax',
-          maxAge: 24 * 60 * 60 * 1000
-        });
+        console.log("Login successful - User:", user.username);
+        console.log("Session ID:", req.sessionID);
         
         return res.json({
           ok: true,
@@ -192,9 +189,14 @@ export function setupAuth(app: Express) {
   });
 
   app.get("/api/user", (req, res) => {
-    if (!req.user) {
+    console.log("GET /api/user - isAuthenticated:", req.isAuthenticated());
+    console.log("Session ID:", req.sessionID);
+    
+    if (!req.isAuthenticated() || !req.user) {
       return res.status(401).json({ message: "Not authenticated" });
     }
+    
+    console.log("User found:", req.user);
     res.json(req.user);
   });
 }
