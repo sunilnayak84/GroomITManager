@@ -32,15 +32,17 @@ type BaseUser = {
   name: string;
 };
 
+// Define the User type that extends the base user interface
+interface AuthUser {
+  id: number;
+  username: string;
+  role: string;
+  name: string;
+}
+
 declare global {
   namespace Express {
-    // Define User interface explicitly
-    interface User {
-      id: number;
-      username: string;
-      role: string;
-      name: string;
-    }
+    interface User extends AuthUser {}
   }
 }
 
@@ -49,17 +51,19 @@ export function setupAuth(app: Express) {
   const sessionConfig = {
     secret: process.env.REPL_ID || "groomit-secret",
     name: "connect.sid",
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     store: new MemoryStore({
       checkPeriod: 86400000 // 24 hours
     }),
+    rolling: true,
     cookie: {
       httpOnly: true,
       secure: false, // We're in development mode
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
       sameSite: "lax" as const,
-      path: "/"
+      path: "/",
+      domain: undefined
     },
   };
 
@@ -159,7 +163,7 @@ export function setupAuth(app: Express) {
       });
     }
 
-    passport.authenticate("local", (err, user, info) => {
+    passport.authenticate("local", (err: any, user: Express.User | false, info: { message: string } | undefined) => {
       if (err) {
         console.error("Authentication error:", err);
         return res.status(500).json({ 
