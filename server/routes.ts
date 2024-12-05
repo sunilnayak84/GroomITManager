@@ -22,10 +22,13 @@ async function createAdminUser(app: Express) {
         role: 'admin',
         name: 'Admin User'
       }).returning();
-      console.log('Admin user created successfully');
+      console.log('Admin user created successfully:', adminUser.id);
+    } else {
+      console.log('Admin user already exists:', existingAdmin.id);
     }
   } catch (error) {
     console.error('Error creating admin user:', error);
+    throw error; // Rethrow to handle it in the caller
   }
 }
 
