@@ -5,7 +5,7 @@ import session from "express-session";
 import createMemoryStore from "memorystore";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
-import { users, type User } from "@db/schema";
+import { users, type User as SelectUser } from "@db/schema";
 import { db } from "../db";
 import { eq } from "drizzle-orm";
 
@@ -24,16 +24,19 @@ export const crypto = {
   },
 };
 
-// Extend Express User interface with our schema's User type
+// extend express user object with our schema
+// Define the base user type we'll use throughout the application
+type BaseUser = {
+  id: number;
+  username: string;
+  role: string;
+  name: string;
+};
+
 declare global {
   namespace Express {
-    interface User {
-      id: number;
-      username: string;
-      password?: string;
-      role: string;
-      name: string;
-    }
+    // Extend Express.User interface with our base user type
+    interface User extends BaseUser {}
   }
 }
 
@@ -65,7 +68,6 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  // Enhanced passport configuration with better error handling
   passport.use(
     new LocalStrategy(async (username, password, done) => {
       try {
@@ -84,8 +86,14 @@ export function setupAuth(app: Express) {
           return done(null, false, { message: "Invalid credentials" });
         }
 
-        const { password: _, ...userWithoutPassword } = user;
-        return done(null, userWithoutPassword);
+        // Only pass the required user fields to match BaseUser type
+        const userInfo: BaseUser = {
+          id: user.id,
+          username: user.username,
+          role: user.role,
+          name: user.name
+        };
+        return done(null, userInfo);
       } catch (err) {
         return done(err);
       }
@@ -113,13 +121,18 @@ export function setupAuth(app: Express) {
         return done(null, false);
       }
       
-      done(null, user);
+      const userInfo: BaseUser = {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+        name: user.name
+      };
+      done(null, userInfo);
     } catch (err) {
       done(err);
     }
   });
 
-  // Auth routes with enhanced error handling
   app.post("/api/login", (req, res, next) => {
     passport.authenticate("local", (err: Error | null, user: Express.User | false, info: { message: string }) => {
       if (err) return next(err);
