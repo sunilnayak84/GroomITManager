@@ -112,9 +112,20 @@ export function registerRoutes(app: Express) {
           date: appointments.date,
           status: appointments.status,
           notes: appointments.notes,
-          pet: pets,
-          customer: customers,
-          groomer: users,
+          pet: {
+            id: pets.id,
+            name: pets.name,
+            breed: pets.breed,
+            image: pets.image
+          },
+          customer: {
+            id: customers.id,
+            name: customers.name
+          },
+          groomer: {
+            id: users.id,
+            name: users.name
+          }
         })
         .from(appointments)
         .leftJoin(pets, eq(appointments.petId, pets.id))
@@ -122,6 +133,7 @@ export function registerRoutes(app: Express) {
         .leftJoin(users, eq(appointments.groomerId, users.id));
       res.json(allAppointments);
     } catch (error) {
+      console.error('Error fetching appointments:', error);
       res.status(500).json({ error: "Failed to fetch appointments" });
     }
   });

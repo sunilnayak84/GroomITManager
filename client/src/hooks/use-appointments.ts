@@ -31,10 +31,12 @@ export function useAppointments() {
   });
 
   const addAppointment = async (appointment: InsertAppointment) => {
-    const response = await fetch("/api/appointments", {
+    const token = await auth.currentUser?.getIdToken();
+  const response = await fetch("/api/appointments", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify(appointment),
     });
