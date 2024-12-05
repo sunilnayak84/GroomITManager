@@ -5,7 +5,7 @@ import session from "express-session";
 import createMemoryStore from "memorystore";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
-import { users, type User as SelectUser } from "@db/schema";
+import { users } from "@db/schema";
 import { db } from "../db";
 import { eq } from "drizzle-orm";
 
@@ -24,14 +24,17 @@ export const crypto = {
   },
 };
 
-// Define user type based on database schema
-import type { User as DbUser } from "@db/schema";
-
-type AuthUser = Omit<DbUser, 'password'>;
+// Define base user type for authentication
+type BaseUser = {
+  id: number;
+  username: string;
+  role: string;
+  name: string;
+};
 
 declare global {
   namespace Express {
-    interface User extends AuthUser {}
+    interface User extends BaseUser {}
   }
 }
 
@@ -83,12 +86,13 @@ export function setupAuth(app: Express) {
         }
 
         // Only pass the required user fields
-        const userInfo: UserInfo = {
+        const userInfo: BaseUser = {
           id: user.id,
           username: user.username,
           role: user.role,
           name: user.name
         };
+        
         return done(null, userInfo);
       } catch (err) {
         return done(err);
@@ -117,7 +121,7 @@ export function setupAuth(app: Express) {
         return done(null, false);
       }
 
-      const userInfo: UserInfo = {
+      const userInfo: BaseUser = {
         id: user.id,
         username: user.username,
         role: user.role,
@@ -152,11 +156,15 @@ export function setupAuth(app: Express) {
           return res.status(500).json({ ok: false, message: "Failed to create session" });
         }
 
-        // Remove sensitive data and return user info
-        const { password, ...userWithoutPassword } = user;
+        // Return only the necessary user info
         return res.json({
           ok: true,
-          user: userWithoutPassword
+          user: {
+            id: user.id,
+            username: user.username,
+            role: user.role,
+            name: user.name
+          }
         });
       });
     })(req, res, next);
@@ -165,7 +173,7 @@ export function setupAuth(app: Express) {
   app.post("/api/logout", (req, res, next) => {
     try {
       req.logout(() => {
-        res.json({ message: "Logged out successfully" });
+        res.json({ ok: true, message: "Logged out successfully" });
       });
     } catch (error) {
       next(error);
@@ -177,18 +185,5 @@ export function setupAuth(app: Express) {
       return res.status(401).json({ message: "Not authenticated" });
     }
     res.json(req.user);
-  });
-
-  // Add session check middleware for protected routes
-  app.use("/api/*", (req, res, next) => {
-    if (req.path === "/api/login" || req.path === "/api/user") {
-      return next();
-    }
-    
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Authentication required" });
-    }
-    
-    next();
   });
 }
