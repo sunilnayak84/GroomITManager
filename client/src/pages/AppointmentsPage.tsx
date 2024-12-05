@@ -10,7 +10,7 @@ import { format } from "date-fns";
 import { insertAppointmentSchema, type Appointment } from "@db/schema";
 
 // Get status type from the schema to ensure it matches database
-type AppointmentStatus = typeof insertAppointmentSchema._type.shape.status._def.values[number];
+type AppointmentStatus = "pending" | "confirmed" | "completed" | "cancelled";
 
 const statusColors: Record<AppointmentStatus, string> = {
   pending: "bg-yellow-100 text-yellow-800",
