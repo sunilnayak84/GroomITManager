@@ -1,5 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Pet, InsertPet } from "@db/schema";
+import { getDocs, addDoc, onSnapshot, query } from "firebase/firestore";
+import { petsCollection } from "../lib/firestore";
+import React from "react";
 
 export function usePets() {
   const queryClient = useQueryClient();
@@ -7,28 +10,23 @@ export function usePets() {
   const { data, isLoading, error } = useQuery<Pet[]>({
     queryKey: ["pets"],
     queryFn: async () => {
-      const response = await fetch("/api/pets");
-      if (!response.ok) {
-        throw new Error("Failed to fetch pets");
-      }
-      return response.json();
+      const querySnapshot = await getDocs(petsCollection);
+      return querySnapshot.docs.map(doc => ({
+        id: parseInt(doc.id),
+        ...doc.data()
+      } as Pet));
     },
   });
 
-  const addPet = async (pet: InsertPet) => {
-    const response = await fetch("/api/pets", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(pet),
+  const addPet = async (pet: Omit<Pet, 'id'>) => {
+    const docRef = await addDoc(petsCollection, {
+      ...pet,
+      createdAt: new Date()
     });
-
-    if (!response.ok) {
-      throw new Error("Failed to add pet");
-    }
-
-    return response.json();
+    return {
+      id: parseInt(docRef.id),
+      ...pet
+    };
   };
 
   const addPetMutation = useMutation({
@@ -37,6 +35,20 @@ export function usePets() {
       queryClient.invalidateQueries({ queryKey: ["pets"] });
     },
   });
+
+  // Set up real-time updates
+  React.useEffect(() => {
+    const q = query(petsCollection);
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const pets = snapshot.docs.map(doc => ({
+        id: parseInt(doc.id),
+        ...doc.data()
+      } as Pet));
+      queryClient.setQueryData(["pets"], pets);
+    });
+
+    return () => unsubscribe();
+  }, [queryClient]);
 
   return {
     data,
