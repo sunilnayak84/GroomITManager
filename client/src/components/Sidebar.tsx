@@ -24,16 +24,16 @@ export default function Sidebar() {
 
       <nav className="flex-1">
         {links.map((link) => (
-          <Link key={link.href} href={link.href}>
-            <a
-              className={cn(
-                "flex items-center gap-2 px-4 py-2 rounded-md mb-1 hover:bg-gray-100 transition-colors",
-                location === link.href && "bg-primary/10 text-primary"
-              )}
-            >
-              <link.icon className="h-5 w-5" />
-              {link.label}
-            </a>
+          <Link 
+            key={link.href} 
+            href={link.href}
+            className={cn(
+              "flex items-center gap-2 px-4 py-2 rounded-md mb-1 hover:bg-gray-100 transition-colors",
+              location === link.href && "bg-primary/10 text-primary"
+            )}
+          >
+            <link.icon className="h-5 w-5" />
+            {link.label}
           </Link>
         ))}
       </nav>
