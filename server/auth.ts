@@ -27,8 +27,13 @@ export const crypto = {
 // Extend Express User interface with our schema's User type
 declare global {
   namespace Express {
-    // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    interface User extends Omit<User, 'password'> {}
+    interface User {
+      id: number;
+      username: string;
+      password?: string;
+      role: string;
+      name: string;
+    }
   }
 }
 

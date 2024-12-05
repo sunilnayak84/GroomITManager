@@ -32,9 +32,9 @@ export default function CustomersPage() {
       cell: (row: Customer) => (
         <div className="flex items-center gap-2">
           <img
-            src={`https://i.pravatar.cc/40?u=${row.email}`}
+            src={`https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(row.name)}`}
             alt={row.name}
-            className="w-10 h-10 rounded-full"
+            className="w-10 h-10 rounded-full bg-primary/10"
           />
           <div>
             <div className="font-medium">{row.name}</div>
@@ -107,7 +107,7 @@ export default function CustomersPage() {
                     <FormItem>
                       <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <Input {...field} value={field.value || ""} />
+                        <Input {...field} />
                       </FormControl>
                     </FormItem>
                   )}
@@ -119,7 +119,7 @@ export default function CustomersPage() {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input type="email" {...field} value={field.value || ""} />
+                        <Input type="email" {...field} />
                       </FormControl>
                     </FormItem>
                   )}
@@ -131,7 +131,7 @@ export default function CustomersPage() {
                     <FormItem>
                       <FormLabel>Phone</FormLabel>
                       <FormControl>
-                        <Input {...field} value={field.value || ""} />
+                        <Input {...field} />
                       </FormControl>
                     </FormItem>
                   )}
@@ -143,7 +143,7 @@ export default function CustomersPage() {
                     <FormItem>
                       <FormLabel>Address</FormLabel>
                       <FormControl>
-                        <Input {...field} value={field.value || ""} />
+                        <Input {...field} />
                       </FormControl>
                     </FormItem>
                   )}
