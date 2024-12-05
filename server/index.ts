@@ -19,7 +19,8 @@ function log(message: string, type: 'info' | 'error' | 'warn' = 'info') {
 
 const app = express();
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
+app.set('trust proxy', 1);
 
 // Add CORS configuration for development
 if (app.get("env") === "development") {

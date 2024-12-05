@@ -44,16 +44,17 @@ export function setupAuth(app: Express) {
   // Enhanced session configuration
   const sessionConfig: session.SessionOptions = {
     secret: process.env.REPL_ID || "groomit-secret",
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
     store: new MemoryStore({
       checkPeriod: 86400000 // 24 hours
     }),
     name: 'groomit.sid',
     cookie: {
-      secure: false, // Changed to false as we're in development
+      secure: false,
       httpOnly: true,
       sameSite: 'lax',
+      path: '/',
       maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }
   };

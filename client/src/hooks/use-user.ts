@@ -24,7 +24,8 @@ async function handleRequest(
       method,
       headers: {
         "Content-Type": "application/json",
-        "Accept": "application/json"
+        "Accept": "application/json",
+        "X-Requested-With": "XMLHttpRequest"
       },
       body: body ? JSON.stringify(body) : undefined,
       credentials: "include",
