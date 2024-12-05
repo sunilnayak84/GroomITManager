@@ -7,16 +7,18 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useForm } from "react-hook-form";
-import { insertPetSchema, type InsertPet } from "@db/schema";
+import { insertPetSchema, type Pet } from "@db/schema";
+import { useCustomers } from "../hooks/use-customers";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
 
 export default function PetsPage() {
   const [open, setOpen] = useState(false);
   const { data: pets, isLoading, addPet } = usePets();
+  const { data: customers } = useCustomers();
   const { toast } = useToast();
 
-  const form = useForm<InsertPet>({
+  const form = useForm({
     resolver: zodResolver(insertPetSchema),
     defaultValues: {
       name: "",
@@ -24,6 +26,8 @@ export default function PetsPage() {
       breed: "",
       size: "",
       notes: "",
+      customerId: 0,
+      image: null
     },
   });
 
@@ -147,6 +151,32 @@ export default function PetsPage() {
                       <FormControl>
                         <Input {...field} value={field.value?.toString() || ''} />
                       </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="customerId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Customer</FormLabel>
+                      <Select
+                        onValueChange={(value) => field.onChange(parseInt(value))}
+                        defaultValue={field.value?.toString()}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a customer" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {(customers || []).map((customer) => (
+                            <SelectItem key={customer.id} value={customer.id.toString()}>
+                              {customer.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormItem>
                   )}
                 />
