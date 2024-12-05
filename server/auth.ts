@@ -51,7 +51,7 @@ export function setupAuth(app: Express) {
     }),
     name: 'groomit.sid',
     cookie: {
-      secure: app.get('env') === 'production',
+      secure: false, // Changed to false as we're in development
       httpOnly: true,
       sameSite: 'lax',
       maxAge: 24 * 60 * 60 * 1000 // 24 hours
