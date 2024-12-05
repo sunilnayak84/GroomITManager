@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertAppointmentSchema, type InsertAppointment } from "@db/schema";
+import { insertAppointmentSchema, type InsertAppointment, type Appointment } from "@db/schema";
 import { Button } from "@/components/ui/button";
 import {
   DialogContent,
@@ -32,7 +32,7 @@ export default function AppointmentForm() {
   const { toast } = useToast();
 
   const defaultGroomerId = "1";
-  const form = useForm<InsertAppointment>({
+  const form = useForm<Omit<Appointment, 'id' | 'createdAt'>>({
     resolver: zodResolver(insertAppointmentSchema),
     defaultValues: {
       petId: 0,
@@ -43,7 +43,12 @@ export default function AppointmentForm() {
     },
   });
 
-  async function onSubmit(data: Omit<Appointment, 'id' | 'createdAt'>) {
+  async function onSubmit(values: Omit<Appointment, 'id' | 'createdAt'>) {
+    const data = {
+      ...values,
+      status: 'pending' as const,
+      date: new Date(values.date)
+    };
     try {
       await addAppointment(data);
       toast({
