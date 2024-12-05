@@ -51,12 +51,11 @@ export function setupAuth(app: Express) {
     }),
     name: 'groomit.sid',
     cookie: {
-      secure: false, // Set to true in production
+      secure: app.get("env") === "production",
       httpOnly: true,
       sameSite: 'lax',
       path: '/',
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      domain: app.get("env") === "production" ? ".repl.co" : undefined
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }
   };
 
@@ -151,16 +150,17 @@ export function setupAuth(app: Express) {
       }
 
       if (!user) {
-        return res.status(401).json({ ok: false, message: "Invalid username or password" });
+        console.error("Login failed:", info.message);
+        return res.status(401).json({ ok: false, message: info.message || "Invalid username or password" });
       }
 
-      req.logIn(user, (loginErr) => {
+      req.login(user, (loginErr) => {
         if (loginErr) {
           console.error("Login session error:", loginErr);
           return res.status(500).json({ ok: false, message: "Failed to create session" });
         }
 
-        // Return only the necessary user info
+        console.log("Login successful for user:", user.username);
         return res.json({
           ok: true,
           user: {
