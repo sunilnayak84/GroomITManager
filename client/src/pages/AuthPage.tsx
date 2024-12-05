@@ -21,7 +21,9 @@ export default function AuthPage() {
 
   async function onSubmit(data: InsertUser) {
     try {
+      console.log('Attempting login...');
       const result = await login(data);
+      
       if (!result.ok) {
         console.error("Login failed:", result.message);
         toast({
@@ -31,11 +33,16 @@ export default function AuthPage() {
         });
         return;
       }
-      // Login successful
+
+      console.log('Login successful');
       toast({
         title: "Success",
         description: "Logged in successfully",
       });
+      
+      // Force a page reload to ensure the auth state is updated
+      window.location.href = '/';
+      
     } catch (error) {
       console.error("Login error:", error);
       toast({
