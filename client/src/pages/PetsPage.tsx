@@ -145,7 +145,7 @@ export default function PetsPage() {
                     <FormItem>
                       <FormLabel>Notes</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input {...field} value={field.value ?? ''} />
                       </FormControl>
                     </FormItem>
                   )}

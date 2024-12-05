@@ -1,14 +1,19 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Appointment, InsertAppointment } from "@db/schema";
 
+type AppointmentStatus = 'pending' | 'completed' | 'cancelled' | 'in-progress';
+
+type AppointmentWithRelations = Appointment & {
+  pet: { name: string; breed: string; image: string | null };
+  customer: { name: string };
+  groomer: { name: string };
+  status: AppointmentStatus;
+};
+
 export function useAppointments() {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error } = useQuery<(Appointment & {
-    pet: { name: string; breed: string; image: string | null };
-    customer: { name: string };
-    groomer: { name: string };
-  })[]>({
+  const { data, isLoading, error } = useQuery<AppointmentWithRelations[]>({
     queryKey: ["appointments"],
     queryFn: async () => {
       const response = await fetch("/api/appointments");

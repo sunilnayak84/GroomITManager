@@ -22,6 +22,7 @@ type AppointmentWithRelations = Appointment & {
   pet: { name: string; breed: string; image: string | null };
   customer: { name: string };
   groomer: { name: string };
+  status: AppointmentStatus;
 };
 
 export default function AppointmentsPage() {
@@ -60,7 +61,7 @@ export default function AppointmentsPage() {
     {
       header: "Status",
       cell: (row: AppointmentWithRelations) => {
-        const status = row.status.toLowerCase();
+        const status = row.status.toLowerCase() as AppointmentStatus;
         return (
           <Badge className={statusColors[status] || statusColors['pending']}>
             {row.status}
