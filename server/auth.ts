@@ -24,18 +24,15 @@ export const crypto = {
   },
 };
 
-// Define the base user type we'll use throughout the application
-interface BaseUser {
-  id: number;
-  username: string;
-  role: string;
-  name: string;
-}
-
-// Define Express.User to match our base user type
+// Define Express.User to match our user type
 declare global {
   namespace Express {
-    interface User extends SelectUser {}
+    interface User {
+      id: number;
+      username: string;
+      role: string;
+      name: string;
+    }
   }
 }
 
@@ -96,7 +93,7 @@ export function setupAuth(app: Express) {
     })
   );
 
-  passport.serializeUser((user: Express.User, done) => {
+  passport.serializeUser((user: any, done) => {
     done(null, user.id);
   });
 
@@ -117,26 +114,37 @@ export function setupAuth(app: Express) {
         return done(null, false);
       }
       
-      const userInfo: BaseUser = {
-        id: user.id,
-        username: user.username,
-        role: user.role,
-        name: user.name
-      };
-      done(null, userInfo);
+      done(null, user);
     } catch (err) {
       done(err);
     }
   });
 
   app.post("/api/login", (req, res, next) => {
-    passport.authenticate("local", (err: Error | null, user: Express.User | false, info: { message: string }) => {
-      if (err) return next(err);
-      if (!user) return res.status(401).json({ ok: false, message: "Invalid credentials" });
+    passport.authenticate("local", (err: Error | null, user: any, info: { message: string }) => {
+      if (err) {
+        console.error("Login error:", err);
+        return res.status(500).json({ ok: false, message: "Internal server error" });
+      }
       
-      req.logIn(user, (err) => {
-        if (err) return next(err);
-        return res.json({ ok: true, user });
+      if (!user) {
+        return res.status(401).json({ ok: false, message: info.message || "Invalid credentials" });
+      }
+
+      req.logIn(user, (loginErr) => {
+        if (loginErr) {
+          console.error("Login session error:", loginErr);
+          return res.status(500).json({ ok: false, message: "Failed to create session" });
+        }
+
+        const userResponse = {
+          id: user.id,
+          username: user.username,
+          role: user.role,
+          name: user.name
+        };
+
+        return res.json({ ok: true, user: userResponse });
       });
     })(req, res, next);
   });
