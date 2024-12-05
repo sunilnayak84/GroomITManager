@@ -21,17 +21,21 @@ async function handleRequest(
       credentials: "include",
     });
 
+    const data = await response.json();
+    
     if (!response.ok) {
-      if (response.status >= 500) {
-        return { ok: false, message: response.statusText };
-      }
-
-      const message = await response.text();
-      return { ok: false, message };
+      return { 
+        ok: false, 
+        message: data.message || response.statusText 
+      };
     }
 
-    return { ok: true };
+    return { 
+      ok: true,
+      ...data
+    };
   } catch (e: any) {
+    console.error('Request error:', e);
     return { ok: false, message: e.toString() };
   }
 }
