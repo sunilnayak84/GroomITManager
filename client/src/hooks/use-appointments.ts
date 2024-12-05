@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { Appointment, InsertAppointment } from "@db/schema";
-import { auth } from "../lib/firebase";
+import type { Appointment } from "@db/schema";
+import { collection, getDocs, addDoc, onSnapshot, query, getDoc, doc } from "firebase/firestore";
+import { appointmentsCollection, petsCollection, customersCollection, usersCollection } from "../lib/firestore";
+import React from "react";
 
 type AppointmentStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled';
 
@@ -17,35 +19,54 @@ export function useAppointments() {
   const { data, isLoading, error } = useQuery<AppointmentWithRelations[]>({
     queryKey: ["appointments"],
     queryFn: async () => {
-      const token = await auth.currentUser?.getIdToken();
-      const response = await fetch("/api/appointments", {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch appointments");
+      const querySnapshot = await getDocs(appointmentsCollection);
+      const appointments = [];
+
+      for (const appointmentDoc of querySnapshot.docs) {
+        const appointmentData = appointmentDoc.data();
+        
+        // Get pet details
+        const petDoc = await getDoc(doc(petsCollection, appointmentData.petId));
+        const petData = petDoc.data();
+        
+        // Get customer details through pet's customerId
+        const customerDoc = await getDoc(doc(customersCollection, petData?.customerId));
+        const customerData = customerDoc.data();
+        
+        // Get groomer details
+        const groomerDoc = await getDoc(doc(usersCollection, appointmentData.groomerId));
+        const groomerData = groomerDoc.data();
+
+        appointments.push({
+          id: parseInt(appointmentDoc.id),
+          ...appointmentData,
+          pet: {
+            name: petData?.name || '',
+            breed: petData?.breed || '',
+            image: petData?.image || null
+          },
+          customer: {
+            name: customerData?.name || ''
+          },
+          groomer: {
+            name: groomerData?.name || ''
+          }
+        });
       }
-      return response.json();
+
+      return appointments;
     },
   });
 
-  const addAppointment = async (appointment: InsertAppointment) => {
-    const token = await auth.currentUser?.getIdToken();
-  const response = await fetch("/api/appointments", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify(appointment),
+  const addAppointment = async (appointment: Omit<Appointment, 'id'>) => {
+    const docRef = await addDoc(appointmentsCollection, {
+      ...appointment,
+      createdAt: new Date()
     });
-
-    if (!response.ok) {
-      throw new Error("Failed to add appointment");
-    }
-
-    return response.json();
+    return {
+      id: parseInt(docRef.id),
+      ...appointment
+    };
   };
 
   const addAppointmentMutation = useMutation({
@@ -54,6 +75,50 @@ export function useAppointments() {
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
     },
   });
+
+  // Set up real-time updates
+  React.useEffect(() => {
+    const q = query(appointmentsCollection);
+    const unsubscribe = onSnapshot(q, async (snapshot) => {
+      const appointments = [];
+      
+      for (const appointmentDoc of snapshot.docs) {
+        const appointmentData = appointmentDoc.data();
+        
+        // Get pet details
+        const petDoc = await getDoc(doc(petsCollection, appointmentData.petId));
+        const petData = petDoc.data();
+        
+        // Get customer details through pet's customerId
+        const customerDoc = await getDoc(doc(customersCollection, petData?.customerId));
+        const customerData = customerDoc.data();
+        
+        // Get groomer details
+        const groomerDoc = await getDoc(doc(usersCollection, appointmentData.groomerId));
+        const groomerData = groomerDoc.data();
+
+        appointments.push({
+          id: parseInt(appointmentDoc.id),
+          ...appointmentData,
+          pet: {
+            name: petData?.name || '',
+            breed: petData?.breed || '',
+            image: petData?.image || null
+          },
+          customer: {
+            name: customerData?.name || ''
+          },
+          groomer: {
+            name: groomerData?.name || ''
+          }
+        });
+      }
+      
+      queryClient.setQueryData(["appointments"], appointments);
+    });
+
+    return () => unsubscribe();
+  }, [queryClient]);
 
   return {
     data,

@@ -61,7 +61,7 @@ export default function CustomersPage() {
     },
   ];
 
-  async function onSubmit(data: InsertCustomer) {
+  async function onSubmit(data: Omit<Customer, 'id' | 'createdAt'>) {
     try {
       await addCustomer(data);
       setOpen(false);

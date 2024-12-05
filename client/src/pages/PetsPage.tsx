@@ -27,7 +27,7 @@ export default function PetsPage() {
     },
   });
 
-  async function onSubmit(data: InsertPet) {
+  async function onSubmit(data: Omit<Pet, 'id' | 'createdAt'>) {
     try {
       await addPet(data);
       setOpen(false);
