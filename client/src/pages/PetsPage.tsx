@@ -31,9 +31,9 @@ export default function PetsPage() {
     },
   });
 
-  async function onSubmit(data: Omit<Pet, 'id' | 'createdAt'>) {
+  async function onSubmit(data: Omit<Pet, 'id'>) {
     try {
-      await addPet(data);
+      await addPet({ ...data, createdAt: new Date() });
       setOpen(false);
       form.reset();
       toast({
