@@ -56,7 +56,7 @@ export function setupAuth(app: Express) {
       checkPeriod: 86400000, // 24 hours
     }),
     cookie: {
-      secure: app.get("env") === "production",
+      secure: false, // Set to false for development
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
       sameSite: "lax" as const,
@@ -139,12 +139,21 @@ export function setupAuth(app: Express) {
 
   app.post("/api/login", (req, res, next) => {
     passport.authenticate("local", (err: Error | null, user: Express.User | false, info: { message: string }) => {
-      if (err) return next(err);
-      if (!user) return res.status(401).json({ message: info.message });
+      if (err) {
+        console.error("Login error:", err);
+        return next(err);
+      }
+      if (!user) {
+        console.log("Login failed:", info.message);
+        return res.status(401).json({ ok: false, message: info.message || "Invalid credentials" });
+      }
       
       req.logIn(user, (err) => {
-        if (err) return next(err);
-        return res.json(user);
+        if (err) {
+          console.error("Login session error:", err);
+          return next(err);
+        }
+        return res.json({ ok: true, user });
       });
     })(req, res, next);
   });
