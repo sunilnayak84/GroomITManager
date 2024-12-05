@@ -20,12 +20,22 @@ export default function AuthPage() {
   });
 
   async function onSubmit(data: InsertUser) {
-    const result = await login(data);
-    if (!result.ok) {
+    try {
+      const result = await login(data);
+      if (!result.ok) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: result.message || "Login failed",
+        });
+        console.error("Login failed:", result.message);
+      }
+    } catch (error) {
+      console.error("Login error:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: result.message,
+        description: "Failed to login. Please try again.",
       });
     }
   }
