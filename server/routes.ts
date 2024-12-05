@@ -2,7 +2,7 @@ import { type Express } from "express";
 import { setupAuth } from "./auth";
 import { db } from "../db";
 import { appointments, customers, pets, users } from "@db/schema";
-import { crypto } from "./auth";
+// Remove unused import
 import { and, eq, gte, count } from "drizzle-orm";
 
 // Firebase handles user creation and management
