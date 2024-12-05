@@ -29,8 +29,17 @@ export default function AuthPage() {
         toast({
           variant: "destructive",
           title: "Login Failed",
-          description: result.message || "Invalid credentials",
+          description: result.message,
         });
+        
+        if (result.message.includes("not found")) {
+          form.setError("username", { message: "User not found" });
+        } else if (result.message.includes("password")) {
+          form.setError("password", { message: "Incorrect password" });
+        } else {
+          form.setError("username", { message: "Invalid credentials" });
+          form.setError("password", { message: "Invalid credentials" });
+        }
         return;
       }
 
@@ -40,8 +49,8 @@ export default function AuthPage() {
         description: "Logged in successfully",
       });
       
-      // Force a page reload to ensure the auth state is updated
-      window.location.href = '/';
+      // Use window.location.reload() instead of changing href to properly handle SPA navigation
+      window.location.reload();
       
     } catch (error) {
       console.error("Login error:", error);
