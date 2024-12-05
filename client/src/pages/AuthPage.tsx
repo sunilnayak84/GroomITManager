@@ -23,13 +23,19 @@ export default function AuthPage() {
     try {
       const result = await login(data);
       if (!result.ok) {
+        console.error("Login failed:", result.message);
         toast({
           variant: "destructive",
-          title: "Error",
-          description: result.message || "Login failed",
+          title: "Login Failed",
+          description: result.message || "Invalid credentials",
         });
-        console.error("Login failed:", result.message);
+        return;
       }
+      // Login successful
+      toast({
+        title: "Success",
+        description: "Logged in successfully",
+      });
     } catch (error) {
       console.error("Login error:", error);
       toast({
