@@ -44,18 +44,19 @@ export function setupAuth(app: Express) {
   // Enhanced session configuration
   const sessionConfig: session.SessionOptions = {
     secret: process.env.REPL_ID || "groomit-secret",
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     store: new MemoryStore({
       checkPeriod: 86400000 // 24 hours
     }),
     name: 'groomit.sid',
     cookie: {
-      secure: false,
+      secure: false, // Set to true in production
       httpOnly: true,
       sameSite: 'lax',
       path: '/',
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      domain: app.get("env") === "production" ? ".repl.co" : undefined
     }
   };
 
@@ -78,12 +79,12 @@ export function setupAuth(app: Express) {
           .limit(1);
 
         if (!user) {
-          return done(null, false, { message: "Invalid credentials" });
+          return done(null, false, { message: "User not found" });
         }
 
         const isValid = await crypto.compare(password, user.password);
         if (!isValid) {
-          return done(null, false, { message: "Invalid credentials" });
+          return done(null, false, { message: "Incorrect password" });
         }
 
         // Only pass the required user fields
@@ -144,11 +145,11 @@ export function setupAuth(app: Express) {
     passport.authenticate("local", (err: Error | null, user: Express.User | false, info: { message: string }) => {
       if (err) {
         console.error("Login error:", err);
-        return res.status(500).json({ ok: false, message: "Internal server error" });
+        return res.status(500).json({ ok: false, message: "An error occurred during login. Please try again." });
       }
 
       if (!user) {
-        return res.status(401).json({ ok: false, message: info.message || "Invalid credentials" });
+        return res.status(401).json({ ok: false, message: "Invalid username or password" });
       }
 
       req.logIn(user, (loginErr) => {

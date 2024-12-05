@@ -23,18 +23,18 @@ app.use(express.urlencoded({ extended: true }));
 app.set('trust proxy', 1);
 
 // Add CORS configuration for development
-if (app.get("env") === "development") {
-  app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "http://localhost:5000");
-    res.header("Access-Control-Allow-Credentials", "true");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    if (req.method === "OPTIONS") {
-      return res.sendStatus(200);
-    }
-    next();
-  });
-}
+app.use((req, res, next) => {
+  const origin = req.get('origin') || 'http://localhost:5000';
+  res.header("Access-Control-Allow-Origin", origin);
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Cookie");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Expose-Headers", "Set-Cookie");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 // Request logging middleware
 app.use((req, res, next) => {
