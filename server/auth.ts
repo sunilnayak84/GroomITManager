@@ -38,6 +38,11 @@ export async function createUserInDatabase(user: FirebaseUser) {
         name: user.name,
         role: user.role
       });
+
+      // Create user custom claims in Firebase
+      await admin.auth().setCustomUserClaims(user.id, {
+        role: user.role
+      });
     }
     
     return true;
