@@ -122,7 +122,7 @@ export function registerRoutes(app: Express) {
           },
           customer: {
             id: customers.id,
-            name: customers.name
+            name: `${customers.firstName} ${customers.lastName}`
           },
           groomer: {
             id: users.id,

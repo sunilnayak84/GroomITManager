@@ -19,9 +19,12 @@ export default function CustomersPage() {
   const form = useForm<InsertCustomer>({
     resolver: zodResolver(insertCustomerSchema),
     defaultValues: {
-      name: "",
+      firstName: "",
+      lastName: "",
       email: "",
       phone: "",
+      password: "",
+      gender: undefined,
       address: "",
     },
   });
@@ -32,12 +35,12 @@ export default function CustomersPage() {
       cell: (row: Customer) => (
         <div className="flex items-center gap-2">
           <img
-            src={`https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(row.name)}`}
-            alt={row.name}
+            src={`https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(`${row.firstName} ${row.lastName}`)}`}
+            alt={`${row.firstName} ${row.lastName}`}
             className="w-10 h-10 rounded-full bg-primary/10"
           />
           <div>
-            <div className="font-medium">{row.name}</div>
+            <div className="font-medium">{`${row.firstName} ${row.lastName}`}</div>
             <div className="text-sm text-muted-foreground">{row.email}</div>
           </div>
         </div>
@@ -100,18 +103,32 @@ export default function CustomersPage() {
             </DialogHeader>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="firstName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>First Name *</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="John" />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="lastName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Last Name *</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Doe" />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <FormField
                   control={form.control}
                   name="email"
@@ -129,10 +146,83 @@ export default function CustomersPage() {
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone</FormLabel>
+                      <FormLabel>Phone Number *</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <div className="flex">
+                          <select className="h-10 rounded-l-md border border-r-0 bg-background px-3 text-sm ring-offset-background">
+                            <option value="+91">🇮🇳 +91</option>
+                          </select>
+                          <Input className="rounded-l-none" {...field} placeholder="Enter phone number" />
+                        </div>
                       </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password *</FormLabel>
+                      <FormControl>
+                        <Input type="password" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Confirm Password *</FormLabel>
+                      <FormControl>
+                        <Input type="password" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="gender"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Gender</FormLabel>
+                      <div className="flex gap-4">
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            className="form-radio h-4 w-4"
+                            name="gender"
+                            value="male"
+                            checked={field.value === 'male'}
+                            onChange={(e) => field.onChange(e.target.value)}
+                          />
+                          <span className="ml-2">Male</span>
+                        </label>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            className="form-radio h-4 w-4"
+                            name="gender"
+                            value="female"
+                            checked={field.value === 'female'}
+                            onChange={(e) => field.onChange(e.target.value)}
+                          />
+                          <span className="ml-2">Female</span>
+                        </label>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            className="form-radio h-4 w-4"
+                            name="gender"
+                            value="other"
+                            checked={field.value === 'other'}
+                            onChange={(e) => field.onChange(e.target.value)}
+                          />
+                          <span className="ml-2">Other</span>
+                        </label>
+                      </div>
                     </FormItem>
                   )}
                 />
@@ -149,7 +239,7 @@ export default function CustomersPage() {
                   )}
                 />
                 <Button type="submit" className="w-full">
-                  Add Customer
+                  Create Owner
                 </Button>
               </form>
             </Form>

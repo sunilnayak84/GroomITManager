@@ -172,7 +172,7 @@ export default function PetsPage() {
                         <SelectContent>
                           {(customers || []).map((customer) => (
                             <SelectItem key={customer.id} value={customer.id.toString()}>
-                              {customer.name}
+                              {`${customer.firstName} ${customer.lastName}`}
                             </SelectItem>
                           ))}
                         </SelectContent>
