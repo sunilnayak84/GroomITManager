@@ -54,19 +54,21 @@ export function useAppointments() {
         });
       }
 
-      return appointments;
+      return appointments as AppointmentWithRelations[];
     },
   });
 
-  const addAppointment = async (appointment: Omit<Appointment, 'id'>) => {
+  const addAppointment = async (appointment: Omit<Appointment, 'id' | 'createdAt'>) => {
     const docRef = await addDoc(appointmentsCollection, {
       ...appointment,
-      createdAt: new Date()
+      createdAt: new Date(),
+      status: appointment.status || 'pending'
     });
     return {
       id: parseInt(docRef.id),
-      ...appointment
-    };
+      ...appointment,
+      createdAt: new Date()
+    } as Appointment;
   };
 
   const addAppointmentMutation = useMutation({
