@@ -44,14 +44,14 @@ export function setupAuth(app: Express) {
   // Enhanced session configuration
   const sessionConfig: session.SessionOptions = {
     secret: process.env.REPL_ID || "groomit-secret",
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
     store: new MemoryStore({
       checkPeriod: 86400000 // 24 hours
     }),
     name: 'groomit.sid',
     cookie: {
-      secure: app.get("env") === "production",
+      secure: false, // Set to false for development
       httpOnly: true,
       sameSite: 'lax',
       path: '/',
@@ -150,17 +150,24 @@ export function setupAuth(app: Express) {
       }
 
       if (!user) {
-        console.error("Login failed:", info.message);
-        return res.status(401).json({ ok: false, message: info.message || "Invalid username or password" });
+        console.error("Login failed:", info?.message);
+        return res.status(401).json({ ok: false, message: info?.message || "Invalid username or password" });
       }
 
-      req.login(user, (loginErr) => {
+      req.logIn(user, (loginErr) => {
         if (loginErr) {
           console.error("Login session error:", loginErr);
           return res.status(500).json({ ok: false, message: "Failed to create session" });
         }
 
         console.log("Login successful for user:", user.username);
+        res.cookie('connect.sid', req.sessionID, {
+          httpOnly: true,
+          secure: false,
+          sameSite: 'lax',
+          maxAge: 24 * 60 * 60 * 1000
+        });
+        
         return res.json({
           ok: true,
           user: {
