@@ -7,9 +7,10 @@ import AppointmentForm from "../components/AppointmentForm";
 import { DataTable } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import type { Appointment } from "@db/schema";
+import { insertAppointmentSchema, type Appointment } from "@db/schema";
 
-type AppointmentStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled';
+// Get status type from the schema to ensure it matches database
+type AppointmentStatus = typeof insertAppointmentSchema._type.shape.status._def.values[number];
 
 const statusColors: Record<AppointmentStatus, string> = {
   pending: "bg-yellow-100 text-yellow-800",
@@ -18,7 +19,7 @@ const statusColors: Record<AppointmentStatus, string> = {
   cancelled: "bg-red-100 text-red-800",
 };
 
-type AppointmentWithRelations = Appointment & {
+type AppointmentWithRelations = Omit<Appointment, 'status'> & {
   pet: { name: string; breed: string; image: string | null };
   customer: { name: string };
   groomer: { name: string };
@@ -32,20 +33,20 @@ export default function AppointmentsPage() {
   const columns = [
     {
       header: "Date",
-      cell: (row: AppointmentWithRelations) => format(new Date(row.date), "PPp"),
+      cell: ({ date }: AppointmentWithRelations) => format(new Date(date), "PPp"),
     },
     {
       header: "Pet",
-      cell: (row: AppointmentWithRelations) => (
+      cell: ({ pet }: AppointmentWithRelations) => (
         <div className="flex items-center gap-2">
           <img
-            src={row.pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${row.pet.name}`}
-            alt={row.pet.name}
+            src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
+            alt={pet.name}
             className="w-8 h-8 rounded-full"
           />
           <div>
-            <div className="font-medium">{row.pet.name}</div>
-            <div className="text-sm text-muted-foreground">{row.pet.breed}</div>
+            <div className="font-medium">{pet.name}</div>
+            <div className="text-sm text-muted-foreground">{pet.breed}</div>
           </div>
         </div>
       ),
@@ -60,14 +61,11 @@ export default function AppointmentsPage() {
     },
     {
       header: "Status",
-      cell: (row: AppointmentWithRelations) => {
-        const status = row.status.toLowerCase() as AppointmentStatus;
-        return (
-          <Badge className={statusColors[status]}>
-            {row.status.charAt(0).toUpperCase() + row.status.slice(1)}
-          </Badge>
-        );
-      },
+      cell: ({ status }: AppointmentWithRelations) => (
+        <Badge className={statusColors[status]}>
+          {status.charAt(0).toUpperCase() + status.slice(1)}
+        </Badge>
+      ),
     },
     {
       header: "Actions",

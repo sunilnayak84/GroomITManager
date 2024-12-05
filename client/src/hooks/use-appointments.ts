@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Appointment, InsertAppointment } from "@db/schema";
 import { auth } from "../lib/firebase";
 
-type AppointmentStatus = 'pending' | 'completed' | 'cancelled' | 'in-progress';
+type AppointmentStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled';
 
 type AppointmentWithRelations = Appointment & {
   pet: { name: string; breed: string; image: string | null };

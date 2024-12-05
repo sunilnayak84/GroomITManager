@@ -1,21 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import admin from 'firebase-admin';
 
-export interface FirebaseUser {
-  id: string;
-  email: string;
-  role: string;
-  name: string;
-}
+import { FirebaseUser } from '../auth';
 
-declare global {
-  namespace Express {
-    // Extend the base Request type with our FirebaseUser
-    interface Request {
-      user?: FirebaseUser;
-    }
-  }
-}
+// We don't need to redeclare the namespace as it's already declared in auth.ts
 
 export async function authenticateFirebase(req: Request, res: Response, next: NextFunction) {
   try {

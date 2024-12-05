@@ -18,6 +18,8 @@ declare global {
     interface Request {
       user?: FirebaseUser;
     }
+    // Use the correct Firebase user type
+    interface User extends FirebaseUser {}
   }
 }
 
