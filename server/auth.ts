@@ -79,12 +79,14 @@ export function setupAuth(app: Express) {
           .limit(1);
 
         if (!user) {
-          return done(null, false, { message: "User not found" });
+          console.log('Login failed: User not found');
+          return done(null, false, { message: "Username not found" });
         }
 
         const isValid = await crypto.compare(password, user.password);
         if (!isValid) {
-          return done(null, false, { message: "Incorrect password" });
+          console.log('Login failed: Invalid password');
+          return done(null, false, { message: "Invalid password" });
         }
 
         // Only pass the required user fields

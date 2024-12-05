@@ -22,24 +22,28 @@ export default function AuthPage() {
   async function onSubmit(data: InsertUser) {
     try {
       console.log('Attempting login...');
+      form.clearErrors();
       const result = await login(data);
       
       if (!result.ok) {
         console.error("Login failed:", result.message);
+        
+        // Set specific form errors based on the error message
+        if (result.message.toLowerCase().includes("username")) {
+          form.setError("username", { message: "Username not found" });
+        } else if (result.message.toLowerCase().includes("password")) {
+          form.setError("password", { message: "Invalid password" });
+        } else {
+          // If we get a non-specific error, set both fields as invalid
+          form.setError("username", { message: "Invalid credentials" });
+          form.setError("password", { message: "Invalid credentials" });
+        }
+        
         toast({
           variant: "destructive",
           title: "Login Failed",
           description: result.message,
         });
-        
-        if (result.message.includes("not found")) {
-          form.setError("username", { message: "User not found" });
-        } else if (result.message.includes("password")) {
-          form.setError("password", { message: "Incorrect password" });
-        } else {
-          form.setError("username", { message: "Invalid credentials" });
-          form.setError("password", { message: "Invalid credentials" });
-        }
         return;
       }
 
