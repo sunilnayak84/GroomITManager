@@ -24,19 +24,23 @@ export const crypto = {
   },
 };
 
-// extend express user object with our schema
 // Define the base user type we'll use throughout the application
-type BaseUser = {
+interface BaseUser {
   id: number;
   username: string;
   role: string;
   name: string;
-};
+}
 
+// Define Express.User to match our base user type
 declare global {
   namespace Express {
-    // Extend Express.User interface with our base user type
-    interface User extends BaseUser {}
+    interface User {
+      id: number;
+      username: string;
+      role: string;
+      name: string;
+    }
   }
 }
 
@@ -100,7 +104,7 @@ export function setupAuth(app: Express) {
     })
   );
 
-  passport.serializeUser((user: Express.User, done) => {
+  passport.serializeUser((user: BaseUser, done) => {
     done(null, user.id);
   });
 
