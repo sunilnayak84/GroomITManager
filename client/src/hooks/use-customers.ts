@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Customer, InsertCustomer } from "@db/schema";
+import { auth } from "../lib/firebase";
 
 export function useCustomers() {
   const queryClient = useQueryClient();
@@ -7,7 +8,12 @@ export function useCustomers() {
   const { data, isLoading, error } = useQuery<Customer[]>({
     queryKey: ["customers"],
     queryFn: async () => {
-      const response = await fetch("/api/customers");
+      const token = await auth.currentUser?.getIdToken();
+      const response = await fetch("/api/customers", {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch customers");
       }
@@ -16,10 +22,12 @@ export function useCustomers() {
   });
 
   const addCustomer = async (customer: InsertCustomer) => {
+    const token = await auth.currentUser?.getIdToken();
     const response = await fetch("/api/customers", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify(customer),
     });
