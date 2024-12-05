@@ -31,8 +31,15 @@ async function handleRequest(
       credentials: "include",
     });
 
+    console.log('Auth response:', { 
+      url, 
+      status: response.status, 
+      ok: response.ok,
+      statusText: response.statusText
+    });
+
     const data = await response.json();
-    console.log('Auth response:', { url, status: response.status, ok: response.ok });
+    console.log('Response data:', data);
     
     if (!response.ok) {
       return { 
