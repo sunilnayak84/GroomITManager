@@ -18,7 +18,7 @@ export const customers = pgTable("customers", {
   lastName: varchar("last_name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).unique().notNull(),
   phone: varchar("phone", { length: 50 }).notNull(),
-  password: varchar("password", { length: 255 }).notNull(),
+  password: varchar("password", { length: 255 }),
   gender: varchar("gender", { length: 10 }).notNull(),
   address: text("address"),
   createdAt: timestamp("created_at").defaultNow(),
@@ -61,7 +61,7 @@ export const insertCustomerSchema = createInsertSchema(customers, {
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
   firstName: z.string().min(2, "First name must be at least 2 characters"),
   lastName: z.string().min(2, "Last name must be at least 2 characters"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string().min(6, "Password must be at least 6 characters").optional(),
   gender: z.enum(["male", "female", "other"], {
     required_error: "Please select a gender",
   }),
