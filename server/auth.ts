@@ -24,15 +24,14 @@ export const crypto = {
   },
 };
 
-// Define Express.User to match our user type
+// Define user type based on database schema
+import type { User as DbUser } from "@db/schema";
+
+type AuthUser = Omit<DbUser, 'password'>;
+
 declare global {
   namespace Express {
-    interface User {
-      id: number;
-      username: string;
-      role: string;
-      name: string;
-    }
+    interface User extends AuthUser {}
   }
 }
 
@@ -40,14 +39,18 @@ export function setupAuth(app: Express) {
   const MemoryStore = createMemoryStore(session);
   
   // Enhanced session configuration
-  const sessionConfig = {
+  const sessionConfig: session.SessionOptions = {
     secret: process.env.REPL_ID || "groomit-secret",
     resave: false,
     saveUninitialized: false,
     store: new MemoryStore({
       checkPeriod: 86400000 // 24 hours
     }),
+    name: 'groomit.sid',
     cookie: {
+      secure: app.get('env') === 'production',
+      httpOnly: true,
+      sameSite: 'lax',
       maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }
   };
@@ -79,8 +82,8 @@ export function setupAuth(app: Express) {
           return done(null, false, { message: "Invalid credentials" });
         }
 
-        // Only pass the required user fields to match BaseUser type
-        const userInfo: BaseUser = {
+        // Only pass the required user fields
+        const userInfo: UserInfo = {
           id: user.id,
           username: user.username,
           role: user.role,
@@ -93,7 +96,7 @@ export function setupAuth(app: Express) {
     })
   );
 
-  passport.serializeUser((user: any, done) => {
+  passport.serializeUser((user: Express.User, done) => {
     done(null, user.id);
   });
 
@@ -113,20 +116,32 @@ export function setupAuth(app: Express) {
       if (!user) {
         return done(null, false);
       }
+
+      const userInfo: UserInfo = {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+        name: user.name
+      };
       
-      done(null, user);
+      done(null, userInfo);
     } catch (err) {
+      console.error('Deserialize error:', err);
       done(err);
     }
   });
 
   app.post("/api/login", (req, res, next) => {
-    passport.authenticate("local", (err: Error | null, user: any, info: { message: string }) => {
+    if (!req.body.username || !req.body.password) {
+      return res.status(400).json({ ok: false, message: "Username and password are required" });
+    }
+
+    passport.authenticate("local", (err: Error | null, user: Express.User | false, info: { message: string }) => {
       if (err) {
         console.error("Login error:", err);
         return res.status(500).json({ ok: false, message: "Internal server error" });
       }
-      
+
       if (!user) {
         return res.status(401).json({ ok: false, message: info.message || "Invalid credentials" });
       }
@@ -137,14 +152,12 @@ export function setupAuth(app: Express) {
           return res.status(500).json({ ok: false, message: "Failed to create session" });
         }
 
-        const userResponse = {
-          id: user.id,
-          username: user.username,
-          role: user.role,
-          name: user.name
-        };
-
-        return res.json({ ok: true, user: userResponse });
+        // Remove sensitive data and return user info
+        const { password, ...userWithoutPassword } = user;
+        return res.json({
+          ok: true,
+          user: userWithoutPassword
+        });
       });
     })(req, res, next);
   });
