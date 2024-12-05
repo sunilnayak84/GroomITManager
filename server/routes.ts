@@ -32,10 +32,17 @@ async function createAdminUser(app: Express) {
   }
 }
 
+import { authenticateFirebase } from './middleware/auth';
+
 export function registerRoutes(app: Express) {
-  setupAuth(app);
-  // Create admin user on startup
-  createAdminUser(app);
+  // Setup protected routes with Firebase authentication
+  const protectedRoutes = ['/api/appointments', '/api/customers', '/api/pets', '/api/stats'];
+  app.use(protectedRoutes, authenticateFirebase);
+
+  // Create routes without auth middleware
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok" });
+  });
 
   // Dashboard stats
   app.get("/api/stats", async (req, res) => {

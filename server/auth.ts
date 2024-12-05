@@ -24,25 +24,22 @@ export const crypto = {
   },
 };
 
-// Define the User type that matches our schema
-type BaseUser = {
-  id: number;
-  username: string;
-  role: string;
-  name: string;
-};
-
-// Define the User type that extends the base user interface
+// Define the User type that matches our Firebase auth schema
 interface AuthUser {
-  id: number;
-  username: string;
+  id: string;
+  email: string;
   role: string;
   name: string;
 }
 
 declare global {
   namespace Express {
-    interface User extends AuthUser {}
+    interface User {
+      id: string;
+      email: string;
+      role: string;
+      name: string;
+    }
   }
 }
 
