@@ -5,32 +5,7 @@ import { appointments, customers, pets, users } from "@db/schema";
 import { crypto } from "./auth";
 import { and, eq, gte, count } from "drizzle-orm";
 
-async function createAdminUser(app: Express) {
-  try {
-    // Check if admin user already exists
-    const [existingAdmin] = await db
-      .select()
-      .from(users)
-      .where(eq(users.username, 'admin@groomery.in'))
-      .limit(1);
-
-    if (!existingAdmin) {
-      const hashedPassword = await crypto.hash('admin123');
-      const [adminUser] = await db.insert(users).values({
-        username: 'admin@groomery.in',
-        password: hashedPassword,
-        role: 'admin',
-        name: 'Admin User'
-      }).returning();
-      console.log('Admin user created successfully:', adminUser.id);
-    } else {
-      console.log('Admin user already exists:', existingAdmin.id);
-    }
-  } catch (error) {
-    console.error('Error creating admin user:', error);
-    throw error; // Rethrow to handle it in the caller
-  }
-}
+// Firebase handles user creation and management
 
 import { authenticateFirebase } from './middleware/auth';
 

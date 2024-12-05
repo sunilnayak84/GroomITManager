@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Appointment, InsertAppointment } from "@db/schema";
+import { auth } from "../lib/firebase";
 
 type AppointmentStatus = 'pending' | 'completed' | 'cancelled' | 'in-progress';
 
@@ -16,7 +17,12 @@ export function useAppointments() {
   const { data, isLoading, error } = useQuery<AppointmentWithRelations[]>({
     queryKey: ["appointments"],
     queryFn: async () => {
-      const response = await fetch("/api/appointments");
+      const token = await auth.currentUser?.getIdToken();
+      const response = await fetch("/api/appointments", {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch appointments");
       }

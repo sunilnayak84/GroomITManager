@@ -9,14 +9,14 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import type { Appointment } from "@db/schema";
 
+type AppointmentStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled';
+
 const statusColors: Record<AppointmentStatus, string> = {
   pending: "bg-yellow-100 text-yellow-800",
   confirmed: "bg-blue-100 text-blue-800",
   completed: "bg-green-100 text-green-800",
   cancelled: "bg-red-100 text-red-800",
 };
-
-type AppointmentStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled';
 
 type AppointmentWithRelations = Appointment & {
   pet: { name: string; breed: string; image: string | null };
@@ -61,10 +61,10 @@ export default function AppointmentsPage() {
     {
       header: "Status",
       cell: (row: AppointmentWithRelations) => {
-        const status = (row.status?.toLowerCase() || 'pending') as AppointmentStatus;
+        const status = row.status.toLowerCase() as AppointmentStatus;
         return (
           <Badge className={statusColors[status]}>
-            {status.charAt(0).toUpperCase() + status.slice(1)}
+            {row.status.charAt(0).toUpperCase() + row.status.slice(1)}
           </Badge>
         );
       },

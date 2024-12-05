@@ -15,11 +15,11 @@ type AuthUser = {
   name: string;
 }
 
-async function loginWithFirebase(credentials: InsertUser): Promise<AuthUser> {
+async function loginWithFirebase(credentials: { email: string; password: string }): Promise<AuthUser> {
   try {
     const { user } = await signInWithEmailAndPassword(
       auth,
-      credentials.username,
+      credentials.email,
       credentials.password
     );
     

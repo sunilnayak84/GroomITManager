@@ -19,23 +19,20 @@ function log(message: string, type: 'info' | 'error' | 'warn' = 'info') {
 }
 
 // Initialize Firebase Admin
-// Initialize Firebase Admin with proper private key handling
 const serviceAccount = {
   projectId: process.env.FIREBASE_PROJECT_ID,
   clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-  // Handle both escaped and unescaped private key formats
-  privateKey: process.env.FIREBASE_PRIVATE_KEY?.includes('\\n') 
-    ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
-    : process.env.FIREBASE_PRIVATE_KEY
+  privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n')
 };
 
 if (!serviceAccount.projectId || !serviceAccount.clientEmail || !serviceAccount.privateKey) {
   console.error('Missing Firebase credentials');
-} else {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
-  });
+  process.exit(1);
 }
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
+});
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

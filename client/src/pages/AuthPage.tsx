@@ -4,33 +4,32 @@ import { useUser } from "../hooks/use-user";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { insertUserSchema, type InsertUser } from "@db/schema";
 import { PawPrint } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { z } from "zod";
 
 export default function AuthPage() {
   const { login } = useUser();
   const { toast } = useToast();
-  const form = useForm<InsertUser>({
-    resolver: zodResolver(insertUserSchema),
+  const form = useForm<{ email: string; password: string }>({
+    resolver: zodResolver(
+      z.object({
+        email: z.string().email("Invalid email format"),
+        password: z.string().min(6, "Password must be at least 6 characters"),
+      })
+    ),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
 
-  async function onSubmit(data: InsertUser) {
+  async function onSubmit(data: { email: string; password: string }) {
     try {
       console.log('Attempting login...');
       form.clearErrors();
       await login(data);
       
-      toast({
-        title: "Success",
-        description: "Logged in successfully",
-      });
-
-      console.log('Login successful');
       toast({
         title: "Success",
         description: "Logged in successfully",
@@ -62,10 +61,10 @@ export default function AuthPage() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="username"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
