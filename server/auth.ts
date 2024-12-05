@@ -50,12 +50,13 @@ export function setupAuth(app: Express) {
   // Enhanced session configuration
   const sessionConfig = {
     secret: process.env.REPL_ID || "groomit-secret",
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
     store: new MemoryStore({
       checkPeriod: 86400000, // 24 hours
     }),
     name: 'groomit.sid',
+    rolling: true,
     cookie: {
       secure: false, // Set to false for development
       httpOnly: true,

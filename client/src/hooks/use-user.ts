@@ -16,12 +16,16 @@ async function handleRequest(
   try {
     const response = await fetch(url, {
       method,
-      headers: body ? { "Content-Type": "application/json" } : undefined,
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
       body: body ? JSON.stringify(body) : undefined,
       credentials: "include",
     });
 
     const data = await response.json();
+    console.log('Auth response:', { url, status: response.status, ok: response.ok });
     
     if (!response.ok) {
       return { 
@@ -32,7 +36,7 @@ async function handleRequest(
 
     return { 
       ok: true,
-      ...data
+      user: data.user,
     };
   } catch (e: any) {
     console.error('Request error:', e);
