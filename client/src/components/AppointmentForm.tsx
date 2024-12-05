@@ -31,11 +31,12 @@ export default function AppointmentForm() {
   const { data: pets } = usePets();
   const { toast } = useToast();
 
+  const defaultGroomerId = "1";
   const form = useForm<InsertAppointment>({
     resolver: zodResolver(insertAppointmentSchema),
     defaultValues: {
       petId: 0,
-      groomerId: 1, // Default to first groomer
+      groomerId: parseInt(defaultGroomerId),
       date: new Date(),
       status: "pending",
       notes: "",

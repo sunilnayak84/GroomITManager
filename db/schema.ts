@@ -4,9 +4,8 @@ import { z } from "zod";
 
 // Users table for authentication
 export const users = pgTable("users", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  username: varchar("username", { length: 255 }).unique().notNull(),
-  password: text("password").notNull(),
+  id: varchar("id", { length: 255 }).primaryKey(), // Firebase UID
+  email: varchar("email", { length: 255 }).unique().notNull(),
   name: varchar("name", { length: 255 }).notNull(),
   role: varchar("role", { length: 50 }).notNull().default("staff"),
   createdAt: timestamp("created_at").defaultNow(),
@@ -48,8 +47,8 @@ export const appointments = pgTable("appointments", {
 
 // Zod schemas for type safety and validation
 export const insertUserSchema = createInsertSchema(users, {
-  username: z.string().email("Invalid email format"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  id: z.string().min(1),
+  email: z.string().email("Invalid email format"),
   name: z.string().min(2, "Name must be at least 2 characters"),
   role: z.enum(["admin", "staff"]),
 });
