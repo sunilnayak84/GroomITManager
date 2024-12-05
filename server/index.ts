@@ -4,6 +4,7 @@ import { setupVite, serveStatic } from "./vite";
 import { createServer } from "http";
 import { db } from "../db";
 import { sql } from "drizzle-orm";
+import admin from "firebase-admin";
 
 function log(message: string, type: 'info' | 'error' | 'warn' = 'info') {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -17,6 +18,24 @@ function log(message: string, type: 'info' | 'error' | 'warn' = 'info') {
   console.log(`${formattedTime} [express] ${prefix} ${message}`);
 }
 
+// Initialize Firebase Admin
+// Initialize Firebase Admin with proper private key handling
+const serviceAccount = {
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+  // Handle both escaped and unescaped private key formats
+  privateKey: process.env.FIREBASE_PRIVATE_KEY?.includes('\\n') 
+    ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
+    : process.env.FIREBASE_PRIVATE_KEY
+};
+
+if (!serviceAccount.projectId || !serviceAccount.clientEmail || !serviceAccount.privateKey) {
+  console.error('Missing Firebase credentials');
+} else {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
+  });
+}
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

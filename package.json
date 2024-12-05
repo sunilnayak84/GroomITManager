@@ -11,6 +11,7 @@
     "db:push": "drizzle-kit push"
   },
   "dependencies": {
+    "@firebase/auth": "^1.8.1",
     "@hookform/resolvers": "^3.9.1",
     "@jridgewell/trace-mapping": "^0.3.25",
     "@radix-ui/react-accordion": "^1.2.1",
@@ -54,6 +55,8 @@
     "embla-carousel-react": "^8.3.0",
     "express": "^4.21.1",
     "express-session": "^1.18.1",
+    "firebase": "^11.0.2",
+    "firebase-admin": "^13.0.1",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.453.0",
     "memorystore": "^1.6.7",

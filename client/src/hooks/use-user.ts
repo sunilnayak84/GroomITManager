@@ -1,102 +1,75 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { User, InsertUser } from "@db/schema";
+import { auth } from '../lib/firebase';
+import { 
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  type User as FirebaseUser
+} from 'firebase/auth';
 
-type RequestResult = {
-  ok: true;
-  user?: {
-    id: number;
-    username: string;
-    role: string;
-    name: string;
-  };
-} | {
-  ok: false;
-  message: string;
-};
+type AuthUser = {
+  id: string;
+  email: string;
+  role: string;
+  name: string;
+}
 
-async function handleRequest(
-  url: string,
-  method: string,
-  body?: InsertUser
-): Promise<RequestResult> {
+async function loginWithFirebase(credentials: InsertUser): Promise<AuthUser> {
   try {
-    const response = await fetch(url, {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "X-Requested-With": "XMLHttpRequest"
-      },
-      body: body ? JSON.stringify(body) : undefined,
-      credentials: "include",
-    });
-
-    console.log('Auth response:', { 
-      url, 
-      status: response.status, 
-      ok: response.ok,
-      statusText: response.statusText
-    });
-
-    const data = await response.json();
-    console.log('Response data:', data);
+    const { user } = await signInWithEmailAndPassword(
+      auth,
+      credentials.username,
+      credentials.password
+    );
     
-    if (!response.ok) {
-      return { 
-        ok: false, 
-        message: data.message || response.statusText 
-      };
-    }
-
-    return { 
-      ok: true,
-      user: data.user,
+    return {
+      id: user.uid,
+      email: user.email!,
+      name: user.displayName || user.email!,
+      role: 'staff' // You might want to store this in Firebase custom claims
     };
-  } catch (e: any) {
-    console.error('Request error:', e);
-    return { ok: false, message: e.toString() };
+  } catch (error: any) {
+    throw new Error(error.message);
   }
 }
 
-async function fetchUser(): Promise<User | null> {
-  const response = await fetch('/api/user', {
-    credentials: 'include'
+function useFirebaseUser() {
+  return useQuery({
+    queryKey: ['user'],
+    queryFn: () => {
+      return new Promise<AuthUser | null>((resolve) => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+          unsubscribe();
+          if (user) {
+            resolve({
+              id: user.uid,
+              email: user.email!,
+              name: user.displayName || user.email!,
+              role: 'staff'
+            });
+          } else {
+            resolve(null);
+          }
+        });
+      });
+    },
   });
-
-  if (!response.ok) {
-    if (response.status === 401) {
-      return null;
-    }
-
-    if (response.status >= 500) {
-      throw new Error(`${response.status}: ${response.statusText}`);
-    }
-
-    throw new Error(`${response.status}: ${await response.text()}`);
-  }
-
-  return response.json();
 }
 
 export function useUser() {
   const queryClient = useQueryClient();
+  const { data: user, error, isLoading } = useFirebaseUser();
 
-  const { data: user, error, isLoading } = useQuery<User | null, Error>({
-    queryKey: ['user'],
-    queryFn: fetchUser,
-    staleTime: Infinity,
-    retry: false
-  });
-
-  const loginMutation = useMutation<RequestResult, Error, InsertUser>({
-    mutationFn: (userData) => handleRequest('/api/login', 'POST', userData),
+  const loginMutation = useMutation({
+    mutationFn: loginWithFirebase,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
     },
   });
 
-  const logoutMutation = useMutation<RequestResult, Error>({
-    mutationFn: () => handleRequest('/api/logout', 'POST'),
+  const logoutMutation = useMutation({
+    mutationFn: () => signOut(auth),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
     },

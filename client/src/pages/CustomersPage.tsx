@@ -143,7 +143,7 @@ export default function CustomersPage() {
                     <FormItem>
                       <FormLabel>Address</FormLabel>
                       <FormControl>
-                        <Input {...field} value={field.value ?? ''} />
+                        <Input {...field} value={field.value || ''} />
                       </FormControl>
                     </FormItem>
                   )}
