@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Search } from "lucide-react";
 import { useCustomers } from "../hooks/use-customers";
+import { usePets } from "../hooks/use-pets";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,7 @@ import { insertCustomerSchema, type InsertCustomer, type Customer } from "@db/sc
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DataTable } from "@/components/ui/data-table";
 import { useToast } from "@/hooks/use-toast";
+import PetForm from "@/components/PetForm";
 
 export default function CustomersPage() {
   const [open, setOpen] = useState(false);
@@ -28,6 +30,11 @@ export default function CustomersPage() {
       address: "",
     },
   });
+
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [showPetList, setShowPetList] = useState(false);
+  const [showAddPet, setShowAddPet] = useState(false);
+  const { data: pets } = usePets();
 
   const columns = [
     {
@@ -53,6 +60,37 @@ export default function CustomersPage() {
     {
       header: "Address",
       cell: (row: Customer) => row.address || "N/A",
+    },
+    {
+      header: "Pet Count",
+      cell: (row: Customer) => {
+        const customerPets = pets?.filter(pet => pet.customerId === row.id) || [];
+        return (
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="hover:bg-primary/10"
+              onClick={() => {
+                setSelectedCustomer(row);
+                setShowPetList(true);
+              }}
+            >
+              {customerPets.length}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setSelectedCustomer(row);
+                setShowAddPet(true);
+              }}
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+        );
+      },
     },
     {
       header: "Actions",
@@ -253,6 +291,54 @@ export default function CustomersPage() {
         data={customers || []}
         isLoading={isLoading}
       />
+
+      {/* Pet List Dialog */}
+      <Dialog open={showPetList} onOpenChange={setShowPetList}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Pets for {selectedCustomer ? `${selectedCustomer.firstName} ${selectedCustomer.lastName}` : ''}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {pets?.filter(pet => pet.customerId === selectedCustomer?.id).map(pet => (
+              <div key={pet.id} className="flex items-center gap-4 p-4 border rounded-lg">
+                <img
+                  src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
+                  alt={pet.name}
+                  className="w-12 h-12 rounded-full"
+                />
+                <div>
+                  <div className="font-medium">{pet.name}</div>
+                  <div className="text-sm text-muted-foreground capitalize">{pet.breed} · {pet.type}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Pet Dialog */}
+      <Dialog open={showAddPet} onOpenChange={setShowAddPet}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Pet</DialogTitle>
+          </DialogHeader>
+          {selectedCustomer && (
+            <div>
+              {/* We'll reuse the PetForm component but pre-fill the customer */}
+              <PetForm
+                onSuccess={() => {
+                  setShowAddPet(false);
+                  toast({
+                    title: "Success",
+                    description: "Pet added successfully",
+                  });
+                }}
+                defaultValues={{ customerId: selectedCustomer.id }}
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
