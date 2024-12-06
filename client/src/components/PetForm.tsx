@@ -167,90 +167,34 @@ export default function PetForm({
     console.log('PET FORM: Cleaned submission data', { 
       cleanedData, 
       isUpdate: !!pet, 
-      petId: pet?.id, 
-      selectedCustomer: customers?.find(c => c.id === cleanedData.customerId)
+      petId: pet?.id
     });
 
     try {
-      // Verify customer exists before submission
-      const selectedCustomer = customers?.find(c => c.id === cleanedData.customerId);
-      if (!selectedCustomer) {
-        console.error('PET FORM: Selected customer not found', { 
-          customerId: cleanedData.customerId,
-          availableCustomers: customers
-        });
-        
-        form.setError('customerId', {
-          type: 'validate',
-          message: 'Selected customer not found'
-        });
-
-        toast({
-          title: "Customer Error",
-          description: "Selected customer not found. Please select a valid customer.",
-          variant: "destructive"
-        });
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Perform add or update
-      if (pet) {
-        // Update existing pet
+      if (pet?.id) {
         await usePetsUpdatePet(pet.id, cleanedData);
         toast({
           title: "Success",
-          description: "Pet updated successfully!",
-          variant: "default"
+          description: "Pet updated successfully",
         });
       } else {
-        // Add new pet
         await addPet(cleanedData);
         toast({
           title: "Success",
-          description: "Pet added successfully!",
-          variant: "default"
+          description: "Pet added successfully",
         });
       }
 
-      // Reset form and call onSuccess if provided
-      form.reset();
-      onSuccess?.(form.getValues());
+      setIsSubmitting(false);
+      onSuccess?.(cleanedData);
     } catch (error) {
-      console.error('PET FORM: Error adding pet', { 
-        error, 
-        errorMessage: error instanceof Error ? error.message : 'Unknown error',
-        cleanedData 
+      console.error('PET FORM: Submission error', error);
+      setIsSubmitting(false);
+      toast({
+        title: "Error",
+        description: "Failed to save pet. Please try again.",
+        variant: "destructive",
       });
-
-      // Specific error handling for different types of errors
-      if (error instanceof Error) {
-        if (error.message.includes('Missing required fields')) {
-          toast({
-            title: "Validation Error",
-            description: "Please fill in all required fields",
-            variant: "destructive"
-          });
-        } else if (error.message.includes('Customer')) {
-          toast({
-            title: "Customer Error",
-            description: "Invalid customer selected",
-            variant: "destructive"
-          });
-        } else {
-          toast({
-            title: "Error",
-            description: `Failed to ${pet ? 'update' : 'add'} pet: ${error.message}`,
-            variant: "destructive"
-          });
-        }
-      } else {
-        toast({
-          title: "Error",
-          description: `Failed to ${pet ? 'update' : 'add'} pet`,
-          variant: "destructive"
-        });
-      }
     }
   };
 
