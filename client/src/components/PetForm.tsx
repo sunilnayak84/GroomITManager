@@ -110,8 +110,20 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
           return;
         }
         
+        // Clean up form data to remove empty strings and undefined values
+        const cleanedData = Object.fromEntries(
+          Object.entries(data).filter(
+            ([_, value]) => 
+              value !== undefined && 
+              value !== null && 
+              value !== ''
+          )
+        );
+
+        console.log('Cleaned Form Data:', cleanedData);
+        
         const updateResult = await updatePet?.(petId, {
-          ...data,
+          ...cleanedData,
           customerId: data.customerId
         });
         

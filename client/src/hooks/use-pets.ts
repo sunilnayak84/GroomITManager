@@ -41,11 +41,6 @@ export function usePets() {
 
       // More robust ID parsing
       let petId: number;
-      if (id === null || id === undefined) {
-        console.error('Null or undefined ID provided');
-        throw new Error('Invalid pet ID: null or undefined');
-      }
-
       if (typeof id === 'string') {
         petId = parseInt(id, 10);
       } else if (typeof id === 'number') {
@@ -80,10 +75,14 @@ export function usePets() {
         id: petRef.id
       });
       
-      // Remove undefined values to prevent overwriting with undefined
+      // Remove undefined and null values to prevent Firestore errors
       const updateData = Object.fromEntries(
-        Object.entries(data).filter(([_, v]) => v !== undefined)
+        Object.entries(data)
+          .filter(([_, v]) => v !== undefined && v !== null)
+          .map(([k, v]) => [k, v === '' ? null : v])
       );
+
+      console.log('Cleaned Update Data:', updateData);
 
       await updateDoc(petRef, {
         ...updateData,
