@@ -3,6 +3,7 @@ import type { Pet, InsertPet } from "@db/schema";
 import { getDocs, doc, runTransaction, increment, collection, addDoc, serverTimestamp, query, updateDoc, deleteDoc, getDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { petsCollection, createPet } from "../lib/firestore";
+import { uploadFile } from "../lib/storage";
 
 export const usePets = () => {
   const queryClient = useQueryClient();
@@ -63,9 +64,20 @@ export const usePets = () => {
         throw new Error(`Customer with ID ${pet.customerId} does not exist`);
       }
 
+      // Upload image if present
+      let imageUrl;
+      if (pet.image instanceof File) {
+        imageUrl = await uploadFile(
+          pet.image, 
+          `pets/${pet.customerId}/${Date.now()}_${pet.image.name}`
+        );
+      }
+
       // Prepare pet data for Firestore
       const petData = {
         ...pet,
+        // Add image URL if uploaded
+        ...(imageUrl ? { image: imageUrl } : {}),
         // Remove undefined fields
         ...(pet.dateOfBirth ? { dateOfBirth: pet.dateOfBirth } : {}),
         createdAt: serverTimestamp(),
@@ -124,9 +136,20 @@ export const usePets = () => {
         }
       }
 
+      // Upload image if present
+      let imageUrl;
+      if (petData.image instanceof File) {
+        imageUrl = await uploadFile(
+          petData.image, 
+          `pets/${petData.customerId || 'unknown'}/${Date.now()}_${petData.image.name}`
+        );
+      }
+
       // Prepare update data for Firestore
       const updateData = {
         ...petData,
+        // Add image URL if uploaded
+        ...(imageUrl ? { image: imageUrl } : {}),
         updatedAt: serverTimestamp()
       };
 
