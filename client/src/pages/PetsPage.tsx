@@ -278,21 +278,20 @@ export default function PetsPage() {
                     }}
                     pet={{
                       ...selectedPet,
-                      // Ensure id is a valid number or undefined
-                      id: typeof selectedPet.id === 'string' 
-                        ? parseInt(selectedPet.id, 10) 
-                        : (selectedPet.id || undefined)
+                      id: selectedPet.id // Use the Firestore document ID directly
                     }}
                     updatePet={updatePet}
-                    onCancel={() => {
-                      console.log('Selected Pet before closing:', {
-                        ...selectedPet,
-                        id: typeof selectedPet.id === 'string' 
-                          ? parseInt(selectedPet.id, 10) 
-                          : (selectedPet.id || undefined)
-                      });
+                    onSuccess={(data) => {
+                      setIsEditing(false);
+                      setShowPetDetails(false);
                       setSelectedPet(null);
-                      setOpen(false);
+                      toast({
+                        title: "Success",
+                        description: "Pet updated successfully",
+                      });
+                    }}
+                    onCancel={() => {
+                      setIsEditing(false);
                     }}
                   />
                 )}
@@ -326,10 +325,10 @@ export default function PetsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {(pets || []).map((pet, index) => (
-              <TableRow key={pet.id || `pet-${index}`}>
+            {(pets || []).map((pet) => (
+              <TableRow key={pet.id}>
                 {columns.map((column) => (
-                  <TableCell key={`${pet.id || `pet-${index}`}-${column.header}`}>
+                  <TableCell key={`${pet.id}-${column.header}`}>
                     {column.cell(pet)}
                   </TableCell>
                 ))}

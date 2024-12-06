@@ -12,38 +12,37 @@ export function usePets() {
     queryFn: async () => {
       const querySnapshot = await getDocs(petsCollection);
       return querySnapshot.docs.map(doc => {
-        const petData = {
-          ...doc.data(),
-          id: doc.id  // Use the document ID directly
+        const petData = doc.data();
+        const pet = {
+          ...petData,
+          id: doc.id,  // Always use the Firestore document ID
+          createdAt: petData.createdAt?.toDate() || new Date(),
+          updatedAt: petData.updatedAt?.toDate() || new Date()
         } as Pet;
         console.log('Fetched Pet Document:', {
           id: doc.id,
-          documentData: petData
+          documentData: pet
         });
-        return petData;
+        return pet;
       });
     },
   });
 
   const addPet = async (pet: Omit<Pet, 'id'>) => {
-    // Clean up pet data to remove undefined and null values
-    const cleanedPetData = Object.fromEntries(
-      Object.entries(pet)
-        .filter(([_, value]) => 
-          value !== undefined && 
-          value !== null && 
-          value !== ''
-        )
-        .map(([key, value]) => [
-          key, 
-          // Convert empty strings to null
-          value === '' ? null : value
-        ])
-    );
-
-    console.log('Cleaned Pet Data for Adding:', cleanedPetData);
-
     try {
+      // Clean up pet data
+      const cleanedPetData = Object.fromEntries(
+        Object.entries(pet)
+          .filter(([_, value]) => 
+            value !== undefined && 
+            value !== null && 
+            value !== ''
+          )
+          .map(([key, value]) => [key, value === '' ? null : value])
+      );
+
+      console.log('Cleaned Pet Data for Adding:', cleanedPetData);
+
       const docRef = await addDoc(petsCollection, {
         ...cleanedPetData,
         createdAt: new Date()
@@ -51,99 +50,38 @@ export function usePets() {
 
       console.log('Added Pet Document Reference:', docRef);
 
+      // Invalidate and refetch
+      await queryClient.invalidateQueries({ queryKey: ["pets"] });
+
       return {
         id: docRef.id,
         ...cleanedPetData
-      };
+      } as Pet;
     } catch (error) {
-      console.error('Error adding pet:', {
-        errorName: error instanceof Error ? error.name : 'Unknown Error',
-        errorMessage: error instanceof Error ? error.message : 'No error message',
-        errorStack: error instanceof Error ? error.stack : 'No stack trace'
-      });
+      console.error('Error adding pet:', error);
       throw error;
     }
   };
 
   const updatePet = async (id: string, data: Partial<InsertPet>) => {
-    // Comprehensive input validation and normalization
     console.log('updatePet called with:', {
       id, 
-      data: JSON.stringify(data, null, 2),
-      dataType: typeof data,
-      dataKeys: data ? Object.keys(data) : 'NO DATA'
+      data: JSON.stringify(data, null, 2)
     });
 
     // Validate ID
     if (!id || typeof id !== 'string' || id.trim() === '') {
-      const errorDetails = { 
-        id, 
-        idType: typeof id,
-        idLength: id ? id.length : 'N/A'
-      };
-      console.error('Invalid or missing pet ID', errorDetails);
-      throw new Error(JSON.stringify({
-        message: 'Invalid pet ID: ID must be a non-empty string',
-        details: errorDetails
-      }));
+      throw new Error('Invalid pet ID: ID must be a non-empty string');
     }
-
-    // Normalize data input
-    const normalizedData = data || {};
 
     // Validate data
-    if (typeof normalizedData !== 'object' || Array.isArray(normalizedData)) {
-      const errorDetails = { 
-        id, 
-        data: normalizedData, 
-        dataType: typeof normalizedData,
-        isArray: Array.isArray(normalizedData)
-      };
-      console.error('Invalid update data', errorDetails);
-      throw new Error(JSON.stringify({
-        message: 'Update data must be a valid object',
-        details: errorDetails
-      }));
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+      throw new Error('Update data must be a valid object');
     }
 
-    // Ensure data has properties
-    const dataKeys = Object.keys(normalizedData);
-    if (dataKeys.length === 0) {
-      const errorDetails = {
-        id,
-        data: normalizedData,
-        dataType: typeof normalizedData
-      };
-      console.error('Empty update data object', errorDetails);
-      throw new Error(JSON.stringify({
-        message: 'No fields provided for update',
-        details: errorDetails
-      }));
-    }
-
-    // Validate Firestore document reference
-    let petRef;
-    try {
-      petRef = doc(petsCollection, id);
-      console.log('Firestore Document Reference:', {
-        path: petRef.path,
-        id: petRef.id
-      });
-    } catch (refError) {
-      const errorDetails = {
-        error: refError instanceof Error ? refError.message : 'Unknown error',
-        id
-      };
-      console.error('Failed to create Firestore document reference', errorDetails);
-      throw new Error(JSON.stringify({
-        message: 'Unable to create document reference',
-        details: errorDetails
-      }));
-    }
-    
-    // Remove undefined and null values to prevent Firestore errors
+    // Clean the update data
     const updateData = Object.fromEntries(
-      Object.entries(normalizedData)
+      Object.entries(data)
         .filter(([_, v]) => 
           v !== undefined && 
           v !== null && 
@@ -152,64 +90,45 @@ export function usePets() {
         .map(([k, v]) => [k, v === '' ? null : v])
     );
 
-    console.log('Cleaned Update Data:', JSON.stringify(updateData, null, 2));
-
-    // Ensure we have data to update after cleaning
+    // Ensure we have data to update
     if (Object.keys(updateData).length === 0) {
-      const errorDetails = {
-        originalData: normalizedData,
-        cleanedData: updateData
-      };
-      console.error('No valid update data after cleaning', errorDetails);
-      throw new Error(JSON.stringify({
-        message: 'No valid fields to update',
-        details: errorDetails
-      }));
+      throw new Error('No valid fields to update');
     }
 
     try {
-      // Perform the update
-      await updateDoc(petRef, {
+      const petRef = doc(petsCollection, id);
+      
+      // Add updatedAt timestamp
+      const finalUpdateData = {
         ...updateData,
         updatedAt: new Date()
-      });
+      };
+
+      await updateDoc(petRef, finalUpdateData);
       
-      console.log('Pet updated successfully', {
-        id,
-        updatedFields: Object.keys(updateData)
-      });
+      // Invalidate and refetch
+      await queryClient.invalidateQueries({ queryKey: ["pets"] });
 
       // Return the updated pet data
       return {
         id,
-        ...updateData
-      } as InsertPet;
-    } catch (updateError) {
-      const errorDetails = {
-        errorName: updateError instanceof Error ? updateError.name : 'Unknown Error',
-        errorMessage: updateError instanceof Error ? updateError.message : 'No error message',
-        errorStack: updateError instanceof Error ? updateError.stack : 'No stack trace',
-        inputData: { 
-          id, 
-          data: JSON.stringify(normalizedData, null, 2),
-          updateData: JSON.stringify(updateData, null, 2)
-        }
-      };
-
-      console.error('Firestore Update Error:', errorDetails);
-      throw new Error(JSON.stringify({
-        message: 'Failed to update pet in Firestore',
-        details: errorDetails
-      }));
+        ...updateData,
+        updatedAt: new Date()
+      } as Pet;
+    } catch (error) {
+      console.error('Error updating pet:', error);
+      throw error;
     }
   };
 
-  const deletePet = async (id: number) => {
+  const deletePet = async (id: string) => {
     try {
-      const petRef = doc(petsCollection, id.toString());
+      const petRef = doc(petsCollection, id);
       console.log('Attempting to delete pet with ID:', id);
       await deleteDoc(petRef);
       console.log('Pet deleted successfully');
+      // Invalidate and refetch
+      await queryClient.invalidateQueries({ queryKey: ["pets"] });
       return true;
     } catch (error) {
       console.error('Error deleting pet:', error);
