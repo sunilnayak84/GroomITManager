@@ -41,6 +41,11 @@ export function usePets() {
 
       // More robust ID parsing
       let petId: number;
+      if (id === null || id === undefined) {
+        console.error('Null or undefined ID provided');
+        throw new Error('Invalid pet ID: null or undefined');
+      }
+
       if (typeof id === 'string') {
         petId = parseInt(id, 10);
       } else if (typeof id === 'number') {
@@ -61,6 +66,12 @@ export function usePets() {
       if (isNaN(petId)) {
         console.error('Invalid pet ID after parsing:', id);
         throw new Error('Invalid pet ID');
+      }
+
+      // Ensure we have valid data to update
+      if (!data || Object.keys(data).length === 0) {
+        console.error('No update data provided');
+        throw new Error('No data to update');
       }
 
       const petRef = doc(petsCollection, petId.toString());

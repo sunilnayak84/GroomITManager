@@ -97,6 +97,16 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
           stringValue: pet.id?.toString(),
           parsedInt: parseInt(pet.id?.toString() || '', 10)
         });
+
+        // Validate pet ID before update
+        if (pet.id === null || pet.id === undefined || isNaN(pet.id)) {
+          toast({
+            title: "Error",
+            description: "Invalid pet ID. Cannot update pet.",
+            variant: "destructive"
+          });
+          return;
+        }
         
         const updateResult = await updatePet?.(pet.id, {
           ...data,

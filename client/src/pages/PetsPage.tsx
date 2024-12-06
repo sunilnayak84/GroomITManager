@@ -261,7 +261,10 @@ export default function PetsPage() {
                       image: selectedPet.image || undefined,
                       notes: selectedPet.notes || undefined
                     }}
-                    pet={selectedPet}
+                    pet={{
+                      ...selectedPet,
+                      id: selectedPet.id ?? undefined
+                    }}
                     updatePet={updatePet}
                     onCancel={() => {
                       console.log('Selected Pet before closing:', selectedPet);
