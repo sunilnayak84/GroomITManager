@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Customer } from "@db/schema";
-import { getDocs, onSnapshot, query } from "firebase/firestore";
+import { getDocs, onSnapshot, query, deleteDoc, doc } from "firebase/firestore";
 import { customersCollection, createCustomer, updateCustomer as updateCustomerDoc } from "../lib/firestore";
 import { useEffect } from "react";
 
@@ -63,11 +63,23 @@ export function useCustomers() {
     return () => unsubscribe();
   }, [queryClient]);
 
+  const deleteCustomerMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const customerRef = doc(customersCollection, id.toString());
+      await deleteDoc(customerRef);
+      return id;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["customers"] });
+    },
+  });
+
   return {
     data,
     isLoading,
     error,
     addCustomer: addCustomerMutation.mutateAsync,
     updateCustomer: updateCustomerMutation.mutateAsync,
+    deleteCustomer: deleteCustomerMutation.mutateAsync,
   };
 }
