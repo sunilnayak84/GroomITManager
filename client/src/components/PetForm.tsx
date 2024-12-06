@@ -12,11 +12,12 @@ import { useState } from "react";
 import { Upload } from "lucide-react";
 
 interface PetFormProps {
-  onSuccess?: () => void;
-  defaultValues?: Partial<InsertPet>;
+  onSuccess?: (data: PetFormData) => void;
+  onCancel?: () => void;
+  defaultValues?: Partial<PetFormData>;
 }
 
-export default function PetForm({ onSuccess, defaultValues }: PetFormProps) {
+export default function PetForm({ onSuccess, onCancel, defaultValues }: PetFormProps) {
   const { addPet } = usePets();
   const { data: customers } = useCustomers();
   const { toast } = useToast();
@@ -89,19 +90,14 @@ export default function PetForm({ onSuccess, defaultValues }: PetFormProps) {
         notes: data.notes || null
       };
 
-      await addPet(petData);
+      onSuccess?.(petData);
       form.reset();
       setImagePreview(null);
-      onSuccess?.();
-      toast({
-        title: "Success",
-        description: "Pet added successfully",
-      });
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to add pet",
+        description: "Failed to save pet details",
       });
     }
   }
@@ -374,12 +370,18 @@ export default function PetForm({ onSuccess, defaultValues }: PetFormProps) {
           )}
         />
 
-        <div className="flex gap-4">
-          <Button type="submit" className="flex-1">
-            Save
-          </Button>
-          <Button type="button" variant="outline" className="flex-1" onClick={() => form.reset()}>
-            Cancel
+        <div className="flex justify-end gap-2">
+          {onCancel && (
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={onCancel}
+            >
+              Cancel
+            </Button>
+          )}
+          <Button type="submit">
+            {defaultValues ? "Update" : "Add"} Pet
           </Button>
         </div>
       </form>
