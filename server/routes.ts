@@ -11,8 +11,7 @@ import { authenticateFirebase, requireRole } from './middleware/auth';
 
 export function registerRoutes(app: Express) {
   // Setup protected routes with Firebase authentication
-  const protectedRoutes = ['/api/appointments', '/api/customers', '/api/pets', '/api/stats'];
-  app.use(protectedRoutes, authenticateFirebase);
+  app.use(['/api/appointments', '/api/customers', '/api/pets', '/api/stats'], authenticateFirebase);
 
   // Create routes without auth middleware
   app.get("/api/health", (req, res) => {

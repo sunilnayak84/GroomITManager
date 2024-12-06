@@ -98,12 +98,12 @@ export function setupAuth(app: Express) {
 
     // Add authentication middleware
     app.use(async (req, res, next) => {
-      const authHeader = req.headers.authorization;
-      if (!authHeader?.startsWith('Bearer ')) {
-        return next();
-      }
-
       try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader?.startsWith('Bearer ')) {
+          return res.status(401).json({ message: "Not authenticated" });
+        }
+
         const token = authHeader.split('Bearer ')[1];
         const decodedToken = await admin.auth().verifyIdToken(token);
         
@@ -134,7 +134,7 @@ export function setupAuth(app: Express) {
         next();
       } catch (error) {
         console.error('Auth error:', error);
-        next();
+        return res.status(401).json({ message: "Authentication failed" });
       }
     });
 

@@ -1,4 +1,4 @@
-import { collection, doc, setDoc, getDoc, getDocs, query, where, DocumentData, CollectionReference } from 'firebase/firestore';
+import { collection, doc, setDoc, getDoc, getDocs, deleteDoc, query, where, DocumentData, CollectionReference } from 'firebase/firestore';
 import { db } from './firebase';
 import type { User, Customer, Pet, Appointment } from '@db/schema';
 
@@ -75,7 +75,7 @@ export async function createAppointment(appointment: Omit<Appointment, 'id'>) {
   }
 }
 
-// Add update operations
+// Add update and delete operations
 export async function updateCustomer(id: number, data: Partial<Customer>) {
   try {
     const customerRef = doc(customersCollection, id.toString());
@@ -86,6 +86,27 @@ export async function updateCustomer(id: number, data: Partial<Customer>) {
     return true;
   } catch (error) {
     console.error('Error updating customer:', error);
+    throw error;
+  }
+}
+
+export async function deleteCustomerAndRelated(id: number) {
+  try {
+    // First, get and delete all pets associated with this customer
+    const petsQuery = query(petsCollection, where('customerId', '==', id));
+    const petsSnapshot = await getDocs(petsQuery);
+    
+    // Delete all pets
+    const petDeletions = petsSnapshot.docs.map(doc => deleteDoc(doc.ref));
+    await Promise.all(petDeletions);
+    
+    // Then delete the customer
+    const customerRef = doc(customersCollection, id.toString());
+    await deleteDoc(customerRef);
+    
+    return true;
+  } catch (error) {
+    console.error('Error deleting customer and related data:', error);
     throw error;
   }
 }
