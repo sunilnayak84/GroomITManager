@@ -88,13 +88,28 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
         return;
       }
 
+      // Validate that updatePet function exists
+      if (!updatePet) {
+        console.error('updatePet function is not provided');
+        toast({
+          title: "Error",
+          description: "Update function is not available",
+          variant: "destructive"
+        });
+        return;
+      }
+
       // Log initial form data and pet object for debugging
       console.log('Initial Form Data:', JSON.stringify(data, null, 2));
       console.log('Original Pet Object:', JSON.stringify(pet, null, 2));
 
       // Validate form data
       const cleanedData = Object.fromEntries(
-        Object.entries(data).filter(([_, v]) => v !== undefined && v !== null)
+        Object.entries(data).filter(([_, v]) => 
+          v !== undefined && 
+          v !== null && 
+          (typeof v !== 'string' || v.trim() !== '')
+        )
       );
 
       console.log('Cleaned Form Data:', JSON.stringify(cleanedData, null, 2));
@@ -110,15 +125,18 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
         console.log(`Comparing field ${key}:`, {
           currentValue, 
           originalValue, 
-          isDifferent: currentValue !== originalValue
+          isDifferent: currentValue !== originalValue,
+          comparisonType: typeof currentValue
         });
         
-        // Compare values, considering type conversion and empty strings
-        if (
+        // More robust comparison
+        const isDifferent = 
           currentValue !== originalValue && 
           !(currentValue === '' && originalValue === null) &&
-          !(currentValue === null && originalValue === '')
-        ) {
+          !(currentValue === null && originalValue === '') &&
+          !(currentValue === undefined && originalValue === undefined);
+
+        if (isDifferent) {
           updateData[key] = currentValue;
         }
       });
@@ -160,14 +178,15 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
 
         // Validate pet ID before update
         if (!petId) {
+          console.error('No pet ID provided for update', { pet, data });
           toast({
             title: "Error",
-            description: "Cannot identify pet for update. Please try again.",
+            description: "Cannot update pet: Missing ID",
             variant: "destructive"
           });
           return;
         }
-        
+
         try {
           // Add customerId to update data if it's not already included
           if (!updateData.customerId && data.customerId) {
@@ -176,7 +195,12 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
 
           console.log('Final Update Data:', JSON.stringify(updateData, null, 2));
           
-          const updateResult = await updatePet?.(petId, updateData);
+          // Validate updatePet call
+          if (typeof updatePet !== 'function') {
+            throw new Error('updatePet is not a valid function');
+          }
+
+          const updateResult = await updatePet(petId, updateData);
           
           if (updateResult) {
             toast({
@@ -184,13 +208,32 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
               description: "Pet updated successfully",
             });
             onCancel?.();
+          } else {
+            console.error('Update failed: No result returned', {
+              petId,
+              updateData
+            });
+            toast({
+              title: "Error",
+              description: "Failed to update pet",
+              variant: "destructive"
+            });
           }
         } catch (updateError) {
           console.error('Update Error:', {
             error: updateError,
             petId,
-            updateData
+            updateData,
+            errorType: typeof updateError,
+            errorMessage: updateError instanceof Error ? updateError.message : String(updateError)
           });
+          
+          toast({
+            title: "Error",
+            description: `Failed to update pet: ${updateError instanceof Error ? updateError.message : 'Unknown error'}`,
+            variant: "destructive"
+          });
+          
           throw updateError;
         }
       } else {

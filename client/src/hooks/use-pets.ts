@@ -66,6 +66,7 @@ export function usePets() {
   };
 
   const updatePet = async (id: string, data: Partial<InsertPet>) => {
+    // Comprehensive input validation
     console.log('updatePet called with:', {
       id, 
       data: JSON.stringify(data, null, 2),
@@ -74,30 +75,35 @@ export function usePets() {
     });
 
     // Validate ID
-    if (!id) {
-      console.error('Invalid or missing pet ID', { id });
-      throw new Error('Invalid pet ID');
+    if (!id || typeof id !== 'string' || id.trim() === '') {
+      console.error('Invalid or missing pet ID', { 
+        id, 
+        idType: typeof id,
+        idLength: id ? id.length : 'N/A'
+      });
+      throw new Error('Invalid pet ID: ID must be a non-empty string');
     }
 
     // Validate data
-    if (!data || typeof data !== 'object') {
-      console.error('No update data provided', { 
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+      console.error('Invalid update data', { 
         id, 
         data, 
         dataType: typeof data,
-        dataKeys: data ? Object.keys(data) : 'NO DATA'
+        isArray: Array.isArray(data)
       });
-      throw new Error('No data to update');
+      throw new Error('Update data must be a non-null object');
     }
 
     // Ensure data has properties
-    if (Object.keys(data).length === 0) {
+    const dataKeys = Object.keys(data);
+    if (dataKeys.length === 0) {
       console.error('Empty update data object', {
         id,
         data,
         dataType: typeof data
       });
-      throw new Error('Empty update data');
+      throw new Error('No fields provided for update');
     }
 
     // If the ID is a generated timestamp-based ID, log a warning
@@ -105,16 +111,30 @@ export function usePets() {
       console.warn('Using generated timestamp-based ID for update:', id);
     }
 
-    const petRef = doc(petsCollection, id);
-    console.log('Firestore Document Reference:', {
-      path: petRef.path,
-      id: petRef.id
-    });
+    // Validate Firestore document reference
+    let petRef;
+    try {
+      petRef = doc(petsCollection, id);
+      console.log('Firestore Document Reference:', {
+        path: petRef.path,
+        id: petRef.id
+      });
+    } catch (refError) {
+      console.error('Failed to create Firestore document reference', {
+        error: refError,
+        id
+      });
+      throw new Error('Unable to create document reference');
+    }
     
     // Remove undefined and null values to prevent Firestore errors
     const updateData = Object.fromEntries(
       Object.entries(data)
-        .filter(([_, v]) => v !== undefined && v !== null)
+        .filter(([_, v]) => 
+          v !== undefined && 
+          v !== null && 
+          (typeof v !== 'string' || v.trim() !== '')
+        )
         .map(([k, v]) => [k, v === '' ? null : v])
     );
 
@@ -126,28 +146,36 @@ export function usePets() {
         originalData: data,
         cleanedData: updateData
       });
-      throw new Error('No valid data to update');
+      throw new Error('No valid fields to update');
     }
 
     try {
+      // Perform the update
       await updateDoc(petRef, {
         ...updateData,
         updatedAt: new Date()
       });
       
-      console.log('Pet updated successfully');
+      console.log('Pet updated successfully', {
+        id,
+        updatedFields: Object.keys(updateData)
+      });
+
       return true;
-    } catch (error) {
-      console.error('Comprehensive Error in updatePet:', {
-        errorName: error instanceof Error ? error.name : 'Unknown Error',
-        errorMessage: error instanceof Error ? error.message : 'No error message',
-        errorStack: error instanceof Error ? error.stack : 'No stack trace',
+    } catch (updateError) {
+      console.error('Firestore Update Error:', {
+        errorName: updateError instanceof Error ? updateError.name : 'Unknown Error',
+        errorMessage: updateError instanceof Error ? updateError.message : 'No error message',
+        errorStack: updateError instanceof Error ? updateError.stack : 'No stack trace',
         inputData: { 
           id, 
-          data: JSON.stringify(data, null, 2) 
+          data: JSON.stringify(data, null, 2),
+          updateData: JSON.stringify(updateData, null, 2)
         }
       });
-      throw error;
+
+      // Throw a more user-friendly error
+      throw new Error(`Failed to update pet: ${updateError instanceof Error ? updateError.message : 'Unknown error'}`);
     }
   };
 
