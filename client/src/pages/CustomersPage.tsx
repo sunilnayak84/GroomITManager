@@ -35,7 +35,12 @@ export default function CustomersPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const { customersQuery, updateCustomerMutation, deleteCustomerMutationHook, createCustomer } = useCustomers();
+  const { 
+    customersQuery, 
+    updateCustomerMutation, 
+    deleteCustomerMutationHook, 
+    addCustomerMutation 
+  } = useCustomers();
   const { data: pets } = usePets();
   const queryClient = useQueryClient();
 
@@ -203,7 +208,8 @@ export default function CustomersPage() {
       // Log the attempt to create a customer
       console.log('ADD_CUSTOMER: Attempting to create customer', { data });
 
-      await addCustomer({
+      // Mutate using the addCustomerMutation
+      await addCustomerMutation.mutateAsync({
         ...data,
         createdAt: new Date(),
         password: data.password || null,
@@ -238,38 +244,6 @@ export default function CustomersPage() {
     } finally {
       // Ensure submitting state is reset
       setIsSubmitting(false);
-    }
-  }
-
-  async function addCustomer(data: InsertCustomer) {
-    try {
-      // Log the attempt to create a customer
-      console.log('ADD_CUSTOMER: Attempting to create customer in Firestore', { data });
-
-      // Call the createCustomer function from firestore.ts
-      const customerId = await createCustomer({
-        ...data,
-        createdAt: data.createdAt || new Date(),
-        petCount: 0
-      });
-
-      // Log successful creation
-      console.log('ADD_CUSTOMER: Customer created successfully', { customerId });
-
-      // Invalidate and refetch customers query
-      await queryClient.invalidateQueries({ queryKey: ["customers"] });
-
-      return customerId;
-    } catch (error) {
-      // Log the full error details
-      console.error('ADD_CUSTOMER: Error creating customer', { 
-        error,
-        errorMessage: error instanceof Error ? error.message : 'Unknown error',
-        customerData: data
-      });
-
-      // Throw the error to be caught by the calling function
-      throw error;
     }
   }
 
