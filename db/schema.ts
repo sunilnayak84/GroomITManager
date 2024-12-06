@@ -47,8 +47,6 @@ export const pets = pgTable("pets", {
   gender: varchar("gender", { length: 20 }),
   weight: varchar("weight", { length: 20 }),
   weightUnit: varchar("weight_unit", { length: 10 }).default("kg"),
-  height: varchar("height", { length: 20 }),
-  heightUnit: varchar("height_unit", { length: 10 }).default("cm"),
   image: text("image_url"),
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
@@ -94,11 +92,9 @@ export const insertPetSchema = createInsertSchema(pets, {
   gender: z.enum(["male", "female", "other"]).optional(),
   weight: z.string().optional(),
   weightUnit: z.enum(["kg", "lbs"]).default("kg"),
-  height: z.string().optional(),
-  heightUnit: z.enum(["cm", "inches"]).default("cm"),
   image: z.string().optional(),
   notes: z.string().optional(),
-  firebaseId: z.string().optional(), // Add this line
+  firebaseId: z.string().optional(),
 });
 
 export const insertAppointmentSchema = createInsertSchema(appointments, {
@@ -129,7 +125,7 @@ export type Pet = typeof pets.$inferSelect & {
     phone?: string;
     email?: string;
   } | null;
-  firebaseId?: string; // Add this line
+  firebaseId?: string;
 };
 
 export type InsertPet = typeof pets.$inferInsert;

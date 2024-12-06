@@ -34,17 +34,12 @@ const insertPetSchema = z.object({
   gender: z.enum(["male", "female", "unknown"]).optional(),
   weight: z.coerce.number().optional(),
   weightUnit: z.enum(["kg", "lbs"]).default("kg"),
-  height: z.coerce.number().optional(),
-  heightUnit: z.enum(["cm", "inches"]).default("cm"),
   image: z.string().or(z.instanceof(File)).nullable().optional(),
   notes: z.string().optional()
 }).refine(data => {
   // Ensure that if optional fields are provided, they are valid
   if (data.weight !== undefined && isNaN(data.weight)) {
     throw new Error("Weight must be a valid number");
-  }
-  if (data.height !== undefined && isNaN(data.height)) {
-    throw new Error("Height must be a valid number");
   }
   if (data.age !== undefined && isNaN(data.age)) {
     throw new Error("Age must be a valid number");
@@ -99,8 +94,6 @@ export default function PetForm({
       gender: defaultValues?.gender,
       weight: defaultValues?.weight,
       weightUnit: defaultValues?.weightUnit || "kg",
-      height: defaultValues?.height,
-      heightUnit: defaultValues?.heightUnit || "cm",
       image: defaultValues?.image || undefined,
       notes: defaultValues?.notes
     },
@@ -122,8 +115,6 @@ export default function PetForm({
         gender: defaultValues.gender,
         weight: defaultValues.weight,
         weightUnit: defaultValues.weightUnit || "kg",
-        height: defaultValues.height,
-        heightUnit: defaultValues.heightUnit || "cm",
         image: defaultValues.image || undefined,
         notes: defaultValues.notes
       });
@@ -159,8 +150,6 @@ export default function PetForm({
     gender?: "male" | "female" | "unknown";
     weight?: string;
     weightUnit: "kg" | "lbs";
-    height?: string;
-    heightUnit: "cm" | "inches";
     image?: string | null;
     notes?: string;
   };
@@ -507,50 +496,6 @@ export default function PetForm({
                   <SelectContent>
                     <SelectItem value="kg">kg</SelectItem>
                     <SelectItem value="lbs">lbs</SelectItem>
-                  </SelectContent>
-                </Select>
-              </FormItem>
-            )}
-          />
-        </div>
-
-        {/* Height with unit */}
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="height"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Height</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="number" 
-                    step="0.1" 
-                    {...field}
-                    value={field.value || ''}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="heightUnit"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Unit</FormLabel>
-                <Select 
-                  onValueChange={field.onChange}
-                  value={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Unit" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="cm">cm</SelectItem>
-                    <SelectItem value="inches">inches</SelectItem>
                   </SelectContent>
                 </Select>
               </FormItem>

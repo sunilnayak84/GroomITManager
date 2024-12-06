@@ -160,8 +160,6 @@ export default function PetsPage() {
       gender: undefined,
       weight: undefined,
       weightUnit: "kg",
-      height: undefined,
-      heightUnit: "cm",
       image: null,
       notes: undefined,
     },
@@ -180,8 +178,6 @@ export default function PetsPage() {
         gender: selectedPet.gender || undefined,
         weight: selectedPet.weight || undefined,
         weightUnit: selectedPet.weightUnit || "kg",
-        height: selectedPet.height || undefined,
-        heightUnit: selectedPet.heightUnit || "cm",
         image: selectedPet.image || null,
         notes: selectedPet.notes || undefined,
       });
@@ -402,8 +398,6 @@ export default function PetsPage() {
                     gender: selectedPet?.gender,
                     weight: selectedPet?.weight,
                     weightUnit: selectedPet?.weightUnit || "kg",
-                    height: selectedPet?.height,
-                    heightUnit: selectedPet?.heightUnit || "cm",
                     image: selectedPet?.image,
                     notes: selectedPet?.notes
                   }}
@@ -445,8 +439,6 @@ export default function PetsPage() {
               gender: selectedPet?.gender,
               weight: selectedPet?.weight,
               weightUnit: selectedPet?.weightUnit || "kg",
-              height: selectedPet?.height,
-              heightUnit: selectedPet?.heightUnit || "cm",
               image: selectedPet?.image,
               notes: selectedPet?.notes
             }}
