@@ -76,6 +76,10 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
 
   const onSubmit = async (data: PetFormData) => {
     try {
+      if (isSubmitting) {
+        return; // Prevent duplicate submissions
+      }
+
       setIsSubmitting(true);
       
       // Clean the data by removing empty strings and undefined values
@@ -113,13 +117,7 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
             comparisonType: typeof currentValue
           });
           
-          const isDifferent = 
-            currentValue !== originalValue && 
-            !(currentValue === '' && originalValue === null) &&
-            !(currentValue === null && originalValue === '') &&
-            !(currentValue === undefined && originalValue === undefined);
-
-          if (isDifferent) {
+          if (currentValue !== originalValue) {
             updateData[key] = currentValue;
           }
         });

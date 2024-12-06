@@ -1,48 +1,65 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Pet, InsertPet } from "@db/schema";
-import { getDocs, addDoc, onSnapshot, query, doc, updateDoc, deleteDoc, collection, getDoc } from "firebase/firestore";
-import { petsCollection } from "../lib/firestore";
-import { db } from "../lib/firebase"; // Import the Firebase database instance
-import React from "react";
+import { getDocs, addDoc, doc, updateDoc, deleteDoc, collection, getDoc, onSnapshot } from "firebase/firestore";
+import { db } from "../lib/firebase";
+import { useEffect } from "react";
 
 export function usePets() {
   const queryClient = useQueryClient();
 
   const { data: pets, isLoading } = useQuery<Pet[]>({
     queryKey: ['pets'],
-    queryFn: async () => {
-      try {
-        const petsCollection = collection(db, 'pets');
-        const querySnapshot = await getDocs(petsCollection);
-        return querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        } as Pet));
-      } catch (error) {
-        console.error('Error fetching pets:', error);
-        throw error;
-      }
+    queryFn: () => {
+      return new Promise((resolve, reject) => {
+        try {
+          const petsCollection = collection(db, 'pets');
+          
+          // Set up real-time listener
+          const unsubscribe = onSnapshot(petsCollection, (snapshot) => {
+            const petsData = snapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data()
+            } as Pet));
+            
+            resolve(petsData);
+          }, (error) => {
+            console.error('Error in real-time pets listener:', error);
+            reject(error);
+          });
+
+          // Clean up listener on query cleanup
+          return () => unsubscribe();
+        } catch (error) {
+          console.error('Error setting up pets listener:', error);
+          reject(error);
+        }
+      });
     },
+    staleTime: Infinity, // Disable automatic refetching since we're using real-time updates
   });
 
   const addPet = async (pet: InsertPet): Promise<Pet> => {
     try {
       const petsCollection = collection(db, 'pets');
+      
+      // Clean the pet data before adding
+      const cleanedPet = Object.fromEntries(
+        Object.entries(pet)
+          .filter(([_, value]) => value !== undefined && value !== '')
+          .map(([key, value]) => [key, value === '' ? null : value])
+      );
+
       const docRef = await addDoc(petsCollection, {
-        ...pet,
+        ...cleanedPet,
         createdAt: new Date(),
         updatedAt: new Date()
       });
 
+      const newPetDoc = await getDoc(docRef);
       const newPet = {
         id: docRef.id,
-        ...pet,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        ...newPetDoc.data()
       } as Pet;
-
-      // Invalidate and refetch
-      await queryClient.invalidateQueries({ queryKey: ['pets'] });
 
       return newPet;
     } catch (error) {
@@ -61,8 +78,15 @@ export function usePets() {
         throw new Error('Pet not found');
       }
 
+      // Clean the update data
+      const cleanedUpdates = Object.fromEntries(
+        Object.entries(updates)
+          .filter(([_, value]) => value !== undefined && value !== '')
+          .map(([key, value]) => [key, value === '' ? null : value])
+      );
+
       const updateData = {
-        ...updates,
+        ...cleanedUpdates,
         updatedAt: new Date()
       };
 
@@ -79,9 +103,6 @@ export function usePets() {
         ...updatedDoc.data()
       } as Pet;
 
-      // Invalidate and refetch
-      await queryClient.invalidateQueries({ queryKey: ['pets'] });
-
       return updatedPet;
     } catch (error) {
       console.error('Error updating pet:', error);
@@ -93,9 +114,6 @@ export function usePets() {
     try {
       const petRef = doc(db, 'pets', id);
       await deleteDoc(petRef);
-
-      // Invalidate and refetch
-      await queryClient.invalidateQueries({ queryKey: ['pets'] });
     } catch (error) {
       console.error('Error deleting pet:', error);
       throw error;

@@ -20,13 +20,71 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { insertPetSchema, type InsertPet } from "@db/schema";
 
 export default function PetsPage() {
+  const { pets, isLoading, addPet, updatePet, deletePet } = usePets();
+
   const [open, setOpen] = useState(false);
-  const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const [showPetDetails, setShowPetDetails] = useState(false);
+  const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const { data: pets, isLoading, addPet, deletePet, updatePet } = usePets();
-  const { data: customers } = useCustomers();
+
   const { toast } = useToast();
+
+  const handleAddPet = async (data: InsertPet) => {
+    try {
+      await addPet(data);
+      setOpen(false);
+      toast({
+        title: "Success",
+        description: "Pet added successfully",
+      });
+    } catch (error) {
+      console.error('Error adding pet:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add pet",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleUpdatePet = async (id: string, data: Partial<InsertPet>) => {
+    try {
+      await updatePet(id, data);
+      setIsEditing(false);
+      setShowPetDetails(false);
+      setSelectedPet(null);
+      toast({
+        title: "Success",
+        description: "Pet updated successfully",
+      });
+    } catch (error) {
+      console.error('Error updating pet:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update pet",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeletePet = async (id: string) => {
+    try {
+      await deletePet(id);
+      setShowPetDetails(false);
+      setSelectedPet(null);
+      toast({
+        title: "Success",
+        description: "Pet deleted successfully",
+      });
+    } catch (error) {
+      console.error('Error deleting pet:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete pet",
+        variant: "destructive",
+      });
+    }
+  };
 
   const editForm = useForm<InsertPet>({
     resolver: zodResolver(insertPetSchema),
@@ -68,26 +126,6 @@ export default function PetsPage() {
     }
   }, [selectedPet, isEditing, editForm]);
 
-  const handleDeletePet = async () => {
-    if (!selectedPet) return;
-
-    try {
-      await deletePet(selectedPet.id);
-      setShowPetDetails(false);
-      toast({
-        title: "Success",
-        description: "Pet deleted successfully",
-      });
-    } catch (error) {
-      console.error('Delete Pet Error:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: `Failed to delete pet: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      });
-    }
-  };
-
   const formatDate = (date: Date | null | undefined) => {
     if (!date) return "N/A";
     return new Date(date).toLocaleDateString();
@@ -113,7 +151,7 @@ export default function PetsPage() {
     {
       header: "Owner",
       cell: (pet: Pet) => {
-        const owner = customers?.find(c => c.id === pet.customerId);
+        const owner = pets?.find(c => c.id === pet.customerId);
         return owner ? `${owner.firstName} ${owner.lastName}` : "N/A";
       },
     },
@@ -163,29 +201,22 @@ export default function PetsPage() {
               Add Pet
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+          <DialogContent>
             <DialogHeader>
               <DialogTitle>Add New Pet</DialogTitle>
               <DialogDescription>
-                Fill in the details to add a new pet to the system.
+                Fill in the details below to add a new pet.
               </DialogDescription>
             </DialogHeader>
             <PetForm 
-              onSuccess={(data) => {
-                addPet(data);
-                setOpen(false);
-                toast({
-                  title: "Success",
-                  description: "Pet added successfully",
-                });
-              }}
+              onSuccess={handleAddPet}
             />
           </DialogContent>
         </Dialog>
 
         {/* Pet Details Dialog */}
         <Dialog open={showPetDetails} onOpenChange={setShowPetDetails}>
-          <DialogContent className="sm:max-w-[600px]">
+          <DialogContent>
             <DialogHeader>
               <DialogTitle>
                 {isEditing ? "Edit Pet Details" : "Pet Details"}
@@ -214,7 +245,7 @@ export default function PetsPage() {
                         size="sm" 
                         onClick={() => {
                           if (window.confirm('Are you sure you want to delete this pet?')) {
-                            handleDeletePet();
+                            handleDeletePet(selectedPet.id);
                           }
                         }}
                       >
@@ -237,7 +268,7 @@ export default function PetsPage() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <h3 className="font-medium mb-1">Owner</h3>
-                        <p>{customers?.find(c => c.id === selectedPet.customerId)?.firstName} {customers?.find(c => c.id === selectedPet.customerId)?.lastName}</p>
+                        <p>{pets?.find(c => c.id === selectedPet.customerId)?.firstName} {pets?.find(c => c.id === selectedPet.customerId)?.lastName}</p>
                       </div>
                       <div>
                         <h3 className="font-medium mb-1">Age</h3>
@@ -283,16 +314,8 @@ export default function PetsPage() {
                       notes: selectedPet.notes || undefined
                     }}
                     pet={selectedPet}
-                    updatePet={updatePet}
-                    onSuccess={(data) => {
-                      setIsEditing(false);
-                      setShowPetDetails(false);
-                      setSelectedPet(null);
-                      toast({
-                        title: "Success",
-                        description: "Pet updated successfully",
-                      });
-                    }}
+                    updatePet={handleUpdatePet}
+                    onSuccess={(data) => handleUpdatePet(selectedPet.id, data)}
                     onCancel={() => {
                       setIsEditing(false);
                     }}
