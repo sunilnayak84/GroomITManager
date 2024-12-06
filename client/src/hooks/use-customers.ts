@@ -11,19 +11,44 @@ export function useCustomers() {
 
   const addCustomerMutation = useMutation({
     mutationFn: async (customer: Omit<Customer, 'id'>) => {
-      // Validate required fields
-      const requiredFields: (keyof Omit<Customer, 'id'>)[] = ['firstName', 'lastName', 'email', 'phone'];
-      const missingFields = requiredFields.filter(field => {
-        const value = customer[field];
-        return value === undefined || value === null || value === '';
-      });
+      // Detailed validation and logging
+      const validationErrors: string[] = [];
 
-      if (missingFields.length > 0) {
-        console.error('ADD_CUSTOMER: Missing required fields', { 
-          missingFields,
+      // Validate firstName
+      if (!customer.firstName || customer.firstName.trim().length < 2) {
+        validationErrors.push("First name must be at least 2 characters");
+      }
+
+      // Validate lastName
+      if (!customer.lastName || customer.lastName.trim().length < 2) {
+        validationErrors.push("Last name must be at least 2 characters");
+      }
+
+      // Validate email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!customer.email || !emailRegex.test(customer.email)) {
+        validationErrors.push("Invalid email format");
+      }
+
+      // Validate phone
+      const phoneRegex = /^[0-9]{10,}$/;
+      if (!customer.phone || !phoneRegex.test(customer.phone.replace(/\D/g, ''))) {
+        validationErrors.push("Phone number must be at least 10 digits");
+      }
+
+      // Validate gender
+      const validGenders = ['male', 'female', 'other'];
+      if (!customer.gender || !validGenders.includes(customer.gender)) {
+        validationErrors.push("Invalid gender selection");
+      }
+
+      // If there are validation errors, throw them
+      if (validationErrors.length > 0) {
+        console.error('ADD_CUSTOMER: Validation errors', { 
+          errors: validationErrors,
           customerData: customer
         });
-        throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+        throw new Error(validationErrors.join('; '));
       }
 
       try {
