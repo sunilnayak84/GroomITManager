@@ -144,10 +144,35 @@ export default function PetForm({
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file type and size
+      const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      const maxSize = 5 * 1024 * 1024; // 5MB
+
+      if (!validTypes.includes(file.type)) {
+        toast({
+          title: "Invalid File Type",
+          description: "Please upload a valid image (JPEG, PNG, or GIF)",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      if (file.size > maxSize) {
+        toast({
+          title: "File Too Large",
+          description: "Image must be less than 5MB",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Set image for form
+      form.setValue('image', file);
+
+      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
-        form.setValue("image", reader.result as string);
       };
       reader.readAsDataURL(file);
     }
