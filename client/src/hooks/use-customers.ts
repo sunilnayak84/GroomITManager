@@ -13,14 +13,17 @@ export function useCustomers() {
     queryFn: async () => {
       try {
         const querySnapshot = await getDocs(customersCollection);
-        const customers = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          // Ensure createdAt is a valid Date object
-          createdAt: doc.data().createdAt 
-            ? new Date(doc.data().createdAt) 
-            : undefined
-        } as Customer));
+        const customers = querySnapshot.docs.map(doc => {
+          const customerData = doc.data();
+          return {
+            id: doc.id,
+            ...customerData,
+            // Ensure createdAt is a valid Date object
+            createdAt: customerData.createdAt 
+              ? new Date(customerData.createdAt) 
+              : undefined
+          } as Customer;
+        });
 
         console.error('USE CUSTOMERS: Fetched customers', {
           customerCount: customers.length,
@@ -73,13 +76,16 @@ export function useCustomers() {
     // Listen for customer updates
     const customerQuery = query(customersCollection);
     const customerUnsubscribe = onSnapshot(customerQuery, async (snapshot) => {
-      const customers = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt: doc.data().createdAt 
-          ? new Date(doc.data().createdAt) 
-          : undefined
-      } as Customer));
+      const customers = snapshot.docs.map(doc => {
+        const customerData = doc.data();
+        return {
+          id: doc.id,
+          ...customerData,
+          createdAt: customerData.createdAt 
+            ? new Date(customerData.createdAt) 
+            : undefined
+        } as Customer;
+      });
 
       // Update customers in cache
       queryClient.setQueryData(["customers"], customers);

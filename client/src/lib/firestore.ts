@@ -118,12 +118,21 @@ export async function createAppointment(appointment: Omit<Appointment, 'id'>) {
 }
 
 // Add update and delete operations
-export async function updateCustomer(id: number, data: Partial<Customer>) {
+export async function updateCustomer(id: string, data: Partial<Customer>) {
   try {
-    const customerRef = doc(customersCollection, id.toString());
+    const customerRef = doc(customersCollection, id);
+    
+    // Ensure createdAt is handled correctly if present
+    const processedData = { ...data };
+    if (processedData.createdAt) {
+      processedData.createdAt = processedData.createdAt instanceof Date 
+        ? processedData.createdAt.toISOString() 
+        : (processedData.createdAt ? new Date(processedData.createdAt).toISOString() : undefined);
+    }
+
     await setDoc(customerRef, {
-      ...data,
-      updatedAt: new Date()
+      ...processedData,
+      updatedAt: new Date().toISOString()
     }, { merge: true });
     return true;
   } catch (error) {
