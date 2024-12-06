@@ -29,7 +29,7 @@ export default function PetsPage() {
               Add Pet
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
+          <DialogContent className="sm:max-w-[531px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Add New Pet</DialogTitle>
             </DialogHeader>
