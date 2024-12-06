@@ -68,7 +68,7 @@ export default function PetForm({
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedCustomerId, setSelectedCustomerId] = useState(
-    defaultValues?.customerId || customers?.find(customer => customer.id === defaultValues?.customerId)?.id || pet?.customerId || ""
+    defaultValues?.customerId || customers?.find(customer => customer.id === defaultValues?.customerId)?.id || pet?.customerId || fetchedCustomers?.find(customer => customer.id === defaultValues?.customerId)?.id || ""
   );
 
   console.log('PET FORM: Component Mounted', { 
@@ -113,13 +113,18 @@ export default function PetForm({
 
   useEffect(() => {
     if (defaultValues?.customerId || pet?.customerId) {
-      const customerId = defaultValues?.customerId || pet?.customerId;
+      const customerId = 
+        defaultValues?.customerId || 
+        pet?.customerId || 
+        customers?.find(c => c.id === defaultValues?.customerId)?.id || 
+        fetchedCustomers?.find(c => c.id === defaultValues?.customerId)?.id;
+      
       if (customerId) {
         setSelectedCustomerId(customerId);
         form.setValue("customerId", customerId);
       }
     }
-  }, [defaultValues?.customerId, pet?.customerId, form]);
+  }, [defaultValues?.customerId, pet?.customerId, customers, fetchedCustomers, form]);
 
   // Log customers and form details on component mount
   useEffect(() => {
@@ -254,6 +259,8 @@ export default function PetForm({
     );
   };
 
+  const { data: fetchedCustomers } = useCustomers();
+
   return (
     <Form {...form}>
       <form 
@@ -285,7 +292,7 @@ export default function PetForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {customers?.map((customer) => (
+                      {((customers || [])?.concat(fetchedCustomers || [])).map((customer) => (
                         <SelectItem key={customer.id} value={customer.id}>
                           {customer.firstName} {customer.lastName}
                         </SelectItem>
