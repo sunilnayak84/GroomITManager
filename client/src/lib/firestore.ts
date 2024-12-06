@@ -18,10 +18,12 @@ export async function createUserDocument(user: User) {
   try {
     const userRef = doc(usersCollection, user.id.toString());
     await setDoc(userRef, {
+      id: user.id,
       email: user.email,
       name: user.name,
       role: user.role,
-      createdAt: new Date()
+      createdAt: new Date(),
+      branchId: user.branchId || null
     });
     return true;
   } catch (error) {
@@ -97,12 +99,13 @@ export async function deleteCustomerAndRelated(id: number) {
     const petsSnapshot = await getDocs(petsQuery);
     
     // Delete all pets
-    const petDeletions = petsSnapshot.docs.map(doc => deleteDoc(doc.ref));
+    const petDeletions = petsSnapshot.docs.map(petDoc => 
+      deleteDoc(doc(petsCollection, petDoc.id))
+    );
     await Promise.all(petDeletions);
     
     // Then delete the customer
-    const customerRef = doc(customersCollection, id.toString());
-    await deleteDoc(customerRef);
+    await deleteDoc(doc(customersCollection, id.toString()));
     
     return true;
   } catch (error) {
