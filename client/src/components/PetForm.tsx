@@ -71,14 +71,7 @@ export default function PetForm({
     defaultValues?.customerId || pet?.customerId || ""
   );
 
-  useEffect(() => {
-    if (defaultValues?.customerId || pet?.customerId) {
-      setSelectedCustomerId(defaultValues?.customerId || pet?.customerId || "");
-      form.setValue("customerId", defaultValues?.customerId || pet?.customerId || "");
-    }
-  }, [defaultValues?.customerId, pet?.customerId, form]);
-
-  console.error('PET FORM: Component Mounted', { 
+  console.log('PET FORM: Component Mounted', { 
     customers, 
     defaultValues, 
     pet, 
@@ -107,6 +100,13 @@ export default function PetForm({
     mode: 'onSubmit',
     reValidateMode: 'onSubmit'
   });
+
+  useEffect(() => {
+    if (defaultValues?.customerId || pet?.customerId) {
+      setSelectedCustomerId(defaultValues?.customerId || pet?.customerId || "");
+      form.setValue("customerId", defaultValues?.customerId || pet?.customerId || "");
+    }
+  }, [defaultValues?.customerId, pet?.customerId, form]);
 
   // Log customers and form details on component mount
   useEffect(() => {
