@@ -36,7 +36,7 @@ export default function CustomersPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const { data: customers, isLoading, updateCustomerMutation } = useCustomers();
+  const { customersQuery, updateCustomerMutation } = useCustomers();
   const { data: pets } = usePets();
   const queryClient = useQueryClient();
 
@@ -179,21 +179,16 @@ export default function CustomersPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Customers</h1>
-          <p className="text-muted-foreground">Manage your customers</p>
-        </div>
-
+    <div className="p-4 space-y-4">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Customers</h1>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              New Customer
+            <Button variant="outline" size="sm">
+              <Plus className="mr-2 h-4 w-4" /> Add Customer
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+          <DialogContent>
             <DialogHeader>
               <DialogTitle>Add New Customer</DialogTitle>
             </DialogHeader>
@@ -344,11 +339,16 @@ export default function CustomersPage() {
         </div>
       </div>
 
-      <DataTable
-        columns={columns}
-        data={customers || []}
-        isLoading={isLoading}
-      />
+      {customersQuery.isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      ) : (
+        <DataTable 
+          columns={columns} 
+          data={customersQuery.data || []} 
+        />
+      )}
 
       {/* Pet List Dialog */}
       <Dialog open={showPetList} onOpenChange={setShowPetList}>

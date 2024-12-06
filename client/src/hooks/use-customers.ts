@@ -148,7 +148,7 @@ export function useCustomers() {
   }, [queryClient]);
 
   return {
-    data: useQuery<Customer[]>({
+    customersQuery: useQuery({
       queryKey: ["customers"],
       queryFn: async () => {
         try {
@@ -177,31 +177,7 @@ export function useCustomers() {
           throw error;
         }
       },
-    }).data,
-    isLoading: useQuery<Customer[]>({
-      queryKey: ["customers"],
-      queryFn: async () => {
-        try {
-          const querySnapshot = await getDocs(customersCollection);
-          const customers = querySnapshot.docs.map(doc => {
-            const customerData = doc.data();
-            return {
-              id: doc.id,
-              ...customerData,
-              // Ensure createdAt is a valid Date object
-              createdAt: customerData.createdAt 
-                ? new Date(customerData.createdAt) 
-                : undefined
-            } as Customer;
-          });
-
-          return customers;
-        } catch (error) {
-          console.error('Error fetching customers:', error);
-          throw error;
-        }
-      },
-    }).data,
+    }),
     addCustomerMutation,
     updateCustomerMutation,
     deleteCustomerMutationHook
