@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Customer } from "@db/schema";
 import { getDocs, onSnapshot, query } from "firebase/firestore";
 import { customersCollection, createCustomer, updateCustomer as updateCustomerDoc } from "../lib/firestore";
+import { useEffect } from "react";
 
 export function useCustomers() {
   const queryClient = useQueryClient();
@@ -49,7 +50,7 @@ export function useCustomers() {
   });
 
   // Set up real-time updates
-  React.useEffect(() => {
+  useEffect(() => {
     const q = query(customersCollection);
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const customers = snapshot.docs.map(doc => ({
