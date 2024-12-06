@@ -88,59 +88,36 @@ export default function PetForm({
     }
   }, [pet]);
 
+  // Initialize form with default values, ensuring customerId is set
   const form = useForm<PetFormData>({
     resolver: zodResolver(insertPetSchema),
     defaultValues: {
       name: "",
-      type: "dog",
+      type: undefined,
       breed: "",
-      customerId: selectedCustomerId,
-      dateOfBirth: pet?.dateOfBirth ? new Date(pet.dateOfBirth) : undefined,
-      age: undefined,
-      gender: undefined,
-      weight: undefined,
-      weightUnit: "kg",
-      height: undefined,
-      heightUnit: "cm",
-      image: pet?.image || null,
-      notes: undefined,
-      ...defaultValues,
-      ...(pet && {
-        ...pet,
-        dateOfBirth: pet.dateOfBirth ? new Date(pet.dateOfBirth) : undefined
-      })
+      dateOfBirth: undefined,
+      image: undefined,
+      customerId: defaultValues?.customerId || selectedCustomerId || "",
     },
-    mode: 'onSubmit',
-    reValidateMode: 'onSubmit'
   });
 
+  // Ensure selectedCustomerId is always set from defaultValues
   useEffect(() => {
-    if (defaultValues?.customerId || pet?.customerId) {
-      const customerId = 
-        defaultValues?.customerId || 
-        pet?.customerId || 
-        customers?.find(c => c.id === defaultValues?.customerId)?.id;
-      
-      if (customerId) {
-        setSelectedCustomerId(customerId);
-        form.setValue("customerId", customerId);
-      }
+    if (defaultValues?.customerId) {
+      setSelectedCustomerId(defaultValues.customerId);
+      form.setValue("customerId", defaultValues.customerId);
     }
-  }, [defaultValues?.customerId, pet?.customerId, customers, form]);
+  }, [defaultValues?.customerId, form]);
 
-  // Log customers and form details on component mount
+  // Log component mount details with more robust logging
   useEffect(() => {
-    console.error('PET FORM: Component Mounted', { 
-      customers: customers?.map(c => ({
-        id: c.id, 
-        name: `${c.firstName} ${c.lastName}`,
-        petCount: c.petCount
-      })),
-      defaultValues,
-      pet,
-      selectedCustomerId: form.getValues('customerId')
+    console.log('PET FORM: Component Mounted', {
+      customers: customers?.length || 'No customers',
+      defaultValues: defaultValues || 'No default values',
+      pet: pet || 'No pet',
+      selectedCustomerId: selectedCustomerId || 'No selected customer',
     });
-  }, [customers, defaultValues, pet, form]);
+  }, [customers, defaultValues, pet, selectedCustomerId]);
 
   type PetFormData = {
     name: string;
@@ -198,10 +175,16 @@ export default function PetForm({
   const onSubmit = async (data: PetFormData) => {
     setIsSubmitting(true);
     try {
-      // Always use the defaultValues customerId if present
+      // Always prioritize defaultValues.customerId or form's customerId
+      const customerId = defaultValues?.customerId || data.customerId;
+      
+      if (!customerId) {
+        throw new Error("Customer ID is required");
+      }
+
       const petData: InsertPet = {
         ...data,
-        customerId: defaultValues?.customerId || data.customerId,
+        customerId: customerId,
         imageUrl: imagePreview || undefined,
       };
 
