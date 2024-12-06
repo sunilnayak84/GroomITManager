@@ -1,7 +1,8 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Pet, InsertPet } from "@db/schema";
-import { getDocs, addDoc, doc, updateDoc, deleteDoc, collection, getDoc, runTransaction, increment } from "firebase/firestore";
+import { getDocs, doc, runTransaction, increment } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import { petsCollection, createPet } from "../lib/firestore";
 
 export function usePets() {
   const queryClient = useQueryClient();
@@ -10,7 +11,6 @@ export function usePets() {
     queryKey: ['pets'],
     queryFn: async () => {
       try {
-        const petsCollection = collection(db, 'pets');
         const querySnapshot = await getDocs(petsCollection);
         return querySnapshot.docs.map(doc => ({
           id: doc.id,
@@ -32,12 +32,11 @@ export function usePets() {
           .map(([key, value]) => [key, value === '' ? null : value])
       );
 
-      let newPet: Pet | null = null;
+      let newPetId: string;
 
       await runTransaction(db, async (transaction) => {
-        // Add the pet
-        const petsCollection = collection(db, 'pets');
-        const petRef = await addDoc(petsCollection, {
+        // Add the pet using createPet function
+        newPetId = await createPet({
           ...cleanedPet,
           createdAt: new Date(),
           updatedAt: new Date()
@@ -49,34 +48,28 @@ export function usePets() {
           const customerDoc = await transaction.get(customerRef);
           
           if (customerDoc.exists()) {
-            const currentPetCount = customerDoc.data().petCount || 0;
             transaction.update(customerRef, {
-              petCount: currentPetCount + 1,
-              updatedAt: new Date()
+              petCount: increment(1)
             });
+          } else {
+            throw new Error('Customer not found');
           }
         }
-
-        // Get the new pet data
-        const newPetDoc = await getDoc(petRef);
-        newPet = {
-          id: petRef.id,
-          ...newPetDoc.data()
-        } as Pet;
       });
 
-      if (!newPet) {
-        throw new Error('Failed to create pet');
-      }
+      // Fetch the newly created pet
+      const newPet = {
+        id: newPetId,
+        ...cleanedPet,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      } as Pet;
 
       // Update the cache
       queryClient.setQueryData<Pet[]>(['pets'], (old) => {
-        if (!old) return [newPet!];
-        return [...old, newPet!];
+        if (!old) return [newPet];
+        return [...old, newPet];
       });
-
-      // Invalidate the customers query to update the pet count
-      await queryClient.invalidateQueries({ queryKey: ['customers'] });
 
       return newPet;
     } catch (error) {
@@ -85,129 +78,91 @@ export function usePets() {
     }
   };
 
-  const updatePet = async (id: string, updates: Partial<InsertPet>): Promise<Pet | null> => {
+  const updatePet = async (id: string, updatedData: Partial<Pet>): Promise<void> => {
     try {
-      let updatedPet: Pet | null = null;
-
+      const petRef = doc(db, 'pets', id);
       await runTransaction(db, async (transaction) => {
-        const petRef = doc(db, 'pets', id);
-        
-        // Get the current pet data
         const petDoc = await transaction.get(petRef);
+        
         if (!petDoc.exists()) {
           throw new Error('Pet not found');
         }
 
-        const currentPet = petDoc.data() as Pet;
-
-        // Clean the update data
-        const cleanedUpdates = Object.fromEntries(
-          Object.entries(updates)
-            .filter(([_, value]) => value !== undefined && value !== '')
-            .map(([key, value]) => [key, value === '' ? null : value])
-        );
-
-        const updateData = {
-          ...cleanedUpdates,
-          updatedAt: new Date()
-        };
-
-        // If the customer is being changed, update both old and new customer's pet counts
-        if (cleanedUpdates.customerId && cleanedUpdates.customerId !== currentPet.customerId) {
+        // If customer is being changed, update pet counts
+        const currentData = petDoc.data() as Pet;
+        if (updatedData.customerId && updatedData.customerId !== currentData.customerId) {
           // Decrease old customer's pet count
-          if (currentPet.customerId) {
-            const oldCustomerRef = doc(db, 'customers', currentPet.customerId);
-            const oldCustomerDoc = await transaction.get(oldCustomerRef);
-            if (oldCustomerDoc.exists()) {
-              const oldPetCount = oldCustomerDoc.data().petCount || 0;
-              transaction.update(oldCustomerRef, {
-                petCount: Math.max(0, oldPetCount - 1),
-                updatedAt: new Date()
-              });
-            }
+          const oldCustomerRef = doc(db, 'customers', currentData.customerId);
+          const oldCustomerDoc = await transaction.get(oldCustomerRef);
+          if (oldCustomerDoc.exists()) {
+            transaction.update(oldCustomerRef, {
+              petCount: increment(-1)
+            });
           }
 
           // Increase new customer's pet count
-          const newCustomerRef = doc(db, 'customers', cleanedUpdates.customerId);
+          const newCustomerRef = doc(db, 'customers', updatedData.customerId);
           const newCustomerDoc = await transaction.get(newCustomerRef);
           if (newCustomerDoc.exists()) {
-            const newPetCount = newCustomerDoc.data().petCount || 0;
             transaction.update(newCustomerRef, {
-              petCount: newPetCount + 1,
-              updatedAt: new Date()
+              petCount: increment(1)
             });
+          } else {
+            throw new Error('New customer not found');
           }
         }
 
         // Update the pet
-        transaction.update(petRef, updateData);
-
-        // Get the updated pet data
-        const updatedDoc = await getDoc(petRef);
-        updatedPet = {
-          id: updatedDoc.id,
-          ...updatedDoc.data()
-        } as Pet;
+        transaction.update(petRef, {
+          ...updatedData,
+          updatedAt: new Date()
+        });
       });
-
-      if (!updatedPet) {
-        throw new Error('Failed to update pet');
-      }
 
       // Update the cache
       queryClient.setQueryData<Pet[]>(['pets'], (old) => {
-        if (!old) return [updatedPet!];
-        return old.map(pet => pet.id === id ? updatedPet! : pet);
+        if (!old) return old;
+        return old.map(pet => {
+          if (pet.id === id) {
+            return {
+              ...pet,
+              ...updatedData,
+              updatedAt: new Date()
+            };
+          }
+          return pet;
+        });
       });
-
-      // Invalidate the customers query to update the pet counts
-      await queryClient.invalidateQueries({ queryKey: ['customers'] });
-
-      return updatedPet;
     } catch (error) {
       console.error('Error updating pet:', error);
       throw error;
     }
   };
 
-  const deletePet = async (id: string) => {
+  const deletePet = async (id: string, customerId: string): Promise<void> => {
     try {
+      const petRef = doc(db, 'pets', id);
+      
       await runTransaction(db, async (transaction) => {
-        const petRef = doc(db, 'pets', id);
-        
-        // Get the pet data before deleting
-        const petDoc = await transaction.get(petRef);
-        if (!petDoc.exists()) {
-          throw new Error('Pet not found');
-        }
-
-        const pet = petDoc.data() as Pet;
-
-        // Update the customer's pet count
-        if (pet.customerId) {
-          const customerRef = doc(db, 'customers', pet.customerId);
-          const customerDoc = await transaction.get(customerRef);
-          if (customerDoc.exists()) {
-            const currentPetCount = customerDoc.data().petCount || 0;
-            transaction.update(customerRef, {
-              petCount: Math.max(0, currentPetCount - 1),
-              updatedAt: new Date()
-            });
-          }
-        }
-
         // Delete the pet
         transaction.delete(petRef);
+
+        // Update customer's pet count
+        const customerRef = doc(db, 'customers', customerId);
+        const customerDoc = await transaction.get(customerRef);
+        
+        if (customerDoc.exists()) {
+          transaction.update(customerRef, {
+            petCount: increment(-1)
+          });
+        }
       });
 
       // Update the cache
       queryClient.setQueryData<Pet[]>(['pets'], (old) => {
-        if (!old) return [];
-        return old.filter(p => p.id !== id);
+        if (!old) return old;
+        return old.filter(pet => pet.id !== id);
       });
-
-      // Invalidate the customers query to update the pet count
-      await queryClient.invalidateQueries({ queryKey: ['customers'] });
     } catch (error) {
       console.error('Error deleting pet:', error);
       throw error;
@@ -219,6 +174,6 @@ export function usePets() {
     isLoading,
     addPet,
     updatePet,
-    deletePet,
+    deletePet
   };
 }

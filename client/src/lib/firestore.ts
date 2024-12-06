@@ -62,7 +62,9 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
     const petRef = doc(petsCollection);
     await setDoc(petRef, {
       ...pet,
-      createdAt: new Date()
+      id: petRef.id,
+      createdAt: pet.createdAt instanceof Date ? pet.createdAt : new Date(),
+      updatedAt: new Date()
     });
     return petRef.id;
   } catch (error) {
