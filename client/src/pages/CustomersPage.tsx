@@ -191,6 +191,9 @@ export default function CustomersPage() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Add New Customer</DialogTitle>
+              <DialogDescription>
+                Fill out the form below to add a new customer to your system.
+              </DialogDescription>
             </DialogHeader>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -697,7 +700,7 @@ export default function CustomersPage() {
                   </div>
                 </div>
               )}
-i            </div>
+            </div>
           )}
         </DialogContent>
       </Dialog>
