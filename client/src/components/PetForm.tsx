@@ -114,48 +114,6 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
 
       console.log('Cleaned Form Data:', JSON.stringify(cleanedData, null, 2));
 
-      // Determine which fields have changed
-      const updateData: Partial<InsertPet> = {};
-      
-      // Check each field and add to updateData only if it's different from the original
-      (Object.keys(cleanedData) as Array<keyof InsertPet>).forEach((key) => {
-        const currentValue = cleanedData[key];
-        const originalValue = pet?.[key];
-        
-        console.log(`Comparing field ${key}:`, {
-          currentValue, 
-          originalValue, 
-          isDifferent: currentValue !== originalValue,
-          comparisonType: typeof currentValue
-        });
-        
-        // More robust comparison
-        const isDifferent = 
-          currentValue !== originalValue && 
-          !(currentValue === '' && originalValue === null) &&
-          !(currentValue === null && originalValue === '') &&
-          !(currentValue === undefined && originalValue === undefined);
-
-        if (isDifferent) {
-          updateData[key] = currentValue;
-        }
-      });
-
-      console.log('Prepared Update Data:', JSON.stringify(updateData, null, 2));
-
-      // If no changes were made, show info toast and return
-      if (Object.keys(updateData).length === 0) {
-        console.warn('No changes detected in pet update', {
-          originalPet: pet,
-          formData: cleanedData
-        });
-        toast({
-          title: "Info",
-          description: "No changes were made",
-        });
-        return;
-      }
-
       // If editing an existing pet, use the ID
       if (pet) {
         console.log('Complete Pet Object:', JSON.stringify(pet, null, 2));
@@ -187,6 +145,48 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
           return;
         }
 
+        // Determine which fields have changed
+        const updateData: Partial<InsertPet> = {};
+        
+        // Check each field and add to updateData only if it's different from the original
+        (Object.keys(cleanedData) as Array<keyof InsertPet>).forEach((key) => {
+          const currentValue = cleanedData[key];
+          const originalValue = pet?.[key];
+          
+          console.log(`Comparing field ${key}:`, {
+            currentValue, 
+            originalValue, 
+            isDifferent: currentValue !== originalValue,
+            comparisonType: typeof currentValue
+          });
+          
+          // More robust comparison
+          const isDifferent = 
+            currentValue !== originalValue && 
+            !(currentValue === '' && originalValue === null) &&
+            !(currentValue === null && originalValue === '') &&
+            !(currentValue === undefined && originalValue === undefined);
+
+          if (isDifferent) {
+            updateData[key] = currentValue;
+          }
+        });
+
+        console.log('Prepared Update Data:', JSON.stringify(updateData, null, 2));
+
+        // If no changes were made, show info toast and return
+        if (Object.keys(updateData).length === 0) {
+          console.warn('No changes detected in pet update', {
+            originalPet: pet,
+            formData: cleanedData
+          });
+          toast({
+            title: "Info",
+            description: "No changes were made",
+          });
+          return;
+        }
+
         try {
           // Add customerId to update data if it's not already included
           if (!updateData.customerId && data.customerId) {
@@ -200,7 +200,8 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
             throw new Error('updatePet is not a valid function');
           }
 
-          const updateResult = await updatePet(petId, updateData);
+          // Create a new object to ensure it's not undefined
+          const updateResult = await updatePet(petId, Object.keys(updateData).length > 0 ? { ...updateData } : {});
           
           if (updateResult) {
             toast({
