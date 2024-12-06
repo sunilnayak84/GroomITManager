@@ -36,12 +36,15 @@ export async function createUserDocument(user: User) {
 export async function createCustomer(customer: Omit<Customer, 'id'>) {
   try {
     const customerRef = doc(customersCollection);
+    const customerId = parseInt(customerRef.id, 10) || Date.now(); // Fallback to timestamp if parsing fails
+    
     await setDoc(customerRef, {
       ...customer,
-      id: parseInt(customerRef.id), // Convert Firestore doc ID to number
+      id: customerId, // Ensure id is a number
       createdAt: new Date()
     });
-    return parseInt(customerRef.id);
+    
+    return customerId;
   } catch (error) {
     console.error('Error creating customer:', error);
     throw error;
@@ -95,10 +98,13 @@ export async function updateCustomer(id: number, data: Partial<Customer>) {
 
 export async function deleteCustomerAndRelated(id: number) {
   try {
+    // Validate input
+    if (isNaN(id) || id <= 0) {
+      console.error('Invalid customer ID:', id);
+      throw new Error(`Invalid customer ID: ${id}`);
+    }
+
     console.log('Starting deletion process for customer:', id);
-    
-    // Convert ID to string for Firestore
-    const customerIdStr = id.toString();
     
     // First, check if the customer exists
     const customerQuery = query(
