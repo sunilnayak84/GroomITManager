@@ -38,10 +38,15 @@ export async function createCustomer(customer: Omit<Customer, 'id'>) {
     const customerRef = doc(customersCollection);
     const customerId = parseInt(customerRef.id, 10) || Date.now(); // Fallback to timestamp if parsing fails
     
+    // Ensure createdAt is a valid Date
+    const createdAt = customer.createdAt instanceof Date 
+      ? customer.createdAt 
+      : (customer.createdAt ? new Date(customer.createdAt) : new Date());
+    
     await setDoc(customerRef, {
       ...customer,
       id: customerId, // Ensure id is a number
-      createdAt: new Date()
+      createdAt: createdAt.toISOString() // Store as ISO string for consistent serialization
     });
     
     return customerId;

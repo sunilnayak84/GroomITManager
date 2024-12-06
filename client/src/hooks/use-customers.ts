@@ -14,7 +14,11 @@ export function useCustomers() {
         const querySnapshot = await getDocs(customersCollection);
         return querySnapshot.docs.map(doc => ({
           id: parseInt(doc.id),
-          ...doc.data()
+          ...doc.data(),
+          // Ensure createdAt is a valid Date object
+          createdAt: doc.data().createdAt 
+            ? new Date(doc.data().createdAt) 
+            : undefined
         } as Customer));
       } catch (error) {
         console.error('Error fetching customers:', error);
@@ -25,10 +29,14 @@ export function useCustomers() {
 
   const addCustomerMutation = useMutation({
     mutationFn: async (customer: Omit<Customer, 'id'>) => {
-      const id = await createCustomer(customer);
+      const id = await createCustomer({
+        ...customer,
+        createdAt: customer.createdAt || new Date()
+      });
       return {
         id: parseInt(id),
-        ...customer
+        ...customer,
+        createdAt: customer.createdAt || new Date()
       };
     },
     onSuccess: () => {
@@ -55,7 +63,11 @@ export function useCustomers() {
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const customers = snapshot.docs.map(doc => ({
         id: parseInt(doc.id),
-        ...doc.data()
+        ...doc.data(),
+        // Ensure createdAt is a valid Date object
+        createdAt: doc.data().createdAt 
+          ? new Date(doc.data().createdAt) 
+          : undefined
       } as Customer));
       queryClient.setQueryData(["customers"], customers);
     });
