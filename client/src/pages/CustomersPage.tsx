@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Search } from "lucide-react";
 import { useCustomers } from "../hooks/use-customers";
@@ -50,7 +50,7 @@ export default function CustomersPage() {
   });
 
   // Populate edit form when customer is selected
-  React.useEffect(() => {
+  useEffect(() => {
     if (selectedCustomer && isEditing) {
       editForm.reset({
         firstName: selectedCustomer.firstName,
