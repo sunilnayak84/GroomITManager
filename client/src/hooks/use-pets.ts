@@ -66,7 +66,7 @@ export function usePets() {
   };
 
   const updatePet = async (id: string, data: Partial<InsertPet>) => {
-    // Comprehensive input validation
+    // Comprehensive input validation and normalization
     console.log('updatePet called with:', {
       id, 
       data: JSON.stringify(data, null, 2),
@@ -88,28 +88,31 @@ export function usePets() {
       }));
     }
 
+    // Normalize data input
+    const normalizedData = data || {};
+
     // Validate data
-    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+    if (typeof normalizedData !== 'object' || Array.isArray(normalizedData)) {
       const errorDetails = { 
         id, 
-        data, 
-        dataType: typeof data,
-        isArray: Array.isArray(data)
+        data: normalizedData, 
+        dataType: typeof normalizedData,
+        isArray: Array.isArray(normalizedData)
       };
       console.error('Invalid update data', errorDetails);
       throw new Error(JSON.stringify({
-        message: 'Update data must be a non-null object',
+        message: 'Update data must be a valid object',
         details: errorDetails
       }));
     }
 
     // Ensure data has properties
-    const dataKeys = Object.keys(data);
+    const dataKeys = Object.keys(normalizedData);
     if (dataKeys.length === 0) {
       const errorDetails = {
         id,
-        data,
-        dataType: typeof data
+        data: normalizedData,
+        dataType: typeof normalizedData
       };
       console.error('Empty update data object', errorDetails);
       throw new Error(JSON.stringify({
@@ -145,7 +148,7 @@ export function usePets() {
     
     // Remove undefined and null values to prevent Firestore errors
     const updateData = Object.fromEntries(
-      Object.entries(data)
+      Object.entries(normalizedData)
         .filter(([_, v]) => 
           v !== undefined && 
           v !== null && 
@@ -159,7 +162,7 @@ export function usePets() {
     // Ensure we have data to update after cleaning
     if (Object.keys(updateData).length === 0) {
       const errorDetails = {
-        originalData: data,
+        originalData: normalizedData,
         cleanedData: updateData
       };
       console.error('No valid update data after cleaning', errorDetails);
@@ -189,7 +192,7 @@ export function usePets() {
         errorStack: updateError instanceof Error ? updateError.stack : 'No stack trace',
         inputData: { 
           id, 
-          data: JSON.stringify(data, null, 2),
+          data: JSON.stringify(normalizedData, null, 2),
           updateData: JSON.stringify(updateData, null, 2)
         }
       };

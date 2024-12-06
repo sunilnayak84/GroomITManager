@@ -201,8 +201,16 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
           }
 
           // CRITICAL: Ensure a non-null object is always passed
-          const finalUpdateData = { ...updateData };
+          const finalUpdateData = Object.keys(updateData).length > 0 
+            ? { ...updateData } 
+            : { name: pet?.name || '' };
+          
           console.log('Ensuring non-null update data:', JSON.stringify(finalUpdateData, null, 2));
+
+          // Validate finalUpdateData before calling updatePet
+          if (!finalUpdateData || typeof finalUpdateData !== 'object' || Object.keys(finalUpdateData).length === 0) {
+            throw new Error('Cannot update pet with empty or invalid data');
+          }
 
           const updateResult = await updatePet(petId, finalUpdateData);
           
@@ -215,7 +223,7 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
           } else {
             console.error('Update failed: No result returned', {
               petId,
-              updateData
+              updateData: finalUpdateData
             });
             toast({
               title: "Error",
