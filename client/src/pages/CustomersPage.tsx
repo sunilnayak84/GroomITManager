@@ -36,7 +36,7 @@ export default function CustomersPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const { customersQuery, updateCustomerMutation } = useCustomers();
+  const { customersQuery, updateCustomerMutation, deleteCustomerMutationHook } = useCustomers();
   const { data: pets } = usePets();
   const queryClient = useQueryClient();
 
@@ -454,33 +454,8 @@ export default function CustomersPage() {
                     <AlertDialogAction
                       onClick={async () => {
                         if (!selectedCustomer) return;
-                        try {
-                          toast({
-                            title: "Deleting...",
-                            description: "Please wait while we delete the customer and their pets",
-                          });
-                          
-                          await queryClient.invalidateQueries('customers');
-                          await queryClient.invalidateQueries('pets');
-                          
-                          // Use the mutation hook directly
-                          await queryClient.getMutationCache().find({
-                            mutationKey: ['deleteCustomer']
-                          })?.execute(selectedCustomer.id);
-                          
-                          setShowCustomerDetails(false);
-                          toast({
-                            title: "Success",
-                            description: "Customer and associated pets deleted successfully",
-                          });
-                        } catch (error) {
-                          console.error('Error deleting customer:', error);
-                          toast({
-                            variant: "destructive",
-                            title: "Error",
-                            description: error instanceof Error ? error.message : "Failed to delete customer",
-                          });
-                        }
+                        await deleteCustomerMutationHook.mutateAsync(selectedCustomer.id);
+                        setShowCustomerDetails(false);
                       }}
                     >
                       Delete
@@ -722,7 +697,7 @@ export default function CustomersPage() {
                   </div>
                 </div>
               )}
-            </div>
+i            </div>
           )}
         </DialogContent>
       </Dialog>
