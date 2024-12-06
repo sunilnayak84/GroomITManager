@@ -189,7 +189,7 @@ export default function CustomersPage() {
               New Customer
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Add New Customer</DialogTitle>
             </DialogHeader>
