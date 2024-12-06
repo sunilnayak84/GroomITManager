@@ -83,7 +83,12 @@ export function usePets() {
 
       // Validate data
       if (!data || Object.keys(data).length === 0) {
-        console.error('No update data provided');
+        console.error('No update data provided', { 
+          id, 
+          data, 
+          dataType: typeof data,
+          dataKeys: data ? Object.keys(data) : 'NO DATA'
+        });
         throw new Error('No data to update');
       }
 
@@ -109,7 +114,10 @@ export function usePets() {
 
       // Ensure we have data to update after cleaning
       if (Object.keys(updateData).length === 0) {
-        console.error('No valid update data after cleaning');
+        console.error('No valid update data after cleaning', {
+          originalData: data,
+          cleanedData: updateData
+        });
         throw new Error('No valid data to update');
       }
 

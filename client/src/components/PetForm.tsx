@@ -75,6 +75,9 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
 
   const onSubmit = async (data: InsertPet) => {
     try {
+      // Log the raw form data for debugging
+      console.log('Raw Form Data:', JSON.stringify(data, null, 2));
+
       // Ensure we have a valid customer ID
       if (!data.customerId) {
         toast({
@@ -99,7 +102,8 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
         ])
       );
 
-      console.log('Cleaned Form Data:', cleanedData);
+      console.log('Cleaned Form Data:', JSON.stringify(cleanedData, null, 2));
+      console.log('Original Pet Object:', JSON.stringify(pet, null, 2));
 
       // If editing an existing pet, use the ID
       if (pet) {
@@ -133,6 +137,11 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
         
         // Ensure we have data to update
         if (Object.keys(cleanedData).length === 0) {
+          console.error('No valid data to update', {
+            originalData: data,
+            cleanedData: cleanedData,
+            pet: pet
+          });
           toast({
             title: "Error",
             description: "No valid data to update",
@@ -141,8 +150,33 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
           return;
         }
 
+        // Prepare update data by comparing with original pet
+        const updateData: Partial<Pet> = {};
+        (Object.keys(cleanedData) as Array<keyof InsertPet>).forEach(key => {
+          // Only include fields that have changed
+          if (cleanedData[key] !== pet[key]) {
+            updateData[key] = cleanedData[key];
+          }
+        });
+
+        console.log('Prepared Update Data:', JSON.stringify(updateData, null, 2));
+
+        // Ensure we still have data to update after comparison
+        if (Object.keys(updateData).length === 0) {
+          console.error('No changes detected', {
+            originalData: data,
+            cleanedData: cleanedData,
+            pet: pet
+          });
+          toast({
+            title: "Info",
+            description: "No changes were made",
+          });
+          return;
+        }
+
         const updateResult = await updatePet?.(petId, {
-          ...cleanedData,
+          ...updateData,
           customerId: data.customerId
         });
         
