@@ -35,7 +35,7 @@ export default function CustomersPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const { customersQuery, updateCustomerMutation, deleteCustomerMutationHook } = useCustomers();
+  const { customersQuery, updateCustomerMutation, deleteCustomerMutationHook, createCustomer } = useCustomers();
   const { data: pets } = usePets();
   const queryClient = useQueryClient();
 
@@ -155,24 +155,150 @@ export default function CustomersPage() {
   ];
 
   async function onSubmit(data: InsertCustomer) {
+    setIsSubmitting(true);
     try {
+      // Validate required fields
+      const validationErrors: string[] = [];
+
+      // Validate firstName
+      if (!data.firstName || data.firstName.trim().length < 2) {
+        validationErrors.push("First name must be at least 2 characters");
+      }
+
+      // Validate lastName
+      if (!data.lastName || data.lastName.trim().length < 2) {
+        validationErrors.push("Last name must be at least 2 characters");
+      }
+
+      // Validate email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!data.email || !emailRegex.test(data.email)) {
+        validationErrors.push("Invalid email format");
+      }
+
+      // Validate phone
+      const phoneRegex = /^[0-9]{10,}$/;
+      const phoneDigits = data.phone.replace(/\D/g, '');
+      if (!data.phone || !phoneRegex.test(phoneDigits)) {
+        validationErrors.push("Phone number must be at least 10 digits");
+      }
+
+      // Validate gender
+      const validGenders = ['male', 'female', 'other'];
+      if (!data.gender || !validGenders.includes(data.gender)) {
+        validationErrors.push("Invalid gender selection");
+      }
+
+      // If there are validation errors, show them
+      if (validationErrors.length > 0) {
+        toast({
+          variant: "destructive",
+          title: "Validation Error",
+          description: validationErrors.join('; ')
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Log the attempt to create a customer
+      console.log('ADD_CUSTOMER: Attempting to create customer', { data });
+
       await addCustomer({
         ...data,
         createdAt: new Date(),
         password: data.password || null,
         address: data.address || null
       });
+
+      // Reset form and close dialog
       setOpen(false);
       form.reset();
+
+      // Show success toast
       toast({
         title: "Success",
         description: "Customer added successfully",
       });
     } catch (error) {
+      // Log the full error details
+      console.error('ADD_CUSTOMER: Error in onSubmit', { 
+        error,
+        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+        customerData: data
+      });
+
+      // Show error toast with more details
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to add customer",
+        description: error instanceof Error 
+          ? error.message 
+          : "Failed to add customer. Please check your input and try again."
+      });
+    } finally {
+      // Ensure submitting state is reset
+      setIsSubmitting(false);
+    }
+  }
+
+  async function addCustomer(data: InsertCustomer) {
+    try {
+      // Log the attempt to create a customer
+      console.log('ADD_CUSTOMER: Attempting to create customer in Firestore', { data });
+
+      // Call the createCustomer function from firestore.ts
+      const customerId = await createCustomer({
+        ...data,
+        createdAt: data.createdAt || new Date(),
+        petCount: 0
+      });
+
+      // Log successful creation
+      console.log('ADD_CUSTOMER: Customer created successfully', { customerId });
+
+      // Invalidate and refetch customers query
+      await queryClient.invalidateQueries({ queryKey: ["customers"] });
+
+      return customerId;
+    } catch (error) {
+      // Log the full error details
+      console.error('ADD_CUSTOMER: Error creating customer', { 
+        error,
+        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+        customerData: data
+      });
+
+      // Throw the error to be caught by the calling function
+      throw error;
+    }
+  }
+
+  async function editCustomer(data: InsertCustomer) {
+    try {
+      // Use the updateCustomerMutation from the hook
+      await updateCustomerMutation.mutateAsync({ 
+        id: selectedCustomer?.id, 
+        data: {
+          ...data,
+          createdAt: selectedCustomer?.createdAt,
+        }
+      });
+      
+      // Update the selected customer
+      setSelectedCustomer(prev => prev ? { ...prev, ...data } : null);
+      
+      setIsSubmitting(false);
+      setIsEditing(false);
+      toast({
+        title: "Success",
+        description: "Customer updated successfully",
+      });
+    } catch (error) {
+      setIsSubmitting(false);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update customer",
       });
     }
   }
@@ -229,7 +355,7 @@ export default function CustomersPage() {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input type="email" {...field} />
+                        <Input {...field} type="email" />
                       </FormControl>
                     </FormItem>
                   )}
@@ -325,7 +451,7 @@ export default function CustomersPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-transparent flex items-center p-8">
           <div className="text-white">
-            <h2 className="text-2xl font-bold mb-2">Customer Management</h2>
+            <h2 className="text-2xl font-bold">Customer Management</h2>
             <p>Keep track of all your valued customers</p>
           </div>
         </div>
@@ -471,36 +597,7 @@ export default function CustomersPage() {
             <div className="space-y-6">
               {isEditing ? (
                 <Form {...editForm}>
-                  <form onSubmit={editForm.handleSubmit(async (data) => {
-                    try {
-                      setIsSubmitting(true);
-                      // Use the updateCustomerMutation from the hook
-                      await updateCustomerMutation.mutateAsync({ 
-                        id: selectedCustomer.id, 
-                        data: {
-                          ...data,
-                          createdAt: selectedCustomer.createdAt,
-                        }
-                      });
-                      
-                      // Update the selected customer
-                      setSelectedCustomer(prev => prev ? { ...prev, ...data } : null);
-                      
-                      setIsSubmitting(false);
-                      setIsEditing(false);
-                      toast({
-                        title: "Success",
-                        description: "Customer updated successfully",
-                      });
-                    } catch (error) {
-                      setIsSubmitting(false);
-                      toast({
-                        variant: "destructive",
-                        title: "Error",
-                        description: "Failed to update customer",
-                      });
-                    }
-                  })} className="space-y-4">
+                  <form onSubmit={editForm.handleSubmit(editCustomer)} className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <FormField
                         control={editForm.control}
