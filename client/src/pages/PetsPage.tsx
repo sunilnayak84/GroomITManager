@@ -245,17 +245,7 @@ export default function PetsPage() {
                     </div>
                   </div>
                 ) : (
-                  <PetForm 
-                    onSuccess={(data) => {
-                      updatePet(selectedPet.id, data);
-                      setIsEditing(false);
-                      setShowPetDetails(false);
-                      toast({
-                        title: "Success",
-                        description: "Pet updated successfully",
-                      });
-                    }}
-                    onCancel={() => setIsEditing(false)}
+                  <PetForm
                     defaultValues={{
                       name: selectedPet.name,
                       type: selectedPet.type,
@@ -265,11 +255,17 @@ export default function PetsPage() {
                       age: selectedPet.age || undefined,
                       gender: selectedPet.gender || undefined,
                       weight: selectedPet.weight || undefined,
-                      weightUnit: selectedPet.weightUnit || "kg",
+                      weightUnit: selectedPet.weightUnit,
                       height: selectedPet.height || undefined,
-                      heightUnit: selectedPet.heightUnit || "cm",
-                      image: selectedPet.image || null,
-                      notes: selectedPet.notes || undefined,
+                      heightUnit: selectedPet.heightUnit,
+                      image: selectedPet.image || undefined,
+                      notes: selectedPet.notes || undefined
+                    }}
+                    pet={selectedPet}
+                    updatePet={updatePet}
+                    onCancel={() => {
+                      setSelectedPet(null);
+                      setOpen(false);
                     }}
                   />
                 )}

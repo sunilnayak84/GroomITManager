@@ -30,12 +30,33 @@ export function usePets() {
   };
 
   const updatePet = async (id: number, data: Partial<Pet>) => {
-    const petRef = doc(petsCollection, id.toString());
-    await updateDoc(petRef, {
-      ...data,
-      updatedAt: new Date()
-    });
-    return true;
+    try {
+      // Ensure id is a valid number
+      const petId = Number(id);
+      if (isNaN(petId)) {
+        console.error('Invalid pet ID:', id);
+        throw new Error('Invalid pet ID');
+      }
+
+      const petRef = doc(petsCollection, petId.toString());
+      console.log('Attempting to update pet with ID:', petId);
+      
+      // Remove undefined values to prevent overwriting with undefined
+      const updateData = Object.fromEntries(
+        Object.entries(data).filter(([_, v]) => v !== undefined)
+      );
+
+      await updateDoc(petRef, {
+        ...updateData,
+        updatedAt: new Date()
+      });
+      
+      console.log('Pet updated successfully');
+      return true;
+    } catch (error) {
+      console.error('Error updating pet:', error);
+      throw error;
+    }
   };
 
   const deletePet = async (id: number) => {

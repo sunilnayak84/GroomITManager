@@ -15,9 +15,11 @@ interface PetFormProps {
   onSuccess?: (data: PetFormData) => void;
   onCancel?: () => void;
   defaultValues?: Partial<PetFormData>;
+  pet?: InsertPet;
+  updatePet?: (id: number, data: InsertPet) => Promise<InsertPet | null>;
 }
 
-export default function PetForm({ onSuccess, onCancel, defaultValues }: PetFormProps) {
+export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updatePet }: PetFormProps) {
   const { addPet } = usePets();
   const { data: customers } = useCustomers();
   const { toast } = useToast();
@@ -71,36 +73,53 @@ export default function PetForm({ onSuccess, onCancel, defaultValues }: PetFormP
     }
   };
 
-  async function onSubmit(data: PetFormData) {
+  const onSubmit = async (data: InsertPet) => {
     try {
-      const petData: Omit<InsertPet, "id"> = {
-        name: data.name,
-        type: data.type,
-        breed: data.breed,
-        customerId: data.customerId,
-        createdAt: new Date(),
-        dateOfBirth: data.dateOfBirth || null,
-        age: data.age || null,
-        gender: data.gender || null,
-        weight: data.weight || null,
-        weightUnit: data.weightUnit,
-        height: data.height || null,
-        heightUnit: data.heightUnit,
-        image: data.image || null,
-        notes: data.notes || null
-      };
+      // Ensure we have a valid customer ID
+      if (!data.customerId) {
+        toast({
+          title: "Error",
+          description: "Please select a customer",
+          variant: "destructive"
+        });
+        return;
+      }
 
-      onSuccess?.(petData);
-      form.reset();
-      setImagePreview(null);
+      // If editing an existing pet, use the ID
+      if (pet) {
+        const updateResult = await updatePet?.(pet.id, {
+          ...data,
+          customerId: data.customerId
+        });
+        
+        if (updateResult) {
+          toast({
+            title: "Success",
+            description: "Pet updated successfully",
+          });
+          onCancel?.();
+        }
+      } else {
+        // If adding a new pet
+        const newPet = await addPet(data);
+        
+        if (newPet) {
+          toast({
+            title: "Success", 
+            description: "Pet added successfully",
+          });
+          onCancel?.();
+        }
+      }
     } catch (error) {
+      console.error('Error in pet form submission:', error);
       toast({
-        variant: "destructive",
         title: "Error",
         description: "Failed to save pet details",
+        variant: "destructive"
       });
     }
-  }
+  };
 
   return (
     <Form {...form}>
