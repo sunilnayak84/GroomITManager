@@ -84,7 +84,7 @@ export default function PetForm({
       type: "dog",
       breed: "",
       customerId: selectedCustomerId,
-      dateOfBirth: undefined,
+      dateOfBirth: pet?.dateOfBirth ? new Date(pet.dateOfBirth) : undefined,
       age: undefined,
       gender: undefined,
       weight: undefined,
@@ -94,7 +94,10 @@ export default function PetForm({
       image: null,
       notes: undefined,
       ...defaultValues,
-      ...pet
+      ...(pet && {
+        ...pet,
+        dateOfBirth: pet.dateOfBirth ? new Date(pet.dateOfBirth) : undefined
+      })
     },
     mode: 'onSubmit',
     reValidateMode: 'onSubmit'
@@ -150,20 +153,17 @@ export default function PetForm({
   };
 
   const onSubmit = async (data: PetFormData) => {
+    console.error('PET FORM: Form submitted', { data });
     setIsSubmitting(true);
 
-    const cleanedData = {
-      ...data,
-      customerId: data.customerId || selectedCustomerId,
-      // Convert date to timestamp if needed
-      ...(form.getValues().dateOfBirth ? { 
-        dateOfBirth: form.getValues().dateOfBirth instanceof Date 
-          ? form.getValues().dateOfBirth 
-          : new Date(form.getValues().dateOfBirth) 
-      } : {})
-    };
-
     try {
+      const cleanedData = {
+        ...data,
+        dateOfBirth: data.dateOfBirth ? data.dateOfBirth.toISOString() : undefined,
+        image: data.image || undefined,
+        customerId: selectedCustomerId || data.customerId,
+      };
+
       if (pet?.id) {
         await usePetsUpdatePet(pet.id, cleanedData);
         toast({
