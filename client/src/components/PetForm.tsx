@@ -36,7 +36,7 @@ const insertPetSchema = z.object({
   weightUnit: z.enum(["kg", "lbs"]).default("kg"),
   height: z.coerce.number().optional(),
   heightUnit: z.enum(["cm", "inches"]).default("cm"),
-  image: z.instanceof(File).nullable().optional(),
+  image: z.string().or(z.instanceof(File)).nullable().optional(),
   notes: z.string().optional()
 }).refine(data => {
   // Ensure that if optional fields are provided, they are valid
@@ -78,6 +78,13 @@ export default function PetForm({
     selectedCustomerId 
   });
 
+  useEffect(() => {
+    // Set image preview when pet prop changes
+    if (pet?.image) {
+      setImagePreview(pet.image);
+    }
+  }, [pet]);
+
   const form = useForm<PetFormData>({
     resolver: zodResolver(insertPetSchema),
     defaultValues: {
@@ -92,7 +99,7 @@ export default function PetForm({
       weightUnit: "kg",
       height: undefined,
       heightUnit: "cm",
-      image: null,
+      image: pet?.image || null,
       notes: undefined,
       ...defaultValues,
       ...(pet && {
@@ -186,7 +193,9 @@ export default function PetForm({
       const cleanedData = {
         ...data,
         dateOfBirth: data.dateOfBirth ? data.dateOfBirth.toISOString() : undefined,
-        image: data.image || undefined,
+        // If image is a string (existing image URL), pass it as is
+        // If it's a File, it will be handled by the upload function
+        image: data.image,
         customerId: selectedCustomerId || data.customerId,
       };
 
@@ -212,6 +221,34 @@ export default function PetForm({
         variant: "destructive",
       });
     }
+  };
+
+  const renderImageUpload = () => {
+    return (
+      <div className="flex flex-col items-center mb-6">
+        <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-2 relative overflow-hidden">
+          {imagePreview ? (
+            <img 
+              src={imagePreview} 
+              alt="Pet preview" 
+              className="w-full h-full object-cover" 
+            />
+          ) : (
+            <Upload className="w-8 h-8 text-gray-400" />
+          )}
+        </div>
+        <Input
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          className="hidden"
+          id="pet-image"
+        />
+        <label htmlFor="pet-image" className="text-sm text-primary cursor-pointer">
+          Choose Photo
+        </label>
+      </div>
+    );
   };
 
   return (
@@ -259,25 +296,7 @@ export default function PetForm({
         </div>
 
         {/* Pet Image Upload */}
-        <div className="flex flex-col items-center mb-6">
-          <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-2 relative overflow-hidden">
-            {imagePreview ? (
-              <img src={imagePreview} alt="Pet preview" className="w-full h-full object-cover" />
-            ) : (
-              <Upload className="w-8 h-8 text-gray-400" />
-            )}
-          </div>
-          <Input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="hidden"
-            id="pet-image"
-          />
-          <label htmlFor="pet-image" className="text-sm text-primary cursor-pointer">
-            Choose Photo
-          </label>
-        </div>
+        {renderImageUpload()}
 
         {/* Name */}
         <FormField

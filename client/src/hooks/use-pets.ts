@@ -119,58 +119,31 @@ export const usePets = () => {
     }
   };
 
-  const updatePet = async (petId: string, petData: Partial<InsertPet>) => {
+  const updatePet = async (petId: string, petData: Partial<Pet>) => {
     console.error('UPDATE_PET: Attempting to update pet', { 
       petId, 
       petData 
     });
 
     try {
-      // Verify customer exists if customerId is provided
-      if (petData.customerId) {
-        const customerDocRef = doc(db, 'customers', petData.customerId);
-        const customerDoc = await getDoc(customerDocRef);
-
-        if (!customerDoc.exists()) {
-          throw new Error(`Customer with ID ${petData.customerId} does not exist`);
-        }
-      }
-
-      // Upload image if present
-      let imageUrl;
+      // If a new image file is provided, upload it first
+      let imageUrl = petData.image;
       if (petData.image instanceof File) {
         imageUrl = await uploadFile(
           petData.image, 
-          `pets/${petData.customerId || 'unknown'}/${Date.now()}_${petData.image.name}`
+          `pets/${petId}/${Date.now()}_${petData.image.name}`
         );
       }
 
-      // Prepare update data for Firestore
+      // Update Firestore document with potentially new image URL
       const updateData = {
         ...petData,
-        // Add image URL if uploaded
-        ...(imageUrl ? { image: imageUrl } : {}),
+        image: imageUrl,
         updatedAt: serverTimestamp()
       };
 
-      // Remove any undefined values
-      Object.keys(updateData).forEach(key => updateData[key] === undefined && delete updateData[key]);
-
-      // Reference to the specific pet document
-      const petDocRef = doc(db, 'pets', petId);
-
-      // Update the pet in Firestore
-      await updateDoc(petDocRef, updateData);
-
-      // Invalidate and refetch pets query
-      await queryClient.invalidateQueries({ queryKey: ['pets'] });
-
-      // Return the updated pet data
-      return {
-        id: petId,
-        ...updateData
-      } as Pet;
-
+      await updateDoc(doc(db, 'pets', petId), updateData);
+      return updateData;
     } catch (error) {
       console.error('UPDATE_PET: Error updating pet', { 
         error,
