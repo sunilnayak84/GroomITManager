@@ -34,6 +34,7 @@ export default function CustomersPage() {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [showPetList, setShowPetList] = useState(false);
   const [showAddPet, setShowAddPet] = useState(false);
+  const [showCustomerDetails, setShowCustomerDetails] = useState(false);
   const { data: pets } = usePets();
 
   const columns = [
@@ -94,11 +95,21 @@ export default function CustomersPage() {
     },
     {
       header: "Actions",
-      cell: (row: Customer) => (
-        <Button variant="outline" size="sm">
-          View Details
-        </Button>
-      ),
+      cell: (row: Customer) => {
+        const customerPets = pets?.filter(pet => pet.customerId === row.id) || [];
+        return (
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => {
+              setSelectedCustomer(row);
+              setShowCustomerDetails(true);
+            }}
+          >
+            View Details
+          </Button>
+        );
+      },
     },
   ];
 
@@ -340,6 +351,72 @@ export default function CustomersPage() {
                 }}
                 defaultValues={{ customerId: selectedCustomer.id }}
               />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Customer Details Dialog */}
+      <Dialog open={showCustomerDetails} onOpenChange={setShowCustomerDetails}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Customer Details</DialogTitle>
+          </DialogHeader>
+          {selectedCustomer && (
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                <img
+                  src={`https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
+                    `${selectedCustomer.firstName} ${selectedCustomer.lastName}`
+                  )}`}
+                  alt={`${selectedCustomer.firstName} ${selectedCustomer.lastName}`}
+                  className="w-20 h-20 rounded-full bg-primary/10"
+                />
+                <div>
+                  <h2 className="text-2xl font-bold">{`${selectedCustomer.firstName} ${selectedCustomer.lastName}`}</h2>
+                  <p className="text-muted-foreground">{selectedCustomer.email}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Contact Information</h3>
+                  <p><span className="text-muted-foreground">Phone:</span> {selectedCustomer.phone}</p>
+                  <p><span className="text-muted-foreground">Email:</span> {selectedCustomer.email}</p>
+                  <p><span className="text-muted-foreground">Address:</span> {selectedCustomer.address || 'N/A'}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Additional Information</h3>
+                  <p><span className="text-muted-foreground">Gender:</span> {selectedCustomer.gender}</p>
+                  <p><span className="text-muted-foreground">Member Since:</span> {
+                    selectedCustomer.createdAt 
+                      ? new Date(selectedCustomer.createdAt).toLocaleDateString()
+                      : 'N/A'
+                  }</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="font-semibold">Pets</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  {pets?.filter(pet => pet.customerId === selectedCustomer.id).map(pet => (
+                    <div key={pet.id} className="flex items-center gap-4 p-4 border rounded-lg">
+                      <img
+                        src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
+                        alt={pet.name}
+                        className="w-12 h-12 rounded-full"
+                      />
+                      <div>
+                        <div className="font-medium">{pet.name}</div>
+                        <div className="text-sm text-muted-foreground capitalize">
+                          {pet.breed} · {pet.type}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
         </DialogContent>
