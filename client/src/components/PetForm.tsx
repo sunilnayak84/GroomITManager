@@ -117,11 +117,14 @@ export default function PetForm({
     }
   };
 
-  const onSubmit = async (event: React.FormEvent<HTMLFormElement>, data: PetFormData) => {
-    console.error('PET FORM: Form submission event', { 
-      event, 
-      isValid: form.formState.isValid, 
-      errors: form.formState.errors 
+  const onSubmit = async (data: PetFormData, event?: React.BaseSyntheticEvent) => {
+    console.error('PET FORM: onSubmit called', { 
+      data, 
+      isSubmitting, 
+      customers: customers?.map(c => c.id),
+      formValues: form.getValues(),
+      formErrors: form.formState.errors,
+      event
     });
 
     // Detailed error logging
@@ -134,12 +137,12 @@ export default function PetForm({
           value: form.getValues(field as keyof PetFormData)
         }))
       });
-    }
 
-    // Prevent submission if form is not valid
-    if (!form.formState.isValid) {
-      event.preventDefault();
-      
+      // Prevent form submission
+      if (event && typeof event.preventDefault === 'function') {
+        event.preventDefault();
+      }
+
       toast({
         title: "Form Validation Error",
         description: "Please check all required fields.",
@@ -289,7 +292,7 @@ export default function PetForm({
             isValid: form.formState.isValid,
             errors: form.formState.errors
           });
-          
+
           // Prevent default to ensure our handler is called
           event.preventDefault();
           
