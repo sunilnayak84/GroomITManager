@@ -190,7 +190,11 @@ export default function PetsPage() {
                       <Button 
                         variant="destructive" 
                         size="sm" 
-                        onClick={handleDeletePet}
+                        onClick={() => {
+                          if (window.confirm('Are you sure you want to delete this pet?')) {
+                            handleDeletePet();
+                          }
+                        }}
                       >
                         <Trash className="mr-2 h-4 w-4" />
                         Delete
@@ -241,8 +245,8 @@ export default function PetsPage() {
                   </div>
                 ) : (
                   <PetForm 
-                    onSuccess={() => {
-                      updatePet(selectedPet.id, editForm.getValues());
+                    onSuccess={(data) => {
+                      updatePet(selectedPet.id, data);
                       setIsEditing(false);
                       setShowPetDetails(false);
                       toast({
