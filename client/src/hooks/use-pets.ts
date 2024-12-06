@@ -29,7 +29,7 @@ export const usePets = () => {
   });
 
   const addPet = async (pet: InsertPet) => {
-    console.error('ADD_PET: Attempting to add pet', { 
+    console.log('ADD_PET: Attempting to add pet', { 
       pet,
       petData: {
         ...pet,
@@ -71,24 +71,37 @@ export const usePets = () => {
           pet.image, 
           `pets/${pet.customerId}/${Date.now()}_${pet.image.name}`
         );
+      } else if (pet.imageUrl) {
+        imageUrl = pet.imageUrl;
       }
 
       // Prepare pet data for Firestore
       const petData = {
-        ...pet,
-        // Add image URL if uploaded
-        ...(imageUrl ? { image: imageUrl } : {}),
-        // Remove undefined fields
+        name: pet.name,
+        type: pet.type,
+        breed: pet.breed,
+        customerId: pet.customerId,
         ...(pet.dateOfBirth ? { dateOfBirth: pet.dateOfBirth } : {}),
+        ...(imageUrl ? { image: imageUrl } : {}),
+        ...(pet.gender ? { gender: pet.gender } : {}),
+        ...(pet.weight ? { weight: pet.weight } : {}),
+        ...(pet.height ? { height: pet.height } : {}),
+        ...(pet.notes ? { notes: pet.notes } : {}),
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       };
 
-      // Remove any undefined values
-      Object.keys(petData).forEach(key => petData[key] === undefined && delete petData[key]);
-
       // Add pet to Firestore
       const newPetRef = await addDoc(petsCollection, petData);
+
+      // Increment customer's pet count
+      await runTransaction(db, async (transaction) => {
+        const customerRef = doc(db, 'customers', pet.customerId);
+        transaction.update(customerRef, {
+          petCount: increment(1),
+          updatedAt: serverTimestamp()
+        });
+      });
 
       // Invalidate and refetch pets query
       await queryClient.invalidateQueries({ queryKey: ['pets'] });
