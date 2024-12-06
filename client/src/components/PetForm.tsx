@@ -178,26 +178,26 @@ export default function PetForm({
     // Start submission
     console.log('PET FORM: Submission started', { formData: form.getValues(), formState: form.formState });
 
+    // Prepare cleaned data outside try-catch to ensure it's in scope
+    const cleanedData: InsertPet = {
+      ...form.getValues(),
+      customerId: selectedCustomerId,
+      // Convert date to timestamp if needed
+      ...(form.getValues().dateOfBirth ? { 
+        dateOfBirth: form.getValues().dateOfBirth instanceof Date 
+          ? form.getValues().dateOfBirth 
+          : new Date(form.getValues().dateOfBirth) 
+      } : {})
+    };
+
+    console.log('PET FORM: Cleaned submission data', { 
+      cleanedData, 
+      isUpdate: !!pet, 
+      petId: pet?.id, 
+      selectedCustomer: customers?.find(c => c.id === cleanedData.customerId)
+    });
+
     try {
-      // Clean submission data
-      const cleanedData: InsertPet = {
-        ...form.getValues(),
-        customerId: selectedCustomerId,
-        // Convert date to timestamp if needed
-        ...(form.getValues().dateOfBirth ? { 
-          dateOfBirth: form.getValues().dateOfBirth instanceof Date 
-            ? form.getValues().dateOfBirth 
-            : new Date(form.getValues().dateOfBirth) 
-        } : {})
-      };
-
-      console.log('PET FORM: Cleaned submission data', { 
-        cleanedData, 
-        isUpdate: !!pet, 
-        petId: pet?.id, 
-        selectedCustomer: customers?.find(c => c.id === cleanedData.customerId)
-      });
-
       // Verify customer exists before submission
       const selectedCustomer = customers?.find(c => c.id === cleanedData.customerId);
       if (!selectedCustomer) {
