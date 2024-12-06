@@ -76,34 +76,46 @@ export function usePets() {
 
     // Validate ID
     if (!id || typeof id !== 'string' || id.trim() === '') {
-      console.error('Invalid or missing pet ID', { 
+      const errorDetails = { 
         id, 
         idType: typeof id,
         idLength: id ? id.length : 'N/A'
-      });
-      throw new Error('Invalid pet ID: ID must be a non-empty string');
+      };
+      console.error('Invalid or missing pet ID', errorDetails);
+      throw new Error(JSON.stringify({
+        message: 'Invalid pet ID: ID must be a non-empty string',
+        details: errorDetails
+      }));
     }
 
     // Validate data
     if (!data || typeof data !== 'object' || Array.isArray(data)) {
-      console.error('Invalid update data', { 
+      const errorDetails = { 
         id, 
         data, 
         dataType: typeof data,
         isArray: Array.isArray(data)
-      });
-      throw new Error('Update data must be a non-null object');
+      };
+      console.error('Invalid update data', errorDetails);
+      throw new Error(JSON.stringify({
+        message: 'Update data must be a non-null object',
+        details: errorDetails
+      }));
     }
 
     // Ensure data has properties
     const dataKeys = Object.keys(data);
     if (dataKeys.length === 0) {
-      console.error('Empty update data object', {
+      const errorDetails = {
         id,
         data,
         dataType: typeof data
-      });
-      throw new Error('No fields provided for update');
+      };
+      console.error('Empty update data object', errorDetails);
+      throw new Error(JSON.stringify({
+        message: 'No fields provided for update',
+        details: errorDetails
+      }));
     }
 
     // If the ID is a generated timestamp-based ID, log a warning
@@ -120,11 +132,15 @@ export function usePets() {
         id: petRef.id
       });
     } catch (refError) {
-      console.error('Failed to create Firestore document reference', {
-        error: refError,
+      const errorDetails = {
+        error: refError instanceof Error ? refError.message : 'Unknown error',
         id
-      });
-      throw new Error('Unable to create document reference');
+      };
+      console.error('Failed to create Firestore document reference', errorDetails);
+      throw new Error(JSON.stringify({
+        message: 'Unable to create document reference',
+        details: errorDetails
+      }));
     }
     
     // Remove undefined and null values to prevent Firestore errors
@@ -142,11 +158,15 @@ export function usePets() {
 
     // Ensure we have data to update after cleaning
     if (Object.keys(updateData).length === 0) {
-      console.error('No valid update data after cleaning', {
+      const errorDetails = {
         originalData: data,
         cleanedData: updateData
-      });
-      throw new Error('No valid fields to update');
+      };
+      console.error('No valid update data after cleaning', errorDetails);
+      throw new Error(JSON.stringify({
+        message: 'No valid fields to update',
+        details: errorDetails
+      }));
     }
 
     try {
@@ -163,7 +183,7 @@ export function usePets() {
 
       return true;
     } catch (updateError) {
-      console.error('Firestore Update Error:', {
+      const errorDetails = {
         errorName: updateError instanceof Error ? updateError.name : 'Unknown Error',
         errorMessage: updateError instanceof Error ? updateError.message : 'No error message',
         errorStack: updateError instanceof Error ? updateError.stack : 'No stack trace',
@@ -172,10 +192,15 @@ export function usePets() {
           data: JSON.stringify(data, null, 2),
           updateData: JSON.stringify(updateData, null, 2)
         }
-      });
+      };
 
-      // Throw a more user-friendly error
-      throw new Error(`Failed to update pet: ${updateError instanceof Error ? updateError.message : 'Unknown error'}`);
+      console.error('Firestore Update Error:', errorDetails);
+
+      // Throw a more user-friendly error with detailed error object
+      throw new Error(JSON.stringify({
+        message: `Failed to update pet: ${updateError instanceof Error ? updateError.message : 'Unknown error'}`,
+        details: errorDetails
+      }));
     }
   };
 

@@ -200,8 +200,11 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
             throw new Error('updatePet is not a valid function');
           }
 
-          // Create a new object to ensure it's not undefined
-          const updateResult = await updatePet(petId, Object.keys(updateData).length > 0 ? { ...updateData } : {});
+          // CRITICAL: Ensure a non-null object is always passed
+          const finalUpdateData = { ...updateData };
+          console.log('Ensuring non-null update data:', JSON.stringify(finalUpdateData, null, 2));
+
+          const updateResult = await updatePet(petId, finalUpdateData);
           
           if (updateResult) {
             toast({
