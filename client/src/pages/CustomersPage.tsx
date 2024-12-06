@@ -25,7 +25,7 @@ import { useToast } from "@/hooks/use-toast";
 import PetForm from "@/components/PetForm";
 import { Loader2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useUpdateCustomer, useDeleteCustomer } from "@/hooks/use-customers";
+import { useUpdateCustomer } from "@/hooks/use-customers";
 
 export default function CustomersPage() {
   const [open, setOpen] = useState(false);
@@ -40,7 +40,6 @@ export default function CustomersPage() {
   const { data: customers, isLoading } = useCustomers();
   const { data: pets } = usePets();
   const { mutateAsync: updateCustomer } = useUpdateCustomer();
-  const { mutateAsync: deleteCustomer } = useDeleteCustomer();
   const queryClient = useQueryClient();
 
   const form = useForm<InsertCustomer>({
@@ -463,7 +462,13 @@ export default function CustomersPage() {
                             description: "Please wait while we delete the customer and their pets",
                           });
                           
-                          await deleteCustomer(selectedCustomer.id);
+                          await queryClient.invalidateQueries('customers');
+                          await queryClient.invalidateQueries('pets');
+                          
+                          // Use the mutation hook directly
+                          await queryClient.getMutationCache().find({
+                            mutationKey: ['deleteCustomer']
+                          })?.execute(selectedCustomer.id);
                           
                           setShowCustomerDetails(false);
                           toast({
