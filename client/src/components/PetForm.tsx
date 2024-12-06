@@ -68,10 +68,7 @@ export default function PetForm({
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedCustomerId, setSelectedCustomerId] = useState(
-    defaultValues?.customerId || 
-    customers?.find(customer => customer.id === defaultValues?.customerId)?.id || 
-    pet?.customerId || 
-    ""
+    defaultValues?.customerId || ""
   );
 
   console.log('PET FORM: Component Mounted', { 
@@ -99,25 +96,28 @@ export default function PetForm({
       image: undefined,
       customerId: defaultValues?.customerId || selectedCustomerId || "",
     },
+    mode: 'onSubmit',
+    reValidateMode: 'onSubmit'
   });
 
   // Ensure selectedCustomerId is always set from defaultValues
   useEffect(() => {
     if (defaultValues?.customerId) {
-      setSelectedCustomerId(defaultValues.customerId);
-      form.setValue("customerId", defaultValues.customerId);
+      const customerId = defaultValues.customerId;
+      setSelectedCustomerId(customerId);
+      form.setValue("customerId", customerId);
     }
   }, [defaultValues?.customerId, form]);
 
-  // Log component mount details with more robust logging
+  // Simplified logging with more robust checks
   useEffect(() => {
-    console.log('PET FORM: Component Mounted', {
-      customers: customers?.length || 'No customers',
-      defaultValues: defaultValues || 'No default values',
-      pet: pet || 'No pet',
-      selectedCustomerId: selectedCustomerId || 'No selected customer',
+    console.log('PET FORM: Component Details', {
+      customersCount: customers?.length || 0,
+      defaultCustomerId: defaultValues?.customerId,
+      selectedCustomerId: selectedCustomerId,
+      formCustomerId: form.getValues('customerId')
     });
-  }, [customers, defaultValues, pet, selectedCustomerId]);
+  }, [customers, defaultValues, selectedCustomerId, form]);
 
   type PetFormData = {
     name: string;
@@ -176,10 +176,10 @@ export default function PetForm({
     setIsSubmitting(true);
     try {
       // Always prioritize defaultValues.customerId or form's customerId
-      const customerId = defaultValues?.customerId || data.customerId;
+      const customerId = defaultValues?.customerId || data.customerId || selectedCustomerId;
       
       if (!customerId) {
-        throw new Error("Customer ID is required");
+        throw new Error("Customer ID is required to add a pet");
       }
 
       const petData: InsertPet = {
@@ -187,6 +187,13 @@ export default function PetForm({
         customerId: customerId,
         imageUrl: imagePreview || undefined,
       };
+
+      console.log('PET FORM: Submitting Pet Data', { 
+        petData, 
+        defaultCustomerId: defaultValues?.customerId,
+        formCustomerId: data.customerId,
+        selectedCustomerId 
+      });
 
       if (pet) {
         // Update existing pet
