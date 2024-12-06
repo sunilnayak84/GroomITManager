@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Pet, InsertPet } from "@db/schema";
-import { getDocs, addDoc, onSnapshot, query } from "firebase/firestore";
+import { getDocs, addDoc, onSnapshot, query, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { petsCollection } from "../lib/firestore";
 import React from "react";
 
@@ -29,8 +29,37 @@ export function usePets() {
     };
   };
 
+  const updatePet = async (id: number, data: Partial<Pet>) => {
+    const petRef = doc(petsCollection, id.toString());
+    await updateDoc(petRef, {
+      ...data,
+      updatedAt: new Date()
+    });
+    return true;
+  };
+
+  const deletePet = async (id: number) => {
+    const petRef = doc(petsCollection, id.toString());
+    await deleteDoc(petRef);
+    return true;
+  };
+
   const addPetMutation = useMutation({
     mutationFn: addPet,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["pets"] });
+    },
+  });
+
+  const updatePetMutation = useMutation({
+    mutationFn: updatePet,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["pets"] });
+    },
+  });
+
+  const deletePetMutation = useMutation({
+    mutationFn: deletePet,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["pets"] });
     },
@@ -55,5 +84,7 @@ export function usePets() {
     isLoading,
     error,
     addPet: addPetMutation.mutateAsync,
+    updatePet: updatePetMutation.mutateAsync,
+    deletePet: deletePetMutation.mutateAsync,
   };
 }
