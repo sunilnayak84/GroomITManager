@@ -129,22 +129,34 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
       }
     }
 
+    // Verify customer exists
+    const customerRef = doc(db, 'customers', pet.customerId.toString());
+    const customerDoc = await getDoc(customerRef);
+
+    if (!customerDoc.exists()) {
+      throw new Error(`Customer with ID ${pet.customerId} does not exist`);
+    }
+
     const petRef = doc(petsCollection);
     
     // Log before setDoc
     console.error('FIRESTORE: Pet reference created', { petRefId: petRef.id });
 
-    await setDoc(petRef, {
+    // Prepare pet data for Firestore
+    const petData = {
       ...pet,
-      id: petRef.id,
+      firebaseId: petRef.id, // Store the Firebase-generated ID separately
+      customerId: pet.customerId, // Ensure customerId is stored
       createdAt: pet.createdAt instanceof Date ? pet.createdAt : new Date(),
       updatedAt: new Date()
-    });
+    };
+
+    await setDoc(petRef, petData);
 
     // Log after setDoc
     console.error('FIRESTORE: Pet document created successfully', { 
       petId: petRef.id, 
-      petData: { ...pet, id: petRef.id }
+      petData
     });
 
     return petRef.id;

@@ -17,13 +17,26 @@ export const usePets = () => {
       const fetchedPets = await Promise.all(querySnapshot.docs.map(async (doc) => {
         const petData = doc.data();
         
+        console.error('PET_QUERY: Raw Pet Data', {
+          petId: doc.id,
+          petData,
+          customerId: petData.customerId,
+          firebaseId: petData.firebaseId
+        });
+
         // Fetch associated customer details
         let customerDetails = null;
         if (petData.customerId) {
           try {
-            const customerRef = doc(db, 'customers', petData.customerId);
+            const customerRef = doc(db, 'customers', petData.customerId.toString());
             const customerDoc = await getDoc(customerRef);
             
+            console.error('PET_QUERY: Customer Lookup', {
+              customerId: petData.customerId,
+              customerExists: customerDoc.exists(),
+              customerData: customerDoc.exists() ? customerDoc.data() : null
+            });
+
             if (customerDoc.exists()) {
               customerDetails = {
                 id: customerDoc.id,
@@ -31,16 +44,17 @@ export const usePets = () => {
               };
             }
           } catch (error) {
-            console.error('Error fetching customer details for pet:', {
+            console.error('PET_QUERY: Customer Fetch Error', {
               petId: doc.id,
               customerId: petData.customerId,
-              error
+              error: error instanceof Error ? error.message : error
             });
           }
         }
 
-        return {
-          id: doc.id,
+        const petWithOwner = {
+          id: doc.data().id || 0, // Fallback to 0 if id is not present
+          firebaseId: doc.id, // Use Firestore document ID as firebaseId
           ...petData,
           owner: customerDetails ? {
             id: customerDetails.id,
@@ -49,14 +63,26 @@ export const usePets = () => {
             email: customerDetails.email || ''
           } : null
         } as Pet;
+
+        console.error('PET_QUERY: Processed Pet', {
+          petId: petWithOwner.id,
+          firebaseId: petWithOwner.firebaseId,
+          petName: petWithOwner.name,
+          ownerName: petWithOwner.owner?.name,
+          customerId: petWithOwner.customerId
+        });
+
+        return petWithOwner;
       }));
 
       console.error('PETS HOOK: Fetched pets', { 
         petCount: fetchedPets.length,
         pets: fetchedPets.map(p => ({ 
           id: p.id, 
+          firebaseId: p.firebaseId,
           name: p.name, 
-          owner: p.owner?.name 
+          owner: p.owner?.name,
+          customerId: p.customerId
         }))
       });
 

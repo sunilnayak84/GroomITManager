@@ -37,6 +37,7 @@ export const customers = pgTable("customers", {
 // Pets table
 export const pets = pgTable("pets", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  firebaseId: varchar("firebase_id", { length: 255 }).unique(),
   customerId: integer("customer_id").notNull().references(() => customers.id),
   name: varchar("name", { length: 255 }).notNull(),
   type: varchar("type", { length: 50 }).notNull(),
@@ -97,6 +98,7 @@ export const insertPetSchema = createInsertSchema(pets, {
   heightUnit: z.enum(["cm", "inches"]).default("cm"),
   image: z.string().optional(),
   notes: z.string().optional(),
+  firebaseId: z.string().optional(), // Add this line
 });
 
 export const insertAppointmentSchema = createInsertSchema(appointments, {
@@ -127,6 +129,7 @@ export type Pet = typeof pets.$inferSelect & {
     phone?: string;
     email?: string;
   } | null;
+  firebaseId?: string; // Add this line
 };
 
 export type InsertPet = typeof pets.$inferInsert;
