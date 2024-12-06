@@ -141,10 +141,10 @@ export async function updateCustomer(id: string, data: Partial<Customer>) {
   }
 }
 
-export async function deleteCustomerAndRelated(id: number) {
+export async function deleteCustomerAndRelated(id: string) {
   try {
     // Validate input
-    if (isNaN(id) || id <= 0) {
+    if (!id || typeof id !== 'string') {
       console.error('Invalid customer ID:', id);
       throw new Error(`Invalid customer ID: ${id}`);
     }
@@ -181,7 +181,7 @@ export async function deleteCustomerAndRelated(id: number) {
         console.log('Successfully deleted pet:', petDoc.id);
       } catch (error) {
         console.error('Failed to delete pet:', petDoc.id, error);
-        throw new Error(`Failed to delete pet: ${petDoc.id}`);
+        // Continue with other deletions even if one fails
       }
     });
 
