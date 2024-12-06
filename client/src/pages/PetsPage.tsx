@@ -107,7 +107,10 @@ export default function PetsPage() {
 
   const handleUpdatePet = async (id: string, data: Partial<InsertPet>) => {
     try {
-      await updatePet(id, data);
+      await updatePet({
+        id,
+        ...data
+      });
       setIsEditing(false);
       // Keep the details dialog open to show the updated information
       const updatedPet = { ...selectedPet, ...data, id };

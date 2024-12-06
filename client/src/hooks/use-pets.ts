@@ -205,48 +205,64 @@ export const usePets = () => {
     }
   };
 
-  const updatePet = async (petId: string, petData: Partial<Pet>) => {
-    console.error('UPDATE_PET: Attempting to update pet', JSON.stringify({ 
-      petId, 
-      petData 
-    }, null, 2));
-
+  const updatePet = async (petData: Partial<Pet>) => {
     try {
-      // If a new image file is provided, upload it first
-      let imageUrl = petData.image;
-      if (petData.image instanceof File) {
-        imageUrl = await uploadFile(
+      console.log('UPDATE_PET: Attempting to update pet', { 
+        petId: petData.id, 
+        petData 
+      });
+
+      // Remove undefined fields and special objects
+      const cleanedPetData = Object.fromEntries(
+        Object.entries(petData)
+          .filter(([_, value]) => value !== undefined)
+          .filter(([key, value]) => {
+            // Remove special Firestore objects and undefined values
+            if (value === undefined) return false;
+            if (typeof value === 'object' && value !== null) {
+              if ('_methodName' in value) return false;
+            }
+            return true;
+          })
+      );
+
+      // Explicitly handle image field
+      if (petData.image === undefined) {
+        delete cleanedPetData.image;
+      } else if (petData.image instanceof File) {
+        // Handle file upload logic
+        const imageUrl = await uploadFile(
           petData.image, 
-          `pets/${petId}/${Date.now()}_${petData.image.name}`
+          `pets/${petData.id}/${Date.now()}_${petData.image.name}`
         );
+        cleanedPetData.image = imageUrl;
       }
 
-      // Update Firestore document with potentially new image URL
-      const updateData = {
-        ...petData,
-        image: imageUrl,
+      console.log('UPDATE_PET: Cleaned Pet Data', { 
+        cleanedPetData 
+      });
+
+      // Reference to the specific pet document
+      const petDocRef = doc(db, 'pets', petData.id);
+
+      // Update the document with cleaned data
+      await updateDoc(petDocRef, {
+        ...cleanedPetData,
         updatedAt: serverTimestamp()
-      };
+      });
 
-      await updateDoc(doc(db, 'pets', petId), updateData);
-      return updateData;
+      console.log('UPDATE_PET: Successfully updated pet', { 
+        petId: petData.id 
+      });
+
+      return petData;
     } catch (error) {
-      console.error('UPDATE_PET: Error updating pet', JSON.stringify({ 
-        error: error instanceof Error ? error.message : 'Unknown error',
+      console.error('UPDATE_PET: Error updating pet', { 
+        error,
         errorMessage: error instanceof Error ? error.message : 'Unknown error',
-        petId,
-        petData
-      }, null, 2));
-
-      // Detailed error logging
-      if (error instanceof Error) {
-        console.error('UPDATE_PET: Detailed error', JSON.stringify({
-          name: error.name,
-          message: error.message,
-          stack: error.stack
-        }, null, 2));
-      }
-
+        petId: petData.id,
+        petData 
+      });
       throw error;
     }
   };
