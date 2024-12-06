@@ -20,8 +20,9 @@ export const usePets = () => {
         const customersSnapshot = await getDocs(customersQuery);
         const customersMap = new Map(
           customersSnapshot.docs.map(doc => [
-            doc.id, // Use the Firestore document ID directly
+            doc.id, // Use the Firestore document ID directly as the key
             {
+              id: doc.id,
               ...doc.data(),
               fullName: `${doc.data().firstName} ${doc.data().lastName}`
             }
@@ -30,77 +31,73 @@ export const usePets = () => {
 
         console.log('PETS_QUERY: Customers Map Debug', JSON.stringify({
           customerCount: customersMap.size,
-          customerIds: Array.from(customersMap.keys())
+          customerIds: Array.from(customersMap.keys()),
+          firstCustomer: Array.from(customersMap.values())[0]
         }, null, 2));
 
         const fetchedPets = querySnapshot.docs.map((doc) => {
           const petData = doc.data();
           
-          console.log('PET_QUERY: Detailed Pet Data Debug', JSON.stringify({
-            petFirebaseId: doc.id,
-            petData,
-            customerId: petData.customerId,
-            customerIdType: typeof petData.customerId
+          console.log('PET_QUERY: Processing Pet', JSON.stringify({
+            petId: doc.id,
+            petName: petData.name,
+            petCustomerId: petData.customerId,
+            customerExists: customersMap.has(petData.customerId),
+            availableCustomerIds: Array.from(customersMap.keys())
           }, null, 2));
 
           // Find customer using the Firestore document ID
           let customerDetails = null;
           if (petData.customerId && customersMap.has(petData.customerId)) {
             customerDetails = customersMap.get(petData.customerId);
-            
-            console.log('PET_QUERY: Customer Found Debug', JSON.stringify({
+            console.log('PET_QUERY: Found Customer', JSON.stringify({
+              petId: doc.id,
+              petName: petData.name,
               customerId: petData.customerId,
-              customerName: customerDetails?.fullName,
-              customerData: customerDetails
-            }, null, 2));
-          } else {
-            console.warn('PET_QUERY: Customer NOT Found Debug', JSON.stringify({
-              searchedCustomerId: petData.customerId,
-              availableCustomerIds: Array.from(customersMap.keys())
+              customerName: customerDetails.fullName
             }, null, 2));
           }
 
-          return {
-            id: petData.id || 0,
-            firebaseId: doc.id,
+          const pet = {
+            id: doc.id, // Use Firestore ID as the primary ID
             ...petData,
             owner: customerDetails ? {
-              id: petData.customerId,
+              id: customerDetails.id,
               name: customerDetails.fullName,
               phone: customerDetails.phone || '',
               email: customerDetails.email || ''
             } : null
           } as Pet;
+
+          console.log('PET_QUERY: Processed Pet', JSON.stringify({
+            id: pet.id,
+            name: pet.name,
+            customerId: pet.customerId,
+            ownerName: pet.owner?.name
+          }, null, 2));
+
+          return pet;
         });
 
-        console.log('PETS HOOK: Fetched Pets Summary Debug', JSON.stringify({ 
+        console.log('PETS HOOK: Final Result', JSON.stringify({ 
           petCount: fetchedPets.length,
-          petsWithOwners: fetchedPets.map(p => ({ 
-            id: p.id, 
-            firebaseId: p.firebaseId,
+          pets: fetchedPets.map(p => ({ 
+            id: p.id,
             name: p.name, 
             owner: p.owner?.name,
             customerId: p.customerId
           }))
         }, null, 2));
 
-        // Add additional properties to each pet
-        const enrichedPets = fetchedPets.map(pet => ({
-          ...pet,
-          age: calculateAge(pet.dateOfBirth),
-          weightRange: getWeightRange(pet.weight)
-        }));
-
-        return enrichedPets;
+        return fetchedPets;
       } catch (error) {
-        console.error('PETS HOOK: Critical Error', {
+        console.error('PETS HOOK: Critical Error', JSON.stringify({
           error: error instanceof Error ? error.message : 'Unknown error',
           stack: error instanceof Error ? error.stack : undefined
-        });
+        }, null, 2));
         throw error;
       }
     },
-    // Add retry and stale time to improve performance and error handling
     retry: 2,
     staleTime: 1000 * 60 * 5 // 5 minutes
   });

@@ -30,6 +30,30 @@ export default function PetsPage() {
 
   const { toast } = useToast();
 
+  // Debug logging
+  useEffect(() => {
+    if (pets) {
+      console.log('PetsPage Debug:', JSON.stringify({
+        petsCount: pets.length,
+        pets: pets.map(p => ({
+          id: p.id,
+          name: p.name,
+          customerId: p.customerId,
+          owner: p.owner
+        }))
+      }, null, 2));
+    }
+    if (customers) {
+      console.log('PetsPage Customers Debug:', JSON.stringify({
+        customersCount: customers.length,
+        customers: customers.map(c => ({
+          id: c.id,
+          name: `${c.firstName} ${c.lastName}`
+        }))
+      }, null, 2));
+    }
+  }, [pets, customers]);
+
   const handleAddPet = async (data: InsertPet) => {
     console.error('PETS PAGE: handleAddPet called', { 
       data, 
