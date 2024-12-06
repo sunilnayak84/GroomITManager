@@ -33,32 +33,6 @@ export default function PetForm({
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    console.error('PET FORM: Available Customers', { 
-      customers: customers?.map(c => ({
-        id: c.id, 
-        name: `${c.firstName} ${c.lastName}`,
-        petCount: c.petCount
-      }))
-    });
-  }, [customers]);
-
-  type PetFormData = {
-    name: string;
-    type: "dog" | "cat" | "other";
-    breed: string;
-    customerId: string;
-    dateOfBirth?: string;
-    age?: number;
-    gender?: "male" | "female" | "other";
-    weight?: string;
-    weightUnit: "kg" | "lbs";
-    height?: string;
-    heightUnit: "cm" | "inches";
-    image?: string | null;
-    notes?: string;
-  };
-
   const form = useForm<PetFormData>({
     resolver: zodResolver(insertPetSchema),
     defaultValues: {
@@ -78,6 +52,36 @@ export default function PetForm({
       ...defaultValues,
     },
   });
+
+  // Log customers and form details on component mount
+  useEffect(() => {
+    console.error('PET FORM: Component Mounted', { 
+      customers: customers?.map(c => ({
+        id: c.id, 
+        name: `${c.firstName} ${c.lastName}`,
+        petCount: c.petCount
+      })),
+      defaultValues,
+      pet,
+      selectedCustomerId: form.getValues('customerId')
+    });
+  }, [customers, defaultValues, pet, form]);
+
+  type PetFormData = {
+    name: string;
+    type: "dog" | "cat" | "other";
+    breed: string;
+    customerId: string;
+    dateOfBirth?: string;
+    age?: number;
+    gender?: "male" | "female" | "other";
+    weight?: string;
+    weightUnit: "kg" | "lbs";
+    height?: string;
+    heightUnit: "cm" | "inches";
+    image?: string | null;
+    notes?: string;
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

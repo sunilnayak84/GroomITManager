@@ -13,7 +13,7 @@ export function useCustomers() {
     queryFn: async () => {
       try {
         const querySnapshot = await getDocs(customersCollection);
-        return querySnapshot.docs.map(doc => ({
+        const customers = querySnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
           // Ensure createdAt is a valid Date object
@@ -21,6 +21,14 @@ export function useCustomers() {
             ? new Date(doc.data().createdAt) 
             : undefined
         } as Customer));
+
+        console.error('USE CUSTOMERS: Fetched customers', {
+          customerCount: customers.length,
+          customerIds: customers.map(c => c.id),
+          customerNames: customers.map(c => `${c.firstName} ${c.lastName}`)
+        });
+
+        return customers;
       } catch (error) {
         console.error('Error fetching customers:', error);
         throw error;
