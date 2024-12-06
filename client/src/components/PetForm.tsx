@@ -215,24 +215,41 @@ export default function PetForm({
           onSuccess?.(updateData as PetFormData);
         }
       } else {
-        // Add new pet
-        const newPet = await addPet(cleanedData);
-        
-        console.error('PET FORM: New pet added', { newPet });
+        // Attempt to add the pet
+        try {
+          const newPet = await addPet(cleanedData);
+          
+          console.error('PET FORM: New pet added successfully', { 
+            newPet,
+            customerId: cleanedData.customerId
+          });
 
-        toast({
-          title: "Success",
-          description: "Pet added successfully",
-          variant: "default"
-        });
+          toast({
+            title: "Success",
+            description: "Pet added successfully",
+            variant: "default"
+          });
 
-        // Reset form and call onSuccess if provided
-        form.reset();
-        onSuccess?.(data);
+          // Reset form and call onSuccess if provided
+          form.reset();
+          onSuccess?.(data);
+        } catch (addPetError) {
+          console.error('PET FORM: Error adding pet', { 
+            error: addPetError,
+            errorMessage: addPetError instanceof Error ? addPetError.message : 'Unknown error',
+            cleanedData
+          });
+
+          toast({
+            title: "Error Adding Pet",
+            description: addPetError instanceof Error ? addPetError.message : "Failed to add pet",
+            variant: "destructive"
+          });
+        }
       }
     } catch (error) {
       console.error('PET FORM: Submission error', { 
-        error, 
+        error,
         errorMessage: error instanceof Error ? error.message : 'Unknown error' 
       });
 
