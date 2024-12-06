@@ -24,12 +24,25 @@ import { DataTable } from "@/components/ui/data-table";
 import { useToast } from "@/hooks/use-toast";
 import PetForm from "@/components/PetForm";
 import { Loader2 } from "lucide-react";
+import { useQueryClient } from "react-query";
+import { useUpdateCustomer, useDeleteCustomer } from "../hooks/use-customers";
 
 export default function CustomersPage() {
   const [open, setOpen] = useState(false);
-  const { data: customers, isLoading, addCustomer, updateCustomer, deleteCustomer } = useCustomers();
+  const [showPetList, setShowPetList] = useState(false);
+  const [showAddPet, setShowAddPet] = useState(false);
+  const [showCustomerDetails, setShowCustomerDetails] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-  
+
+  const { data: customers, isLoading } = useCustomers();
+  const { data: pets } = usePets();
+  const { mutateAsync: updateCustomer } = useUpdateCustomer();
+  const { mutateAsync: deleteCustomer } = useDeleteCustomer();
+  const queryClient = useQueryClient();
+
   const form = useForm<InsertCustomer>({
     resolver: zodResolver(insertCustomerSchema),
     defaultValues: {
@@ -43,12 +56,6 @@ export default function CustomersPage() {
     },
   });
 
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
-  const [showPetList, setShowPetList] = useState(false);
-  const [showAddPet, setShowAddPet] = useState(false);
-  const [showCustomerDetails, setShowCustomerDetails] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  
   const editForm = useForm<InsertCustomer>({
     resolver: zodResolver(insertCustomerSchema),
     defaultValues: {
@@ -60,9 +67,6 @@ export default function CustomersPage() {
       address: "",
     },
   });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [petSearchQuery, setPetSearchQuery] = useState('');
 
   // Populate edit form when customer is selected
   useEffect(() => {
@@ -77,7 +81,6 @@ export default function CustomersPage() {
       });
     }
   }, [selectedCustomer, isEditing]);
-  const { data: pets } = usePets();
 
   const columns = [
     {
@@ -359,24 +362,10 @@ export default function CustomersPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold">Pets</h3>
-              <div className="relative w-64">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search pets..."
-                  className="pl-9"
-                  value={petSearchQuery}
-                  onChange={(e) => setPetSearchQuery(e.target.value)}
-                />
-              </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               {pets
                 ?.filter(pet => pet.customerId === selectedCustomer?.id)
-                .filter(pet => 
-                  pet.name.toLowerCase().includes(petSearchQuery.toLowerCase()) ||
-                  pet.breed.toLowerCase().includes(petSearchQuery.toLowerCase()) ||
-                  pet.type.toLowerCase().includes(petSearchQuery.toLowerCase())
-                )
                 .map(pet => (
                 <div key={pet.id} className="flex items-center gap-4 p-4 border rounded-lg hover:bg-accent transition-colors">
                   <img
@@ -395,7 +384,6 @@ export default function CustomersPage() {
                     size="sm"
                     className="ml-auto"
                     onClick={() => {
-                      // TODO: Implement view pet details
                       toast({
                         title: "Coming Soon",
                         description: "Pet details view will be available soon!",
@@ -506,7 +494,6 @@ export default function CustomersPage() {
                   <form onSubmit={editForm.handleSubmit(async (data) => {
                     try {
                       setIsSubmitting(true);
-                      // TODO: Implement updateCustomer mutation
                       await updateCustomer({ 
                         id: selectedCustomer.id, 
                         data: {
@@ -514,6 +501,20 @@ export default function CustomersPage() {
                           createdAt: selectedCustomer.createdAt,
                         }
                       });
+                      
+                      // Update the local customer data
+                      queryClient.setQueryData(['customers'], (oldData: Customer[] | undefined) => {
+                        if (!oldData) return oldData;
+                        return oldData.map(customer => 
+                          customer.id === selectedCustomer.id 
+                            ? { ...customer, ...data }
+                            : customer
+                        );
+                      });
+                      
+                      // Update the selected customer
+                      setSelectedCustomer(prev => prev ? { ...prev, ...data } : null);
+                      
                       setIsSubmitting(false);
                       setIsEditing(false);
                       toast({
@@ -691,24 +692,10 @@ export default function CustomersPage() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <h3 className="font-semibold">Pets</h3>
-                      <div className="relative w-64">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          placeholder="Search pets..."
-                          className="pl-9"
-                          value={petSearchQuery}
-                          onChange={(e) => setPetSearchQuery(e.target.value)}
-                        />
-                      </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       {pets
                         ?.filter(pet => pet.customerId === selectedCustomer.id)
-                        .filter(pet => 
-                          pet.name.toLowerCase().includes(petSearchQuery.toLowerCase()) ||
-                          pet.breed.toLowerCase().includes(petSearchQuery.toLowerCase()) ||
-                          pet.type.toLowerCase().includes(petSearchQuery.toLowerCase())
-                        )
                         .map(pet => (
                         <div key={pet.id} className="flex items-center gap-4 p-4 border rounded-lg hover:bg-accent transition-colors">
                           <img
@@ -727,7 +714,6 @@ export default function CustomersPage() {
                             size="sm"
                             className="ml-auto"
                             onClick={() => {
-                              // TODO: Implement view pet details
                               toast({
                                 title: "Coming Soon",
                                 description: "Pet details view will be available soon!",
