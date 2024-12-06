@@ -11,91 +11,102 @@ export const usePets = () => {
   const { data: pets, ...rest } = useQuery({
     queryKey: ['pets'],
     queryFn: async () => {
-      const q = query(petsCollection);
-      const querySnapshot = await getDocs(q);
-      
-      // First, fetch all customers to create a lookup map
-      const customersQuery = query(customersCollection);
-      const customersSnapshot = await getDocs(customersQuery);
-      const customersMap = new Map(
-        customersSnapshot.docs.map(doc => [
-          doc.id, // Use the Firestore document ID directly
-          {
-            ...doc.data(),
-            fullName: `${doc.data().firstName} ${doc.data().lastName}`
-          }
-        ])
-      );
-
-      console.error('PETS_QUERY: Customers Map Debug', {
-        customerCount: customersMap.size,
-        customerIds: Array.from(customersMap.keys())
-      });
-
-      const fetchedPets = querySnapshot.docs.map((doc) => {
-        const petData = doc.data();
+      try {
+        const q = query(petsCollection);
+        const querySnapshot = await getDocs(q);
         
-        console.error('PET_QUERY: Detailed Pet Data Debug', {
-          petFirebaseId: doc.id,
-          petData,
-          customerId: petData.customerId,
-          customerIdType: typeof petData.customerId
+        // First, fetch all customers to create a lookup map
+        const customersQuery = query(customersCollection);
+        const customersSnapshot = await getDocs(customersQuery);
+        const customersMap = new Map(
+          customersSnapshot.docs.map(doc => [
+            doc.id, // Use the Firestore document ID directly
+            {
+              ...doc.data(),
+              fullName: `${doc.data().firstName} ${doc.data().lastName}`
+            }
+          ])
+        );
+
+        console.log('PETS_QUERY: Customers Map Debug', JSON.stringify({
+          customerCount: customersMap.size,
+          customerIds: Array.from(customersMap.keys())
+        }, null, 2));
+
+        const fetchedPets = querySnapshot.docs.map((doc) => {
+          const petData = doc.data();
+          
+          console.log('PET_QUERY: Detailed Pet Data Debug', JSON.stringify({
+            petFirebaseId: doc.id,
+            petData,
+            customerId: petData.customerId,
+            customerIdType: typeof petData.customerId
+          }, null, 2));
+
+          // Find customer using the Firestore document ID
+          let customerDetails = null;
+          if (petData.customerId && customersMap.has(petData.customerId)) {
+            customerDetails = customersMap.get(petData.customerId);
+            
+            console.log('PET_QUERY: Customer Found Debug', JSON.stringify({
+              customerId: petData.customerId,
+              customerName: customerDetails?.fullName,
+              customerData: customerDetails
+            }, null, 2));
+          } else {
+            console.warn('PET_QUERY: Customer NOT Found Debug', JSON.stringify({
+              searchedCustomerId: petData.customerId,
+              availableCustomerIds: Array.from(customersMap.keys())
+            }, null, 2));
+          }
+
+          return {
+            id: petData.id || 0,
+            firebaseId: doc.id,
+            ...petData,
+            owner: customerDetails ? {
+              id: petData.customerId,
+              name: customerDetails.fullName,
+              phone: customerDetails.phone || '',
+              email: customerDetails.email || ''
+            } : null
+          } as Pet;
         });
 
-        // Find customer using the Firestore document ID
-        let customerDetails = null;
-        if (petData.customerId && customersMap.has(petData.customerId)) {
-          customerDetails = customersMap.get(petData.customerId);
-          
-          console.error('PET_QUERY: Customer Found Debug', {
-            customerId: petData.customerId,
-            customerName: customerDetails?.fullName,
-            customerData: customerDetails
-          });
-        } else {
-          console.error('PET_QUERY: Customer NOT Found Debug', {
-            searchedCustomerId: petData.customerId,
-            availableCustomerIds: Array.from(customersMap.keys())
-          });
-        }
+        console.log('PETS HOOK: Fetched Pets Summary Debug', JSON.stringify({ 
+          petCount: fetchedPets.length,
+          petsWithOwners: fetchedPets.map(p => ({ 
+            id: p.id, 
+            firebaseId: p.firebaseId,
+            name: p.name, 
+            owner: p.owner?.name,
+            customerId: p.customerId
+          }))
+        }, null, 2));
 
-        return {
-          id: petData.id || 0,
-          firebaseId: doc.id,
-          ...petData,
-          owner: customerDetails ? {
-            id: petData.customerId,
-            name: customerDetails.fullName,
-            phone: customerDetails.phone || '',
-            email: customerDetails.email || ''
-          } : null
-        } as Pet;
-      });
+        // Add additional properties to each pet
+        const enrichedPets = fetchedPets.map(pet => ({
+          ...pet,
+          age: calculateAge(pet.dateOfBirth),
+          weightRange: getWeightRange(pet.weight)
+        }));
 
-      console.error('PETS HOOK: Fetched Pets Summary Debug', { 
-        petCount: fetchedPets.length,
-        petsWithOwners: fetchedPets.map(p => ({ 
-          id: p.id, 
-          firebaseId: p.firebaseId,
-          name: p.name, 
-          owner: p.owner?.name,
-          customerId: p.customerId
-        }))
-      });
-
-      // Add additional properties to each pet
-      const enrichedPets = fetchedPets.map(pet => ({
-        ...pet,
-        age: calculateAge(pet.dateOfBirth),
-        weightRange: getWeightRange(pet.weight)
-      }));
-
-      return enrichedPets;
-    }
+        return enrichedPets;
+      } catch (error) {
+        console.error('PETS HOOK: Critical Error', {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          stack: error instanceof Error ? error.stack : undefined
+        });
+        throw error;
+      }
+    },
+    // Add retry and stale time to improve performance and error handling
+    retry: 2,
+    staleTime: 1000 * 60 * 5 // 5 minutes
   });
 
   const addPet = async (pet: InsertPet) => {
-    console.log('ADD_PET: Attempting to add pet', { 
+    console.log('ADD_PET: Attempting to add pet', JSON.stringify({ 
       pet,
       petData: {
         ...pet,
@@ -104,24 +115,24 @@ export const usePets = () => {
         type: pet.type,
         breed: pet.breed
       }
-    });
-
-    // Validate required fields before submission
-    const requiredFields: (keyof InsertPet)[] = ['name', 'type', 'breed', 'customerId'];
-    const missingFields = requiredFields.filter(field => {
-      const value = pet[field];
-      return value === undefined || value === null || value === '';
-    });
-
-    if (missingFields.length > 0) {
-      console.error('ADD_PET: Missing required fields', { 
-        missingFields,
-        petData: pet
-      });
-      throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
-    }
+    }, null, 2));
 
     try {
+      // Validate required fields before submission
+      const requiredFields: (keyof InsertPet)[] = ['name', 'type', 'breed', 'customerId'];
+      const missingFields = requiredFields.filter(field => {
+        const value = pet[field];
+        return value === undefined || value === null || value === '';
+      });
+
+      if (missingFields.length > 0) {
+        console.error('ADD_PET: Missing required fields', JSON.stringify({ 
+          missingFields,
+          petData: pet
+        }, null, 2));
+        throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+      }
+
       // Verify customer exists
       const customerDocRef = doc(db, 'customers', pet.customerId);
       const customerDoc = await getDoc(customerDocRef);
@@ -177,21 +188,20 @@ export const usePets = () => {
         id: newPetRef.id,
         ...petData
       } as Pet;
-
     } catch (error) {
-      console.error('ADD_PET: Error adding pet', { 
-        error,
+      console.error('ADD_PET: Error adding pet', JSON.stringify({ 
+        error: error instanceof Error ? error.message : 'Unknown error',
         errorMessage: error instanceof Error ? error.message : 'Unknown error',
         pet
-      });
+      }, null, 2));
 
       // Detailed error logging
       if (error instanceof Error) {
-        console.error('ADD_PET: Detailed error', {
+        console.error('ADD_PET: Detailed error', JSON.stringify({
           name: error.name,
           message: error.message,
           stack: error.stack
-        });
+        }, null, 2));
       }
 
       throw error;
@@ -199,10 +209,10 @@ export const usePets = () => {
   };
 
   const updatePet = async (petId: string, petData: Partial<Pet>) => {
-    console.error('UPDATE_PET: Attempting to update pet', { 
+    console.error('UPDATE_PET: Attempting to update pet', JSON.stringify({ 
       petId, 
       petData 
-    });
+    }, null, 2));
 
     try {
       // If a new image file is provided, upload it first
@@ -224,20 +234,20 @@ export const usePets = () => {
       await updateDoc(doc(db, 'pets', petId), updateData);
       return updateData;
     } catch (error) {
-      console.error('UPDATE_PET: Error updating pet', { 
-        error,
+      console.error('UPDATE_PET: Error updating pet', JSON.stringify({ 
+        error: error instanceof Error ? error.message : 'Unknown error',
         errorMessage: error instanceof Error ? error.message : 'Unknown error',
         petId,
         petData
-      });
+      }, null, 2));
 
       // Detailed error logging
       if (error instanceof Error) {
-        console.error('UPDATE_PET: Detailed error', {
+        console.error('UPDATE_PET: Detailed error', JSON.stringify({
           name: error.name,
           message: error.message,
           stack: error.stack
-        });
+        }, null, 2));
       }
 
       throw error;
@@ -245,14 +255,14 @@ export const usePets = () => {
   };
 
   const deletePet = async (id: string) => {
-    console.error('DELETE_PET: Attempting to delete pet', { id });
+    console.error('DELETE_PET: Attempting to delete pet', JSON.stringify({ id }, null, 2));
 
     try {
       const petRef = doc(db, 'pets', id);
       const petDoc = await getDoc(petRef);
 
       if (!petDoc.exists()) {
-        console.error('DELETE_PET: Pet not found', { id });
+        console.error('DELETE_PET: Pet not found', JSON.stringify({ id }, null, 2));
         throw new Error('Pet not found');
       }
 
@@ -263,7 +273,7 @@ export const usePets = () => {
       // Delete the pet
       await deleteDoc(petRef);
 
-      console.error('DELETE_PET: Pet deleted successfully', { id });
+      console.error('DELETE_PET: Pet deleted successfully', JSON.stringify({ id }, null, 2));
 
       // Decrement customer's pet count if customer ID exists
       if (customerId) {
@@ -284,11 +294,11 @@ export const usePets = () => {
 
       return { id };
     } catch (error) {
-      console.error('DELETE_PET: Error deleting pet', { 
-        error,
+      console.error('DELETE_PET: Error deleting pet', JSON.stringify({ 
+        error: error instanceof Error ? error.message : 'Unknown error',
         errorMessage: error instanceof Error ? error.message : 'Unknown error',
         id 
-      });
+      }, null, 2));
 
       throw error;
     }
