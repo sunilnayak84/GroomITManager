@@ -118,17 +118,12 @@ export default function PetForm({
           const currentValue = cleanedData[key];
           const originalValue = pet?.[key];
           
-          console.log(`Comparing field ${key}:`, {
-            currentValue, 
-            originalValue, 
-            isDifferent: currentValue !== originalValue,
-            comparisonType: typeof currentValue
-          });
-          
           if (currentValue !== originalValue) {
             updateData[key] = currentValue;
           }
         });
+
+        console.log('Update data:', updateData);
 
         // If no fields were changed, provide feedback
         if (Object.keys(updateData).length === 0) {
@@ -140,9 +135,30 @@ export default function PetForm({
           return;
         }
 
-        await onSuccess?.(updateData as PetFormData);
+        // Perform the update
+        const updatedPet = await updatePet(pet.id, updateData);
+        if (updatedPet) {
+          toast({
+            title: "Success",
+            description: "Pet updated successfully",
+            variant: "default"
+          });
+          onSuccess?.(updateData as PetFormData);
+        }
       } else {
-        await onSuccess?.(cleanedData);
+        // This is a new pet creation
+        console.log('Attempting to add new pet:', cleanedData);
+        const newPet = await addPet(cleanedData);
+        console.log('New pet result:', newPet);
+        
+        if (newPet) {
+          toast({
+            title: "Success",
+            description: "Pet added successfully",
+            variant: "default"
+          });
+          onSuccess?.(cleanedData);
+        }
       }
     } catch (error) {
       console.error('Form submission error:', error);

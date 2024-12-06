@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Pet, InsertPet } from "@db/schema";
-import { getDocs, doc, runTransaction, increment } from "firebase/firestore";
+import { getDocs, doc, runTransaction, increment, collection, addDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { petsCollection, createPet } from "../lib/firestore";
 
@@ -25,6 +25,8 @@ export function usePets() {
 
   const addPet = async (pet: InsertPet): Promise<Pet> => {
     try {
+      console.log('Adding pet with data:', pet);
+
       // Clean the pet data before adding
       const cleanedPet = Object.fromEntries(
         Object.entries(pet)
@@ -32,15 +34,20 @@ export function usePets() {
           .map(([key, value]) => [key, value === '' ? null : value])
       );
 
-      let newPetId: string;
+      console.log('Cleaned pet data:', cleanedPet);
+
+      let newPet: Pet | null = null;
 
       await runTransaction(db, async (transaction) => {
-        // Add the pet using createPet function
-        newPetId = await createPet({
+        // Add the pet
+        const petsCollection = collection(db, 'pets');
+        const petRef = await addDoc(petsCollection, {
           ...cleanedPet,
           createdAt: new Date(),
           updatedAt: new Date()
         });
+
+        console.log('Pet added with ID:', petRef.id);
 
         // Update the customer's pet count
         if (cleanedPet.customerId) {
@@ -48,27 +55,36 @@ export function usePets() {
           const customerDoc = await transaction.get(customerRef);
           
           if (customerDoc.exists()) {
+            const currentPetCount = customerDoc.data().petCount || 0;
             transaction.update(customerRef, {
-              petCount: increment(1)
+              petCount: currentPetCount + 1,
+              updatedAt: new Date()
             });
+
+            console.log('Customer pet count updated:', currentPetCount + 1);
           } else {
-            throw new Error('Customer not found');
+            console.error('Customer not found:', cleanedPet.customerId);
           }
         }
+
+        // Fetch the newly created pet
+        const newPetDoc = await transaction.get(petRef);
+        newPet = {
+          id: petRef.id,
+          ...newPetDoc.data()
+        } as Pet;
       });
 
-      // Fetch the newly created pet
-      const newPet = {
-        id: newPetId,
-        ...cleanedPet,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      } as Pet;
+      if (!newPet) {
+        throw new Error('Failed to create pet');
+      }
+
+      console.log('New pet created:', newPet);
 
       // Update the cache
       queryClient.setQueryData<Pet[]>(['pets'], (old) => {
-        if (!old) return [newPet];
-        return [...old, newPet];
+        if (!old) return [newPet!];
+        return [...old, newPet!];
       });
 
       return newPet;
