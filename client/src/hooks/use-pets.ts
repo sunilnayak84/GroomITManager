@@ -71,7 +71,7 @@ export function usePets() {
       console.log('Raw Update Pet Input:', { 
         id, 
         idType: typeof id, 
-        data,
+        data: JSON.stringify(data, null, 2),
         dataKeys: data ? Object.keys(data) : 'NO DATA'
       });
 
@@ -82,7 +82,7 @@ export function usePets() {
       }
 
       // Validate data
-      if (!data || Object.keys(data).length === 0) {
+      if (!data || typeof data !== 'object') {
         console.error('No update data provided', { 
           id, 
           data, 
@@ -90,6 +90,16 @@ export function usePets() {
           dataKeys: data ? Object.keys(data) : 'NO DATA'
         });
         throw new Error('No data to update');
+      }
+
+      // Ensure data has properties
+      if (Object.keys(data).length === 0) {
+        console.error('Empty update data object', {
+          id,
+          data,
+          dataType: typeof data
+        });
+        throw new Error('Empty update data');
       }
 
       // If the ID is a generated timestamp-based ID, log a warning
@@ -110,7 +120,7 @@ export function usePets() {
           .map(([k, v]) => [k, v === '' ? null : v])
       );
 
-      console.log('Cleaned Update Data:', updateData);
+      console.log('Cleaned Update Data:', JSON.stringify(updateData, null, 2));
 
       // Ensure we have data to update after cleaning
       if (Object.keys(updateData).length === 0) {
@@ -133,7 +143,10 @@ export function usePets() {
         errorName: error instanceof Error ? error.name : 'Unknown Error',
         errorMessage: error instanceof Error ? error.message : 'No error message',
         errorStack: error instanceof Error ? error.stack : 'No stack trace',
-        inputData: { id, data }
+        inputData: { 
+          id, 
+          data: JSON.stringify(data, null, 2) 
+        }
       });
       throw error;
     }

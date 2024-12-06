@@ -175,17 +175,30 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
           return;
         }
 
-        const updateResult = await updatePet?.(petId, {
-          ...updateData,
-          customerId: data.customerId
-        });
-        
-        if (updateResult) {
-          toast({
-            title: "Success",
-            description: "Pet updated successfully",
+        try {
+          // Add customerId to update data if it's not already included
+          if (!updateData.customerId && data.customerId) {
+            updateData.customerId = data.customerId;
+          }
+
+          console.log('Final Update Data:', JSON.stringify(updateData, null, 2));
+          
+          const updateResult = await updatePet?.(petId, updateData);
+          
+          if (updateResult) {
+            toast({
+              title: "Success",
+              description: "Pet updated successfully",
+            });
+            onCancel?.();
+          }
+        } catch (updateError) {
+          console.error('Update Error:', {
+            error: updateError,
+            petId,
+            updateData
           });
-          onCancel?.();
+          throw updateError;
         }
       } else {
         // If adding a new pet
