@@ -109,7 +109,7 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
         let petId: string | undefined;
         
         // Check if the pet has a valid ID from Firestore document
-        if (pet.id) {
+        if (pet.id && typeof pet.id === 'string' && pet.id.trim() !== '') {
           petId = pet.id;
         } 
         // If no ID, try to find the ID in the original document
@@ -131,6 +131,16 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
           return;
         }
         
+        // Ensure we have data to update
+        if (Object.keys(cleanedData).length === 0) {
+          toast({
+            title: "Error",
+            description: "No valid data to update",
+            variant: "destructive"
+          });
+          return;
+        }
+
         const updateResult = await updatePet?.(petId, {
           ...cleanedData,
           customerId: data.customerId
@@ -162,7 +172,9 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
       console.error('Detailed Error in pet form submission:', {
         errorName: error instanceof Error ? error.name : 'Unknown Error',
         errorMessage: error instanceof Error ? error.message : 'No error message',
-        errorStack: error instanceof Error ? error.stack : 'No stack trace'
+        errorStack: error instanceof Error ? error.stack : 'No stack trace',
+        petObject: pet,
+        formData: data
       });
       toast({
         title: "Error",

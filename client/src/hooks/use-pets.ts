@@ -72,13 +72,19 @@ export function usePets() {
         id, 
         idType: typeof id, 
         data,
-        dataKeys: Object.keys(data)
+        dataKeys: data ? Object.keys(data) : 'NO DATA'
       });
 
       // Validate ID
       if (!id || typeof id !== 'string' || id.trim() === '') {
         console.error('Invalid pet ID:', id);
         throw new Error('Invalid pet ID');
+      }
+
+      // Validate data
+      if (!data || Object.keys(data).length === 0) {
+        console.error('No update data provided');
+        throw new Error('No data to update');
       }
 
       // If the ID is a generated timestamp-based ID, log a warning
@@ -101,6 +107,12 @@ export function usePets() {
 
       console.log('Cleaned Update Data:', updateData);
 
+      // Ensure we have data to update after cleaning
+      if (Object.keys(updateData).length === 0) {
+        console.error('No valid update data after cleaning');
+        throw new Error('No valid data to update');
+      }
+
       await updateDoc(petRef, {
         ...updateData,
         updatedAt: new Date()
@@ -112,7 +124,8 @@ export function usePets() {
       console.error('Comprehensive Error in updatePet:', {
         errorName: error instanceof Error ? error.name : 'Unknown Error',
         errorMessage: error instanceof Error ? error.message : 'No error message',
-        errorStack: error instanceof Error ? error.stack : 'No stack trace'
+        errorStack: error instanceof Error ? error.stack : 'No stack trace',
+        inputData: { id, data }
       });
       throw error;
     }
