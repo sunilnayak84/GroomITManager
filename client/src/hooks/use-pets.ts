@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Pet, InsertPet } from "@db/schema";
-import { getDocs, doc, runTransaction, increment, collection, addDoc, serverTimestamp, query, updateDoc, deleteDoc } from "firebase/firestore";
+import { getDocs, doc, runTransaction, increment, collection, addDoc, serverTimestamp, query, updateDoc, deleteDoc, getDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { petsCollection, createPet } from "../lib/firestore";
 
@@ -49,86 +49,47 @@ export const usePets = () => {
     if (missingFields.length > 0) {
       console.error('ADD_PET: Missing required fields', { 
         missingFields,
-        pet 
+        petData: pet
       });
       throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
     }
 
     try {
-      // Validate customer ID format
-      if (!pet.customerId || typeof pet.customerId !== 'string' || pet.customerId.trim() === '') {
-        console.error('ADD_PET: Invalid customer ID', { 
-          customerId: pet.customerId 
-        });
-        throw new Error('Invalid customer ID');
-      }
-
-      // Fetch the customer to ensure it exists
-      const customerRef = doc(db, 'customers', pet.customerId);
-      const customerDoc = await getDoc(customerRef);
+      // Verify customer exists
+      const customerDocRef = doc(db, 'customers', pet.customerId);
+      const customerDoc = await getDoc(customerDocRef);
 
       if (!customerDoc.exists()) {
-        console.error('ADD_PET: Customer not found', { 
-          customerId: pet.customerId,
-          customerRef: customerRef.path
-        });
-        throw new Error('Selected customer does not exist');
+        throw new Error(`Customer with ID ${pet.customerId} does not exist`);
       }
 
-      // Prepare pet data with cleaned values
-      const cleanedPet = Object.fromEntries(
-        Object.entries(pet)
-          .filter(([_, value]) => value !== undefined && value !== '')
-          .map(([key, value]) => [key, value === '' ? null : value])
-      ) as InsertPet;
-
-      // Add timestamp fields
-      const petWithTimestamps = {
-        ...cleanedPet,
+      // Prepare pet data for Firestore
+      const petData = {
+        ...pet,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       };
 
-      // Add the pet to Firestore
-      const petsCollection = collection(db, 'pets');
-      const petRef = await addDoc(petsCollection, petWithTimestamps);
+      // Add pet to Firestore
+      const newPetRef = await addDoc(petsCollection, petData);
 
-      console.error('ADD_PET: Pet added successfully', { 
-        petId: petRef.id,
-        customerId: pet.customerId,
-        petData: petWithTimestamps
-      });
+      // Invalidate and refetch pets query
+      await queryClient.invalidateQueries({ queryKey: ['pets'] });
 
-      // Update customer's pet count in a transaction
-      await runTransaction(db, async (transaction) => {
-        transaction.update(customerRef, {
-          petCount: increment(1),
-          updatedAt: serverTimestamp()
-        });
-      });
-
-      // Update the cache
-      queryClient.setQueryData(['pets'], (old: Pet[] | undefined) => {
-        console.error('PETS HOOK: Updating query cache', { 
-          oldPets: old, 
-          newPet: petWithTimestamps 
-        });
-        if (!old) return [{ id: petRef.id, ...petWithTimestamps }];
-        return [...old, { id: petRef.id, ...petWithTimestamps }];
-      });
-
+      // Return the newly created pet with its ID
       return {
-        id: petRef.id,
-        ...petWithTimestamps
-      };
+        id: newPetRef.id,
+        ...petData
+      } as Pet;
+
     } catch (error) {
       console.error('ADD_PET: Error adding pet', { 
         error,
         errorMessage: error instanceof Error ? error.message : 'Unknown error',
-        pet 
+        pet
       });
-      
-      // More detailed error logging
+
+      // Detailed error logging
       if (error instanceof Error) {
         console.error('ADD_PET: Detailed error', {
           name: error.name,
