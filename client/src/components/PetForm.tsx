@@ -51,6 +51,8 @@ export default function PetForm({
       notes: undefined,
       ...defaultValues,
     },
+    mode: 'onSubmit', // Validate only on form submission
+    reValidateMode: 'onSubmit' // Revalidate only on submission
   });
 
   // Log customers and form details on component mount
@@ -100,8 +102,20 @@ export default function PetForm({
       data, 
       isSubmitting, 
       customers: customers?.map(c => c.id),
-      formValues: form.getValues()
+      formValues: form.getValues(),
+      formErrors: form.formState.errors
     });
+
+    // Log all form errors in detail
+    if (Object.keys(form.formState.errors).length > 0) {
+      console.error('PET FORM: Validation Errors', {
+        errors: Object.entries(form.formState.errors).map(([field, error]) => ({
+          field,
+          type: error?.type,
+          message: error?.message
+        }))
+      });
+    }
 
     // Prevent multiple submissions
     if (isSubmitting) {
@@ -113,33 +127,34 @@ export default function PetForm({
       // Explicitly set submitting state
       setIsSubmitting(true);
       
-      // Log form state at submission
-      console.error('PET FORM: Form state at submission', {
-        formData: data,
-        formValues: form.getValues(),
-        selectedCustomerId: form.getValues('customerId'),
-        customers: customers?.map(c => ({ id: c.id, name: `${c.firstName} ${c.lastName}` }))
-      });
-      
       // Validate required fields with more detailed logging
       const requiredFields: (keyof PetFormData)[] = ['name', 'type', 'breed', 'customerId'];
-      for (const field of requiredFields) {
+      const missingFields = requiredFields.filter(field => {
         const value = data[field];
-        console.error(`PET FORM: Checking required field ${field}`, { 
-          value, 
-          isEmpty: value === undefined || value === null || value === '' 
+        return value === undefined || value === null || value === '';
+      });
+
+      if (missingFields.length > 0) {
+        console.error('PET FORM: Missing required fields', { 
+          missingFields,
+          formData: data 
         });
 
-        if (!value) {
-          console.error(`PET FORM: Missing required field ${field}`, { data });
-          toast({
-            title: "Validation Error",
-            description: `${field.charAt(0).toUpperCase() + field.slice(1)} is required`,
-            variant: "destructive"
+        missingFields.forEach(field => {
+          form.setError(field, {
+            type: 'required',
+            message: `${field.charAt(0).toUpperCase() + field.slice(1)} is required`
           });
-          setIsSubmitting(false);
-          return;
-        }
+        });
+
+        toast({
+          title: "Validation Error",
+          description: `Please fill in all required fields: ${missingFields.join(', ')}`,
+          variant: "destructive"
+        });
+
+        setIsSubmitting(false);
+        return;
       }
       
       // Clean the data by removing empty strings and undefined values
@@ -162,6 +177,12 @@ export default function PetForm({
           customerId: cleanedData.customerId,
           availableCustomers: customers?.map(c => c.id)
         });
+        
+        form.setError('customerId', {
+          type: 'validate',
+          message: 'Selected customer not found'
+        });
+
         toast({
           title: "Customer Error",
           description: "Selected customer not found. Please select a valid customer.",
@@ -171,81 +192,36 @@ export default function PetForm({
         return;
       }
 
-      // Check if this is an update operation
-      if (pet?.id) {
-        // Validate that we have the updatePet function
-        if (!updatePet) {
-          console.error('PET FORM: Update function not available');
-          throw new Error("Update function is not available");
-        }
-
-        const updateData: Partial<InsertPet> = {};
-
-        // Check each field and add to updateData only if it's different from the original
-        (Object.keys(cleanedData) as Array<keyof InsertPet>).forEach((key) => {
-          const currentValue = cleanedData[key];
-          const originalValue = pet?.[key];
-          
-          if (currentValue !== originalValue) {
-            updateData[key] = currentValue;
-          }
+      // Attempt to add the pet
+      try {
+        const newPet = await addPet(cleanedData);
+        
+        console.error('PET FORM: New pet added successfully', { 
+          newPet,
+          customerId: cleanedData.customerId
         });
 
-        console.error('PET FORM: Update data', { updateData });
+        toast({
+          title: "Success",
+          description: "Pet added successfully",
+          variant: "default"
+        });
 
-        // If no fields were changed, provide feedback
-        if (Object.keys(updateData).length === 0) {
-          toast({
-            title: "No Changes Detected",
-            description: "Please modify at least one field before updating.",
-            variant: "default"
-          });
-          setIsSubmitting(false);
-          return;
-        }
+        // Reset form and call onSuccess if provided
+        form.reset();
+        onSuccess?.(data);
+      } catch (addPetError) {
+        console.error('PET FORM: Error adding pet', { 
+          error: addPetError,
+          errorMessage: addPetError instanceof Error ? addPetError.message : 'Unknown error',
+          cleanedData
+        });
 
-        // Perform the update
-        const updatedPet = await updatePet(pet.id, updateData);
-        if (updatedPet) {
-          toast({
-            title: "Success",
-            description: "Pet updated successfully",
-            variant: "default"
-          });
-          onSuccess?.(updateData as PetFormData);
-        }
-      } else {
-        // Attempt to add the pet
-        try {
-          const newPet = await addPet(cleanedData);
-          
-          console.error('PET FORM: New pet added successfully', { 
-            newPet,
-            customerId: cleanedData.customerId
-          });
-
-          toast({
-            title: "Success",
-            description: "Pet added successfully",
-            variant: "default"
-          });
-
-          // Reset form and call onSuccess if provided
-          form.reset();
-          onSuccess?.(data);
-        } catch (addPetError) {
-          console.error('PET FORM: Error adding pet', { 
-            error: addPetError,
-            errorMessage: addPetError instanceof Error ? addPetError.message : 'Unknown error',
-            cleanedData
-          });
-
-          toast({
-            title: "Error Adding Pet",
-            description: addPetError instanceof Error ? addPetError.message : "Failed to add pet",
-            variant: "destructive"
-          });
-        }
+        toast({
+          title: "Error Adding Pet",
+          description: addPetError instanceof Error ? addPetError.message : "Failed to add pet",
+          variant: "destructive"
+        });
       }
     } catch (error) {
       console.error('PET FORM: Submission error', { 
@@ -267,7 +243,19 @@ export default function PetForm({
   return (
     <Form {...form}>
       <form 
-        onSubmit={form.handleSubmit(onSubmit)} 
+        onSubmit={(e) => {
+          console.error('PET FORM: Form submission event', { 
+            event: e,
+            isValid: form.formState.isValid,
+            errors: form.formState.errors
+          });
+          
+          // Prevent default to ensure our handler is called
+          e.preventDefault();
+          
+          // Trigger form validation and submission
+          form.handleSubmit(onSubmit)(e);
+        }} 
         className="space-y-4 p-4 max-h-[60vh] overflow-y-auto pr-2"
       >
         {/* Customer Selection */}
@@ -567,6 +555,13 @@ export default function PetForm({
           <Button 
             type="submit" 
             disabled={isSubmitting}
+            onClick={(e) => {
+              console.error('PET FORM: Submit button clicked', { 
+                event: e,
+                formValues: form.getValues(),
+                formErrors: form.formState.errors
+              });
+            }}
           >
             {defaultValues ? "Update" : "Add"} Pet
           </Button>

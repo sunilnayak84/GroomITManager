@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Pet, InsertPet } from "@db/schema";
-import { getDocs, doc, runTransaction, increment, collection, addDoc } from "firebase/firestore";
+import { getDocs, doc, runTransaction, increment, collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { petsCollection, createPet } from "../lib/firestore";
 
@@ -24,119 +24,88 @@ export function usePets() {
   });
 
   const addPet = async (pet: InsertPet): Promise<Pet> => {
-    try {
-      console.error('PETS HOOK: Attempting to add pet', { pet });
+    console.error('ADD_PET: Attempting to add pet', { 
+      pet,
+      petData: {
+        ...pet,
+        customerId: pet.customerId,
+        name: pet.name,
+        type: pet.type,
+        breed: pet.breed
+      }
+    });
 
-      // Validate required fields
-      const requiredFields = ['name', 'type', 'breed', 'customerId'];
-      for (const field of requiredFields) {
-        if (!pet[field]) {
-          console.error(`PETS HOOK: Missing required field ${field}`, { pet });
-          throw new Error(`${field.charAt(0).toUpperCase() + field.slice(1)} is required`);
-        }
+    // Validate required fields before submission
+    const requiredFields: (keyof InsertPet)[] = ['name', 'type', 'breed', 'customerId'];
+    const missingFields = requiredFields.filter(field => {
+      const value = pet[field];
+      return value === undefined || value === null || value === '';
+    });
+
+    if (missingFields.length > 0) {
+      console.error('ADD_PET: Missing required fields', { 
+        missingFields,
+        pet 
+      });
+      throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+    }
+
+    try {
+      // Fetch the customer to ensure it exists
+      const customerDoc = await getDoc(doc(db, 'customers', pet.customerId));
+      if (!customerDoc.exists()) {
+        console.error('ADD_PET: Customer not found', { 
+          customerId: pet.customerId 
+        });
+        throw new Error('Selected customer does not exist');
       }
 
-      // Clean the pet data before adding
-      const cleanedPet = Object.fromEntries(
-        Object.entries(pet)
-          .filter(([_, value]) => value !== undefined && value !== '')
-          .map(([key, value]) => [key, value === '' ? null : value])
-      );
+      // Add timestamp fields
+      const petWithTimestamps = {
+        ...pet,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      };
 
-      console.error('PETS HOOK: Cleaned pet data', { cleanedPet });
+      // Add the pet to Firestore
+      const petRef = await addDoc(collection(db, 'pets'), petWithTimestamps);
 
-      let newPet: Pet | null = null;
-
-      await runTransaction(db, async (transaction) => {
-        // Verify customer exists
-        const customerRef = doc(db, 'customers', cleanedPet.customerId);
-        const customerDoc = await transaction.get(customerRef);
-        
-        if (!customerDoc.exists()) {
-          console.error('PETS HOOK: Customer not found', { 
-            customerId: cleanedPet.customerId,
-            customerRef: customerRef.path 
-          });
-          throw new Error(`Customer with ID ${cleanedPet.customerId} not found`);
-        }
-
-        // Log customer details
-        console.error('PETS HOOK: Customer found', { 
-          customerId: cleanedPet.customerId,
-          customerData: customerDoc.data() 
-        });
-
-        // Add the pet
-        const petsCollection = collection(db, 'pets');
-        const petRef = await addDoc(petsCollection, {
-          ...cleanedPet,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        });
-
-        console.error('PETS HOOK: Pet added with ID', { 
-          petId: petRef.id,
-          petData: {
-            ...cleanedPet,
-            createdAt: new Date(),
-            updatedAt: new Date()
-          }
-        });
-
-        // Update the customer's pet count
-        const currentPetCount = customerDoc.data().petCount || 0;
-        transaction.update(customerRef, {
-          petCount: currentPetCount + 1,
-          updatedAt: new Date()
-        });
-
-        console.error('PETS HOOK: Customer pet count updated', { 
-          customerId: cleanedPet.customerId, 
-          oldPetCount: currentPetCount,
-          newPetCount: currentPetCount + 1 
-        });
-
-        // Fetch the newly created pet
-        const newPetDoc = await transaction.get(petRef);
-        newPet = {
-          id: petRef.id,
-          ...newPetDoc.data()
-        } as Pet;
-
-        console.error('PETS HOOK: New pet created', { newPet });
+      console.error('ADD_PET: Pet added successfully', { 
+        petId: petRef.id,
+        customerId: pet.customerId 
       });
 
-      if (!newPet) {
-        throw new Error('Failed to create pet - no pet returned');
+      // Update the customer's pet count
+      const customerRef = doc(db, 'customers', pet.customerId);
+      const customerDoc = await getDoc(customerRef);
+      if (customerDoc.exists()) {
+        await runTransaction(db, async (transaction) => {
+          transaction.update(customerRef, {
+            petCount: increment(1)
+          });
+        });
       }
 
       // Update the cache
       queryClient.setQueryData<Pet[]>(['pets'], (old) => {
         console.error('PETS HOOK: Updating query cache', { 
           oldPets: old, 
-          newPet 
+          newPet: petWithTimestamps 
         });
-        if (!old) return [newPet!];
-        return [...old, newPet!];
+        if (!old) return [petWithTimestamps];
+        return [...old, petWithTimestamps];
       });
 
-      return newPet;
+      return {
+        id: petRef.id,
+        ...petWithTimestamps
+      };
     } catch (error) {
-      console.error('PETS HOOK: CRITICAL ERROR - Failed to add pet', { 
+      console.error('ADD_PET: Error adding pet', { 
         error,
         errorMessage: error instanceof Error ? error.message : 'Unknown error',
         pet 
       });
-      
-      // More detailed error logging
-      if (error instanceof Error) {
-        console.error('PETS HOOK: Error details', {
-          message: error.message,
-          name: error.name,
-          stack: error.stack
-        });
-      }
-
       throw error;
     }
   };
