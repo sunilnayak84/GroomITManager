@@ -161,13 +161,10 @@ export default function PetForm({
       // Display specific toast errors
       Object.entries(fieldErrors).forEach(([field, errors]) => {
         if (errors.length > 0) {
-          toast.error(`${field.charAt(0).toUpperCase() + field.slice(1)}: ${errors[0]}`, {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
+          toast({
+            title: field.charAt(0).toUpperCase() + field.slice(1),
+            description: errors[0],
+            variant: "destructive"
           });
         }
       });
@@ -214,13 +211,10 @@ export default function PetForm({
           message: 'Selected customer not found'
         });
 
-        toast.error('Selected customer not found', {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
+        toast({
+          title: "Customer Error",
+          description: "Selected customer not found",
+          variant: "destructive"
         });
         return;
       }
@@ -229,24 +223,18 @@ export default function PetForm({
       if (pet) {
         // Update existing pet
         await usePetsUpdatePet(pet.id, cleanedData);
-        toast.success('Pet updated successfully!', {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
+        toast({
+          title: "Success",
+          description: "Pet updated successfully!",
+          variant: "default"
         });
       } else {
         // Add new pet
         await addPet(cleanedData);
-        toast.success('Pet added successfully!', {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
+        toast({
+          title: "Success",
+          description: "Pet added successfully!",
+          variant: "default"
         });
       }
 
@@ -263,41 +251,29 @@ export default function PetForm({
       // Specific error handling for different types of errors
       if (error instanceof Error) {
         if (error.message.includes('Missing required fields')) {
-          toast.error('Please fill in all required fields', {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
+          toast({
+            title: "Validation Error",
+            description: "Please fill in all required fields",
+            variant: "destructive"
           });
         } else if (error.message.includes('Customer')) {
-          toast.error('Invalid customer selected', {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
+          toast({
+            title: "Customer Error",
+            description: "Invalid customer selected",
+            variant: "destructive"
           });
         } else {
-          toast.error(`Failed to ${pet ? 'update' : 'add'} pet: ${error.message}`, {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
+          toast({
+            title: "Error",
+            description: `Failed to ${pet ? 'update' : 'add'} pet: ${error.message}`,
+            variant: "destructive"
           });
         }
       } else {
-        toast.error(`Failed to ${pet ? 'update' : 'add'} pet`, {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
+        toast({
+          title: "Error",
+          description: `Failed to ${pet ? 'update' : 'add'} pet`,
+          variant: "destructive"
         });
       }
     }
