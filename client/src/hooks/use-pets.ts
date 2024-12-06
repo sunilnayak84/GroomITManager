@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Pet, InsertPet } from "@db/schema";
 import { getDocs, doc, runTransaction, increment, collection, addDoc, serverTimestamp, query, updateDoc, deleteDoc, getDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
-import { petsCollection, createPet } from "../lib/firestore";
+import { petsCollection, createPet, customersCollection } from "../lib/firestore";
 import { uploadFile } from "../lib/storage";
 
 export const usePets = () => {
@@ -14,70 +14,71 @@ export const usePets = () => {
       const q = query(petsCollection);
       const querySnapshot = await getDocs(q);
       
-      const fetchedPets = await Promise.all(querySnapshot.docs.map(async (doc) => {
+      // First, fetch all customers to create a lookup map
+      const customersQuery = query(customersCollection);
+      const customersSnapshot = await getDocs(customersQuery);
+      const customersMap = new Map(
+        customersSnapshot.docs.map(doc => {
+          const customerData = doc.data();
+          return [
+            customerData.id.toString(), 
+            {
+              id: doc.id,
+              ...customerData,
+              fullName: `${customerData.firstName} ${customerData.lastName}`
+            }
+          ];
+        })
+      );
+
+      console.error('PETS_QUERY: Customers Map', {
+        customerCount: customersMap.size,
+        customerIds: Array.from(customersMap.keys())
+      });
+
+      const fetchedPets = querySnapshot.docs.map((doc) => {
         const petData = doc.data();
         
-        console.error('PET_QUERY: Raw Pet Data', {
-          petId: doc.id,
+        console.error('PET_QUERY: Detailed Pet Data', {
+          petFirebaseId: doc.id,
           petData,
           customerId: petData.customerId,
-          firebaseId: petData.firebaseId
+          customerIdType: typeof petData.customerId
         });
 
-        // Fetch associated customer details
+        // Try to find customer using multiple methods
         let customerDetails = null;
-        if (petData.customerId) {
-          try {
-            const customerRef = doc(db, 'customers', petData.customerId.toString());
-            const customerDoc = await getDoc(customerRef);
-            
-            console.error('PET_QUERY: Customer Lookup', {
-              customerId: petData.customerId,
-              customerExists: customerDoc.exists(),
-              customerData: customerDoc.exists() ? customerDoc.data() : null
-            });
-
-            if (customerDoc.exists()) {
-              customerDetails = {
-                id: customerDoc.id,
-                ...customerDoc.data()
-              };
-            }
-          } catch (error) {
-            console.error('PET_QUERY: Customer Fetch Error', {
-              petId: doc.id,
-              customerId: petData.customerId,
-              error: error instanceof Error ? error.message : error
-            });
-          }
+        const customerIdStr = petData.customerId ? petData.customerId.toString() : null;
+        
+        if (customerIdStr && customersMap.has(customerIdStr)) {
+          customerDetails = customersMap.get(customerIdStr);
+          console.error('PET_QUERY: Customer Found in Map', {
+            customerId: customerIdStr,
+            customerName: customerDetails?.fullName
+          });
+        } else {
+          console.error('PET_QUERY: Customer NOT Found', {
+            searchedCustomerId: customerIdStr,
+            availableCustomerIds: Array.from(customersMap.keys())
+          });
         }
 
-        const petWithOwner = {
-          id: doc.data().id || 0, // Fallback to 0 if id is not present
-          firebaseId: doc.id, // Use Firestore document ID as firebaseId
+        return {
+          id: petData.id || 0,
+          firebaseId: doc.id,
           ...petData,
           owner: customerDetails ? {
             id: customerDetails.id,
-            name: `${customerDetails.firstName} ${customerDetails.lastName}`,
+            name: customerDetails.fullName,
             phone: customerDetails.phone || '',
             email: customerDetails.email || ''
           } : null
         } as Pet;
+      });
 
-        console.error('PET_QUERY: Processed Pet', {
-          petId: petWithOwner.id,
-          firebaseId: petWithOwner.firebaseId,
-          petName: petWithOwner.name,
-          ownerName: petWithOwner.owner?.name,
-          customerId: petWithOwner.customerId
-        });
-
-        return petWithOwner;
-      }));
-
-      console.error('PETS HOOK: Fetched pets', { 
+      console.error('PETS HOOK: Fetched Pets Summary', { 
         petCount: fetchedPets.length,
-        pets: fetchedPets.map(p => ({ 
+        petsWithOwners: fetchedPets.map(p => ({ 
           id: p.id, 
           firebaseId: p.firebaseId,
           name: p.name, 
@@ -86,7 +87,14 @@ export const usePets = () => {
         }))
       });
 
-      return fetchedPets;
+      // Add additional properties to each pet
+      const enrichedPets = fetchedPets.map(pet => ({
+        ...pet,
+        age: calculateAge(pet.dateOfBirth),
+        weightRange: getWeightRange(pet.weight)
+      }));
+
+      return enrichedPets;
     }
   });
 
@@ -298,3 +306,22 @@ export const usePets = () => {
     ...rest
   };
 };
+
+// Helper functions
+function calculateAge(dateOfBirth: Date | null): number | null {
+  if (!dateOfBirth) return null;
+  const today = new Date();
+  const age = today.getFullYear() - dateOfBirth.getFullYear();
+  const monthDiff = today.getMonth() - dateOfBirth.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dateOfBirth.getDate())) {
+    return age - 1;
+  }
+  return age;
+}
+
+function getWeightRange(weight: number | null): string | null {
+  if (!weight) return null;
+  if (weight < 10) return 'Small';
+  if (weight < 20) return 'Medium';
+  return 'Large';
+}
