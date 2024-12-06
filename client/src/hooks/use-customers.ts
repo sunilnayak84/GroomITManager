@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Customer } from "@db/schema";
-import { getDocs, onSnapshot, query, deleteDoc, doc } from "firebase/firestore";
-import { customersCollection, createCustomer, updateCustomer as updateCustomerDoc } from "../lib/firestore";
+import { getDocs, onSnapshot, query, deleteDoc, doc, where } from "firebase/firestore";
+import { customersCollection, createCustomer, updateCustomer as updateCustomerDoc, deleteCustomerAndRelated } from "../lib/firestore";
 import { useEffect } from "react";
 
 export function useCustomers() {
@@ -65,12 +65,12 @@ export function useCustomers() {
 
   const deleteCustomerMutation = useMutation({
     mutationFn: async (id: number) => {
-      const customerRef = doc(customersCollection, id.toString());
-      await deleteDoc(customerRef);
+      await deleteCustomerAndRelated(id);
       return id;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["customers"] });
+      queryClient.invalidateQueries({ queryKey: ["pets"] });
     },
   });
 
