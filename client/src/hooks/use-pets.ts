@@ -121,11 +121,6 @@ export function usePets() {
       }));
     }
 
-    // If the ID is a generated timestamp-based ID, log a warning
-    if (id.startsWith('pet_')) {
-      console.warn('Using generated timestamp-based ID for update:', id);
-    }
-
     // Validate Firestore document reference
     let petRef;
     try {
@@ -184,7 +179,11 @@ export function usePets() {
         updatedFields: Object.keys(updateData)
       });
 
-      return true;
+      // Return the updated pet data
+      return {
+        id,
+        ...updateData
+      } as InsertPet;
     } catch (updateError) {
       const errorDetails = {
         errorName: updateError instanceof Error ? updateError.name : 'Unknown Error',
@@ -198,10 +197,8 @@ export function usePets() {
       };
 
       console.error('Firestore Update Error:', errorDetails);
-
-      // Throw a more user-friendly error with detailed error object
       throw new Error(JSON.stringify({
-        message: `Failed to update pet: ${updateError instanceof Error ? updateError.message : 'Unknown error'}`,
+        message: 'Failed to update pet in Firestore',
         details: errorDetails
       }));
     }

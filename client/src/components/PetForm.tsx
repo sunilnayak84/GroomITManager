@@ -92,7 +92,13 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
         petId: pet?.id
       });
 
-      if (pet?.id && updatePet) {
+      // Check if this is an update operation
+      if (pet?.id) {
+        // Validate that we have the updatePet function
+        if (!updatePet) {
+          throw new Error("Update function is not available");
+        }
+
         const updateData: Partial<InsertPet> = {};
 
         // Check each field and add to updateData only if it's different from the original
@@ -150,7 +156,7 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
           });
         }
       } else {
-        // Handle new pet creation
+        // Only create a new pet if this is not an update operation
         try {
           const newPet = await addPet(cleanedData);
           toast({
@@ -172,7 +178,7 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
       console.error('Form submission error:', error);
       toast({
         title: "Error",
-        description: "An unexpected error occurred. Please try again.",
+        description: error instanceof Error ? error.message : "An unexpected error occurred. Please try again.",
         variant: "destructive"
       });
     } finally {
