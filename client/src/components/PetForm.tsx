@@ -87,6 +87,9 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
 
       // If editing an existing pet, use the ID
       if (pet) {
+        console.log('Pet being updated:', pet);
+        console.log('Pet ID type:', typeof pet.id);
+        
         const updateResult = await updatePet?.(pet.id, {
           ...data,
           customerId: data.customerId

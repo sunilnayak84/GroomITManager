@@ -31,8 +31,16 @@ export function usePets() {
 
   const updatePet = async (id: number, data: Partial<Pet>) => {
     try {
+      // Log the input values for debugging
+      console.log('Update Pet Input:', { id, data });
+
       // Ensure id is a valid number
-      const petId = Number(id);
+      const petId = typeof id === 'string' ? parseInt(id, 10) : id;
+      
+      // Additional logging
+      console.log('Parsed Pet ID:', petId);
+      console.log('Pet ID Type:', typeof petId);
+
       if (isNaN(petId)) {
         console.error('Invalid pet ID:', id);
         throw new Error('Invalid pet ID');

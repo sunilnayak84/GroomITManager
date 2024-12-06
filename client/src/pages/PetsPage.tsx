@@ -264,6 +264,7 @@ export default function PetsPage() {
                     pet={selectedPet}
                     updatePet={updatePet}
                     onCancel={() => {
+                      console.log('Selected Pet before closing:', selectedPet);
                       setSelectedPet(null);
                       setOpen(false);
                     }}
