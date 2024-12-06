@@ -303,10 +303,10 @@ export default function PetsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {(pets || []).map((pet) => (
-              <TableRow key={pet.id}>
+            {(pets || []).map((pet, index) => (
+              <TableRow key={pet.id || `pet-${index}`}>
                 {columns.map((column) => (
-                  <TableCell key={`${pet.id}-${column.header}`}>
+                  <TableCell key={`${pet.id || `pet-${index}`}-${column.header}`}>
                     {column.cell(pet)}
                   </TableCell>
                 ))}
