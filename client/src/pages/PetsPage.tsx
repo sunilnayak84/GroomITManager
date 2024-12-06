@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Pencil, Trash } from "lucide-react";
 import { usePets } from "../hooks/use-pets";
@@ -142,6 +142,12 @@ export default function PetsPage() {
     },
   ];
 
+  useEffect(() => {
+    if (pets) {
+      // Update the table with the latest pets data
+    }
+  }, [pets]);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -166,7 +172,7 @@ export default function PetsPage() {
             </DialogHeader>
             <PetForm 
               onSuccess={(data) => {
-                addPet({ ...data, createdAt: new Date() });
+                addPet(data);
                 setOpen(false);
                 toast({
                   title: "Success",
@@ -276,10 +282,7 @@ export default function PetsPage() {
                       image: selectedPet.image || undefined,
                       notes: selectedPet.notes || undefined
                     }}
-                    pet={{
-                      ...selectedPet,
-                      id: selectedPet.id // Use the Firestore document ID directly
-                    }}
+                    pet={selectedPet}
                     updatePet={updatePet}
                     onSuccess={(data) => {
                       setIsEditing(false);
@@ -325,7 +328,7 @@ export default function PetsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {(pets || []).map((pet) => (
+            {pets?.map((pet) => (
               <TableRow key={pet.id}>
                 {columns.map((column) => (
                   <TableCell key={`${pet.id}-${column.header}`}>

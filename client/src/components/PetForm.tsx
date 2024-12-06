@@ -138,11 +138,6 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
         try {
           const updatedPet = await updatePet(pet.id, updateData);
           if (updatedPet) {
-            toast({
-              title: "Success",
-              description: "Pet information updated successfully",
-              variant: "default"
-            });
             onSuccess?.(updatedPet);
           } else {
             throw new Error("Failed to update pet information");
@@ -159,11 +154,6 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
         // Only create a new pet if this is not an update operation
         try {
           const newPet = await addPet(cleanedData);
-          toast({
-            title: "Success",
-            description: "New pet added successfully",
-            variant: "default"
-          });
           onSuccess?.(newPet);
         } catch (error) {
           console.error('Error adding new pet:', error);

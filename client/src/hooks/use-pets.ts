@@ -1,120 +1,88 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Pet, InsertPet } from "@db/schema";
-import { getDocs, addDoc, onSnapshot, query, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { getDocs, addDoc, onSnapshot, query, doc, updateDoc, deleteDoc, collection, getDoc } from "firebase/firestore";
 import { petsCollection } from "../lib/firestore";
+import { db } from "../lib/firebase"; // Import the Firebase database instance
 import React from "react";
 
 export function usePets() {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error } = useQuery<Pet[]>({
-    queryKey: ["pets"],
+  const { data: pets, isLoading } = useQuery<Pet[]>({
+    queryKey: ['pets'],
     queryFn: async () => {
-      const querySnapshot = await getDocs(petsCollection);
-      return querySnapshot.docs.map(doc => {
-        const petData = doc.data();
-        const pet = {
-          ...petData,
-          id: doc.id,  // Always use the Firestore document ID
-          createdAt: petData.createdAt?.toDate() || new Date(),
-          updatedAt: petData.updatedAt?.toDate() || new Date()
-        } as Pet;
-        console.log('Fetched Pet Document:', {
+      try {
+        const petsCollection = collection(db, 'pets');
+        const querySnapshot = await getDocs(petsCollection);
+        return querySnapshot.docs.map(doc => ({
           id: doc.id,
-          documentData: pet
-        });
-        return pet;
-      });
+          ...doc.data()
+        } as Pet));
+      } catch (error) {
+        console.error('Error fetching pets:', error);
+        throw error;
+      }
     },
   });
 
-  const addPet = async (pet: Omit<Pet, 'id'>) => {
+  const addPet = async (pet: InsertPet): Promise<Pet> => {
     try {
-      // Clean up pet data
-      const cleanedPetData = Object.fromEntries(
-        Object.entries(pet)
-          .filter(([_, value]) => 
-            value !== undefined && 
-            value !== null && 
-            value !== ''
-          )
-          .map(([key, value]) => [key, value === '' ? null : value])
-      );
-
-      console.log('Cleaned Pet Data for Adding:', cleanedPetData);
-
+      const petsCollection = collection(db, 'pets');
       const docRef = await addDoc(petsCollection, {
-        ...cleanedPetData,
-        createdAt: new Date()
+        ...pet,
+        createdAt: new Date(),
+        updatedAt: new Date()
       });
 
-      console.log('Added Pet Document Reference:', docRef);
+      const newPet = {
+        id: docRef.id,
+        ...pet,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      } as Pet;
 
       // Invalidate and refetch
-      await queryClient.invalidateQueries({ queryKey: ["pets"] });
+      await queryClient.invalidateQueries({ queryKey: ['pets'] });
 
-      return {
-        id: docRef.id,
-        ...cleanedPetData
-      } as Pet;
+      return newPet;
     } catch (error) {
       console.error('Error adding pet:', error);
       throw error;
     }
   };
 
-  const updatePet = async (id: string, data: Partial<InsertPet>) => {
-    console.log('updatePet called with:', {
-      id, 
-      data: JSON.stringify(data, null, 2)
-    });
-
-    // Validate ID
-    if (!id || typeof id !== 'string' || id.trim() === '') {
-      throw new Error('Invalid pet ID: ID must be a non-empty string');
-    }
-
-    // Validate data
-    if (!data || typeof data !== 'object' || Array.isArray(data)) {
-      throw new Error('Update data must be a valid object');
-    }
-
-    // Clean the update data
-    const updateData = Object.fromEntries(
-      Object.entries(data)
-        .filter(([_, v]) => 
-          v !== undefined && 
-          v !== null && 
-          (typeof v !== 'string' || v.trim() !== '')
-        )
-        .map(([k, v]) => [k, v === '' ? null : v])
-    );
-
-    // Ensure we have data to update
-    if (Object.keys(updateData).length === 0) {
-      throw new Error('No valid fields to update');
-    }
-
+  const updatePet = async (id: string, updates: Partial<InsertPet>): Promise<Pet | null> => {
     try {
-      const petRef = doc(petsCollection, id);
+      const petRef = doc(db, 'pets', id);
       
-      // Add updatedAt timestamp
-      const finalUpdateData = {
-        ...updateData,
+      // Get the current pet data
+      const petDoc = await getDoc(petRef);
+      if (!petDoc.exists()) {
+        throw new Error('Pet not found');
+      }
+
+      const updateData = {
+        ...updates,
         updatedAt: new Date()
       };
 
-      await updateDoc(petRef, finalUpdateData);
-      
-      // Invalidate and refetch
-      await queryClient.invalidateQueries({ queryKey: ["pets"] });
+      await updateDoc(petRef, updateData);
 
-      // Return the updated pet data
-      return {
-        id,
-        ...updateData,
-        updatedAt: new Date()
+      // Get the updated document
+      const updatedDoc = await getDoc(petRef);
+      if (!updatedDoc.exists()) {
+        throw new Error('Failed to retrieve updated pet');
+      }
+
+      const updatedPet = {
+        id: updatedDoc.id,
+        ...updatedDoc.data()
       } as Pet;
+
+      // Invalidate and refetch
+      await queryClient.invalidateQueries({ queryKey: ['pets'] });
+
+      return updatedPet;
     } catch (error) {
       console.error('Error updating pet:', error);
       throw error;
@@ -123,60 +91,22 @@ export function usePets() {
 
   const deletePet = async (id: string) => {
     try {
-      const petRef = doc(petsCollection, id);
-      console.log('Attempting to delete pet with ID:', id);
+      const petRef = doc(db, 'pets', id);
       await deleteDoc(petRef);
-      console.log('Pet deleted successfully');
+
       // Invalidate and refetch
-      await queryClient.invalidateQueries({ queryKey: ["pets"] });
-      return true;
+      await queryClient.invalidateQueries({ queryKey: ['pets'] });
     } catch (error) {
       console.error('Error deleting pet:', error);
       throw error;
     }
   };
 
-  const addPetMutation = useMutation({
-    mutationFn: addPet,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["pets"] });
-    },
-  });
-
-  const updatePetMutation = useMutation({
-    mutationFn: updatePet,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["pets"] });
-    },
-  });
-
-  const deletePetMutation = useMutation({
-    mutationFn: deletePet,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["pets"] });
-    },
-  });
-
-  // Set up real-time updates
-  React.useEffect(() => {
-    const q = query(petsCollection);
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const pets = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      } as Pet));
-      queryClient.setQueryData(["pets"], pets);
-    });
-
-    return () => unsubscribe();
-  }, [queryClient]);
-
   return {
-    data,
+    pets,
     isLoading,
-    error,
-    addPet: addPetMutation.mutateAsync,
-    updatePet: updatePetMutation.mutateAsync,
-    deletePet: deletePetMutation.mutateAsync,
+    addPet,
+    updatePet,
+    deletePet,
   };
 }
