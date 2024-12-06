@@ -1,47 +1,30 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Pet, InsertPet } from "@db/schema";
-import { getDocs, addDoc, doc, updateDoc, deleteDoc, collection, getDoc, onSnapshot } from "firebase/firestore";
+import { getDocs, addDoc, doc, updateDoc, deleteDoc, collection, getDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
-import { useEffect } from "react";
 
 export function usePets() {
   const queryClient = useQueryClient();
 
   const { data: pets, isLoading } = useQuery<Pet[]>({
     queryKey: ['pets'],
-    queryFn: () => {
-      return new Promise((resolve, reject) => {
-        try {
-          const petsCollection = collection(db, 'pets');
-          
-          // Set up real-time listener
-          const unsubscribe = onSnapshot(petsCollection, (snapshot) => {
-            const petsData = snapshot.docs.map(doc => ({
-              id: doc.id,
-              ...doc.data()
-            } as Pet));
-            
-            resolve(petsData);
-          }, (error) => {
-            console.error('Error in real-time pets listener:', error);
-            reject(error);
-          });
-
-          // Clean up listener on query cleanup
-          return () => unsubscribe();
-        } catch (error) {
-          console.error('Error setting up pets listener:', error);
-          reject(error);
-        }
-      });
-    },
-    staleTime: Infinity, // Disable automatic refetching since we're using real-time updates
+    queryFn: async () => {
+      try {
+        const petsCollection = collection(db, 'pets');
+        const querySnapshot = await getDocs(petsCollection);
+        return querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        } as Pet));
+      } catch (error) {
+        console.error('Error fetching pets:', error);
+        throw error;
+      }
+    }
   });
 
   const addPet = async (pet: InsertPet): Promise<Pet> => {
     try {
-      const petsCollection = collection(db, 'pets');
-      
       // Clean the pet data before adding
       const cleanedPet = Object.fromEntries(
         Object.entries(pet)
@@ -49,6 +32,7 @@ export function usePets() {
           .map(([key, value]) => [key, value === '' ? null : value])
       );
 
+      const petsCollection = collection(db, 'pets');
       const docRef = await addDoc(petsCollection, {
         ...cleanedPet,
         createdAt: new Date(),
@@ -60,6 +44,12 @@ export function usePets() {
         id: docRef.id,
         ...newPetDoc.data()
       } as Pet;
+
+      // Update the cache manually
+      queryClient.setQueryData<Pet[]>(['pets'], (old) => {
+        if (!old) return [newPet];
+        return [...old, newPet];
+      });
 
       return newPet;
     } catch (error) {
@@ -103,6 +93,12 @@ export function usePets() {
         ...updatedDoc.data()
       } as Pet;
 
+      // Update the cache manually
+      queryClient.setQueryData<Pet[]>(['pets'], (old) => {
+        if (!old) return [updatedPet];
+        return old.map(pet => pet.id === id ? updatedPet : pet);
+      });
+
       return updatedPet;
     } catch (error) {
       console.error('Error updating pet:', error);
@@ -114,6 +110,12 @@ export function usePets() {
     try {
       const petRef = doc(db, 'pets', id);
       await deleteDoc(petRef);
+
+      // Update the cache manually
+      queryClient.setQueryData<Pet[]>(['pets'], (old) => {
+        if (!old) return [];
+        return old.filter(pet => pet.id !== id);
+      });
     } catch (error) {
       console.error('Error deleting pet:', error);
       throw error;

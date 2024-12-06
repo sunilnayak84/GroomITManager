@@ -75,11 +75,12 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
   };
 
   const onSubmit = async (data: PetFormData) => {
-    try {
-      if (isSubmitting) {
-        return; // Prevent duplicate submissions
-      }
+    if (isSubmitting) {
+      console.log('Form is already submitting, preventing duplicate submission');
+      return;
+    }
 
+    try {
       setIsSubmitting(true);
       
       // Clean the data by removing empty strings and undefined values
@@ -129,38 +130,12 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
             description: "Please modify at least one field before updating.",
             variant: "default"
           });
-          setIsSubmitting(false);
           return;
         }
 
-        try {
-          const updatedPet = await updatePet(pet.id, updateData);
-          if (updatedPet) {
-            onSuccess?.(updatedPet);
-          } else {
-            throw new Error("Failed to update pet information");
-          }
-        } catch (error) {
-          console.error('Error updating pet:', error);
-          toast({
-            title: "Update Failed",
-            description: error instanceof Error ? error.message : "Failed to update pet information",
-            variant: "destructive"
-          });
-        }
+        await onSuccess?.(updateData as PetFormData);
       } else {
-        // Only create a new pet if this is not an update operation
-        try {
-          const newPet = await addPet(cleanedData);
-          onSuccess?.(newPet);
-        } catch (error) {
-          console.error('Error adding new pet:', error);
-          toast({
-            title: "Creation Failed",
-            description: error instanceof Error ? error.message : "Failed to add new pet",
-            variant: "destructive"
-          });
-        }
+        await onSuccess?.(cleanedData);
       }
     } catch (error) {
       console.error('Form submission error:', error);

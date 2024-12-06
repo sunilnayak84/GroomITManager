@@ -209,7 +209,14 @@ export default function PetsPage() {
               </DialogDescription>
             </DialogHeader>
             <PetForm 
-              onSuccess={handleAddPet}
+              onSuccess={async (data) => {
+                try {
+                  await handleAddPet(data);
+                  setOpen(false);
+                } catch (error) {
+                  console.error('Error in form submission:', error);
+                }
+              }}
             />
           </DialogContent>
         </Dialog>
@@ -315,7 +322,13 @@ export default function PetsPage() {
                     }}
                     pet={selectedPet}
                     updatePet={handleUpdatePet}
-                    onSuccess={(data) => handleUpdatePet(selectedPet.id, data)}
+                    onSuccess={async (data) => {
+                      try {
+                        await handleUpdatePet(selectedPet.id, data);
+                      } catch (error) {
+                        console.error('Error in form update:', error);
+                      }
+                    }}
                     onCancel={() => {
                       setIsEditing(false);
                     }}
