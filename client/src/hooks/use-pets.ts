@@ -39,9 +39,16 @@ export function usePets() {
   };
 
   const deletePet = async (id: number) => {
-    const petRef = doc(petsCollection, id.toString());
-    await deleteDoc(petRef);
-    return true;
+    try {
+      const petRef = doc(petsCollection, id.toString());
+      console.log('Attempting to delete pet with ID:', id);
+      await deleteDoc(petRef);
+      console.log('Pet deleted successfully');
+      return true;
+    } catch (error) {
+      console.error('Error deleting pet:', error);
+      throw error;
+    }
   };
 
   const addPetMutation = useMutation({

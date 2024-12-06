@@ -72,10 +72,11 @@ export default function PetsPage() {
         description: "Pet deleted successfully",
       });
     } catch (error) {
+      console.error('Delete Pet Error:', error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to delete pet",
+        description: `Failed to delete pet: ${error instanceof Error ? error.message : 'Unknown error'}`,
       });
     }
   };
