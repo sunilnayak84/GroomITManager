@@ -201,33 +201,9 @@ export function useCustomers() {
           throw error;
         }
       },
-    }).isLoading,
-    error: useQuery<Customer[]>({
-      queryKey: ["customers"],
-      queryFn: async () => {
-        try {
-          const querySnapshot = await getDocs(customersCollection);
-          const customers = querySnapshot.docs.map(doc => {
-            const customerData = doc.data();
-            return {
-              id: doc.id,
-              ...customerData,
-              // Ensure createdAt is a valid Date object
-              createdAt: customerData.createdAt 
-                ? new Date(customerData.createdAt) 
-                : undefined
-            } as Customer;
-          });
-
-          return customers;
-        } catch (error) {
-          console.error('Error fetching customers:', error);
-          throw error;
-        }
-      },
-    }).error,
-    addCustomer: addCustomerMutation.mutateAsync,
-    updateCustomer: updateCustomerMutation.mutateAsync,
-    deleteCustomer: deleteCustomerMutationHook.mutateAsync,
+    }).data,
+    addCustomerMutation,
+    updateCustomerMutation,
+    deleteCustomerMutationHook
   };
 }

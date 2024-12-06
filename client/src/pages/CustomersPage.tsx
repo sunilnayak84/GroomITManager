@@ -25,7 +25,6 @@ import { useToast } from "@/hooks/use-toast";
 import PetForm from "@/components/PetForm";
 import { Loader2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useUpdateCustomer } from "@/hooks/use-customers";
 
 export default function CustomersPage() {
   const [open, setOpen] = useState(false);
@@ -37,9 +36,8 @@ export default function CustomersPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const { data: customers, isLoading } = useCustomers();
+  const { data: customers, isLoading, updateCustomerMutation } = useCustomers();
   const { data: pets } = usePets();
-  const { mutateAsync: updateCustomer } = useUpdateCustomer();
   const queryClient = useQueryClient();
 
   const form = useForm<InsertCustomer>({
@@ -499,22 +497,13 @@ export default function CustomersPage() {
                   <form onSubmit={editForm.handleSubmit(async (data) => {
                     try {
                       setIsSubmitting(true);
-                      await updateCustomer({ 
+                      // Use the updateCustomerMutation from the hook
+                      await updateCustomerMutation.mutateAsync({ 
                         id: selectedCustomer.id, 
                         data: {
                           ...data,
                           createdAt: selectedCustomer.createdAt,
                         }
-                      });
-                      
-                      // Update the local customer data
-                      queryClient.setQueryData(['customers'], (oldData: Customer[] | undefined) => {
-                        if (!oldData) return oldData;
-                        return oldData.map(customer => 
-                          customer.id === selectedCustomer.id 
-                            ? { ...customer, ...data }
-                            : customer
-                        );
                       });
                       
                       // Update the selected customer
