@@ -167,6 +167,7 @@ export default function PetForm({
 
       if (pet?.id) {
         await usePetsUpdatePet(pet.id, cleanedData);
+        onSuccess?.(cleanedData);
         toast({
           title: "Success",
           description: "Pet updated successfully",

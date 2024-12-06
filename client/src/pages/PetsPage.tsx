@@ -85,8 +85,9 @@ export default function PetsPage() {
     try {
       await updatePet(id, data);
       setIsEditing(false);
-      setShowPetDetails(false);
-      setSelectedPet(null);
+      // Keep the details dialog open to show the updated information
+      const updatedPet = { ...selectedPet, ...data, id };
+      setSelectedPet(updatedPet as Pet);
       toast({
         title: "Success",
         description: "Pet updated successfully",
@@ -378,7 +379,6 @@ export default function PetsPage() {
             )}
           </DialogContent>
         </Dialog>
-      </div>
 
       <div className="relative h-48 rounded-xl overflow-hidden">
         <img
