@@ -25,20 +25,15 @@ export function usePets() {
 
   const addPet = async (pet: InsertPet): Promise<Pet> => {
     try {
-      console.error('DEBUG: Attempting to add pet', { pet });
+      console.error('PETS HOOK: Attempting to add pet', { pet });
 
       // Validate required fields
-      if (!pet.name) {
-        throw new Error('Pet name is required');
-      }
-      if (!pet.type) {
-        throw new Error('Pet type is required');
-      }
-      if (!pet.breed) {
-        throw new Error('Pet breed is required');
-      }
-      if (!pet.customerId) {
-        throw new Error('Customer ID is required');
+      const requiredFields = ['name', 'type', 'breed', 'customerId'];
+      for (const field of requiredFields) {
+        if (!pet[field]) {
+          console.error(`PETS HOOK: Missing required field ${field}`, { pet });
+          throw new Error(`${field.charAt(0).toUpperCase() + field.slice(1)} is required`);
+        }
       }
 
       // Clean the pet data before adding
@@ -48,7 +43,7 @@ export function usePets() {
           .map(([key, value]) => [key, value === '' ? null : value])
       );
 
-      console.error('DEBUG: Cleaned pet data', { cleanedPet });
+      console.error('PETS HOOK: Cleaned pet data', { cleanedPet });
 
       let newPet: Pet | null = null;
 
@@ -58,9 +53,18 @@ export function usePets() {
         const customerDoc = await transaction.get(customerRef);
         
         if (!customerDoc.exists()) {
-          console.error('DEBUG: Customer not found', { customerId: cleanedPet.customerId });
+          console.error('PETS HOOK: Customer not found', { 
+            customerId: cleanedPet.customerId,
+            customerRef: customerRef.path 
+          });
           throw new Error(`Customer with ID ${cleanedPet.customerId} not found`);
         }
+
+        // Log customer details
+        console.error('PETS HOOK: Customer found', { 
+          customerId: cleanedPet.customerId,
+          customerData: customerDoc.data() 
+        });
 
         // Add the pet
         const petsCollection = collection(db, 'pets');
@@ -70,7 +74,14 @@ export function usePets() {
           updatedAt: new Date()
         });
 
-        console.error('DEBUG: Pet added with ID', { petId: petRef.id });
+        console.error('PETS HOOK: Pet added with ID', { 
+          petId: petRef.id,
+          petData: {
+            ...cleanedPet,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          }
+        });
 
         // Update the customer's pet count
         const currentPetCount = customerDoc.data().petCount || 0;
@@ -79,8 +90,9 @@ export function usePets() {
           updatedAt: new Date()
         });
 
-        console.error('DEBUG: Customer pet count updated', { 
+        console.error('PETS HOOK: Customer pet count updated', { 
           customerId: cleanedPet.customerId, 
+          oldPetCount: currentPetCount,
           newPetCount: currentPetCount + 1 
         });
 
@@ -91,7 +103,7 @@ export function usePets() {
           ...newPetDoc.data()
         } as Pet;
 
-        console.error('DEBUG: New pet created', { newPet });
+        console.error('PETS HOOK: New pet created', { newPet });
       });
 
       if (!newPet) {
@@ -100,17 +112,25 @@ export function usePets() {
 
       // Update the cache
       queryClient.setQueryData<Pet[]>(['pets'], (old) => {
+        console.error('PETS HOOK: Updating query cache', { 
+          oldPets: old, 
+          newPet 
+        });
         if (!old) return [newPet!];
         return [...old, newPet!];
       });
 
       return newPet;
     } catch (error) {
-      console.error('CRITICAL ERROR: Failed to add pet', error);
+      console.error('PETS HOOK: CRITICAL ERROR - Failed to add pet', { 
+        error,
+        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+        pet 
+      });
       
       // More detailed error logging
       if (error instanceof Error) {
-        console.error('Error details:', {
+        console.error('PETS HOOK: Error details', {
           message: error.message,
           name: error.name,
           stack: error.stack

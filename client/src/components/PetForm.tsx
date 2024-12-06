@@ -90,18 +90,25 @@ export default function PetForm({
     try {
       setIsSubmitting(true);
       
+      // Log raw form data
+      console.error('PET FORM: Raw form data', { 
+        data, 
+        customers, 
+        selectedCustomer: customers?.find(c => c.id === data.customerId) 
+      });
+      
       // Validate required fields
-      if (!data.name) {
-        throw new Error('Pet name is required');
-      }
-      if (!data.type) {
-        throw new Error('Pet type is required');
-      }
-      if (!data.breed) {
-        throw new Error('Pet breed is required');
-      }
-      if (!data.customerId) {
-        throw new Error('Please select a customer');
+      const requiredFields = ['name', 'type', 'breed', 'customerId'];
+      for (const field of requiredFields) {
+        if (!data[field]) {
+          console.error(`PET FORM: Missing required field ${field}`, { data });
+          toast({
+            title: "Validation Error",
+            description: `${field.charAt(0).toUpperCase() + field.slice(1)} is required`,
+            variant: "destructive"
+          });
+          return;
+        }
       }
       
       // Clean the data by removing empty strings and undefined values
@@ -111,11 +118,10 @@ export default function PetForm({
           .map(([key, value]) => [key, value === '' ? null : value])
       ) as InsertPet;
 
-      console.error('Form submission data:', {
-        rawData: data,
+      console.error('PET FORM: Cleaned submission data', { 
         cleanedData,
         isUpdate: !!pet,
-        petId: pet?.id
+        petId: pet?.id 
       });
 
       // Check if this is an update operation
@@ -137,7 +143,7 @@ export default function PetForm({
           }
         });
 
-        console.error('Update data:', updateData);
+        console.error('PET FORM: Update data', { updateData });
 
         // If no fields were changed, provide feedback
         if (Object.keys(updateData).length === 0) {
@@ -161,9 +167,9 @@ export default function PetForm({
         }
       } else {
         // This is a new pet creation
-        console.error('Attempting to add new pet:', cleanedData);
+        console.error('PET FORM: Attempting to add new pet', { cleanedData });
         const newPet = await addPet(cleanedData);
-        console.error('New pet result:', newPet);
+        console.error('PET FORM: New pet result', { newPet });
         
         if (newPet) {
           toast({
@@ -178,11 +184,14 @@ export default function PetForm({
         }
       }
     } catch (error) {
-      console.error('Form submission error:', error);
+      console.error('PET FORM: Submission error', { 
+        error,
+        errorMessage: error instanceof Error ? error.message : 'Unknown error' 
+      });
       
       // More detailed error logging
       if (error instanceof Error) {
-        console.error('Error details:', {
+        console.error('PET FORM: Error details', {
           message: error.message,
           name: error.name,
           stack: error.stack

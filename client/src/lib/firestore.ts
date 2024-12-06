@@ -59,16 +59,45 @@ export async function createCustomer(customer: Omit<Customer, 'id'>) {
 // Pet operations with error handling
 export async function createPet(pet: Omit<Pet, 'id'>) {
   try {
+    console.error('FIRESTORE: Attempting to create pet', { pet });
+
+    // Validate input
+    if (!pet) {
+      throw new Error('Pet data is undefined');
+    }
+
+    // Ensure required fields are present
+    const requiredFields = ['name', 'type', 'breed', 'customerId'];
+    for (const field of requiredFields) {
+      if (!pet[field]) {
+        throw new Error(`Missing required field: ${field}`);
+      }
+    }
+
     const petRef = doc(petsCollection);
+    
+    // Log before setDoc
+    console.error('FIRESTORE: Pet reference created', { petRefId: petRef.id });
+
     await setDoc(petRef, {
       ...pet,
       id: petRef.id,
       createdAt: pet.createdAt instanceof Date ? pet.createdAt : new Date(),
       updatedAt: new Date()
     });
+
+    // Log after setDoc
+    console.error('FIRESTORE: Pet document created successfully', { 
+      petId: petRef.id, 
+      petData: { ...pet, id: petRef.id }
+    });
+
     return petRef.id;
   } catch (error) {
-    console.error('Error creating pet:', error);
+    console.error('FIRESTORE: Critical error in createPet', { 
+      error: error instanceof Error ? error.message : 'Unknown error',
+      pet 
+    });
     throw error;
   }
 }
