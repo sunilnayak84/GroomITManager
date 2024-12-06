@@ -38,9 +38,10 @@ export async function createCustomer(customer: Omit<Customer, 'id'>) {
     const customerRef = doc(customersCollection);
     await setDoc(customerRef, {
       ...customer,
+      id: parseInt(customerRef.id), // Convert Firestore doc ID to number
       createdAt: new Date()
     });
-    return customerRef.id;
+    return parseInt(customerRef.id);
   } catch (error) {
     console.error('Error creating customer:', error);
     throw error;
@@ -95,54 +96,52 @@ export async function updateCustomer(id: number, data: Partial<Customer>) {
 export async function deleteCustomerAndRelated(id: number) {
   try {
     console.log('Starting deletion process for customer:', id);
-    const customerId = id.toString();
     
-    // First, verify the customer exists
-    const customerRef = doc(customersCollection, customerId);
-    const customerDoc = await getDoc(customerRef);
+    // Convert ID to string for Firestore
+    const customerIdStr = id.toString();
     
-    if (!customerDoc.exists()) {
-      console.error('Customer not found:', customerId);
-      throw new Error('Customer not found');
+    // First, check if the customer exists
+    const customerQuery = query(
+      customersCollection, 
+      where('id', '==', id)
+    );
+    const customerSnapshot = await getDocs(customerQuery);
+    
+    if (customerSnapshot.empty) {
+      console.error('Customer not found:', id);
+      throw new Error(`Customer with ID ${id} not found`);
     }
 
-    // Get all pets associated with this customer
-    const petsQuery = query(petsCollection, where('customerId', '==', parseInt(customerId)));
+    // Get the actual Firestore document reference
+    const customerDocRef = customerSnapshot.docs[0].ref;
+
+    // Find and delete associated pets
+    const petsQuery = query(
+      petsCollection, 
+      where('customerId', '==', id)
+    );
     const petsSnapshot = await getDocs(petsQuery);
     
-    console.log(`Found ${petsSnapshot.docs.length} pets to delete for customer:`, customerId);
-
-    if (petsSnapshot.docs.length > 0) {
-      // Delete all pets first
-      for (const petDoc of petsSnapshot.docs) {
-        try {
-          console.log('Deleting pet:', petDoc.id);
-          await deleteDoc(doc(petsCollection, petDoc.id));
-          console.log('Successfully deleted pet:', petDoc.id);
-        } catch (error) {
-          console.error('Failed to delete pet:', petDoc.id, error);
-          throw new Error(`Failed to delete pet: ${petDoc.id}`);
-        }
+    // Delete associated pets
+    const petDeletionPromises = petsSnapshot.docs.map(async (petDoc) => {
+      try {
+        console.log('Deleting pet:', petDoc.id);
+        await deleteDoc(petDoc.ref);
+        console.log('Successfully deleted pet:', petDoc.id);
+      } catch (error) {
+        console.error('Failed to delete pet:', petDoc.id, error);
+        throw new Error(`Failed to delete pet: ${petDoc.id}`);
       }
-      console.log('All pets deleted successfully');
-    }
+    });
 
-    // Delete the customer
-    try {
-      console.log('Deleting customer:', customerId);
-      await deleteDoc(customerRef);
-      
-      // Verify customer deletion
-      const verifyDoc = await getDoc(customerRef);
-      if (verifyDoc.exists()) {
-        throw new Error('Customer document still exists after deletion');
-      }
-      console.log('Customer deleted successfully:', customerId);
-      return true;
-    } catch (error) {
-      console.error('Error deleting customer:', customerId, error);
-      throw new Error('Failed to delete customer');
-    }
+    // Wait for all pet deletions
+    await Promise.all(petDeletionPromises);
+
+    // Delete the customer document
+    await deleteDoc(customerDocRef);
+    
+    console.log('Customer and associated pets deleted successfully:', id);
+    return true;
   } catch (error) {
     console.error('Error in deleteCustomerAndRelated:', error);
     throw error;
