@@ -62,7 +62,8 @@ export default function PetForm({
   pet
 }: PetFormProps) {
   const { 
-    updatePet: usePetsUpdatePet 
+    updatePet: usePetsUpdatePet,
+    addPet
   } = usePets();
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -197,25 +198,33 @@ export default function PetForm({
 
       if (pet) {
         // Update existing pet
-        await usePetsUpdatePet(pet.id, petData);
+        await updatePet({ id: pet.id, ...petData });
         toast({
           title: "Pet Updated",
           description: `${data.name} has been updated successfully.`,
         });
       } else {
-        // Just call onSuccess with the cleaned data
-        onSuccess?.(petData);
+        // Create new pet
+        const addedPet = await addPet(petData);
+        toast({
+          title: "Pet Added",
+          description: `${data.name} has been added successfully.`,
+        });
+        onSuccess?.(addedPet);
       }
 
-      setIsSubmitting(false);
+      form.reset();
+      setImagePreview(null);
+      onCancel?.();
     } catch (error) {
       console.error('PET FORM: Submission error', error);
-      setIsSubmitting(false);
       toast({
         title: "Error",
-        description: "Failed to save pet. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to save pet. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
