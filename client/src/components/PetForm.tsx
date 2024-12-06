@@ -24,6 +24,7 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
   const { data: customers } = useCustomers();
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   type PetFormData = {
     name: string;
@@ -73,81 +74,27 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
     }
   };
 
-  const onSubmit = async (data: InsertPet) => {
+  const onSubmit = async (data: PetFormData) => {
     try {
-      // Log the raw form data for debugging
-      console.log('Raw Form Data:', JSON.stringify(data, null, 2));
-
-      // Ensure we have a valid customer ID
-      if (!data.customerId) {
-        toast({
-          title: "Error",
-          description: "Please select a customer",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      // Validate that updatePet function exists
-      if (!updatePet) {
-        console.error('updatePet function is not provided');
-        toast({
-          title: "Error",
-          description: "Update function is not available",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      // Log initial form data and pet object for debugging
-      console.log('Initial Form Data:', JSON.stringify(data, null, 2));
-      console.log('Original Pet Object:', JSON.stringify(pet, null, 2));
-
-      // Validate form data
+      setIsSubmitting(true);
+      
+      // Clean the data by removing empty strings and undefined values
       const cleanedData = Object.fromEntries(
-        Object.entries(data).filter(([_, v]) => 
-          v !== undefined && 
-          v !== null && 
-          (typeof v !== 'string' || v.trim() !== '')
-        )
-      );
+        Object.entries(data)
+          .filter(([_, value]) => value !== undefined && value !== '')
+          .map(([key, value]) => [key, value === '' ? null : value])
+      ) as InsertPet;
 
-      console.log('Cleaned Form Data:', JSON.stringify(cleanedData, null, 2));
+      console.log('Form submission data:', {
+        rawData: data,
+        cleanedData,
+        isUpdate: !!pet,
+        petId: pet?.id
+      });
 
-      // If editing an existing pet, use the ID
-      if (pet) {
-        console.log('Complete Pet Object:', JSON.stringify(pet, null, 2));
-        
-        // Robust ID parsing and validation
-        let petId: string | undefined;
-        
-        // Check if the pet has a valid ID from Firestore document
-        if (pet.id && typeof pet.id === 'string' && pet.id.trim() !== '') {
-          petId = pet.id;
-        } 
-        // If no ID, try to find the ID in the original document
-        else if (pet.createdAt && typeof pet.createdAt === 'object' && 'seconds' in pet.createdAt) {
-          // Use createdAt timestamp as a fallback identifier
-          petId = `pet_${pet.createdAt.seconds}_${pet.createdAt.nanoseconds}`;
-        }
-
-        console.log('Parsed Pet ID:', petId);
-        console.log('Parsed Pet ID Type:', typeof petId);
-
-        // Validate pet ID before update
-        if (!petId) {
-          console.error('No pet ID provided for update', { pet, data });
-          toast({
-            title: "Error",
-            description: "Cannot update pet: Missing ID",
-            variant: "destructive"
-          });
-          return;
-        }
-
-        // Determine which fields have changed
+      if (pet?.id && updatePet) {
         const updateData: Partial<InsertPet> = {};
-        
+
         // Check each field and add to updateData only if it's different from the original
         (Object.keys(cleanedData) as Array<keyof InsertPet>).forEach((key) => {
           const currentValue = cleanedData[key];
@@ -160,7 +107,6 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
             comparisonType: typeof currentValue
           });
           
-          // More robust comparison
           const isDifferent = 
             currentValue !== originalValue && 
             !(currentValue === '' && originalValue === null) &&
@@ -172,106 +118,65 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
           }
         });
 
-        console.log('Prepared Update Data:', JSON.stringify(updateData, null, 2));
-
-        // If no changes were made, force at least one field update
+        // If no fields were changed, provide feedback
         if (Object.keys(updateData).length === 0) {
-          console.warn('No changes detected in pet update', {
-            originalPet: pet,
-            formData: cleanedData
+          toast({
+            title: "No Changes Detected",
+            description: "Please modify at least one field before updating.",
+            variant: "default"
           });
-
-          // Force at least one field to be updated
-          updateData.name = cleanedData.name || pet?.name || 'Unnamed Pet';
+          setIsSubmitting(false);
+          return;
         }
 
         try {
-          // Add customerId to update data if it's not already included
-          if (!updateData.customerId && data.customerId) {
-            updateData.customerId = data.customerId;
-          }
-
-          console.log('Final Update Data:', JSON.stringify(updateData, null, 2));
-          
-          // Validate updatePet call
-          if (typeof updatePet !== 'function') {
-            throw new Error('updatePet is not a valid function');
-          }
-
-          // CRITICAL: Ensure a non-null object is always passed
-          const finalUpdateData = { ...updateData };
-          
-          console.log('Ensuring non-null update data:', JSON.stringify(finalUpdateData, null, 2));
-
-          // Validate finalUpdateData before calling updatePet
-          if (!finalUpdateData || typeof finalUpdateData !== 'object' || Object.keys(finalUpdateData).length === 0) {
-            throw new Error('Cannot update pet with empty or invalid data');
-          }
-
-          const updateResult = await updatePet(petId, finalUpdateData);
-          
-          if (updateResult) {
+          const updatedPet = await updatePet(pet.id, updateData);
+          if (updatedPet) {
             toast({
               title: "Success",
-              description: "Pet updated successfully",
+              description: "Pet information updated successfully",
+              variant: "default"
             });
-            onCancel?.();
+            onSuccess?.(updatedPet);
           } else {
-            console.error('Update failed: No result returned', {
-              petId,
-              updateData: finalUpdateData
-            });
-            toast({
-              title: "Error",
-              description: "Failed to update pet",
-              variant: "destructive"
-            });
+            throw new Error("Failed to update pet information");
           }
-        } catch (updateError) {
-          console.error('Update Error:', {
-            error: updateError,
-            petId,
-            updateData,
-            errorType: typeof updateError,
-            errorMessage: updateError instanceof Error ? updateError.message : String(updateError)
-          });
-          
+        } catch (error) {
+          console.error('Error updating pet:', error);
           toast({
-            title: "Error",
-            description: `Failed to update pet: ${updateError instanceof Error ? updateError.message : 'Unknown error'}`,
+            title: "Update Failed",
+            description: error instanceof Error ? error.message : "Failed to update pet information",
             variant: "destructive"
           });
-          
-          throw updateError;
         }
       } else {
-        // If adding a new pet
-        const newPet = await addPet({
-          ...cleanedData,
-          customerId: data.customerId
-        });
-        
-        if (newPet) {
+        // Handle new pet creation
+        try {
+          const newPet = await addPet(cleanedData);
           toast({
-            title: "Success", 
-            description: "Pet added successfully",
+            title: "Success",
+            description: "New pet added successfully",
+            variant: "default"
           });
-          onCancel?.();
+          onSuccess?.(newPet);
+        } catch (error) {
+          console.error('Error adding new pet:', error);
+          toast({
+            title: "Creation Failed",
+            description: error instanceof Error ? error.message : "Failed to add new pet",
+            variant: "destructive"
+          });
         }
       }
     } catch (error) {
-      console.error('Detailed Error in pet form submission:', {
-        errorName: error instanceof Error ? error.name : 'Unknown Error',
-        errorMessage: error instanceof Error ? error.message : 'No error message',
-        errorStack: error instanceof Error ? error.stack : 'No stack trace',
-        petObject: pet,
-        formData: data
-      });
+      console.error('Form submission error:', error);
       toast({
         title: "Error",
-        description: "Failed to save pet details",
+        description: "An unexpected error occurred. Please try again.",
         variant: "destructive"
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -553,7 +458,7 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
               Cancel
             </Button>
           )}
-          <Button type="submit">
+          <Button type="submit" disabled={isSubmitting}>
             {defaultValues ? "Update" : "Add"} Pet
           </Button>
         </div>
