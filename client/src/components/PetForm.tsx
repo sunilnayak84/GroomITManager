@@ -410,9 +410,13 @@ export default function PetForm({
                 <Input
                   type="date"
                   {...field}
-                  value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                  value={field.value && !isNaN(new Date(field.value).getTime()) 
+                    ? new Date(field.value).toISOString().split('T')[0] 
+                    : ''}
                   onChange={(e) => {
-                    const date = e.target.value ? new Date(e.target.value + 'T00:00:00') : undefined;
+                    const date = e.target.value 
+                      ? new Date(e.target.value + 'T00:00:00Z') 
+                      : undefined;
                     field.onChange(date);
                   }}
                 />
