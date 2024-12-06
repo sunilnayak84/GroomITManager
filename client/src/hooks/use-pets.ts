@@ -19,14 +19,43 @@ export function usePets() {
   });
 
   const addPet = async (pet: Omit<Pet, 'id'>) => {
-    const docRef = await addDoc(petsCollection, {
-      ...pet,
-      createdAt: new Date()
-    });
-    return {
-      id: parseInt(docRef.id),
-      ...pet
-    };
+    // Clean up pet data to remove undefined and null values
+    const cleanedPetData = Object.fromEntries(
+      Object.entries(pet)
+        .filter(([_, value]) => 
+          value !== undefined && 
+          value !== null && 
+          value !== ''
+        )
+        .map(([key, value]) => [
+          key, 
+          // Convert empty strings to null
+          value === '' ? null : value
+        ])
+    );
+
+    console.log('Cleaned Pet Data for Adding:', cleanedPetData);
+
+    try {
+      const docRef = await addDoc(petsCollection, {
+        ...cleanedPetData,
+        createdAt: new Date()
+      });
+
+      console.log('Added Pet Document Reference:', docRef);
+
+      return {
+        id: parseInt(docRef.id),
+        ...cleanedPetData
+      };
+    } catch (error) {
+      console.error('Error adding pet:', {
+        errorName: error instanceof Error ? error.name : 'Unknown Error',
+        errorMessage: error instanceof Error ? error.message : 'No error message',
+        errorStack: error instanceof Error ? error.stack : 'No stack trace'
+      });
+      throw error;
+    }
   };
 
   const updatePet = async (id: number | string, data: Partial<Pet>) => {

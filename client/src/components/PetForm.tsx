@@ -85,6 +85,22 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
         return;
       }
 
+      // Clean up form data to remove empty strings and undefined values
+      const cleanedData = Object.fromEntries(
+        Object.entries(data).filter(
+          ([_, value]) => 
+            value !== undefined && 
+            value !== null && 
+            value !== ''
+        ).map(([key, value]) => [
+          key, 
+          // Convert empty strings to null
+          value === '' ? null : value
+        ])
+      );
+
+      console.log('Cleaned Form Data:', cleanedData);
+
       // If editing an existing pet, use the ID
       if (pet) {
         console.log('Complete Pet Object:', JSON.stringify(pet, null, 2));
@@ -110,18 +126,6 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
           return;
         }
         
-        // Clean up form data to remove empty strings and undefined values
-        const cleanedData = Object.fromEntries(
-          Object.entries(data).filter(
-            ([_, value]) => 
-              value !== undefined && 
-              value !== null && 
-              value !== ''
-          )
-        );
-
-        console.log('Cleaned Form Data:', cleanedData);
-        
         const updateResult = await updatePet?.(petId, {
           ...cleanedData,
           customerId: data.customerId
@@ -136,7 +140,10 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
         }
       } else {
         // If adding a new pet
-        const newPet = await addPet(data);
+        const newPet = await addPet({
+          ...cleanedData,
+          customerId: data.customerId
+        });
         
         if (newPet) {
           toast({
