@@ -65,13 +65,26 @@ export function useCustomers() {
 
   const deleteCustomerMutation = useMutation({
     mutationFn: async (id: number) => {
-      await deleteCustomerAndRelated(id);
-      return id;
+      try {
+        await deleteCustomerAndRelated(id);
+        return id;
+      } catch (error) {
+        console.error('Error in delete mutation:', error);
+        throw error;
+      }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["customers"] });
+    onSuccess: (deletedId) => {
+      // Update the customers cache by removing the deleted customer
+      queryClient.setQueryData<Customer[]>(["customers"], (old) => 
+        old?.filter(customer => customer.id !== deletedId) || []
+      );
+      // Invalidate pets query to refetch the updated list
       queryClient.invalidateQueries({ queryKey: ["pets"] });
     },
+    onError: (error) => {
+      console.error('Delete mutation error:', error);
+      throw error;
+    }
   });
 
   return {

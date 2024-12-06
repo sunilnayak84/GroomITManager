@@ -53,7 +53,7 @@ export default function AppointmentsPage() {
     },
     {
       header: "Customer",
-      cell: (row: AppointmentWithRelations) => row.customer.name,
+      cell: (row: AppointmentWithRelations) => `${row.customer.firstName} ${row.customer.lastName}`,
     },
     {
       header: "Groomer",
