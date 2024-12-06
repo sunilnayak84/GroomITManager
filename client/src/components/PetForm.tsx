@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertPetSchema, type InsertPet } from "@db/schema";
+import { z } from "zod";
+import { type InsertPet } from "@db/schema";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -19,6 +20,25 @@ interface PetFormProps {
   updatePet?: (id: string, data: Partial<InsertPet>) => Promise<InsertPet | null>;
   customers?: Customer[];
 }
+
+const insertPetSchema = z.object({
+  name: z.string().min(1, { message: "Pet name is required" }),
+  type: z.enum(["dog", "cat", "bird", "fish", "other"], { 
+    required_error: "Pet type is required",
+    invalid_type_error: "Invalid pet type selected"
+  }),
+  breed: z.string().min(1, { message: "Breed is required" }),
+  customerId: z.string().min(1, { message: "Customer is required" }),
+  dateOfBirth: z.date().optional(),
+  age: z.number().optional(),
+  gender: z.enum(["male", "female", "unknown"]).optional(),
+  weight: z.number().optional(),
+  weightUnit: z.enum(["kg", "lbs"]).default("kg"),
+  height: z.number().optional(),
+  heightUnit: z.enum(["cm", "inches"]).default("cm"),
+  image: z.instanceof(File).nullable().optional(),
+  notes: z.string().optional()
+});
 
 export default function PetForm({
   onSuccess,
@@ -71,12 +91,12 @@ export default function PetForm({
 
   type PetFormData = {
     name: string;
-    type: "dog" | "cat" | "other";
+    type: "dog" | "cat" | "bird" | "fish" | "other";
     breed: string;
     customerId: string;
     dateOfBirth?: string;
     age?: number;
-    gender?: "male" | "female" | "other";
+    gender?: "male" | "female" | "unknown";
     weight?: string;
     weightUnit: "kg" | "lbs";
     height?: string;
@@ -97,24 +117,36 @@ export default function PetForm({
     }
   };
 
-  const onSubmit = async (data: PetFormData) => {
-    console.error('PET FORM: onSubmit called', { 
-      data, 
-      isSubmitting, 
-      customers: customers?.map(c => c.id),
-      formValues: form.getValues(),
-      formErrors: form.formState.errors
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>, data: PetFormData) => {
+    console.error('PET FORM: Form submission event', { 
+      event, 
+      isValid: form.formState.isValid, 
+      errors: form.formState.errors 
     });
 
-    // Log all form errors in detail
-    if (Object.keys(form.formState.errors).length > 0) {
+    // Detailed error logging
+    if (!form.formState.isValid) {
       console.error('PET FORM: Validation Errors', {
         errors: Object.entries(form.formState.errors).map(([field, error]) => ({
           field,
           type: error?.type,
-          message: error?.message
+          message: error?.message,
+          value: form.getValues(field as keyof PetFormData)
         }))
       });
+    }
+
+    // Prevent submission if form is not valid
+    if (!form.formState.isValid) {
+      event.preventDefault();
+      
+      toast({
+        title: "Form Validation Error",
+        description: "Please check all required fields.",
+        variant: "destructive"
+      });
+
+      return;
     }
 
     // Prevent multiple submissions
@@ -167,7 +199,8 @@ export default function PetForm({
       console.error('PET FORM: Cleaned submission data', { 
         cleanedData,
         isUpdate: !!pet,
-        petId: pet?.id 
+        petId: pet?.id,
+        selectedCustomer: customers?.find(c => c.id === cleanedData.customerId)
       });
 
       // Verify customer exists before submission
@@ -175,7 +208,10 @@ export default function PetForm({
       if (!selectedCustomer) {
         console.error('PET FORM: Selected customer not found', { 
           customerId: cleanedData.customerId,
-          availableCustomers: customers?.map(c => c.id)
+          availableCustomers: customers?.map(c => ({ 
+            id: c.id, 
+            name: `${c.firstName} ${c.lastName}` 
+          }))
         });
         
         form.setError('customerId', {
@@ -247,18 +283,18 @@ export default function PetForm({
   return (
     <Form {...form}>
       <form 
-        onSubmit={(e) => {
+        onSubmit={(event) => {
           console.error('PET FORM: Form submission event', { 
-            event: e,
+            event,
             isValid: form.formState.isValid,
             errors: form.formState.errors
           });
           
           // Prevent default to ensure our handler is called
-          e.preventDefault();
+          event.preventDefault();
           
           // Trigger form validation and submission
-          form.handleSubmit(onSubmit)(e);
+          form.handleSubmit(onSubmit)(event);
         }} 
         className="space-y-4 p-4 max-h-[60vh] overflow-y-auto pr-2"
       >
@@ -360,6 +396,8 @@ export default function PetForm({
                 <SelectContent>
                   <SelectItem value="dog">Dog</SelectItem>
                   <SelectItem value="cat">Cat</SelectItem>
+                  <SelectItem value="bird">Bird</SelectItem>
+                  <SelectItem value="fish">Fish</SelectItem>
                   <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
@@ -437,7 +475,7 @@ export default function PetForm({
                 <SelectContent>
                   <SelectItem value="male">Male</SelectItem>
                   <SelectItem value="female">Female</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
+                  <SelectItem value="unknown">Unknown</SelectItem>
                 </SelectContent>
               </Select>
             </FormItem>
