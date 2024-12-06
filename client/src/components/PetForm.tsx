@@ -71,6 +71,13 @@ export default function PetForm({
     defaultValues?.customerId || pet?.customerId || ""
   );
 
+  useEffect(() => {
+    if (defaultValues?.customerId || pet?.customerId) {
+      setSelectedCustomerId(defaultValues?.customerId || pet?.customerId || "");
+      form.setValue("customerId", defaultValues?.customerId || pet?.customerId || "");
+    }
+  }, [defaultValues?.customerId, pet?.customerId, form]);
+
   console.error('PET FORM: Component Mounted', { 
     customers, 
     defaultValues, 
@@ -143,42 +150,12 @@ export default function PetForm({
     }
   };
 
-  const onSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    console.log('PET FORM: Submit button clicked', { event, formValues: form.getValues(), formErrors: form.formState.errors });
+  const onSubmit = async (data: PetFormData) => {
+    setIsSubmitting(true);
 
-    // Validate form
-    const validationResult = insertPetSchema.safeParse(form.getValues());
-    console.log('PET FORM: Form submission event', { 
-      event, 
-      isValid: validationResult.success, 
-      errors: !validationResult.success ? validationResult.error.flatten().fieldErrors : {} 
-    });
-
-    if (!validationResult.success) {
-      const fieldErrors = validationResult.error.flatten().fieldErrors;
-      
-      // Display specific toast errors
-      Object.entries(fieldErrors).forEach(([field, errors]) => {
-        if (errors.length > 0) {
-          toast({
-            title: field.charAt(0).toUpperCase() + field.slice(1),
-            description: errors[0],
-            variant: "destructive"
-          });
-        }
-      });
-
-      return;
-    }
-
-    // Start submission
-    console.log('PET FORM: Submission started', { formData: form.getValues(), formState: form.formState });
-
-    // Prepare cleaned data outside try-catch to ensure it's in scope
-    const cleanedData: InsertPet = {
-      ...form.getValues(),
-      customerId: selectedCustomerId,
+    const cleanedData = {
+      ...data,
+      customerId: data.customerId || selectedCustomerId,
       // Convert date to timestamp if needed
       ...(form.getValues().dateOfBirth ? { 
         dateOfBirth: form.getValues().dateOfBirth instanceof Date 
@@ -200,10 +177,7 @@ export default function PetForm({
       if (!selectedCustomer) {
         console.error('PET FORM: Selected customer not found', { 
           customerId: cleanedData.customerId,
-          availableCustomers: customers?.map(c => ({ 
-            id: c.id, 
-            name: `${c.firstName} ${c.lastName}` 
-          }))
+          availableCustomers: customers
         });
         
         form.setError('customerId', {
@@ -213,9 +187,10 @@ export default function PetForm({
 
         toast({
           title: "Customer Error",
-          description: "Selected customer not found",
+          description: "Selected customer not found. Please select a valid customer.",
           variant: "destructive"
         });
+        setIsSubmitting(false);
         return;
       }
 
@@ -282,7 +257,7 @@ export default function PetForm({
   return (
     <Form {...form}>
       <form 
-        onSubmit={onSubmit} 
+        onSubmit={form.handleSubmit(onSubmit)} 
         className="space-y-4 p-4 max-h-[60vh] overflow-y-auto pr-2"
       >
         {/* Customer Selection */}
@@ -296,28 +271,22 @@ export default function PetForm({
               name="customerId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Customer *</FormLabel>
-                  <Select 
-                    onValueChange={(value) => {
-                      console.error('PET FORM: Customer Selected', { 
-                        selectedCustomerId: value,
-                        selectedCustomer: customers?.find(c => c.id === value)
-                      });
-                      field.onChange(value);
-                    }}
+                  <FormLabel>Customer</FormLabel>
+                  <Select
                     value={field.value}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      setSelectedCustomerId(value);
+                    }}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select customer" />
+                        <SelectValue placeholder="Select a customer" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {customers?.map((customer) => (
-                        <SelectItem 
-                          key={customer.id} 
-                          value={customer.id}
-                        >
+                        <SelectItem key={customer.id} value={customer.id}>
                           {customer.firstName} {customer.lastName}
                         </SelectItem>
                       ))}
