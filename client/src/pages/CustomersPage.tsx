@@ -23,6 +23,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { DataTable } from "@/components/ui/data-table";
 import { useToast } from "@/hooks/use-toast";
 import PetForm from "@/components/PetForm";
+import { Loader2 } from "lucide-react";
 
 export default function CustomersPage() {
   const [open, setOpen] = useState(false);
@@ -59,6 +60,9 @@ export default function CustomersPage() {
       address: "",
     },
   });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [petSearchQuery, setPetSearchQuery] = useState('');
 
   // Populate edit form when customer is selected
   useEffect(() => {
@@ -353,19 +357,56 @@ export default function CustomersPage() {
             <DialogTitle>Pets for {selectedCustomer ? `${selectedCustomer.firstName} ${selectedCustomer.lastName}` : ''}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            {pets?.filter(pet => pet.customerId === selectedCustomer?.id).map(pet => (
-              <div key={pet.id} className="flex items-center gap-4 p-4 border rounded-lg">
-                <img
-                  src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
-                  alt={pet.name}
-                  className="w-12 h-12 rounded-full"
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold">Pets</h3>
+              <div className="relative w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search pets..."
+                  className="pl-9"
+                  value={petSearchQuery}
+                  onChange={(e) => setPetSearchQuery(e.target.value)}
                 />
-                <div>
-                  <div className="font-medium">{pet.name}</div>
-                  <div className="text-sm text-muted-foreground capitalize">{pet.breed} · {pet.type}</div>
-                </div>
               </div>
-            ))}
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              {pets
+                ?.filter(pet => pet.customerId === selectedCustomer?.id)
+                .filter(pet => 
+                  pet.name.toLowerCase().includes(petSearchQuery.toLowerCase()) ||
+                  pet.breed.toLowerCase().includes(petSearchQuery.toLowerCase()) ||
+                  pet.type.toLowerCase().includes(petSearchQuery.toLowerCase())
+                )
+                .map(pet => (
+                <div key={pet.id} className="flex items-center gap-4 p-4 border rounded-lg hover:bg-accent transition-colors">
+                  <img
+                    src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
+                    alt={pet.name}
+                    className="w-12 h-12 rounded-full"
+                  />
+                  <div className="flex-1">
+                    <div className="font-medium">{pet.name}</div>
+                    <div className="text-sm text-muted-foreground capitalize">
+                      {pet.breed} · {pet.type}
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="ml-auto"
+                    onClick={() => {
+                      // TODO: Implement view pet details
+                      toast({
+                        title: "Coming Soon",
+                        description: "Pet details view will be available soon!",
+                      });
+                    }}
+                  >
+                    View
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -464,6 +505,7 @@ export default function CustomersPage() {
                 <Form {...editForm}>
                   <form onSubmit={editForm.handleSubmit(async (data) => {
                     try {
+                      setIsSubmitting(true);
                       // TODO: Implement updateCustomer mutation
                       await updateCustomer({ 
                         id: selectedCustomer.id, 
@@ -472,12 +514,14 @@ export default function CustomersPage() {
                           createdAt: selectedCustomer.createdAt,
                         }
                       });
+                      setIsSubmitting(false);
                       setIsEditing(false);
                       toast({
                         title: "Success",
                         description: "Customer updated successfully",
                       });
                     } catch (error) {
+                      setIsSubmitting(false);
                       toast({
                         variant: "destructive",
                         title: "Error",
@@ -592,8 +636,15 @@ export default function CustomersPage() {
                       )}
                     />
                     <div className="flex gap-4">
-                      <Button type="submit" className="flex-1">
-                        Save Changes
+                      <Button type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Saving...
+                          </>
+                        ) : (
+                          'Save Changes'
+                        )}
                       </Button>
                       <Button type="button" variant="outline" className="flex-1" onClick={() => {
                         setIsEditing(false);
@@ -605,12 +656,10 @@ export default function CustomersPage() {
                   </form>
                 </Form>
               ) : (
-                <>
+                <div>
                   <div className="flex items-center gap-4">
                     <img
-                      src={`https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
-                        `${selectedCustomer.firstName} ${selectedCustomer.lastName}`
-                      )}`}
+                      src={`https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(`${selectedCustomer.firstName} ${selectedCustomer.lastName}`)}`}
                       alt={`${selectedCustomer.firstName} ${selectedCustomer.lastName}`}
                       className="w-20 h-20 rounded-full bg-primary/10"
                     />
@@ -638,29 +687,61 @@ export default function CustomersPage() {
                       }</p>
                     </div>
                   </div>
-                </>
-              )}
 
-              <div className="space-y-4">
-                <h3 className="font-semibold">Pets</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  {pets?.filter(pet => pet.customerId === selectedCustomer.id).map(pet => (
-                    <div key={pet.id} className="flex items-center gap-4 p-4 border rounded-lg">
-                      <img
-                        src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
-                        alt={pet.name}
-                        className="w-12 h-12 rounded-full"
-                      />
-                      <div>
-                        <div className="font-medium">{pet.name}</div>
-                        <div className="text-sm text-muted-foreground capitalize">
-                          {pet.breed} · {pet.type}
-                        </div>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold">Pets</h3>
+                      <div className="relative w-64">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Search pets..."
+                          className="pl-9"
+                          value={petSearchQuery}
+                          onChange={(e) => setPetSearchQuery(e.target.value)}
+                        />
                       </div>
                     </div>
-                  ))}
+                    <div className="grid grid-cols-2 gap-4">
+                      {pets
+                        ?.filter(pet => pet.customerId === selectedCustomer.id)
+                        .filter(pet => 
+                          pet.name.toLowerCase().includes(petSearchQuery.toLowerCase()) ||
+                          pet.breed.toLowerCase().includes(petSearchQuery.toLowerCase()) ||
+                          pet.type.toLowerCase().includes(petSearchQuery.toLowerCase())
+                        )
+                        .map(pet => (
+                        <div key={pet.id} className="flex items-center gap-4 p-4 border rounded-lg hover:bg-accent transition-colors">
+                          <img
+                            src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
+                            alt={pet.name}
+                            className="w-12 h-12 rounded-full"
+                          />
+                          <div className="flex-1">
+                            <div className="font-medium">{pet.name}</div>
+                            <div className="text-sm text-muted-foreground capitalize">
+                              {pet.breed} · {pet.type}
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="ml-auto"
+                            onClick={() => {
+                              // TODO: Implement view pet details
+                              toast({
+                                title: "Coming Soon",
+                                description: "Pet details view will be available soon!",
+                              });
+                            }}
+                          >
+                            View
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           )}
         </DialogContent>
