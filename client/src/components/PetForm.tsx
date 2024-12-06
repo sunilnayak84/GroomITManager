@@ -219,7 +219,9 @@ export default function PetForm({
 
         toast({
           title: "Error Adding Pet",
-          description: addPetError instanceof Error ? addPetError.message : "Failed to add pet",
+          description: addPetError instanceof Error 
+            ? addPetError.message 
+            : "Failed to add pet. Please check your input and try again.",
           variant: "destructive"
         });
       }
@@ -231,7 +233,9 @@ export default function PetForm({
 
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to add/update pet",
+        description: error instanceof Error 
+          ? error.message 
+          : "An unexpected error occurred. Please try again.",
         variant: "destructive"
       });
     } finally {

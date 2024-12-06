@@ -23,7 +23,7 @@ export function usePets() {
     }
   });
 
-  const addPet = async (pet: InsertPet): Promise<Pet> => {
+  export const addPet = async (pet: InsertPet) => {
     console.error('ADD_PET: Attempting to add pet', { 
       pet,
       petData: {
@@ -51,36 +51,55 @@ export function usePets() {
     }
 
     try {
+      // Validate customer ID format
+      if (!pet.customerId || typeof pet.customerId !== 'string' || pet.customerId.trim() === '') {
+        console.error('ADD_PET: Invalid customer ID', { 
+          customerId: pet.customerId 
+        });
+        throw new Error('Invalid customer ID');
+      }
+
       // Fetch the customer to ensure it exists
-      const customerDoc = await getDoc(doc(db, 'customers', pet.customerId));
+      const customerRef = doc(db, 'customers', pet.customerId);
+      const customerDoc = await getDoc(customerRef);
+
       if (!customerDoc.exists()) {
         console.error('ADD_PET: Customer not found', { 
-          customerId: pet.customerId 
+          customerId: pet.customerId,
+          customerRef: customerRef.path
         });
         throw new Error('Selected customer does not exist');
       }
 
+      // Prepare pet data with cleaned values
+      const cleanedPet = Object.fromEntries(
+        Object.entries(pet)
+          .filter(([_, value]) => value !== undefined && value !== '')
+          .map(([key, value]) => [key, value === '' ? null : value])
+      ) as InsertPet;
+
       // Add timestamp fields
       const petWithTimestamps = {
-        ...pet,
+        ...cleanedPet,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       };
 
       // Add the pet to Firestore
-      const petRef = await addDoc(collection(db, 'pets'), petWithTimestamps);
+      const petsCollection = collection(db, 'pets');
+      const petRef = await addDoc(petsCollection, petWithTimestamps);
 
       console.error('ADD_PET: Pet added successfully', { 
         petId: petRef.id,
-        customerId: pet.customerId 
+        customerId: pet.customerId,
+        petData: petWithTimestamps
       });
 
-      // Update the customer's pet count
-      const customerRef = doc(db, 'customers', pet.customerId);
-      
+      // Update customer's pet count in a transaction
       await runTransaction(db, async (transaction) => {
         transaction.update(customerRef, {
-          petCount: increment(1)
+          petCount: increment(1),
+          updatedAt: serverTimestamp()
         });
       });
 
@@ -90,8 +109,8 @@ export function usePets() {
           oldPets: old, 
           newPet: petWithTimestamps 
         });
-        if (!old) return [petWithTimestamps];
-        return [...old, petWithTimestamps];
+        if (!old) return [{ id: petRef.id, ...petWithTimestamps }];
+        return [...old, { id: petRef.id, ...petWithTimestamps }];
       });
 
       return {
@@ -104,6 +123,16 @@ export function usePets() {
         errorMessage: error instanceof Error ? error.message : 'Unknown error',
         pet 
       });
+      
+      // More detailed error logging
+      if (error instanceof Error) {
+        console.error('ADD_PET: Detailed error', {
+          name: error.name,
+          message: error.message,
+          stack: error.stack
+        });
+      }
+
       throw error;
     }
   };
