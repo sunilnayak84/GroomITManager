@@ -1,9 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Customer } from "@db/schema";
-import { collection, getDocs, addDoc, onSnapshot, query } from "firebase/firestore";
-import { db } from "../lib/firebase";
-import { customersCollection } from "../lib/firestore";
-import React from "react";
+import { getDocs, onSnapshot, query } from "firebase/firestore";
+import { customersCollection, createCustomer, updateCustomer as updateCustomerDoc } from "../lib/firestore";
 
 export function useCustomers() {
   const queryClient = useQueryClient();
@@ -11,27 +9,40 @@ export function useCustomers() {
   const { data, isLoading, error } = useQuery<Customer[]>({
     queryKey: ["customers"],
     queryFn: async () => {
-      const querySnapshot = await getDocs(customersCollection);
-      return querySnapshot.docs.map(doc => ({
-        id: parseInt(doc.id),
-        ...doc.data()
-      } as Customer));
+      try {
+        const querySnapshot = await getDocs(customersCollection);
+        return querySnapshot.docs.map(doc => ({
+          id: parseInt(doc.id),
+          ...doc.data()
+        } as Customer));
+      } catch (error) {
+        console.error('Error fetching customers:', error);
+        throw error;
+      }
     },
   });
 
-  const addCustomer = async (customer: Omit<Customer, 'id'>) => {
-    const docRef = await addDoc(customersCollection, {
-      ...customer,
-      createdAt: new Date()
-    });
-    return {
-      id: parseInt(docRef.id),
-      ...customer
-    };
-  };
-
   const addCustomerMutation = useMutation({
-    mutationFn: addCustomer,
+    mutationFn: async (customer: Omit<Customer, 'id'>) => {
+      const id = await createCustomer(customer);
+      return {
+        id: parseInt(id),
+        ...customer
+      };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["customers"] });
+    },
+  });
+
+  const updateCustomerMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: Partial<Omit<Customer, 'id'>> }) => {
+      await updateCustomerDoc(id, data);
+      return {
+        id,
+        ...data
+      };
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["customers"] });
     },
@@ -56,5 +67,6 @@ export function useCustomers() {
     isLoading,
     error,
     addCustomer: addCustomerMutation.mutateAsync,
+    updateCustomer: updateCustomerMutation.mutateAsync,
   };
 }

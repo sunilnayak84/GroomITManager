@@ -15,7 +15,7 @@ import PetForm from "@/components/PetForm";
 
 export default function CustomersPage() {
   const [open, setOpen] = useState(false);
-  const { data: customers, isLoading, addCustomer } = useCustomers();
+  const { data: customers, isLoading, addCustomer, updateCustomer } = useCustomers();
   const { toast } = useToast();
   
   const form = useForm<InsertCustomer>({
@@ -35,6 +35,33 @@ export default function CustomersPage() {
   const [showPetList, setShowPetList] = useState(false);
   const [showAddPet, setShowAddPet] = useState(false);
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  
+  const editForm = useForm<InsertCustomer>({
+    resolver: zodResolver(insertCustomerSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      gender: "male",
+      address: "",
+    },
+  });
+
+  // Populate edit form when customer is selected
+  React.useEffect(() => {
+    if (selectedCustomer && isEditing) {
+      editForm.reset({
+        firstName: selectedCustomer.firstName,
+        lastName: selectedCustomer.lastName,
+        email: selectedCustomer.email,
+        phone: selectedCustomer.phone,
+        gender: selectedCustomer.gender,
+        address: selectedCustomer.address || "",
+      });
+    }
+  }, [selectedCustomer, isEditing]);
   const { data: pets } = usePets();
 
   const columns = [
@@ -359,43 +386,198 @@ export default function CustomersPage() {
       {/* Customer Details Dialog */}
       <Dialog open={showCustomerDetails} onOpenChange={setShowCustomerDetails}>
         <DialogContent className="max-w-3xl">
-          <DialogHeader>
+          <DialogHeader className="flex justify-between items-center">
             <DialogTitle>Customer Details</DialogTitle>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setIsEditing(true)}
+            >
+              Edit
+            </Button>
           </DialogHeader>
           {selectedCustomer && (
             <div className="space-y-6">
-              <div className="flex items-center gap-4">
-                <img
-                  src={`https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
-                    `${selectedCustomer.firstName} ${selectedCustomer.lastName}`
-                  )}`}
-                  alt={`${selectedCustomer.firstName} ${selectedCustomer.lastName}`}
-                  className="w-20 h-20 rounded-full bg-primary/10"
-                />
-                <div>
-                  <h2 className="text-2xl font-bold">{`${selectedCustomer.firstName} ${selectedCustomer.lastName}`}</h2>
-                  <p className="text-muted-foreground">{selectedCustomer.email}</p>
-                </div>
-              </div>
+              {isEditing ? (
+                <Form {...editForm}>
+                  <form onSubmit={editForm.handleSubmit(async (data) => {
+                    try {
+                      // TODO: Implement updateCustomer mutation
+                      await updateCustomer({ 
+                        id: selectedCustomer.id, 
+                        data: {
+                          ...data,
+                          createdAt: selectedCustomer.createdAt,
+                        }
+                      });
+                      setIsEditing(false);
+                      toast({
+                        title: "Success",
+                        description: "Customer updated successfully",
+                      });
+                    } catch (error) {
+                      toast({
+                        variant: "destructive",
+                        title: "Error",
+                        description: "Failed to update customer",
+                      });
+                    }
+                  })} className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={editForm.control}
+                        name="firstName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>First Name</FormLabel>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={editForm.control}
+                        name="lastName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Last Name</FormLabel>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <FormField
+                      control={editForm.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input {...field} type="email" />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={editForm.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Phone</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={editForm.control}
+                      name="gender"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Gender</FormLabel>
+                          <div className="flex gap-4">
+                            <label className="flex items-center">
+                              <input
+                                type="radio"
+                                className="form-radio h-4 w-4"
+                                name="gender"
+                                value="male"
+                                checked={field.value === 'male'}
+                                onChange={(e) => field.onChange(e.target.value)}
+                              />
+                              <span className="ml-2">Male</span>
+                            </label>
+                            <label className="flex items-center">
+                              <input
+                                type="radio"
+                                className="form-radio h-4 w-4"
+                                name="gender"
+                                value="female"
+                                checked={field.value === 'female'}
+                                onChange={(e) => field.onChange(e.target.value)}
+                              />
+                              <span className="ml-2">Female</span>
+                            </label>
+                            <label className="flex items-center">
+                              <input
+                                type="radio"
+                                className="form-radio h-4 w-4"
+                                name="gender"
+                                value="other"
+                                checked={field.value === 'other'}
+                                onChange={(e) => field.onChange(e.target.value)}
+                              />
+                              <span className="ml-2">Other</span>
+                            </label>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={editForm.control}
+                      name="address"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Address</FormLabel>
+                          <FormControl>
+                            <Input {...field} value={field.value || ''} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <div className="flex gap-4">
+                      <Button type="submit" className="flex-1">
+                        Save Changes
+                      </Button>
+                      <Button type="button" variant="outline" className="flex-1" onClick={() => {
+                        setIsEditing(false);
+                        editForm.reset();
+                      }}>
+                        Cancel
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+              ) : (
+                <>
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={`https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
+                        `${selectedCustomer.firstName} ${selectedCustomer.lastName}`
+                      )}`}
+                      alt={`${selectedCustomer.firstName} ${selectedCustomer.lastName}`}
+                      className="w-20 h-20 rounded-full bg-primary/10"
+                    />
+                    <div>
+                      <h2 className="text-2xl font-bold">{`${selectedCustomer.firstName} ${selectedCustomer.lastName}`}</h2>
+                      <p className="text-muted-foreground">{selectedCustomer.email}</p>
+                    </div>
+                  </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <h3 className="font-semibold">Contact Information</h3>
-                  <p><span className="text-muted-foreground">Phone:</span> {selectedCustomer.phone}</p>
-                  <p><span className="text-muted-foreground">Email:</span> {selectedCustomer.email}</p>
-                  <p><span className="text-muted-foreground">Address:</span> {selectedCustomer.address || 'N/A'}</p>
-                </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <h3 className="font-semibold">Contact Information</h3>
+                      <p><span className="text-muted-foreground">Phone:</span> {selectedCustomer.phone}</p>
+                      <p><span className="text-muted-foreground">Email:</span> {selectedCustomer.email}</p>
+                      <p><span className="text-muted-foreground">Address:</span> {selectedCustomer.address || 'N/A'}</p>
+                    </div>
 
-                <div className="space-y-2">
-                  <h3 className="font-semibold">Additional Information</h3>
-                  <p><span className="text-muted-foreground">Gender:</span> {selectedCustomer.gender}</p>
-                  <p><span className="text-muted-foreground">Member Since:</span> {
-                    selectedCustomer.createdAt 
-                      ? new Date(selectedCustomer.createdAt).toLocaleDateString()
-                      : 'N/A'
-                  }</p>
-                </div>
-              </div>
+                    <div className="space-y-2">
+                      <h3 className="font-semibold">Additional Information</h3>
+                      <p><span className="text-muted-foreground">Gender:</span> {selectedCustomer.gender}</p>
+                      <p><span className="text-muted-foreground">Member Since:</span> {
+                        selectedCustomer.createdAt 
+                          ? new Date(selectedCustomer.createdAt).toLocaleDateString()
+                          : 'N/A'
+                      }</p>
+                    </div>
+                  </div>
+                </>
+              )}
 
               <div className="space-y-4">
                 <h3 className="font-semibold">Pets</h3>

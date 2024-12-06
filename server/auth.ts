@@ -4,6 +4,18 @@ import { users } from "@db/schema";
 import { db } from "../db";
 import { eq } from "drizzle-orm";
 
+// Initialize Firebase Admin
+const serviceAccount = {
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+  privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+};
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET
+});
+
 // Type for our Firebase auth user
 export interface FirebaseUser {
   id: string;
