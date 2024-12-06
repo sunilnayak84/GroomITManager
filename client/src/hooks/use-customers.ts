@@ -11,21 +11,54 @@ export function useCustomers() {
 
   const addCustomerMutation = useMutation({
     mutationFn: async (customer: Omit<Customer, 'id'>) => {
-      const id = await createCustomer({
-        ...customer,
-        createdAt: customer.createdAt || new Date(),
-        petCount: 0 // Initialize petCount
+      // Validate required fields
+      const requiredFields: (keyof Omit<Customer, 'id'>)[] = ['firstName', 'lastName', 'email', 'phone'];
+      const missingFields = requiredFields.filter(field => {
+        const value = customer[field];
+        return value === undefined || value === null || value === '';
       });
-      return {
-        id,
-        ...customer,
-        petCount: 0,
-        createdAt: customer.createdAt || new Date()
-      };
+
+      if (missingFields.length > 0) {
+        console.error('ADD_CUSTOMER: Missing required fields', { 
+          missingFields,
+          customerData: customer
+        });
+        throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+      }
+
+      try {
+        const id = await createCustomer({
+          ...customer,
+          createdAt: customer.createdAt || new Date(),
+          petCount: 0 // Initialize petCount
+        });
+        return {
+          id,
+          ...customer,
+          petCount: 0,
+          createdAt: customer.createdAt || new Date()
+        };
+      } catch (error) {
+        console.error('ADD_CUSTOMER: Error creating customer', { 
+          error,
+          errorMessage: error instanceof Error ? error.message : 'Unknown error',
+          customer
+        });
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["customers"] });
+      toast.success("Customer added successfully");
     },
+    onError: (error) => {
+      console.error('ADD_CUSTOMER: Mutation error', { error });
+      toast.error(
+        error instanceof Error 
+          ? error.message 
+          : "Failed to add customer. Please try again."
+      );
+    }
   });
 
   const updateCustomerMutation = useMutation({
@@ -72,6 +105,9 @@ export function useCustomers() {
       ]).catch(error => {
         console.error('Error refetching data after deletion:', error);
       });
+
+      // Show success toast
+      toast.success("Customer deleted successfully");
     },
     onError: (error) => {
       console.error('Delete mutation error:', error);
