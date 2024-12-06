@@ -15,18 +15,17 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Customer, insertCustomerSchema, InsertCustomer } from "@/lib/validations/customer";
 import { useForm } from "react-hook-form";
-import { insertCustomerSchema, type InsertCustomer, type Customer } from "@db/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { DataTable } from "@/components/ui/data-table";
 import { useToast } from "@/hooks/use-toast";
 import PetForm from "@/components/PetForm";
 import { Loader2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUpdateCustomer, useDeleteCustomer } from "@/hooks/use-customers";
-import { usePets } from "@/hooks/use-pets";
 
 export default function CustomersPage() {
   const [open, setOpen] = useState(false);
