@@ -45,7 +45,7 @@ export function usePets() {
 
         // Update the customer's pet count
         if (cleanedPet.customerId) {
-          const customerRef = doc(db, 'customers', cleanedPet.customerId.toString());
+          const customerRef = doc(db, 'customers', cleanedPet.customerId);
           const customerDoc = await transaction.get(customerRef);
           
           if (customerDoc.exists()) {
@@ -116,22 +116,24 @@ export function usePets() {
         if (cleanedUpdates.customerId && cleanedUpdates.customerId !== currentPet.customerId) {
           // Decrease old customer's pet count
           if (currentPet.customerId) {
-            const oldCustomerRef = doc(db, 'customers', currentPet.customerId.toString());
+            const oldCustomerRef = doc(db, 'customers', currentPet.customerId);
             const oldCustomerDoc = await transaction.get(oldCustomerRef);
             if (oldCustomerDoc.exists()) {
+              const oldPetCount = oldCustomerDoc.data().petCount || 0;
               transaction.update(oldCustomerRef, {
-                petCount: increment(-1),
+                petCount: Math.max(0, oldPetCount - 1),
                 updatedAt: new Date()
               });
             }
           }
 
           // Increase new customer's pet count
-          const newCustomerRef = doc(db, 'customers', cleanedUpdates.customerId.toString());
+          const newCustomerRef = doc(db, 'customers', cleanedUpdates.customerId);
           const newCustomerDoc = await transaction.get(newCustomerRef);
           if (newCustomerDoc.exists()) {
+            const newPetCount = newCustomerDoc.data().petCount || 0;
             transaction.update(newCustomerRef, {
-              petCount: increment(1),
+              petCount: newPetCount + 1,
               updatedAt: new Date()
             });
           }
@@ -183,11 +185,12 @@ export function usePets() {
 
         // Update the customer's pet count
         if (pet.customerId) {
-          const customerRef = doc(db, 'customers', pet.customerId.toString());
+          const customerRef = doc(db, 'customers', pet.customerId);
           const customerDoc = await transaction.get(customerRef);
           if (customerDoc.exists()) {
+            const currentPetCount = customerDoc.data().petCount || 0;
             transaction.update(customerRef, {
-              petCount: increment(-1),
+              petCount: Math.max(0, currentPetCount - 1),
               updatedAt: new Date()
             });
           }

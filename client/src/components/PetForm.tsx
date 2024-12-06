@@ -37,7 +37,7 @@ export default function PetForm({
     name: string;
     type: "dog" | "cat" | "other";
     breed: string;
-    customerId: number;
+    customerId: string;
     dateOfBirth?: string;
     age?: number;
     gender?: "male" | "female" | "other";
@@ -55,7 +55,7 @@ export default function PetForm({
       name: "",
       type: "dog",
       breed: "",
-      customerId: defaultValues?.customerId || 0,
+      customerId: defaultValues?.customerId || "",
       dateOfBirth: undefined,
       age: undefined,
       gender: undefined,
@@ -166,7 +166,7 @@ export default function PetForm({
               Owner
             </FormLabel>
             <Select
-              onValueChange={(value) => form.setValue("customerId", parseInt(value))}
+              onValueChange={(value) => form.setValue("customerId", value)}
               value={form.watch("customerId")?.toString()}
             >
               <FormControl>

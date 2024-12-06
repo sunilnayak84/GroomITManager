@@ -14,7 +14,7 @@ export function useCustomers() {
       try {
         const querySnapshot = await getDocs(customersCollection);
         return querySnapshot.docs.map(doc => ({
-          id: parseInt(doc.id),
+          id: doc.id,
           ...doc.data(),
           // Ensure createdAt is a valid Date object
           createdAt: doc.data().createdAt 
@@ -36,7 +36,7 @@ export function useCustomers() {
         petCount: 0 // Initialize petCount
       });
       return {
-        id: parseInt(id),
+        id,
         ...customer,
         petCount: 0,
         createdAt: customer.createdAt || new Date()
@@ -48,7 +48,7 @@ export function useCustomers() {
   });
 
   const updateCustomerMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: Partial<Omit<Customer, 'id'>> }) => {
+    mutationFn: async ({ id, data }: { id: string; data: Partial<Omit<Customer, 'id'>> }) => {
       await updateCustomerDoc(id, data);
       return {
         id,
@@ -66,7 +66,7 @@ export function useCustomers() {
     const customerQuery = query(customersCollection);
     const customerUnsubscribe = onSnapshot(customerQuery, async (snapshot) => {
       const customers = snapshot.docs.map(doc => ({
-        id: parseInt(doc.id),
+        id: doc.id,
         ...doc.data(),
         createdAt: doc.data().createdAt 
           ? new Date(doc.data().createdAt) 
@@ -85,7 +85,7 @@ export function useCustomers() {
         const currentCustomers = queryClient.getQueryData<Customer[]>(["customers"]) || [];
         
         // Count pets for each customer
-        const petCounts = new Map<number, number>();
+        const petCounts = new Map<string, number>();
         snapshot.docs.forEach(doc => {
           const pet = doc.data();
           if (pet.customerId) {
@@ -122,7 +122,7 @@ export function useCustomers() {
   }, [queryClient]);
 
   const deleteCustomerMutation = useMutation({
-    mutationFn: async (id: number) => {
+    mutationFn: async (id: string) => {
       try {
         console.log('Starting delete mutation for customer:', id);
         const success = await deleteCustomerAndRelated(id);

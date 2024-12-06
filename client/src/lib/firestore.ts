@@ -36,7 +36,6 @@ export async function createUserDocument(user: User) {
 export async function createCustomer(customer: Omit<Customer, 'id'>) {
   try {
     const customerRef = doc(customersCollection);
-    const customerId = parseInt(customerRef.id, 10) || Date.now(); // Fallback to timestamp if parsing fails
     
     // Ensure createdAt is a valid Date
     const createdAt = customer.createdAt instanceof Date 
@@ -45,11 +44,12 @@ export async function createCustomer(customer: Omit<Customer, 'id'>) {
     
     await setDoc(customerRef, {
       ...customer,
-      id: customerId, // Ensure id is a number
-      createdAt: createdAt.toISOString() // Store as ISO string for consistent serialization
+      id: customerRef.id, // Use the Firestore document ID directly
+      createdAt: createdAt.toISOString(), // Store as ISO string for consistent serialization
+      petCount: customer.petCount || 0
     });
     
-    return customerId;
+    return customerRef.id;
   } catch (error) {
     console.error('Error creating customer:', error);
     throw error;
