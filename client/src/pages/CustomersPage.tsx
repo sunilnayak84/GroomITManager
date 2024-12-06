@@ -429,17 +429,24 @@ export default function CustomersPage() {
                       onClick={async () => {
                         if (!selectedCustomer) return;
                         try {
+                          toast({
+                            title: "Deleting...",
+                            description: "Please wait while we delete the customer and their pets",
+                          });
+                          
                           await deleteCustomer(selectedCustomer.id);
+                          
                           setShowCustomerDetails(false);
                           toast({
                             title: "Success",
-                            description: "Customer deleted successfully",
+                            description: "Customer and associated pets deleted successfully",
                           });
                         } catch (error) {
+                          console.error('Error deleting customer:', error);
                           toast({
                             variant: "destructive",
                             title: "Error",
-                            description: "Failed to delete customer",
+                            description: error instanceof Error ? error.message : "Failed to delete customer",
                           });
                         }
                       }}

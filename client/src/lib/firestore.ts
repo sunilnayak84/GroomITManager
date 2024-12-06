@@ -94,22 +94,57 @@ export async function updateCustomer(id: number, data: Partial<Customer>) {
 
 export async function deleteCustomerAndRelated(id: number) {
   try {
-    // First, get and delete all pets associated with this customer
-    const petsQuery = query(petsCollection, where('customerId', '==', id));
+    console.log('Starting deletion process for customer:', id);
+    const customerId = id.toString();
+    
+    // First, verify the customer exists
+    const customerRef = doc(customersCollection, customerId);
+    const customerDoc = await getDoc(customerRef);
+    
+    if (!customerDoc.exists()) {
+      console.error('Customer not found:', customerId);
+      throw new Error('Customer not found');
+    }
+
+    // Get all pets associated with this customer
+    const petsQuery = query(petsCollection, where('customerId', '==', parseInt(customerId)));
     const petsSnapshot = await getDocs(petsQuery);
     
-    // Delete all pets
-    const petDeletions = petsSnapshot.docs.map(petDoc => 
-      deleteDoc(doc(petsCollection, petDoc.id))
-    );
-    await Promise.all(petDeletions);
-    
-    // Then delete the customer
-    await deleteDoc(doc(customersCollection, id.toString()));
-    
-    return true;
+    console.log(`Found ${petsSnapshot.docs.length} pets to delete for customer:`, customerId);
+
+    if (petsSnapshot.docs.length > 0) {
+      // Delete all pets first
+      for (const petDoc of petsSnapshot.docs) {
+        try {
+          console.log('Deleting pet:', petDoc.id);
+          await deleteDoc(doc(petsCollection, petDoc.id));
+          console.log('Successfully deleted pet:', petDoc.id);
+        } catch (error) {
+          console.error('Failed to delete pet:', petDoc.id, error);
+          throw new Error(`Failed to delete pet: ${petDoc.id}`);
+        }
+      }
+      console.log('All pets deleted successfully');
+    }
+
+    // Delete the customer
+    try {
+      console.log('Deleting customer:', customerId);
+      await deleteDoc(customerRef);
+      
+      // Verify customer deletion
+      const verifyDoc = await getDoc(customerRef);
+      if (verifyDoc.exists()) {
+        throw new Error('Customer document still exists after deletion');
+      }
+      console.log('Customer deleted successfully:', customerId);
+      return true;
+    } catch (error) {
+      console.error('Error deleting customer:', customerId, error);
+      throw new Error('Failed to delete customer');
+    }
   } catch (error) {
-    console.error('Error deleting customer and related data:', error);
+    console.error('Error in deleteCustomerAndRelated:', error);
     throw error;
   }
 }

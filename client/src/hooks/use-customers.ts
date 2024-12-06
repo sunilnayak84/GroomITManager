@@ -66,7 +66,11 @@ export function useCustomers() {
   const deleteCustomerMutation = useMutation({
     mutationFn: async (id: number) => {
       try {
-        await deleteCustomerAndRelated(id);
+        console.log('Starting delete mutation for customer:', id);
+        const success = await deleteCustomerAndRelated(id);
+        if (!success) {
+          throw new Error('Delete operation did not complete successfully');
+        }
         return id;
       } catch (error) {
         console.error('Error in delete mutation:', error);
@@ -74,15 +78,23 @@ export function useCustomers() {
       }
     },
     onSuccess: (deletedId) => {
-      // Update the customers cache by removing the deleted customer
+      console.log('Delete mutation succeeded for customer:', deletedId);
+      // Optimistically update the cache
       queryClient.setQueryData<Customer[]>(["customers"], (old) => 
         old?.filter(customer => customer.id !== deletedId) || []
       );
-      // Invalidate pets query to refetch the updated list
-      queryClient.invalidateQueries({ queryKey: ["pets"] });
+      
+      // Force refetch to ensure consistency
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["customers"] }),
+        queryClient.invalidateQueries({ queryKey: ["pets"] })
+      ]).catch(error => {
+        console.error('Error refetching data after deletion:', error);
+      });
     },
     onError: (error) => {
       console.error('Delete mutation error:', error);
+      // Let the component handle the error
       throw error;
     }
   });
