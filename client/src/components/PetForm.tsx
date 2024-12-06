@@ -20,22 +20,38 @@ export default function PetForm({ onSuccess, defaultValues }: PetFormProps) {
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  const form = useForm<InsertPet>({
+  type PetFormData = {
+    name: string;
+    type: "dog" | "cat" | "other";
+    breed: string;
+    customerId: number;
+    dateOfBirth?: string;
+    age?: number;
+    gender?: "male" | "female" | "other";
+    weight?: string;
+    weightUnit: "kg" | "lbs";
+    height?: string;
+    heightUnit: "cm" | "inches";
+    image?: string | null;
+    notes?: string;
+  };
+
+  const form = useForm<PetFormData>({
     resolver: zodResolver(insertPetSchema),
     defaultValues: {
       name: "",
       type: "dog",
       breed: "",
-      notes: "",
       customerId: defaultValues?.customerId || 0,
-      image: "",
-      dateOfBirth: "",
-      age: 0,
-      gender: "male",
-      weight: "",
+      dateOfBirth: undefined,
+      age: undefined,
+      gender: undefined,
+      weight: undefined,
       weightUnit: "kg",
-      height: "",
+      height: undefined,
       heightUnit: "cm",
+      image: null,
+      notes: undefined,
       ...defaultValues,
     },
   });
@@ -52,9 +68,26 @@ export default function PetForm({ onSuccess, defaultValues }: PetFormProps) {
     }
   };
 
-  async function onSubmit(data: InsertPet) {
+  async function onSubmit(data: PetFormData) {
     try {
-      await addPet({ ...data, createdAt: new Date() });
+      const petData: Omit<InsertPet, "id"> = {
+        name: data.name,
+        type: data.type,
+        breed: data.breed,
+        customerId: data.customerId,
+        createdAt: new Date(),
+        dateOfBirth: data.dateOfBirth || null,
+        age: data.age || null,
+        gender: data.gender || null,
+        weight: data.weight || null,
+        weightUnit: data.weightUnit,
+        height: data.height || null,
+        heightUnit: data.heightUnit,
+        image: data.image || null,
+        notes: data.notes || null
+      };
+
+      await addPet(petData);
       form.reset();
       setImagePreview(null);
       onSuccess?.();
@@ -116,7 +149,10 @@ export default function PetForm({ onSuccess, defaultValues }: PetFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Pet Type *</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
+              <Select 
+                onValueChange={field.onChange}
+                value={field.value}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select pet type" />
@@ -175,7 +211,7 @@ export default function PetForm({ onSuccess, defaultValues }: PetFormProps) {
                 <Input 
                   type="number"
                   {...field}
-                  onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
+                  onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
                   value={field.value || ''}
                 />
               </FormControl>
@@ -190,7 +226,10 @@ export default function PetForm({ onSuccess, defaultValues }: PetFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Gender</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value || 'male'}>
+              <Select 
+                onValueChange={field.onChange}
+                value={field.value}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select gender" />
@@ -231,7 +270,10 @@ export default function PetForm({ onSuccess, defaultValues }: PetFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Unit</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select 
+                  onValueChange={field.onChange}
+                  value={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Unit" />
@@ -272,7 +314,10 @@ export default function PetForm({ onSuccess, defaultValues }: PetFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Unit</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select 
+                  onValueChange={field.onChange}
+                  value={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Unit" />

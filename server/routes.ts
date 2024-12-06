@@ -3,7 +3,7 @@ import { setupAuth } from "./auth";
 import { db } from "../db";
 import { appointments, customers, pets, users } from "@db/schema";
 // Remove unused import
-import { and, eq, gte, count } from "drizzle-orm";
+import { and, eq, gte, count, sql } from "drizzle-orm";
 
 // Firebase handles user creation and management
 
@@ -122,7 +122,7 @@ export function registerRoutes(app: Express) {
           },
           customer: {
             id: customers.id,
-            name: `${customers.firstName} ${customers.lastName}`
+            name: sql`${customers.firstName} || ' ' || ${customers.lastName}`
           },
           groomer: {
             id: users.id,

@@ -1,0 +1,77 @@
+ ERROR(TypeScript)  Argument of type '{ createdAt: Date; name: string; customerId: number; type: string; breed: string; gender?: string | null | undefined; dateOfBirth?: string | null | undefined; age?: number | null | undefined; ... 5 more ...; notes?: string | ... 1 more ... | undefined; }' is not assignable to parameter of type 'Omit<{ id: number; name: string; gender: string | null; createdAt: Date | null; customerId: number; type: string; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; ... 4 more ...; notes: string | null; }, "id">'.
+  Types of property 'gender' are incompatible.
+    Type 'string | null | undefined' is not assignable to type 'string | null'.
+      Type 'undefined' is not assignable to type 'string | null'.
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:57:20
+
+    55 |   async function onSubmit(data: InsertPet) {
+    56 |     try {
+  > 57 |       await addPet({ ...data, createdAt: new Date() });
+       |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    58 |       form.reset();
+    59 |       setImagePreview(null);
+    60 |       onSuccess?.();
+
+ ERROR(TypeScript)  Type 'string | null | undefined' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:234:56
+
+    232 |               <FormItem>
+    233 |                 <FormLabel>Unit</FormLabel>
+  > 234 |                 <Select onValueChange={field.onChange} value={field.value}>
+        |                                                        ^^^^^
+    235 |                   <FormControl>
+    236 |                     <SelectTrigger>
+    237 |                       <SelectValue placeholder="Unit" />
+
+ ERROR(TypeScript)  Type 'string | null | undefined' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:275:56
+
+    273 |               <FormItem>
+    274 |                 <FormLabel>Unit</FormLabel>
+  > 275 |                 <Select onValueChange={field.onChange} value={field.value}>
+        |                                                        ^^^^^
+    276 |                   <FormControl>
+    277 |                     <SelectTrigger>
+    278 |                       <SelectValue placeholder="Unit" />
+
+ ERROR(TypeScript)  Argument of type '(data: Omit<{ id: number; firstName: string; lastName: string; email: string; phone: string; password: string | null; gender: string; address: string | null; createdAt: Date | null; }, "id">) => Promise<...>' is not assignable to parameter of type 'SubmitHandler<{ firstName: string; lastName: string; email: string; phone: string; gender: string; password?: string | null | undefined; address?: string | null | undefined; createdAt?: Date | null | undefined; }>'.
+  Types of parameters 'data' and 'data' are incompatible.
+    Type '{ firstName: string; lastName: string; email: string; phone: string; gender: string; password?: string | null | undefined; address?: string | null | undefined; createdAt?: Date | null | undefined; }' is not assignable to type 'Omit<{ id: number; firstName: string; lastName: string; email: string; phone: string; password: string | null; gender: string; address: string | null; createdAt: Date | null; }, "id">'.
+      Types of property 'password' are incompatible.
+        Type 'string | null | undefined' is not assignable to type 'string | null'.
+          Type 'undefined' is not assignable to type 'string | null'.
+ FILE  /home/runner/GroomITManager/client/src/pages/CustomersPage.tsx:143:49
+
+    141 |             </DialogHeader>
+    142 |             <Form {...form}>
+  > 143 |               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        |                                                 ^^^^^^^^
+    144 |                 <div className="grid grid-cols-2 gap-4">
+    145 |                   <FormField
+    146 |                     control={form.control}
+
+ ERROR(TypeScript)  Argument of type '(data: Omit<{ id: number; name: string; gender: string | null; createdAt: Date | null; customerId: number; type: string; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; ... 4 more ...; notes: string | null; }, "id">) => Promise<...>' is not assignable to parameter of type 'SubmitHandler<{ name: string; type: string; breed: string; dateOfBirth: string; age: number; gender: string; weight: string; weightUnit: string; height: string; heightUnit: string; notes: string; customerId: number; image: null; }>'.
+  Types of parameters 'data' and 'data' are incompatible.
+    Property 'createdAt' is missing in type '{ name: string; type: string; breed: string; dateOfBirth: string; age: number; gender: string; weight: string; weightUnit: string; height: string; heightUnit: string; notes: string; customerId: number; image: null; }' but required in type 'Omit<{ id: number; name: string; gender: string | null; createdAt: Date | null; customerId: number; type: string; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; ... 4 more ...; notes: string | null; }, "id">'.
+ FILE  /home/runner/GroomITManager/client/src/pages/PetsPage.tsx:78:49
+
+    76 |             </DialogHeader>
+    77 |             <Form {...form}>
+  > 78 |               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+       |                                                 ^^^^^^^^
+    79 |                 <FormField
+    80 |                   control={form.control}
+    81 |                   name="name"
+
+ ERROR(TypeScript)  Type 'string' is not assignable to type 'SQL<unknown> | Aliased<unknown> | PgColumn<ColumnBaseConfig<ColumnDataType, string>, {}, {}>'.
+ FILE  /home/runner/GroomITManager/server/routes.ts:125:13
+
+    123 |           customer: {
+    124 |             id: customers.id,
+  > 125 |             name: `${customers.firstName} ${customers.lastName}`
+        |             ^^^^
+    126 |           },
+    127 |           groomer: {
+    128 |             id: users.id,
