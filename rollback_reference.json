@@ -1,0 +1,27 @@
+{
+  "timestamp": "2024-12-06",
+  "version": "1.0.0",
+  "database": {
+    "schema": "db/schema.ts",
+    "tables": ["branches", "users", "customers", "pets", "appointments"]
+  },
+  "auth": {
+    "provider": "firebase",
+    "config": "server/auth.ts"
+  },
+  "frontend": {
+    "components": [
+      "PetForm.tsx",
+      "CustomersPage.tsx",
+      "PetsPage.tsx"
+    ],
+    "hooks": [
+      "use-customers.ts",
+      "use-pets.ts"
+    ]
+  },
+  "server": {
+    "routes": "server/routes.ts",
+    "middleware": "server/middleware/auth.ts"
+  }
+}
