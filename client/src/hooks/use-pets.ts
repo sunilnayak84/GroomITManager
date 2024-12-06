@@ -29,25 +29,45 @@ export function usePets() {
     };
   };
 
-  const updatePet = async (id: number, data: Partial<Pet>) => {
+  const updatePet = async (id: number | string, data: Partial<Pet>) => {
     try {
-      // Log the input values for debugging
-      console.log('Update Pet Input:', { id, data });
+      // Extensive logging for debugging
+      console.log('Raw Update Pet Input:', { 
+        id, 
+        idType: typeof id, 
+        data,
+        dataKeys: Object.keys(data)
+      });
 
-      // Ensure id is a valid number
-      const petId = typeof id === 'string' ? parseInt(id, 10) : id;
+      // More robust ID parsing
+      let petId: number;
+      if (typeof id === 'string') {
+        petId = parseInt(id, 10);
+      } else if (typeof id === 'number') {
+        petId = id;
+      } else {
+        console.error('Unexpected ID type:', typeof id, 'Value:', id);
+        throw new Error('Invalid pet ID type');
+      }
       
-      // Additional logging
-      console.log('Parsed Pet ID:', petId);
-      console.log('Pet ID Type:', typeof petId);
+      // Additional comprehensive logging
+      console.log('Parsed Pet ID Details:', { 
+        petId, 
+        petIdType: typeof petId, 
+        isNaN: isNaN(petId),
+        stringValue: petId.toString()
+      });
 
       if (isNaN(petId)) {
-        console.error('Invalid pet ID:', id);
+        console.error('Invalid pet ID after parsing:', id);
         throw new Error('Invalid pet ID');
       }
 
       const petRef = doc(petsCollection, petId.toString());
-      console.log('Attempting to update pet with ID:', petId);
+      console.log('Firestore Document Reference:', {
+        path: petRef.path,
+        id: petRef.id
+      });
       
       // Remove undefined values to prevent overwriting with undefined
       const updateData = Object.fromEntries(
@@ -62,7 +82,11 @@ export function usePets() {
       console.log('Pet updated successfully');
       return true;
     } catch (error) {
-      console.error('Error updating pet:', error);
+      console.error('Comprehensive Error in updatePet:', {
+        errorName: error instanceof Error ? error.name : 'Unknown Error',
+        errorMessage: error instanceof Error ? error.message : 'No error message',
+        errorStack: error instanceof Error ? error.stack : 'No stack trace'
+      });
       throw error;
     }
   };

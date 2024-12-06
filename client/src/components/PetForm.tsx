@@ -87,8 +87,16 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
 
       // If editing an existing pet, use the ID
       if (pet) {
-        console.log('Pet being updated:', pet);
-        console.log('Pet ID type:', typeof pet.id);
+        console.log('Complete Pet Object:', JSON.stringify(pet, null, 2));
+        console.log('Pet ID:', pet.id);
+        console.log('Pet ID Type:', typeof pet.id);
+        console.log('Pet ID Inspection:', {
+          isNumber: typeof pet.id === 'number',
+          isString: typeof pet.id === 'string',
+          value: pet.id,
+          stringValue: pet.id?.toString(),
+          parsedInt: parseInt(pet.id?.toString() || '', 10)
+        });
         
         const updateResult = await updatePet?.(pet.id, {
           ...data,
@@ -115,7 +123,11 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
         }
       }
     } catch (error) {
-      console.error('Error in pet form submission:', error);
+      console.error('Detailed Error in pet form submission:', {
+        errorName: error instanceof Error ? error.name : 'Unknown Error',
+        errorMessage: error instanceof Error ? error.message : 'No error message',
+        errorStack: error instanceof Error ? error.stack : 'No stack trace'
+      });
       toast({
         title: "Error",
         description: "Failed to save pet details",
