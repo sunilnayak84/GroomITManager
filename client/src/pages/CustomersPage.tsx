@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Search } from "lucide-react";
-import { useCustomers } from "../hooks/use-customers";
-import { usePets } from "../hooks/use-pets";
+import { useCustomers } from "@/hooks/use-customers";
+import { usePets } from "@/hooks/use-pets";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -24,8 +24,9 @@ import { DataTable } from "@/components/ui/data-table";
 import { useToast } from "@/hooks/use-toast";
 import PetForm from "@/components/PetForm";
 import { Loader2 } from "lucide-react";
-import { useQueryClient } from "react-query";
-import { useUpdateCustomer, useDeleteCustomer } from "../hooks/use-customers";
+import { useQueryClient } from "@tanstack/react-query";
+import { useUpdateCustomer, useDeleteCustomer } from "@/hooks/use-customers";
+import { usePets } from "@/hooks/use-pets";
 
 export default function CustomersPage() {
   const [open, setOpen] = useState(false);
