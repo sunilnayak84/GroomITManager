@@ -87,6 +87,7 @@ export const insertPetSchema = createInsertSchema(pets, {
   type: z.enum(["dog", "cat", "other"]),
   name: z.string().min(1, "Name is required"),
   breed: z.string().min(1, "Breed is required"),
+  customerId: z.number().min(1, "Customer is required"),
   dateOfBirth: z.string().optional(),
   age: z.number().optional(),
   gender: z.enum(["male", "female", "other"]).optional(),

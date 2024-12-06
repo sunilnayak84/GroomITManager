@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { usePets } from "../hooks/use-pets";
+import { useCustomers } from "../hooks/use-customers";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { Upload } from "lucide-react";
@@ -17,6 +18,7 @@ interface PetFormProps {
 
 export default function PetForm({ onSuccess, defaultValues }: PetFormProps) {
   const { addPet } = usePets();
+  const { data: customers } = useCustomers();
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
@@ -107,6 +109,31 @@ export default function PetForm({ onSuccess, defaultValues }: PetFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+        {/* Customer Selection */}
+        <FormField
+          control={form.control}
+          name="customerId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Customer *</FormLabel>
+              <Select onValueChange={(value) => field.onChange(parseInt(value))} value={field.value?.toString()}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a customer" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {customers?.map((customer) => (
+                    <SelectItem key={customer.id} value={customer.id.toString()}>
+                      {customer.firstName} {customer.lastName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormItem>
+          )}
+        />
+
         {/* Pet Image Upload */}
         <div className="flex flex-col items-center mb-6">
           <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-2 relative overflow-hidden">
