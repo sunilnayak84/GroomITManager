@@ -11,6 +11,7 @@ import { useCustomers } from "../hooks/use-customers";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
 import { Upload } from "lucide-react";
+import { format } from "date-fns";
 
 interface PetFormProps {
   onSuccess?: (data: PetFormData) => void;
@@ -319,7 +320,11 @@ export default function PetForm({
                 <Input 
                   type="date" 
                   {...field}
-                  value={field.value || ''}
+                  value={field.value ? format(new Date(field.value), 'yyyy-MM-dd') : ''}
+                  onChange={(e) => {
+                    const date = e.target.value ? new Date(e.target.value) : undefined;
+                    field.onChange(date);
+                  }}
                 />
               </FormControl>
             </FormItem>
