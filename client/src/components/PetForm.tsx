@@ -68,7 +68,7 @@ export default function PetForm({
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedCustomerId, setSelectedCustomerId] = useState(
-    defaultValues?.customerId || pet?.customerId || ""
+    defaultValues?.customerId || customers?.find(customer => customer.id === defaultValues?.customerId)?.id || pet?.customerId || ""
   );
 
   console.log('PET FORM: Component Mounted', { 
@@ -113,8 +113,11 @@ export default function PetForm({
 
   useEffect(() => {
     if (defaultValues?.customerId || pet?.customerId) {
-      setSelectedCustomerId(defaultValues?.customerId || pet?.customerId || "");
-      form.setValue("customerId", defaultValues?.customerId || pet?.customerId || "");
+      const customerId = defaultValues?.customerId || pet?.customerId;
+      if (customerId) {
+        setSelectedCustomerId(customerId);
+        form.setValue("customerId", customerId);
+      }
     }
   }, [defaultValues?.customerId, pet?.customerId, form]);
 
@@ -196,7 +199,7 @@ export default function PetForm({
         // If image is a string (existing image URL), pass it as is
         // If it's a File, it will be handled by the upload function
         image: data.image,
-        customerId: selectedCustomerId || data.customerId,
+        customerId: selectedCustomerId,
       };
 
       if (pet?.id) {
