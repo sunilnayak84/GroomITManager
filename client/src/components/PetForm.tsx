@@ -39,7 +39,16 @@ const insertPetSchema = z.object({
   image: z.instanceof(File).nullable().optional(),
   notes: z.string().optional()
 }).refine(data => {
-  // Optional fields should pass if they are either undefined or valid
+  // Ensure that if optional fields are provided, they are valid
+  if (data.weight !== undefined && isNaN(data.weight)) {
+    throw new Error("Weight must be a valid number");
+  }
+  if (data.height !== undefined && isNaN(data.height)) {
+    throw new Error("Height must be a valid number");
+  }
+  if (data.age !== undefined && isNaN(data.age)) {
+    throw new Error("Age must be a valid number");
+  }
   return true;
 }, {
   message: "Invalid optional field"
@@ -132,87 +141,65 @@ export default function PetForm({
     }
   };
 
-  const onSubmit = async (data: PetFormData, event?: React.BaseSyntheticEvent) => {
-    console.error('PET FORM: onSubmit called', { 
-      data, 
-      isSubmitting, 
-      customers: customers?.map(c => c.id),
-      formValues: form.getValues(),
-      formErrors: form.formState.errors,
-      event
+  const onSubmit = async (data: PetFormData) => {
+    console.error('PET FORM: Submission started', { 
+      formData: data,
+      formState: {
+        isValid: form.formState.isValid,
+        errors: form.formState.errors,
+        touchedFields: form.formState.touchedFields,
+        dirtyFields: form.formState.dirtyFields
+      }
     });
 
-    // Detailed error logging
-    if (!form.formState.isValid) {
-      console.error('PET FORM: Validation Errors', {
-        errors: Object.entries(form.formState.errors).map(([field, error]) => ({
-          field,
-          type: error?.type,
-          message: error?.message,
-          value: form.getValues(field as keyof PetFormData)
-        }))
-      });
-
-      // Prevent form submission
-      if (event && typeof event.preventDefault === 'function') {
-        event.preventDefault();
-      }
-
-      toast({
-        title: "Form Validation Error",
-        description: "Please check all required fields.",
-        variant: "destructive"
-      });
-
-      return;
-    }
-
     // Prevent multiple submissions
-    if (isSubmitting) {
-      console.error('PET FORM: Already submitting, preventing duplicate submission');
-      return;
-    }
+    if (isSubmitting) return;
+    setIsSubmitting(true);
 
     try {
-      // Explicitly set submitting state
-      setIsSubmitting(true);
+      // Validate form data
+      const validationResult = insertPetSchema.safeParse(data);
       
-      // Validate required fields with more detailed logging
-      const requiredFields: (keyof PetFormData)[] = ['name', 'type', 'breed', 'customerId'];
-      const missingFields = requiredFields.filter(field => {
-        const value = data[field];
-        return value === undefined || value === null || value === '';
-      });
-
-      if (missingFields.length > 0) {
-        console.error('PET FORM: Missing required fields', { 
-          missingFields,
-          formData: data 
+      if (!validationResult.success) {
+        console.error('PET FORM: Validation Failed', {
+          errors: validationResult.error.errors,
+          formData: data
         });
 
-        missingFields.forEach(field => {
-          form.setError(field, {
-            type: 'required',
-            message: `${field.charAt(0).toUpperCase() + field.slice(1)} is required`
-          });
+        // Detailed error handling
+        const errorMessages = validationResult.error.errors.map(err => {
+          const path = err.path.join('.');
+          return `${path}: ${err.message}`;
         });
 
         toast({
           title: "Validation Error",
-          description: `Please fill in all required fields: ${missingFields.join(', ')}`,
+          description: errorMessages.join(", "),
           variant: "destructive"
+        });
+
+        // Set specific form errors
+        validationResult.error.errors.forEach(err => {
+          const path = err.path.join('.') as keyof PetFormData;
+          form.setError(path, {
+            type: 'validate',
+            message: err.message
+          });
         });
 
         setIsSubmitting(false);
         return;
       }
-      
-      // Clean the data by removing empty strings and undefined values
-      const cleanedData = Object.fromEntries(
-        Object.entries(data)
-          .filter(([_, value]) => value !== undefined && value !== '')
-          .map(([key, value]) => [key, value === '' ? null : value])
-      ) as InsertPet;
+
+      // Clean and prepare data
+      const cleanedData: InsertPet = {
+        ...data,
+        customerId: selectedCustomerId || data.customerId,
+        dateOfBirth: data.dateOfBirth instanceof Date ? data.dateOfBirth : undefined,
+        weight: data.weight ? Number(data.weight) : undefined,
+        height: data.height ? Number(data.height) : undefined,
+        age: data.age ? Number(data.age) : undefined
+      };
 
       console.error('PET FORM: Cleaned submission data', { 
         cleanedData,
