@@ -29,29 +29,43 @@ const insertPetSchema = z.object({
   }),
   breed: z.string().min(1, { message: "Breed is required" }),
   customerId: z.string().min(1, { message: "Customer is required" }),
-  dateOfBirth: z.date().optional(),
-  age: z.number().optional(),
+  dateOfBirth: z.coerce.date().optional(),
+  age: z.coerce.number().optional(),
   gender: z.enum(["male", "female", "unknown"]).optional(),
-  weight: z.number().optional(),
+  weight: z.coerce.number().optional(),
   weightUnit: z.enum(["kg", "lbs"]).default("kg"),
-  height: z.number().optional(),
+  height: z.coerce.number().optional(),
   heightUnit: z.enum(["cm", "inches"]).default("cm"),
   image: z.instanceof(File).nullable().optional(),
   notes: z.string().optional()
+}).refine(data => {
+  // Optional fields should pass if they are either undefined or valid
+  return true;
+}, {
+  message: "Invalid optional field"
 });
 
 export default function PetForm({
   onSuccess,
   onCancel,
+  customers,
   defaultValues,
-  pet,
-  updatePet,
-  customers
+  pet
 }: PetFormProps) {
   const { addPet } = usePets();
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedCustomerId, setSelectedCustomerId] = useState(
+    defaultValues?.customerId || pet?.customerId || ""
+  );
+
+  console.error('PET FORM: Component Mounted', { 
+    customers, 
+    defaultValues, 
+    pet, 
+    selectedCustomerId 
+  });
 
   const form = useForm<PetFormData>({
     resolver: zodResolver(insertPetSchema),
@@ -59,7 +73,7 @@ export default function PetForm({
       name: "",
       type: "dog",
       breed: "",
-      customerId: defaultValues?.customerId || "",
+      customerId: selectedCustomerId,
       dateOfBirth: undefined,
       age: undefined,
       gender: undefined,
@@ -70,9 +84,10 @@ export default function PetForm({
       image: null,
       notes: undefined,
       ...defaultValues,
+      ...pet
     },
-    mode: 'onSubmit', // Validate only on form submission
-    reValidateMode: 'onSubmit' // Revalidate only on submission
+    mode: 'onSubmit',
+    reValidateMode: 'onSubmit'
   });
 
   // Log customers and form details on component mount
