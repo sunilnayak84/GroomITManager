@@ -49,8 +49,9 @@ export function usePets() {
           const customerDoc = await transaction.get(customerRef);
           
           if (customerDoc.exists()) {
+            const currentPetCount = customerDoc.data().petCount || 0;
             transaction.update(customerRef, {
-              petCount: increment(1),
+              petCount: currentPetCount + 1,
               updatedAt: new Date()
             });
           }

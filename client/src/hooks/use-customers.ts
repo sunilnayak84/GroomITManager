@@ -79,28 +79,40 @@ export function useCustomers() {
 
     // Listen for pet updates to keep pet counts in sync
     const petsCollection = collection(db, 'pets');
-    const petsUnsubscribe = onSnapshot(petsCollection, (snapshot) => {
-      // Get current customers from cache
-      const currentCustomers = queryClient.getQueryData<Customer[]>(["customers"]) || [];
-      
-      // Count pets for each customer
-      const petCounts = new Map<number, number>();
-      snapshot.docs.forEach(doc => {
-        const pet = doc.data();
-        if (pet.customerId) {
-          const count = petCounts.get(pet.customerId) || 0;
-          petCounts.set(pet.customerId, count + 1);
-        }
-      });
+    const petsUnsubscribe = onSnapshot(petsCollection, async (snapshot) => {
+      try {
+        // Get current customers from cache
+        const currentCustomers = queryClient.getQueryData<Customer[]>(["customers"]) || [];
+        
+        // Count pets for each customer
+        const petCounts = new Map<number, number>();
+        snapshot.docs.forEach(doc => {
+          const pet = doc.data();
+          if (pet.customerId) {
+            const count = petCounts.get(pet.customerId) || 0;
+            petCounts.set(pet.customerId, count + 1);
+          }
+        });
 
-      // Update customers with new pet counts
-      const updatedCustomers = currentCustomers.map(customer => ({
-        ...customer,
-        petCount: petCounts.get(customer.id) || 0
-      }));
+        // Update customers with new pet counts in Firestore
+        const updatePromises = currentCustomers.map(async (customer) => {
+          const newPetCount = petCounts.get(customer.id) || 0;
+          if (customer.petCount !== newPetCount) {
+            await updateCustomerDoc(customer.id, { petCount: newPetCount });
+          }
+          return {
+            ...customer,
+            petCount: newPetCount
+          };
+        });
 
-      // Update cache with new pet counts
-      queryClient.setQueryData(["customers"], updatedCustomers);
+        const updatedCustomers = await Promise.all(updatePromises);
+
+        // Update cache with new pet counts
+        queryClient.setQueryData(["customers"], updatedCustomers);
+      } catch (error) {
+        console.error('Error updating pet counts:', error);
+      }
     });
 
     return () => {
