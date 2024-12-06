@@ -86,20 +86,49 @@ export default function PetForm({
     }
   }, [pet]);
 
-  // Initialize form with default values, ensuring customerId is set
+  // Initialize form with default values
   const form = useForm<PetFormData>({
     resolver: zodResolver(insertPetSchema),
     defaultValues: {
-      name: "",
-      type: undefined,
-      breed: "",
-      dateOfBirth: undefined,
-      image: undefined,
-      customerId: defaultValues?.customerId || selectedCustomerId || "",
+      name: defaultValues?.name || "",
+      type: defaultValues?.type || "dog",
+      breed: defaultValues?.breed || "",
+      customerId: defaultValues?.customerId || "",
+      dateOfBirth: defaultValues?.dateOfBirth,
+      age: defaultValues?.age,
+      gender: defaultValues?.gender,
+      weight: defaultValues?.weight,
+      weightUnit: defaultValues?.weightUnit || "kg",
+      height: defaultValues?.height,
+      heightUnit: defaultValues?.heightUnit || "cm",
+      image: defaultValues?.image || undefined,
+      notes: defaultValues?.notes
     },
     mode: 'onSubmit',
     reValidateMode: 'onSubmit'
   });
+
+  // Reset form when defaultValues change
+  useEffect(() => {
+    if (defaultValues) {
+      console.log('PET FORM: Resetting form with default values:', defaultValues);
+      form.reset({
+        name: defaultValues.name || "",
+        type: defaultValues.type || "dog",
+        breed: defaultValues.breed || "",
+        customerId: defaultValues.customerId || "",
+        dateOfBirth: defaultValues.dateOfBirth,
+        age: defaultValues.age,
+        gender: defaultValues.gender,
+        weight: defaultValues.weight,
+        weightUnit: defaultValues.weightUnit || "kg",
+        height: defaultValues.height,
+        heightUnit: defaultValues.heightUnit || "cm",
+        image: defaultValues.image || undefined,
+        notes: defaultValues.notes
+      });
+    }
+  }, [defaultValues, form]);
 
   // Ensure selectedCustomerId is always set from defaultValues
   useEffect(() => {

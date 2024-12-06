@@ -383,38 +383,72 @@ export default function PetsPage() {
                 </div>
               ) : (
                 <PetForm
-                  defaultValues={{
-                    name: selectedPet.name,
-                    type: selectedPet.type,
-                    breed: selectedPet.breed,
-                    customerId: selectedPet.customerId,
-                    dateOfBirth: selectedPet.dateOfBirth || undefined,
-                    age: selectedPet.age || undefined,
-                    gender: selectedPet.gender || undefined,
-                    weight: selectedPet.weight || undefined,
-                    weightUnit: selectedPet.weightUnit,
-                    height: selectedPet.height || undefined,
-                    heightUnit: selectedPet.heightUnit,
-                    image: selectedPet.image || undefined,
-                    notes: selectedPet.notes || undefined
-                  }}
-                  pet={selectedPet}
-                  updatePet={handleUpdatePet}
-                  onSuccess={async (data) => {
-                    try {
-                      await handleUpdatePet(selectedPet.id, data);
-                    } catch (error) {
-                      console.error('Error in form update:', error);
+                  onSuccess={(data) => {
+                    if (selectedPet) {
+                      handleUpdatePet(selectedPet.id, data);
                     }
                   }}
-                  onCancel={() => {
-                    setIsEditing(false);
+                  onCancel={() => setIsEditing(false)}
+                  defaultValues={{
+                    name: selectedPet?.name || "",
+                    type: selectedPet?.type || "dog",
+                    breed: selectedPet?.breed || "",
+                    customerId: selectedPet?.customerId || "",
+                    dateOfBirth: selectedPet?.dateOfBirth,
+                    age: selectedPet?.age,
+                    gender: selectedPet?.gender,
+                    weight: selectedPet?.weight,
+                    weightUnit: selectedPet?.weightUnit || "kg",
+                    height: selectedPet?.height,
+                    heightUnit: selectedPet?.heightUnit || "cm",
+                    image: selectedPet?.image,
+                    notes: selectedPet?.notes
                   }}
                   customers={customers}
                 />
               )}
             </>
           )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isEditing} onOpenChange={(open) => {
+        setIsEditing(open);
+        if (!open) {
+          setSelectedPet(null);
+        }
+      }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Pet Details</DialogTitle>
+            <DialogDescription>
+              Modify the pet's information below.
+            </DialogDescription>
+          </DialogHeader>
+          <PetForm
+            onSuccess={(data) => {
+              if (selectedPet) {
+                handleUpdatePet(selectedPet.id, data);
+              }
+            }}
+            onCancel={() => setIsEditing(false)}
+            defaultValues={{
+              name: selectedPet?.name || "",
+              type: selectedPet?.type || "dog",
+              breed: selectedPet?.breed || "",
+              customerId: selectedPet?.customerId || "",
+              dateOfBirth: selectedPet?.dateOfBirth,
+              age: selectedPet?.age,
+              gender: selectedPet?.gender,
+              weight: selectedPet?.weight,
+              weightUnit: selectedPet?.weightUnit || "kg",
+              height: selectedPet?.height,
+              heightUnit: selectedPet?.heightUnit || "cm",
+              image: selectedPet?.image,
+              notes: selectedPet?.notes
+            }}
+            customers={customers}
+          />
         </DialogContent>
       </Dialog>
 
