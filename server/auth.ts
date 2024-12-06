@@ -10,18 +10,20 @@ export interface FirebaseUser {
   email: string;
   role: 'admin' | 'staff';
   name: string;
+  branchId?: number;
 }
 
-// Extend Express Request type
+// Extend Express Request type to avoid recursive type reference
 declare global {
   namespace Express {
     interface Request {
       user?: FirebaseUser;
     }
-    // Use the correct Firebase user type
-    interface User extends FirebaseUser {}
   }
 }
+
+// Export the type for use in other files
+export type AuthUser = FirebaseUser;
 
 export async function createUserInDatabase(user: FirebaseUser) {
   try {

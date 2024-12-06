@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { usePets } from "../hooks/use-pets";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { Upload } from "lucide-react";
 
 interface PetFormProps {
   onSuccess?: () => void;
@@ -16,25 +18,45 @@ interface PetFormProps {
 export default function PetForm({ onSuccess, defaultValues }: PetFormProps) {
   const { addPet } = usePets();
   const { toast } = useToast();
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  const form = useForm({
+  const form = useForm<InsertPet>({
     resolver: zodResolver(insertPetSchema),
     defaultValues: {
       name: "",
-      type: "",
+      type: "dog",
       breed: "",
-      size: "",
       notes: "",
-      customerId: 0,
-      image: null,
+      customerId: defaultValues?.customerId || 0,
+      image: "",
+      dateOfBirth: "",
+      age: 0,
+      gender: "male",
+      weight: "",
+      weightUnit: "kg",
+      height: "",
+      heightUnit: "cm",
       ...defaultValues,
     },
   });
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+        form.setValue("image", reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   async function onSubmit(data: InsertPet) {
     try {
       await addPet({ ...data, createdAt: new Date() });
       form.reset();
+      setImagePreview(null);
       onSuccess?.();
       toast({
         title: "Success",
@@ -52,28 +74,49 @@ export default function PetForm({ onSuccess, defaultValues }: PetFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {/* Pet Image Upload */}
+        <div className="flex flex-col items-center mb-6">
+          <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-2 relative overflow-hidden">
+            {imagePreview ? (
+              <img src={imagePreview} alt="Pet preview" className="w-full h-full object-cover" />
+            ) : (
+              <Upload className="w-8 h-8 text-gray-400" />
+            )}
+          </div>
+          <Input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="hidden"
+            id="pet-image"
+          />
+          <label htmlFor="pet-image" className="text-sm text-primary cursor-pointer">
+            Choose Photo
+          </label>
+        </div>
+
+        {/* Name */}
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Pet Name *</FormLabel>
+              <FormLabel>Name *</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Max" />
+                <Input {...field} />
               </FormControl>
             </FormItem>
           )}
         />
+
+        {/* Pet Type */}
         <FormField
           control={form.control}
           name="type"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Type *</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-              >
+              <FormLabel>Pet Type *</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select pet type" />
@@ -88,6 +131,8 @@ export default function PetForm({ onSuccess, defaultValues }: PetFormProps) {
             </FormItem>
           )}
         />
+
+        {/* Breed */}
         <FormField
           control={form.control}
           name="breed"
@@ -95,50 +140,176 @@ export default function PetForm({ onSuccess, defaultValues }: PetFormProps) {
             <FormItem>
               <FormLabel>Breed *</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Golden Retriever" />
+                <Input {...field} />
               </FormControl>
             </FormItem>
           )}
         />
+
+        {/* Date of Birth */}
         <FormField
           control={form.control}
-          name="size"
+          name="dateOfBirth"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Size *</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-              >
+              <FormLabel>Date of Birth</FormLabel>
+              <FormControl>
+                <Input 
+                  type="date" 
+                  {...field}
+                  value={field.value || ''}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        {/* Age */}
+        <FormField
+          control={form.control}
+          name="age"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Age</FormLabel>
+              <FormControl>
+                <Input 
+                  type="number"
+                  {...field}
+                  onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
+                  value={field.value || ''}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        {/* Gender */}
+        <FormField
+          control={form.control}
+          name="gender"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Gender</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value || 'male'}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select size" />
+                    <SelectValue placeholder="Select gender" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="small">Small</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="large">Large</SelectItem>
+                  <SelectItem value="male">Male</SelectItem>
+                  <SelectItem value="female">Female</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
             </FormItem>
           )}
         />
+
+        {/* Weight with unit */}
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="weight"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Weight</FormLabel>
+                <FormControl>
+                  <Input 
+                    type="number" 
+                    step="0.1" 
+                    {...field}
+                    value={field.value || ''}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="weightUnit"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Unit</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Unit" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="kg">kg</SelectItem>
+                    <SelectItem value="lbs">lbs</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* Height with unit */}
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="height"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Height</FormLabel>
+                <FormControl>
+                  <Input 
+                    type="number" 
+                    step="0.1" 
+                    {...field}
+                    value={field.value || ''}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="heightUnit"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Unit</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Unit" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="cm">cm</SelectItem>
+                    <SelectItem value="inches">inches</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* Additional Info */}
         <FormField
           control={form.control}
           name="notes"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Notes</FormLabel>
+              <FormLabel>Additional Info</FormLabel>
               <FormControl>
-                <Input {...field} value={field.value?.toString() || ''} />
+                <Input {...field} value={field.value || ''} />
               </FormControl>
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">
-          Add Pet
-        </Button>
+
+        <div className="flex gap-4">
+          <Button type="submit" className="flex-1">
+            Save
+          </Button>
+          <Button type="button" variant="outline" className="flex-1" onClick={() => form.reset()}>
+            Cancel
+          </Button>
+        </div>
       </form>
     </Form>
   );

@@ -24,7 +24,13 @@ export default function PetsPage() {
       name: "",
       type: "",
       breed: "",
-      size: "",
+      dateOfBirth: "",
+      age: 0,
+      gender: "",
+      weight: "",
+      weightUnit: "kg",
+      height: "",
+      heightUnit: "cm",
       notes: "",
       customerId: 0,
       image: null
@@ -118,30 +124,7 @@ export default function PetsPage() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="size"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Size</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select size" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="small">Small</SelectItem>
-                          <SelectItem value="medium">Medium</SelectItem>
-                          <SelectItem value="large">Large</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormItem>
-                  )}
-                />
+                {/* Size field removed as per schema update */}
                 <FormField
                   control={form.control}
                   name="notes"
@@ -215,7 +198,7 @@ export default function PetsPage() {
               <div>
                 <h3 className="font-semibold text-lg">{pet.name}</h3>
                 <p className="text-sm text-muted-foreground capitalize">
-                  {pet.breed} · {pet.size}
+                  {pet.breed} · {pet.type}
                 </p>
               </div>
             </div>
