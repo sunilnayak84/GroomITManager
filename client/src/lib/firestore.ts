@@ -35,6 +35,49 @@ export async function createUserDocument(user: User) {
 // Customer operations with error handling
 export async function createCustomer(customer: Omit<Customer, 'id'>) {
   try {
+    // Validate input
+    if (!customer) {
+      console.error('FIRESTORE: Customer data is undefined');
+      throw new Error('Customer data cannot be empty');
+    }
+
+    // Validate required fields
+    const requiredFields: (keyof Omit<Customer, 'id'>)[] = [
+      'firstName', 
+      'lastName', 
+      'email', 
+      'phone', 
+      'gender'
+    ];
+
+    const missingFields = requiredFields.filter(field => {
+      const value = customer[field];
+      return value === undefined || value === null || value === '';
+    });
+
+    if (missingFields.length > 0) {
+      console.error('FIRESTORE: Missing required customer fields', { 
+        missingFields,
+        customerData: customer
+      });
+      throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(customer.email)) {
+      console.error('FIRESTORE: Invalid email format', { email: customer.email });
+      throw new Error('Invalid email format');
+    }
+
+    // Validate phone number (remove non-digit characters)
+    const phoneDigits = customer.phone.replace(/\D/g, '');
+    if (phoneDigits.length < 10) {
+      console.error('FIRESTORE: Invalid phone number', { phone: customer.phone });
+      throw new Error('Phone number must be at least 10 digits');
+    }
+
+    // Create customer reference
     const customerRef = doc(customersCollection);
     
     // Ensure createdAt is a valid Date
@@ -42,16 +85,28 @@ export async function createCustomer(customer: Omit<Customer, 'id'>) {
       ? customer.createdAt 
       : (customer.createdAt ? new Date(customer.createdAt) : new Date());
     
-    await setDoc(customerRef, {
+    // Prepare customer data for Firestore
+    const customerData = {
       ...customer,
       id: customerRef.id, // Use the Firestore document ID directly
       createdAt: createdAt.toISOString(), // Store as ISO string for consistent serialization
       petCount: customer.petCount || 0
-    });
+    };
+
+    // Log the data being saved
+    console.log('FIRESTORE: Creating customer', { customerData });
+
+    // Save to Firestore
+    await setDoc(customerRef, customerData);
     
+    console.log('FIRESTORE: Customer created successfully', { id: customerRef.id });
     return customerRef.id;
   } catch (error) {
-    console.error('Error creating customer:', error);
+    console.error('FIRESTORE: Error creating customer', { 
+      error,
+      errorMessage: error instanceof Error ? error.message : 'Unknown error',
+      customer
+    });
     throw error;
   }
 }
