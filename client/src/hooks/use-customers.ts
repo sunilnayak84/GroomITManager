@@ -32,7 +32,8 @@ export function useCustomers() {
 
       // Validate phone
       const phoneRegex = /^[0-9]{10,}$/;
-      if (!customer.phone || !phoneRegex.test(customer.phone.replace(/\D/g, ''))) {
+      const phoneDigits = customer.phone.replace(/\D/g, '');
+      if (!customer.phone || !phoneRegex.test(phoneDigits)) {
         validationErrors.push("Phone number must be at least 10 digits");
       }
 
@@ -52,11 +53,18 @@ export function useCustomers() {
       }
 
       try {
+        // Log the attempt to create a customer
+        console.log('ADD_CUSTOMER: Attempting to create customer', { customer });
+
         const id = await createCustomer({
           ...customer,
           createdAt: customer.createdAt || new Date(),
           petCount: 0 // Initialize petCount
         });
+
+        // Log successful creation
+        console.log('ADD_CUSTOMER: Customer created successfully', { id });
+
         return {
           id,
           ...customer,
@@ -64,12 +72,19 @@ export function useCustomers() {
           createdAt: customer.createdAt || new Date()
         };
       } catch (error) {
+        // Log the full error details
         console.error('ADD_CUSTOMER: Error creating customer', { 
           error,
           errorMessage: error instanceof Error ? error.message : 'Unknown error',
           customer
         });
-        throw error;
+        
+        // Throw a more descriptive error
+        throw new Error(
+          error instanceof Error 
+            ? error.message 
+            : 'Failed to create customer. Please check your input and try again.'
+        );
       }
     },
     onSuccess: () => {
