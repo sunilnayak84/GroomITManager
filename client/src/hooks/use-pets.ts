@@ -25,7 +25,21 @@ export function usePets() {
 
   const addPet = async (pet: InsertPet): Promise<Pet> => {
     try {
-      console.log('Adding pet with data:', pet);
+      console.error('DEBUG: Attempting to add pet', { pet });
+
+      // Validate required fields
+      if (!pet.name) {
+        throw new Error('Pet name is required');
+      }
+      if (!pet.type) {
+        throw new Error('Pet type is required');
+      }
+      if (!pet.breed) {
+        throw new Error('Pet breed is required');
+      }
+      if (!pet.customerId) {
+        throw new Error('Customer ID is required');
+      }
 
       // Clean the pet data before adding
       const cleanedPet = Object.fromEntries(
@@ -34,11 +48,20 @@ export function usePets() {
           .map(([key, value]) => [key, value === '' ? null : value])
       );
 
-      console.log('Cleaned pet data:', cleanedPet);
+      console.error('DEBUG: Cleaned pet data', { cleanedPet });
 
       let newPet: Pet | null = null;
 
       await runTransaction(db, async (transaction) => {
+        // Verify customer exists
+        const customerRef = doc(db, 'customers', cleanedPet.customerId);
+        const customerDoc = await transaction.get(customerRef);
+        
+        if (!customerDoc.exists()) {
+          console.error('DEBUG: Customer not found', { customerId: cleanedPet.customerId });
+          throw new Error(`Customer with ID ${cleanedPet.customerId} not found`);
+        }
+
         // Add the pet
         const petsCollection = collection(db, 'pets');
         const petRef = await addDoc(petsCollection, {
@@ -47,25 +70,19 @@ export function usePets() {
           updatedAt: new Date()
         });
 
-        console.log('Pet added with ID:', petRef.id);
+        console.error('DEBUG: Pet added with ID', { petId: petRef.id });
 
         // Update the customer's pet count
-        if (cleanedPet.customerId) {
-          const customerRef = doc(db, 'customers', cleanedPet.customerId);
-          const customerDoc = await transaction.get(customerRef);
-          
-          if (customerDoc.exists()) {
-            const currentPetCount = customerDoc.data().petCount || 0;
-            transaction.update(customerRef, {
-              petCount: currentPetCount + 1,
-              updatedAt: new Date()
-            });
+        const currentPetCount = customerDoc.data().petCount || 0;
+        transaction.update(customerRef, {
+          petCount: currentPetCount + 1,
+          updatedAt: new Date()
+        });
 
-            console.log('Customer pet count updated:', currentPetCount + 1);
-          } else {
-            console.error('Customer not found:', cleanedPet.customerId);
-          }
-        }
+        console.error('DEBUG: Customer pet count updated', { 
+          customerId: cleanedPet.customerId, 
+          newPetCount: currentPetCount + 1 
+        });
 
         // Fetch the newly created pet
         const newPetDoc = await transaction.get(petRef);
@@ -73,13 +90,13 @@ export function usePets() {
           id: petRef.id,
           ...newPetDoc.data()
         } as Pet;
+
+        console.error('DEBUG: New pet created', { newPet });
       });
 
       if (!newPet) {
-        throw new Error('Failed to create pet');
+        throw new Error('Failed to create pet - no pet returned');
       }
-
-      console.log('New pet created:', newPet);
 
       // Update the cache
       queryClient.setQueryData<Pet[]>(['pets'], (old) => {
@@ -89,7 +106,17 @@ export function usePets() {
 
       return newPet;
     } catch (error) {
-      console.error('Error adding pet:', error);
+      console.error('CRITICAL ERROR: Failed to add pet', error);
+      
+      // More detailed error logging
+      if (error instanceof Error) {
+        console.error('Error details:', {
+          message: error.message,
+          name: error.name,
+          stack: error.stack
+        });
+      }
+
       throw error;
     }
   };

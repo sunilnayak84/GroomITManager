@@ -90,6 +90,20 @@ export default function PetForm({
     try {
       setIsSubmitting(true);
       
+      // Validate required fields
+      if (!data.name) {
+        throw new Error('Pet name is required');
+      }
+      if (!data.type) {
+        throw new Error('Pet type is required');
+      }
+      if (!data.breed) {
+        throw new Error('Pet breed is required');
+      }
+      if (!data.customerId) {
+        throw new Error('Please select a customer');
+      }
+      
       // Clean the data by removing empty strings and undefined values
       const cleanedData = Object.fromEntries(
         Object.entries(data)
@@ -97,7 +111,7 @@ export default function PetForm({
           .map(([key, value]) => [key, value === '' ? null : value])
       ) as InsertPet;
 
-      console.log('Form submission data:', {
+      console.error('Form submission data:', {
         rawData: data,
         cleanedData,
         isUpdate: !!pet,
@@ -123,7 +137,7 @@ export default function PetForm({
           }
         });
 
-        console.log('Update data:', updateData);
+        console.error('Update data:', updateData);
 
         // If no fields were changed, provide feedback
         if (Object.keys(updateData).length === 0) {
@@ -147,9 +161,9 @@ export default function PetForm({
         }
       } else {
         // This is a new pet creation
-        console.log('Attempting to add new pet:', cleanedData);
+        console.error('Attempting to add new pet:', cleanedData);
         const newPet = await addPet(cleanedData);
-        console.log('New pet result:', newPet);
+        console.error('New pet result:', newPet);
         
         if (newPet) {
           toast({
@@ -158,10 +172,23 @@ export default function PetForm({
             variant: "default"
           });
           onSuccess?.(cleanedData);
+          
+          // Reset the form after successful submission
+          form.reset();
         }
       }
     } catch (error) {
       console.error('Form submission error:', error);
+      
+      // More detailed error logging
+      if (error instanceof Error) {
+        console.error('Error details:', {
+          message: error.message,
+          name: error.name,
+          stack: error.stack
+        });
+      }
+      
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "An unexpected error occurred. Please try again.",
