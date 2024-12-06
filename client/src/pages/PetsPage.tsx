@@ -153,6 +153,7 @@ export default function PetsPage() {
           <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Add New Pet</DialogTitle>
+              <p className="text-muted-foreground">Fill in the details to add a new pet to the system.</p>
             </DialogHeader>
             <PetForm 
               onSuccess={(data) => {
@@ -174,6 +175,11 @@ export default function PetsPage() {
               <DialogTitle>
                 {isEditing ? "Edit Pet Details" : "Pet Details"}
               </DialogTitle>
+              <p className="text-muted-foreground">
+                {isEditing 
+                  ? "Modify the pet's information below." 
+                  : "View and manage the pet's details."}
+              </p>
             </DialogHeader>
             {selectedPet && (
               <>
