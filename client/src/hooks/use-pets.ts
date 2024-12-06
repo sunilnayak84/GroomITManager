@@ -77,17 +77,15 @@ export function usePets() {
 
       // Update the customer's pet count
       const customerRef = doc(db, 'customers', pet.customerId);
-      const customerDoc = await getDoc(customerRef);
-      if (customerDoc.exists()) {
-        await runTransaction(db, async (transaction) => {
-          transaction.update(customerRef, {
-            petCount: increment(1)
-          });
+      
+      await runTransaction(db, async (transaction) => {
+        transaction.update(customerRef, {
+          petCount: increment(1)
         });
-      }
+      });
 
       // Update the cache
-      queryClient.setQueryData<Pet[]>(['pets'], (old) => {
+      queryClient.setQueryData(['pets'], (old: Pet[] | undefined) => {
         console.error('PETS HOOK: Updating query cache', { 
           oldPets: old, 
           newPet: petWithTimestamps 
@@ -152,7 +150,7 @@ export function usePets() {
       });
 
       // Update the cache
-      queryClient.setQueryData<Pet[]>(['pets'], (old) => {
+      queryClient.setQueryData(['pets'], (old: Pet[] | undefined) => {
         if (!old) return old;
         return old.map(pet => {
           if (pet.id === id) {
@@ -191,7 +189,7 @@ export function usePets() {
       });
 
       // Update the cache
-      queryClient.setQueryData<Pet[]>(['pets'], (old) => {
+      queryClient.setQueryData(['pets'], (old: Pet[] | undefined) => {
         if (!old) return old;
         return old.filter(pet => pet.id !== id);
       });
