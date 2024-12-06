@@ -31,19 +31,52 @@ export default function PetsPage() {
   const { toast } = useToast();
 
   const handleAddPet = async (data: InsertPet) => {
+    console.error('PETS PAGE: handleAddPet called', { 
+      data, 
+      customers: customers?.map(c => c.id)
+    });
+
     try {
-      await addPet(data);
+      // Verify customer exists
+      const selectedCustomer = customers?.find(c => c.id === data.customerId);
+      if (!selectedCustomer) {
+        console.error('PETS PAGE: Selected customer not found', { 
+          customerId: data.customerId,
+          availableCustomers: customers?.map(c => c.id)
+        });
+        toast({
+          title: "Customer Error",
+          description: "Selected customer not found. Please select a valid customer.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Add the pet
+      const newPet = await addPet(data);
+      
+      console.error('PETS PAGE: New pet added', { newPet });
+
+      // Close the dialog
       setOpen(false);
+
+      // Show success toast
       toast({
         title: "Success",
         description: "Pet added successfully",
+        variant: "default"
       });
     } catch (error) {
-      console.error('Error adding pet:', error);
+      console.error('PETS PAGE: Error adding pet', { 
+        error,
+        errorMessage: error instanceof Error ? error.message : 'Unknown error'
+      });
+
+      // Show error toast
       toast({
         title: "Error",
-        description: "Failed to add pet",
-        variant: "destructive",
+        description: error instanceof Error ? error.message : "Failed to add pet",
+        variant: "destructive"
       });
     }
   };
