@@ -1,59 +1,18 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Search } from "lucide-react";
+import { Plus } from "lucide-react";
 import { usePets } from "../hooks/use-pets";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useForm } from "react-hook-form";
-import { insertPetSchema, type Pet } from "@db/schema";
 import { useCustomers } from "../hooks/use-customers";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
+import PetForm from "@/components/PetForm";
+import type { Pet } from "@db/schema";
 
 export default function PetsPage() {
   const [open, setOpen] = useState(false);
   const { data: pets, isLoading, addPet } = usePets();
   const { data: customers } = useCustomers();
   const { toast } = useToast();
-
-  const form = useForm({
-    resolver: zodResolver(insertPetSchema),
-    defaultValues: {
-      name: "",
-      type: "",
-      breed: "",
-      dateOfBirth: "",
-      age: 0,
-      gender: "",
-      weight: "",
-      weightUnit: "kg",
-      height: "",
-      heightUnit: "cm",
-      notes: "",
-      customerId: 0,
-      image: null
-    },
-  });
-
-  async function onSubmit(data: Omit<Pet, 'id'>) {
-    try {
-      await addPet({ ...data, createdAt: new Date() });
-      setOpen(false);
-      form.reset();
-      toast({
-        title: "Success",
-        description: "Pet added successfully",
-      });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to add pet",
-      });
-    }
-  }
 
   return (
     <div className="space-y-6">
@@ -70,104 +29,20 @@ export default function PetsPage() {
               Add Pet
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Add New Pet</DialogTitle>
             </DialogHeader>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="type"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Type</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select pet type" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="dog">Dog</SelectItem>
-                          <SelectItem value="cat">Cat</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="breed"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Breed</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                {/* Size field removed as per schema update */}
-                <FormField
-                  control={form.control}
-                  name="notes"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Notes</FormLabel>
-                      <FormControl>
-                        <Input {...field} value={field.value?.toString() || ''} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="customerId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Customer</FormLabel>
-                      <Select
-                        onValueChange={(value) => field.onChange(parseInt(value))}
-                        defaultValue={field.value?.toString()}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a customer" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {(customers || []).map((customer) => (
-                            <SelectItem key={customer.id} value={customer.id.toString()}>
-                              {`${customer.firstName} ${customer.lastName}`}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" className="w-full">
-                  Add Pet
-                </Button>
-              </form>
-            </Form>
+            <PetForm 
+              onSuccess={(data) => {
+                addPet({ ...data, createdAt: new Date() });
+                setOpen(false);
+                toast({
+                  title: "Success",
+                  description: "Pet added successfully",
+                });
+              }}
+            />
           </DialogContent>
         </Dialog>
       </div>
@@ -187,11 +62,11 @@ export default function PetsPage() {
       </div>
 
       <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {(pets || []).map((pet: any) => (
+        {(pets || []).map((pet: Pet) => (
           <div key={pet.id} className="bg-white rounded-lg p-6 shadow-sm">
             <div className="flex items-center gap-4 mb-4">
               <img
-                src={pet.image || "https://api.dicebear.com/7.x/adventurer/svg?seed=" + pet.name}
+                src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
                 alt={pet.name}
                 className="w-16 h-16 rounded-full"
               />
