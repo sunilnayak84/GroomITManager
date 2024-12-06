@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { usePets } from "../hooks/use-pets";
 import { useCustomers } from "../hooks/use-customers";
 import { useToast } from "@/hooks/use-toast";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Upload } from "lucide-react";
 import { format } from "date-fns";
 
@@ -71,7 +71,6 @@ export default function PetForm({
     defaultValues?.customerId || 
     customers?.find(customer => customer.id === defaultValues?.customerId)?.id || 
     pet?.customerId || 
-    (fetchedCustomers && fetchedCustomers.find(customer => customer.id === defaultValues?.customerId)?.id) || 
     ""
   );
 
@@ -120,15 +119,14 @@ export default function PetForm({
       const customerId = 
         defaultValues?.customerId || 
         pet?.customerId || 
-        customers?.find(c => c.id === defaultValues?.customerId)?.id || 
-        (fetchedCustomers && fetchedCustomers.find(c => c.id === defaultValues?.customerId)?.id);
+        customers?.find(c => c.id === defaultValues?.customerId)?.id;
       
       if (customerId) {
         setSelectedCustomerId(customerId);
         form.setValue("customerId", customerId);
       }
     }
-  }, [defaultValues?.customerId, pet?.customerId, customers, fetchedCustomers?.length, form]);
+  }, [defaultValues?.customerId, pet?.customerId, customers, form]);
 
   // Log customers and form details on component mount
   useEffect(() => {
@@ -265,6 +263,14 @@ export default function PetForm({
 
   const { data: fetchedCustomers } = useCustomers();
 
+  // Safely handle fetched customers
+  const availableCustomers = useMemo(() => {
+    return [
+      ...(customers || []),
+      ...(fetchedCustomers || [])
+    ].filter(customer => customer && customer.id);
+  }, [customers, fetchedCustomers]);
+
   return (
     <Form {...form}>
       <form 
@@ -296,7 +302,7 @@ export default function PetForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {(customers || []).concat(fetchedCustomers || []).filter(Boolean).map((customer) => (
+                      {availableCustomers.map((customer) => (
                         <SelectItem key={customer.id} value={customer.id}>
                           {customer.firstName} {customer.lastName}
                         </SelectItem>
