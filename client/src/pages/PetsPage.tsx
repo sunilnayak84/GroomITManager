@@ -2,7 +2,14 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Pencil, Trash } from "lucide-react";
 import { usePets } from "../hooks/use-pets";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger,
+  DialogDescription 
+} from "@/components/ui/dialog";
 import { useCustomers } from "../hooks/use-customers";
 import { useToast } from "@/hooks/use-toast";
 import PetForm from "@/components/PetForm";
@@ -153,7 +160,9 @@ export default function PetsPage() {
           <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Add New Pet</DialogTitle>
-              <p className="text-muted-foreground">Fill in the details to add a new pet to the system.</p>
+              <DialogDescription>
+                Fill in the details to add a new pet to the system.
+              </DialogDescription>
             </DialogHeader>
             <PetForm 
               onSuccess={(data) => {
@@ -175,11 +184,11 @@ export default function PetsPage() {
               <DialogTitle>
                 {isEditing ? "Edit Pet Details" : "Pet Details"}
               </DialogTitle>
-              <p className="text-muted-foreground">
+              <DialogDescription>
                 {isEditing 
                   ? "Modify the pet's information below." 
                   : "View and manage the pet's details."}
-              </p>
+              </DialogDescription>
             </DialogHeader>
             {selectedPet && (
               <>
