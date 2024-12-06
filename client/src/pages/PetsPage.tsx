@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Pencil, Trash } from "lucide-react";
 import { usePets } from "../hooks/use-pets";
+import { useCustomers } from "../hooks/use-customers";
 import { 
   Dialog, 
   DialogContent, 
@@ -10,7 +11,6 @@ import {
   DialogTrigger,
   DialogDescription 
 } from "@/components/ui/dialog";
-import { useCustomers } from "../hooks/use-customers";
 import { useToast } from "@/hooks/use-toast";
 import PetForm from "@/components/PetForm";
 import type { Pet } from "@db/schema";
@@ -21,6 +21,7 @@ import { insertPetSchema, type InsertPet } from "@db/schema";
 
 export default function PetsPage() {
   const { pets, isLoading, addPet, updatePet, deletePet } = usePets();
+  const { data: customers } = useCustomers();
 
   const [open, setOpen] = useState(false);
   const [showPetDetails, setShowPetDetails] = useState(false);
@@ -151,7 +152,7 @@ export default function PetsPage() {
     {
       header: "Owner",
       cell: (pet: Pet) => {
-        const owner = pets?.find(c => c.id === pet.customerId);
+        const owner = customers?.find(c => c.id === pet.customerId);
         return owner ? `${owner.firstName} ${owner.lastName}` : "N/A";
       },
     },
@@ -186,6 +187,10 @@ export default function PetsPage() {
     }
   }, [pets]);
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -217,6 +222,7 @@ export default function PetsPage() {
                   console.error('Error in form submission:', error);
                 }
               }}
+              customers={customers}
             />
           </DialogContent>
         </Dialog>
@@ -275,7 +281,7 @@ export default function PetsPage() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <h3 className="font-medium mb-1">Owner</h3>
-                        <p>{pets?.find(c => c.id === selectedPet.customerId)?.firstName} {pets?.find(c => c.id === selectedPet.customerId)?.lastName}</p>
+                        <p>{customers?.find(c => c.id === selectedPet.customerId)?.firstName} {customers?.find(c => c.id === selectedPet.customerId)?.lastName}</p>
                       </div>
                       <div>
                         <h3 className="font-medium mb-1">Age</h3>
@@ -332,6 +338,7 @@ export default function PetsPage() {
                     onCancel={() => {
                       setIsEditing(false);
                     }}
+                    customers={customers}
                   />
                 )}
               </>

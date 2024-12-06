@@ -16,12 +16,19 @@ interface PetFormProps {
   onCancel?: () => void;
   defaultValues?: Partial<PetFormData>;
   pet?: InsertPet;
-  updatePet?: (id: string, data: InsertPet) => Promise<InsertPet | null>;
+  updatePet?: (id: string, data: Partial<InsertPet>) => Promise<InsertPet | null>;
+  customers?: Customer[];
 }
 
-export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updatePet }: PetFormProps) {
+export default function PetForm({
+  onSuccess,
+  onCancel,
+  defaultValues,
+  pet,
+  updatePet,
+  customers
+}: PetFormProps) {
   const { addPet } = usePets();
-  const { data: customers } = useCustomers();
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -153,29 +160,30 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
         {/* Customer Selection */}
-        <FormField
-          control={form.control}
-          name="customerId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Customer *</FormLabel>
-              <Select onValueChange={(value) => field.onChange(parseInt(value))} value={field.value?.toString()}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a customer" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {customers?.map((customer) => (
-                    <SelectItem key={customer.id} value={customer.id.toString()}>
-                      {customer.firstName} {customer.lastName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormItem>
-          )}
-        />
+        <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <FormLabel className="text-right" htmlFor="customerId">
+              Owner
+            </FormLabel>
+            <Select
+              onValueChange={(value) => form.setValue("customerId", parseInt(value))}
+              value={form.watch("customerId")?.toString()}
+            >
+              <FormControl>
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Select an owner" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {customers?.map((customer) => (
+                  <SelectItem key={customer.id} value={customer.id.toString()}>
+                    {customer.firstName} {customer.lastName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
 
         {/* Pet Image Upload */}
         <div className="flex flex-col items-center mb-6">
