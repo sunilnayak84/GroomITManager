@@ -263,11 +263,19 @@ export default function PetsPage() {
                     }}
                     pet={{
                       ...selectedPet,
-                      id: selectedPet.id ?? undefined
+                      // Ensure id is a valid number or undefined
+                      id: typeof selectedPet.id === 'string' 
+                        ? parseInt(selectedPet.id, 10) 
+                        : (selectedPet.id || undefined)
                     }}
                     updatePet={updatePet}
                     onCancel={() => {
-                      console.log('Selected Pet before closing:', selectedPet);
+                      console.log('Selected Pet before closing:', {
+                        ...selectedPet,
+                        id: typeof selectedPet.id === 'string' 
+                          ? parseInt(selectedPet.id, 10) 
+                          : (selectedPet.id || undefined)
+                      });
                       setSelectedPet(null);
                       setOpen(false);
                     }}

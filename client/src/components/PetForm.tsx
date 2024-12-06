@@ -88,18 +88,20 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
       // If editing an existing pet, use the ID
       if (pet) {
         console.log('Complete Pet Object:', JSON.stringify(pet, null, 2));
-        console.log('Pet ID:', pet.id);
-        console.log('Pet ID Type:', typeof pet.id);
-        console.log('Pet ID Inspection:', {
-          isNumber: typeof pet.id === 'number',
-          isString: typeof pet.id === 'string',
-          value: pet.id,
-          stringValue: pet.id?.toString(),
-          parsedInt: parseInt(pet.id?.toString() || '', 10)
-        });
+        
+        // Robust ID parsing and validation
+        let petId: number | undefined;
+        if (typeof pet.id === 'string') {
+          petId = parseInt(pet.id, 10);
+        } else if (typeof pet.id === 'number' && !isNaN(pet.id)) {
+          petId = pet.id;
+        }
+
+        console.log('Parsed Pet ID:', petId);
+        console.log('Parsed Pet ID Type:', typeof petId);
 
         // Validate pet ID before update
-        if (pet.id === null || pet.id === undefined || isNaN(pet.id)) {
+        if (petId === undefined || isNaN(petId)) {
           toast({
             title: "Error",
             description: "Invalid pet ID. Cannot update pet.",
@@ -108,7 +110,7 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
           return;
         }
         
-        const updateResult = await updatePet?.(pet.id, {
+        const updateResult = await updatePet?.(petId, {
           ...data,
           customerId: data.customerId
         });
