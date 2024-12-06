@@ -16,7 +16,7 @@ interface PetFormProps {
   onCancel?: () => void;
   defaultValues?: Partial<PetFormData>;
   pet?: InsertPet;
-  updatePet?: (id: number, data: InsertPet) => Promise<InsertPet | null>;
+  updatePet?: (id: string, data: InsertPet) => Promise<InsertPet | null>;
 }
 
 export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updatePet }: PetFormProps) {
@@ -106,10 +106,8 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
         console.log('Complete Pet Object:', JSON.stringify(pet, null, 2));
         
         // Robust ID parsing and validation
-        let petId: number | undefined;
-        if (typeof pet.id === 'string') {
-          petId = parseInt(pet.id, 10);
-        } else if (typeof pet.id === 'number' && !isNaN(pet.id)) {
+        let petId: string | undefined;
+        if (typeof pet.id === 'string' && pet.id.trim() !== '') {
           petId = pet.id;
         }
 
@@ -117,7 +115,7 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
         console.log('Parsed Pet ID Type:', typeof petId);
 
         // Validate pet ID before update
-        if (petId === undefined || isNaN(petId)) {
+        if (petId === undefined) {
           toast({
             title: "Error",
             description: "Invalid pet ID. Cannot update pet.",

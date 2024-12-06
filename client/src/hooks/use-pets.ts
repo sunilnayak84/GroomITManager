@@ -11,10 +11,17 @@ export function usePets() {
     queryKey: ["pets"],
     queryFn: async () => {
       const querySnapshot = await getDocs(petsCollection);
-      return querySnapshot.docs.map(doc => ({
-        id: parseInt(doc.id),
-        ...doc.data()
-      } as Pet));
+      return querySnapshot.docs.map(doc => {
+        const petData = {
+          ...doc.data(),
+          id: doc.id  // Use the document ID directly
+        } as Pet;
+        console.log('Fetched Pet Document:', {
+          id: doc.id,
+          documentData: petData
+        });
+        return petData;
+      });
     },
   });
 
@@ -45,7 +52,7 @@ export function usePets() {
       console.log('Added Pet Document Reference:', docRef);
 
       return {
-        id: parseInt(docRef.id),
+        id: docRef.id,
         ...cleanedPetData
       };
     } catch (error) {
@@ -58,7 +65,7 @@ export function usePets() {
     }
   };
 
-  const updatePet = async (id: number | string, data: Partial<Pet>) => {
+  const updatePet = async (id: string, data: Partial<Pet>) => {
     try {
       // Extensive logging for debugging
       console.log('Raw Update Pet Input:', { 
@@ -68,37 +75,13 @@ export function usePets() {
         dataKeys: Object.keys(data)
       });
 
-      // More robust ID parsing
-      let petId: number;
-      if (typeof id === 'string') {
-        petId = parseInt(id, 10);
-      } else if (typeof id === 'number') {
-        petId = id;
-      } else {
-        console.error('Unexpected ID type:', typeof id, 'Value:', id);
-        throw new Error('Invalid pet ID type');
-      }
-      
-      // Additional comprehensive logging
-      console.log('Parsed Pet ID Details:', { 
-        petId, 
-        petIdType: typeof petId, 
-        isNaN: isNaN(petId),
-        stringValue: petId.toString()
-      });
-
-      if (isNaN(petId)) {
-        console.error('Invalid pet ID after parsing:', id);
+      // Validate ID
+      if (!id || typeof id !== 'string' || id.trim() === '') {
+        console.error('Invalid pet ID:', id);
         throw new Error('Invalid pet ID');
       }
 
-      // Ensure we have valid data to update
-      if (!data || Object.keys(data).length === 0) {
-        console.error('No update data provided');
-        throw new Error('No data to update');
-      }
-
-      const petRef = doc(petsCollection, petId.toString());
+      const petRef = doc(petsCollection, id);
       console.log('Firestore Document Reference:', {
         path: petRef.path,
         id: petRef.id
@@ -169,7 +152,7 @@ export function usePets() {
     const q = query(petsCollection);
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const pets = snapshot.docs.map(doc => ({
-        id: parseInt(doc.id),
+        id: doc.id,
         ...doc.data()
       } as Pet));
       queryClient.setQueryData(["pets"], pets);
