@@ -66,9 +66,14 @@ export const usePets = () => {
       // Prepare pet data for Firestore
       const petData = {
         ...pet,
+        // Remove undefined fields
+        ...(pet.dateOfBirth ? { dateOfBirth: pet.dateOfBirth } : {}),
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       };
+
+      // Remove any undefined values
+      Object.keys(petData).forEach(key => petData[key] === undefined && delete petData[key]);
 
       // Add pet to Firestore
       const newPetRef = await addDoc(petsCollection, petData);

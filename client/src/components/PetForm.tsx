@@ -141,70 +141,58 @@ export default function PetForm({
     }
   };
 
-  const onSubmit = async (data: PetFormData) => {
-    console.error('PET FORM: Submission started', { 
-      formData: data,
-      formState: {
-        isValid: form.formState.isValid,
-        errors: form.formState.errors,
-        touchedFields: form.formState.touchedFields,
-        dirtyFields: form.formState.dirtyFields
-      }
+  const onSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    console.log('PET FORM: Submit button clicked', { event, formValues: form.getValues(), formErrors: form.formState.errors });
+
+    // Validate form
+    const validationResult = insertPetSchema.safeParse(form.getValues());
+    console.log('PET FORM: Form submission event', { 
+      event, 
+      isValid: validationResult.success, 
+      errors: !validationResult.success ? validationResult.error.flatten().fieldErrors : {} 
     });
 
-    // Prevent multiple submissions
-    if (isSubmitting) return;
-    setIsSubmitting(true);
+    if (!validationResult.success) {
+      const fieldErrors = validationResult.error.flatten().fieldErrors;
+      
+      // Display specific toast errors
+      Object.entries(fieldErrors).forEach(([field, errors]) => {
+        if (errors.length > 0) {
+          toast.error(`${field.charAt(0).toUpperCase() + field.slice(1)}: ${errors[0]}`, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+        }
+      });
+
+      return;
+    }
+
+    // Start submission
+    console.log('PET FORM: Submission started', { formData: form.getValues(), formState: form.formState });
 
     try {
-      // Validate form data
-      const validationResult = insertPetSchema.safeParse(data);
-      
-      if (!validationResult.success) {
-        console.error('PET FORM: Validation Failed', {
-          errors: validationResult.error.errors,
-          formData: data
-        });
-
-        // Detailed error handling
-        const errorMessages = validationResult.error.errors.map(err => {
-          const path = err.path.join('.');
-          return `${path}: ${err.message}`;
-        });
-
-        toast({
-          title: "Validation Error",
-          description: errorMessages.join(", "),
-          variant: "destructive"
-        });
-
-        // Set specific form errors
-        validationResult.error.errors.forEach(err => {
-          const path = err.path.join('.') as keyof PetFormData;
-          form.setError(path, {
-            type: 'validate',
-            message: err.message
-          });
-        });
-
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Clean and prepare data
+      // Clean submission data
       const cleanedData: InsertPet = {
-        ...data,
-        customerId: selectedCustomerId || data.customerId,
-        dateOfBirth: data.dateOfBirth instanceof Date ? data.dateOfBirth : undefined,
-        weight: data.weight ? Number(data.weight) : undefined,
-        height: data.height ? Number(data.height) : undefined,
-        age: data.age ? Number(data.age) : undefined
+        ...form.getValues(),
+        customerId: selectedCustomerId,
+        // Convert date to timestamp if needed
+        ...(form.getValues().dateOfBirth ? { 
+          dateOfBirth: form.getValues().dateOfBirth instanceof Date 
+            ? form.getValues().dateOfBirth 
+            : new Date(form.getValues().dateOfBirth) 
+        } : {})
       };
 
-      console.error('PET FORM: Cleaned submission data', { 
-        cleanedData,
-        isUpdate: !!pet,
-        petId: pet?.id,
+      console.log('PET FORM: Cleaned submission data', { 
+        cleanedData, 
+        isUpdate: !!pet, 
+        petId: pet?.id, 
         selectedCustomer: customers?.find(c => c.id === cleanedData.customerId)
       });
 
@@ -224,83 +212,99 @@ export default function PetForm({
           message: 'Selected customer not found'
         });
 
-        toast({
-          title: "Customer Error",
-          description: "Selected customer not found. Please select a valid customer.",
-          variant: "destructive"
+        toast.error('Selected customer not found', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
         });
-        setIsSubmitting(false);
         return;
       }
 
-      // Attempt to add the pet
-      try {
-        const newPet = await addPet(cleanedData);
-        
-        console.error('PET FORM: New pet added successfully', { 
-          newPet,
-          customerId: cleanedData.customerId
+      // Perform add or update
+      if (pet) {
+        // Update existing pet
+        await pet.updatePet?.(pet.id, cleanedData);
+        toast.success('Pet updated successfully!', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
         });
-
-        toast({
-          title: "Success",
-          description: "Pet added successfully",
-          variant: "default"
-        });
-
-        // Reset form and call onSuccess if provided
-        form.reset();
-        onSuccess?.(data);
-      } catch (addPetError) {
-        console.error('PET FORM: Error adding pet', { 
-          error: addPetError,
-          errorMessage: addPetError instanceof Error ? addPetError.message : 'Unknown error',
-          cleanedData
-        });
-
-        toast({
-          title: "Error Adding Pet",
-          description: addPetError instanceof Error 
-            ? addPetError.message 
-            : "Failed to add pet. Please check your input and try again.",
-          variant: "destructive"
+      } else {
+        // Add new pet
+        await addPet(cleanedData);
+        toast.success('Pet added successfully!', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
         });
       }
+
+      // Reset form and call onSuccess if provided
+      form.reset();
+      onSuccess?.(form.getValues());
     } catch (error) {
-      console.error('PET FORM: Submission error', { 
-        error,
-        errorMessage: error instanceof Error ? error.message : 'Unknown error' 
+      console.error('PET FORM: Error adding pet', { 
+        error, 
+        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+        cleanedData 
       });
 
-      toast({
-        title: "Error",
-        description: error instanceof Error 
-          ? error.message 
-          : "An unexpected error occurred. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      // Always reset submitting state
-      setIsSubmitting(false);
+      // Specific error handling for different types of errors
+      if (error instanceof Error) {
+        if (error.message.includes('Missing required fields')) {
+          toast.error('Please fill in all required fields', {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+        } else if (error.message.includes('Customer')) {
+          toast.error('Invalid customer selected', {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+        } else {
+          toast.error(`Failed to ${pet ? 'update' : 'add'} pet: ${error.message}`, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+        }
+      } else {
+        toast.error(`Failed to ${pet ? 'update' : 'add'} pet`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }
     }
   };
 
   return (
     <Form {...form}>
       <form 
-        onSubmit={(event) => {
-          console.error('PET FORM: Form submission event', { 
-            event,
-            isValid: form.formState.isValid,
-            errors: form.formState.errors
-          });
-
-          // Prevent default to ensure our handler is called
-          event.preventDefault();
-          
-          // Trigger form validation and submission
-          form.handleSubmit(onSubmit)(event);
-        }} 
+        onSubmit={onSubmit} 
         className="space-y-4 p-4 max-h-[60vh] overflow-y-auto pr-2"
       >
         {/* Customer Selection */}
@@ -602,13 +606,6 @@ export default function PetForm({
           <Button 
             type="submit" 
             disabled={isSubmitting}
-            onClick={(e) => {
-              console.error('PET FORM: Submit button clicked', { 
-                event: e,
-                formValues: form.getValues(),
-                formErrors: form.formState.errors
-              });
-            }}
           >
             {defaultValues ? "Update" : "Add"} Pet
           </Button>
