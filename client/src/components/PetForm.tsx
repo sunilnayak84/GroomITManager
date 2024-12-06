@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { usePets } from "../hooks/use-pets";
 import { useCustomers } from "../hooks/use-customers";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Upload } from "lucide-react";
 
 interface PetFormProps {
@@ -32,6 +32,16 @@ export default function PetForm({
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    console.error('PET FORM: Available Customers', { 
+      customers: customers?.map(c => ({
+        id: c.id, 
+        name: `${c.firstName} ${c.lastName}`,
+        petCount: c.petCount
+      }))
+    });
+  }, [customers]);
 
   type PetFormData = {
     name: string;
@@ -237,7 +247,7 @@ export default function PetForm({
     <Form {...form}>
       <form 
         onSubmit={form.handleSubmit(onSubmit)} 
-        className="space-y-4 p-4"
+        className="space-y-4 p-4 max-h-[60vh] overflow-y-auto pr-2"
       >
         {/* Customer Selection */}
         <div className="grid gap-4 py-4">
@@ -245,23 +255,41 @@ export default function PetForm({
             <FormLabel className="text-right" htmlFor="customerId">
               Owner
             </FormLabel>
-            <Select
-              onValueChange={(value) => form.setValue("customerId", value)}
-              value={form.watch("customerId")?.toString()}
-            >
-              <FormControl>
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select an owner" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                {customers?.map((customer) => (
-                  <SelectItem key={customer.id} value={customer.id.toString()}>
-                    {customer.firstName} {customer.lastName}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <FormField
+              control={form.control}
+              name="customerId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Customer *</FormLabel>
+                  <Select 
+                    onValueChange={(value) => {
+                      console.error('PET FORM: Customer Selected', { 
+                        selectedCustomerId: value,
+                        selectedCustomer: customers?.find(c => c.id === value)
+                      });
+                      field.onChange(value);
+                    }}
+                    value={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select customer" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {customers?.map((customer) => (
+                        <SelectItem 
+                          key={customer.id} 
+                          value={customer.id}
+                        >
+                          {customer.firstName} {customer.lastName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
           </div>
         </div>
 
