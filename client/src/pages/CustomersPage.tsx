@@ -3,13 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Plus, Search } from "lucide-react";
 import { useCustomers } from "@/hooks/use-customers";
 import { usePets } from "@/hooks/use-pets";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -191,9 +190,9 @@ export default function CustomersPage() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Add New Customer</DialogTitle>
-              <DialogDescription>
+              <p className="text-sm text-muted-foreground">
                 Fill out the form below to add a new customer to your system.
-              </DialogDescription>
+              </p>
             </DialogHeader>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
