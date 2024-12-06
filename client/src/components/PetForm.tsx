@@ -201,68 +201,44 @@ export default function PetForm({
           onSuccess?.(updateData as PetFormData);
         }
       } else {
-        // This is a new pet creation
-        console.error('PET FORM: Attempting to add new pet', { 
-          cleanedData,
-          selectedCustomer
+        // Add new pet
+        const newPet = await addPet(cleanedData);
+        
+        console.error('PET FORM: New pet added', { newPet });
+
+        toast({
+          title: "Success",
+          description: "Pet added successfully",
+          variant: "default"
         });
 
-        try {
-          const newPet = await addPet(cleanedData);
-          console.error('PET FORM: New pet result', { newPet });
-          
-          if (newPet) {
-            toast({
-              title: "Success",
-              description: "Pet added successfully",
-              variant: "default"
-            });
-            onSuccess?.(cleanedData);
-            
-            // Reset the form after successful submission
-            form.reset();
-          }
-        } catch (addPetError) {
-          console.error('PET FORM: Error adding pet', { 
-            error: addPetError,
-            errorMessage: addPetError instanceof Error ? addPetError.message : 'Unknown error'
-          });
-          toast({
-            title: "Error Adding Pet",
-            description: addPetError instanceof Error ? addPetError.message : "Failed to add pet",
-            variant: "destructive"
-          });
-        }
+        // Reset form and call onSuccess if provided
+        form.reset();
+        onSuccess?.(data);
       }
     } catch (error) {
       console.error('PET FORM: Submission error', { 
-        error,
+        error, 
         errorMessage: error instanceof Error ? error.message : 'Unknown error' 
       });
-      
-      // More detailed error logging
-      if (error instanceof Error) {
-        console.error('PET FORM: Error details', {
-          message: error.message,
-          name: error.name,
-          stack: error.stack
-        });
-      }
-      
+
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "An unexpected error occurred. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to add/update pet",
         variant: "destructive"
       });
     } finally {
-      // Ensure submitting state is reset
+      // Always reset submitting state
       setIsSubmitting(false);
     }
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+      <form 
+        onSubmit={form.handleSubmit(onSubmit)} 
+        className="space-y-4 p-4"
+      >
         {/* Customer Selection */}
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
@@ -539,7 +515,10 @@ export default function PetForm({
               Cancel
             </Button>
           )}
-          <Button type="submit" disabled={isSubmitting}>
+          <Button 
+            type="submit" 
+            disabled={isSubmitting}
+          >
             {defaultValues ? "Update" : "Add"} Pet
           </Button>
         </div>
