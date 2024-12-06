@@ -1,18 +1,61 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { usePets } from "../hooks/use-pets";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useCustomers } from "../hooks/use-customers";
 import { useToast } from "@/hooks/use-toast";
 import PetForm from "@/components/PetForm";
 import type { Pet } from "@db/schema";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export default function PetsPage() {
   const [open, setOpen] = useState(false);
   const { data: pets, isLoading, addPet } = usePets();
   const { data: customers } = useCustomers();
   const { toast } = useToast();
+
+  const columns = [
+    {
+      header: "Pet",
+      cell: (pet: Pet) => (
+        <div className="flex items-center gap-2">
+          <img
+            src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
+            alt={pet.name}
+            className="w-10 h-10 rounded-full bg-primary/10"
+          />
+          <div>
+            <div className="font-medium">{pet.name}</div>
+            <div className="text-sm text-muted-foreground capitalize">{pet.breed} · {pet.type}</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      header: "Owner",
+      cell: (pet: Pet) => {
+        const owner = customers?.find(c => c.id === pet.customerId);
+        return owner ? `${owner.firstName} ${owner.lastName}` : "N/A";
+      },
+    },
+    {
+      header: "Age",
+      cell: (pet: Pet) => pet.age || "N/A",
+    },
+    {
+      header: "Gender",
+      cell: (pet: Pet) => pet.gender ? pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1) : "N/A",
+    },
+    {
+      header: "Actions",
+      cell: (pet: Pet) => (
+        <Button variant="outline" size="sm">
+          View Details
+        </Button>
+      ),
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -61,28 +104,27 @@ export default function PetsPage() {
         </div>
       </div>
 
-      <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {(pets || []).map((pet: Pet) => (
-          <div key={pet.id} className="bg-white rounded-lg p-6 shadow-sm">
-            <div className="flex items-center gap-4 mb-4">
-              <img
-                src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
-                alt={pet.name}
-                className="w-16 h-16 rounded-full"
-              />
-              <div>
-                <h3 className="font-semibold text-lg">{pet.name}</h3>
-                <p className="text-sm text-muted-foreground capitalize">
-                  {pet.breed} · {pet.type}
-                </p>
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground">{pet.notes}</p>
-            <Button variant="outline" className="w-full mt-4">
-              View Details
-            </Button>
-          </div>
-        ))}
+      <div className="bg-white rounded-lg shadow">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              {columns.map((column) => (
+                <TableHead key={column.header}>{column.header}</TableHead>
+              ))}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {(pets || []).map((pet) => (
+              <TableRow key={pet.id}>
+                {columns.map((column) => (
+                  <TableCell key={`${pet.id}-${column.header}`}>
+                    {column.cell(pet)}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );
