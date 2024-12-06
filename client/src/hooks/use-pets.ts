@@ -18,20 +18,16 @@ export const usePets = () => {
       const customersQuery = query(customersCollection);
       const customersSnapshot = await getDocs(customersQuery);
       const customersMap = new Map(
-        customersSnapshot.docs.map(doc => {
-          const customerData = doc.data();
-          return [
-            customerData.id.toString(), 
-            {
-              id: doc.id,
-              ...customerData,
-              fullName: `${customerData.firstName} ${customerData.lastName}`
-            }
-          ];
-        })
+        customersSnapshot.docs.map(doc => [
+          doc.id, // Use the Firestore document ID directly
+          {
+            ...doc.data(),
+            fullName: `${doc.data().firstName} ${doc.data().lastName}`
+          }
+        ])
       );
 
-      console.error('PETS_QUERY: Customers Map', {
+      console.error('PETS_QUERY: Customers Map Debug', {
         customerCount: customersMap.size,
         customerIds: Array.from(customersMap.keys())
       });
@@ -39,26 +35,26 @@ export const usePets = () => {
       const fetchedPets = querySnapshot.docs.map((doc) => {
         const petData = doc.data();
         
-        console.error('PET_QUERY: Detailed Pet Data', {
+        console.error('PET_QUERY: Detailed Pet Data Debug', {
           petFirebaseId: doc.id,
           petData,
           customerId: petData.customerId,
           customerIdType: typeof petData.customerId
         });
 
-        // Try to find customer using multiple methods
+        // Find customer using the Firestore document ID
         let customerDetails = null;
-        const customerIdStr = petData.customerId ? petData.customerId.toString() : null;
-        
-        if (customerIdStr && customersMap.has(customerIdStr)) {
-          customerDetails = customersMap.get(customerIdStr);
-          console.error('PET_QUERY: Customer Found in Map', {
-            customerId: customerIdStr,
-            customerName: customerDetails?.fullName
+        if (petData.customerId && customersMap.has(petData.customerId)) {
+          customerDetails = customersMap.get(petData.customerId);
+          
+          console.error('PET_QUERY: Customer Found Debug', {
+            customerId: petData.customerId,
+            customerName: customerDetails?.fullName,
+            customerData: customerDetails
           });
         } else {
-          console.error('PET_QUERY: Customer NOT Found', {
-            searchedCustomerId: customerIdStr,
+          console.error('PET_QUERY: Customer NOT Found Debug', {
+            searchedCustomerId: petData.customerId,
             availableCustomerIds: Array.from(customersMap.keys())
           });
         }
@@ -68,7 +64,7 @@ export const usePets = () => {
           firebaseId: doc.id,
           ...petData,
           owner: customerDetails ? {
-            id: customerDetails.id,
+            id: petData.customerId,
             name: customerDetails.fullName,
             phone: customerDetails.phone || '',
             email: customerDetails.email || ''
@@ -76,7 +72,7 @@ export const usePets = () => {
         } as Pet;
       });
 
-      console.error('PETS HOOK: Fetched Pets Summary', { 
+      console.error('PETS HOOK: Fetched Pets Summary Debug', { 
         petCount: fetchedPets.length,
         petsWithOwners: fetchedPets.map(p => ({ 
           id: p.id, 
