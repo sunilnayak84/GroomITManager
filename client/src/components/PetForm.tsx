@@ -174,17 +174,15 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
 
         console.log('Prepared Update Data:', JSON.stringify(updateData, null, 2));
 
-        // If no changes were made, show info toast and return
+        // If no changes were made, force at least one field update
         if (Object.keys(updateData).length === 0) {
           console.warn('No changes detected in pet update', {
             originalPet: pet,
             formData: cleanedData
           });
-          toast({
-            title: "Info",
-            description: "No changes were made",
-          });
-          return;
+
+          // Force at least one field to be updated
+          updateData.name = cleanedData.name || pet?.name || 'Unnamed Pet';
         }
 
         try {
@@ -201,9 +199,7 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
           }
 
           // CRITICAL: Ensure a non-null object is always passed
-          const finalUpdateData = Object.keys(updateData).length > 0 
-            ? { ...updateData } 
-            : { name: pet?.name || '' };
+          const finalUpdateData = { ...updateData };
           
           console.log('Ensuring non-null update data:', JSON.stringify(finalUpdateData, null, 2));
 
