@@ -120,7 +120,15 @@ export type InsertUser = typeof users.$inferInsert;
 export type Customer = typeof customers.$inferSelect;
 export type InsertCustomer = typeof customers.$inferInsert;
 
-export type Pet = typeof pets.$inferSelect;
+export type Pet = typeof pets.$inferSelect & {
+  owner?: {
+    id: string;
+    name: string;
+    phone?: string;
+    email?: string;
+  } | null;
+};
+
 export type InsertPet = typeof pets.$inferInsert;
 
 export type Appointment = typeof appointments.$inferSelect;

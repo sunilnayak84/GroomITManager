@@ -14,14 +14,50 @@ export const usePets = () => {
       const q = query(petsCollection);
       const querySnapshot = await getDocs(q);
       
-      const fetchedPets = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Pet[];
+      const fetchedPets = await Promise.all(querySnapshot.docs.map(async (doc) => {
+        const petData = doc.data();
+        
+        // Fetch associated customer details
+        let customerDetails = null;
+        if (petData.customerId) {
+          try {
+            const customerRef = doc(db, 'customers', petData.customerId);
+            const customerDoc = await getDoc(customerRef);
+            
+            if (customerDoc.exists()) {
+              customerDetails = {
+                id: customerDoc.id,
+                ...customerDoc.data()
+              };
+            }
+          } catch (error) {
+            console.error('Error fetching customer details for pet:', {
+              petId: doc.id,
+              customerId: petData.customerId,
+              error
+            });
+          }
+        }
+
+        return {
+          id: doc.id,
+          ...petData,
+          owner: customerDetails ? {
+            id: customerDetails.id,
+            name: `${customerDetails.firstName} ${customerDetails.lastName}`,
+            phone: customerDetails.phone || '',
+            email: customerDetails.email || ''
+          } : null
+        } as Pet;
+      }));
 
       console.error('PETS HOOK: Fetched pets', { 
         petCount: fetchedPets.length,
-        pets: fetchedPets.map(p => ({ id: p.id, name: p.name }))
+        pets: fetchedPets.map(p => ({ 
+          id: p.id, 
+          name: p.name, 
+          owner: p.owner?.name 
+        }))
       });
 
       return fetchedPets;

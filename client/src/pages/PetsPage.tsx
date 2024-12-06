@@ -186,8 +186,11 @@ export default function PetsPage() {
     {
       header: "Owner",
       cell: (pet: Pet) => {
-        const owner = customers?.find(c => c.id === pet.customerId);
-        return owner ? `${owner.firstName} ${owner.lastName}` : "N/A";
+        return pet.owner 
+          ? `${pet.owner.name}` 
+          : (customers?.find(c => c.id === pet.customerId) 
+            ? `${customers.find(c => c.id === pet.customerId)?.firstName} ${customers.find(c => c.id === pet.customerId)?.lastName}` 
+            : "N/A");
       },
     },
     {
@@ -316,7 +319,17 @@ export default function PetsPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <h3 className="font-medium mb-1">Owner</h3>
-                      <p>{customers?.find(c => c.id === selectedPet.customerId)?.firstName} {customers?.find(c => c.id === selectedPet.customerId)?.lastName}</p>
+                      {selectedPet.owner && (
+                        <div className="space-y-1">
+                          <p className="text-sm">{selectedPet.owner.name}</p>
+                          {selectedPet.owner.phone && (
+                            <p className="text-sm text-gray-600">Phone: {selectedPet.owner.phone}</p>
+                          )}
+                          {selectedPet.owner.email && (
+                            <p className="text-sm text-gray-600">Email: {selectedPet.owner.email}</p>
+                          )}
+                        </div>
+                      )}
                     </div>
                     <div>
                       <h3 className="font-medium mb-1">Age</h3>

@@ -305,6 +305,15 @@ export default function PetForm({
         {/* Pet Image Upload */}
         {renderImageUpload()}
 
+        {/* Owner Details */}
+        {pet?.owner && (
+          <div className="text-sm text-gray-600 mt-2">
+            <p>Owner: {pet.owner.name}</p>
+            {pet.owner.phone && <p>Phone: {pet.owner.phone}</p>}
+            {pet.owner.email && <p>Email: {pet.owner.email}</p>}
+          </div>
+        )}
+
         {/* Name */}
         <FormField
           control={form.control}
