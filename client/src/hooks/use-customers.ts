@@ -75,11 +75,11 @@ export function useCustomers() {
     },
     onError: (error) => {
       console.error('Delete mutation error:', error);
-      toast({
-        title: "Delete Failed",
-        description: error instanceof Error ? error.message : "Unable to delete customer",
-        variant: "destructive"
-      });
+      toast.error(
+        error instanceof Error 
+          ? error.message 
+          : "Unable to delete customer"
+      );
     }
   });
 
