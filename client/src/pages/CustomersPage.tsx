@@ -102,9 +102,14 @@ export default function CustomersPage() {
     },
   ];
 
-  async function onSubmit(data: Omit<Customer, 'id'>) {
+  async function onSubmit(data: InsertCustomer) {
     try {
-      await addCustomer({ ...data, createdAt: new Date() });
+      await addCustomer({
+        ...data,
+        createdAt: new Date(),
+        password: data.password || null,
+        address: data.address || null
+      });
       setOpen(false);
       form.reset();
       toast({
