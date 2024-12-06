@@ -81,6 +81,11 @@ export function usePets() {
         throw new Error('Invalid pet ID');
       }
 
+      // If the ID is a generated timestamp-based ID, log a warning
+      if (id.startsWith('pet_')) {
+        console.warn('Using generated timestamp-based ID for update:', id);
+      }
+
       const petRef = doc(petsCollection, id);
       console.log('Firestore Document Reference:', {
         path: petRef.path,

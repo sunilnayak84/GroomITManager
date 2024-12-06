@@ -107,18 +107,25 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
         
         // Robust ID parsing and validation
         let petId: string | undefined;
-        if (typeof pet.id === 'string' && pet.id.trim() !== '') {
+        
+        // Check if the pet has a valid ID from Firestore document
+        if (pet.id) {
           petId = pet.id;
+        } 
+        // If no ID, try to find the ID in the original document
+        else if (pet.createdAt && typeof pet.createdAt === 'object' && 'seconds' in pet.createdAt) {
+          // Use createdAt timestamp as a fallback identifier
+          petId = `pet_${pet.createdAt.seconds}_${pet.createdAt.nanoseconds}`;
         }
 
         console.log('Parsed Pet ID:', petId);
         console.log('Parsed Pet ID Type:', typeof petId);
 
         // Validate pet ID before update
-        if (petId === undefined) {
+        if (!petId) {
           toast({
             title: "Error",
-            description: "Invalid pet ID. Cannot update pet.",
+            description: "Cannot identify pet for update. Please try again.",
             variant: "destructive"
           });
           return;
