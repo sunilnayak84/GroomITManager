@@ -196,29 +196,25 @@ export default function PetForm({
   };
 
   const onSubmit = async (data: PetFormData) => {
-    console.error('PET FORM: Form submitted', { data });
     setIsSubmitting(true);
-
     try {
-      const cleanedData = {
+      // Always use the defaultValues customerId if present
+      const petData: InsertPet = {
         ...data,
-        dateOfBirth: data.dateOfBirth ? data.dateOfBirth.toISOString() : undefined,
-        // If image is a string (existing image URL), pass it as is
-        // If it's a File, it will be handled by the upload function
-        image: data.image,
-        customerId: selectedCustomerId,
+        customerId: defaultValues?.customerId || data.customerId,
+        imageUrl: imagePreview || undefined,
       };
 
-      if (pet?.id) {
-        await usePetsUpdatePet(pet.id, cleanedData);
-        onSuccess?.(cleanedData);
+      if (pet) {
+        // Update existing pet
+        await usePetsUpdatePet(pet.id, petData);
         toast({
-          title: "Success",
-          description: "Pet updated successfully",
+          title: "Pet Updated",
+          description: `${data.name} has been updated successfully.`,
         });
       } else {
         // Just call onSuccess with the cleaned data
-        onSuccess?.(cleanedData);
+        onSuccess?.(petData);
       }
 
       setIsSubmitting(false);
@@ -278,42 +274,34 @@ export default function PetForm({
         className="space-y-4 p-4 max-h-[60vh] overflow-y-auto pr-2"
       >
         {/* Customer Selection */}
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <FormLabel className="text-right" htmlFor="customerId">
-              Owner
-            </FormLabel>
-            <FormField
-              control={form.control}
-              name="customerId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Customer</FormLabel>
-                  <Select
-                    value={field.value}
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                      setSelectedCustomerId(value);
-                    }}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a customer" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {availableCustomers.map((customer) => (
-                        <SelectItem key={customer.id} value={customer.id}>
-                          {customer.firstName} {customer.lastName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormItem>
-              )}
-            />
-          </div>
-        </div>
+        {!defaultValues?.customerId && (
+          <FormField
+            control={form.control}
+            name="customerId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Customer Owner</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Customer" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {availableCustomers.map((customer) => (
+                      <SelectItem key={customer.id} value={customer.id}>
+                        {customer.firstName} {customer.lastName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )}
+          />
+        )}
 
         {/* Pet Image Upload */}
         {renderImageUpload()}
