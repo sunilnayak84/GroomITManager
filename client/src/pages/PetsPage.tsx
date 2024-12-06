@@ -11,9 +11,16 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 
 export default function PetsPage() {
   const [open, setOpen] = useState(false);
+  const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+  const [showPetDetails, setShowPetDetails] = useState(false);
   const { data: pets, isLoading, addPet } = usePets();
   const { data: customers } = useCustomers();
   const { toast } = useToast();
+
+  const formatDate = (date: Date | null | undefined) => {
+    if (!date) return "N/A";
+    return new Date(date).toLocaleDateString();
+  };
 
   const columns = [
     {
@@ -50,7 +57,14 @@ export default function PetsPage() {
     {
       header: "Actions",
       cell: (pet: Pet) => (
-        <Button variant="outline" size="sm">
+        <Button 
+          variant="outline" 
+          size="sm"
+          onClick={() => {
+            setSelectedPet(pet);
+            setShowPetDetails(true);
+          }}
+        >
           View Details
         </Button>
       ),
@@ -86,6 +100,61 @@ export default function PetsPage() {
                 });
               }}
             />
+          </DialogContent>
+        </Dialog>
+
+        {/* Pet Details Dialog */}
+        <Dialog open={showPetDetails} onOpenChange={setShowPetDetails}>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle>Pet Details</DialogTitle>
+            </DialogHeader>
+            {selectedPet && (
+              <div className="space-y-6">
+                <div className="flex items-center gap-4">
+                  <img
+                    src={selectedPet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${selectedPet.name}`}
+                    alt={selectedPet.name}
+                    className="w-24 h-24 rounded-full bg-primary/10"
+                  />
+                  <div>
+                    <h2 className="text-2xl font-bold">{selectedPet.name}</h2>
+                    <p className="text-muted-foreground capitalize">{selectedPet.breed} · {selectedPet.type}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h3 className="font-medium mb-1">Owner</h3>
+                    <p>{customers?.find(c => c.id === selectedPet.customerId)?.firstName} {customers?.find(c => c.id === selectedPet.customerId)?.lastName}</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-1">Age</h3>
+                    <p>{selectedPet.age || "N/A"}</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-1">Gender</h3>
+                    <p className="capitalize">{selectedPet.gender || "N/A"}</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-1">Date of Birth</h3>
+                    <p>{formatDate(selectedPet.dateOfBirth)}</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-1">Weight</h3>
+                    <p>{selectedPet.weight ? `${selectedPet.weight} ${selectedPet.weightUnit}` : "N/A"}</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-1">Height</h3>
+                    <p>{selectedPet.height ? `${selectedPet.height} ${selectedPet.heightUnit}` : "N/A"}</p>
+                  </div>
+                  <div className="col-span-2">
+                    <h3 className="font-medium mb-1">Notes</h3>
+                    <p className="text-muted-foreground">{selectedPet.notes || "No notes available"}</p>
+                  </div>
+                </div>
+              </div>
+            )}
           </DialogContent>
         </Dialog>
       </div>
