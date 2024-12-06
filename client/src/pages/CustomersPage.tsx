@@ -4,6 +4,17 @@ import { Plus, Search } from "lucide-react";
 import { useCustomers } from "../hooks/use-customers";
 import { usePets } from "../hooks/use-pets";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
@@ -15,7 +26,7 @@ import PetForm from "@/components/PetForm";
 
 export default function CustomersPage() {
   const [open, setOpen] = useState(false);
-  const { data: customers, isLoading, addCustomer, updateCustomer } = useCustomers();
+  const { data: customers, isLoading, addCustomer, updateCustomer, deleteCustomer } = useCustomers();
   const { toast } = useToast();
   
   const form = useForm<InsertCustomer>({
@@ -388,13 +399,57 @@ export default function CustomersPage() {
         <DialogContent className="max-w-3xl">
           <DialogHeader className="flex justify-between items-center">
             <DialogTitle>Customer Details</DialogTitle>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => setIsEditing(true)}
-            >
-              Edit
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setIsEditing(true)}
+              >
+                Edit
+              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button 
+                    variant="destructive" 
+                    size="sm"
+                  >
+                    Delete
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete the customer and all associated data.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={async () => {
+                        if (!selectedCustomer) return;
+                        try {
+                          await deleteCustomer(selectedCustomer.id);
+                          setShowCustomerDetails(false);
+                          toast({
+                            title: "Success",
+                            description: "Customer deleted successfully",
+                          });
+                        } catch (error) {
+                          toast({
+                            variant: "destructive",
+                            title: "Error",
+                            description: "Failed to delete customer",
+                          });
+                        }
+                      }}
+                    >
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           </DialogHeader>
           {selectedCustomer && (
             <div className="space-y-6">
