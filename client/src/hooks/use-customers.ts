@@ -9,37 +9,6 @@ import { toast } from '../lib/toast';
 export function useCustomers() {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error } = useQuery<Customer[]>({
-    queryKey: ["customers"],
-    queryFn: async () => {
-      try {
-        const querySnapshot = await getDocs(customersCollection);
-        const customers = querySnapshot.docs.map(doc => {
-          const customerData = doc.data();
-          return {
-            id: doc.id,
-            ...customerData,
-            // Ensure createdAt is a valid Date object
-            createdAt: customerData.createdAt 
-              ? new Date(customerData.createdAt) 
-              : undefined
-          } as Customer;
-        });
-
-        console.error('USE CUSTOMERS: Fetched customers', {
-          customerCount: customers.length,
-          customerIds: customers.map(c => c.id),
-          customerNames: customers.map(c => `${c.firstName} ${c.lastName}`)
-        });
-
-        return customers;
-      } catch (error) {
-        console.error('Error fetching customers:', error);
-        throw error;
-      }
-    },
-  });
-
   const addCustomerMutation = useMutation({
     mutationFn: async (customer: Omit<Customer, 'id'>) => {
       const id = await createCustomer({
@@ -72,7 +41,8 @@ export function useCustomers() {
     },
   });
 
-  export async function deleteCustomerMutation(id: string) {
+  // Separate function for delete mutation logic
+  const deleteCustomerMutation = async (id: string) => {
     try {
       console.log('Starting delete mutation for customer:', id);
       const success = await deleteCustomerAndRelated(id);
@@ -84,7 +54,7 @@ export function useCustomers() {
       console.error('Error in delete mutation:', error);
       throw error;
     }
-  }
+  };
 
   const deleteCustomerMutationHook = useMutation({
     mutationFn: deleteCustomerMutation,
@@ -178,9 +148,84 @@ export function useCustomers() {
   }, [queryClient]);
 
   return {
-    data,
-    isLoading,
-    error,
+    data: useQuery<Customer[]>({
+      queryKey: ["customers"],
+      queryFn: async () => {
+        try {
+          const querySnapshot = await getDocs(customersCollection);
+          const customers = querySnapshot.docs.map(doc => {
+            const customerData = doc.data();
+            return {
+              id: doc.id,
+              ...customerData,
+              // Ensure createdAt is a valid Date object
+              createdAt: customerData.createdAt 
+                ? new Date(customerData.createdAt) 
+                : undefined
+            } as Customer;
+          });
+
+          console.error('USE CUSTOMERS: Fetched customers', {
+            customerCount: customers.length,
+            customerIds: customers.map(c => c.id),
+            customerNames: customers.map(c => `${c.firstName} ${c.lastName}`)
+          });
+
+          return customers;
+        } catch (error) {
+          console.error('Error fetching customers:', error);
+          throw error;
+        }
+      },
+    }).data,
+    isLoading: useQuery<Customer[]>({
+      queryKey: ["customers"],
+      queryFn: async () => {
+        try {
+          const querySnapshot = await getDocs(customersCollection);
+          const customers = querySnapshot.docs.map(doc => {
+            const customerData = doc.data();
+            return {
+              id: doc.id,
+              ...customerData,
+              // Ensure createdAt is a valid Date object
+              createdAt: customerData.createdAt 
+                ? new Date(customerData.createdAt) 
+                : undefined
+            } as Customer;
+          });
+
+          return customers;
+        } catch (error) {
+          console.error('Error fetching customers:', error);
+          throw error;
+        }
+      },
+    }).isLoading,
+    error: useQuery<Customer[]>({
+      queryKey: ["customers"],
+      queryFn: async () => {
+        try {
+          const querySnapshot = await getDocs(customersCollection);
+          const customers = querySnapshot.docs.map(doc => {
+            const customerData = doc.data();
+            return {
+              id: doc.id,
+              ...customerData,
+              // Ensure createdAt is a valid Date object
+              createdAt: customerData.createdAt 
+                ? new Date(customerData.createdAt) 
+                : undefined
+            } as Customer;
+          });
+
+          return customers;
+        } catch (error) {
+          console.error('Error fetching customers:', error);
+          throw error;
+        }
+      },
+    }).error,
     addCustomer: addCustomerMutation.mutateAsync,
     updateCustomer: updateCustomerMutation.mutateAsync,
     deleteCustomer: deleteCustomerMutationHook.mutateAsync,
