@@ -407,12 +407,12 @@ export default function PetForm({
             <FormItem>
               <FormLabel>Date of Birth</FormLabel>
               <FormControl>
-                <Input 
-                  type="date" 
+                <Input
+                  type="date"
                   {...field}
-                  value={field.value ? format(new Date(field.value), 'yyyy-MM-dd') : ''}
+                  value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
                   onChange={(e) => {
-                    const date = e.target.value ? new Date(e.target.value) : undefined;
+                    const date = e.target.value ? new Date(e.target.value + 'T00:00:00') : undefined;
                     field.onChange(date);
                   }}
                 />
