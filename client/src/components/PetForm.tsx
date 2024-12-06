@@ -106,7 +106,7 @@ export default function PetForm({ onSuccess, defaultValues }: PetFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
         {/* Pet Image Upload */}
         <div className="flex flex-col items-center mb-6">
           <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-2 relative overflow-hidden">
