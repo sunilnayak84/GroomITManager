@@ -107,61 +107,63 @@ export const usePets = () => {
     }
   };
 
-  const updatePet = async (id: string, updates: Partial<InsertPet>) => {
+  const updatePet = async (petId: string, petData: Partial<InsertPet>) => {
     console.error('UPDATE_PET: Attempting to update pet', { 
-      id, 
-      updates 
+      petId, 
+      petData 
     });
 
     try {
-      const petRef = doc(db, 'pets', id);
-      
-      // Validate that at least one field is being updated
-      if (Object.keys(updates).length === 0) {
-        console.error('UPDATE_PET: No updates provided');
-        throw new Error('No updates provided');
+      // Verify customer exists if customerId is provided
+      if (petData.customerId) {
+        const customerDocRef = doc(db, 'customers', petData.customerId);
+        const customerDoc = await getDoc(customerDocRef);
+
+        if (!customerDoc.exists()) {
+          throw new Error(`Customer with ID ${petData.customerId} does not exist`);
+        }
       }
 
-      // Add updatedAt timestamp
-      const updateWithTimestamp = {
-        ...updates,
+      // Prepare update data for Firestore
+      const updateData = {
+        ...petData,
         updatedAt: serverTimestamp()
       };
 
-      await updateDoc(petRef, updateWithTimestamp);
+      // Remove any undefined values
+      Object.keys(updateData).forEach(key => updateData[key] === undefined && delete updateData[key]);
 
-      console.error('UPDATE_PET: Pet updated successfully', { 
-        petId: id,
-        updates: updateWithTimestamp 
-      });
+      // Reference to the specific pet document
+      const petDocRef = doc(db, 'pets', petId);
 
-      // Update the cache
-      queryClient.setQueryData(['pets'], (old: Pet[] | undefined) => {
-        if (!old) return old;
-        return old.map(pet => {
-          if (pet.id === id) {
-            return {
-              ...pet,
-              ...updateWithTimestamp
-            };
-          }
-          return pet;
-        });
-      });
+      // Update the pet in Firestore
+      await updateDoc(petDocRef, updateData);
 
-      // Fetch the updated pet to return the latest data
-      const updatedPetDoc = await getDoc(petRef);
+      // Invalidate and refetch pets query
+      await queryClient.invalidateQueries({ queryKey: ['pets'] });
+
+      // Return the updated pet data
       return {
-        id,
-        ...updatedPetDoc.data()
+        id: petId,
+        ...updateData
       } as Pet;
+
     } catch (error) {
       console.error('UPDATE_PET: Error updating pet', { 
         error,
         errorMessage: error instanceof Error ? error.message : 'Unknown error',
-        id,
-        updates 
+        petId,
+        petData
       });
+
+      // Detailed error logging
+      if (error instanceof Error) {
+        console.error('UPDATE_PET: Detailed error', {
+          name: error.name,
+          message: error.message,
+          stack: error.stack
+        });
+      }
 
       throw error;
     }

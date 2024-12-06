@@ -17,7 +17,6 @@ interface PetFormProps {
   onCancel?: () => void;
   defaultValues?: Partial<PetFormData>;
   pet?: InsertPet;
-  updatePet?: (id: string, data: Partial<InsertPet>) => Promise<InsertPet | null>;
   customers?: Customer[];
 }
 
@@ -61,7 +60,10 @@ export default function PetForm({
   defaultValues,
   pet
 }: PetFormProps) {
-  const { addPet } = usePets();
+  const { 
+    addPet, 
+    updatePet: usePetsUpdatePet 
+  } = usePets();
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -226,7 +228,7 @@ export default function PetForm({
       // Perform add or update
       if (pet) {
         // Update existing pet
-        await pet.updatePet?.(pet.id, cleanedData);
+        await usePetsUpdatePet(pet.id, cleanedData);
         toast.success('Pet updated successfully!', {
           position: "top-right",
           autoClose: 3000,
