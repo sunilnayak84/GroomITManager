@@ -88,22 +88,55 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
         return;
       }
 
-      // Clean up form data to remove empty strings and undefined values
+      // Log initial form data and pet object for debugging
+      console.log('Initial Form Data:', JSON.stringify(data, null, 2));
+      console.log('Original Pet Object:', JSON.stringify(pet, null, 2));
+
+      // Validate form data
       const cleanedData = Object.fromEntries(
-        Object.entries(data).filter(
-          ([_, value]) => 
-            value !== undefined && 
-            value !== null && 
-            value !== ''
-        ).map(([key, value]) => [
-          key, 
-          // Convert empty strings to null
-          value === '' ? null : value
-        ])
+        Object.entries(data).filter(([_, v]) => v !== undefined && v !== null)
       );
 
       console.log('Cleaned Form Data:', JSON.stringify(cleanedData, null, 2));
-      console.log('Original Pet Object:', JSON.stringify(pet, null, 2));
+
+      // Determine which fields have changed
+      const updateData: Partial<InsertPet> = {};
+      
+      // Check each field and add to updateData only if it's different from the original
+      (Object.keys(cleanedData) as Array<keyof InsertPet>).forEach((key) => {
+        const currentValue = cleanedData[key];
+        const originalValue = pet?.[key];
+        
+        console.log(`Comparing field ${key}:`, {
+          currentValue, 
+          originalValue, 
+          isDifferent: currentValue !== originalValue
+        });
+        
+        // Compare values, considering type conversion and empty strings
+        if (
+          currentValue !== originalValue && 
+          !(currentValue === '' && originalValue === null) &&
+          !(currentValue === null && originalValue === '')
+        ) {
+          updateData[key] = currentValue;
+        }
+      });
+
+      console.log('Prepared Update Data:', JSON.stringify(updateData, null, 2));
+
+      // If no changes were made, show info toast and return
+      if (Object.keys(updateData).length === 0) {
+        console.warn('No changes detected in pet update', {
+          originalPet: pet,
+          formData: cleanedData
+        });
+        toast({
+          title: "Info",
+          description: "No changes were made",
+        });
+        return;
+      }
 
       // If editing an existing pet, use the ID
       if (pet) {
@@ -135,33 +168,6 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
           return;
         }
         
-        // Determine which fields have changed
-        const updateData: Partial<InsertPet> = {};
-        
-        // Check each field and add to updateData only if it's different from the original
-        (Object.keys(data) as Array<keyof InsertPet>).forEach((key) => {
-          const currentValue = data[key];
-          const originalValue = pet?.[key];
-          
-          // Compare values, considering type conversion and empty strings
-          if (
-            currentValue !== originalValue && 
-            !(currentValue === '' && originalValue === null) &&
-            !(currentValue === null && originalValue === '')
-          ) {
-            updateData[key] = currentValue;
-          }
-        });
-
-        // If no changes were made, show info toast and return
-        if (Object.keys(updateData).length === 0) {
-          toast({
-            title: "Info",
-            description: "No changes were made",
-          });
-          return;
-        }
-
         try {
           // Add customerId to update data if it's not already included
           if (!updateData.customerId && data.customerId) {

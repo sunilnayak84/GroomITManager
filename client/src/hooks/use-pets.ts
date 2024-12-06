@@ -65,72 +65,71 @@ export function usePets() {
     }
   };
 
-  const updatePet = async (id: string, data: Partial<Pet>) => {
-    try {
-      // Extensive logging for debugging
-      console.log('Raw Update Pet Input:', { 
+  const updatePet = async (id: string, data: Partial<InsertPet>) => {
+    console.log('updatePet called with:', {
+      id, 
+      data: JSON.stringify(data, null, 2),
+      dataType: typeof data,
+      dataKeys: data ? Object.keys(data) : 'NO DATA'
+    });
+
+    // Validate ID
+    if (!id) {
+      console.error('Invalid or missing pet ID', { id });
+      throw new Error('Invalid pet ID');
+    }
+
+    // Validate data
+    if (!data || typeof data !== 'object') {
+      console.error('No update data provided', { 
         id, 
-        idType: typeof id, 
-        data: JSON.stringify(data, null, 2),
+        data, 
+        dataType: typeof data,
         dataKeys: data ? Object.keys(data) : 'NO DATA'
       });
+      throw new Error('No data to update');
+    }
 
-      // Validate ID
-      if (!id || typeof id !== 'string' || id.trim() === '') {
-        console.error('Invalid pet ID:', id);
-        throw new Error('Invalid pet ID');
-      }
-
-      // Validate data
-      if (!data || typeof data !== 'object') {
-        console.error('No update data provided', { 
-          id, 
-          data, 
-          dataType: typeof data,
-          dataKeys: data ? Object.keys(data) : 'NO DATA'
-        });
-        throw new Error('No data to update');
-      }
-
-      // Ensure data has properties
-      if (Object.keys(data).length === 0) {
-        console.error('Empty update data object', {
-          id,
-          data,
-          dataType: typeof data
-        });
-        throw new Error('Empty update data');
-      }
-
-      // If the ID is a generated timestamp-based ID, log a warning
-      if (id.startsWith('pet_')) {
-        console.warn('Using generated timestamp-based ID for update:', id);
-      }
-
-      const petRef = doc(petsCollection, id);
-      console.log('Firestore Document Reference:', {
-        path: petRef.path,
-        id: petRef.id
+    // Ensure data has properties
+    if (Object.keys(data).length === 0) {
+      console.error('Empty update data object', {
+        id,
+        data,
+        dataType: typeof data
       });
-      
-      // Remove undefined and null values to prevent Firestore errors
-      const updateData = Object.fromEntries(
-        Object.entries(data)
-          .filter(([_, v]) => v !== undefined && v !== null)
-          .map(([k, v]) => [k, v === '' ? null : v])
-      );
+      throw new Error('Empty update data');
+    }
 
-      console.log('Cleaned Update Data:', JSON.stringify(updateData, null, 2));
+    // If the ID is a generated timestamp-based ID, log a warning
+    if (id.startsWith('pet_')) {
+      console.warn('Using generated timestamp-based ID for update:', id);
+    }
 
-      // Ensure we have data to update after cleaning
-      if (Object.keys(updateData).length === 0) {
-        console.error('No valid update data after cleaning', {
-          originalData: data,
-          cleanedData: updateData
-        });
-        throw new Error('No valid data to update');
-      }
+    const petRef = doc(petsCollection, id);
+    console.log('Firestore Document Reference:', {
+      path: petRef.path,
+      id: petRef.id
+    });
+    
+    // Remove undefined and null values to prevent Firestore errors
+    const updateData = Object.fromEntries(
+      Object.entries(data)
+        .filter(([_, v]) => v !== undefined && v !== null)
+        .map(([k, v]) => [k, v === '' ? null : v])
+    );
 
+    console.log('Cleaned Update Data:', JSON.stringify(updateData, null, 2));
+
+    // Ensure we have data to update after cleaning
+    if (Object.keys(updateData).length === 0) {
+      console.error('No valid update data after cleaning', {
+        originalData: data,
+        cleanedData: updateData
+      });
+      throw new Error('No valid data to update');
+    }
+
+    try {
       await updateDoc(petRef, {
         ...updateData,
         updatedAt: new Date()
