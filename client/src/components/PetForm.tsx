@@ -135,39 +135,26 @@ export default function PetForm({ onSuccess, onCancel, defaultValues, pet, updat
           return;
         }
         
-        // Ensure we have data to update
-        if (Object.keys(cleanedData).length === 0) {
-          console.error('No valid data to update', {
-            originalData: data,
-            cleanedData: cleanedData,
-            pet: pet
-          });
-          toast({
-            title: "Error",
-            description: "No valid data to update",
-            variant: "destructive"
-          });
-          return;
-        }
-
-        // Prepare update data by comparing with original pet
-        const updateData: Partial<Pet> = {};
-        (Object.keys(cleanedData) as Array<keyof InsertPet>).forEach(key => {
-          // Only include fields that have changed
-          if (cleanedData[key] !== pet[key]) {
-            updateData[key] = cleanedData[key];
+        // Determine which fields have changed
+        const updateData: Partial<InsertPet> = {};
+        
+        // Check each field and add to updateData only if it's different from the original
+        (Object.keys(data) as Array<keyof InsertPet>).forEach((key) => {
+          const currentValue = data[key];
+          const originalValue = pet?.[key];
+          
+          // Compare values, considering type conversion and empty strings
+          if (
+            currentValue !== originalValue && 
+            !(currentValue === '' && originalValue === null) &&
+            !(currentValue === null && originalValue === '')
+          ) {
+            updateData[key] = currentValue;
           }
         });
 
-        console.log('Prepared Update Data:', JSON.stringify(updateData, null, 2));
-
-        // Ensure we still have data to update after comparison
+        // If no changes were made, show info toast and return
         if (Object.keys(updateData).length === 0) {
-          console.error('No changes detected', {
-            originalData: data,
-            cleanedData: cleanedData,
-            pet: pet
-          });
           toast({
             title: "Info",
             description: "No changes were made",
