@@ -61,7 +61,6 @@ export default function PetForm({
   pet
 }: PetFormProps) {
   const { 
-    addPet, 
     updatePet: usePetsUpdatePet 
   } = usePets();
   const { toast } = useToast();
@@ -164,12 +163,6 @@ export default function PetForm({
       } : {})
     };
 
-    console.log('PET FORM: Cleaned submission data', { 
-      cleanedData, 
-      isUpdate: !!pet, 
-      petId: pet?.id
-    });
-
     try {
       if (pet?.id) {
         await usePetsUpdatePet(pet.id, cleanedData);
@@ -178,15 +171,11 @@ export default function PetForm({
           description: "Pet updated successfully",
         });
       } else {
-        await addPet(cleanedData);
-        toast({
-          title: "Success",
-          description: "Pet added successfully",
-        });
+        // Just call onSuccess with the cleaned data
+        onSuccess?.(cleanedData);
       }
 
       setIsSubmitting(false);
-      onSuccess?.(cleanedData);
     } catch (error) {
       console.error('PET FORM: Submission error', error);
       setIsSubmitting(false);
