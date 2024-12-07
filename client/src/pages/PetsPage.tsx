@@ -282,6 +282,7 @@ export default function PetsPage() {
                 }
               }}
               customers={customers}
+              pet={selectedPet}
             />
           </DialogContent>
         </Dialog>
@@ -364,6 +365,7 @@ export default function PetsPage() {
                   ...selectedPet,
                   customerId: selectedPet?.customerId || ""
                 }}
+                pet={selectedPet}
                 customers={customers}
               />
             ) : (
