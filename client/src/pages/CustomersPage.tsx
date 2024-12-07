@@ -188,32 +188,36 @@ export default function CustomersPage() {
       return [];
     }
     
-    const customerId = selectedCustomer.id;
-    console.log('PETS_DEBUG: Looking for pets with customer ID:', {
-      customerId,
-      customerName: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`,
-      totalPets: pets.length,
-      allPets: pets.map(p => ({
-        id: p.id,
-        name: p.name,
-        customerId: p.customerId
-      }))
+    // Compare IDs as strings to ensure consistent comparison
+    const customerId = selectedCustomer.id.toString();
+    const petsForCustomer = pets.filter(pet => {
+      const petCustomerId = pet.customerId?.toString();
+      const isMatch = petCustomerId === customerId;
+      
+      console.log('PETS_DEBUG: Checking pet match', {
+        petId: pet.id,
+        petName: pet.name,
+        petCustomerId,
+        customerId,
+        isMatch
+      });
+      
+      return isMatch;
     });
 
-    const filteredPets = pets.filter(pet => pet.customerId === customerId);
-    
-    console.log('PETS_DEBUG: Filtered pets result', { 
+    console.log('PETS_DEBUG: Final filtered pets', {
       customerId,
       customerName: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`,
-      filteredCount: filteredPets.length,
-      filteredPets: filteredPets.map(p => ({
+      totalPetsFound: petsForCustomer.length,
+      petsList: petsForCustomer.map(p => ({
         id: p.id,
         name: p.name,
-        customerId: p.customerId
+        type: p.type,
+        breed: p.breed
       }))
     });
     
-    return filteredPets;
+    return petsForCustomer;
   }, [selectedCustomer, pets]);
 
   async function onSubmit(data: InsertCustomer) {
@@ -538,7 +542,7 @@ export default function CustomersPage() {
                 <div className="flex justify-center items-center py-8">
                   <Loader2 className="h-6 w-6 animate-spin" />
                 </div>
-              ) : selectedCustomerPets.length === 0 ? (
+              ) : !pets || selectedCustomerPets.length === 0 ? (
                 <div className="text-center text-muted-foreground py-8">
                   No pets found for this customer
                 </div>
@@ -546,14 +550,14 @@ export default function CustomersPage() {
                 selectedCustomerPets.map(pet => (
                   <div key={pet.id} className="flex items-center gap-4 p-4 border rounded-lg hover:bg-accent transition-colors">
                     <img
-                      src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
+                      src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(pet.name)}`}
                       alt={pet.name}
                       className="w-12 h-12 rounded-full"
                     />
                     <div className="flex-1">
                       <div className="font-medium">{pet.name}</div>
                       <div className="text-sm text-muted-foreground capitalize">
-                        {pet.breed} · {pet.type}
+                        {pet.breed || 'Unknown breed'} · {pet.type || 'Unknown type'}
                       </div>
                     </div>
                     <Button
