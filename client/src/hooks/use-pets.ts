@@ -5,20 +5,22 @@ import { db } from "../lib/firebase";
 import { petsCollection, customersCollection } from "../lib/firestore";
 import { uploadFile } from "../lib/storage";
 
-export type PetWithRelations = {
+export type Pet = {
   id: string;
   customerId: string;
   name: string;
-  type: string;
+  type: "dog" | "cat" | "other";
   breed: string;
   image: string | null;
-  dateOfBirth: any | null;
+  dateOfBirth: string | null;
   age: number | null;
-  gender: string | null;
-  weight: number | null;
-  weightUnit: string;
+  gender: "male" | "female" | "other" | null;
+  weight: string | null;
+  weightUnit: "kg" | "lbs";
+  height: string | null;
+  heightUnit: "cm" | "inches";
   notes: string | null;
-  owner: {
+  owner?: {
     id: string;
     firstName: string;
     lastName: string;
@@ -31,7 +33,7 @@ export type PetWithRelations = {
 export function usePets() {
   const queryClient = useQueryClient();
 
-  const { data: pets, ...rest } = useQuery<PetWithRelations[]>({
+  const { data: pets, ...rest } = useQuery<Pet[]>({
     queryKey: ['pets'],
     queryFn: async () => {
       try {

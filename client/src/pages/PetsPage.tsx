@@ -21,6 +21,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertPetSchema, type InsertPet } from "@db/schema";
+import type { Pet } from "@/hooks/use-pets";
 import {
   AlertDialog,
   AlertDialogAction,
