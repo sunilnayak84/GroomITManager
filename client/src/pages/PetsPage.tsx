@@ -106,14 +106,30 @@ export default function PetsPage() {
     }
   };
 
-  const handleUpdatePet = async (id: string, data: Partial<InsertPet>) => {
+  const formatDate = (date: any) => {
+    if (!date) return 'N/A';
     try {
-      await updatePet({
-        id,
-        ...data
-      });
+      // Handle Firestore timestamp
+      if (date?.seconds) {
+        return new Date(date.seconds * 1000).toLocaleDateString();
+      }
+      // Handle string date
+      return new Date(date).toLocaleDateString();
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Invalid Date';
+    }
+  };
+
+  const handleUpdatePet = async (petId: string, data: Partial<InsertPet>) => {
+    try {
+      await updatePet({ id: petId, ...data });
+      // Refresh the selected pet data after update
+      const updatedPet = pets?.find(p => p.id === petId);
+      if (updatedPet) {
+        setSelectedPet(updatedPet);
+      }
       setIsEditing(false);
-      setSelectedPet(prevPet => prevPet ? { ...prevPet, ...data } : null);
       toast({
         title: "Success",
         description: "Pet updated successfully",
@@ -182,11 +198,6 @@ export default function PetsPage() {
       });
     }
   }, [selectedPet, isEditing, editForm]);
-
-  const formatDate = (date: Date | null | undefined) => {
-    if (!date) return "N/A";
-    return new Date(date).toLocaleDateString();
-  };
 
   const columns = [
     {
@@ -296,80 +307,54 @@ export default function PetsPage() {
             setIsEditing(false);
           }
         }}>
-          <DialogContent className="max-w-3xl">
-            <DialogHeader className="flex justify-between items-center">
-              <DialogTitle>Pet Details</DialogTitle>
-              <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => setIsEditing(true)}
-                >
-                  Edit
-                </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button 
-                      variant="destructive" 
-                      size="sm"
+          <DialogContent className="sm:max-w-[425px]">
+            {isEditing ? (
+              <>
+                <DialogHeader>
+                  <DialogTitle>Edit Pet</DialogTitle>
+                </DialogHeader>
+                <PetForm
+                  onSuccess={(data) => {
+                    if (selectedPet) {
+                      handleUpdatePet(selectedPet.id, data);
+                    }
+                  }}
+                  onCancel={() => setIsEditing(false)}
+                  defaultValues={selectedPet}
+                  pet={selectedPet}
+                  customers={customers}
+                />
+              </>
+            ) : (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="text-center">Pet Details</DialogTitle>
+                  <div className="flex justify-center gap-2 mt-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsEditing(true)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      onClick={() => setShowDeleteConfirm(true)}
                     >
                       Delete
                     </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                      <p className="text-sm text-muted-foreground">
-                        This action cannot be undone. This will permanently delete the pet.
-                      </p>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={async () => {
-                          if (!selectedPet) return;
-                          try {
-                            await deletePet(selectedPet.id);
-                            setShowPetDetails(false);
-                            toast({
-                              title: "Success",
-                              description: "Pet deleted successfully",
-                            });
-                          } catch (error) {
-                            console.error('Error deleting pet:', error);
-                            toast({
-                              title: "Error",
-                              description: "Failed to delete pet",
-                              variant: "destructive",
-                            });
-                          }
-                        }}
-                      >
-                        Delete
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
-            </DialogHeader>
+                  </div>
+                </DialogHeader>
 
-            {isEditing ? (
-              <PetForm
-                onSuccess={(data) => {
-                  if (selectedPet) {
-                    handleUpdatePet(selectedPet.id, data);
-                  }
-                }}
-                onCancel={() => setIsEditing(false)}
-                defaultValues={{
-                  ...selectedPet,
-                  customerId: selectedPet?.customerId || ""
-                }}
-                pet={selectedPet}
-                customers={customers}
-              />
-            ) : (
-              <div className="space-y-4">
+                {selectedPet.imageUrl && (
+                  <div className="flex justify-center mb-4">
+                    <img
+                      src={selectedPet.imageUrl}
+                      alt={`${selectedPet.name}'s photo`}
+                      className="rounded-full w-24 h-24 object-cover"
+                    />
+                  </div>
+                )}
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <strong>Name:</strong> {selectedPet.name}
@@ -381,28 +366,25 @@ export default function PetsPage() {
                     <strong>Breed:</strong> {selectedPet.breed}
                   </div>
                   <div>
-                    <strong>Owner:</strong> {selectedPet.owner ? selectedPet.owner.name : (customers?.find(c => c.id === selectedPet.customerId) ? `${customers.find(c => c.id === selectedPet.customerId)?.firstName} ${customers.find(c => c.id === selectedPet.customerId)?.lastName}` : "N/A")}
+                    <strong>Owner:</strong> {selectedPet.owner ? `${selectedPet.owner.firstName} ${selectedPet.owner.lastName}` : 'N/A'}
                   </div>
                   <div>
-                    <strong>Age:</strong> {selectedPet.age || "N/A"}
+                    <strong>Age:</strong> {selectedPet.age || 'N/A'}
                   </div>
                   <div>
-                    <strong>Gender:</strong> {selectedPet.gender ? selectedPet.gender.charAt(0).toUpperCase() + selectedPet.gender.slice(1) : "N/A"}
+                    <strong>Gender:</strong> {selectedPet.gender || 'N/A'}
                   </div>
                   <div>
                     <strong>Date of Birth:</strong> {formatDate(selectedPet.dateOfBirth)}
                   </div>
                   <div>
-                    <strong>Weight:</strong> {selectedPet.weight ? `${selectedPet.weight} ${selectedPet.weightUnit}` : "N/A"}
-                  </div>
-                  <div>
-                    <strong>Height:</strong> {selectedPet.height ? `${selectedPet.height} ${selectedPet.heightUnit}` : "N/A"}
+                    <strong>Weight:</strong> {selectedPet.weight ? `${selectedPet.weight} ${selectedPet.weightUnit}` : 'N/A'}
                   </div>
                   <div className="col-span-2">
-                    <strong>Notes:</strong> {selectedPet.notes || "No notes available"}
+                    <strong>Notes:</strong> {selectedPet.notes || 'No notes available'}
                   </div>
                 </div>
-              </div>
+              </>
             )}
           </DialogContent>
         </Dialog>

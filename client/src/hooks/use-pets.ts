@@ -205,64 +205,27 @@ export const usePets = () => {
     }
   };
 
-  const updatePet = async (petData: Partial<Pet>) => {
+  const updatePet = async (data: { id: string; [key: string]: any }) => {
+    const { id, ...updateData } = data;
+    const petRef = doc(db, "pets", id);
+
     try {
-      console.log('UPDATE_PET: Attempting to update pet', { 
-        petId: petData.id, 
-        petData 
-      });
-
-      // Remove undefined fields and special objects
-      const cleanedPetData = Object.fromEntries(
-        Object.entries(petData)
-          .filter(([_, value]) => value !== undefined)
-          .filter(([key, value]) => {
-            // Remove special Firestore objects and undefined values
-            if (value === undefined) return false;
-            if (typeof value === 'object' && value !== null) {
-              if ('_methodName' in value) return false;
-            }
-            return true;
-          })
-      );
-
-      // Explicitly handle image field
-      if (petData.image === undefined) {
-        delete cleanedPetData.image;
-      } else if (petData.image instanceof File) {
-        // Handle file upload logic
-        const imageUrl = await uploadFile(
-          petData.image, 
-          `pets/${petData.id}/${Date.now()}_${petData.image.name}`
-        );
-        cleanedPetData.image = imageUrl;
-      }
-
-      console.log('UPDATE_PET: Cleaned Pet Data', { 
-        cleanedPetData 
-      });
-
-      // Reference to the specific pet document
-      const petDocRef = doc(db, 'pets', petData.id);
-
-      // Update the document with cleaned data
-      await updateDoc(petDocRef, {
-        ...cleanedPetData,
+      await updateDoc(petRef, {
+        ...updateData,
         updatedAt: serverTimestamp()
       });
 
-      console.log('UPDATE_PET: Successfully updated pet', { 
-        petId: petData.id 
+      // Manually update the cache to reflect the changes immediately
+      queryClient.setQueryData(["pets"], (oldData: Pet[] | undefined) => {
+        if (!oldData) return oldData;
+        return oldData.map(pet => 
+          pet.id === id ? { ...pet, ...updateData } : pet
+        );
       });
 
-      return petData;
+      return true;
     } catch (error) {
-      console.error('UPDATE_PET: Error updating pet', { 
-        error,
-        errorMessage: error instanceof Error ? error.message : 'Unknown error',
-        petId: petData.id,
-        petData 
-      });
+      console.error("Error updating pet:", error);
       throw error;
     }
   };

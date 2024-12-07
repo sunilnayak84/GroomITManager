@@ -82,19 +82,21 @@ export const insertCustomerSchema = createInsertSchema(customers, {
   }),
 });
 
-export const insertPetSchema = createInsertSchema(pets, {
-  type: z.enum(["dog", "cat", "other"]),
-  name: z.string().min(1, "Name is required"),
-  breed: z.string().min(1, "Breed is required"),
-  customerId: z.number().min(1, "Customer is required"),
-  dateOfBirth: z.string().optional(),
+export const insertPetSchema = z.object({
+  name: z.string().min(1, { message: "Pet name is required" }),
+  type: z.enum(["dog", "cat", "bird", "fish", "other"], {
+    required_error: "Pet type is required",
+    invalid_type_error: "Invalid pet type selected"
+  }),
+  breed: z.string().min(1, { message: "Breed is required" }),
+  customerId: z.string().min(1, { message: "Customer is required" }),
+  dateOfBirth: z.any().optional(),
   age: z.number().optional(),
-  gender: z.enum(["male", "female", "other"]).optional(),
+  gender: z.enum(["male", "female", "unknown"]).optional(),
   weight: z.string().optional(),
   weightUnit: z.enum(["kg", "lbs"]).default("kg"),
-  image: z.string().optional(),
+  imageUrl: z.string().optional(),
   notes: z.string().optional(),
-  firebaseId: z.string().optional(),
 });
 
 export const insertAppointmentSchema = createInsertSchema(appointments, {
