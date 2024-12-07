@@ -855,16 +855,9 @@ export default function CustomersPage() {
                 <div className="space-y-2">
                   <h3 className="font-semibold">Additional Information</h3>
                   <p><span className="text-muted-foreground">Date of Birth:</span> {
-                    selectedPet.dateOfBirth 
-                      ? new Date(selectedPet.dateOfBirth).toLocaleDateString()
-                      : 'Not specified'
+                    selectedPet.dateOfBirth || 'Not specified'
                   }</p>
                   <p><span className="text-muted-foreground">Weight:</span> {selectedPet.weight ? `${selectedPet.weight} kg` : 'Not specified'}</p>
-                  <p><span className="text-muted-foreground">Added On:</span> {
-                    selectedPet.createdAt 
-                      ? new Date(selectedPet.createdAt).toLocaleDateString()
-                      : 'Not specified'
-                  }</p>
                 </div>
               </div>
 
