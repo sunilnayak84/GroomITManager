@@ -1,20 +1,23 @@
-import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash } from "lucide-react";
-import { usePets } from "../hooks/use-pets";
-import { useCustomers } from "../hooks/use-customers";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger,
-  DialogDescription 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
-import PetForm from "@/components/PetForm";
-import type { Pet } from "@db/schema";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { usePets } from "@/hooks/use-pets";
+import { useCustomers } from "@/hooks/use-customers";
+import { PetForm } from "@/components/PetForm";
+import { useToast } from "@/components/ui/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertPetSchema, type InsertPet } from "@db/schema";
@@ -29,11 +32,12 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-export default function PetsPage() {
-  const { pets, isLoading, addPet, updatePet, deletePet } = usePets();
-  const { data: customers } = useCustomers();
+import React, { useState, useEffect } from "react";
 
-  const [open, setOpen] = useState(false);
+export default function PetsPage() {
+  const { pets, isLoading, updatePet, deletePet } = usePets();
+  const { customers } = useCustomers();
+
   const [showPetDetails, setShowPetDetails] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
@@ -65,57 +69,6 @@ export default function PetsPage() {
     }
   }, [pets, customers]);
 
-  const handleAddPet = async (data: InsertPet) => {
-    console.error('PETS PAGE: handleAddPet called', { 
-      data, 
-      customers: customers?.map(c => c.id)
-    });
-
-    try {
-      // Verify customer exists
-      const selectedCustomer = customers?.find(c => c.id === data.customerId);
-      if (!selectedCustomer) {
-        console.error('PETS PAGE: Selected customer not found', { 
-          customerId: data.customerId,
-          availableCustomers: customers?.map(c => c.id)
-        });
-        toast({
-          title: "Customer Error",
-          description: "Selected customer not found. Please select a valid customer.",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      // Add the pet
-      const newPet = await addPet(data);
-      
-      console.error('PETS PAGE: New pet added', { newPet });
-
-      // Close the dialog
-      setOpen(false);
-
-      // Show success toast
-      toast({
-        title: "Success",
-        description: "Pet added successfully",
-        variant: "default"
-      });
-    } catch (error) {
-      console.error('PETS PAGE: Error adding pet', { 
-        error,
-        errorMessage: error instanceof Error ? error.message : 'Unknown error'
-      });
-
-      // Show error toast
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to add pet",
-        variant: "destructive"
-      });
-    }
-  };
-
   const formatDate = (date: any) => {
     if (!date) return 'N/A';
     try {
@@ -140,43 +93,17 @@ export default function PetsPage() {
     return owner ? `${owner.firstName} ${owner.lastName}` : 'N/A';
   };
 
-  const handleUpdatePet = async (petId: string, data: Partial<InsertPet>) => {
+  const handleUpdatePet = async (data: InsertPet) => {
+    if (!selectedPet) return;
+    
     try {
-      await updatePet({ id: petId, ...data });
-      // Close all dialogs
-      setShowPetDetails(false);
+      await updatePet(selectedPet.id, data);
       setIsEditing(false);
+      setShowPetDetails(false);
       setSelectedPet(null);
-      toast({
-        title: "Success",
-        description: "Pet updated successfully",
-      });
     } catch (error) {
       console.error('Error updating pet:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update pet",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleDeletePet = async (id: string) => {
-    try {
-      await deletePet(id);
-      setShowPetDetails(false);
-      setSelectedPet(null);
-      toast({
-        title: "Success",
-        description: "Pet deleted successfully",
-      });
-    } catch (error) {
-      console.error('Error deleting pet:', error);
-      toast({
-        title: "Error",
-        description: "Failed to delete pet",
-        variant: "destructive",
-      });
+      throw error;
     }
   };
 
@@ -276,40 +203,13 @@ export default function PetsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between space-y-2">
         <div>
-          <h1 className="text-3xl font-bold">Pets</h1>
-          <p className="text-muted-foreground">Manage your client's pets</p>
+          <h2 className="text-2xl font-bold tracking-tight">Pets</h2>
+          <p className="text-muted-foreground">
+            Here&apos;s a list of all pets in your system
+          </p>
         </div>
-
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Pet
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add New Pet</DialogTitle>
-              <DialogDescription>
-                Fill in the details below to add a new pet.
-              </DialogDescription>
-            </DialogHeader>
-            <PetForm 
-              onSuccess={async (data) => {
-                try {
-                  await handleAddPet(data);
-                  setOpen(false);
-                } catch (error) {
-                  console.error('Error in form submission:', error);
-                }
-              }}
-              customers={customers}
-              pet={selectedPet}
-            />
-          </DialogContent>
-        </Dialog>
       </div>
 
       {selectedPet && (
@@ -329,7 +229,7 @@ export default function PetsPage() {
                 <PetForm
                   onSuccess={(data) => {
                     if (selectedPet) {
-                      handleUpdatePet(selectedPet.id, data);
+                      handleUpdatePet(data);
                     }
                   }}
                   onCancel={() => setIsEditing(false)}
