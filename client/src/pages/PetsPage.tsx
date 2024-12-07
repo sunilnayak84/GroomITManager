@@ -62,7 +62,7 @@ export default function PetsPage() {
     if (customers) {
       console.log('PetsPage Customers Debug:', JSON.stringify({
         customersCount: customers.length,
-        customers: customers.map(c => ({
+        customers: customers.map((c: { id: string; firstName: string; lastName: string; }) => ({
           id: c.id,
           name: `${c.firstName} ${c.lastName}`
         }))
@@ -70,15 +70,23 @@ export default function PetsPage() {
     }
   }, [pets, customers]);
 
-  const formatDate = (date: any) => {
+  const formatDate = (date: { seconds: number; nanoseconds: number; } | string | Date | null | undefined) => {
     if (!date) return 'N/A';
     try {
       // Handle Firestore timestamp
-      if (date?.seconds) {
+      if (typeof date === 'object' && 'seconds' in date) {
         return new Date(date.seconds * 1000).toLocaleDateString();
       }
+      // Handle Date object
+      if (date instanceof Date) {
+        return date.toLocaleDateString();
+      }
       // Handle string date
-      return new Date(date).toLocaleDateString();
+      if (typeof date === 'string') {
+        const parsedDate = new Date(date);
+        return !isNaN(parsedDate.getTime()) ? parsedDate.toLocaleDateString() : 'Invalid Date';
+      }
+      return 'N/A';
     } catch (error) {
       console.error('Error formatting date:', error);
       return 'Invalid Date';
@@ -90,7 +98,9 @@ export default function PetsPage() {
     if (pet.owner) {
       return `${pet.owner.firstName} ${pet.owner.lastName}`;
     }
-    const owner = customers?.find(c => c.id === pet.customerId);
+    const owner = customers?.find((c: { id: string; firstName: string; lastName: string; }) => 
+      parseInt(c.id) === pet.customerId
+    );
     return owner ? `${owner.firstName} ${owner.lastName}` : 'N/A';
   };
 
@@ -156,7 +166,7 @@ export default function PetsPage() {
         name: selectedPet.name,
         type: selectedPet.type,
         breed: selectedPet.breed,
-        customerId: selectedPet.customerId,
+        customerId: parseInt(selectedPet.customerId.toString()),
         dateOfBirth: selectedPet.dateOfBirth || undefined,
         age: selectedPet.age || undefined,
         gender: selectedPet.gender || undefined,

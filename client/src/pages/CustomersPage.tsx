@@ -34,6 +34,28 @@ export default function CustomersPage() {
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+  const formatDate = (date: { seconds: number; nanoseconds: number; } | string | Date | null | undefined) => {
+    if (!date) return 'N/A';
+    try {
+      // Handle Firestore timestamp
+      if (typeof date === 'object' && 'seconds' in date) {
+        return new Date(date.seconds * 1000).toLocaleDateString();
+      }
+      // Handle Date object
+      if (date instanceof Date) {
+        return date.toLocaleDateString();
+      }
+      // Handle string date
+      if (typeof date === 'string') {
+        const parsedDate = new Date(date);
+        return !isNaN(parsedDate.getTime()) ? parsedDate.toLocaleDateString() : 'Invalid Date';
+      }
+      return 'N/A';
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Invalid Date';
+    }
+  };
   const [showPetDetails, setShowPetDetails] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -855,9 +877,9 @@ export default function CustomersPage() {
                 <div className="space-y-2">
                   <h3 className="font-semibold">Additional Information</h3>
                   <p><span className="text-muted-foreground">Date of Birth:</span> {
-                    selectedPet.dateOfBirth || 'Not specified'
+                    formatDate(selectedPet.dateOfBirth)
                   }</p>
-                  <p><span className="text-muted-foreground">Weight:</span> {selectedPet.weight ? `${selectedPet.weight} kg` : 'Not specified'}</p>
+                  <p><span className="text-muted-foreground">Weight:</span> {selectedPet.weight ? `${selectedPet.weight} ${selectedPet.weightUnit}` : 'Not specified'}</p>
                 </div>
               </div>
 
