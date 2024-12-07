@@ -197,8 +197,9 @@ export default function PetForm({
           title: "Pet Updated",
           description: `${data.name} has been updated successfully.`,
         });
-        // Trigger onSuccess callback to potentially refresh data
+        // Close form and trigger refresh
         onSuccess?.(petData);
+        onCancel?.();
       } else {
         // Create new pet
         const addedPet = await addPet(petData);
@@ -207,11 +208,11 @@ export default function PetForm({
           description: `${data.name} has been added successfully.`,
         });
         onSuccess?.(addedPet);
+        onCancel?.();
       }
 
       form.reset();
       setImagePreview(null);
-      onCancel?.();
     } catch (error) {
       console.error('PET FORM: Submission error', error);
       toast({

@@ -121,15 +121,19 @@ export default function PetsPage() {
     }
   };
 
+  // Get owner name helper function
+  const getOwnerName = (pet: Pet) => {
+    const owner = customers?.find(c => c.id === pet.customerId);
+    return owner ? `${owner.firstName} ${owner.lastName}` : 'N/A';
+  };
+
   const handleUpdatePet = async (petId: string, data: Partial<InsertPet>) => {
     try {
       await updatePet({ id: petId, ...data });
-      // Refresh the selected pet data after update
-      const updatedPet = pets?.find(p => p.id === petId);
-      if (updatedPet) {
-        setSelectedPet(updatedPet);
-      }
+      // Close all dialogs
+      setShowPetDetails(false);
       setIsEditing(false);
+      setSelectedPet(null);
       toast({
         title: "Success",
         description: "Pet updated successfully",
@@ -218,13 +222,7 @@ export default function PetsPage() {
     },
     {
       header: "Owner",
-      cell: (pet: Pet) => {
-        return pet.owner 
-          ? `${pet.owner.name}` 
-          : (customers?.find(c => c.id === pet.customerId) 
-            ? `${customers.find(c => c.id === pet.customerId)?.firstName} ${customers.find(c => c.id === pet.customerId)?.lastName}` 
-            : "N/A");
-      },
+      cell: (pet: Pet) => getOwnerName(pet),
     },
     {
       header: "Age",
@@ -366,13 +364,7 @@ export default function PetsPage() {
                     <strong>Breed:</strong> {selectedPet.breed}
                   </div>
                   <div>
-                    <strong>Owner:</strong> {
-                      selectedPet.owner 
-                        ? `${selectedPet.owner.firstName} ${selectedPet.owner.lastName}` 
-                        : (customers?.find(c => c.id === selectedPet.customerId)
-                            ? `${customers.find(c => c.id === selectedPet.customerId)?.firstName} ${customers.find(c => c.id === selectedPet.customerId)?.lastName}`
-                            : 'N/A')
-                    }
+                    <strong>Owner:</strong> {getOwnerName(selectedPet)}
                   </div>
                   <div>
                     <strong>Age:</strong> {selectedPet.age || 'N/A'}
