@@ -111,21 +111,29 @@ export default function CustomersPage() {
     {
       header: "Pet Count",
       cell: (row: Customer) => {
-        const customerPets = useMemo(() => {
-          if (!row.id || !pets) return [];
-          return pets.filter(pet => pet.customerId === row.id);
-        }, [row.id, pets]);
+        const customerPets = pets?.filter(pet => pet.customerId === row.id) || [];
         return (
           <div className="flex items-center gap-2">
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
+              className="hover:bg-primary/10"
               onClick={() => {
                 setSelectedCustomer(row);
-                setOpen(true);
+                setShowPetList(true);
               }}
             >
               {row.petCount || 0}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setSelectedCustomer(row);
+                setShowAddPet(true);
+              }}
+            >
+              <Plus className="h-4 w-4" />
             </Button>
           </div>
         );
