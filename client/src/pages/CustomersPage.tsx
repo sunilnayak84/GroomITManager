@@ -15,7 +15,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
-import { insertCustomerSchema, type InsertCustomer } from "../../../db/schema";
+import { insertCustomerSchema, type InsertCustomer } from "@/lib/schema";
 import type { Customer } from "@/lib/schema";
 import type { Pet } from "@/hooks/use-pets";
 import { useForm } from "react-hook-form";
@@ -84,7 +84,6 @@ export default function CustomersPage() {
       lastName: "",
       email: "",
       phone: "",
-      password: undefined,
       gender: undefined,
       address: "",
     },
@@ -250,7 +249,6 @@ export default function CustomersPage() {
       await addCustomerMutation.mutateAsync({
         ...data,
         createdAt: new Date(),
-        password: data.password || null,
         address: data.address || null
       });
 

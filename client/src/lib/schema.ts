@@ -3,10 +3,11 @@ import { z } from "zod";
 // Schema for Customer
 export const customerSchema = z.object({
   id: z.string(),
-  firstName: z.string(),
-  lastName: z.string(),
-  email: z.string().email(),
-  phone: z.string(),
+  firebaseId: z.string().nullable(),
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  email: z.string().email("Invalid email format"),
+  phone: z.string().min(10, "Phone number must be at least 10 digits"),
   address: z.string().nullable(),
   gender: z.enum(["male", "female", "other"]).nullable(),
   petCount: z.number().default(0),
@@ -16,6 +17,7 @@ export const customerSchema = z.object({
 
 export const insertCustomerSchema = customerSchema.omit({
   id: true,
+  firebaseId: true,
   petCount: true,
   createdAt: true,
   updatedAt: true,
