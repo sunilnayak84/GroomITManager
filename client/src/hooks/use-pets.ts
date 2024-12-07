@@ -78,9 +78,10 @@ export const usePets = () => {
               id: customerDetails.id,
               firstName: customerDetails.firstName,
               lastName: customerDetails.lastName,
+              name: `${customerDetails.firstName} ${customerDetails.lastName}`,
               phone: customerDetails.phone || '',
               email: customerDetails.email || ''
-            } : undefined
+            } : null
           } as Pet;
         });
 
