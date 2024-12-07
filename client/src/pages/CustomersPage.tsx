@@ -192,7 +192,7 @@ export default function CustomersPage() {
     
     // Compare IDs as strings to ensure consistent comparison
     const customerId = selectedCustomer.id.toString();
-    const petsForCustomer = pets.filter(pet => {
+    const petsForCustomer = pets.filter((pet: Pet) => {
       const petCustomerId = pet.customerId?.toString();
       const isMatch = petCustomerId === customerId;
       
@@ -211,7 +211,7 @@ export default function CustomersPage() {
       customerId,
       customerName: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`,
       totalPetsFound: petsForCustomer.length,
-      petsList: petsForCustomer.map(p => ({
+      petsList: petsForCustomer.map((p: Pet) => ({
         id: p.id,
         name: p.name,
         type: p.type,
@@ -219,7 +219,7 @@ export default function CustomersPage() {
       }))
     });
     
-    return petsForCustomer;
+    return petsForCustomer as Pet[];
   }, [selectedCustomer, pets]);
 
   async function onSubmit(data: InsertCustomer) {
@@ -321,8 +321,12 @@ export default function CustomersPage() {
         }
       });
       
-      // Update the selected customer
-      setSelectedCustomer(prev => prev ? { ...prev, ...data } : null);
+      // Update the selected customer with type casting for gender
+      setSelectedCustomer(prev => prev ? {
+        ...prev,
+        ...data,
+        gender: data.gender as "male" | "female" | "other" | null
+      } : null);
       
       setIsSubmitting(false);
       setIsEditing(false);
