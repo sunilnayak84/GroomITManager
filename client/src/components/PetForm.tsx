@@ -20,6 +20,7 @@ export type PetFormProps = {
   pet?: InsertPet;
   customers?: Customer[];
   updatePet?: (id: string, data: Partial<InsertPet>) => Promise<void>;
+  addPet?: (data: InsertPet) => Promise<InsertPet>;
   id?: string;
 };
 
@@ -58,11 +59,11 @@ export const PetForm: React.FC<PetFormProps> = ({
   defaultValues,
   pet,
   updatePet: externalUpdatePet,
+  addPet: externalAddPet,
   id
 }: PetFormProps) => {
   const { 
     updatePet: usePetsUpdatePet,
-    addPet
   } = usePets();
 
   const { toast } = useToast();
@@ -209,7 +210,10 @@ export const PetForm: React.FC<PetFormProps> = ({
         onCancel?.();
       } else {
         // Create new pet
-        const addedPet = await addPet(petData);
+        if (!externalAddPet) {
+          throw new Error("addPet function is required for adding new pets");
+        }
+        const addedPet = await externalAddPet(petData);
         toast({
           title: "Pet Added",
           description: `${data.name} has been added successfully.`,
