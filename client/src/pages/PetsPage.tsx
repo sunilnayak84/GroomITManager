@@ -366,13 +366,19 @@ export default function PetsPage() {
                     <strong>Breed:</strong> {selectedPet.breed}
                   </div>
                   <div>
-                    <strong>Owner:</strong> {selectedPet.owner ? `${selectedPet.owner.firstName} ${selectedPet.owner.lastName}` : 'N/A'}
+                    <strong>Owner:</strong> {
+                      selectedPet.owner 
+                        ? `${selectedPet.owner.firstName} ${selectedPet.owner.lastName}` 
+                        : (customers?.find(c => c.id === selectedPet.customerId)
+                            ? `${customers.find(c => c.id === selectedPet.customerId)?.firstName} ${customers.find(c => c.id === selectedPet.customerId)?.lastName}`
+                            : 'N/A')
+                    }
                   </div>
                   <div>
                     <strong>Age:</strong> {selectedPet.age || 'N/A'}
                   </div>
                   <div>
-                    <strong>Gender:</strong> {selectedPet.gender || 'N/A'}
+                    <strong>Gender:</strong> {selectedPet.gender ? selectedPet.gender.charAt(0).toUpperCase() + selectedPet.gender.slice(1) : 'N/A'}
                   </div>
                   <div>
                     <strong>Date of Birth:</strong> {formatDate(selectedPet.dateOfBirth)}

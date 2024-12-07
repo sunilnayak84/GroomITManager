@@ -209,17 +209,34 @@ export const usePets = () => {
     const { id, ...updateData } = data;
     const petRef = doc(db, "pets", id);
 
+    // Remove undefined values and clean up the data
+    const cleanData = Object.fromEntries(
+      Object.entries(updateData)
+        .filter(([_, value]) => value !== undefined)
+        .map(([key, value]) => {
+          // Convert empty strings to null for optional fields
+          if (value === "") {
+            return [key, null];
+          }
+          // Handle weight specifically
+          if (key === "weight" && value === null) {
+            return [key, null];
+          }
+          return [key, value];
+        })
+    );
+
     try {
       await updateDoc(petRef, {
-        ...updateData,
+        ...cleanData,
         updatedAt: serverTimestamp()
       });
 
-      // Manually update the cache to reflect the changes immediately
+      // Manually update the cache
       queryClient.setQueryData(["pets"], (oldData: Pet[] | undefined) => {
         if (!oldData) return oldData;
         return oldData.map(pet => 
-          pet.id === id ? { ...pet, ...updateData } : pet
+          pet.id === id ? { ...pet, ...cleanData } : pet
         );
       });
 

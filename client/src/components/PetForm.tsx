@@ -125,14 +125,20 @@ export default function PetForm({
     reValidateMode: 'onSubmit'
   });
 
-  // Update form when defaultValues or pet changes
   useEffect(() => {
     if (defaultValues || pet) {
       const formDefaults = {
         ...defaultValues,
         ...(pet || {}),
         dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
-        customerId: defaultValues?.customerId || pet?.customerId || selectedCustomerId
+        customerId: defaultValues?.customerId || pet?.customerId || selectedCustomerId,
+        // Ensure weight is properly handled
+        weight: defaultValues?.weight || pet?.weight || "",
+        weightUnit: defaultValues?.weightUnit || pet?.weightUnit || "kg",
+        // Handle optional fields
+        gender: defaultValues?.gender || pet?.gender || "unknown",
+        notes: defaultValues?.notes || pet?.notes || "",
+        age: defaultValues?.age || pet?.age || undefined
       };
 
       // Remove undefined values
@@ -143,8 +149,8 @@ export default function PetForm({
       form.reset(formDefaults);
       
       // Set image preview if there's an existing image
-      if (defaultValues?.image || pet?.image) {
-        setImagePreview(defaultValues?.image || pet?.image);
+      if (defaultValues?.imageUrl || pet?.imageUrl) {
+        setImagePreview(defaultValues?.imageUrl || pet?.imageUrl);
       }
 
       // Update selected customer ID
