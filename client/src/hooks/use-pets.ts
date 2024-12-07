@@ -5,7 +5,19 @@ import { db } from "../lib/firebase";
 import { petsCollection, customersCollection } from "../lib/firestore";
 import { uploadFile } from "../lib/storage";
 
-export type PetWithRelations = Pet & {
+export type PetWithRelations = {
+  id: string;
+  customerId: string;
+  name: string;
+  type: string;
+  breed: string;
+  image: string | null;
+  dateOfBirth: any | null;
+  age: number | null;
+  gender: string | null;
+  weight: number | null;
+  weightUnit: string;
+  notes: string | null;
   owner: {
     id: string;
     firstName: string;
@@ -35,7 +47,7 @@ export function usePets() {
           customersSnapshot.docs.map(doc => {
             const data = doc.data();
             return [
-              doc.id,
+              doc.id,  // Use the Firebase document ID as the key
               {
                 id: doc.id,
                 firstName: data.firstName,
@@ -47,23 +59,31 @@ export function usePets() {
           })
         );
 
+        console.log('FETCH_PETS: Available customers:', 
+          Array.from(customersMap.entries()).map(([id, data]) => ({
+            id,
+            name: `${data.firstName} ${data.lastName}`
+          }))
+        );
+
         const fetchedPets = querySnapshot.docs.map((doc) => {
           const petData = doc.data();
-          const customerId = petData.customerId?.toString();
+          const customerId = petData.customerId;  // Use the raw customerId
           const customerDetails = customersMap.get(customerId);
           
           console.log('FETCH_PETS: Processing pet data:', {
             petId: doc.id,
             customerId,
-            rawCustomerId: petData.customerId,
-            petData,
-            customerDetails,
-            availableCustomers: Array.from(customersMap.keys())
+            petName: petData.name,
+            customerDetails: customerDetails ? {
+              id: customerDetails.id,
+              name: `${customerDetails.firstName} ${customerDetails.lastName}`
+            } : null
           });
 
-          const pet = {
+          const pet: PetWithRelations = {
             id: doc.id,
-            customerId: customerId,  // Store as string
+            customerId: customerId,
             name: petData.name,
             type: petData.type || 'dog',
             breed: petData.breed,
@@ -82,7 +102,7 @@ export function usePets() {
               phone: customerDetails.phone || '',
               email: customerDetails.email || ''
             } : null
-          } as PetWithRelations;
+          };
 
           return pet;
         });
