@@ -168,7 +168,7 @@ export function usePets() {
       // Invalidate queries
       await queryClient.invalidateQueries({ queryKey: ['pets'] });
 
-      console.log('UPDATE_PET: Successfully updated pet:', { id, cleanData });
+      console.log('UPDATE_PET: Successfully updated pet:', { petId, cleanData });
       return true;
     } catch (error) {
       console.error('UPDATE_PET: Error updating pet:', error);
