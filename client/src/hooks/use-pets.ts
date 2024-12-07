@@ -12,6 +12,7 @@ export const usePets = () => {
     queryKey: ['pets'],
     queryFn: async () => {
       try {
+        console.log('FETCH_PETS: Starting to fetch pets');
         const q = query(petsCollection);
         const querySnapshot = await getDocs(q);
         
@@ -34,13 +35,25 @@ export const usePets = () => {
           })
         );
 
+        console.log('FETCH_PETS: Processing pet documents');
         const fetchedPets = querySnapshot.docs.map((doc) => {
           const petData = doc.data();
           const customerDetails = customersMap.get(petData.customerId);
 
+          console.log('FETCH_PETS: Processing pet', {
+            petId: doc.id,
+            petData,
+            customerId: petData.customerId,
+            hasCustomerDetails: !!customerDetails
+          });
+
           return {
             id: doc.id,
-            ...petData,
+            customerId: petData.customerId,
+            name: petData.name,
+            type: petData.type,
+            breed: petData.breed,
+            image: petData.image || null,
             owner: customerDetails ? {
               id: customerDetails.id,
               firstName: customerDetails.firstName,
@@ -51,9 +64,14 @@ export const usePets = () => {
           } as Pet;
         });
 
+        console.log('FETCH_PETS: Completed fetching pets', {
+          totalPets: fetchedPets.length,
+          pets: fetchedPets
+        });
+
         return fetchedPets;
       } catch (error) {
-        console.error('Error fetching pets:', error);
+        console.error('FETCH_PETS: Error fetching pets:', error);
         throw error;
       }
     },

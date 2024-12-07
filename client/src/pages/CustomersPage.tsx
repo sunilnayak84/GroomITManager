@@ -41,7 +41,7 @@ export default function CustomersPage() {
     deleteCustomerMutationHook, 
     addCustomerMutation 
   } = useCustomers();
-  const { data: pets } = usePets();
+  const { data: pets, isLoading: isPetsLoading } = usePets();
   const queryClient = useQueryClient();
 
   const form = useForm<InsertCustomer>({
@@ -157,6 +157,11 @@ export default function CustomersPage() {
       },
     },
   ];
+
+  const selectedCustomerPets = useMemo(() => {
+    if (!selectedCustomer || !pets) return [];
+    return pets.filter(pet => pet.customerId === selectedCustomer.id);
+  }, [selectedCustomer, pets]);
 
   async function onSubmit(data: InsertCustomer) {
     setIsSubmitting(true);
@@ -275,11 +280,6 @@ export default function CustomersPage() {
       });
     }
   }
-
-  const selectedCustomerPets = useMemo(() => {
-    if (!selectedCustomer || !pets) return [];
-    return pets.filter(pet => pet.customerId === selectedCustomer.id);
-  }, [selectedCustomer, pets]);
 
   return (
     <div className="p-4 space-y-4">
@@ -478,7 +478,11 @@ export default function CustomersPage() {
               </Button>
             </div>
             <div className="grid grid-cols-1 gap-4">
-              {selectedCustomerPets.length === 0 ? (
+              {isPetsLoading ? (
+                <div className="flex justify-center items-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                </div>
+              ) : selectedCustomerPets.length === 0 ? (
                 <div className="text-center text-muted-foreground py-8">
                   No pets found for this customer
                 </div>
