@@ -217,20 +217,9 @@ export default function CustomersPage() {
         ownerMatch: p.customerId?.toString() === customerId
       }))
     );
-    console.log('PETS_DEBUG: Filtering pets for customer', {
-      customerId,
-      customerName: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`,
-      totalPets: pets.length,
-      availablePets: pets,
-      allPetIds: pets.map(p => ({ 
-        id: p.id, 
-        customerId: p.customerId,
-        name: p.name
-      }))
-    });
     
     // Filter pets for the selected customer
-    return pets.filter((pet: Pet) => {
+    const filteredPets = pets.filter((pet: Pet) => {
       // Ensure both IDs are strings for comparison
       const petCustomerId = pet.customerId?.toString();
       const match = petCustomerId === customerId;
@@ -249,8 +238,8 @@ export default function CustomersPage() {
     console.log('PETS_DEBUG: Final filtered pets', {
       customerId,
       customerName: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`,
-      totalPetsFound: petsForCustomer.length,
-      petsList: petsForCustomer.map((p: Pet) => ({
+      totalPetsFound: filteredPets.length,
+      petsList: filteredPets.map((p: Pet) => ({
         id: p.id,
         name: p.name,
         type: p.type,
@@ -258,7 +247,7 @@ export default function CustomersPage() {
       }))
     });
     
-    return petsForCustomer as Pet[];
+    return filteredPets;
   }, [selectedCustomer, pets]);
 
   async function onSubmit(data: InsertCustomer) {
@@ -352,11 +341,15 @@ export default function CustomersPage() {
   async function editCustomer(data: InsertCustomer) {
     try {
       // Use the updateCustomerMutation from the hook
+      if (!selectedCustomer?.id) {
+        throw new Error('No customer selected for update');
+      }
+      
       await updateCustomerMutation.mutateAsync({ 
-        id: selectedCustomer?.id, 
+        id: selectedCustomer.id, 
         data: {
           ...data,
-          createdAt: selectedCustomer?.createdAt,
+          createdAt: selectedCustomer.createdAt || new Date(),
         }
       });
       
@@ -640,7 +633,7 @@ export default function CustomersPage() {
                 onSuccess={(data) => {
                   setShowAddPet(false);
                   // Invalidate pets query to refresh the list
-                  queryClient.invalidateQueries(['pets']);
+                  queryClient.invalidateQueries({ queryKey: ['pets'] });
                   toast({
                     title: "Success",
                     description: "Pet added successfully",
