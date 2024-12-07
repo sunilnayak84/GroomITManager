@@ -125,7 +125,7 @@ export default function CustomersPage() {
                 setOpen(true);
               }}
             >
-              {customerPets.length}
+              {row.petCount || 0}
             </Button>
           </div>
         );
