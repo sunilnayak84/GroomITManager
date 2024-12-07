@@ -37,6 +37,7 @@ export const customers = pgTable("customers", {
 // Pets table
 export const pets = pgTable("pets", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  firebaseId: varchar("firebase_id", { length: 255 }).unique(),
   customerId: integer("customer_id").notNull().references(() => customers.id),
   name: varchar("name", { length: 255 }).notNull(),
   type: varchar("type", { length: 50 }).notNull(),
@@ -46,8 +47,6 @@ export const pets = pgTable("pets", {
   gender: varchar("gender", { length: 20 }),
   weight: varchar("weight", { length: 20 }),
   weightUnit: varchar("weight_unit", { length: 10 }).default("kg"),
-  height: varchar("height", { length: 20 }),
-  heightUnit: varchar("height_unit", { length: 10 }).default("cm"),
   image: text("image_url"),
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
@@ -83,18 +82,20 @@ export const insertCustomerSchema = createInsertSchema(customers, {
   }),
 });
 
-export const insertPetSchema = createInsertSchema(pets, {
-  type: z.enum(["dog", "cat", "other"]),
-  name: z.string().min(1, "Name is required"),
-  breed: z.string().min(1, "Breed is required"),
-  dateOfBirth: z.string().optional(),
+export const insertPetSchema = z.object({
+  name: z.string().min(1, { message: "Pet name is required" }),
+  type: z.enum(["dog", "cat", "bird", "fish", "other"], {
+    required_error: "Pet type is required",
+    invalid_type_error: "Invalid pet type selected"
+  }),
+  breed: z.string().min(1, { message: "Breed is required" }),
+  customerId: z.string().min(1, { message: "Customer is required" }),
+  dateOfBirth: z.any().optional(),
   age: z.number().optional(),
-  gender: z.enum(["male", "female", "other"]).optional(),
+  gender: z.enum(["male", "female", "unknown"]).optional(),
   weight: z.string().optional(),
   weightUnit: z.enum(["kg", "lbs"]).default("kg"),
-  height: z.string().optional(),
-  heightUnit: z.enum(["cm", "inches"]).default("cm"),
-  image: z.string().optional(),
+  imageUrl: z.string().optional(),
   notes: z.string().optional(),
 });
 
@@ -119,7 +120,28 @@ export type InsertUser = typeof users.$inferInsert;
 export type Customer = typeof customers.$inferSelect;
 export type InsertCustomer = typeof customers.$inferInsert;
 
-export type Pet = typeof pets.$inferSelect;
+export type Pet = {
+  id: string;
+  name: string;
+  type: "dog" | "cat" | "bird" | "fish" | "other";
+  breed: string;
+  customerId: string;
+  dateOfBirth?: Date;
+  age?: number;
+  gender?: "male" | "female" | "unknown";
+  weight?: string;
+  weightUnit: "kg" | "lbs";
+  imageUrl?: string;
+  notes?: string;
+  owner?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    phone?: string;
+    email?: string;
+  };
+};
+
 export type InsertPet = typeof pets.$inferInsert;
 
 export type Appointment = typeof appointments.$inferSelect;

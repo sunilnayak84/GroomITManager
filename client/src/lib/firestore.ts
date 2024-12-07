@@ -35,14 +35,78 @@ export async function createUserDocument(user: User) {
 // Customer operations with error handling
 export async function createCustomer(customer: Omit<Customer, 'id'>) {
   try {
-    const customerRef = doc(customersCollection);
-    await setDoc(customerRef, {
-      ...customer,
-      createdAt: new Date()
+    // Validate input
+    if (!customer) {
+      console.error('FIRESTORE: Customer data is undefined');
+      throw new Error('Customer data cannot be empty');
+    }
+
+    // Validate required fields
+    const requiredFields: (keyof Omit<Customer, 'id'>)[] = [
+      'firstName', 
+      'lastName', 
+      'email', 
+      'phone', 
+      'gender'
+    ];
+
+    const missingFields = requiredFields.filter(field => {
+      const value = customer[field];
+      return value === undefined || value === null || value === '';
     });
+
+    if (missingFields.length > 0) {
+      console.error('FIRESTORE: Missing required customer fields', { 
+        missingFields,
+        customerData: customer
+      });
+      throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(customer.email)) {
+      console.error('FIRESTORE: Invalid email format', { email: customer.email });
+      throw new Error('Invalid email format');
+    }
+
+    // Validate phone number (remove non-digit characters)
+    const phoneDigits = customer.phone.replace(/\D/g, '');
+    if (phoneDigits.length < 10) {
+      console.error('FIRESTORE: Invalid phone number', { phone: customer.phone });
+      throw new Error('Phone number must be at least 10 digits');
+    }
+
+    // Create customer reference
+    const customerRef = doc(customersCollection);
+    
+    // Ensure createdAt is a valid Date
+    const createdAt = customer.createdAt instanceof Date 
+      ? customer.createdAt 
+      : (customer.createdAt ? new Date(customer.createdAt) : new Date());
+    
+    // Prepare customer data for Firestore
+    const customerData = {
+      ...customer,
+      id: customerRef.id, // Use the Firestore document ID directly
+      createdAt: createdAt.toISOString(), // Store as ISO string for consistent serialization
+      petCount: customer.petCount || 0
+    };
+
+    // Log the data being saved
+    console.log('FIRESTORE: Creating customer', { customerData });
+
+    // Save to Firestore
+    await setDoc(customerRef, customerData);
+    
+    console.log('FIRESTORE: Customer created successfully', { id: customerRef.id });
     return customerRef.id;
   } catch (error) {
-    console.error('Error creating customer:', error);
+    console.error('FIRESTORE: Error creating customer', { 
+      error,
+      errorMessage: error instanceof Error ? error.message : 'Unknown error',
+      customer
+    });
     throw error;
   }
 }
@@ -50,14 +114,57 @@ export async function createCustomer(customer: Omit<Customer, 'id'>) {
 // Pet operations with error handling
 export async function createPet(pet: Omit<Pet, 'id'>) {
   try {
+    console.error('FIRESTORE: Attempting to create pet', { pet });
+
+    // Validate input
+    if (!pet) {
+      throw new Error('Pet data is undefined');
+    }
+
+    // Ensure required fields are present
+    const requiredFields = ['name', 'type', 'breed', 'customerId'];
+    for (const field of requiredFields) {
+      if (!pet[field]) {
+        throw new Error(`Missing required field: ${field}`);
+      }
+    }
+
+    // Verify customer exists
+    const customerRef = doc(db, 'customers', pet.customerId.toString());
+    const customerDoc = await getDoc(customerRef);
+
+    if (!customerDoc.exists()) {
+      throw new Error(`Customer with ID ${pet.customerId} does not exist`);
+    }
+
     const petRef = doc(petsCollection);
-    await setDoc(petRef, {
+    
+    // Log before setDoc
+    console.error('FIRESTORE: Pet reference created', { petRefId: petRef.id });
+
+    // Prepare pet data for Firestore
+    const petData = {
       ...pet,
-      createdAt: new Date()
+      firebaseId: petRef.id, // Store the Firebase-generated ID separately
+      customerId: pet.customerId, // Ensure customerId is stored
+      createdAt: pet.createdAt instanceof Date ? pet.createdAt : new Date(),
+      updatedAt: new Date()
+    };
+
+    await setDoc(petRef, petData);
+
+    // Log after setDoc
+    console.error('FIRESTORE: Pet document created successfully', { 
+      petId: petRef.id, 
+      petData
     });
+
     return petRef.id;
   } catch (error) {
-    console.error('Error creating pet:', error);
+    console.error('FIRESTORE: Critical error in createPet', { 
+      error: error instanceof Error ? error.message : 'Unknown error',
+      pet 
+    });
     throw error;
   }
 }
@@ -78,12 +185,21 @@ export async function createAppointment(appointment: Omit<Appointment, 'id'>) {
 }
 
 // Add update and delete operations
-export async function updateCustomer(id: number, data: Partial<Customer>) {
+export async function updateCustomer(id: string, data: Partial<Customer>) {
   try {
-    const customerRef = doc(customersCollection, id.toString());
+    const customerRef = doc(customersCollection, id);
+    
+    // Ensure createdAt is handled correctly if present
+    const processedData = { ...data };
+    if (processedData.createdAt) {
+      processedData.createdAt = processedData.createdAt instanceof Date 
+        ? processedData.createdAt.toISOString() 
+        : (processedData.createdAt ? new Date(processedData.createdAt).toISOString() : undefined);
+    }
+
     await setDoc(customerRef, {
-      ...data,
-      updatedAt: new Date()
+      ...processedData,
+      updatedAt: new Date().toISOString()
     }, { merge: true });
     return true;
   } catch (error) {
@@ -92,57 +208,58 @@ export async function updateCustomer(id: number, data: Partial<Customer>) {
   }
 }
 
-export async function deleteCustomerAndRelated(id: number) {
+export async function deleteCustomerAndRelated(id: string) {
   try {
-    console.log('Starting deletion process for customer:', id);
-    const customerId = id.toString();
-    
-    // First, verify the customer exists
-    const customerRef = doc(customersCollection, customerId);
-    const customerDoc = await getDoc(customerRef);
-    
-    if (!customerDoc.exists()) {
-      console.error('Customer not found:', customerId);
-      throw new Error('Customer not found');
+    // Validate input
+    if (!id || typeof id !== 'string') {
+      console.error('Invalid customer ID:', id);
+      throw new Error(`Invalid customer ID: ${id}`);
     }
 
-    // Get all pets associated with this customer
-    const petsQuery = query(petsCollection, where('customerId', '==', parseInt(customerId)));
+    console.log('Starting deletion process for customer:', id);
+    
+    // First, check if the customer exists
+    const customerQuery = query(
+      customersCollection, 
+      where('id', '==', id)
+    );
+    const customerSnapshot = await getDocs(customerQuery);
+    
+    if (customerSnapshot.empty) {
+      console.error('Customer not found:', id);
+      throw new Error(`Customer with ID ${id} not found`);
+    }
+
+    // Get the actual Firestore document reference
+    const customerDocRef = customerSnapshot.docs[0].ref;
+
+    // Find and delete associated pets
+    const petsQuery = query(
+      petsCollection, 
+      where('customerId', '==', id)
+    );
     const petsSnapshot = await getDocs(petsQuery);
     
-    console.log(`Found ${petsSnapshot.docs.length} pets to delete for customer:`, customerId);
-
-    if (petsSnapshot.docs.length > 0) {
-      // Delete all pets first
-      for (const petDoc of petsSnapshot.docs) {
-        try {
-          console.log('Deleting pet:', petDoc.id);
-          await deleteDoc(doc(petsCollection, petDoc.id));
-          console.log('Successfully deleted pet:', petDoc.id);
-        } catch (error) {
-          console.error('Failed to delete pet:', petDoc.id, error);
-          throw new Error(`Failed to delete pet: ${petDoc.id}`);
-        }
+    // Delete associated pets
+    const petDeletionPromises = petsSnapshot.docs.map(async (petDoc) => {
+      try {
+        console.log('Deleting pet:', petDoc.id);
+        await deleteDoc(petDoc.ref);
+        console.log('Successfully deleted pet:', petDoc.id);
+      } catch (error) {
+        console.error('Failed to delete pet:', petDoc.id, error);
+        // Continue with other deletions even if one fails
       }
-      console.log('All pets deleted successfully');
-    }
+    });
 
-    // Delete the customer
-    try {
-      console.log('Deleting customer:', customerId);
-      await deleteDoc(customerRef);
-      
-      // Verify customer deletion
-      const verifyDoc = await getDoc(customerRef);
-      if (verifyDoc.exists()) {
-        throw new Error('Customer document still exists after deletion');
-      }
-      console.log('Customer deleted successfully:', customerId);
-      return true;
-    } catch (error) {
-      console.error('Error deleting customer:', customerId, error);
-      throw new Error('Failed to delete customer');
-    }
+    // Wait for all pet deletions
+    await Promise.all(petDeletionPromises);
+
+    // Delete the customer document
+    await deleteDoc(customerDocRef);
+    
+    console.log('Customer and associated pets deleted successfully:', id);
+    return true;
   } catch (error) {
     console.error('Error in deleteCustomerAndRelated:', error);
     throw error;

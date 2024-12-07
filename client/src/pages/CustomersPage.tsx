@@ -1,34 +1,49 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Search } from "lucide-react";
-import { useCustomers } from "../hooks/use-customers";
-import { usePets } from "../hooks/use-pets";
+import { Plus, Search, Loader2 } from "lucide-react";
+import { useCustomers } from "@/hooks/use-customers";
+import { usePets } from "@/hooks/use-pets";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { insertCustomerSchema, type InsertCustomer, type Customer } from "../../../db/schema";
 import { useForm } from "react-hook-form";
-import { insertCustomerSchema, type InsertCustomer, type Customer } from "@db/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { DataTable } from "@/components/ui/data-table";
 import { useToast } from "@/hooks/use-toast";
-import PetForm from "@/components/PetForm";
+import { PetForm } from "@/components/PetForm";
+import { useQueryClient } from "@tanstack/react-query";
+import { useMemo } from "react";
 
 export default function CustomersPage() {
   const [open, setOpen] = useState(false);
-  const { data: customers, isLoading, addCustomer, updateCustomer, deleteCustomer } = useCustomers();
+  const [showPetList, setShowPetList] = useState(false);
+  const [showAddPet, setShowAddPet] = useState(false);
+  const [showCustomerDetails, setShowCustomerDetails] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-  
+
+  const { 
+    customersQuery, 
+    updateCustomerMutation, 
+    deleteCustomerMutationHook, 
+    addCustomerMutation 
+  } = useCustomers();
+  const { data: pets, isLoading: isPetsLoading } = usePets();
+  const queryClient = useQueryClient();
+
   const form = useForm<InsertCustomer>({
     resolver: zodResolver(insertCustomerSchema),
     defaultValues: {
@@ -42,12 +57,6 @@ export default function CustomersPage() {
     },
   });
 
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
-  const [showPetList, setShowPetList] = useState(false);
-  const [showAddPet, setShowAddPet] = useState(false);
-  const [showCustomerDetails, setShowCustomerDetails] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  
   const editForm = useForm<InsertCustomer>({
     resolver: zodResolver(insertCustomerSchema),
     defaultValues: {
@@ -73,7 +82,6 @@ export default function CustomersPage() {
       });
     }
   }, [selectedCustomer, isEditing]);
-  const { data: pets } = usePets();
 
   const columns = [
     {
@@ -103,23 +111,32 @@ export default function CustomersPage() {
     {
       header: "Pet Count",
       cell: (row: Customer) => {
-        const customerPets = pets?.filter(pet => pet.customerId === row.id) || [];
+        console.log('PET_COUNT_DEBUG:', {
+          customerId: row.id,
+          petCount: row.petCount,
+          customerName: `${row.firstName} ${row.lastName}`
+        });
+        
         return (
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
-              size="sm"
-              className="hover:bg-primary/10"
+              className="text-lg font-medium"
               onClick={() => {
+                console.log('Opening pet list for customer:', {
+                  customerId: row.id,
+                  customerName: `${row.firstName} ${row.lastName}`,
+                  petCount: row.petCount
+                });
                 setSelectedCustomer(row);
                 setShowPetList(true);
               }}
             >
-              {customerPets.length}
+              {row.petCount || 0}
             </Button>
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               onClick={() => {
                 setSelectedCustomer(row);
                 setShowAddPet(true);
@@ -134,7 +151,10 @@ export default function CustomersPage() {
     {
       header: "Actions",
       cell: (row: Customer) => {
-        const customerPets = pets?.filter(pet => pet.customerId === row.id) || [];
+        const customerPets = useMemo(() => {
+          if (!row.id || !pets) return [];
+          return pets.filter(pet => pet.customerId === row.id);
+        }, [row.id, pets]);
         return (
           <Button 
             variant="outline" 
@@ -151,47 +171,160 @@ export default function CustomersPage() {
     },
   ];
 
+  const selectedCustomerPets = useMemo(() => {
+    if (!selectedCustomer || !pets) {
+      console.log('PETS_DEBUG: No pets or customer', { 
+        hasSelectedCustomer: !!selectedCustomer, 
+        hasPets: !!pets,
+        selectedCustomerId: selectedCustomer?.id,
+        petsCount: pets?.length
+      });
+      return [];
+    }
+    const filteredPets = pets.filter(pet => pet.customerId === selectedCustomer.id);
+    console.log('PETS_DEBUG: Filtered pets', { 
+      selectedCustomerId: selectedCustomer.id,
+      totalPets: pets.length,
+      filteredPets,
+      filteredCount: filteredPets.length
+    });
+    return filteredPets;
+  }, [selectedCustomer, pets]);
+
   async function onSubmit(data: InsertCustomer) {
+    setIsSubmitting(true);
     try {
-      await addCustomer({
+      // Validate required fields
+      const validationErrors: string[] = [];
+
+      // Validate firstName
+      if (!data.firstName || data.firstName.trim().length < 2) {
+        validationErrors.push("First name must be at least 2 characters");
+      }
+
+      // Validate lastName
+      if (!data.lastName || data.lastName.trim().length < 2) {
+        validationErrors.push("Last name must be at least 2 characters");
+      }
+
+      // Validate email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!data.email || !emailRegex.test(data.email)) {
+        validationErrors.push("Invalid email format");
+      }
+
+      // Validate phone
+      const phoneRegex = /^[0-9]{10,}$/;
+      const phoneDigits = data.phone.replace(/\D/g, '');
+      if (!data.phone || !phoneRegex.test(phoneDigits)) {
+        validationErrors.push("Phone number must be at least 10 digits");
+      }
+
+      // Validate gender
+      const validGenders = ['male', 'female', 'other'];
+      if (!data.gender || !validGenders.includes(data.gender)) {
+        validationErrors.push("Invalid gender selection");
+      }
+
+      // If there are validation errors, show them
+      if (validationErrors.length > 0) {
+        toast({
+          variant: "destructive",
+          title: "Validation Error",
+          description: validationErrors.join('; ')
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Log the attempt to create a customer
+      console.log('ADD_CUSTOMER: Attempting to create customer', { data });
+
+      // Mutate using the addCustomerMutation
+      await addCustomerMutation.mutateAsync({
         ...data,
         createdAt: new Date(),
         password: data.password || null,
         address: data.address || null
       });
+
+      // Reset form and close dialog
       setOpen(false);
       form.reset();
+
+      // Show success toast
       toast({
         title: "Success",
         description: "Customer added successfully",
       });
     } catch (error) {
+      // Log the full error details
+      console.error('ADD_CUSTOMER: Error in onSubmit', { 
+        error,
+        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+        customerData: data
+      });
+
+      // Show error toast with more details
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to add customer",
+        description: error instanceof Error 
+          ? error.message 
+          : "Failed to add customer. Please check your input and try again."
+      });
+    } finally {
+      // Ensure submitting state is reset
+      setIsSubmitting(false);
+    }
+  }
+
+  async function editCustomer(data: InsertCustomer) {
+    try {
+      // Use the updateCustomerMutation from the hook
+      await updateCustomerMutation.mutateAsync({ 
+        id: selectedCustomer?.id, 
+        data: {
+          ...data,
+          createdAt: selectedCustomer?.createdAt,
+        }
+      });
+      
+      // Update the selected customer
+      setSelectedCustomer(prev => prev ? { ...prev, ...data } : null);
+      
+      setIsSubmitting(false);
+      setIsEditing(false);
+      toast({
+        title: "Success",
+        description: "Customer updated successfully",
+      });
+    } catch (error) {
+      setIsSubmitting(false);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update customer",
       });
     }
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Customers</h1>
-          <p className="text-muted-foreground">Manage your customers</p>
-        </div>
-
+    <div className="p-4 space-y-4">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Customers</h1>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              New Customer
+            <Button variant="outline" size="sm">
+              <Plus className="mr-2 h-4 w-4" /> Add Customer
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Add New Customer</DialogTitle>
+              <p className="text-sm text-muted-foreground">
+                Fill out the form below to add a new customer to your system.
+              </p>
             </DialogHeader>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -228,7 +361,7 @@ export default function CustomersPage() {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input type="email" {...field} />
+                        <Input {...field} type="email" />
                       </FormControl>
                     </FormItem>
                   )}
@@ -324,7 +457,7 @@ export default function CustomersPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-transparent flex items-center p-8">
           <div className="text-white">
-            <h2 className="text-2xl font-bold mb-2">Customer Management</h2>
+            <h2 className="text-2xl font-bold">Customer Management</h2>
             <p>Keep track of all your valued customers</p>
           </div>
         </div>
@@ -340,32 +473,81 @@ export default function CustomersPage() {
         </div>
       </div>
 
-      <DataTable
-        columns={columns}
-        data={customers || []}
-        isLoading={isLoading}
-      />
+      {customersQuery.isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      ) : (
+        <DataTable 
+          columns={columns} 
+          data={customersQuery.data || []} 
+        />
+      )}
 
       {/* Pet List Dialog */}
       <Dialog open={showPetList} onOpenChange={setShowPetList}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[425px]" aria-describedby="pet-list-description">
           <DialogHeader>
             <DialogTitle>Pets for {selectedCustomer ? `${selectedCustomer.firstName} ${selectedCustomer.lastName}` : ''}</DialogTitle>
+            <p id="pet-list-description" className="text-sm text-muted-foreground">
+              View and manage pets for this customer
+            </p>
           </DialogHeader>
           <div className="space-y-4">
-            {pets?.filter(pet => pet.customerId === selectedCustomer?.id).map(pet => (
-              <div key={pet.id} className="flex items-center gap-4 p-4 border rounded-lg">
-                <img
-                  src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
-                  alt={pet.name}
-                  className="w-12 h-12 rounded-full"
-                />
-                <div>
-                  <div className="font-medium">{pet.name}</div>
-                  <div className="text-sm text-muted-foreground capitalize">{pet.breed} · {pet.type}</div>
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold">Pets</h3>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setShowPetList(false);
+                  setShowAddPet(true);
+                }}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Pet
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 gap-4">
+              {isPetsLoading ? (
+                <div className="flex justify-center items-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin" />
                 </div>
-              </div>
-            ))}
+              ) : selectedCustomerPets.length === 0 ? (
+                <div className="text-center text-muted-foreground py-8">
+                  No pets found for this customer
+                </div>
+              ) : (
+                selectedCustomerPets.map(pet => (
+                  <div key={pet.id} className="flex items-center gap-4 p-4 border rounded-lg hover:bg-accent transition-colors">
+                    <img
+                      src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
+                      alt={pet.name}
+                      className="w-12 h-12 rounded-full"
+                    />
+                    <div className="flex-1">
+                      <div className="font-medium">{pet.name}</div>
+                      <div className="text-sm text-muted-foreground capitalize">
+                        {pet.breed} · {pet.type}
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="ml-auto"
+                      onClick={() => {
+                        toast({
+                          title: "Coming Soon",
+                          description: "Pet details view will be available soon!",
+                        });
+                      }}
+                    >
+                      View
+                    </Button>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -419,36 +601,17 @@ export default function CustomersPage() {
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
+                    <p className="text-sm text-muted-foreground">
                       This action cannot be undone. This will permanently delete the customer and all associated data.
-                    </AlertDialogDescription>
+                    </p>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                       onClick={async () => {
                         if (!selectedCustomer) return;
-                        try {
-                          toast({
-                            title: "Deleting...",
-                            description: "Please wait while we delete the customer and their pets",
-                          });
-                          
-                          await deleteCustomer(selectedCustomer.id);
-                          
-                          setShowCustomerDetails(false);
-                          toast({
-                            title: "Success",
-                            description: "Customer and associated pets deleted successfully",
-                          });
-                        } catch (error) {
-                          console.error('Error deleting customer:', error);
-                          toast({
-                            variant: "destructive",
-                            title: "Error",
-                            description: error instanceof Error ? error.message : "Failed to delete customer",
-                          });
-                        }
+                        await deleteCustomerMutationHook.mutateAsync(selectedCustomer.id);
+                        setShowCustomerDetails(false);
                       }}
                     >
                       Delete
@@ -462,29 +625,7 @@ export default function CustomersPage() {
             <div className="space-y-6">
               {isEditing ? (
                 <Form {...editForm}>
-                  <form onSubmit={editForm.handleSubmit(async (data) => {
-                    try {
-                      // TODO: Implement updateCustomer mutation
-                      await updateCustomer({ 
-                        id: selectedCustomer.id, 
-                        data: {
-                          ...data,
-                          createdAt: selectedCustomer.createdAt,
-                        }
-                      });
-                      setIsEditing(false);
-                      toast({
-                        title: "Success",
-                        description: "Customer updated successfully",
-                      });
-                    } catch (error) {
-                      toast({
-                        variant: "destructive",
-                        title: "Error",
-                        description: "Failed to update customer",
-                      });
-                    }
-                  })} className="space-y-4">
+                  <form onSubmit={editForm.handleSubmit(editCustomer)} className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <FormField
                         control={editForm.control}
@@ -592,8 +733,15 @@ export default function CustomersPage() {
                       )}
                     />
                     <div className="flex gap-4">
-                      <Button type="submit" className="flex-1">
-                        Save Changes
+                      <Button type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Saving...
+                          </>
+                        ) : (
+                          'Save Changes'
+                        )}
                       </Button>
                       <Button type="button" variant="outline" className="flex-1" onClick={() => {
                         setIsEditing(false);
@@ -605,12 +753,10 @@ export default function CustomersPage() {
                   </form>
                 </Form>
               ) : (
-                <>
+                <div>
                   <div className="flex items-center gap-4">
                     <img
-                      src={`https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
-                        `${selectedCustomer.firstName} ${selectedCustomer.lastName}`
-                      )}`}
+                      src={`https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(`${selectedCustomer.firstName} ${selectedCustomer.lastName}`)}`}
                       alt={`${selectedCustomer.firstName} ${selectedCustomer.lastName}`}
                       className="w-20 h-20 rounded-full bg-primary/10"
                     />
@@ -638,29 +784,44 @@ export default function CustomersPage() {
                       }</p>
                     </div>
                   </div>
-                </>
-              )}
 
-              <div className="space-y-4">
-                <h3 className="font-semibold">Pets</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  {pets?.filter(pet => pet.customerId === selectedCustomer.id).map(pet => (
-                    <div key={pet.id} className="flex items-center gap-4 p-4 border rounded-lg">
-                      <img
-                        src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
-                        alt={pet.name}
-                        className="w-12 h-12 rounded-full"
-                      />
-                      <div>
-                        <div className="font-medium">{pet.name}</div>
-                        <div className="text-sm text-muted-foreground capitalize">
-                          {pet.breed} · {pet.type}
-                        </div>
-                      </div>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold">Pets</h3>
                     </div>
-                  ))}
+                    <div className="grid grid-cols-1 gap-4">
+                      {selectedCustomerPets.map(pet => (
+                        <div key={pet.id} className="flex items-center gap-4 p-4 border rounded-lg hover:bg-accent transition-colors">
+                          <img
+                            src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
+                            alt={pet.name}
+                            className="w-12 h-12 rounded-full"
+                          />
+                          <div className="flex-1">
+                            <div className="font-medium">{pet.name}</div>
+                            <div className="text-sm text-muted-foreground capitalize">
+                              {pet.breed} · {pet.type}
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="ml-auto"
+                            onClick={() => {
+                              toast({
+                                title: "Coming Soon",
+                                description: "Pet details view will be available soon!",
+                              });
+                            }}
+                          >
+                            View
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           )}
         </DialogContent>
