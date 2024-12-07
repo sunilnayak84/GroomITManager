@@ -529,10 +529,8 @@ export default function CustomersPage() {
                       size="sm"
                       className="ml-auto"
                       onClick={() => {
-                        toast({
-                          title: "Coming Soon",
-                          description: "Pet details view will be available soon!",
-                        });
+                        setSelectedPet(pet);
+                        setShowPetDetails(true);
                       }}
                     >
                       View
