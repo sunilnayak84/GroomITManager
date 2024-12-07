@@ -196,22 +196,29 @@ export default function CustomersPage() {
       customerId,
       customerName: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`,
       totalPets: pets.length,
-      allPetIds: pets.map(p => ({ id: p.id, customerId: p.customerId }))
+      availablePets: pets,
+      allPetIds: pets.map(p => ({ 
+        id: p.id, 
+        customerId: p.customerId,
+        name: p.name
+      }))
     });
     
-    const petsForCustomer = pets.filter((pet: Pet) => {
+    // Filter pets for the selected customer
+    return pets.filter((pet: Pet) => {
+      // Ensure both IDs are strings for comparison
       const petCustomerId = pet.customerId?.toString();
-      const isMatch = petCustomerId === customerId;
+      const match = petCustomerId === customerId;
       
       console.log('PETS_DEBUG: Checking pet match', {
         petId: pet.id,
         petName: pet.name,
         petCustomerId,
         customerId,
-        isMatch
+        match
       });
       
-      return isMatch;
+      return match;
     });
 
     console.log('PETS_DEBUG: Final filtered pets', {
@@ -555,9 +562,10 @@ export default function CustomersPage() {
                 <div className="flex justify-center items-center py-8">
                   <Loader2 className="h-6 w-6 animate-spin" />
                 </div>
-              ) : !pets || selectedCustomerPets.length === 0 ? (
+              ) : !selectedCustomerPets || selectedCustomerPets.length === 0 ? (
                 <div className="text-center text-muted-foreground py-8">
-                  No pets found for this customer
+                  <p>No pets found for this customer</p>
+                  <p className="text-sm text-muted-foreground mt-2">Click the "Add Pet" button to add a new pet.</p>
                 </div>
               ) : (
                 selectedCustomerPets.map(pet => (

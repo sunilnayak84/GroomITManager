@@ -33,7 +33,7 @@ export type Pet = {
 export function usePets() {
   const queryClient = useQueryClient();
 
-  const { data: pets, ...rest } = useQuery<Pet[]>({
+  const { data: pets = [], ...rest } = useQuery<Pet[]>({
     queryKey: ['pets'],
     queryFn: async () => {
       try {
