@@ -18,7 +18,16 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertPetSchema, type InsertPet } from "@db/schema";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function PetsPage() {
   const { pets, isLoading, addPet, updatePet, deletePet } = usePets();
@@ -26,6 +35,7 @@ export default function PetsPage() {
 
   const [open, setOpen] = useState(false);
   const [showPetDetails, setShowPetDetails] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -392,6 +402,32 @@ export default function PetsPage() {
           </DialogContent>
         </Dialog>
       )}
+
+      <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to delete this pet?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete {selectedPet?.name}'s record.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                if (selectedPet) {
+                  await deletePet(selectedPet.id);
+                  setShowDeleteConfirm(false);
+                  setShowPetDetails(false);
+                  setSelectedPet(null);
+                }
+              }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <div className="relative h-48 rounded-xl overflow-hidden">
         <img
