@@ -33,13 +33,18 @@ export type Pet = {
 export function usePets() {
   const queryClient = useQueryClient();
 
-  const { data: pets = [], ...rest } = useQuery<Pet[]>({
+  const { data: pets = [], isLoading, ...rest } = useQuery<Pet[]>({
     queryKey: ['pets'],
     queryFn: async () => {
       try {
         console.log('FETCH_PETS: Starting to fetch pets');
         const q = query(petsCollection);
         const querySnapshot = await getDocs(q);
+        
+        if (querySnapshot.empty) {
+          console.log('FETCH_PETS: No pets found in collection');
+          return [];
+        }
         
         // First, fetch all customers to create a lookup map
         const customersQuery = query(customersCollection);
