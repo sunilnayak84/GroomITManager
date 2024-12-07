@@ -98,25 +98,35 @@ export function usePets() {
     staleTime: 1000 * 60 * 5 // 5 minutes
   });
 
-  const updatePet = async (id: string, updateData: Partial<InsertPet>) => {
+  const updatePet = async (petId: string, updateData: Partial<InsertPet>) => {
     try {
-      console.log('UPDATE_PET: Starting update', { id, updateData });
+      console.log('UPDATE_PET: Starting update', { 
+        petId, 
+        updateData,
+        petIdType: typeof petId,
+        updateDataType: typeof updateData 
+      });
 
       // Validate parameters
-      if (!id || typeof id !== 'string') {
-        throw new Error('Valid pet ID string is required for update');
+      if (!petId) {
+        throw new Error('Pet ID is required');
       }
+
+      if (typeof petId !== 'string') {
+        throw new Error(`Invalid pet ID type: ${typeof petId}. Expected string.`);
+      }
+
       if (!updateData || typeof updateData !== 'object') {
-        throw new Error('Valid update data object is required');
+        throw new Error('Update data must be a valid object');
       }
 
       // Create document reference
-      const petRef = doc(petsCollection, id);
+      const petRef = doc(petsCollection, petId);
       
       // Check if document exists
       const petDoc = await getDoc(petRef);
       if (!petDoc.exists()) {
-        throw new Error(`Pet with ID ${id} not found`);
+        throw new Error(`Pet with ID ${petId} not found`);
       }
 
       // Handle image upload if present

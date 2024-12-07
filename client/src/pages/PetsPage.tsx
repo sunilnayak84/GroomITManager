@@ -100,12 +100,14 @@ export default function PetsPage() {
     }
     
     try {
+      // Ensure we're passing a string ID and the update data separately
+      const petId = selectedPet.id.toString();
       console.log('Update pet data:', {
-        petId: selectedPet.id,
+        petId,
         updateData: data
       });
 
-      await updatePet(selectedPet.id, data);
+      await updatePet(petId, data);
       
       toast({
         title: "Success",
