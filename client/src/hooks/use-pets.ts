@@ -8,18 +8,16 @@ import { toast } from "../lib/toast";
 
 export type Pet = {
   id: string;
-  customerId: string;
+  customerId: number;
   name: string;
-  type: "dog" | "cat" | "other";
+  type: "dog" | "cat" | "bird" | "fish" | "other";
   breed: string;
   image: string | null;
-  dateOfBirth: string | null;
+  dateOfBirth: { seconds: number; nanoseconds: number; } | string | null;
   age: number | null;
-  gender: "male" | "female" | "other" | null;
+  gender: "male" | "female" | "unknown" | null;
   weight: string | null;
   weightUnit: "kg" | "lbs";
-  height: string | null;
-  heightUnit: "cm" | "inches";
   notes: string | null;
   owner?: {
     id: string;
