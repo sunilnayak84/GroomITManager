@@ -1,0 +1,94 @@
+USE CUSTOMERS: Fetched customers {customerCount: 2, customerIds: Array(2), customerNames: Array(2)}customerCount: 2customerIds: (2) ['Th1c7kHFUAT2qJI8hiqc', 'ldOvbrblVpCTXcUHzYsK']customerNames: (2) ['user two', 'user one'][[Prototype]]: Object
+queryFn @ use-customers.ts:250
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=dfae63dc:839
+run @ @tanstack_react-query.js?v=dfae63dc:493
+start @ @tanstack_react-query.js?v=dfae63dc:535
+fetch @ @tanstack_react-query.js?v=dfae63dc:925
+(anonymous) @ @tanstack_react-query.js?v=dfae63dc:1727
+(anonymous) @ @tanstack_react-query.js?v=dfae63dc:1726
+batch @ @tanstack_react-query.js?v=dfae63dc:582
+refetchQueries @ @tanstack_react-query.js?v=dfae63dc:1725
+(anonymous) @ @tanstack_react-query.js?v=dfae63dc:1717
+batch @ @tanstack_react-query.js?v=dfae63dc:582
+invalidateQueries @ @tanstack_react-query.js?v=dfae63dc:1706
+(anonymous) @ use-customers.ts:220
+await in (anonymous)
+next @ firebase_firestore.js?v=dfae63dc:17289
+(anonymous) @ firebase_firestore.js?v=dfae63dc:14611
+setTimeout
+Xa @ firebase_firestore.js?v=dfae63dc:14610
+next @ firebase_firestore.js?v=dfae63dc:14601
+aa @ firebase_firestore.js?v=dfae63dc:13470
+ta @ firebase_firestore.js?v=dfae63dc:13447
+__PRIVATE_eventManagerListen @ firebase_firestore.js?v=dfae63dc:13358
+(anonymous) @ firebase_firestore.js?v=dfae63dc:17297
+await in (anonymous)
+(anonymous) @ firebase_firestore.js?v=dfae63dc:15553
+(anonymous) @ firebase_firestore.js?v=dfae63dc:15584
+Promise.then
+yu @ firebase_firestore.js?v=dfae63dc:15584
+enqueue @ firebase_firestore.js?v=dfae63dc:15553
+enqueueAndForget @ firebase_firestore.js?v=dfae63dc:15535
+__PRIVATE_firestoreClientListen @ firebase_firestore.js?v=dfae63dc:17297
+onSnapshot @ firebase_firestore.js?v=dfae63dc:17300
+(anonymous) @ use-customers.ts:184
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=dfae63dc:16915
+invokePassiveEffectMountInDEV @ chunk-RPCDYKBN.js?v=dfae63dc:18324
+invokeEffectsInDev @ chunk-RPCDYKBN.js?v=dfae63dc:19701
+commitDoubleInvokeEffectsInDEV @ chunk-RPCDYKBN.js?v=dfae63dc:19686
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19503
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=dfae63dc:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19416
+commitRoot @ chunk-RPCDYKBN.js?v=dfae63dc:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=dfae63dc:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=dfae63dc:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=dfae63dc:18627Understand this errorAI
+PetForm.tsx:188 PET FORM: Submitting Pet Data {petData: {…}, defaultCustomerId: 'Th1c7kHFUAT2qJI8hiqc', formCustomerId: 'Th1c7kHFUAT2qJI8hiqc', selectedCustomerId: 'Th1c7kHFUAT2qJI8hiqc'}defaultCustomerId: "Th1c7kHFUAT2qJI8hiqc"formCustomerId: "Th1c7kHFUAT2qJI8hiqc"petData: {name: 'pet', type: 'dog', breed: 'pet', customerId: 'Th1c7kHFUAT2qJI8hiqc', dateOfBirth: undefined, …}selectedCustomerId: "Th1c7kHFUAT2qJI8hiqc"[[Prototype]]: Object
+use-pets.ts:103 UPDATE_PET: Starting update {petId: {…}, updateData: undefined, petIdType: 'object', updateDataType: 'undefined'}petId: {id: 'YrsusoMSscKL5dEwwi08', name: 'pet', type: 'dog', breed: 'pet', customerId: 'Th1c7kHFUAT2qJI8hiqc', …}petIdType: "object"updateData: undefinedupdateDataType: "undefined"[[Prototype]]: Object
+use-pets.ts:174 UPDATE_PET: Error updating pet: Error: Invalid pet ID type: object. Expected string.
+    at updatePet (use-pets.ts:116:15)
+    at onSubmit (PetForm.tsx:197:15)
+    at chunk-SVWJYMPS.js?v=dfae63dc:1681:15
+updatePet @ use-pets.ts:174
+onSubmit @ PetForm.tsx:197
+(anonymous) @ chunk-SVWJYMPS.js?v=dfae63dc:1681
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=dfae63dc:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=dfae63dc:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=dfae63dc:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=dfae63dc:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=dfae63dc:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=dfae63dc:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=dfae63dc:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=dfae63dc:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=dfae63dc:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=dfae63dc:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=dfae63dc:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=dfae63dc:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=dfae63dc:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=dfae63dc:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=dfae63dc:5449Understand this errorAI
+PetForm.tsx:219 PET FORM: Submission error Error: Invalid pet ID type: object. Expected string.
+    at updatePet (use-pets.ts:116:15)
+    at onSubmit (PetForm.tsx:197:15)
+    at chunk-SVWJYMPS.js?v=dfae63dc:1681:15
+onSubmit @ PetForm.tsx:219
+await in onSubmit
+(anonymous) @ chunk-SVWJYMPS.js?v=dfae63dc:1681
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=dfae63dc:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=dfae63dc:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=dfae63dc:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=dfae63dc:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=dfae63dc:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=dfae63dc:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=dfae63dc:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=dfae63dc:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=dfae63dc:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=dfae63dc:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=dfae63dc:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=dfae63dc:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=dfae63dc:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=dfae63dc:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=dfae63dc:5449Understand this errorAI
