@@ -121,6 +121,31 @@ export const appointments = pgTable("appointments", {
 });
 
 // Validation schemas
+export const insertPetSchema = createInsertSchema(pets, {
+  name: z.string().min(1, "Pet name is required"),
+  type: z.string().min(1, "Pet type is required"),
+  breed: z.string().min(1, "Pet breed is required"),
+  customerId: z.number().min(1, "Customer must be selected"),
+  dateOfBirth: z.string().nullable(),
+  age: z.number().nullable(),
+  gender: z.string().nullable(),
+  weight: z.string().nullable(),
+  weightUnit: z.string().default("kg"),
+  image: z.string().nullable(),
+  notes: z.string().nullable(),
+});
+
+export const insertAppointmentSchema = createInsertSchema(appointments, {
+  petId: z.number().min(1, "Pet must be selected"),
+  serviceId: z.number().min(1, "Service must be selected"),
+  groomerId: z.number().min(1, "Groomer must be selected"),
+  branchId: z.number().min(1, "Branch must be selected"),
+  date: z.date().min(new Date(), "Appointment date must be in the future"),
+  status: z.enum(["pending", "confirmed", "completed", "cancelled"]),
+  notes: z.string().optional(),
+  productsUsed: z.string().optional(),
+});
+
 export const insertServiceSchema = createInsertSchema(services, {
   name: z.string().min(2, "Service name must be at least 2 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
