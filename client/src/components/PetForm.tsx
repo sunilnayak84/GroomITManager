@@ -77,121 +77,34 @@ export default function PetForm({
   });
 
   useEffect(() => {
-    // Set image preview when pet prop changes
-    if (pet?.image) {
-      setImagePreview(pet.image);
+    if (defaultValues || pet) {
+      const formDefaults = {
+        ...defaultValues,
+        ...(pet || {}),
+        dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
+        customerId: defaultValues?.customerId || pet?.customerId || selectedCustomerId
+      };
+
+      // Remove undefined values
+      Object.keys(formDefaults).forEach(key => 
+        formDefaults[key] === undefined && delete formDefaults[key]
+      );
+
+      form.reset(formDefaults);
+      
+      // Set image preview if there's an existing image
+      if (defaultValues?.image || pet?.image) {
+        setImagePreview(defaultValues?.image || pet?.image);
+      }
     }
-  }, [pet]);
+  }, [defaultValues, pet, form, selectedCustomerId]);
 
   // Initialize form with default values
   const form = useForm<PetFormData>({
     resolver: zodResolver(insertPetSchema),
-    defaultValues: {
-      name: defaultValues?.name || "",
-      type: defaultValues?.type || "dog",
-      breed: defaultValues?.breed || "",
-      customerId: defaultValues?.customerId || "",
-      dateOfBirth: defaultValues?.dateOfBirth,
-      age: defaultValues?.age,
-      gender: defaultValues?.gender,
-      weight: defaultValues?.weight,
-      weightUnit: defaultValues?.weightUnit || "kg",
-      image: defaultValues?.image || undefined,
-      notes: defaultValues?.notes
-    },
     mode: 'onSubmit',
     reValidateMode: 'onSubmit'
   });
-
-  // Reset form when defaultValues change
-  useEffect(() => {
-    if (defaultValues) {
-      console.log('PET FORM: Resetting form with default values:', defaultValues);
-      form.reset({
-        name: defaultValues.name || "",
-        type: defaultValues.type || "dog",
-        breed: defaultValues.breed || "",
-        customerId: defaultValues.customerId || "",
-        dateOfBirth: defaultValues.dateOfBirth,
-        age: defaultValues.age,
-        gender: defaultValues.gender,
-        weight: defaultValues.weight,
-        weightUnit: defaultValues.weightUnit || "kg",
-        image: defaultValues.image || undefined,
-        notes: defaultValues.notes
-      });
-    }
-  }, [defaultValues, form]);
-
-  // Ensure selectedCustomerId is always set from defaultValues
-  useEffect(() => {
-    if (defaultValues?.customerId) {
-      const customerId = defaultValues.customerId;
-      setSelectedCustomerId(customerId);
-      form.setValue("customerId", customerId);
-    }
-  }, [defaultValues?.customerId, form]);
-
-  // Simplified logging with more robust checks
-  useEffect(() => {
-    console.log('PET FORM: Component Details', {
-      customersCount: customers?.length || 0,
-      defaultCustomerId: defaultValues?.customerId,
-      selectedCustomerId: selectedCustomerId,
-      formCustomerId: form.getValues('customerId')
-    });
-  }, [customers, defaultValues, selectedCustomerId, form]);
-
-  type PetFormData = {
-    name: string;
-    type: "dog" | "cat" | "bird" | "fish" | "other";
-    breed: string;
-    customerId: string;
-    dateOfBirth?: string;
-    age?: number;
-    gender?: "male" | "female" | "unknown";
-    weight?: string;
-    weightUnit: "kg" | "lbs";
-    image?: string | null;
-    notes?: string;
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Validate file type and size
-      const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
-      const maxSize = 5 * 1024 * 1024; // 5MB
-
-      if (!validTypes.includes(file.type)) {
-        toast({
-          title: "Invalid File Type",
-          description: "Please upload a valid image (JPEG, PNG, or GIF)",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      if (file.size > maxSize) {
-        toast({
-          title: "File Too Large",
-          description: "Image must be less than 5MB",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      // Set image for form
-      form.setValue('image', file);
-
-      // Create preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const updatePet = externalUpdatePet || usePetsUpdatePet;
 
@@ -208,6 +121,12 @@ export default function PetForm({
         ...data,
         customerId: customerId,
         imageUrl: imagePreview || undefined,
+        // Convert date to a consistent format
+        dateOfBirth: data.dateOfBirth 
+          ? (data.dateOfBirth instanceof Date 
+            ? data.dateOfBirth 
+            : new Date(data.dateOfBirth)) 
+          : undefined
       };
 
       console.log('PET FORM: Submitting Pet Data', { 
@@ -224,6 +143,8 @@ export default function PetForm({
           title: "Pet Updated",
           description: `${data.name} has been updated successfully.`,
         });
+        // Trigger onSuccess callback to potentially refresh data
+        onSuccess?.(petData);
       } else {
         // Create new pet
         const addedPet = await addPet(petData);
@@ -286,6 +207,78 @@ export default function PetForm({
       ...(fetchedCustomers || [])
     ].filter(customer => customer && customer.id);
   }, [customers, fetchedCustomers]);
+
+  // Convert Firestore timestamp or date string to Date object
+  const convertToDate = (dateValue: Date | string | { seconds: number, nanoseconds: number } | null | undefined): Date | undefined => {
+    if (!dateValue) return undefined;
+    
+    // If it's already a Date object, return it
+    if (dateValue instanceof Date) return dateValue;
+    
+    // If it's a Firestore timestamp object
+    if (typeof dateValue === 'object' && 'seconds' in dateValue) {
+      return new Date(dateValue.seconds * 1000);
+    }
+    
+    // If it's a string, try parsing
+    if (typeof dateValue === 'string') {
+      const parsedDate = new Date(dateValue);
+      return !isNaN(parsedDate.getTime()) ? parsedDate : undefined;
+    }
+    
+    return undefined;
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type and size
+      const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      const maxSize = 5 * 1024 * 1024; // 5MB
+
+      if (!validTypes.includes(file.type)) {
+        toast({
+          title: "Invalid File Type",
+          description: "Please upload a valid image (JPEG, PNG, or GIF)",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      if (file.size > maxSize) {
+        toast({
+          title: "File Too Large",
+          description: "Image must be less than 5MB",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Set image for form
+      form.setValue('image', file);
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  type PetFormData = {
+    name: string;
+    type: "dog" | "cat" | "bird" | "fish" | "other";
+    breed: string;
+    customerId: string;
+    dateOfBirth?: string;
+    age?: number;
+    gender?: "male" | "female" | "unknown";
+    weight?: string;
+    weightUnit: "kg" | "lbs";
+    image?: string | null;
+    notes?: string;
+  };
 
   return (
     <Form {...form}>
