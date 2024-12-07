@@ -49,9 +49,15 @@ export function usePets() {
 
         const fetchedPets = querySnapshot.docs.map((doc) => {
           const petData = doc.data();
-          const customerDetails = customersMap.get(petData.customerId);
+          const customerDetails = customersMap.get(petData.customerId?.toString());
           
-          return {
+          console.log('FETCH_PETS: Processing pet data:', {
+            petId: doc.id,
+            petData,
+            customerDetails
+          });
+
+          const pet = {
             id: doc.id,
             customerId: petData.customerId,
             name: petData.name,
@@ -73,6 +79,13 @@ export function usePets() {
               email: customerDetails.email || ''
             } : null
           } as PetWithRelations;
+
+          return pet;
+        });
+
+        console.log('FETCH_PETS: Completed fetching pets', {
+          totalPets: fetchedPets.length,
+          pets: fetchedPets
         });
 
         return fetchedPets;
@@ -85,26 +98,37 @@ export function usePets() {
     staleTime: 1000 * 60 * 5 // 5 minutes
   });
 
-  const updatePet = async (id: string, updateData: Partial<InsertPet>) => {
-    if (!id) {
+  const updatePet = async (petId: string, updateData: Partial<InsertPet>) => {
+    if (!petId) {
+      console.error('UPDATE_PET: No pet ID provided');
       throw new Error('Pet ID is required for update');
     }
 
     try {
-      console.log('UPDATE_PET: Starting update', { id, updateData });
+      console.log('UPDATE_PET: Starting update', { petId, updateData });
       
-      const petRef = doc(db, 'pets', id);
+      const petRef = doc(db, 'pets', petId);
+      const petDoc = await getDoc(petRef);
       
+      if (!petDoc.exists()) {
+        throw new Error(`Pet with ID ${petId} not found`);
+      }
+
       // Handle image upload if it's a File
       let imageUrl = updateData.image;
       if (updateData.image instanceof File) {
-        imageUrl = await uploadFile(
-          updateData.image,
-          `pets/${updateData.customerId}/${Date.now()}_${updateData.image.name}`
-        );
+        try {
+          imageUrl = await uploadFile(
+            updateData.image,
+            `pets/${updateData.customerId}/${Date.now()}_${updateData.image.name}`
+          );
+        } catch (uploadError) {
+          console.error('UPDATE_PET: Error uploading image:', uploadError);
+          throw new Error('Failed to upload pet image');
+        }
       }
 
-      // Remove undefined values and clean up the data
+      // Clean up the update data
       const cleanData = Object.fromEntries(
         Object.entries({
           ...updateData,
@@ -118,6 +142,9 @@ export function usePets() {
         })
       );
 
+      console.log('UPDATE_PET: Cleaned update data:', cleanData);
+
+      // Update the document in Firebase
       await updateDoc(petRef, {
         ...cleanData,
         updatedAt: serverTimestamp()
@@ -126,6 +153,7 @@ export function usePets() {
       // Invalidate the pets query to ensure fresh data
       await queryClient.invalidateQueries({ queryKey: ['pets'] });
       
+      console.log('UPDATE_PET: Successfully updated pet:', { petId, cleanData });
       return true;
     } catch (error) {
       console.error('UPDATE_PET: Error updating pet:', error);
