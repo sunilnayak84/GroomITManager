@@ -19,6 +19,7 @@ interface PetFormProps {
   defaultValues?: Partial<PetFormData>;
   pet?: InsertPet;
   customers?: Customer[];
+  updatePet?: (data: { id: string; [key: string]: any }) => Promise<void>;
 }
 
 const insertPetSchema = z.object({
@@ -54,7 +55,8 @@ export default function PetForm({
   onCancel,
   customers,
   defaultValues,
-  pet
+  pet,
+  updatePet: externalUpdatePet
 }: PetFormProps) {
   const { 
     updatePet: usePetsUpdatePet,
@@ -191,10 +193,11 @@ export default function PetForm({
     }
   };
 
+  const updatePet = externalUpdatePet || usePetsUpdatePet;
+
   const onSubmit = async (data: PetFormData) => {
     setIsSubmitting(true);
     try {
-      // Always prioritize defaultValues.customerId or form's customerId
       const customerId = defaultValues?.customerId || data.customerId || selectedCustomerId;
       
       if (!customerId) {
