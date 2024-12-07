@@ -98,13 +98,16 @@ export function usePets() {
     staleTime: 1000 * 60 * 5 // 5 minutes
   });
 
-  const updatePet = async (id: string, data: Partial<InsertPet>) => {
+  const updatePet = async (id: string, updateData: Partial<InsertPet>) => {
     try {
-      console.log('UPDATE_PET: Starting update', { id, data });
+      console.log('UPDATE_PET: Starting update', { id, updateData });
 
-      // Validate ID
-      if (!id) {
-        throw new Error('Pet ID is required for update');
+      // Validate parameters
+      if (!id || typeof id !== 'string') {
+        throw new Error('Valid pet ID string is required for update');
+      }
+      if (!updateData || typeof updateData !== 'object') {
+        throw new Error('Valid update data object is required');
       }
 
       // Create document reference
@@ -117,12 +120,12 @@ export function usePets() {
       }
 
       // Handle image upload if present
-      let imageUrl = data.image;
-      if (data.image instanceof File) {
+      let imageUrl = updateData.image;
+      if (updateData.image instanceof File) {
         try {
           imageUrl = await uploadFile(
-            data.image,
-            `pets/${data.customerId}/${Date.now()}_${data.image.name}`
+            updateData.image,
+            `pets/${updateData.customerId}/${Date.now()}_${updateData.image.name}`
           );
         } catch (uploadError) {
           console.error('UPDATE_PET: Image upload failed:', uploadError);
@@ -131,18 +134,21 @@ export function usePets() {
       }
 
       // Prepare update data
-      const updateData = {
-        ...data,
+      const cleanData = {
+        ...updateData,
         image: imageUrl,
         updatedAt: serverTimestamp()
       };
 
-      // Clean null/undefined values
-      const cleanData = Object.fromEntries(
-        Object.entries(updateData)
-          .filter(([_, value]) => value !== undefined)
-          .map(([key, value]) => [key, value === '' ? null : value])
-      );
+      // Remove undefined values
+      Object.keys(cleanData).forEach(key => {
+        if (cleanData[key] === undefined) {
+          delete cleanData[key];
+        }
+        if (cleanData[key] === '') {
+          cleanData[key] = null;
+        }
+      });
 
       console.log('UPDATE_PET: Preparing to update with data:', cleanData);
 
