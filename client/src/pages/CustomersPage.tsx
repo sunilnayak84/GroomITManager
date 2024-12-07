@@ -679,10 +679,14 @@ export default function CustomersPage() {
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
-                      onClick={async () => {
+                      onClick={() => {
                         if (!selectedCustomer) return;
-                        await deleteCustomerMutationHook.mutateAsync(selectedCustomer.id);
-                        setShowCustomerDetails(false);
+                        deleteCustomerMutationHook.mutate(selectedCustomer.id, {
+                          onSuccess: () => {
+                            setShowCustomerDetails(false);
+                            setSelectedCustomer(null);
+                          }
+                        });
                       }}
                     >
                       Delete
