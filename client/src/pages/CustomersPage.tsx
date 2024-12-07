@@ -43,8 +43,21 @@ export default function CustomersPage() {
     deleteCustomerMutationHook, 
     addCustomerMutation 
   } = useCustomers();
-  const { data: pets, isLoading: isPetsLoading } = usePets();
+  const { pets = [], isLoading: isPetsLoading } = usePets();
   const queryClient = useQueryClient();
+
+  // Debug pets data
+  useEffect(() => {
+    console.log('DEBUG: Pets data in CustomersPage:', {
+      petsAvailable: !!pets,
+      petsCount: pets?.length,
+      petsData: pets?.map(p => ({
+        id: p.id,
+        name: p.name,
+        customerId: p.customerId
+      }))
+    });
+  }, [pets]);
 
   const form = useForm<InsertCustomer>({
     resolver: zodResolver(insertCustomerSchema),
@@ -180,18 +193,30 @@ export default function CustomersPage() {
   ];
 
   const selectedCustomerPets = useMemo(() => {
-    if (!selectedCustomer || !pets) {
+    // Early return if no data
+    if (!selectedCustomer || !Array.isArray(pets)) {
       console.log('PETS_DEBUG: No pets or customer', { 
         hasSelectedCustomer: !!selectedCustomer, 
-        hasPets: !!pets,
+        hasPets: Array.isArray(pets),
         selectedCustomerId: selectedCustomer?.id,
-        petsCount: pets?.length
+        petsCount: Array.isArray(pets) ? pets.length : undefined,
+        petsType: typeof pets
       });
       return [];
     }
     
     // Compare IDs as strings to ensure consistent comparison
     const customerId = selectedCustomer.id.toString();
+    
+    // Log all available pets before filtering
+    console.log('PETS_DEBUG: All available pets before filtering:', 
+      pets.map(p => ({
+        id: p.id,
+        name: p.name,
+        customerId: p.customerId,
+        ownerMatch: p.customerId?.toString() === customerId
+      }))
+    );
     console.log('PETS_DEBUG: Filtering pets for customer', {
       customerId,
       customerName: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`,
