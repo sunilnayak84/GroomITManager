@@ -188,26 +188,29 @@ export default function CustomersPage() {
       return [];
     }
     
-    // Ensure we're comparing the same types (strings)
     const customerId = selectedCustomer.id;
-    const filteredPets = pets.filter(pet => {
-      const matches = pet.customerId === customerId;
-      console.log('PETS_DEBUG: Comparing IDs', {
-        petId: pet.id,
-        petName: pet.name,
-        petCustomerId: pet.customerId,
-        selectedCustomerId: customerId,
-        matches
-      });
-      return matches;
+    console.log('PETS_DEBUG: Looking for pets with customer ID:', {
+      customerId,
+      customerName: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`,
+      totalPets: pets.length,
+      allPets: pets.map(p => ({
+        id: p.id,
+        name: p.name,
+        customerId: p.customerId
+      }))
     });
+
+    const filteredPets = pets.filter(pet => pet.customerId === customerId);
     
     console.log('PETS_DEBUG: Filtered pets result', { 
-      selectedCustomerId: customerId,
-      totalPets: pets.length,
-      filteredPets,
+      customerId,
+      customerName: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`,
       filteredCount: filteredPets.length,
-      customerName: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`
+      filteredPets: filteredPets.map(p => ({
+        id: p.id,
+        name: p.name,
+        customerId: p.customerId
+      }))
     });
     
     return filteredPets;
