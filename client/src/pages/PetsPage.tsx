@@ -94,10 +94,14 @@ export default function PetsPage() {
   };
 
   const handleUpdatePet = async (data: InsertPet) => {
-    if (!selectedPet) return;
+    if (!selectedPet?.id) {
+      console.error('No pet selected for update');
+      return;
+    }
     
     try {
-      await updatePet(selectedPet.id, data);
+      console.log('Updating pet:', { id: selectedPet.id, data });
+      await updatePet(selectedPet.id.toString(), data);
       setIsEditing(false);
       setShowPetDetails(false);
       setSelectedPet(null);
