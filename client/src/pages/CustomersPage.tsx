@@ -110,30 +110,43 @@ export default function CustomersPage() {
     },
     {
       header: "Pet Count",
-      cell: (row: Customer) => (
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            className="text-lg font-medium"
-            onClick={() => {
-              setSelectedCustomer(row);
-              setShowPetList(true);
-            }}
-          >
-            {row.petCount || 0}
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => {
-              setSelectedCustomer(row);
-              setShowAddPet(true);
-            }}
-          >
-            <Plus className="h-4 w-4" />
-          </Button>
-        </div>
-      ),
+      cell: (row: Customer) => {
+        console.log('PET_COUNT_DEBUG:', {
+          customerId: row.id,
+          petCount: row.petCount,
+          customerName: `${row.firstName} ${row.lastName}`
+        });
+        
+        return (
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              className="text-lg font-medium"
+              onClick={() => {
+                console.log('Opening pet list for customer:', {
+                  customerId: row.id,
+                  customerName: `${row.firstName} ${row.lastName}`,
+                  petCount: row.petCount
+                });
+                setSelectedCustomer(row);
+                setShowPetList(true);
+              }}
+            >
+              {row.petCount || 0}
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                setSelectedCustomer(row);
+                setShowAddPet(true);
+              }}
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+        );
+      },
     },
     {
       header: "Actions",
@@ -159,8 +172,23 @@ export default function CustomersPage() {
   ];
 
   const selectedCustomerPets = useMemo(() => {
-    if (!selectedCustomer || !pets) return [];
-    return pets.filter(pet => pet.customerId === selectedCustomer.id);
+    if (!selectedCustomer || !pets) {
+      console.log('PETS_DEBUG: No pets or customer', { 
+        hasSelectedCustomer: !!selectedCustomer, 
+        hasPets: !!pets,
+        selectedCustomerId: selectedCustomer?.id,
+        petsCount: pets?.length
+      });
+      return [];
+    }
+    const filteredPets = pets.filter(pet => pet.customerId === selectedCustomer.id);
+    console.log('PETS_DEBUG: Filtered pets', { 
+      selectedCustomerId: selectedCustomer.id,
+      totalPets: pets.length,
+      filteredPets,
+      filteredCount: filteredPets.length
+    });
+    return filteredPets;
   }, [selectedCustomer, pets]);
 
   async function onSubmit(data: InsertCustomer) {
@@ -458,9 +486,12 @@ export default function CustomersPage() {
 
       {/* Pet List Dialog */}
       <Dialog open={showPetList} onOpenChange={setShowPetList}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[425px]" aria-describedby="pet-list-description">
           <DialogHeader>
             <DialogTitle>Pets for {selectedCustomer ? `${selectedCustomer.firstName} ${selectedCustomer.lastName}` : ''}</DialogTitle>
+            <p id="pet-list-description" className="text-sm text-muted-foreground">
+              View and manage pets for this customer
+            </p>
           </DialogHeader>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
