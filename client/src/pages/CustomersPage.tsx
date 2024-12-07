@@ -33,6 +33,8 @@ export default function CustomersPage() {
   const [showAddPet, setShowAddPet] = useState(false);
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+  const [showPetDetails, setShowPetDetails] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -806,10 +808,8 @@ export default function CustomersPage() {
                             size="sm"
                             className="ml-auto"
                             onClick={() => {
-                              toast({
-                                title: "Coming Soon",
-                                description: "Pet details view will be available soon!",
-                              });
+                              setSelectedPet(pet);
+                              setShowPetDetails(true);
                             }}
                           >
                             View
@@ -818,6 +818,62 @@ export default function CustomersPage() {
                       ))}
                     </div>
                   </div>
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Pet Details Dialog */}
+      <Dialog open={showPetDetails} onOpenChange={setShowPetDetails}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Pet Details</DialogTitle>
+          </DialogHeader>
+          {selectedPet && (
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                <img
+                  src={selectedPet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${selectedPet.name}`}
+                  alt={selectedPet.name}
+                  className="w-20 h-20 rounded-full bg-primary/10"
+                />
+                <div>
+                  <h2 className="text-2xl font-bold">{selectedPet.name}</h2>
+                  <p className="text-muted-foreground capitalize">{selectedPet.type} • {selectedPet.breed}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Basic Information</h3>
+                  <p><span className="text-muted-foreground">Type:</span> {selectedPet.type}</p>
+                  <p><span className="text-muted-foreground">Breed:</span> {selectedPet.breed}</p>
+                  <p><span className="text-muted-foreground">Gender:</span> {selectedPet.gender || 'Not specified'}</p>
+                  <p><span className="text-muted-foreground">Age:</span> {selectedPet.age || 'Not specified'}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Additional Information</h3>
+                  <p><span className="text-muted-foreground">Date of Birth:</span> {
+                    selectedPet.dateOfBirth 
+                      ? new Date(selectedPet.dateOfBirth).toLocaleDateString()
+                      : 'Not specified'
+                  }</p>
+                  <p><span className="text-muted-foreground">Weight:</span> {selectedPet.weight ? `${selectedPet.weight} kg` : 'Not specified'}</p>
+                  <p><span className="text-muted-foreground">Added On:</span> {
+                    selectedPet.createdAt 
+                      ? new Date(selectedPet.createdAt).toLocaleDateString()
+                      : 'Not specified'
+                  }</p>
+                </div>
+              </div>
+
+              {selectedPet.notes && (
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Notes</h3>
+                  <p className="text-sm text-muted-foreground">{selectedPet.notes}</p>
                 </div>
               )}
             </div>
