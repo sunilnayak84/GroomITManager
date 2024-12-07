@@ -148,9 +148,9 @@ export default function PetsPage() {
       header: "Pet",
       cell: (pet: Pet) => (
         <div className="flex items-center gap-3">
-          {pet.imageUrl && (
+          {pet.image && (
             <img
-              src={pet.imageUrl}
+              src={pet.image}
               alt={pet.name}
               className="h-10 w-10 rounded-full"
             />
@@ -259,10 +259,10 @@ export default function PetsPage() {
                   </div>
                 </DialogHeader>
 
-                {selectedPet.imageUrl && (
+                {selectedPet.image && (
                   <div className="flex justify-center mb-4">
                     <img
-                      src={selectedPet.imageUrl}
+                      src={selectedPet.image}
                       alt={`${selectedPet.name}'s photo`}
                       className="rounded-full w-24 h-24 object-cover"
                     />
