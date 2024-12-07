@@ -229,37 +229,40 @@ export function useCustomers() {
     };
   }, [queryClient]);
 
+  const customersQuery = useQuery({
+    queryKey: ["customers"],
+    queryFn: async () => {
+      try {
+        const querySnapshot = await getDocs(customersCollection);
+        const customers = querySnapshot.docs.map(doc => {
+          const customerData = doc.data();
+          return {
+            id: doc.id,
+            ...customerData,
+            // Ensure createdAt is a valid Date object
+            createdAt: customerData.createdAt 
+              ? new Date(customerData.createdAt) 
+              : new Date(),
+            petCount: customerData.petCount || 0
+          } as Customer;
+        });
+
+        console.log('USE CUSTOMERS: Fetched customers', {
+          customerCount: customers.length,
+          customerIds: customers.map(c => c.id),
+          customerNames: customers.map(c => `${c.firstName} ${c.lastName}`)
+        });
+
+        return customers;
+      } catch (error) {
+        console.error('Error fetching customers:', error);
+        throw error;
+      }
+    },
+  });
+
   return {
-    customersQuery: useQuery({
-      queryKey: ["customers"],
-      queryFn: async () => {
-        try {
-          const querySnapshot = await getDocs(customersCollection);
-          const customers = querySnapshot.docs.map(doc => {
-            const customerData = doc.data();
-            return {
-              id: doc.id,
-              ...customerData,
-              // Ensure createdAt is a valid Date object
-              createdAt: customerData.createdAt 
-                ? new Date(customerData.createdAt) 
-                : undefined
-            } as Customer;
-          });
-
-          console.error('USE CUSTOMERS: Fetched customers', {
-            customerCount: customers.length,
-            customerIds: customers.map(c => c.id),
-            customerNames: customers.map(c => `${c.firstName} ${c.lastName}`)
-          });
-
-          return customers;
-        } catch (error) {
-          console.error('Error fetching customers:', error);
-          throw error;
-        }
-      },
-    }),
+    customersQuery,
     addCustomerMutation,
     updateCustomerMutation,
     deleteCustomerMutationHook

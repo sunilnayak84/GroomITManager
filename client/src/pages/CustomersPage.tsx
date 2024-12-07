@@ -192,6 +192,13 @@ export default function CustomersPage() {
     
     // Compare IDs as strings to ensure consistent comparison
     const customerId = selectedCustomer.id.toString();
+    console.log('PETS_DEBUG: Filtering pets for customer', {
+      customerId,
+      customerName: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`,
+      totalPets: pets.length,
+      allPetIds: pets.map(p => ({ id: p.id, customerId: p.customerId }))
+    });
+    
     const petsForCustomer = pets.filter((pet: Pet) => {
       const petCustomerId = pet.customerId?.toString();
       const isMatch = petCustomerId === customerId;
@@ -521,12 +528,12 @@ export default function CustomersPage() {
 
       {/* Pet List Dialog */}
       <Dialog open={showPetList} onOpenChange={setShowPetList}>
-        <DialogContent className="sm:max-w-[425px]" aria-describedby="pet-list-description">
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Pets for {selectedCustomer ? `${selectedCustomer.firstName} ${selectedCustomer.lastName}` : ''}</DialogTitle>
-            <p id="pet-list-description" className="text-sm text-muted-foreground">
+            <div className="text-sm text-muted-foreground">
               View and manage pets for this customer
-            </p>
+            </div>
           </DialogHeader>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
