@@ -101,13 +101,27 @@ export default function PetsPage() {
     
     try {
       console.log('Updating pet:', { id: selectedPet.id, data });
-      await updatePet(selectedPet.id.toString(), data);
-      setIsEditing(false);
-      setShowPetDetails(false);
-      setSelectedPet(null);
+      const success = await updatePet(selectedPet.id.toString(), {
+        ...data,
+        customerId: parseInt(data.customerId.toString()),
+      });
+      
+      if (success) {
+        toast({
+          title: "Success",
+          description: "Pet updated successfully",
+        });
+        setIsEditing(false);
+        setShowPetDetails(false);
+        setSelectedPet(null);
+      }
     } catch (error) {
       console.error('Error updating pet:', error);
-      throw error;
+      toast({
+        title: "Error",
+        description: "Failed to update pet",
+        variant: "destructive",
+      });
     }
   };
 
