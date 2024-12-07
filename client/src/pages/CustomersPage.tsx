@@ -189,17 +189,17 @@ export default function CustomersPage() {
     }
     
     // Ensure we're comparing the same types (strings)
-    const customerId = selectedCustomer.id.toString();
+    const customerId = selectedCustomer.id;
     const filteredPets = pets.filter(pet => {
-      const petCustomerId = pet.customerId?.toString();
+      const matches = pet.customerId === customerId;
       console.log('PETS_DEBUG: Comparing IDs', {
         petId: pet.id,
         petName: pet.name,
-        petCustomerId,
+        petCustomerId: pet.customerId,
         selectedCustomerId: customerId,
-        matches: petCustomerId === customerId
+        matches
       });
-      return petCustomerId === customerId;
+      return matches;
     });
     
     console.log('PETS_DEBUG: Filtered pets result', { 

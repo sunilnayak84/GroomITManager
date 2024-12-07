@@ -49,17 +49,21 @@ export function usePets() {
 
         const fetchedPets = querySnapshot.docs.map((doc) => {
           const petData = doc.data();
-          const customerDetails = customersMap.get(petData.customerId?.toString());
+          const customerId = petData.customerId?.toString();
+          const customerDetails = customersMap.get(customerId);
           
           console.log('FETCH_PETS: Processing pet data:', {
             petId: doc.id,
+            customerId,
+            rawCustomerId: petData.customerId,
             petData,
-            customerDetails
+            customerDetails,
+            availableCustomers: Array.from(customersMap.keys())
           });
 
           const pet = {
             id: doc.id,
-            customerId: petData.customerId,
+            customerId: customerId,  // Store as string
             name: petData.name,
             type: petData.type || 'dog',
             breed: petData.breed,
