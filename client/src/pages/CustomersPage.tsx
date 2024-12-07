@@ -43,7 +43,7 @@ export default function CustomersPage() {
     deleteCustomerMutationHook, 
     addCustomerMutation 
   } = useCustomers();
-  const { pets = [], isLoading: isPetsLoading } = usePets();
+  const { pets = [], isLoading: isPetsLoading, addPet } = usePets();
   const queryClient = useQueryClient();
 
   // Debug pets data
@@ -637,14 +637,17 @@ export default function CustomersPage() {
             <div>
               {/* We'll reuse the PetForm component but pre-fill the customer */}
               <PetForm
-                onSuccess={() => {
+                onSuccess={(data) => {
                   setShowAddPet(false);
+                  // Invalidate pets query to refresh the list
+                  queryClient.invalidateQueries(['pets']);
                   toast({
                     title: "Success",
                     description: "Pet added successfully",
                   });
                 }}
                 defaultValues={{ customerId: selectedCustomer.id }}
+                addPet={addPet}
               />
             </div>
           )}
