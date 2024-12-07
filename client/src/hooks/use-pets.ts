@@ -19,82 +19,41 @@ export const usePets = () => {
         const customersQuery = query(customersCollection);
         const customersSnapshot = await getDocs(customersQuery);
         const customersMap = new Map(
-          customersSnapshot.docs.map(doc => [
-            doc.id, // Use the Firestore document ID directly as the key
-            {
-              id: doc.id,
-              ...doc.data(),
-              fullName: `${doc.data().firstName} ${doc.data().lastName}`
-            }
-          ])
+          customersSnapshot.docs.map(doc => {
+            const data = doc.data();
+            return [
+              doc.id,
+              {
+                id: doc.id,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                phone: data.phone,
+                email: data.email
+              }
+            ];
+          })
         );
 
-        console.log('PETS_QUERY: Customers Map Debug', JSON.stringify({
-          customerCount: customersMap.size,
-          customerIds: Array.from(customersMap.keys()),
-          firstCustomer: Array.from(customersMap.values())[0]
-        }, null, 2));
-
-        const fetchedPets = querySnapshot.docs.map((doc) => {
+        const fetchedPets = await Promise.all(querySnapshot.docs.map(async (doc) => {
           const petData = doc.data();
-          
-          console.log('PET_QUERY: Processing Pet', JSON.stringify({
-            petId: doc.id,
-            petName: petData.name,
-            petCustomerId: petData.customerId,
-            customerExists: customersMap.has(petData.customerId),
-            availableCustomerIds: Array.from(customersMap.keys())
-          }, null, 2));
+          const customerDetails = customersMap.get(petData.customerId);
 
-          // Find customer using the Firestore document ID
-          let customerDetails = null;
-          if (petData.customerId && customersMap.has(petData.customerId)) {
-            customerDetails = customersMap.get(petData.customerId);
-            console.log('PET_QUERY: Found Customer', JSON.stringify({
-              petId: doc.id,
-              petName: petData.name,
-              customerId: petData.customerId,
-              customerName: customerDetails.fullName
-            }, null, 2));
-          }
-
-          const pet = {
-            id: doc.id, // Use Firestore ID as the primary ID
+          return {
+            id: doc.id,
             ...petData,
             owner: customerDetails ? {
               id: customerDetails.id,
-              name: customerDetails.fullName,
+              firstName: customerDetails.firstName,
+              lastName: customerDetails.lastName,
               phone: customerDetails.phone || '',
               email: customerDetails.email || ''
-            } : null
+            } : undefined
           } as Pet;
-
-          console.log('PET_QUERY: Processed Pet', JSON.stringify({
-            id: pet.id,
-            name: pet.name,
-            customerId: pet.customerId,
-            ownerName: pet.owner?.name
-          }, null, 2));
-
-          return pet;
-        });
-
-        console.log('PETS HOOK: Final Result', JSON.stringify({ 
-          petCount: fetchedPets.length,
-          pets: fetchedPets.map(p => ({ 
-            id: p.id,
-            name: p.name, 
-            owner: p.owner?.name,
-            customerId: p.customerId
-          }))
-        }, null, 2));
+        }));
 
         return fetchedPets;
       } catch (error) {
-        console.error('PETS HOOK: Critical Error', JSON.stringify({
-          error: error instanceof Error ? error.message : 'Unknown error',
-          stack: error instanceof Error ? error.stack : undefined
-        }, null, 2));
+        console.error('Error fetching pets:', error);
         throw error;
       }
     },

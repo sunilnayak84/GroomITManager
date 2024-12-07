@@ -123,6 +123,9 @@ export default function PetsPage() {
 
   // Get owner name helper function
   const getOwnerName = (pet: Pet) => {
+    if (pet.owner) {
+      return `${pet.owner.firstName} ${pet.owner.lastName}`;
+    }
     const owner = customers?.find(c => c.id === pet.customerId);
     return owner ? `${owner.firstName} ${owner.lastName}` : 'N/A';
   };
@@ -207,12 +210,14 @@ export default function PetsPage() {
     {
       header: "Pet",
       cell: (pet: Pet) => (
-        <div className="flex items-center gap-2">
-          <img
-            src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
-            alt={pet.name}
-            className="w-10 h-10 rounded-full bg-primary/10"
-          />
+        <div className="flex items-center gap-3">
+          {pet.imageUrl && (
+            <img
+              src={pet.imageUrl}
+              alt={pet.name}
+              className="h-10 w-10 rounded-full"
+            />
+          )}
           <div>
             <div className="font-medium">{pet.name}</div>
             <div className="text-sm text-muted-foreground capitalize">{pet.breed} · {pet.type}</div>
@@ -364,7 +369,7 @@ export default function PetsPage() {
                     <strong>Breed:</strong> {selectedPet.breed}
                   </div>
                   <div>
-                    <strong>Owner:</strong> {getOwnerName(selectedPet)}
+                    <strong>Owner:</strong> {selectedPet.owner ? `${selectedPet.owner.firstName} ${selectedPet.owner.lastName}` : getOwnerName(selectedPet)}
                   </div>
                   <div>
                     <strong>Age:</strong> {selectedPet.age || 'N/A'}

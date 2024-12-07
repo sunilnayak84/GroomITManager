@@ -120,14 +120,26 @@ export type InsertUser = typeof users.$inferInsert;
 export type Customer = typeof customers.$inferSelect;
 export type InsertCustomer = typeof customers.$inferInsert;
 
-export type Pet = typeof pets.$inferSelect & {
+export type Pet = {
+  id: string;
+  name: string;
+  type: "dog" | "cat" | "bird" | "fish" | "other";
+  breed: string;
+  customerId: string;
+  dateOfBirth?: Date;
+  age?: number;
+  gender?: "male" | "female" | "unknown";
+  weight?: string;
+  weightUnit: "kg" | "lbs";
+  imageUrl?: string;
+  notes?: string;
   owner?: {
     id: string;
-    name: string;
+    firstName: string;
+    lastName: string;
     phone?: string;
     email?: string;
-  } | null;
-  firebaseId?: string;
+  };
 };
 
 export type InsertPet = typeof pets.$inferInsert;
