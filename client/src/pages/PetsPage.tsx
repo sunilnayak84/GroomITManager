@@ -17,7 +17,7 @@ import {
 import { usePets } from "@/hooks/use-pets";
 import { useCustomers } from "@/hooks/use-customers";
 import { PetForm } from "@/components/PetForm";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertPetSchema, type InsertPet } from "@db/schema";
