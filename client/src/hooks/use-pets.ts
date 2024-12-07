@@ -19,9 +19,20 @@ export const usePets = () => {
         // First, fetch all customers to create a lookup map
         const customersQuery = query(customersCollection);
         const customersSnapshot = await getDocs(customersQuery);
+        
+        // Debug log for customers fetching
+        console.log('FETCH_PETS: Fetched customers', {
+          totalCustomers: customersSnapshot.docs.length,
+          customerIds: customersSnapshot.docs.map(doc => doc.id)
+        });
+        
         const customersMap = new Map(
           customersSnapshot.docs.map(doc => {
             const data = doc.data();
+            console.log('FETCH_PETS: Processing customer', {
+              customerId: doc.id,
+              customerData: data
+            });
             return [
               doc.id,
               {
@@ -38,13 +49,22 @@ export const usePets = () => {
         console.log('FETCH_PETS: Processing pet documents');
         const fetchedPets = querySnapshot.docs.map((doc) => {
           const petData = doc.data();
+          
+          // Debug log for customer lookup
+          console.log('FETCH_PETS: Looking up customer', {
+            petId: doc.id,
+            customerId: petData.customerId,
+            availableCustomers: Array.from(customersMap.keys())
+          });
+
           const customerDetails = customersMap.get(petData.customerId);
 
           console.log('FETCH_PETS: Processing pet', {
             petId: doc.id,
             petData,
             customerId: petData.customerId,
-            hasCustomerDetails: !!customerDetails
+            hasCustomerDetails: !!customerDetails,
+            customerDetails
           });
 
           return {
