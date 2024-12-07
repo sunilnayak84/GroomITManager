@@ -462,6 +462,9 @@ export default function CustomersPage() {
               <h3 className="font-semibold">Pets</h3>
             </div>
             <div className="grid grid-cols-2 gap-4">
+              {console.log('Selected Customer ID:', selectedCustomer?.id)}
+              {console.log('All Pets:', pets)}
+              {console.log('Filtered Pets:', pets?.filter(pet => pet.customerId === selectedCustomer?.id))}
               {pets
                 ?.filter(pet => pet.customerId === selectedCustomer?.id)
                 .map(pet => (
@@ -735,6 +738,9 @@ export default function CustomersPage() {
                       <h3 className="font-semibold">Pets</h3>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
+                      {console.log('Selected Customer ID:', selectedCustomer?.id)}
+                      {console.log('All Pets:', pets)}
+                      {console.log('Filtered Pets:', pets?.filter(pet => pet.customerId === selectedCustomer?.id))}
                       {pets
                         ?.filter(pet => pet.customerId === selectedCustomer.id)
                         .map(pet => (
