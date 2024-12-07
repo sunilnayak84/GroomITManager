@@ -71,7 +71,6 @@
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.2",
     "react-resizable-panels": "^2.1.4",
-    "recharts": "^2.14.1",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^1.1.0",
