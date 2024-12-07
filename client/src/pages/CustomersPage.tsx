@@ -46,18 +46,12 @@ export default function CustomersPage() {
   const { pets = [], isLoading: isPetsLoading, addPet } = usePets();
   const queryClient = useQueryClient();
 
-  // Debug pets data
-  useEffect(() => {
-    console.log('DEBUG: Pets data in CustomersPage:', {
-      petsAvailable: !!pets,
-      petsCount: pets?.length,
-      petsData: pets?.map(p => ({
-        id: p.id,
-        name: p.name,
-        customerId: p.customerId
-      }))
-    });
-  }, [pets]);
+  // Memoize the pets data
+  const petsData = useMemo(() => ({
+    petsAvailable: !!pets,
+    petsCount: pets?.length,
+    petsMap: new Map(pets?.map(p => [p.id, p]) ?? [])
+  }), [pets]);
 
   const form = useForm<InsertCustomer>({
     resolver: zodResolver(insertCustomerSchema),
@@ -125,130 +119,59 @@ export default function CustomersPage() {
     },
     {
       header: "Pet Count",
-      cell: (row: Customer) => {
-        console.log('PET_COUNT_DEBUG:', {
-          customerId: row.id,
-          petCount: row.petCount,
-          customerName: `${row.firstName} ${row.lastName}`
-        });
-        
-        return (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              className="text-lg font-medium"
-              onClick={() => {
-                const customerId = row.id.toString();
-                console.log('PETS_MODAL: Opening pet list for customer:', {
-                  customerId,
-                  customerName: `${row.firstName} ${row.lastName}`,
-                  petCount: row.petCount,
-                  availablePets: pets?.filter(p => p.customerId?.toString() === customerId).map(p => ({
-                    id: p.id,
-                    name: p.name,
-                    customerId: p.customerId
-                  }))
-                });
-                setSelectedCustomer(row);
-                setShowPetList(true);
-              }}
-            >
-              {row.petCount || 0}
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => {
-                setSelectedCustomer(row);
-                setShowAddPet(true);
-              }}
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
-        );
-      },
+      cell: (row: Customer) => (
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            className="text-lg font-medium"
+            onClick={() => {
+              setSelectedCustomer(row);
+              setShowPetList(true);
+            }}
+          >
+            {row.petCount || 0}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              setSelectedCustomer(row);
+              setShowAddPet(true);
+            }}
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
     },
     {
       header: "Actions",
-      cell: (row: Customer) => {
-        const customerPets = useMemo(() => {
-          if (!row.id || !pets) return [];
-          return pets.filter(pet => pet.customerId === row.id);
-        }, [row.id, pets]);
-        return (
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => {
-              setSelectedCustomer(row);
-              setShowCustomerDetails(true);
-            }}
-          >
-            View Details
-          </Button>
-        );
-      },
+      cell: (row: Customer) => (
+        <Button 
+          variant="outline" 
+          size="sm"
+          onClick={() => {
+            setSelectedCustomer(row);
+            setShowCustomerDetails(true);
+          }}
+        >
+          View Details
+        </Button>
+      ),
     },
   ];
 
+  // Memoize the filtered pets for the selected customer
   const selectedCustomerPets = useMemo(() => {
-    // Early return if no data
-    if (!selectedCustomer || !Array.isArray(pets)) {
-      console.log('PETS_DEBUG: No pets or customer', { 
-        hasSelectedCustomer: !!selectedCustomer, 
-        hasPets: Array.isArray(pets),
-        selectedCustomerId: selectedCustomer?.id,
-        petsCount: Array.isArray(pets) ? pets.length : undefined,
-        petsType: typeof pets
-      });
-      return [];
-    }
-    
-    // Compare IDs as strings to ensure consistent comparison
-    const customerId = selectedCustomer.id.toString();
-    
-    // Log all available pets before filtering
-    console.log('PETS_DEBUG: All available pets before filtering:', 
-      pets.map(p => ({
-        id: p.id,
-        name: p.name,
-        customerId: p.customerId,
-        ownerMatch: p.customerId?.toString() === customerId
-      }))
-    );
-    
-    // Filter pets for the selected customer
-    const filteredPets = pets.filter((pet: Pet) => {
-      // Ensure both IDs are strings for comparison
-      const petCustomerId = pet.customerId?.toString();
-      const match = petCustomerId === customerId;
-      
-      console.log('PETS_DEBUG: Checking pet match', {
-        petId: pet.id,
-        petName: pet.name,
-        petCustomerId,
-        customerId,
-        match
-      });
-      
-      return match;
-    });
+    if (!selectedCustomer?.id || !Array.isArray(pets)) return [];
+    return pets.filter(pet => pet.customerId?.toString() === selectedCustomer.id.toString());
+  }, [selectedCustomer?.id, pets]);
 
-    console.log('PETS_DEBUG: Final filtered pets', {
-      customerId,
-      customerName: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`,
-      totalPetsFound: filteredPets.length,
-      petsList: filteredPets.map((p: Pet) => ({
-        id: p.id,
-        name: p.name,
-        type: p.type,
-        breed: p.breed
-      }))
-    });
-    
-    return filteredPets;
-  }, [selectedCustomer, pets]);
+  // Memoize the pets map for quick lookup
+  const petsMap = useMemo(() => {
+    if (!Array.isArray(pets)) return new Map();
+    return new Map(pets.map(pet => [pet.customerId?.toString(), pet]));
+  }, [pets]);
 
   async function onSubmit(data: InsertCustomer) {
     setIsSubmitting(true);
