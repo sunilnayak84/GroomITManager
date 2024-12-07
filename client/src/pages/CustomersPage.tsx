@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Loader2 } from "lucide-react";
 import { useCustomers } from "@/hooks/use-customers";
 import { usePets } from "@/hooks/use-pets";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -21,8 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { DataTable } from "@/components/ui/data-table";
 import { useToast } from "@/hooks/use-toast";
-import PetForm from "@/components/PetForm";
-import { Loader2 } from "lucide-react";
+import { PetForm } from "@/components/PetForm";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function CustomersPage() {
