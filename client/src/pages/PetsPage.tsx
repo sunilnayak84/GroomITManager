@@ -18,6 +18,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertPetSchema, type InsertPet } from "@db/schema";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 export default function PetsPage() {
   const { pets, isLoading, addPet, updatePet, deletePet } = usePets();
@@ -112,9 +113,7 @@ export default function PetsPage() {
         ...data
       });
       setIsEditing(false);
-      // Keep the details dialog open to show the updated information
-      const updatedPet = { ...selectedPet, ...data, id };
-      setSelectedPet(updatedPet as Pet);
+      setSelectedPet(prevPet => prevPet ? { ...prevPet, ...data } : null);
       toast({
         title: "Success",
         description: "Pet updated successfully",
@@ -288,164 +287,124 @@ export default function PetsPage() {
         </Dialog>
       </div>
 
-      {/* Pet Details Dialog */}
-      <Dialog open={showPetDetails} onOpenChange={setShowPetDetails}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {isEditing ? "Edit Pet Details" : "Pet Details"}
-            </DialogTitle>
-            <DialogDescription>
-              {isEditing 
-                ? "Modify the pet's information below." 
-                : "View and manage the pet's details."}
-            </DialogDescription>
-          </DialogHeader>
-          {selectedPet && (
-            <>
-              {!isEditing ? (
-                <div className="space-y-6">
-                  <div className="flex justify-end gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => setIsEditing(true)}
-                    >
-                      <Pencil className="mr-2 h-4 w-4" />
-                      Edit
-                    </Button>
+      {selectedPet && (
+        <Dialog open={showPetDetails} onOpenChange={(open) => {
+          setShowPetDetails(open);
+          if (!open) {
+            setSelectedPet(null);
+            setIsEditing(false);
+          }
+        }}>
+          <DialogContent className="max-w-3xl">
+            <DialogHeader className="flex justify-between items-center">
+              <DialogTitle>Pet Details</DialogTitle>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setIsEditing(true)}
+                >
+                  Edit
+                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
                     <Button 
                       variant="destructive" 
-                      size="sm" 
-                      onClick={() => {
-                        if (window.confirm('Are you sure you want to delete this pet?')) {
-                          handleDeletePet(selectedPet.id);
-                        }
-                      }}
+                      size="sm"
                     >
-                      <Trash className="mr-2 h-4 w-4" />
                       Delete
                     </Button>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <img
-                      src={selectedPet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${selectedPet.name}`}
-                      alt={selectedPet.name}
-                      className="w-24 h-24 rounded-full bg-primary/10"
-                    />
-                    <div>
-                      <h2 className="text-2xl font-bold">{selectedPet.name}</h2>
-                      <p className="text-muted-foreground capitalize">{selectedPet.breed} · {selectedPet.type}</p>
-                    </div>
-                  </div>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                      <p className="text-sm text-muted-foreground">
+                        This action cannot be undone. This will permanently delete the pet.
+                      </p>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={async () => {
+                          if (!selectedPet) return;
+                          try {
+                            await deletePet(selectedPet.id);
+                            setShowPetDetails(false);
+                            toast({
+                              title: "Success",
+                              description: "Pet deleted successfully",
+                            });
+                          } catch (error) {
+                            console.error('Error deleting pet:', error);
+                            toast({
+                              title: "Error",
+                              description: "Failed to delete pet",
+                              variant: "destructive",
+                            });
+                          }
+                        }}
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </DialogHeader>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <h3 className="font-medium mb-1">Owner</h3>
-                      {selectedPet.owner && (
-                        <div className="space-y-1">
-                          <p className="text-sm">{selectedPet.owner.name}</p>
-                          {selectedPet.owner.phone && (
-                            <p className="text-sm text-gray-600">Phone: {selectedPet.owner.phone}</p>
-                          )}
-                          {selectedPet.owner.email && (
-                            <p className="text-sm text-gray-600">Email: {selectedPet.owner.email}</p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <h3 className="font-medium mb-1">Age</h3>
-                      <p>{selectedPet.age || "N/A"}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-medium mb-1">Gender</h3>
-                      <p className="capitalize">{selectedPet.gender || "N/A"}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-medium mb-1">Date of Birth</h3>
-                      <p>{formatDate(selectedPet.dateOfBirth)}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-medium mb-1">Weight</h3>
-                      <p>{selectedPet.weight ? `${selectedPet.weight} ${selectedPet.weightUnit}` : "N/A"}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-medium mb-1">Height</h3>
-                      <p>{selectedPet.height ? `${selectedPet.height} ${selectedPet.heightUnit}` : "N/A"}</p>
-                    </div>
-                    <div className="col-span-2">
-                      <h3 className="font-medium mb-1">Notes</h3>
-                      <p className="text-muted-foreground">{selectedPet.notes || "No notes available"}</p>
-                    </div>
+            {isEditing ? (
+              <PetForm
+                onSuccess={(data) => {
+                  if (selectedPet) {
+                    handleUpdatePet(selectedPet.id, data);
+                  }
+                }}
+                onCancel={() => setIsEditing(false)}
+                defaultValues={{
+                  ...selectedPet,
+                  customerId: selectedPet?.customerId || ""
+                }}
+                customers={customers}
+              />
+            ) : (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <strong>Name:</strong> {selectedPet.name}
+                  </div>
+                  <div>
+                    <strong>Type:</strong> {selectedPet.type}
+                  </div>
+                  <div>
+                    <strong>Breed:</strong> {selectedPet.breed}
+                  </div>
+                  <div>
+                    <strong>Owner:</strong> {selectedPet.owner ? selectedPet.owner.name : (customers?.find(c => c.id === selectedPet.customerId) ? `${customers.find(c => c.id === selectedPet.customerId)?.firstName} ${customers.find(c => c.id === selectedPet.customerId)?.lastName}` : "N/A")}
+                  </div>
+                  <div>
+                    <strong>Age:</strong> {selectedPet.age || "N/A"}
+                  </div>
+                  <div>
+                    <strong>Gender:</strong> {selectedPet.gender ? selectedPet.gender.charAt(0).toUpperCase() + selectedPet.gender.slice(1) : "N/A"}
+                  </div>
+                  <div>
+                    <strong>Date of Birth:</strong> {formatDate(selectedPet.dateOfBirth)}
+                  </div>
+                  <div>
+                    <strong>Weight:</strong> {selectedPet.weight ? `${selectedPet.weight} ${selectedPet.weightUnit}` : "N/A"}
+                  </div>
+                  <div>
+                    <strong>Height:</strong> {selectedPet.height ? `${selectedPet.height} ${selectedPet.heightUnit}` : "N/A"}
+                  </div>
+                  <div className="col-span-2">
+                    <strong>Notes:</strong> {selectedPet.notes || "No notes available"}
                   </div>
                 </div>
-              ) : (
-                <PetForm
-                  onSuccess={(data) => {
-                    if (selectedPet) {
-                      handleUpdatePet(selectedPet.id, data);
-                    }
-                  }}
-                  onCancel={() => setIsEditing(false)}
-                  defaultValues={{
-                    name: selectedPet?.name || "",
-                    type: selectedPet?.type || "dog",
-                    breed: selectedPet?.breed || "",
-                    customerId: selectedPet?.customerId || "",
-                    dateOfBirth: selectedPet?.dateOfBirth,
-                    age: selectedPet?.age,
-                    gender: selectedPet?.gender,
-                    weight: selectedPet?.weight,
-                    weightUnit: selectedPet?.weightUnit || "kg",
-                    image: selectedPet?.image,
-                    notes: selectedPet?.notes
-                  }}
-                  customers={customers}
-                />
-              )}
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isEditing} onOpenChange={(open) => {
-        setIsEditing(open);
-        if (!open) {
-          setSelectedPet(null);
-        }
-      }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Pet Details</DialogTitle>
-            <DialogDescription>
-              Modify the pet's information below.
-            </DialogDescription>
-          </DialogHeader>
-          <PetForm
-            onSuccess={(data) => {
-              if (selectedPet) {
-                handleUpdatePet(selectedPet.id, data);
-              }
-            }}
-            onCancel={() => setIsEditing(false)}
-            defaultValues={{
-              name: selectedPet?.name || "",
-              type: selectedPet?.type || "dog",
-              breed: selectedPet?.breed || "",
-              customerId: selectedPet?.customerId || "",
-              dateOfBirth: selectedPet?.dateOfBirth,
-              age: selectedPet?.age,
-              gender: selectedPet?.gender,
-              weight: selectedPet?.weight,
-              weightUnit: selectedPet?.weightUnit || "kg",
-              image: selectedPet?.image,
-              notes: selectedPet?.notes
-            }}
-            customers={customers}
-          />
-        </DialogContent>
-      </Dialog>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+      )}
 
       <div className="relative h-48 rounded-xl overflow-hidden">
         <img
