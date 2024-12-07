@@ -123,10 +123,16 @@ export default function CustomersPage() {
               variant="ghost"
               className="text-lg font-medium"
               onClick={() => {
-                console.log('Opening pet list for customer:', {
-                  customerId: row.id,
+                const customerId = row.id.toString();
+                console.log('PETS_MODAL: Opening pet list for customer:', {
+                  customerId,
                   customerName: `${row.firstName} ${row.lastName}`,
-                  petCount: row.petCount
+                  petCount: row.petCount,
+                  availablePets: pets?.filter(p => p.customerId?.toString() === customerId).map(p => ({
+                    id: p.id,
+                    name: p.name,
+                    customerId: p.customerId
+                  }))
                 });
                 setSelectedCustomer(row);
                 setShowPetList(true);
@@ -181,13 +187,29 @@ export default function CustomersPage() {
       });
       return [];
     }
-    const filteredPets = pets.filter(pet => pet.customerId === selectedCustomer.id);
-    console.log('PETS_DEBUG: Filtered pets', { 
-      selectedCustomerId: selectedCustomer.id,
+    
+    // Ensure we're comparing the same types (strings)
+    const customerId = selectedCustomer.id.toString();
+    const filteredPets = pets.filter(pet => {
+      const petCustomerId = pet.customerId?.toString();
+      console.log('PETS_DEBUG: Comparing IDs', {
+        petId: pet.id,
+        petName: pet.name,
+        petCustomerId,
+        selectedCustomerId: customerId,
+        matches: petCustomerId === customerId
+      });
+      return petCustomerId === customerId;
+    });
+    
+    console.log('PETS_DEBUG: Filtered pets result', { 
+      selectedCustomerId: customerId,
       totalPets: pets.length,
       filteredPets,
-      filteredCount: filteredPets.length
+      filteredCount: filteredPets.length,
+      customerName: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`
     });
+    
     return filteredPets;
   }, [selectedCustomer, pets]);
 
