@@ -233,9 +233,10 @@ export default function PetsPage() {
                     }
                   }}
                   onCancel={() => setIsEditing(false)}
+                  customers={customers}
                   defaultValues={selectedPet}
                   pet={selectedPet}
-                  customers={customers}
+                  id={selectedPet?.id}
                 />
               </>
             ) : (

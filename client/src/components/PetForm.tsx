@@ -13,14 +13,15 @@ import { useState, useEffect, useMemo } from "react";
 import { Upload } from "lucide-react";
 import { format } from "date-fns";
 
-interface PetFormProps {
+export type PetFormProps = {
   onSuccess?: (data: PetFormData) => void;
   onCancel?: () => void;
   defaultValues?: Partial<PetFormData>;
   pet?: InsertPet;
   customers?: Customer[];
   updatePet?: (data: { id: string; [key: string]: any }) => Promise<void>;
-}
+  id?: string;
+};
 
 const insertPetSchema = z.object({
   name: z.string().min(1, { message: "Pet name is required" }),
@@ -50,14 +51,15 @@ const insertPetSchema = z.object({
   message: "Invalid optional field"
 });
 
-export default function PetForm({
+export const PetForm: React.FC<PetFormProps> = ({
   onSuccess,
   onCancel,
   customers,
   defaultValues,
   pet,
-  updatePet: externalUpdatePet
-}: PetFormProps) {
+  updatePet: externalUpdatePet,
+  id
+}: PetFormProps) => {
   const { 
     updatePet: usePetsUpdatePet,
     addPet
