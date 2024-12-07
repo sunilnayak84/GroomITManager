@@ -7,7 +7,7 @@ import AppointmentForm from "../components/AppointmentForm";
 import { DataTable } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import { insertAppointmentSchema, type Appointment } from "@db/schema";
+import { appointmentSchema, type Appointment, type AppointmentWithRelations } from "@/lib/schema";
 
 // Get status type from the schema to ensure it matches database
 type AppointmentStatus = "pending" | "confirmed" | "completed" | "cancelled";
