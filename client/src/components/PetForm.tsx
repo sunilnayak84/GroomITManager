@@ -62,20 +62,70 @@ export default function PetForm({
     updatePet: usePetsUpdatePet,
     addPet
   } = usePets();
-  const { toast } = useToast();
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedCustomerId, setSelectedCustomerId] = useState(
-    defaultValues?.customerId || ""
-  );
 
-  console.log('PET FORM: Component Mounted', { 
-    customers, 
-    defaultValues, 
-    pet, 
-    selectedCustomerId 
+  const { toast } = useToast();
+
+  // Convert Firestore timestamp or date string to Date object
+  const convertToDate = (dateValue: Date | string | { seconds: number, nanoseconds: number } | null | undefined): Date | undefined => {
+    if (!dateValue) return undefined;
+    
+    // If it's already a Date object, return it
+    if (dateValue instanceof Date) return dateValue;
+    
+    // If it's a Firestore timestamp object
+    if (typeof dateValue === 'object' && 'seconds' in dateValue) {
+      return new Date(dateValue.seconds * 1000);
+    }
+    
+    // If it's a string, try parsing
+    if (typeof dateValue === 'string') {
+      const parsedDate = new Date(dateValue);
+      return !isNaN(parsedDate.getTime()) ? parsedDate : undefined;
+    }
+    
+    return undefined;
+  };
+
+  // State for customer selection and image
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string | undefined>(
+    defaultValues?.customerId || pet?.customerId
+  );
+  const [imagePreview, setImagePreview] = useState<string | null | undefined>(
+    defaultValues?.image || pet?.image
+  );
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Prepare customers list
+  const { data: fetchedCustomers } = useCustomers();
+  const customerOptions = useMemo(() => {
+    const allCustomers = [...(customers || [])];
+    return [
+      ...allCustomers,
+      ...(fetchedCustomers || [])
+    ].filter(customer => customer && customer.id);
+  }, [customers, fetchedCustomers]);
+
+  // Initialize form with default values
+  const form = useForm<PetFormData>({
+    resolver: zodResolver(insertPetSchema),
+    defaultValues: {
+      name: defaultValues?.name || pet?.name || "",
+      type: defaultValues?.type || pet?.type || "dog",
+      breed: defaultValues?.breed || pet?.breed || "",
+      customerId: defaultValues?.customerId || pet?.customerId || "",
+      dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
+      age: defaultValues?.age || pet?.age,
+      gender: defaultValues?.gender || pet?.gender,
+      weight: defaultValues?.weight || pet?.weight,
+      weightUnit: defaultValues?.weightUnit || pet?.weightUnit || "kg",
+      image: defaultValues?.image || pet?.image,
+      notes: defaultValues?.notes || pet?.notes
+    },
+    mode: 'onSubmit',
+    reValidateMode: 'onSubmit'
   });
 
+  // Update form when defaultValues or pet changes
   useEffect(() => {
     if (defaultValues || pet) {
       const formDefaults = {
@@ -96,15 +146,13 @@ export default function PetForm({
       if (defaultValues?.image || pet?.image) {
         setImagePreview(defaultValues?.image || pet?.image);
       }
+
+      // Update selected customer ID
+      if (formDefaults.customerId) {
+        setSelectedCustomerId(formDefaults.customerId);
+      }
     }
   }, [defaultValues, pet, form, selectedCustomerId]);
-
-  // Initialize form with default values
-  const form = useForm<PetFormData>({
-    resolver: zodResolver(insertPetSchema),
-    mode: 'onSubmit',
-    reValidateMode: 'onSubmit'
-  });
 
   const updatePet = externalUpdatePet || usePetsUpdatePet;
 
@@ -198,37 +246,6 @@ export default function PetForm({
     );
   };
 
-  const { data: fetchedCustomers } = useCustomers();
-
-  // Safely handle fetched customers
-  const availableCustomers = useMemo(() => {
-    return [
-      ...(customers || []),
-      ...(fetchedCustomers || [])
-    ].filter(customer => customer && customer.id);
-  }, [customers, fetchedCustomers]);
-
-  // Convert Firestore timestamp or date string to Date object
-  const convertToDate = (dateValue: Date | string | { seconds: number, nanoseconds: number } | null | undefined): Date | undefined => {
-    if (!dateValue) return undefined;
-    
-    // If it's already a Date object, return it
-    if (dateValue instanceof Date) return dateValue;
-    
-    // If it's a Firestore timestamp object
-    if (typeof dateValue === 'object' && 'seconds' in dateValue) {
-      return new Date(dateValue.seconds * 1000);
-    }
-    
-    // If it's a string, try parsing
-    if (typeof dateValue === 'string') {
-      const parsedDate = new Date(dateValue);
-      return !isNaN(parsedDate.getTime()) ? parsedDate : undefined;
-    }
-    
-    return undefined;
-  };
-
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -304,7 +321,7 @@ export default function PetForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {availableCustomers.map((customer) => (
+                    {customerOptions.map((customer) => (
                       <SelectItem key={customer.id} value={customer.id}>
                         {customer.firstName} {customer.lastName}
                       </SelectItem>
