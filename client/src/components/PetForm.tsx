@@ -19,7 +19,7 @@ export type PetFormProps = {
   defaultValues?: Partial<PetFormData>;
   pet?: InsertPet;
   customers?: Customer[];
-  updatePet?: (data: { id: string; [key: string]: any }) => Promise<void>;
+  updatePet?: (id: string, data: Partial<InsertPet>) => Promise<void>;
   id?: string;
 };
 
@@ -192,9 +192,14 @@ export const PetForm: React.FC<PetFormProps> = ({
         selectedCustomerId 
       });
 
-      if (pet) {
+      if (pet?.id) {
         // Update existing pet
-        await updatePet({ id: pet.id, ...petData });
+        console.log('PET FORM: Updating existing pet', {
+          petId: pet.id,
+          updateData: petData
+        });
+        
+        await updatePet(pet.id.toString(), petData);
         toast({
           title: "Pet Updated",
           description: `${data.name} has been updated successfully.`,
