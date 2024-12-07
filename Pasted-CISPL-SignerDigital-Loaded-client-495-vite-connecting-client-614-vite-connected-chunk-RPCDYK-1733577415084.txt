@@ -1,0 +1,483 @@
+CISPL SignerDigital Loaded
+client:495 [vite] connecting...
+client:614 [vite] connected.
+chunk-RPCDYKBN.js?v=dfae63dc:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:35 Firebase initialized successfully
+30Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warningAI
+content.js:1 CISPL SignerDigital Loaded
+HomePage.tsx:10 
+        
+        
+       GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/api/stats 401 (Unauthorized)
+queryFn @ HomePage.tsx:10
+fetchFn @ @tanstack_react-query.js?v=dfae63dc:839
+run @ @tanstack_react-query.js?v=dfae63dc:493
+start @ @tanstack_react-query.js?v=dfae63dc:535
+fetch @ @tanstack_react-query.js?v=dfae63dc:925
+executeFetch_fn @ @tanstack_react-query.js?v=dfae63dc:2212
+onSubscribe @ @tanstack_react-query.js?v=dfae63dc:1899
+subscribe @ @tanstack_react-query.js?v=dfae63dc:24
+(anonymous) @ @tanstack_react-query.js?v=dfae63dc:3014
+subscribeToStore @ chunk-RPCDYKBN.js?v=dfae63dc:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=dfae63dc:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=dfae63dc:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=dfae63dc:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=dfae63dc:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=dfae63dc:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=dfae63dc:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19416
+commitRoot @ chunk-RPCDYKBN.js?v=dfae63dc:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=dfae63dc:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=dfae63dc:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=dfae63dc:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=dfae63dc:554
+flush @ @tanstack_react-query.js?v=dfae63dc:568
+batch @ @tanstack_react-query.js?v=dfae63dc:586
+dispatch_fn @ @tanstack_react-query.js?v=dfae63dc:995
+setData @ @tanstack_react-query.js?v=dfae63dc:695
+onSuccess @ @tanstack_react-query.js?v=dfae63dc:896
+resolve @ @tanstack_react-query.js?v=dfae63dc:455
+Promise.then
+run @ @tanstack_react-query.js?v=dfae63dc:497
+start @ @tanstack_react-query.js?v=dfae63dc:535
+fetch @ @tanstack_react-query.js?v=dfae63dc:925
+executeFetch_fn @ @tanstack_react-query.js?v=dfae63dc:2212
+onSubscribe @ @tanstack_react-query.js?v=dfae63dc:1899
+subscribe @ @tanstack_react-query.js?v=dfae63dc:24
+(anonymous) @ @tanstack_react-query.js?v=dfae63dc:3014
+subscribeToStore @ chunk-RPCDYKBN.js?v=dfae63dc:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=dfae63dc:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=dfae63dc:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=dfae63dc:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=dfae63dc:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=dfae63dc:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=dfae63dc:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=dfae63dc:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=dfae63dc:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19432
+commitRoot @ chunk-RPCDYKBN.js?v=dfae63dc:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=dfae63dc:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=dfae63dc:18718
+workLoop @ chunk-RPCDYKBN.js?v=dfae63dc:197
+flushWork @ chunk-RPCDYKBN.js?v=dfae63dc:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=dfae63dc:384Understand this errorAI
+DashboardStats.tsx:9 
+        
+        
+       GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/api/appointments/stats 401 (Unauthorized)
+queryFn @ DashboardStats.tsx:9
+fetchFn @ @tanstack_react-query.js?v=dfae63dc:839
+run @ @tanstack_react-query.js?v=dfae63dc:493
+start @ @tanstack_react-query.js?v=dfae63dc:535
+fetch @ @tanstack_react-query.js?v=dfae63dc:925
+executeFetch_fn @ @tanstack_react-query.js?v=dfae63dc:2212
+onSubscribe @ @tanstack_react-query.js?v=dfae63dc:1899
+subscribe @ @tanstack_react-query.js?v=dfae63dc:24
+(anonymous) @ @tanstack_react-query.js?v=dfae63dc:3014
+subscribeToStore @ chunk-RPCDYKBN.js?v=dfae63dc:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=dfae63dc:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=dfae63dc:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=dfae63dc:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=dfae63dc:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=dfae63dc:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=dfae63dc:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19416
+commitRoot @ chunk-RPCDYKBN.js?v=dfae63dc:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=dfae63dc:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=dfae63dc:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=dfae63dc:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=dfae63dc:554
+flush @ @tanstack_react-query.js?v=dfae63dc:568
+batch @ @tanstack_react-query.js?v=dfae63dc:586
+dispatch_fn @ @tanstack_react-query.js?v=dfae63dc:995
+setData @ @tanstack_react-query.js?v=dfae63dc:695
+onSuccess @ @tanstack_react-query.js?v=dfae63dc:896
+resolve @ @tanstack_react-query.js?v=dfae63dc:455
+Promise.then
+run @ @tanstack_react-query.js?v=dfae63dc:497
+start @ @tanstack_react-query.js?v=dfae63dc:535
+fetch @ @tanstack_react-query.js?v=dfae63dc:925
+executeFetch_fn @ @tanstack_react-query.js?v=dfae63dc:2212
+onSubscribe @ @tanstack_react-query.js?v=dfae63dc:1899
+subscribe @ @tanstack_react-query.js?v=dfae63dc:24
+(anonymous) @ @tanstack_react-query.js?v=dfae63dc:3014
+subscribeToStore @ chunk-RPCDYKBN.js?v=dfae63dc:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=dfae63dc:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=dfae63dc:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=dfae63dc:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=dfae63dc:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=dfae63dc:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=dfae63dc:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=dfae63dc:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=dfae63dc:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19432
+commitRoot @ chunk-RPCDYKBN.js?v=dfae63dc:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=dfae63dc:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=dfae63dc:18718
+workLoop @ chunk-RPCDYKBN.js?v=dfae63dc:197
+flushWork @ chunk-RPCDYKBN.js?v=dfae63dc:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=dfae63dc:384Understand this errorAI
+HomePage.tsx:10 
+        
+        
+       GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/api/stats 401 (Unauthorized)
+queryFn @ HomePage.tsx:10
+fetchFn @ @tanstack_react-query.js?v=dfae63dc:839
+run @ @tanstack_react-query.js?v=dfae63dc:493
+(anonymous) @ @tanstack_react-query.js?v=dfae63dc:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=dfae63dc:514
+Promise.catch
+run @ @tanstack_react-query.js?v=dfae63dc:497
+start @ @tanstack_react-query.js?v=dfae63dc:535
+fetch @ @tanstack_react-query.js?v=dfae63dc:925
+executeFetch_fn @ @tanstack_react-query.js?v=dfae63dc:2212
+onSubscribe @ @tanstack_react-query.js?v=dfae63dc:1899
+subscribe @ @tanstack_react-query.js?v=dfae63dc:24
+(anonymous) @ @tanstack_react-query.js?v=dfae63dc:3014
+subscribeToStore @ chunk-RPCDYKBN.js?v=dfae63dc:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=dfae63dc:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=dfae63dc:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=dfae63dc:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=dfae63dc:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=dfae63dc:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=dfae63dc:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19416
+commitRoot @ chunk-RPCDYKBN.js?v=dfae63dc:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=dfae63dc:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=dfae63dc:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=dfae63dc:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=dfae63dc:554
+flush @ @tanstack_react-query.js?v=dfae63dc:568
+batch @ @tanstack_react-query.js?v=dfae63dc:586
+dispatch_fn @ @tanstack_react-query.js?v=dfae63dc:995
+setData @ @tanstack_react-query.js?v=dfae63dc:695
+onSuccess @ @tanstack_react-query.js?v=dfae63dc:896
+resolve @ @tanstack_react-query.js?v=dfae63dc:455
+Promise.then
+run @ @tanstack_react-query.js?v=dfae63dc:497
+start @ @tanstack_react-query.js?v=dfae63dc:535
+fetch @ @tanstack_react-query.js?v=dfae63dc:925
+executeFetch_fn @ @tanstack_react-query.js?v=dfae63dc:2212
+onSubscribe @ @tanstack_react-query.js?v=dfae63dc:1899
+subscribe @ @tanstack_react-query.js?v=dfae63dc:24
+(anonymous) @ @tanstack_react-query.js?v=dfae63dc:3014
+subscribeToStore @ chunk-RPCDYKBN.js?v=dfae63dc:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=dfae63dc:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=dfae63dc:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=dfae63dc:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=dfae63dc:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=dfae63dc:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=dfae63dc:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=dfae63dc:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=dfae63dc:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19432
+commitRoot @ chunk-RPCDYKBN.js?v=dfae63dc:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=dfae63dc:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=dfae63dc:18718
+workLoop @ chunk-RPCDYKBN.js?v=dfae63dc:197
+flushWork @ chunk-RPCDYKBN.js?v=dfae63dc:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=dfae63dc:384Understand this errorAI
+DashboardStats.tsx:9 
+        
+        
+       GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/api/appointments/stats 401 (Unauthorized)
+queryFn @ DashboardStats.tsx:9
+fetchFn @ @tanstack_react-query.js?v=dfae63dc:839
+run @ @tanstack_react-query.js?v=dfae63dc:493
+(anonymous) @ @tanstack_react-query.js?v=dfae63dc:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=dfae63dc:514
+Promise.catch
+run @ @tanstack_react-query.js?v=dfae63dc:497
+start @ @tanstack_react-query.js?v=dfae63dc:535
+fetch @ @tanstack_react-query.js?v=dfae63dc:925
+executeFetch_fn @ @tanstack_react-query.js?v=dfae63dc:2212
+onSubscribe @ @tanstack_react-query.js?v=dfae63dc:1899
+subscribe @ @tanstack_react-query.js?v=dfae63dc:24
+(anonymous) @ @tanstack_react-query.js?v=dfae63dc:3014
+subscribeToStore @ chunk-RPCDYKBN.js?v=dfae63dc:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=dfae63dc:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=dfae63dc:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=dfae63dc:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=dfae63dc:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=dfae63dc:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=dfae63dc:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19416
+commitRoot @ chunk-RPCDYKBN.js?v=dfae63dc:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=dfae63dc:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=dfae63dc:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=dfae63dc:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=dfae63dc:554
+flush @ @tanstack_react-query.js?v=dfae63dc:568
+batch @ @tanstack_react-query.js?v=dfae63dc:586
+dispatch_fn @ @tanstack_react-query.js?v=dfae63dc:995
+setData @ @tanstack_react-query.js?v=dfae63dc:695
+onSuccess @ @tanstack_react-query.js?v=dfae63dc:896
+resolve @ @tanstack_react-query.js?v=dfae63dc:455
+Promise.then
+run @ @tanstack_react-query.js?v=dfae63dc:497
+start @ @tanstack_react-query.js?v=dfae63dc:535
+fetch @ @tanstack_react-query.js?v=dfae63dc:925
+executeFetch_fn @ @tanstack_react-query.js?v=dfae63dc:2212
+onSubscribe @ @tanstack_react-query.js?v=dfae63dc:1899
+subscribe @ @tanstack_react-query.js?v=dfae63dc:24
+(anonymous) @ @tanstack_react-query.js?v=dfae63dc:3014
+subscribeToStore @ chunk-RPCDYKBN.js?v=dfae63dc:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=dfae63dc:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=dfae63dc:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=dfae63dc:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=dfae63dc:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=dfae63dc:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=dfae63dc:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=dfae63dc:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=dfae63dc:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19432
+commitRoot @ chunk-RPCDYKBN.js?v=dfae63dc:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=dfae63dc:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=dfae63dc:18718
+workLoop @ chunk-RPCDYKBN.js?v=dfae63dc:197
+flushWork @ chunk-RPCDYKBN.js?v=dfae63dc:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=dfae63dc:384Understand this errorAI
+CustomersPage.tsx:182 PETS_DEBUG: No pets or customer {hasSelectedCustomer: false, hasPets: false, selectedCustomerId: undefined, petsCount: undefined}hasPets: falsehasSelectedCustomer: falsepetsCount: undefinedselectedCustomerId: undefined[[Prototype]]: Object
+CustomersPage.tsx:182 PETS_DEBUG: No pets or customer {hasSelectedCustomer: false, hasPets: false, selectedCustomerId: undefined, petsCount: undefined}hasPets: falsehasSelectedCustomer: falsepetsCount: undefinedselectedCustomerId: undefined[[Prototype]]: Object
+use-pets.ts:38 FETCH_PETS: Starting to fetch pets
+use-customers.ts:250 USE CUSTOMERS: Fetched customers {customerCount: 2, customerIds: Array(2), customerNames: Array(2)}customerCount: 2customerIds: (2) ['Th1c7kHFUAT2qJI8hiqc', 'ldOvbrblVpCTXcUHzYsK']customerNames: (2) ['user two', 'user one'][[Prototype]]: Object
+queryFn @ use-customers.ts:250
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=dfae63dc:839
+run @ @tanstack_react-query.js?v=dfae63dc:493
+start @ @tanstack_react-query.js?v=dfae63dc:535
+fetch @ @tanstack_react-query.js?v=dfae63dc:925
+executeFetch_fn @ @tanstack_react-query.js?v=dfae63dc:2212
+onSubscribe @ @tanstack_react-query.js?v=dfae63dc:1899
+subscribe @ @tanstack_react-query.js?v=dfae63dc:24
+(anonymous) @ @tanstack_react-query.js?v=dfae63dc:3014
+subscribeToStore @ chunk-RPCDYKBN.js?v=dfae63dc:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=dfae63dc:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=dfae63dc:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=dfae63dc:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=dfae63dc:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=dfae63dc:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=dfae63dc:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19416
+commitRoot @ chunk-RPCDYKBN.js?v=dfae63dc:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=dfae63dc:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=dfae63dc:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=dfae63dc:18627Understand this errorAI
+CustomersPage.tsx:114 PET_COUNT_DEBUG: {customerId: 'Th1c7kHFUAT2qJI8hiqc', petCount: 1, customerName: 'user two'}customerId: "Th1c7kHFUAT2qJI8hiqc"customerName: "user two"petCount: 1[[Prototype]]: Object
+CustomersPage.tsx:114 PET_COUNT_DEBUG: {customerId: 'ldOvbrblVpCTXcUHzYsK', petCount: 0, customerName: 'user one'}customerId: "ldOvbrblVpCTXcUHzYsK"customerName: "user one"petCount: 0[[Prototype]]: Object
+CustomersPage.tsx:114 PET_COUNT_DEBUG: {customerId: 'Th1c7kHFUAT2qJI8hiqc', petCount: 1, customerName: 'user two'}customerId: "Th1c7kHFUAT2qJI8hiqc"customerName: "user two"petCount: 1[[Prototype]]: Object
+CustomersPage.tsx:114 PET_COUNT_DEBUG: {customerId: 'ldOvbrblVpCTXcUHzYsK', petCount: 0, customerName: 'user one'}customerId: "ldOvbrblVpCTXcUHzYsK"customerName: "user one"petCount: 0[[Prototype]]: Object
+use-pets.ts:62 FETCH_PETS: Available customers: (2) [{…}, {…}]0: {id: 'Th1c7kHFUAT2qJI8hiqc', name: 'user two'}1: {id: 'ldOvbrblVpCTXcUHzYsK', name: 'user one'}length: 2[[Prototype]]: Array(0)
+use-pets.ts:74 FETCH_PETS: Processing pet data: {petId: 'AxrzPPs2JCbfFIguYkn3', customerId: 'Th1c7kHFUAT2qJI8hiqc', petName: 'pet2', customerDetails: {…}}customerDetails: {id: 'Th1c7kHFUAT2qJI8hiqc', name: 'user two'}customerId: "Th1c7kHFUAT2qJI8hiqc"petId: "AxrzPPs2JCbfFIguYkn3"petName: "pet2"[[Prototype]]: Object
+use-pets.ts:110 FETCH_PETS: Completed fetching pets {totalPets: 1, pets: Array(1)}pets: [{…}]totalPets: 1[[Prototype]]: Object
+use-customers.ts:250 USE CUSTOMERS: Fetched customers {customerCount: 2, customerIds: Array(2), customerNames: Array(2)}customerCount: 2customerIds: (2) ['Th1c7kHFUAT2qJI8hiqc', 'ldOvbrblVpCTXcUHzYsK']customerNames: (2) ['user two', 'user one'][[Prototype]]: Object
+queryFn @ use-customers.ts:250
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=dfae63dc:839
+run @ @tanstack_react-query.js?v=dfae63dc:493
+start @ @tanstack_react-query.js?v=dfae63dc:535
+fetch @ @tanstack_react-query.js?v=dfae63dc:925
+(anonymous) @ @tanstack_react-query.js?v=dfae63dc:1727
+(anonymous) @ @tanstack_react-query.js?v=dfae63dc:1726
+batch @ @tanstack_react-query.js?v=dfae63dc:582
+refetchQueries @ @tanstack_react-query.js?v=dfae63dc:1725
+(anonymous) @ @tanstack_react-query.js?v=dfae63dc:1717
+batch @ @tanstack_react-query.js?v=dfae63dc:582
+invalidateQueries @ @tanstack_react-query.js?v=dfae63dc:1706
+(anonymous) @ use-customers.ts:220
+await in (anonymous)
+next @ firebase_firestore.js?v=dfae63dc:17289
+(anonymous) @ firebase_firestore.js?v=dfae63dc:14611
+setTimeout
+Xa @ firebase_firestore.js?v=dfae63dc:14610
+next @ firebase_firestore.js?v=dfae63dc:14601
+aa @ firebase_firestore.js?v=dfae63dc:13470
+ta @ firebase_firestore.js?v=dfae63dc:13447
+__PRIVATE_eventManagerOnWatchChange @ firebase_firestore.js?v=dfae63dc:13395
+__PRIVATE_syncEngineEmitNewSnapsAndNotifyLocalStore @ firebase_firestore.js?v=dfae63dc:14151
+await in __PRIVATE_syncEngineEmitNewSnapsAndNotifyLocalStore
+__PRIVATE_syncEngineApplyRemoteEvent @ firebase_firestore.js?v=dfae63dc:13990
+await in __PRIVATE_syncEngineApplyRemoteEvent
+__PRIVATE_raiseWatchSnapshot @ firebase_firestore.js?v=dfae63dc:12937
+__PRIVATE_onWatchStreamChange @ firebase_firestore.js?v=dfae63dc:12938
+await in __PRIVATE_onWatchStreamChange
+onNext @ firebase_firestore.js?v=dfae63dc:12565
+(anonymous) @ firebase_firestore.js?v=dfae63dc:12524
+(anonymous) @ firebase_firestore.js?v=dfae63dc:12544
+(anonymous) @ firebase_firestore.js?v=dfae63dc:15553
+(anonymous) @ firebase_firestore.js?v=dfae63dc:15584
+Promise.then
+yu @ firebase_firestore.js?v=dfae63dc:15584
+enqueue @ firebase_firestore.js?v=dfae63dc:15553
+enqueueAndForget @ firebase_firestore.js?v=dfae63dc:15535
+(anonymous) @ firebase_firestore.js?v=dfae63dc:12544
+(anonymous) @ firebase_firestore.js?v=dfae63dc:12524
+vo @ firebase_firestore.js?v=dfae63dc:12112
+(anonymous) @ firebase_firestore.js?v=dfae63dc:12298
+(anonymous) @ firebase_firestore.js?v=dfae63dc:12261
+ab @ firebase_firestore.js?v=dfae63dc:944
+F2 @ firebase_firestore.js?v=dfae63dc:914
+Z2.ta @ firebase_firestore.js?v=dfae63dc:2534
+Rb @ firebase_firestore.js?v=dfae63dc:1413
+M2.Y @ firebase_firestore.js?v=dfae63dc:1278
+M2.ca @ firebase_firestore.js?v=dfae63dc:1209
+ab @ firebase_firestore.js?v=dfae63dc:944
+F2 @ firebase_firestore.js?v=dfae63dc:914
+Wc @ firebase_firestore.js?v=dfae63dc:1948
+h.bb @ firebase_firestore.js?v=dfae63dc:1943
+h.Ea @ firebase_firestore.js?v=dfae63dc:1940
+Lc @ firebase_firestore.js?v=dfae63dc:1840
+h.Pa @ firebase_firestore.js?v=dfae63dc:1807
+Promise.then
+Nc @ firebase_firestore.js?v=dfae63dc:1798
+h.Pa @ firebase_firestore.js?v=dfae63dc:1808
+Promise.then
+Nc @ firebase_firestore.js?v=dfae63dc:1798
+h.Pa @ firebase_firestore.js?v=dfae63dc:1808
+Promise.then
+Nc @ firebase_firestore.js?v=dfae63dc:1798
+h.Sa @ firebase_firestore.js?v=dfae63dc:1794
+Promise.then
+h.send @ firebase_firestore.js?v=dfae63dc:1775
+h.ea @ firebase_firestore.js?v=dfae63dc:1916
+Jb @ firebase_firestore.js?v=dfae63dc:1202
+fd @ firebase_firestore.js?v=dfae63dc:2335
+h.Fa @ firebase_firestore.js?v=dfae63dc:2302
+Da @ firebase_firestore.js?v=dfae63dc:663
+Promise.then
+x2 @ firebase_firestore.js?v=dfae63dc:657
+ec @ firebase_firestore.js?v=dfae63dc:2288
+Rb @ firebase_firestore.js?v=dfae63dc:1410
+M2.Y @ firebase_firestore.js?v=dfae63dc:1278
+M2.ca @ firebase_firestore.js?v=dfae63dc:1209
+ab @ firebase_firestore.js?v=dfae63dc:944
+F2 @ firebase_firestore.js?v=dfae63dc:914
+Wc @ firebase_firestore.js?v=dfae63dc:1948
+h.bb @ firebase_firestore.js?v=dfae63dc:1943
+h.Ea @ firebase_firestore.js?v=dfae63dc:1940
+Lc @ firebase_firestore.js?v=dfae63dc:1840
+h.Pa @ firebase_firestore.js?v=dfae63dc:1807
+Promise.then
+Nc @ firebase_firestore.js?v=dfae63dc:1798
+h.Sa @ firebase_firestore.js?v=dfae63dc:1794
+Promise.then
+h.send @ firebase_firestore.js?v=dfae63dc:1775
+h.ea @ firebase_firestore.js?v=dfae63dc:1916
+Jb @ firebase_firestore.js?v=dfae63dc:1197
+Hb @ firebase_firestore.js?v=dfae63dc:1172
+h.Ga @ firebase_firestore.js?v=dfae63dc:2222
+Da @ firebase_firestore.js?v=dfae63dc:663
+Promise.then
+x2 @ firebase_firestore.js?v=dfae63dc:657
+fc @ firebase_firestore.js?v=dfae63dc:2166
+h.connect @ firebase_firestore.js?v=dfae63dc:2126
+Y2.m @ firebase_firestore.js?v=dfae63dc:2482
+Eo @ firebase_firestore.js?v=dfae63dc:12255
+send @ firebase_firestore.js?v=dfae63dc:12100
+c_ @ firebase_firestore.js?v=dfae63dc:12442
+V_ @ firebase_firestore.js?v=dfae63dc:12594
+__PRIVATE_sendWatchRequest @ firebase_firestore.js?v=dfae63dc:12848
+(anonymous) @ firebase_firestore.js?v=dfae63dc:12877
+__PRIVATE_onWatchStreamOpen @ firebase_firestore.js?v=dfae63dc:12876
+(anonymous) @ firebase_firestore.js?v=dfae63dc:12520
+(anonymous) @ firebase_firestore.js?v=dfae63dc:12544
+(anonymous) @ firebase_firestore.js?v=dfae63dc:15553
+(anonymous) @ firebase_firestore.js?v=dfae63dc:15584
+Promise.then
+yu @ firebase_firestore.js?v=dfae63dc:15584
+enqueue @ firebase_firestore.js?v=dfae63dc:15553
+enqueueAndForget @ firebase_firestore.js?v=dfae63dc:15535
+(anonymous) @ firebase_firestore.js?v=dfae63dc:12544
+(anonymous) @ firebase_firestore.js?v=dfae63dc:12520
+bo @ firebase_firestore.js?v=dfae63dc:12106
+(anonymous) @ firebase_firestore.js?v=dfae63dc:12303
+setTimeout
+qo @ firebase_firestore.js?v=dfae63dc:12302
+d_ @ firebase_firestore.js?v=dfae63dc:12553
+I_ @ firebase_firestore.js?v=dfae63dc:12517
+(anonymous) @ firebase_firestore.js?v=dfae63dc:12507
+Promise.then
+auth @ firebase_firestore.js?v=dfae63dc:12503
+start @ firebase_firestore.js?v=dfae63dc:12402
+__PRIVATE_startWatchStream @ firebase_firestore.js?v=dfae63dc:12858
+__PRIVATE_remoteStoreListen @ firebase_firestore.js?v=dfae63dc:12830
+__PRIVATE_allocateTargetAndMaybeListen @ firebase_firestore.js?v=dfae63dc:13874
+await in __PRIVATE_allocateTargetAndMaybeListen
+__PRIVATE_syncEngineListen @ firebase_firestore.js?v=dfae63dc:13852
+__PRIVATE_eventManagerListen @ firebase_firestore.js?v=dfae63dc:13336
+(anonymous) @ firebase_firestore.js?v=dfae63dc:17297
+await in (anonymous)
+(anonymous) @ firebase_firestore.js?v=dfae63dc:15553
+(anonymous) @ firebase_firestore.js?v=dfae63dc:15584
+Promise.then
+yu @ firebase_firestore.js?v=dfae63dc:15584
+enqueue @ firebase_firestore.js?v=dfae63dc:15553
+enqueueAndForget @ firebase_firestore.js?v=dfae63dc:15535
+__PRIVATE_firestoreClientListen @ firebase_firestore.js?v=dfae63dc:17297
+onSnapshot @ firebase_firestore.js?v=dfae63dc:17300
+(anonymous) @ use-customers.ts:166
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=dfae63dc:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=dfae63dc:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=dfae63dc:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=dfae63dc:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=dfae63dc:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=dfae63dc:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19416
+commitRoot @ chunk-RPCDYKBN.js?v=dfae63dc:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=dfae63dc:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=dfae63dc:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=dfae63dc:18627Understand this errorAI
+CustomersPage.tsx:114 PET_COUNT_DEBUG: {customerId: 'Th1c7kHFUAT2qJI8hiqc', petCount: 1, customerName: 'user two'}customerId: "Th1c7kHFUAT2qJI8hiqc"customerName: "user two"petCount: 1[[Prototype]]: Object
+CustomersPage.tsx:114 PET_COUNT_DEBUG: {customerId: 'ldOvbrblVpCTXcUHzYsK', petCount: 0, customerName: 'user one'}customerId: "ldOvbrblVpCTXcUHzYsK"customerName: "user one"petCount: 0[[Prototype]]: Object
+CustomersPage.tsx:114 PET_COUNT_DEBUG: {customerId: 'Th1c7kHFUAT2qJI8hiqc', petCount: 1, customerName: 'user two'}customerId: "Th1c7kHFUAT2qJI8hiqc"customerName: "user two"petCount: 1[[Prototype]]: Object
+CustomersPage.tsx:114 PET_COUNT_DEBUG: {customerId: 'ldOvbrblVpCTXcUHzYsK', petCount: 0, customerName: 'user one'}customerId: "ldOvbrblVpCTXcUHzYsK"customerName: "user one"petCount: 0[[Prototype]]: Object
+CustomersPage.tsx:127 PETS_MODAL: Opening pet list for customer: {customerId: 'Th1c7kHFUAT2qJI8hiqc', customerName: 'user two', petCount: 1, availablePets: undefined}availablePets: undefinedcustomerId: "Th1c7kHFUAT2qJI8hiqc"customerName: "user two"petCount: 1[[Prototype]]: Object
+CustomersPage.tsx:182 PETS_DEBUG: No pets or customer {hasSelectedCustomer: true, hasPets: false, selectedCustomerId: 'Th1c7kHFUAT2qJI8hiqc', petsCount: undefined}hasPets: falsehasSelectedCustomer: truepetsCount: undefinedselectedCustomerId: "Th1c7kHFUAT2qJI8hiqc"[[Prototype]]: Object
+CustomersPage.tsx:182 PETS_DEBUG: No pets or customer {hasSelectedCustomer: true, hasPets: false, selectedCustomerId: 'Th1c7kHFUAT2qJI8hiqc', petsCount: undefined}hasPets: falsehasSelectedCustomer: truepetsCount: undefinedselectedCustomerId: "Th1c7kHFUAT2qJI8hiqc"[[Prototype]]: Object
+CustomersPage.tsx:114 PET_COUNT_DEBUG: {customerId: 'Th1c7kHFUAT2qJI8hiqc', petCount: 1, customerName: 'user two'}customerId: "Th1c7kHFUAT2qJI8hiqc"customerName: "user two"petCount: 1[[Prototype]]: Object
+CustomersPage.tsx:114 PET_COUNT_DEBUG: {customerId: 'ldOvbrblVpCTXcUHzYsK', petCount: 0, customerName: 'user one'}customerId: "ldOvbrblVpCTXcUHzYsK"customerName: "user one"petCount: 0[[Prototype]]: Object
+CustomersPage.tsx:114 PET_COUNT_DEBUG: {customerId: 'Th1c7kHFUAT2qJI8hiqc', petCount: 1, customerName: 'user two'}customerId: "Th1c7kHFUAT2qJI8hiqc"customerName: "user two"petCount: 1[[Prototype]]: Object
+CustomersPage.tsx:114 PET_COUNT_DEBUG: {customerId: 'ldOvbrblVpCTXcUHzYsK', petCount: 0, customerName: 'user one'}customerId: "ldOvbrblVpCTXcUHzYsK"customerName: "user one"petCount: 0[[Prototype]]: Object
+chunk-TQI4IIDZ.js?v=dfae63dc:330 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-TQI4IIDZ.js?v=dfae63dc:330
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=dfae63dc:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=dfae63dc:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=dfae63dc:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=dfae63dc:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=dfae63dc:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=dfae63dc:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19416
+commitRoot @ chunk-RPCDYKBN.js?v=dfae63dc:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=dfae63dc:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=dfae63dc:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=dfae63dc:18627Understand this warningAI
+chunk-TQI4IIDZ.js?v=dfae63dc:330 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-TQI4IIDZ.js?v=dfae63dc:330
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=dfae63dc:16915
+invokePassiveEffectMountInDEV @ chunk-RPCDYKBN.js?v=dfae63dc:18324
+invokeEffectsInDev @ chunk-RPCDYKBN.js?v=dfae63dc:19701
+commitDoubleInvokeEffectsInDEV @ chunk-RPCDYKBN.js?v=dfae63dc:19686
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19503
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=dfae63dc:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=dfae63dc:19416
+commitRoot @ chunk-RPCDYKBN.js?v=dfae63dc:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=dfae63dc:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=dfae63dc:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=dfae63dc:18627Understand this warningAI
