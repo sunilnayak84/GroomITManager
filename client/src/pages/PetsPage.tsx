@@ -36,7 +36,7 @@ import {
 import React, { useState, useEffect } from "react";
 
 export default function PetsPage() {
-  const { pets, isLoading, updatePet, deletePet } = usePets();
+  const { pets, isLoading, updatePet, deletePet, addPet } = usePets();
   const { customers } = useCustomers();
 
   const [showPetDetails, setShowPetDetails] = useState(false);
@@ -258,6 +258,7 @@ export default function PetsPage() {
                   defaultValues={selectedPet}
                   pet={selectedPet}
                   id={selectedPet?.id}
+                  addPet={addPet}
                 />
               </>
             ) : (

@@ -1,9 +1,10 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import type { Pet, InsertPet } from "@db/schema";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { Pet as PetType, InsertPet } from "@db/schema";
 import { getDocs, doc, runTransaction, increment, collection, addDoc, serverTimestamp, query, updateDoc, deleteDoc, getDoc } from 'firebase/firestore';
 import { db } from "../lib/firebase";
-import { petsCollection, customersCollection } from "../lib/firestore";
+import { petsCollection, customersCollection, createPet } from "../lib/firestore";
 import { uploadFile } from "../lib/storage";
+import { toast } from "../lib/toast";
 
 export type Pet = {
   id: string;
@@ -206,6 +207,76 @@ export function usePets() {
       throw error;
     }
   };
+  const addPetMutation = useMutation({
+    mutationFn: async (petData: InsertPet) => {
+      try {
+        console.log('ADD_PET: Starting to add pet', { petData });
+
+        // Handle image upload if present
+        let imageUrl = petData.image;
+        if (petData.image instanceof File) {
+          try {
+            imageUrl = await uploadFile(
+              petData.image,
+              `pets/${petData.customerId}/${Date.now()}_${petData.image.name}`
+            );
+          } catch (uploadError) {
+            console.error('ADD_PET: Image upload failed:', uploadError);
+            throw new Error('Failed to upload pet image');
+          }
+        }
+
+        // Prepare pet data
+        const newPetData = {
+          ...petData,
+          image: imageUrl,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+
+        // Remove undefined values and empty strings
+        Object.keys(newPetData).forEach(key => {
+          if (newPetData[key] === undefined) {
+            delete newPetData[key];
+          }
+          if (newPetData[key] === '') {
+            newPetData[key] = null;
+          }
+        });
+
+        console.log('ADD_PET: Adding pet with data:', newPetData);
+        
+        // Create pet using Firestore utility
+        const petId = await createPet(newPetData);
+        
+        // Update customer's pet count
+        if (newPetData.customerId) {
+          const customerRef = doc(customersCollection, newPetData.customerId.toString());
+          await runTransaction(db, async (transaction) => {
+            transaction.update(customerRef, {
+              petCount: increment(1),
+              updatedAt: serverTimestamp()
+            });
+          });
+        }
+
+        return { id: petId, ...newPetData };
+      } catch (error) {
+        console.error('ADD_PET: Error adding pet:', error);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pets'] });
+      toast.success('Pet added successfully');
+    },
+    onError: (error) => {
+      console.error('ADD_PET: Mutation error:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to add pet');
+    }
+  });
+
+  const addPet = addPetMutation.mutateAsync;
 
   const deletePet = async (id: string) => {
     try {
@@ -241,8 +312,11 @@ export function usePets() {
 
   return {
     pets,
+    isLoading: rest.isLoading,
+    addPet,
     updatePet,
     deletePet,
+    addPetMutation,
     ...rest
   };
 }
