@@ -23,6 +23,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { useToast } from "@/hooks/use-toast";
 import { PetForm } from "@/components/PetForm";
 import { useQueryClient } from "@tanstack/react-query";
+import { useMemo } from "react";
 
 export default function CustomersPage() {
   const [open, setOpen] = useState(false);
@@ -110,7 +111,10 @@ export default function CustomersPage() {
     {
       header: "Pet Count",
       cell: (row: Customer) => {
-        const customerPets = pets?.filter(pet => pet.customerId === row.id) || [];
+        const customerPets = useMemo(() => {
+          if (!row.id || !pets) return [];
+          return pets.filter(pet => pet.customerId === row.id);
+        }, [row.id, pets]);
         return (
           <div className="flex items-center gap-2">
             <Button
@@ -141,7 +145,10 @@ export default function CustomersPage() {
     {
       header: "Actions",
       cell: (row: Customer) => {
-        const customerPets = pets?.filter(pet => pet.customerId === row.id) || [];
+        const customerPets = useMemo(() => {
+          if (!row.id || !pets) return [];
+          return pets.filter(pet => pet.customerId === row.id);
+        }, [row.id, pets]);
         return (
           <Button 
             variant="outline" 
@@ -275,6 +282,11 @@ export default function CustomersPage() {
       });
     }
   }
+
+  const selectedCustomerPets = useMemo(() => {
+    if (!selectedCustomer || !pets) return [];
+    return pets.filter(pet => pet.customerId === selectedCustomer.id);
+  }, [selectedCustomer, pets]);
 
   return (
     <div className="p-4 space-y-4">
@@ -738,12 +750,7 @@ export default function CustomersPage() {
                       <h3 className="font-semibold">Pets</h3>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      {console.log('Selected Customer ID:', selectedCustomer?.id)}
-                      {console.log('All Pets:', pets)}
-                      {console.log('Filtered Pets:', pets?.filter(pet => pet.customerId === selectedCustomer?.id))}
-                      {pets
-                        ?.filter(pet => pet.customerId === selectedCustomer.id)
-                        .map(pet => (
+                      {selectedCustomerPets.map(pet => (
                         <div key={pet.id} className="flex items-center gap-4 p-4 border rounded-lg hover:bg-accent transition-colors">
                           <img
                             src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}

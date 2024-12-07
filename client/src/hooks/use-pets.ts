@@ -34,18 +34,9 @@ export const usePets = () => {
           })
         );
 
-        console.log('DEBUG: Customers Map', Object.fromEntries(customersMap));
-        console.log('DEBUG: Total Pets Found', querySnapshot.docs.length);
-
-        const fetchedPets = await Promise.all(querySnapshot.docs.map(async (doc) => {
+        const fetchedPets = querySnapshot.docs.map((doc) => {
           const petData = doc.data();
           const customerDetails = customersMap.get(petData.customerId);
-
-          console.log('DEBUG: Individual Pet Data', {
-            petId: doc.id,
-            customerId: petData.customerId,
-            customerDetails: customerDetails
-          });
 
           return {
             id: doc.id,
@@ -58,9 +49,7 @@ export const usePets = () => {
               email: customerDetails.email || ''
             } : undefined
           } as Pet;
-        }));
-
-        console.log('DEBUG: Fetched Pets', fetchedPets);
+        });
 
         return fetchedPets;
       } catch (error) {
@@ -149,6 +138,7 @@ export const usePets = () => {
 
       // Invalidate and refetch pets query
       await queryClient.invalidateQueries({ queryKey: ['pets'] });
+      await queryClient.invalidateQueries({ queryKey: ['customers'] });
 
       // Return the newly created pet with its ID
       return {
