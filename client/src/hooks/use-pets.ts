@@ -127,16 +127,23 @@ export const usePets = () => {
       // Add pet to Firestore
       const newPetRef = await addDoc(petsCollection, petData);
 
-      // Increment customer's pet count
+      // Use a transaction to update customer's pet count
       await runTransaction(db, async (transaction) => {
         const customerRef = doc(db, 'customers', pet.customerId);
+        const customerDoc = await transaction.get(customerRef);
+        
+        if (!customerDoc.exists()) {
+          throw new Error('Customer document does not exist');
+        }
+
+        const currentPetCount = customerDoc.data().petCount || 0;
         transaction.update(customerRef, {
-          petCount: increment(1),
+          petCount: currentPetCount + 1,
           updatedAt: serverTimestamp()
         });
       });
 
-      // Invalidate and refetch pets query
+      // Invalidate and refetch pets and customers queries
       await queryClient.invalidateQueries({ queryKey: ['pets'] });
       await queryClient.invalidateQueries({ queryKey: ['customers'] });
 

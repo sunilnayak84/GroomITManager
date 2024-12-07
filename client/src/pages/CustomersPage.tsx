@@ -118,25 +118,14 @@ export default function CustomersPage() {
         return (
           <div className="flex items-center gap-2">
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
-              className="hover:bg-primary/10"
               onClick={() => {
                 setSelectedCustomer(row);
-                setShowPetList(true);
+                setOpen(true);
               }}
             >
               {customerPets.length}
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setSelectedCustomer(row);
-                setShowAddPet(true);
-              }}
-            >
-              <Plus className="h-4 w-4" />
             </Button>
           </div>
         );
@@ -474,9 +463,6 @@ export default function CustomersPage() {
               <h3 className="font-semibold">Pets</h3>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              {console.log('Selected Customer ID:', selectedCustomer?.id)}
-              {console.log('All Pets:', pets)}
-              {console.log('Filtered Pets:', pets?.filter(pet => pet.customerId === selectedCustomer?.id))}
               {pets
                 ?.filter(pet => pet.customerId === selectedCustomer?.id)
                 .map(pet => (
