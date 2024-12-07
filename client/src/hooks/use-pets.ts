@@ -98,62 +98,61 @@ export function usePets() {
     staleTime: 1000 * 60 * 5 // 5 minutes
   });
 
-  const updatePet = async (petId: string, updateData: Partial<InsertPet>) => {
-    if (!petId) {
-      console.error('UPDATE_PET: No pet ID provided');
-      throw new Error('Pet ID is required for update');
-    }
-
+  const updatePet = async (id: string, data: Partial<InsertPet>) => {
     try {
-      console.log('UPDATE_PET: Starting update', { petId, updateData });
-      
-      const petRef = doc(db, 'pets', petId);
-      const petDoc = await getDoc(petRef);
-      
-      if (!petDoc.exists()) {
-        throw new Error(`Pet with ID ${petId} not found`);
+      console.log('UPDATE_PET: Starting update', { id, data });
+
+      // Validate ID
+      if (!id) {
+        throw new Error('Pet ID is required for update');
       }
 
-      // Handle image upload if it's a File
-      let imageUrl = updateData.image;
-      if (updateData.image instanceof File) {
+      // Create document reference
+      const petRef = doc(petsCollection, id);
+      
+      // Check if document exists
+      const petDoc = await getDoc(petRef);
+      if (!petDoc.exists()) {
+        throw new Error(`Pet with ID ${id} not found`);
+      }
+
+      // Handle image upload if present
+      let imageUrl = data.image;
+      if (data.image instanceof File) {
         try {
           imageUrl = await uploadFile(
-            updateData.image,
-            `pets/${updateData.customerId}/${Date.now()}_${updateData.image.name}`
+            data.image,
+            `pets/${data.customerId}/${Date.now()}_${data.image.name}`
           );
         } catch (uploadError) {
-          console.error('UPDATE_PET: Error uploading image:', uploadError);
+          console.error('UPDATE_PET: Image upload failed:', uploadError);
           throw new Error('Failed to upload pet image');
         }
       }
 
-      // Clean up the update data
+      // Prepare update data
+      const updateData = {
+        ...data,
+        image: imageUrl,
+        updatedAt: serverTimestamp()
+      };
+
+      // Clean null/undefined values
       const cleanData = Object.fromEntries(
-        Object.entries({
-          ...updateData,
-          image: imageUrl,
-        })
-        .filter(([_, value]) => value !== undefined)
-        .map(([key, value]) => {
-          if (value === "") return [key, null];
-          if (key === "weight" && value === null) return [key, null];
-          return [key, value];
-        })
+        Object.entries(updateData)
+          .filter(([_, value]) => value !== undefined)
+          .map(([key, value]) => [key, value === '' ? null : value])
       );
 
-      console.log('UPDATE_PET: Cleaned update data:', cleanData);
+      console.log('UPDATE_PET: Preparing to update with data:', cleanData);
 
-      // Update the document in Firebase
-      await updateDoc(petRef, {
-        ...cleanData,
-        updatedAt: serverTimestamp()
-      });
+      // Update document
+      await updateDoc(petRef, cleanData);
 
-      // Invalidate the pets query to ensure fresh data
+      // Invalidate queries
       await queryClient.invalidateQueries({ queryKey: ['pets'] });
-      
-      console.log('UPDATE_PET: Successfully updated pet:', { petId, cleanData });
+
+      console.log('UPDATE_PET: Successfully updated pet:', { id, cleanData });
       return true;
     } catch (error) {
       console.error('UPDATE_PET: Error updating pet:', error);
