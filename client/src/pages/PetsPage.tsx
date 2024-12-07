@@ -100,24 +100,20 @@ export default function PetsPage() {
     }
     
     try {
-      const petId = selectedPet.id.toString();
-      const updateData = {
-        ...data,
-        customerId: typeof data.customerId === 'string' ? data.customerId : data.customerId.toString()
-      };
+      console.log('Update pet data:', {
+        petId: selectedPet.id,
+        updateData: data
+      });
+
+      await updatePet(selectedPet.id, data);
       
-      console.log('Updating pet:', { petId, updateData });
-      const success = await updatePet(petId, updateData);
-      
-      if (success) {
-        toast({
-          title: "Success",
-          description: "Pet updated successfully",
-        });
-        setIsEditing(false);
-        setShowPetDetails(false);
-        setSelectedPet(null);
-      }
+      toast({
+        title: "Success",
+        description: "Pet updated successfully",
+      });
+      setIsEditing(false);
+      setShowPetDetails(false);
+      setSelectedPet(null);
     } catch (error) {
       console.error('Error updating pet:', error);
       toast({
@@ -248,11 +244,7 @@ export default function PetsPage() {
                   <DialogTitle>Edit Pet</DialogTitle>
                 </DialogHeader>
                 <PetForm
-                  onSuccess={(data) => {
-                    if (selectedPet) {
-                      handleUpdatePet(data);
-                    }
-                  }}
+                  onSuccess={(data) => handleUpdatePet(data)}
                   onCancel={() => setIsEditing(false)}
                   customers={customers}
                   defaultValues={selectedPet}
