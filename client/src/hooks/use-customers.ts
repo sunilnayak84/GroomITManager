@@ -10,7 +10,7 @@ export function useCustomers() {
   const queryClient = useQueryClient();
 
   const addCustomerMutation = useMutation({
-    mutationFn: async (customer: Omit<Customer, 'id'>) => {
+    mutationFn: async (customer: InsertCustomer) => {
       // Detailed validation and logging
       const validationErrors: string[] = [];
 
@@ -253,8 +253,9 @@ export function useCustomers() {
             createdAt: customerData.createdAt 
               ? new Date(customerData.createdAt) 
               : new Date(),
-            petCount: customerData.petCount || 0
-          } as Customer;
+            petCount: customerData.petCount || 0,
+            gender: customerData.gender || null
+          } satisfies Customer;
         });
 
         console.log('USE CUSTOMERS: Fetched customers', {
@@ -272,9 +273,11 @@ export function useCustomers() {
   });
 
   return {
+    customers: customersQuery.data || [],
     customersQuery,
     addCustomerMutation,
     updateCustomerMutation,
-    deleteCustomerMutationHook
+    deleteCustomerMutationHook,
+    isLoading: customersQuery.isLoading
   };
 }
