@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertAppointmentSchema, type InsertAppointment, type Appointment } from "@db/schema";
+import { insertAppointmentSchema, type InsertAppointment } from "@db/schema";
+import { useServices } from "../hooks/use-services";
 import { Button } from "@/components/ui/button";
 import {
   DialogContent,
@@ -32,24 +33,27 @@ export default function AppointmentForm() {
   const { toast } = useToast();
 
   const defaultGroomerId = 1;
-  const form = useForm<Omit<Appointment, 'id' | 'createdAt'>>({
+  const form = useForm<InsertAppointment>({
     resolver: zodResolver(insertAppointmentSchema),
     defaultValues: {
       petId: 0,
+      serviceId: 0,
       groomerId: defaultGroomerId,
+      branchId: 1,
       date: new Date(),
       status: "pending",
       notes: "",
+      productsUsed: null,
     },
   });
 
-  async function onSubmit(values: Omit<Appointment, 'id' | 'createdAt'>) {
-    const data = {
-      ...values,
-      status: 'pending' as const,
-      date: new Date(values.date)
-    };
+  async function onSubmit(values: InsertAppointment) {
     try {
+      const data: InsertAppointment = {
+        ...values,
+        status: 'pending' as const,
+        date: new Date(values.date)
+      };
       await addAppointment(data);
       toast({
         title: "Success",
@@ -90,6 +94,32 @@ export default function AppointmentForm() {
                     {(pets || []).map((pet) => (
                       <SelectItem key={pet.id} value={pet.id.toString()}>
                         {pet.name} - {pet.breed}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="serviceId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Service</FormLabel>
+                <Select
+                  onValueChange={(value) => field.onChange(parseInt(value))}
+                  defaultValue={field.value.toString()}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a service" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {services?.map((service) => (
+                      <SelectItem key={service.id} value={service.id.toString()}>
+                        {service.name}
                       </SelectItem>
                     ))}
                   </SelectContent>

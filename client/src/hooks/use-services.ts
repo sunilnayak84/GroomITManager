@@ -8,13 +8,20 @@ import { toast } from "../lib/toast";
 const servicesCollection = collection(db, 'services');
 
 export type Service = {
-  id: string;
+  id: number;
   name: string;
   description: string;
   duration: number;
-  price: number;
+  priceINR: number;
   isActive: boolean;
   createdAt: Date;
+  category?: string;
+  nameHindi?: string;
+  descriptionHindi?: string;
+  gstRate?: number;
+  petTypes?: string[];
+  includedServices?: string[];
+  updatedAt?: Date | null;
 };
 
 export function useServices() {
@@ -36,13 +43,20 @@ export function useServices() {
         const fetchedServices = querySnapshot.docs.map((doc) => {
           const data = doc.data();
           return {
-            id: doc.id,
+            id: parseInt(doc.id),
             name: data.name,
             description: data.description,
             duration: data.duration,
-            price: data.price,
+            priceINR: data.priceINR,
             isActive: data.isActive ?? true,
             createdAt: data.createdAt?.toDate() || new Date(),
+            category: data.category,
+            nameHindi: data.nameHindi,
+            descriptionHindi: data.descriptionHindi,
+            gstRate: data.gstRate,
+            petTypes: data.petTypes,
+            includedServices: data.includedServices,
+            updatedAt: data.updatedAt?.toDate() || null,
           };
         });
 
@@ -60,19 +74,21 @@ export function useServices() {
     staleTime: 1000 * 60 * 5 // 5 minutes
   });
 
-  const addService = async (serviceData: InsertService) => {
+  const addService = async (serviceData: Omit<InsertService, 'id'>) => {
     try {
       const docRef = doc(servicesCollection);
       const newService = {
         ...serviceData,
         isActive: true,
-        createdAt: new Date()
+        createdAt: new Date(),
+        id: parseInt(docRef.id),
+        updatedAt: null
       };
 
       await setDoc(docRef, newService);
       await queryClient.invalidateQueries({ queryKey: ['services'] });
       toast.success('Service added successfully');
-      return { id: docRef.id, ...newService };
+      return { id: parseInt(docRef.id), ...newService };
     } catch (error) {
       console.error('ADD_SERVICE: Error adding service:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to add service');
@@ -80,9 +96,9 @@ export function useServices() {
     }
   };
 
-  const updateService = async (id: string, updateData: Partial<InsertService>) => {
+  const updateService = async (id: number, updateData: Partial<InsertService>) => {
     try {
-      const serviceRef = doc(servicesCollection, id);
+      const serviceRef = doc(servicesCollection, id.toString());
       await updateDoc(serviceRef, {
         ...updateData,
         updatedAt: new Date()
@@ -97,9 +113,9 @@ export function useServices() {
     }
   };
 
-  const deleteService = async (id: string) => {
+  const deleteService = async (id: number) => {
     try {
-      const serviceRef = doc(servicesCollection, id);
+      const serviceRef = doc(servicesCollection, id.toString());
       await deleteDoc(serviceRef);
       await queryClient.invalidateQueries({ queryKey: ['services'] });
       toast.success('Service deleted successfully');

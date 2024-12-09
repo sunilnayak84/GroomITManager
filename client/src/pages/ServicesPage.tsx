@@ -18,7 +18,7 @@ import { useServices } from "@/hooks/use-services";
 import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertServiceSchema, type InsertService } from "@db/schema";
+import { insertServiceSchema, type InsertService, SERVICE_CATEGORIES } from "@db/schema";
 import type { Service } from "@/hooks/use-services";
 import {
   AlertDialog,
@@ -42,37 +42,64 @@ export default function ServicesPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-
   const { toast } = useToast();
 
   const form = useForm<InsertService>({
     resolver: zodResolver(insertServiceSchema),
     defaultValues: {
       name: "",
+      nameHindi: "",
       description: "",
+      descriptionHindi: "",
       duration: 60,
       priceINR: 0,
+      category: SERVICE_CATEGORIES.STANDARD,
+      petTypes: [],
+      includedServices: [],
+      gstRate: 18,
+      isActive: true
     },
   });
 
-  // Populate form when service is selected for editing
   React.useEffect(() => {
     if (selectedService && isEditing) {
       form.reset({
         name: selectedService.name,
+        nameHindi: selectedService.nameHindi,
         description: selectedService.description,
+        descriptionHindi: selectedService.descriptionHindi,
         duration: selectedService.duration,
         priceINR: selectedService.priceINR,
+        category: selectedService.category || SERVICE_CATEGORIES.STANDARD,
+        petTypes: selectedService.petTypes || [],
+        includedServices: selectedService.includedServices || [],
+        gstRate: selectedService.gstRate || 18,
+        isActive: selectedService.isActive
       });
     }
   }, [selectedService, isEditing, form]);
 
-  const handleSubmit = async (data: InsertService) => {
+  const onSubmit = async (data: z.infer<typeof insertServiceSchema>) => {
     try {
+      const serviceData = {
+        ...data,
+        petTypes: data.petTypes || [],
+        includedServices: data.includedServices || [],
+        isActive: true
+      };
+
       if (isEditing && selectedService) {
-        await updateService(selectedService.id, data);
+        await updateService(selectedService.id, serviceData);
+        toast({
+          title: "Success",
+          description: "Service updated successfully",
+        });
       } else {
-        await addService(data);
+        await addService(serviceData);
+        toast({
+          title: "Success",
+          description: "Service added successfully",
+        });
       }
       setShowServiceDialog(false);
       setSelectedService(null);
@@ -80,6 +107,11 @@ export default function ServicesPage() {
       form.reset();
     } catch (error) {
       console.error('Error handling service:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to save service",
+      });
     }
   };
 
@@ -242,7 +274,7 @@ export default function ServicesPage() {
           </DialogHeader>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
                 name="name"
@@ -284,9 +316,10 @@ export default function ServicesPage() {
                     <FormControl>
                       <Input
                         type="number"
-                        min="1"
+                        min="15"
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value))}
+                        value={field.value || ''}
                       />
                     </FormControl>
                     <FormMessage />
@@ -306,6 +339,7 @@ export default function ServicesPage() {
                         min="0"
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value))}
+                        value={field.value || ''}
                       />
                     </FormControl>
                     <FormMessage />

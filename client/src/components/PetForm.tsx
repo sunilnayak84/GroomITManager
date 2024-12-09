@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { type InsertPet, type Customer, type Pet, type PetGender } from "@/lib/types";
+import { type InsertPet, type Customer, type PetGender } from "@/lib/types";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -38,7 +38,7 @@ interface PetFormProps {
   pet?: InsertPet & { id?: number };
   customers?: Customer[];
   updatePet?: (id: number, data: Partial<InsertPet>) => Promise<void>;
-  addPet: (data: InsertPet) => Promise<Pet>;
+  addPet: (data: InsertPet) => Promise<InsertPet>;
   id?: number;
 }
 
@@ -55,7 +55,6 @@ export const PetForm: React.FC<PetFormProps> = ({
   const { updatePet: usePetsUpdatePet } = usePets();
   const { toast } = useToast();
 
-  // Convert date values to proper format
   const convertToDate = (dateValue: Date | string | null | undefined): string | null => {
     if (!dateValue) return null;
     
@@ -73,19 +72,17 @@ export const PetForm: React.FC<PetFormProps> = ({
     return null;
   };
 
-  // State management
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | undefined>(
     defaultValues?.customerId ? Number(defaultValues.customerId) : 
     pet?.customerId ? Number(pet.customerId) : undefined
   );
   
   const [imagePreview, setImagePreview] = useState<string | null | undefined>(
-    defaultValues?.imageUrl || pet?.imageUrl || defaultValues?.image?.toString() || pet?.image || null
+    defaultValues?.imageUrl || pet?.imageUrl || null
   );
   
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Customer data preparation
   const { data: fetchedCustomers } = useCustomers();
   const customerOptions = useMemo(() => {
     const allCustomers = [...(initialCustomers || [])];
@@ -95,48 +92,52 @@ export const PetForm: React.FC<PetFormProps> = ({
     ].filter((customer): customer is Customer => !!customer && typeof customer.id === 'number');
   }, [initialCustomers, fetchedCustomers]);
 
-  // Form initialization
   const form = useForm<PetFormSchema>({
     resolver: zodResolver(petFormSchema),
     defaultValues: {
       name: defaultValues?.name || pet?.name || "",
       type: defaultValues?.type || pet?.type || "dog",
       breed: defaultValues?.breed || pet?.breed || "",
-      customerId: Number(defaultValues?.customerId || pet?.customerId) || 0,
-      dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth) || null,
-      age: Number(defaultValues?.age || pet?.age) || null,
-      gender: (defaultValues?.gender || pet?.gender || "unknown") as PetGender,
+      customerId: defaultValues?.customerId ? Number(defaultValues.customerId) : 
+                 pet?.customerId ? Number(pet.customerId) : 0,
+      dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
+      age: defaultValues?.age ? Number(defaultValues.age) : 
+           pet?.age ? Number(pet.age) : null,
+      gender: defaultValues?.gender || pet?.gender || null,
       weight: defaultValues?.weight?.toString() || pet?.weight?.toString() || null,
       weightUnit: defaultValues?.weightUnit || pet?.weightUnit || "kg",
-      image: defaultValues?.imageUrl || pet?.imageUrl || defaultValues?.image || pet?.image || null,
-      notes: defaultValues?.notes || pet?.notes || null,
-      owner: defaultValues?.owner || pet?.owner
+      image: null,
+      notes: defaultValues?.notes || pet?.notes || null
     }
   });
 
   useEffect(() => {
     if (defaultValues || pet) {
-      const formDefaults = {
+      const formDefaults: Partial<PetFormSchema> = {
         name: defaultValues?.name || pet?.name || "",
         type: defaultValues?.type || pet?.type || "dog",
         breed: defaultValues?.breed || pet?.breed || "",
-        customerId: Number(defaultValues?.customerId || pet?.customerId),
+        customerId: defaultValues?.customerId ? Number(defaultValues.customerId) : 
+                   pet?.customerId ? Number(pet.customerId) : 0,
         dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
-        age: Number(defaultValues?.age || pet?.age) || null,
-        gender: (defaultValues?.gender || pet?.gender || "unknown") as PetGender,
+        age: defaultValues?.age ? Number(defaultValues.age) : 
+             pet?.age ? Number(pet.age) : null,
+        gender: defaultValues?.gender || pet?.gender || null,
         weight: defaultValues?.weight?.toString() || pet?.weight?.toString() || null,
         weightUnit: defaultValues?.weightUnit || pet?.weightUnit || "kg",
-        image: defaultValues?.imageUrl || pet?.imageUrl || defaultValues?.image || pet?.image || null,
-        notes: defaultValues?.notes || pet?.notes || null,
-        owner: defaultValues?.owner || pet?.owner
+        image: null,
+        notes: defaultValues?.notes || pet?.notes || null
       };
 
-      form.reset(formDefaults);
+      // Type-safe way to remove undefined values
+      const cleanDefaults = Object.fromEntries(
+        Object.entries(formDefaults).filter(([_, value]) => value !== undefined)
+      ) as Partial<PetFormSchema>;
+
+      form.reset(cleanDefaults);
       
       if (defaultValues?.imageUrl || pet?.imageUrl) {
-        setImagePreview(defaultValues?.imageUrl || pet?.imageUrl);
-      } else if (defaultValues?.image || pet?.image) {
-        setImagePreview(defaultValues?.image?.toString() || pet?.image || null);
+        setImagePreview(defaultValues?.imageUrl || pet?.imageUrl || null);
       }
 
       if (formDefaults.customerId) {
@@ -151,9 +152,8 @@ export const PetForm: React.FC<PetFormProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type and size
     const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    const maxSize = 5 * 1024 * 1024;
 
     if (!validTypes.includes(file.type)) {
       toast({
@@ -222,7 +222,7 @@ export const PetForm: React.FC<PetFormProps> = ({
           description: `${data.name} has been updated successfully.`,
         });
       } else {
-        const addedPet = await addPet(petData);
+        await addPet(petData);
         toast({
           title: "Pet Added",
           description: `${data.name} has been added successfully.`,
@@ -402,9 +402,8 @@ export const PetForm: React.FC<PetFormProps> = ({
             <FormItem>
               <FormLabel>Gender</FormLabel>
               <Select 
-                onValueChange={(value: string) => field.onChange(value as PetGender)}
-                value={field.value}
-                defaultValue="unknown"
+                onValueChange={field.onChange}
+                value={field.value || "unknown"}
               >
                 <FormControl>
                   <SelectTrigger>
