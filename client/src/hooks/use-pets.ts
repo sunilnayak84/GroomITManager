@@ -224,15 +224,16 @@ export function usePets() {
           }
         }
 
-        // Prepare pet data
+        // Prepare pet data with Firebase-compatible structure
         const newPetData = {
           ...petData,
+          customerId: petData.customerId, // Ensure we're using the Firebase document ID
           image: imageUrl,
-          createdAt: new Date(),
-          updatedAt: new Date()
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
         };
 
-        // Remove undefined values and empty strings
+        // Clean the data
         Object.keys(newPetData).forEach(key => {
           if (newPetData[key] === undefined) {
             delete newPetData[key];
@@ -247,9 +248,9 @@ export function usePets() {
         // Create pet using Firestore utility
         const petId = await createPet(newPetData);
         
-        // Update customer's pet count
+        // Update customer's pet count using the Firebase document ID
         if (newPetData.customerId) {
-          const customerRef = doc(customersCollection, newPetData.customerId.toString());
+          const customerRef = doc(customersCollection, newPetData.customerId);
           await runTransaction(db, async (transaction) => {
             transaction.update(customerRef, {
               petCount: increment(1),

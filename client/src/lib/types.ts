@@ -70,7 +70,7 @@ export type InsertPet = {
   name: string;
   type: "dog" | "cat" | "bird" | "fish" | "other";
   breed: string;
-  customerId: string;
+  customerId: string;  // Firebase document ID
   dateOfBirth: string | null;
   age: number | null;
   gender: "male" | "female" | "unknown";
@@ -79,12 +79,14 @@ export type InsertPet = {
   image: string | File | null;
   notes: string | null;
   owner?: {
-    id: string;
+    id: string;  // Firebase document ID
     firstName: string;
     lastName: string;
     phone?: string;
     email?: string;
   };
+  createdAt?: Date;
+  updatedAt?: Date;
 };
 
 // Common utility types
