@@ -115,7 +115,7 @@ export function PetForm({
     setIsSubmitting(true);
 
     // Create a unique submission ID at the start
-    const submissionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const submissionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${Math.random().toString(36).substr(2, 9)}`;
     console.log('Generated submission ID:', submissionId);
 
     try {
