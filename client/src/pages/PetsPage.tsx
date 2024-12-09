@@ -21,6 +21,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertPetSchema, type InsertPet } from "@db/schema";
+import type { Pet } from "@/hooks/use-pets";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,7 +36,7 @@ import {
 import React, { useState, useEffect } from "react";
 
 export default function PetsPage() {
-  const { pets, isLoading, updatePet, deletePet } = usePets();
+  const { pets, isLoading, updatePet, deletePet, addPet } = usePets();
   const { customers } = useCustomers();
 
   const [showPetDetails, setShowPetDetails] = useState(false);
@@ -61,7 +62,7 @@ export default function PetsPage() {
     if (customers) {
       console.log('PetsPage Customers Debug:', JSON.stringify({
         customersCount: customers.length,
-        customers: customers.map(c => ({
+        customers: customers.map((c: { id: string; firstName: string; lastName: string; }) => ({
           id: c.id,
           name: `${c.firstName} ${c.lastName}`
         }))
@@ -69,15 +70,23 @@ export default function PetsPage() {
     }
   }, [pets, customers]);
 
-  const formatDate = (date: any) => {
+  const formatDate = (date: { seconds: number; nanoseconds: number; } | string | Date | null | undefined) => {
     if (!date) return 'N/A';
     try {
       // Handle Firestore timestamp
-      if (date?.seconds) {
+      if (typeof date === 'object' && 'seconds' in date) {
         return new Date(date.seconds * 1000).toLocaleDateString();
       }
+      // Handle Date object
+      if (date instanceof Date) {
+        return date.toLocaleDateString();
+      }
       // Handle string date
-      return new Date(date).toLocaleDateString();
+      if (typeof date === 'string') {
+        const parsedDate = new Date(date);
+        return !isNaN(parsedDate.getTime()) ? parsedDate.toLocaleDateString() : 'Invalid Date';
+      }
+      return 'N/A';
     } catch (error) {
       console.error('Error formatting date:', error);
       return 'Invalid Date';
@@ -89,21 +98,47 @@ export default function PetsPage() {
     if (pet.owner) {
       return `${pet.owner.firstName} ${pet.owner.lastName}`;
     }
-    const owner = customers?.find(c => c.id === pet.customerId);
+    const owner = customers?.find((c: { id: string; firstName: string; lastName: string; }) => 
+      parseInt(c.id) === pet.customerId
+    );
     return owner ? `${owner.firstName} ${owner.lastName}` : 'N/A';
   };
 
   const handleUpdatePet = async (data: InsertPet) => {
-    if (!selectedPet) return;
+    if (!selectedPet?.id) {
+      console.error('No pet selected for update');
+      return;
+    }
     
     try {
-      await updatePet(selectedPet.id, data);
+      // Ensure we're passing a string ID and the update data separately
+      if (!selectedPet?.id) {
+        throw new Error('Selected pet ID is required for update');
+      }
+      
+      const petId = selectedPet.id.toString();
+      console.log('Update pet data:', {
+        petId,
+        updateData: data,
+        selectedPet
+      });
+
+      await updatePet(petId, data);
+      
+      toast({
+        title: "Success",
+        description: "Pet updated successfully",
+      });
       setIsEditing(false);
       setShowPetDetails(false);
       setSelectedPet(null);
     } catch (error) {
       console.error('Error updating pet:', error);
-      throw error;
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to update pet",
+        variant: "destructive",
+      });
     }
   };
 
@@ -131,7 +166,7 @@ export default function PetsPage() {
         name: selectedPet.name,
         type: selectedPet.type,
         breed: selectedPet.breed,
-        customerId: selectedPet.customerId,
+        customerId: parseInt(selectedPet.customerId.toString()),
         dateOfBirth: selectedPet.dateOfBirth || undefined,
         age: selectedPet.age || undefined,
         gender: selectedPet.gender || undefined,
@@ -148,9 +183,9 @@ export default function PetsPage() {
       header: "Pet",
       cell: (pet: Pet) => (
         <div className="flex items-center gap-3">
-          {pet.imageUrl && (
+          {pet.image && (
             <img
-              src={pet.imageUrl}
+              src={pet.image}
               alt={pet.name}
               className="h-10 w-10 rounded-full"
             />
@@ -227,16 +262,13 @@ export default function PetsPage() {
                   <DialogTitle>Edit Pet</DialogTitle>
                 </DialogHeader>
                 <PetForm
-                  onSuccess={(data) => {
-                    if (selectedPet) {
-                      handleUpdatePet(data);
-                    }
-                  }}
+                  onSuccess={(data) => handleUpdatePet(data)}
                   onCancel={() => setIsEditing(false)}
                   customers={customers}
                   defaultValues={selectedPet}
                   pet={selectedPet}
                   id={selectedPet?.id}
+                  addPet={addPet}
                 />
               </>
             ) : (
@@ -259,10 +291,10 @@ export default function PetsPage() {
                   </div>
                 </DialogHeader>
 
-                {selectedPet.imageUrl && (
+                {selectedPet.image && (
                   <div className="flex justify-center mb-4">
                     <img
-                      src={selectedPet.imageUrl}
+                      src={selectedPet.image}
                       alt={`${selectedPet.name}'s photo`}
                       className="rounded-full w-24 h-24 object-cover"
                     />
