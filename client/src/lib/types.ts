@@ -39,15 +39,30 @@ export type Pet = {
     phone?: string;
     email?: string;
   };
-  createdAt?: Date;
-  updatedAt?: Date | null;
+  createdAt: Date;
+  updatedAt: Date | null;
   firebaseId?: string | null;
 };
 
+export const PetGenderEnum = {
+  MALE: "male",
+  FEMALE: "female",
+  UNKNOWN: "unknown",
+} as const;
+
+export type PetGender = typeof PetGenderEnum[keyof typeof PetGenderEnum];
+
 // Form data types
-export type PetFormData = Omit<InsertPet, 'id'> & {
+export type PetFormData = Omit<Pet, 'id'> & {
   id?: number;
   image?: File | string | null;
+  owner?: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    phone?: string;
+    email?: string;
+  };
 };
 
 export type InsertPet = Omit<z.infer<typeof insertPetSchema>, 'id'> & {

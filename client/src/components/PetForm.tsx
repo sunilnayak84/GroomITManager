@@ -14,19 +14,21 @@ import { Upload } from "lucide-react";
 import { format } from "date-fns";
 
 export type PetFormProps = {
-  onSuccess?: (data: PetFormData) => void;
+  onSuccess?: (data: PetFormSchema) => void;
   onCancel?: () => void;
   defaultValues?: Partial<InsertPet>;
-  pet?: Pet;
+  pet?: InsertPet & { id: number };
   customers?: Customer[];
   updatePet?: (id: number, data: Partial<InsertPet>) => Promise<void>;
   addPet: (data: InsertPet) => Promise<Pet>;
   id?: number;
 };
 
+export type PetFormSchema = z.infer<typeof petFormSchema>;
+
 const petFormSchema = z.object({
   name: z.string().min(1, { message: "Pet name is required" }),
-  type: z.enum(["dog", "cat", "bird", "fish", "other"], { 
+  type: z.enum(["dog", "cat", "bird", "fish", "other"] as const, { 
     required_error: "Pet type is required",
     invalid_type_error: "Invalid pet type selected"
   }),
@@ -36,11 +38,13 @@ const petFormSchema = z.object({
   age: z.coerce.number().nullable(),
   gender: z.enum(["male", "female", "unknown"] as const).nullable(),
   weight: z.string().nullable(),
-  weightUnit: z.enum(["kg", "lbs"]).default("kg"),
+  weightUnit: z.enum(["kg", "lbs"] as const).default("kg"),
   image: z.union([z.string(), z.instanceof(File), z.null()]).optional(),
   notes: z.string().nullable(),
   id: z.number().optional(),
   firebaseId: z.string().nullable().optional(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().nullable().optional(),
 }).refine(data => {
   if (data.weight !== null && isNaN(Number(data.weight))) {
     throw new Error("Weight must be a valid number");
@@ -102,7 +106,8 @@ export const PetForm: React.FC<PetFormProps> = ({
     defaultValues?.customerId || pet?.customerId
   );
   const [imagePreview, setImagePreview] = useState<string | null | undefined>(
-    defaultValues?.image || pet?.image
+    typeof defaultValues?.image === 'string' ? defaultValues.image : 
+    typeof pet?.image === 'string' ? pet.image : null
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -176,10 +181,10 @@ export const PetForm: React.FC<PetFormProps> = ({
 
   const updatePet = externalUpdatePet || usePetsUpdatePet;
 
-  const onSubmit = async (data: z.infer<typeof petFormSchema>) => {
+  const onSubmit = async (data: PetFormSchema) => {
     setIsSubmitting(true);
     try {
-      const customerId = defaultValues?.customerId || data.customerId || selectedCustomerId;
+      const customerId = Number(defaultValues?.customerId || data.customerId || selectedCustomerId);
       
       if (!customerId) {
         throw new Error("Customer ID is required to add a pet");
@@ -467,7 +472,7 @@ export const PetForm: React.FC<PetFormProps> = ({
             <FormItem>
               <FormLabel>Gender</FormLabel>
               <Select 
-                onValueChange={(value: "male" | "female" | "unknown") => field.onChange(value)}
+                onValueChange={(value) => field.onChange(value as PetGender)}
                 value={field.value || "unknown"}
               >
                 <FormControl>
