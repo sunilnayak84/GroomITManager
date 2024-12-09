@@ -114,7 +114,7 @@ export async function createCustomer(customer: Omit<Customer, 'id'>) {
 // Pet operations with error handling
 export async function createPet(pet: Omit<Pet, 'id'>) {
   try {
-    console.error('FIRESTORE: Attempting to create pet', { pet });
+    console.log('FIRESTORE: Attempting to create pet', { pet });
 
     // Validate input
     if (!pet) {
@@ -130,7 +130,7 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
     }
 
     // Verify customer exists
-    const customerRef = doc(db, 'customers', pet.customerId);
+    const customerRef = doc(db, 'customers', pet.customerId.toString());
     const customerDoc = await getDoc(customerRef);
 
     if (!customerDoc.exists()) {
@@ -140,7 +140,7 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
     const petRef = doc(petsCollection);
     
     // Log before setDoc
-    console.error('FIRESTORE: Pet reference created', { petRefId: petRef.id });
+    console.log('FIRESTORE: Pet reference created', { petRefId: petRef.id });
 
     // Prepare pet data for Firestore
     const petData = {
@@ -154,14 +154,14 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
     await setDoc(petRef, petData);
 
     // Log after setDoc
-    console.error('FIRESTORE: Pet document created successfully', { 
+    console.log('FIRESTORE: Pet document created successfully', { 
       petId: petRef.id, 
       petData
     });
 
     return petRef.id;
   } catch (error) {
-    console.error('FIRESTORE: Critical error in createPet', { 
+    console.log('FIRESTORE: Critical error in createPet', { 
       error: error instanceof Error ? error.message : 'Unknown error',
       pet 
     });

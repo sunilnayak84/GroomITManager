@@ -164,6 +164,12 @@ export const PetForm: React.FC<PetFormProps> = ({
     try {
       const customerId = Number(data.customerId);
       
+      console.log('PetForm: Submitting pet data', { 
+        data, 
+        customerId, 
+        imageType: data.image ? typeof data.image : 'no image' 
+      });
+
       if (!customerId) {
         throw new Error("Customer ID is required");
       }
@@ -188,6 +194,8 @@ export const PetForm: React.FC<PetFormProps> = ({
         firebaseId: pet?.firebaseId || null
       };
 
+      console.log('PetForm: Prepared pet data for submission', { petData });
+
       if (pet?.id) {
         await updatePetFn(pet.id, petData);
         toast({
@@ -196,6 +204,7 @@ export const PetForm: React.FC<PetFormProps> = ({
         });
       } else {
         const addedPet = await addPet(petData);
+        console.log('PetForm: Pet added successfully', { addedPet });
         toast({
           title: "Pet Added",
           description: `${data.name} has been added successfully.`,
