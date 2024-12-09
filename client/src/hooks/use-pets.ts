@@ -301,8 +301,26 @@ export function usePets() {
         throw error;
       }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Update local state for pet count
+      const customerId = data.customerId;
+      queryClient.setQueryData(['customers'], (oldData) => {
+        if (oldData) {
+          return oldData.map(customer => {
+            if (customer.id === customerId) {
+              return {
+                ...customer,
+                petCount: (customer.petCount || 0) + 1 // Increment pet count
+              };
+            }
+            return customer;
+          });
+        }
+        return oldData;
+      });
+      // Invalidate queries to ensure fresh data
       queryClient.invalidateQueries({ queryKey: ['pets'] });
+      queryClient.invalidateQueries({ queryKey: ['customers'] });
     },
     onError: (error) => {
       console.error('ADD_PET: Mutation error:', error);
