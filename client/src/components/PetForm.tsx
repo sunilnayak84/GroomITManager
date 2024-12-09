@@ -14,10 +14,10 @@ import { Upload } from "lucide-react";
 import { format } from "date-fns";
 
 export type PetFormProps = {
-  onSuccess?: (data: PetFormData) => void;
+  onSuccess?: (data: InsertPet) => void;
   onCancel?: () => void;
-  defaultValues?: Partial<PetFormData>;
-  pet?: InsertPet;
+  defaultValues?: Partial<InsertPet>;
+  pet?: InsertPet & { id?: string };
   customers?: Customer[];
   updatePet?: (id: string, data: Partial<InsertPet>) => Promise<void>;
   addPet: (data: InsertPet) => Promise<InsertPet>;
@@ -109,7 +109,7 @@ export const PetForm: React.FC<PetFormProps> = ({
   }, [customers, fetchedCustomers]);
 
   // Initialize form with default values
-  const form = useForm<PetFormData>({
+  const form = useForm<InsertPet>({
     resolver: zodResolver(insertPetSchema),
     defaultValues: {
       name: defaultValues?.name || pet?.name || "",
@@ -117,12 +117,12 @@ export const PetForm: React.FC<PetFormProps> = ({
       breed: defaultValues?.breed || pet?.breed || "",
       customerId: defaultValues?.customerId || pet?.customerId || "",
       dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
-      age: defaultValues?.age || pet?.age,
-      gender: defaultValues?.gender || pet?.gender,
-      weight: defaultValues?.weight || pet?.weight,
+      age: defaultValues?.age || pet?.age || null,
+      gender: defaultValues?.gender || pet?.gender || null,
+      weight: defaultValues?.weight || pet?.weight || null,
       weightUnit: defaultValues?.weightUnit || pet?.weightUnit || "kg",
-      image: defaultValues?.image || pet?.image,
-      notes: defaultValues?.notes || pet?.notes
+      image: defaultValues?.image || pet?.image || null,
+      notes: defaultValues?.notes || pet?.notes || null
     },
     mode: 'onSubmit',
     reValidateMode: 'onSubmit'
@@ -298,19 +298,7 @@ export const PetForm: React.FC<PetFormProps> = ({
     }
   };
 
-  type PetFormData = {
-    name: string;
-    type: "dog" | "cat" | "bird" | "fish" | "other";
-    breed: string;
-    customerId: string;
-    dateOfBirth?: string;
-    age?: number;
-    gender?: "male" | "female" | "unknown";
-    weight?: string;
-    weightUnit: "kg" | "lbs";
-    image?: string | null;
-    notes?: string;
-  };
+  // Using InsertPet type from schema directly
 
   return (
     <Form {...form}>
