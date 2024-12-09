@@ -228,7 +228,10 @@ export function usePets() {
           const existingPet = await checkDuplicateSubmission(petData.submissionId);
           if (existingPet) {
             console.log('ADD_PET: Duplicate submission detected', { submissionId: petData.submissionId });
-            return existingPet;
+            toast({
+              title: "Duplicate Submission",
+              description: "This pet has already been submitted."
+            });
           }
         }
 
