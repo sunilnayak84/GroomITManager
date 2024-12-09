@@ -136,6 +136,21 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
     const customerRef = doc(customersCollection, customerIdStr);
     const petRef = doc(petsCollection);
     
+    // Check for existing submission
+    if (pet.submissionId) {
+      const existingPetQuery = query(
+        petsCollection,
+        where('submissionId', '==', pet.submissionId)
+      );
+      const existingPetDocs = await getDocs(existingPetQuery);
+      if (!existingPetDocs.empty) {
+        console.log('FIRESTORE: Duplicate submission detected', {
+          submissionId: pet.submissionId
+        });
+        return existingPetDocs.docs[0].id;
+      }
+    }
+
     // Use a transaction to create pet and update customer count atomically
     const petId = await runTransaction(db, async (transaction) => {
       try {
@@ -145,37 +160,46 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
           throw new Error(`Customer with ID ${customerIdStr} does not exist`);
         }
 
-        // Get current pet count from customer document
-        const customerData = customerDoc.data();
-        const currentCount = customerData?.petCount || 0;
-
-        // Query existing pets for this customer to double-check count
+        // Query existing pets within transaction
         const petsQuery = query(petsCollection, where('customerId', '==', customerIdStr));
         const petsSnapshot = await getDocs(petsQuery);
-        const actualPetCount = petsSnapshot.size;
+        
+        // Check for duplicate submission again inside transaction
+        if (pet.submissionId) {
+          const duplicate = petsSnapshot.docs.find(
+            doc => doc.data().submissionId === pet.submissionId
+          );
+          if (duplicate) {
+            console.log('FIRESTORE: Duplicate submission caught in transaction', {
+              submissionId: pet.submissionId
+            });
+            return duplicate.id;
+          }
+        }
 
-        // Use the actual count from the query
+        const actualPetCount = petsSnapshot.size;
         const timestamp = new Date().toISOString();
+        
         const petData = {
           ...pet,
           id: petRef.id,
           customerId: customerIdStr,
           createdAt: timestamp,
-          updatedAt: timestamp
+          updatedAt: timestamp,
+          submissionId: pet.submissionId
         };
 
         console.log('FIRESTORE: Transaction details', { 
           petId: petRef.id,
           customerId: customerIdStr,
-          currentStoredCount: currentCount,
-          actualPetCount,
+          currentPetCount: actualPetCount,
           newPetData: petData
         });
 
         // Create pet document
         transaction.set(petRef, petData);
 
-        // Update customer's pet count using the actual count + 1
+        // Update customer's pet count
         transaction.update(customerRef, {
           petCount: actualPetCount + 1,
           updatedAt: timestamp

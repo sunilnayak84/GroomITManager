@@ -105,6 +105,7 @@ export function PetForm({
     }
   };
 
+  // Debounced submit handler
   const onSubmit = async (data: FormData) => {
     if (isSubmitting) {
       console.log('Form submission blocked - already submitting');
@@ -112,8 +113,13 @@ export function PetForm({
     }
     
     setIsSubmitting(true);
+
+    // Create a unique submission ID at the start
+    const submissionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    console.log('Generated submission ID:', submissionId);
+
     try {
-      console.log('Form submission started:', { data });
+      console.log('Form submission started:', { data, submissionId });
 
       // Find customer by either firebaseId or id
       const selectedCustomer = customers.find(c => 
@@ -124,10 +130,6 @@ export function PetForm({
       if (!selectedCustomer) {
         throw new Error("Selected customer not found");
       }
-
-      // Generate a submission ID to track duplicate submissions
-      const submissionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      console.log('Generated submission ID:', submissionId);
 
       // Clean and prepare the pet data
       const petData: InsertPet = {
@@ -157,18 +159,22 @@ export function PetForm({
       const result = await addPet(petData);
       console.log('Pet creation result:', result);
 
-      toast({
-        title: "Success",
-        description: "Pet added successfully",
-      });
+      if (result) {
+        toast({
+          title: "Success",
+          description: "Pet added successfully",
+        });
 
-      if (onSuccess) {
-        onSuccess(petData);
+        // Only reset form and call onSuccess after confirmed success
+        form.reset();
+        setImagePreview(null);
+        
+        if (onSuccess) {
+          onSuccess(petData);
+        }
+      } else {
+        throw new Error("Failed to create pet - no result returned");
       }
-
-      // Reset form after successful submission
-      form.reset();
-      setImagePreview(null);
       
     } catch (error) {
       console.error('Error submitting pet form:', error);
@@ -433,7 +439,11 @@ export function PetForm({
               Cancel
             </Button>
           )}
-          <Button type="submit" disabled={isSubmitting}>
+          <Button 
+            type="submit" 
+            disabled={isSubmitting || !form.formState.isValid}
+            className={isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}
+          >
             {isSubmitting ? "Saving..." : "Save Pet"}
           </Button>
         </div>
