@@ -160,7 +160,7 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
           throw new Error(`Customer with ID ${customerIdStr} does not exist`);
         }
 
-        // Query existing pets within transaction
+        // Query existing pets and validate count within transaction
         const petsQuery = query(petsCollection, where('customerId', '==', customerIdStr));
         const petsSnapshot = await getDocs(petsQuery);
         
@@ -173,10 +173,14 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
             console.log('FIRESTORE: Duplicate submission caught in transaction', {
               submissionId: pet.submissionId
             });
-            return duplicate.id;
+            return { 
+              petId: duplicate.id,
+              petCount: petsSnapshot.size
+            };
           }
         }
 
+        // Calculate actual pet count from query result
         const actualPetCount = petsSnapshot.size;
         const timestamp = new Date().toISOString();
         
