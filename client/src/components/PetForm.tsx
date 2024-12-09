@@ -199,69 +199,45 @@ export const PetForm: React.FC<PetFormProps> = ({
       // Handle image upload if it's a File
       let imageUrl = data.image;
       if (data.image instanceof File) {
-        try {
-          imageUrl = await uploadFile(
-            data.image,
-            `pets/${data.customerId}/${Date.now()}_${data.image.name}`
-          );
-        } catch (uploadError) {
-          console.error('Image upload failed:', uploadError);
-          throw new Error('Failed to upload pet image');
-        }
+        // For now, we'll just use the file name as the URL
+        // In a real app, you would upload this to storage
+        imageUrl = data.image.name;
       }
 
-      // Prepare pet data for Firebase
       const petData: InsertPet = {
-        name: data.name.trim(),
+        name: data.name,
         type: data.type,
-        breed: data.breed.trim(),
+        breed: data.breed,
         customerId: data.customerId,
         dateOfBirth: data.dateOfBirth,
         age: data.age,
-        gender: data.gender,
+        gender: data.gender as PetGender,
         weight: data.weight,
         weightUnit: data.weightUnit,
         image: imageUrl,
         notes: data.notes,
-        owner: selectedCustomer ? {
-          id: selectedCustomer.id.toString(),
-          firstName: selectedCustomer.firstName,
-          lastName: selectedCustomer.lastName,
-          phone: selectedCustomer.phone,
-          email: selectedCustomer.email
-        } : undefined
+        createdAt: new Date(),
+        updatedAt: new Date()
       };
 
-      console.log('Prepared pet data for submission:', petData);
-
       console.log('Submitting pet data:', petData);
 
-      console.log('Submitting pet data:', petData);
+      const newPet = await addPet(petData);
+      console.log('Pet created successfully:', newPet);
 
-      if (pet?.id) {
-        await updatePetFn(pet.id, petData);
-        toast({
-          title: "Success",
-          description: `${data.name} has been updated successfully.`,
-        });
-      } else {
-        await addPet(petData);
-        toast({
-          title: "Success",
-          description: `${data.name} has been added successfully.`,
-        });
+      toast({
+        title: "Success",
+        description: "Pet added successfully",
+      });
+
+      if (onSuccess) {
+        onSuccess(data);
       }
-
-      onSuccess?.(data);
-      onCancel?.();
-      form.reset();
-      setSelectedImage(null);
-      setImagePreview(null);
     } catch (error) {
       console.error('Error submitting pet form:', error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to save pet",
+        description: error instanceof Error ? error.message : "Failed to add pet",
         variant: "destructive",
       });
     } finally {
@@ -271,78 +247,13 @@ export const PetForm: React.FC<PetFormProps> = ({
 
   return (
     <Form {...form}>
-      <form 
-        onSubmit={(e) => {
-          console.log('Form submit event triggered');
-          form.handleSubmit((data) => {
-            console.log('Form validation passed, calling onSubmit');
-            return onSubmit(data);
-          })(e);
-        }} 
-        className="space-y-4 p-4 max-h-[60vh] overflow-y-auto pr-2"
-      >
-        {!defaultValues?.customerId && (
-          <FormField
-            control={form.control}
-            name="customerId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Customer Owner</FormLabel>
-                <Select
-                  onValueChange={(value) => field.onChange(value)}
-                  value={field.value || ''}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Customer" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {customerOptions.map((customer) => (
-                      <SelectItem 
-                        key={customer.id} 
-                        value={customer.id.toString()}
-                      >
-                        {customer.firstName} {customer.lastName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormItem>
-            )}
-          />
-        )}
-
-        <div className="flex flex-col items-center mb-6">
-          <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-2 relative overflow-hidden">
-            {imagePreview ? (
-              <img 
-                src={imagePreview} 
-                alt="Pet preview" 
-                className="w-full h-full object-cover" 
-              />
-            ) : (
-              <Upload className="w-8 h-8 text-gray-400" />
-            )}
-          </div>
-          <Input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="hidden"
-            id="pet-image"
-          />
-          <label htmlFor="pet-image" className="text-sm text-primary cursor-pointer">
-            Choose Photo
-          </label>
-        </div>
-
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name *</FormLabel>
+              <FormLabel>Name*</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -355,11 +266,8 @@ export const PetForm: React.FC<PetFormProps> = ({
           name="type"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Pet Type *</FormLabel>
-              <Select 
-                onValueChange={field.onChange}
-                value={field.value}
-              >
+              <FormLabel>Pet Type*</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select pet type" />
@@ -382,10 +290,34 @@ export const PetForm: React.FC<PetFormProps> = ({
           name="breed"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Breed *</FormLabel>
+              <FormLabel>Breed*</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="customerId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Customer*</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select customer" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {customerOptions.map((customer) => (
+                    <SelectItem key={customer.id} value={customer.id.toString()}>
+                      {customer.firstName} {customer.lastName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </FormItem>
           )}
         />
@@ -397,11 +329,7 @@ export const PetForm: React.FC<PetFormProps> = ({
             <FormItem>
               <FormLabel>Date of Birth</FormLabel>
               <FormControl>
-                <Input
-                  type="date"
-                  {...field}
-                  value={field.value || ''}
-                />
+                <Input type="date" {...field} value={field.value || ''} />
               </FormControl>
             </FormItem>
           )}
@@ -414,12 +342,7 @@ export const PetForm: React.FC<PetFormProps> = ({
             <FormItem>
               <FormLabel>Age</FormLabel>
               <FormControl>
-                <Input 
-                  type="number"
-                  {...field}
-                  onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
-                  value={field.value || ''}
-                />
+                <Input type="number" {...field} value={field.value || ''} />
               </FormControl>
             </FormItem>
           )}
@@ -431,10 +354,7 @@ export const PetForm: React.FC<PetFormProps> = ({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Gender</FormLabel>
-              <Select 
-                onValueChange={(value) => field.onChange(value as PetGender)}
-                value={field.value || "unknown"}
-              >
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select gender" />
@@ -450,37 +370,30 @@ export const PetForm: React.FC<PetFormProps> = ({
           )}
         />
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="flex gap-4">
           <FormField
             control={form.control}
             name="weight"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex-1">
                 <FormLabel>Weight</FormLabel>
                 <FormControl>
-                  <Input 
-                    type="number" 
-                    step="0.1" 
-                    {...field}
-                    value={field.value || ''}
-                  />
+                  <Input type="number" {...field} value={field.value || ''} />
                 </FormControl>
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="weightUnit"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-24">
                 <FormLabel>Unit</FormLabel>
-                <Select 
-                  onValueChange={field.onChange}
-                  value={field.value}
-                >
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Unit" />
+                      <SelectValue />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -496,38 +409,35 @@ export const PetForm: React.FC<PetFormProps> = ({
         <FormField
           control={form.control}
           name="image"
-          render={({ field: { value, onChange, ...field } }) => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Image</FormLabel>
               <FormControl>
-                <div className="flex items-center gap-4">
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="hidden"
-                    id="pet-image"
-                    {...field}
-                  />
-                  <label
-                    htmlFor="pet-image"
-                    className="flex items-center gap-2 px-4 py-2 border rounded-md cursor-pointer hover:bg-gray-50"
-                  >
-                    <Upload className="w-4 h-4" />
-                    <span>Upload Image</span>
-                  </label>
-                  {selectedImage && (
-                    <span className="text-sm text-gray-500">
-                      {selectedImage.name}
-                    </span>
-                  )}
+                <div className="flex flex-col items-center gap-4">
                   {imagePreview && (
                     <img
                       src={imagePreview}
-                      alt="Pet"
-                      className="w-16 h-16 object-cover rounded-md"
+                      alt="Pet preview"
+                      className="w-32 h-32 object-cover rounded-full"
                     />
                   )}
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                      id="pet-image"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => document.getElementById('pet-image')?.click()}
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      Upload Image
+                    </Button>
+                  </div>
                 </div>
               </FormControl>
             </FormItem>
@@ -547,21 +457,14 @@ export const PetForm: React.FC<PetFormProps> = ({
           )}
         />
 
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-end gap-4">
           {onCancel && (
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={onCancel}
-            >
+            <Button type="button" variant="outline" onClick={onCancel}>
               Cancel
             </Button>
           )}
-          <Button 
-            type="submit" 
-            disabled={isSubmitting}
-          >
-            {pet ? "Update" : "Add"} Pet
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Adding..." : "Add Pet"}
           </Button>
         </div>
       </form>
