@@ -1,7 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertAppointmentSchema, type InsertAppointment } from "@db/schema";
-import { useServices } from "../hooks/use-services";
+import { insertAppointmentSchema, type InsertAppointment } from "@/lib/schema";
 import { Button } from "@/components/ui/button";
 import {
   DialogContent,
@@ -25,14 +24,16 @@ import {
 } from "@/components/ui/select";
 import { useAppointments } from "../hooks/use-appointments";
 import { usePets } from "../hooks/use-pets";
+import { useServices } from "../hooks/use-services";
 import { useToast } from "@/hooks/use-toast";
 
 export default function AppointmentForm() {
   const { addAppointment } = useAppointments();
-  const { pets } = usePets();
+  const { data: pets } = usePets();
+  const { data: services } = useServices();
   const { toast } = useToast();
 
-  const defaultGroomerId = 1;
+  const defaultGroomerId = "1"; // This should come from authentication or context
   const form = useForm<InsertAppointment>({
     resolver: zodResolver(insertAppointmentSchema),
     defaultValues: {
@@ -43,15 +44,14 @@ export default function AppointmentForm() {
       date: new Date(),
       status: "pending",
       notes: "",
-      productsUsed: null,
+      productsUsed: null
     },
   });
 
   async function onSubmit(values: InsertAppointment) {
     try {
-      const data: InsertAppointment = {
+      const data = {
         ...values,
-        status: 'pending' as const,
         date: new Date(values.date)
       };
       await addAppointment(data);
@@ -59,11 +59,12 @@ export default function AppointmentForm() {
         title: "Success",
         description: "Appointment scheduled successfully",
       });
+      form.reset();
     } catch (error) {
       toast({
-        variant: "destructive",
         title: "Error",
         description: "Failed to schedule appointment",
+        variant: "destructive",
       });
     }
   }
@@ -83,7 +84,7 @@ export default function AppointmentForm() {
                 <FormLabel>Pet</FormLabel>
                 <Select
                   onValueChange={(value) => field.onChange(parseInt(value))}
-                  defaultValue={field.value.toString()}
+                  value={field.value.toString()}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -91,9 +92,9 @@ export default function AppointmentForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {(pets || []).map((pet) => (
+                    {pets?.map((pet) => (
                       <SelectItem key={pet.id} value={pet.id.toString()}>
-                        {pet.name} - {pet.breed}
+                        {pet.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -101,6 +102,7 @@ export default function AppointmentForm() {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="serviceId"
@@ -109,7 +111,7 @@ export default function AppointmentForm() {
                 <FormLabel>Service</FormLabel>
                 <Select
                   onValueChange={(value) => field.onChange(parseInt(value))}
-                  defaultValue={field.value.toString()}
+                  value={field.value.toString()}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -127,23 +129,20 @@ export default function AppointmentForm() {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="date"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Date & Time</FormLabel>
+                <FormLabel>Date</FormLabel>
                 <FormControl>
-                  <Input 
-                    type="datetime-local" 
-                    {...field}
-                    value={field.value.toISOString().slice(0, 16)}
-                    onChange={(e) => field.onChange(new Date(e.target.value))}
-                  />
+                  <Input type="datetime-local" {...field} />
                 </FormControl>
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="notes"
@@ -151,14 +150,13 @@ export default function AppointmentForm() {
               <FormItem>
                 <FormLabel>Notes</FormLabel>
                 <FormControl>
-                  <Input {...field} value={field.value ?? ''} />
+                  <Input {...field} />
                 </FormControl>
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full">
-            Schedule Appointment
-          </Button>
+
+          <Button type="submit">Schedule</Button>
         </form>
       </Form>
     </DialogContent>
