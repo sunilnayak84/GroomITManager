@@ -1,0 +1,65 @@
+FETCH_CUSTOMERS: Starting customer fetch
+use-pets.ts:39 FETCH_PETS: Starting to fetch pets
+use-customers.ts:247 FETCH_CUSTOMERS: Processed customer: {id: 'uLzGYzLqKlEu94wxCHgE', firebaseId: 'uLzGYzLqKlEu94wxCHgE', name: 'test user'}
+use-customers.ts:255 USE CUSTOMERS: Fetched customers {customerCount: 1, customerIds: Array(1), customerNames: Array(1)}
+use-pets.ts:44 FETCH_PETS: No pets found in collection
+PetForm.tsx:91 Setting initial customer: {customerId: 'uLzGYzLqKlEu94wxCHgE', customerName: 'test user'}
+chunk-V2JKGL3G.js?v=751543d8:330 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-V2JKGL3G.js?v=751543d8:330
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=751543d8:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=751543d8:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=751543d8:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=751543d8:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=751543d8:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=751543d8:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=751543d8:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=751543d8:19416
+commitRoot @ chunk-RPCDYKBN.js?v=751543d8:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=751543d8:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=751543d8:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=751543d8:18627Understand this warningAI
+PetForm.tsx:91 Setting initial customer: {customerId: 'uLzGYzLqKlEu94wxCHgE', customerName: 'test user'}
+chunk-V2JKGL3G.js?v=751543d8:330 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-V2JKGL3G.js?v=751543d8:330
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=751543d8:16915
+invokePassiveEffectMountInDEV @ chunk-RPCDYKBN.js?v=751543d8:18324
+invokeEffectsInDev @ chunk-RPCDYKBN.js?v=751543d8:19701
+commitDoubleInvokeEffectsInDEV @ chunk-RPCDYKBN.js?v=751543d8:19686
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=751543d8:19503
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=751543d8:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=751543d8:19416
+commitRoot @ chunk-RPCDYKBN.js?v=751543d8:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=751543d8:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=751543d8:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=751543d8:18627Understand this warningAI
+PetForm.tsx:119 Generated submission ID: 1733762549335-g3gr724ti
+PetForm.tsx:122 Form submission started: {data: {…}, submissionId: '1733762549335-g3gr724ti'}
+PetForm.tsx:157 Submitting pet data: {name: 'dwedwe', type: 'dog', breed: 'dwedw', customerId: 'uLzGYzLqKlEu94wxCHgE', dateOfBirth: null, …}
+use-pets.ts:211 ADD_PET: Starting to add pet {petData: {…}}
+use-pets.ts:249 ADD_PET: Adding pet with data: {name: 'dwedwe', type: 'dog', breed: 'dwedw', customerId: 'uLzGYzLqKlEu94wxCHgE', dateOfBirth: null, …}
+firestore.ts:117 FIRESTORE: Attempting to create pet {pet: {…}}
+firestore.ts:192 FIRESTORE: Transaction details {petId: 'hAjRp9b5DCk1s3BvSeWi', customerId: 'uLzGYzLqKlEu94wxCHgE', currentPetCount: 0, newPetData: {…}}
+firestore.ts:215 FIRESTORE: Pet created successfully in transaction {petId: 'hAjRp9b5DCk1s3BvSeWi', customerId: 'uLzGYzLqKlEu94wxCHgE'}
+PetForm.tsx:91 Setting initial customer: {customerId: 'uLzGYzLqKlEu94wxCHgE', customerName: 'test user'}
+use-pets.ts:39 FETCH_PETS: Starting to fetch pets
+toast.ts:4 Success: Pet added successfully
+PetForm.tsx:160 Pet creation result: {id: 'hAjRp9b5DCk1s3BvSeWi', name: 'dwedwe', type: 'dog', breed: 'dwedw', customerId: 'uLzGYzLqKlEu94wxCHgE', …}
+CustomersPage.tsx:578 ADD_PET: Submitting pet data {data: {…}}
+use-pets.ts:211 ADD_PET: Starting to add pet {petData: {…}}
+use-pets.ts:249 ADD_PET: Adding pet with data: {name: 'dwedwe', type: 'dog', breed: 'dwedw', customerId: 'uLzGYzLqKlEu94wxCHgE', dateOfBirth: null, …}
+firestore.ts:117 FIRESTORE: Attempting to create pet {pet: {…}}
+use-pets.ts:68 FETCH_PETS: Available customers: [{…}]
+use-pets.ts:80 FETCH_PETS: Processing pet data: {petId: 'hAjRp9b5DCk1s3BvSeWi', customerId: 'uLzGYzLqKlEu94wxCHgE', petName: 'dwedwe', customerDetails: {…}}
+use-pets.ts:116 FETCH_PETS: Completed fetching pets {totalPets: 1, pets: Array(1)}
+PetForm.tsx:91 Setting initial customer: {customerId: 'uLzGYzLqKlEu94wxCHgE', customerName: 'test user'}
+firestore.ts:147 FIRESTORE: Duplicate submission detected {submissionId: '1733762549335-g3gr724ti'}
+use-pets.ts:39 FETCH_PETS: Starting to fetch pets
+toast.ts:4 Success: Pet added successfully
+use-pets.ts:39 FETCH_PETS: Starting to fetch pets
+use-pets.ts:68 FETCH_PETS: Available customers: [{…}]
+use-pets.ts:80 FETCH_PETS: Processing pet data: {petId: 'hAjRp9b5DCk1s3BvSeWi', customerId: 'uLzGYzLqKlEu94wxCHgE', petName: 'dwedwe', customerDetails: {…}}
+use-pets.ts:116 FETCH_PETS: Completed fetching pets {totalPets: 1, pets: Array(1)}
+use-pets.ts:68 FETCH_PETS: Available customers: [{…}]
+use-pets.ts:80 FETCH_PETS: Processing pet data: {petId: 'hAjRp9b5DCk1s3BvSeWi', customerId: 'uLzGYzLqKlEu94wxCHgE', petName: 'dwedwe', customerDetails: {…}}
+use-pets.ts:116 FETCH_PETS: Completed fetching pets {totalPets: 1, pets: Array(1)}
+PetForm.tsx:91 Setting initial customer: {customerId: 'uLzGYzLqKlEu94wxCHgE', customerName: 'test user'}

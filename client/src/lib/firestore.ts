@@ -200,12 +200,17 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
         transaction.set(petRef, petData);
 
         // Update customer's pet count
+        const newPetCount = actualPetCount + 1;
         transaction.update(customerRef, {
-          petCount: actualPetCount + 1,
+          petCount: newPetCount,
           updatedAt: timestamp
         });
 
-        return petRef.id;
+        // Return both the pet ID and the new count
+        return {
+          petId: petRef.id,
+          petCount: newPetCount
+        };
       } catch (error) {
         console.error('FIRESTORE: Transaction failed', error);
         throw error;
