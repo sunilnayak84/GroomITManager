@@ -50,7 +50,7 @@ interface PetFormProps {
   onCancel?: () => void;
   defaultValues?: Partial<InsertPet>;
   pet?: Pet;
-  customers?: Customer[];
+  customerId: string;
   updatePet?: (id: string, data: Partial<InsertPet>) => Promise<void>;
   addPet: (data: InsertPet) => Promise<Pet>;
   id?: string;
@@ -59,9 +59,9 @@ interface PetFormProps {
 export const PetForm: React.FC<PetFormProps> = ({
   onSuccess,
   onCancel,
-  customers: initialCustomers,
   defaultValues,
   pet,
+  customerId,
   updatePet: externalUpdatePet,
   addPet,
   id
@@ -88,11 +88,6 @@ export const PetForm: React.FC<PetFormProps> = ({
   };
 
   // State management
-  const [selectedCustomerId, setSelectedCustomerId] = useState<number | undefined>(
-    defaultValues?.customerId ? Number(defaultValues.customerId) : 
-    pet?.customerId ? Number(pet.customerId) : undefined
-  );
-  
   const [imagePreview, setImagePreview] = useState<string | null | undefined>(
     defaultValues?.image?.toString() || pet?.image || null
   );
@@ -101,20 +96,11 @@ export const PetForm: React.FC<PetFormProps> = ({
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   // Customer data preparation
-  const { data: fetchedCustomers } = useCustomers();
-  const customerOptions = useMemo(() => {
-    const allCustomers = [...(initialCustomers || [])];
-    return [
-      ...allCustomers,
-      ...(fetchedCustomers || [])
-    ].filter((customer): customer is Customer => !!customer && typeof customer.id === 'number');
-  }, [initialCustomers, fetchedCustomers]);
-
   const defaultFormValues = useMemo(() => ({
     name: defaultValues?.name || pet?.name || "",
     type: (defaultValues?.type || pet?.type || "dog") as "dog" | "cat" | "bird" | "fish" | "other",
     breed: defaultValues?.breed || pet?.breed || "",
-    customerId: defaultValues?.customerId?.toString() || pet?.customerId?.toString() || "",
+    customerId: customerId,
     dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
     age: defaultValues?.age || pet?.age || null,
     gender: (defaultValues?.gender || pet?.gender || "unknown") as "male" | "female" | "unknown",
@@ -122,7 +108,7 @@ export const PetForm: React.FC<PetFormProps> = ({
     weightUnit: (defaultValues?.weightUnit || pet?.weightUnit || "kg") as "kg" | "lbs",
     image: defaultValues?.image || pet?.image || null,
     notes: defaultValues?.notes || pet?.notes || null
-  }), [defaultValues, pet]);
+  }), [defaultValues, pet, customerId]);
 
   const form = useForm<PetFormSchema>({
     resolver: zodResolver(petFormSchema),
@@ -143,7 +129,7 @@ export const PetForm: React.FC<PetFormProps> = ({
         name: defaultValues?.name || pet?.name || "",
         type: (defaultValues?.type || pet?.type || "dog") as "dog" | "cat" | "bird" | "fish" | "other",
         breed: defaultValues?.breed || pet?.breed || "",
-        customerId: Number(defaultValues?.customerId || pet?.customerId),
+        customerId: customerId,
         dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
         age: Number(defaultValues?.age || pet?.age) || null,
         gender: (defaultValues?.gender || pet?.gender || "unknown") as "male" | "female" | "unknown",
@@ -158,10 +144,6 @@ export const PetForm: React.FC<PetFormProps> = ({
       
       if (defaultValues?.image || pet?.image) {
         setImagePreview(defaultValues?.image?.toString() || pet?.image || null);
-      }
-
-      if (formDefaults.customerId) {
-        setSelectedCustomerId(formDefaults.customerId);
       }
     }
   }, [defaultValues, pet, form]);
@@ -185,16 +167,6 @@ export const PetForm: React.FC<PetFormProps> = ({
     setIsSubmitting(true);
     try {
       console.log('Form submission started:', { data });
-
-      if (!data.customerId) {
-        throw new Error("Please select a customer");
-      }
-
-      // Find the selected customer's details
-      const selectedCustomer = customerOptions.find(c => c.id.toString() === data.customerId);
-      if (!selectedCustomer) {
-        throw new Error("Selected customer not found");
-      }
 
       // Handle image upload if it's a File
       let imageUrl = data.image;
@@ -295,30 +267,6 @@ export const PetForm: React.FC<PetFormProps> = ({
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="customerId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Customer*</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select customer" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {customerOptions.map((customer) => (
-                      <SelectItem key={customer.id} value={customer.id.toString()}>
-                        {customer.firstName} {customer.lastName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
               </FormItem>
             )}
           />
