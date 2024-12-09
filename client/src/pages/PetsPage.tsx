@@ -137,36 +137,16 @@ export default function PetsPage() {
 
   return (
     <div className="container mx-auto py-6 space-y-4">
-      <div className="relative h-[200px] rounded-lg overflow-hidden mb-6 bg-gradient-to-r from-purple-500 to-pink-500">
-        <div className="absolute inset-0">
-          <img
-            src="/image.png"
-            alt="Pets Banner"
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/80 to-pink-500/80" />
-        <div className="relative p-8 flex flex-col h-full justify-between">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-4xl font-bold text-white mb-2">Pets Management</h1>
-              <p className="text-white/90 text-lg">Manage and track all your furry friends in one place</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
-              <p className="text-white text-sm">Total Pets</p>
-              <p className="text-white text-2xl font-bold">{filteredPets?.length || 0}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 text-white/80 text-sm">
-            <span>🐶 Dogs</span>
-            <span>•</span>
-            <span>🐱 Cats</span>
-            <span>•</span>
-            <span>🦜 Birds</span>
-            <span>•</span>
-            <span>🐠 Fish</span>
-            <span>•</span>
-            <span>🐾 Others</span>
+      <div className="relative h-48 rounded-xl overflow-hidden">
+        <img
+          src="https://images.unsplash.com/photo-1450778869180-41d0601e046e"
+          alt="Professional Pet Care"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-transparent flex items-center p-8">
+          <div className="text-white">
+            <h2 className="text-2xl font-bold">Pets Management</h2>
+            <p>Manage and track all your furry friends</p>
           </div>
         </div>
       </div>
