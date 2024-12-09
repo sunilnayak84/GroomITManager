@@ -1,77 +1,179 @@
-import { pgTable, integer, varchar, timestamp, text, boolean, numeric } from "drizzle-orm/pg-core";
+import { pgTable, integer, varchar, text, timestamp, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// Branches table
+// Branches table with enhanced Indian address format
 export const branches = pgTable("branches", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   name: varchar("name", { length: 255 }).notNull(),
+  nameHindi: varchar("name_hindi", { length: 255 }), // Hindi name
   address: text("address").notNull(),
-  phone: varchar("phone", { length: 50 }).notNull(),
-  openingTime: varchar("opening_time", { length: 5 }).notNull().default("09:00"),
-  closingTime: varchar("closing_time", { length: 5 }).notNull().default("17:00"),
+  landmark: varchar("landmark", { length: 255 }), // Nearby landmark for easy location
+  area: varchar("area", { length: 100 }).notNull(), // Area/Locality
+  city: varchar("city", { length: 100 }).notNull(),
+  state: varchar("state", { length: 100 }).notNull(),
+  pincode: varchar("pincode", { length: 6 }).notNull(),
+  phone: varchar("phone", { length: 15 }).notNull(),
+  alternatePhone: varchar("alternate_phone", { length: 15 }), // Alternative contact
+  gstin: varchar("gstin", { length: 15 }), // GST registration number
+  isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Working days table
+// Branch schema validation with Indian-specific rules
+export const insertBranchSchema = createInsertSchema(branches, {
+  name: z.string().min(2, "Branch name must be at least 2 characters"),
+  nameHindi: z.string().optional(),
+  address: z.string().min(10, "Address must be at least 10 characters"),
+  landmark: z.string().optional(),
+  area: z.string().min(2, "Area/Locality is required"),
+  city: z.string().min(2, "City is required"),
+  state: z.enum(INDIAN_STATES, {
+    required_error: "Please select a valid Indian state",
+  }),
+  pincode: z.string().regex(/^[1-9][0-9]{5}$/, "Invalid pincode format"),
+  phone: z.string().regex(/^[6-9]\d{9}$/, "Invalid Indian mobile number"),
+  alternatePhone: z.string().regex(/^[6-9]\d{9}$/, "Invalid Indian mobile number").optional(),
+  gstin: z.string().regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/, "Invalid GSTIN format").optional(),
+});
+
+// Working days table with enhanced scheduling
 export const workingDays = pgTable("working_days", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   branchId: integer("branch_id").notNull().references(() => branches.id),
   dayOfWeek: integer("day_of_week").notNull(), // 0-6 for Sunday-Saturday
   isOpen: boolean("is_open").notNull().default(true),
-  openingTime: varchar("opening_time", { length: 5 }), // Override branch default if needed
-  closingTime: varchar("closing_time", { length: 5 }), // Override branch default if needed
+  openingTime: varchar("opening_time", { length: 5 }).notNull(), // 24hr format HH:mm
+  closingTime: varchar("closing_time", { length: 5 }).notNull(), // 24hr format HH:mm
+  breakStart: varchar("break_start", { length: 5 }), // Optional break time
+  breakEnd: varchar("break_end", { length: 5 }), // Optional break time
+  maxDailyAppointments: integer("max_daily_appointments"), // Optional limit
   createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at"),
 });
 
-// Users table with groomer-specific fields
+// Staff/Users table with enhanced groomer fields
 export const users = pgTable("users", {
   id: varchar("id", { length: 255 }).primaryKey(), // Firebase UID
   email: varchar("email", { length: 255 }).unique().notNull(),
   name: varchar("name", { length: 255 }).notNull(),
+  phone: varchar("phone", { length: 15 }).notNull(),
   role: varchar("role", { length: 50 }).notNull().default("staff"),
   branchId: integer("branch_id").references(() => branches.id),
   isGroomer: boolean("is_groomer").notNull().default(false),
   specialties: text("specialties").array(), // Array of service IDs they specialize in
+  petTypePreferences: text("pet_type_preferences").array(), // Types of pets they work with
+  experienceYears: integer("experience_years"),
+  certifications: text("certifications").array(),
   availability: text("availability"), // JSON string of weekly availability
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
-// Services table
-export const services = pgTable("services", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  name: varchar("name", { length: 255 }).notNull(),
-  description: text("description").notNull(),
-  duration: integer("duration").notNull(), // Duration in minutes
-  price: integer("price").notNull(), // Price in cents
-  isActive: boolean("is_active").notNull().default(true),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
-// Inventory items table
-export const inventory = pgTable("inventory", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  name: varchar("name", { length: 255 }).notNull(),
-  description: text("description"),
-  sku: varchar("sku", { length: 50 }).unique(),
-  currentStock: integer("current_stock").notNull().default(0),
-  minimumStock: integer("minimum_stock").notNull().default(5),
-  unit: varchar("unit", { length: 20 }).notNull(), // e.g., "bottle", "pack"
-  unitSize: varchar("unit_size", { length: 20 }), // e.g., "500ml", "1kg"
-  reorderPoint: integer("reorder_point").notNull().default(10),
+  maxDailyAppointments: integer("max_daily_appointments"), // Maximum appointments per day
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at"),
 });
 
-// Service-Inventory relationship (products used in services)
-export const serviceProducts = pgTable("service_products", {
+// Services table with India-specific categories and multilingual support
+export const services = pgTable("services", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  serviceId: integer("service_id").notNull().references(() => services.id),
-  inventoryId: integer("inventory_id").notNull().references(() => inventory.id),
-  quantityUsed: numeric("quantity_used").notNull(), // Amount of product used per service
+  name: varchar("name", { length: 255 }).notNull(),
+  nameHindi: varchar("name_hindi", { length: 255 }), // Hindi name for the service
+  description: text("description").notNull(),
+  descriptionHindi: text("description_hindi"), // Hindi description
+  duration: integer("duration").notNull(), // Duration in minutes
+  priceINR: integer("price_inr").notNull(), // Price in INR (Indian Rupees)
+  gstRate: integer("gst_rate"), // GST rate percentage
+  category: varchar("category", { length: 50 }).notNull(), // Premium, Standard, Basic categories
+  petTypes: text("pet_types").array(), // Array of pet types this service is available for
+  includedServices: text("included_services").array(), // Array of included sub-services
+  isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at"),
 });
+
+// Inventory items table with Indian market context
+export const inventory = pgTable("inventory", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  category: varchar("category", { length: 100 }).notNull(),
+  currentStock: integer("current_stock").notNull(),
+  minimumStock: integer("minimum_stock").notNull(),
+  unit: varchar("unit", { length: 20 }).notNull(), // ml, g, pieces etc.
+  pricePerUnitINR: integer("price_per_unit_inr").notNull(), // Cost per unit in INR
+  supplier: varchar("supplier", { length: 255 }),
+  gstRate: integer("gst_rate"), // GST rate percentage
+  branchId: integer("branch_id").references(() => branches.id),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at"),
+});
+
+// Service categories specific to Indian market
+export const SERVICE_CATEGORIES = {
+  PREMIUM: "Premium",    // Premium grooming with luxury spa treatments and specialty products
+  STANDARD: "Standard",  // Regular grooming services with standard Indian products
+  BASIC: "Basic",       // Essential grooming needs at affordable price point
+} as const;
+
+// States for Indian addresses
+export const INDIAN_STATES = [
+  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
+  "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka",
+  "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram",
+  "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu",
+  "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal",
+  "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
+  "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
+] as const;
+
+// Additional validation schemas
+export const insertServiceSchema = createInsertSchema(services, {
+  name: z.string().min(2, "Service name must be at least 2 characters"),
+  description: z.string().min(10, "Description must be at least 10 characters"),
+  duration: z.number().min(15, "Duration must be at least 15 minutes"),
+  priceINR: z.number().min(0, "Price cannot be negative"),
+  category: z.enum([SERVICE_CATEGORIES.PREMIUM, SERVICE_CATEGORIES.STANDARD, SERVICE_CATEGORIES.BASIC]),
+  petTypes: z.array(z.string()).min(1, "At least one pet type must be specified"),
+  includedServices: z.array(z.string()),
+});
+
+export const insertUserSchema = createInsertSchema(users, {
+  email: z.string().email("Invalid email format"),
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  phone: z.string().min(10, "Phone number must be at least 10 digits"),
+  role: z.enum(["admin", "groomer", "staff"]),
+  specialties: z.array(z.string()).optional(),
+  petTypePreferences: z.array(z.string()).optional(),
+  experienceYears: z.number().min(0).optional(),
+  certifications: z.array(z.string()).optional(),
+  availability: z.string().optional(), // JSON string
+  maxDailyAppointments: z.number().min(1).optional(),
+});
+
+export const insertWorkingDaysSchema = createInsertSchema(workingDays, {
+  dayOfWeek: z.number().min(0).max(6),
+  openingTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/),
+  closingTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/),
+  breakStart: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/).optional(),
+  breakEnd: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/).optional(),
+  maxDailyAppointments: z.number().min(1).optional(),
+});
+
+// Export types
+export type Branch = typeof branches.$inferSelect;
+export type InsertBranch = typeof branches.$inferInsert;
+
+export type WorkingDays = typeof workingDays.$inferSelect;
+export type InsertWorkingDays = typeof workingDays.$inferInsert;
+
+export type User = typeof users.$inferSelect;
+export type InsertUser = typeof users.$inferInsert;
+
+export type Service = typeof services.$inferSelect;
+export type InsertService = typeof services.$inferInsert;
+
+export type Inventory = typeof inventory.$inferSelect;
+export type InsertInventory = typeof inventory.$inferInsert;
 
 // Customers table
 export const customers = pgTable("customers", {
@@ -120,7 +222,15 @@ export const appointments = pgTable("appointments", {
   updatedAt: timestamp("updated_at"),
 });
 
-// Validation schemas
+// Service-Inventory relationship (products used in services)
+export const serviceProducts = pgTable("service_products", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  serviceId: integer("service_id").notNull().references(() => services.id),
+  inventoryId: integer("inventory_id").notNull().references(() => inventory.id),
+  quantityUsed: integer("quantity_used").notNull(), // Amount of product used per service
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const insertPetSchema = createInsertSchema(pets, {
   name: z.string().min(1, "Pet name is required"),
   type: z.string().min(1, "Pet type is required"),
@@ -146,32 +256,17 @@ export const insertAppointmentSchema = createInsertSchema(appointments, {
   productsUsed: z.string().optional(),
 });
 
-export const insertServiceSchema = createInsertSchema(services, {
-  name: z.string().min(2, "Service name must be at least 2 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-  duration: z.number().min(1, "Duration must be at least 1 minute"),
-  price: z.number().min(0, "Price cannot be negative"),
-});
-
 export const insertInventorySchema = createInsertSchema(inventory, {
   name: z.string().min(2, "Product name must be at least 2 characters"),
-  sku: z.string().min(3, "SKU must be at least 3 characters"),
+  category: z.string().min(1, "Category is required"),
   currentStock: z.number().min(0, "Stock cannot be negative"),
+  minimumStock: z.number().min(0, "Minimum stock cannot be negative"),
   unit: z.string().min(1, "Unit is required"),
+  pricePerUnitINR: z.number().min(0, "Price cannot be negative"),
+  supplier: z.string().optional(),
+  gstRate: z.number().min(0).max(100).optional(),
+  branchId: z.number().min(1, "Branch must be selected").optional(),
 });
-
-export const insertWorkingDaysSchema = createInsertSchema(workingDays, {
-  dayOfWeek: z.number().min(0).max(6),
-  openingTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/),
-  closingTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/),
-});
-
-// Export types
-export type Branch = typeof branches.$inferSelect;
-export type InsertBranch = typeof branches.$inferInsert;
-
-export type User = typeof users.$inferSelect;
-export type InsertUser = typeof users.$inferInsert;
 
 export type Customer = typeof customers.$inferSelect;
 export type InsertCustomer = typeof customers.$inferInsert;
@@ -179,14 +274,5 @@ export type InsertCustomer = typeof customers.$inferInsert;
 export type Pet = typeof pets.$inferSelect;
 export type InsertPet = typeof pets.$inferInsert;
 
-export type Service = typeof services.$inferSelect;
-export type InsertService = typeof services.$inferInsert;
-
-export type Inventory = typeof inventory.$inferSelect;
-export type InsertInventory = typeof inventory.$inferInsert;
-
 export type Appointment = typeof appointments.$inferSelect;
 export type InsertAppointment = typeof appointments.$inferInsert;
-
-export type WorkingDays = typeof workingDays.$inferSelect;
-export type InsertWorkingDays = typeof workingDays.$inferInsert;
