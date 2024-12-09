@@ -268,6 +268,7 @@ export default function PetsPage() {
                   defaultValues={selectedPet}
                   pet={selectedPet}
                   id={selectedPet?.id}
+                  customerId={selectedPet?.customerId || customers?.[0]?.id || ""}
                   addPet={addPet}
                 />
               </>
