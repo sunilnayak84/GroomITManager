@@ -65,18 +65,30 @@ export type PetFormData = Omit<Pet, 'id'> & {
   };
 };
 
-export type InsertPet = Omit<z.infer<typeof insertPetSchema>, 'id'> & {
-  id?: number;
-  firebaseId?: string | null;
-  image?: string | null;
+export type InsertPet = {
+  id?: string;
+  name: string;
+  type: "dog" | "cat" | "bird" | "fish" | "other";
+  breed: string;
+  customerId: string;
+  dateOfBirth?: string | null;
+  age?: number | null;
+  gender?: "male" | "female" | "unknown" | null;
+  weight?: string | null;
+  weightUnit?: "kg" | "lbs";
+  image?: string | File | null;
   imageUrl?: string | null;
+  notes?: string | null;
   owner?: {
-    id: number;
+    id: string;
     firstName: string;
     lastName: string;
     phone?: string;
     email?: string;
   };
+  firebaseId?: string | null;
+  createdAt?: Date;
+  updatedAt?: Date | null;
 };
 
 // Common utility types
