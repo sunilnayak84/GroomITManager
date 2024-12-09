@@ -83,7 +83,7 @@ export function PetForm({
     try {
       console.log('Form submission started:', { data });
 
-      const selectedCustomer = customers?.find(c => c.id === data.customerId);
+      const selectedCustomer = customers?.find(c => c.firebaseId === data.customerId);
       if (!selectedCustomer) {
         throw new Error("Selected customer not found");
       }
@@ -93,7 +93,7 @@ export function PetForm({
         name: data.name.trim(),
         type: data.type,
         breed: data.breed.trim(),
-        customerId: selectedCustomer.id,
+        customerId: selectedCustomer.firebaseId!, // Use Firebase ID
         dateOfBirth: data.dateOfBirth,
         age: typeof data.age === 'string' ? parseInt(data.age) : data.age,
         gender: data.gender,
@@ -102,7 +102,7 @@ export function PetForm({
         image: data.image,
         notes: data.notes?.trim() ?? null,
         owner: {
-          id: selectedCustomer.id,
+          id: selectedCustomer.firebaseId!,
           firstName: selectedCustomer.firstName,
           lastName: selectedCustomer.lastName,
           phone: selectedCustomer.phone || '',
