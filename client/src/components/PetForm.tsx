@@ -57,7 +57,7 @@ export function PetForm({
       name: defaultValues?.name ?? "",
       type: defaultValues?.type ?? "dog",
       breed: defaultValues?.breed ?? "",
-      customerId: customerId ?? "",
+      customerId: customerId.toString(),
       dateOfBirth: defaultValues?.dateOfBirth ?? null,
       age: defaultValues?.age ?? null,
       gender: defaultValues?.gender ?? "unknown",
@@ -88,24 +88,25 @@ export function PetForm({
         throw new Error("Selected customer not found");
       }
 
+      // Clean and prepare the pet data
       const petData: InsertPet = {
         name: data.name.trim(),
         type: data.type,
         breed: data.breed.trim(),
-        customerId: data.customerId,
+        customerId: selectedCustomer.id, // Using Firebase document ID directly
         dateOfBirth: data.dateOfBirth,
-        age: data.age,
+        age: typeof data.age === 'string' ? parseInt(data.age) : data.age,
         gender: data.gender,
         weight: data.weight?.trim() ?? null,
         weightUnit: data.weightUnit,
         image: data.image,
         notes: data.notes?.trim() ?? null,
         owner: {
-          id: selectedCustomer.id.toString(),
+          id: selectedCustomer.id,
           firstName: selectedCustomer.firstName,
           lastName: selectedCustomer.lastName,
-          phone: selectedCustomer.phone,
-          email: selectedCustomer.email
+          phone: selectedCustomer.phone || '',
+          email: selectedCustomer.email || ''
         }
       };
 
