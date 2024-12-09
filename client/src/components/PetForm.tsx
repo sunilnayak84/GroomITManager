@@ -7,8 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { toast } from 'react-toastify';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Upload } from "lucide-react";
 
 const petSchema = z.object({
@@ -37,6 +36,7 @@ interface PetFormProps {
   customerId?: string;
   selectedCustomer?: Customer;
   isEditing?: boolean;
+  addPet: (data: InsertPet) => Promise<string>;
 }
 
 export function PetForm({
@@ -46,10 +46,12 @@ export function PetForm({
   customers = [],
   customerId,
   selectedCustomer: initialSelectedCustomer,
-  isEditing = false
+  isEditing = false,
+  addPet
 }: PetFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionId, setSubmissionId] = useState<string | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(
     typeof defaultValues?.image === 'string' ? defaultValues.image : null
   );
@@ -60,7 +62,7 @@ export function PetForm({
       name: defaultValues?.name ?? "",
       type: defaultValues?.type ?? "dog",
       breed: defaultValues?.breed ?? "",
-      customerId: "",
+      customerId: customerId ?? "",
       dateOfBirth: defaultValues?.dateOfBirth ?? null,
       age: defaultValues?.age ?? null,
       gender: defaultValues?.gender ?? "unknown",
@@ -76,13 +78,11 @@ export function PetForm({
     if (customers.length > 0) {
       let selectedCustomer;
       if (customerId) {
-        // Try to find customer by Firebase ID or regular ID
         selectedCustomer = customers.find(c => 
           (c.firebaseId && c.firebaseId === customerId) || 
           c.id.toString() === customerId
         );
       }
-      // If no specific customer found, use the first one
       if (!selectedCustomer) {
         selectedCustomer = customers[0];
       }
@@ -105,8 +105,7 @@ export function PetForm({
     }
   };
 
-  // Debounced submit handler
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = useCallback(async (data: FormData) => {
     if (isSubmitting) {
       console.log('Form submission blocked - already submitting');
       return;
@@ -115,8 +114,13 @@ export function PetForm({
     setIsSubmitting(true);
 
     try {
-      const submissionId = `${Date.now()}-${Math.random().toString(36).substring(2)}`;
-      console.log('Generated submission ID:', submissionId);
+      // Generate submission ID if not already set
+      const currentSubmissionId = submissionId || `${Date.now()}-${Math.random().toString(36).substring(2)}`;
+      if (!submissionId) {
+        setSubmissionId(currentSubmissionId);
+      }
+
+      console.log('Form submission started:', { data, submissionId: currentSubmissionId });
 
       // Find customer by either firebaseId or id
       const selectedCustomer = customers.find(c => 
@@ -130,7 +134,7 @@ export function PetForm({
 
       const petData = {
         ...data,
-        customerId: selectedCustomer.id,
+        customerId: selectedCustomer.id.toString(),
         dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null,
         owner: {
           id: selectedCustomer.id,
@@ -140,35 +144,39 @@ export function PetForm({
           phone: selectedCustomer.phone || '',
           email: selectedCustomer.email || ''
         },
-        submissionId
+        submissionId: currentSubmissionId
       };
 
       console.log('Submitting pet data:', petData);
-      // Removed addPet call
+      
+      const result = await addPet(petData);
+      console.log('Pet creation result:', result);
 
-      toast({
-        title: "Success",
-        description: "Pet added successfully",
-      });
+      if (result) {
+        toast({
+          title: "Success",
+          description: "Pet added successfully",
+        });
 
-      form.reset();
-      setImagePreview(null);
-      onSuccess?.(petData);
+        form.reset();
+        setImagePreview(null);
+        setSubmissionId(null);
+        onSuccess?.(petData);
+      }
     } catch (error) {
       console.error('Error submitting pet form:', error);
       toast({
         title: "Error",
         description: error instanceof Error 
           ? error.message 
-          : "Failed to add pet. Please check all required fields and try again.",
+          : "Failed to add pet. Please try again.",
         variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [isSubmitting, submissionId, customers, addPet, form, onSuccess, toast]);
 
-  // Show message if no customers available
   if (customers.length === 0) {
     return (
       <div className="p-4 text-center">

@@ -13,13 +13,14 @@ export type Pet = {
   name: string;
   type: "dog" | "cat" | "bird" | "fish" | "other";
   breed: string;
-  image: string | null;
-  dateOfBirth: { seconds: number; nanoseconds: number; } | string | null;
+  image: string | File | null;
+  dateOfBirth: string | null;
   age: number | null;
   gender: "male" | "female" | "unknown" | null;
   weight: string | null;
   weightUnit: "kg" | "lbs";
   notes: string | null;
+  submissionId?: string;
   owner?: {
     id: string;
     firstName: string;
@@ -229,13 +230,20 @@ export function usePets() {
       try {
         console.log('ADD_PET: Starting to add pet', { petData });
 
-        // Check for duplicate submission
-        if (petData.submissionId) {
-          const existingPet = await checkDuplicateSubmission(petData.submissionId);
-          if (existingPet) {
-            console.log('ADD_PET: Duplicate submission detected', { submissionId: petData.submissionId });
-            return { isDuplicate: true };
-          }
+        // Generate submission ID if not provided
+        const submissionId = petData.submissionId || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        console.log('ADD_PET: Using submission ID:', submissionId);
+
+        // Check for duplicate submission using transaction
+        const duplicate = await runTransaction(db, async (transaction) => {
+          const q = query(petsCollection, where('submissionId', '==', submissionId));
+          const querySnapshot = await transaction.get(q);
+          return !querySnapshot.empty;
+        });
+
+        if (duplicate) {
+          console.log('ADD_PET: Duplicate submission detected', { submissionId });
+          return { isDuplicate: true };
         }
 
         // Validate required fields
@@ -257,13 +265,30 @@ export function usePets() {
           }
         }
 
-        // Prepare pet data with image URL
-        const petDataWithImage = {
-          ...petData,
-          image: imageUrl
-        };
+        // Use transaction to create pet and update customer's pet count atomically
+        const result = await runTransaction(db, async (transaction) => {
+          // Prepare pet data
+          const petDataWithImage = {
+            ...petData,
+            image: imageUrl,
+            submissionId,
+            createdAt: serverTimestamp()
+          };
 
-        const result = await createPet(petDataWithImage);
+          // Create pet document
+          const petRef = doc(petsCollection);
+          transaction.set(petRef, petDataWithImage);
+
+          // Update customer's pet count
+          const customerRef = doc(customersCollection, petData.customerId);
+          transaction.update(customerRef, {
+            petCount: increment(1)
+          });
+
+          return { id: petRef.id, ...petDataWithImage };
+        });
+
+        console.log('ADD_PET: Successfully added pet', result);
         return result;
       } catch (error) {
         console.error('ADD_PET: Error adding pet:', error);
@@ -346,8 +371,30 @@ export function usePets() {
     mutationFn: async (petId: string) => {
       try {
         console.log('DELETE_PET: Starting deletion', { petId });
-        const petRef = doc(petsCollection, petId);
-        await deleteDoc(petRef);
+
+        // Use transaction to delete pet and update customer's pet count atomically
+        await runTransaction(db, async (transaction) => {
+          // Get pet document first to get customerId
+          const petRef = doc(petsCollection, petId);
+          const petDoc = await transaction.get(petRef);
+
+          if (!petDoc.exists()) {
+            throw new Error('Pet not found');
+          }
+
+          const petData = petDoc.data();
+          const customerId = petData.customerId;
+
+          // Delete pet
+          transaction.delete(petRef);
+
+          // Update customer's pet count
+          const customerRef = doc(customersCollection, customerId);
+          transaction.update(customerRef, {
+            petCount: increment(-1)
+          });
+        });
+
         console.log('DELETE_PET: Successfully deleted pet', { petId });
         return { success: true };
       } catch (error) {

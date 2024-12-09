@@ -52,8 +52,17 @@ export const insertPetSchema = z.object({
   gender: z.enum(["male", "female", "unknown"]).nullable(),
   weight: z.string().nullable(),
   weightUnit: z.enum(["kg", "lbs"]).default("kg"),
-  image: z.string().nullable(),
+  image: z.union([z.string(), z.instanceof(File)]).nullable(),
   notes: z.string().nullable(),
+  submissionId: z.string().optional(),
+  owner: z.object({
+    id: z.string(),
+    firstName: z.string(),
+    lastName: z.string(),
+    name: z.string(),
+    phone: z.string(),
+    email: z.string()
+  }).nullable().optional()
 });
 
 // Schema for Appointment

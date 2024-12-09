@@ -84,12 +84,22 @@ export default function PetsPage() {
     if (!selectedPet) {
       throw new Error('No pet selected for update');
     }
+    
+    // Ensure data types match the schema
+    const updateData: InsertPet = {
+      ...data,
+      customerId: selectedPet.customerId,
+      dateOfBirth: data.dateOfBirth || null,
+      age: data.age || null,
+      gender: data.gender || null,
+      weight: data.weight || null,
+      notes: data.notes || null,
+      image: data.image || null
+    };
+
     await updatePet({ 
       petId: selectedPet.id, 
-      updateData: {
-        ...data,
-        customerId: selectedPet.customerId
-      }
+      updateData
     });
   };
 
@@ -270,7 +280,7 @@ export default function PetsPage() {
                 }}
                 customers={customers}
                 defaultValues={selectedPet ?? undefined}
-                customerId={selectedPet?.customerId ?? (customers?.length > 0 ? customers[0].firebaseId : undefined)}
+                customerId={selectedPet?.customerId ?? (customers?.[0]?.firebaseId ?? '')}
                 isEditing={!!selectedPet}
               />
             </>
