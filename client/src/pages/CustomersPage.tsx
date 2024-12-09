@@ -325,8 +325,8 @@ export default function CustomersPage() {
     <div className="container mx-auto py-6 space-y-4">
       <div className="relative h-48 rounded-xl overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1450778869180-41d0601e046e"
-          alt="Professional Pet Care"
+          src="https://images.unsplash.com/photo-1534705867302-2a42a4ccf079"
+          alt="Professional Customer Service"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-transparent flex items-center p-8">
