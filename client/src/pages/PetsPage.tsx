@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -18,9 +17,7 @@ import { usePets } from "@/hooks/use-pets";
 import { useCustomers } from "@/hooks/use-customers";
 import { PetForm } from "@/components/PetForm";
 import { useToast } from "@/hooks/use-toast";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { insertPetSchema, type InsertPet } from "@db/schema";
+import type { InsertPet } from "@/lib/types";
 import type { Pet } from "@/hooks/use-pets";
 import {
   AlertDialog,
@@ -35,21 +32,74 @@ import {
 
 import React, { useState, useEffect } from "react";
 
+const columns = [
+  {
+    header: "Pet",
+    cell: (pet: Pet) => (
+      <div className="flex items-center gap-3">
+        {pet.image && (
+          <img
+            src={pet.image}
+            alt={pet.name}
+            className="h-10 w-10 rounded-full"
+          />
+        )}
+        <div>
+          <div className="font-medium">{pet.name}</div>
+          <div className="text-sm text-muted-foreground capitalize">
+            {pet.breed} · {pet.type}
+          </div>
+        </div>
+      </div>
+    ),
+  },
+  {
+    header: "Owner",
+    cell: (pet: Pet) => {
+      if (pet.owner) {
+        return `${pet.owner.firstName} ${pet.owner.lastName}`;
+      }
+      return 'N/A';
+    },
+  },
+  {
+    header: "Age",
+    cell: (pet: Pet) => pet.age || "N/A",
+  },
+  {
+    header: "Gender",
+    cell: (pet: Pet) => 
+      pet.gender ? pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1) : "N/A",
+  },
+  {
+    header: "Actions",
+    cell: (pet: Pet) => (
+      <Button 
+        variant="outline" 
+        size="sm"
+        onClick={() => {
+          setSelectedPet(pet);
+          setShowPetDetails(true);
+        }}
+      >
+        View Details
+      </Button>
+    ),
+  },
+];
+
 export default function PetsPage() {
   const { pets, isLoading, updatePet, deletePet, addPet } = usePets();
   const { customers } = useCustomers();
-
   const [showPetDetails, setShowPetDetails] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-
   const { toast } = useToast();
 
-  // Debug logging
   useEffect(() => {
     if (pets) {
-      console.log('PetsPage Debug:', JSON.stringify({
+      console.log('PetsPage Debug:', {
         petsCount: pets.length,
         pets: pets.map(p => ({
           id: p.id,
@@ -57,52 +107,18 @@ export default function PetsPage() {
           customerId: p.customerId,
           owner: p.owner
         }))
-      }, null, 2));
+      });
     }
     if (customers) {
-      console.log('PetsPage Customers Debug:', JSON.stringify({
+      console.log('PetsPage Customers Debug:', {
         customersCount: customers.length,
-        customers: customers.map((c: { id: string; firstName: string; lastName: string; }) => ({
+        customers: customers.map(c => ({
           id: c.id,
           name: `${c.firstName} ${c.lastName}`
         }))
-      }, null, 2));
+      });
     }
   }, [pets, customers]);
-
-  const formatDate = (date: { seconds: number; nanoseconds: number; } | string | Date | null | undefined) => {
-    if (!date) return 'N/A';
-    try {
-      // Handle Firestore timestamp
-      if (typeof date === 'object' && 'seconds' in date) {
-        return new Date(date.seconds * 1000).toLocaleDateString();
-      }
-      // Handle Date object
-      if (date instanceof Date) {
-        return date.toLocaleDateString();
-      }
-      // Handle string date
-      if (typeof date === 'string') {
-        const parsedDate = new Date(date);
-        return !isNaN(parsedDate.getTime()) ? parsedDate.toLocaleDateString() : 'Invalid Date';
-      }
-      return 'N/A';
-    } catch (error) {
-      console.error('Error formatting date:', error);
-      return 'Invalid Date';
-    }
-  };
-
-  // Get owner name helper function
-  const getOwnerName = (pet: Pet) => {
-    if (pet.owner) {
-      return `${pet.owner.firstName} ${pet.owner.lastName}`;
-    }
-    const owner = customers?.find((c: { id: string; firstName: string; lastName: string; }) => 
-      parseInt(c.id) === pet.customerId
-    );
-    return owner ? `${owner.firstName} ${owner.lastName}` : 'N/A';
-  };
 
   const handleUpdatePet = async (data: InsertPet) => {
     if (!selectedPet?.id) {
@@ -113,17 +129,10 @@ export default function PetsPage() {
     try {
       console.log('Update pet data:', {
         petId: selectedPet.id,
-        updateData: data,
-        selectedPet
+        updateData: data
       });
 
-      // Convert customerId to string if it's a number
-      const updateData = {
-        ...data,
-        customerId: data.customerId.toString(),
-      };
-
-      await updatePet(selectedPet.id, updateData);
+      await updatePet(selectedPet.id, data);
       
       toast({
         title: "Success",
@@ -142,200 +151,163 @@ export default function PetsPage() {
     }
   };
 
-  const editForm = useForm<InsertPet>({
-    resolver: zodResolver(insertPetSchema),
-    defaultValues: {
-      name: "",
-      type: "dog",
-      breed: "",
-      customerId: 0,
-      dateOfBirth: undefined,
-      age: undefined,
-      gender: undefined,
-      weight: undefined,
-      weightUnit: "kg",
-      image: null,
-      notes: undefined,
-    },
-  });
-
-  // Populate edit form when pet is selected
-  React.useEffect(() => {
-    if (selectedPet && isEditing) {
-      editForm.reset({
-        name: selectedPet.name,
-        type: selectedPet.type,
-        breed: selectedPet.breed,
-        customerId: parseInt(selectedPet.customerId.toString()),
-        dateOfBirth: selectedPet.dateOfBirth || undefined,
-        age: selectedPet.age || undefined,
-        gender: selectedPet.gender || undefined,
-        weight: selectedPet.weight || undefined,
-        weightUnit: selectedPet.weightUnit || "kg",
-        image: selectedPet.image || null,
-        notes: selectedPet.notes || undefined,
-      });
+  const getOwnerName = (pet: Pet) => {
+    if (pet.owner) {
+      return `${pet.owner.firstName} ${pet.owner.lastName}`;
     }
-  }, [selectedPet, isEditing, editForm]);
+    const owner = customers?.find(c => c.id === pet.customerId);
+    return owner ? `${owner.firstName} ${owner.lastName}` : 'N/A';
+  };
 
-  const columns = [
-    {
-      header: "Pet",
-      cell: (pet: Pet) => (
-        <div className="flex items-center gap-3">
-          {pet.image && (
-            <img
-              src={pet.image}
-              alt={pet.name}
-              className="h-10 w-10 rounded-full"
-            />
-          )}
-          <div>
-            <div className="font-medium">{pet.name}</div>
-            <div className="text-sm text-muted-foreground capitalize">{pet.breed} · {pet.type}</div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      header: "Owner",
-      cell: (pet: Pet) => getOwnerName(pet),
-    },
-    {
-      header: "Age",
-      cell: (pet: Pet) => pet.age || "N/A",
-    },
-    {
-      header: "Gender",
-      cell: (pet: Pet) => pet.gender ? pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1) : "N/A",
-    },
-    {
-      header: "Actions",
-      cell: (pet: Pet) => (
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={() => {
-            setSelectedPet(pet);
-            setShowPetDetails(true);
-          }}
-        >
-          View Details
-        </Button>
-      ),
-    },
-  ];
-
-  useEffect(() => {
-    if (pets) {
-      // Update the table with the latest pets data
+  const formatDate = (date: { seconds: number; nanoseconds: number; } | string | Date | null | undefined) => {
+    if (!date) return 'N/A';
+    try {
+      if (typeof date === 'object' && 'seconds' in date) {
+        return new Date(date.seconds * 1000).toLocaleDateString();
+      }
+      if (date instanceof Date) {
+        return date.toLocaleDateString();
+      }
+      if (typeof date === 'string') {
+        const parsedDate = new Date(date);
+        return !isNaN(parsedDate.getTime()) ? parsedDate.toLocaleDateString() : 'Invalid Date';
+      }
+      return 'N/A';
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Invalid Date';
     }
-  }, [pets]);
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
+  const renderColumns = columns.map((column) => ({
+    ...column,
+    cell: (pet: Pet) => column.cell(pet),
+  }));
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between space-y-2">
+      <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Pets</h2>
           <p className="text-muted-foreground">
             Here&apos;s a list of all pets in your system
           </p>
         </div>
+        <Button
+          onClick={() => {
+            setSelectedPet(null);
+            setIsEditing(true);
+            setShowPetDetails(true);
+          }}
+        >
+          Add Pet
+        </Button>
       </div>
 
-      {selectedPet && (
-        <Dialog open={showPetDetails} onOpenChange={(open) => {
+      <Dialog 
+        open={showPetDetails} 
+        onOpenChange={(open) => {
           setShowPetDetails(open);
           if (!open) {
             setSelectedPet(null);
             setIsEditing(false);
           }
-        }}>
-          <DialogContent className="sm:max-w-[425px]">
-            {isEditing ? (
-              <>
-                <DialogHeader>
-                  <DialogTitle>Edit Pet</DialogTitle>
-                </DialogHeader>
-                <PetForm
-                  onSuccess={(data) => handleUpdatePet(data)}
-                  onCancel={() => setIsEditing(false)}
-                  customers={customers}
-                  defaultValues={selectedPet}
-                  pet={selectedPet}
-                  id={selectedPet?.id}
-                  customerId={selectedPet?.customerId || customers?.[0]?.id || ""}
-                  addPet={addPet}
-                />
-              </>
-            ) : (
-              <>
-                <DialogHeader>
-                  <DialogTitle className="text-center">Pet Details</DialogTitle>
-                  <div className="flex justify-center gap-2 mt-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => setIsEditing(true)}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={() => setShowDeleteConfirm(true)}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </DialogHeader>
-
-                {selectedPet.image && (
-                  <div className="flex justify-center mb-4">
-                    <img
-                      src={selectedPet.image}
-                      alt={`${selectedPet.name}'s photo`}
-                      className="rounded-full w-24 h-24 object-cover"
-                    />
-                  </div>
-                )}
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <strong>Name:</strong> {selectedPet.name}
-                  </div>
-                  <div>
-                    <strong>Type:</strong> {selectedPet.type}
-                  </div>
-                  <div>
-                    <strong>Breed:</strong> {selectedPet.breed}
-                  </div>
-                  <div>
-                    <strong>Owner:</strong> {selectedPet.owner ? `${selectedPet.owner.firstName} ${selectedPet.owner.lastName}` : getOwnerName(selectedPet)}
-                  </div>
-                  <div>
-                    <strong>Age:</strong> {selectedPet.age || 'N/A'}
-                  </div>
-                  <div>
-                    <strong>Gender:</strong> {selectedPet.gender ? selectedPet.gender.charAt(0).toUpperCase() + selectedPet.gender.slice(1) : 'N/A'}
-                  </div>
-                  <div>
-                    <strong>Date of Birth:</strong> {formatDate(selectedPet.dateOfBirth)}
-                  </div>
-                  <div>
-                    <strong>Weight:</strong> {selectedPet.weight ? `${selectedPet.weight} ${selectedPet.weightUnit}` : 'N/A'}
-                  </div>
-                  <div className="col-span-2">
-                    <strong>Notes:</strong> {selectedPet.notes || 'No notes available'}
-                  </div>
+        }}
+      >
+        <DialogContent className="sm:max-w-[425px]">
+          {isEditing ? (
+            <>
+              <DialogHeader>
+                <DialogTitle>{selectedPet ? 'Edit Pet' : 'Add New Pet'}</DialogTitle>
+              </DialogHeader>
+              <PetForm
+                onSuccess={async (data) => {
+                  if (selectedPet) {
+                    await handleUpdatePet(data);
+                  } else {
+                    await addPet(data);
+                    setShowPetDetails(false);
+                  }
+                }}
+                onCancel={() => {
+                  setIsEditing(false);
+                  if (!selectedPet) {
+                    setShowPetDetails(false);
+                  }
+                }}
+                customers={customers}
+                defaultValues={selectedPet ?? undefined}
+                customerId={selectedPet?.customerId ?? (customers?.length > 0 ? customers[0].firebaseId : undefined)}
+                addPet={addPet}
+              />
+            </>
+          ) : selectedPet && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-center">Pet Details</DialogTitle>
+                <div className="flex justify-center gap-2 mt-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => setShowDeleteConfirm(true)}
+                  >
+                    Delete
+                  </Button>
                 </div>
-              </>
-            )}
-          </DialogContent>
-        </Dialog>
-      )}
+              </DialogHeader>
+
+              {selectedPet.image && (
+                <div className="flex justify-center mb-4">
+                  <img
+                    src={selectedPet.image}
+                    alt={`${selectedPet.name}'s photo`}
+                    className="rounded-full w-24 h-24 object-cover"
+                  />
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <strong>Name:</strong> {selectedPet.name}
+                </div>
+                <div>
+                  <strong>Type:</strong> {selectedPet.type}
+                </div>
+                <div>
+                  <strong>Breed:</strong> {selectedPet.breed}
+                </div>
+                <div>
+                  <strong>Owner:</strong> {getOwnerName(selectedPet)}
+                </div>
+                <div>
+                  <strong>Age:</strong> {selectedPet.age || 'N/A'}
+                </div>
+                <div>
+                  <strong>Gender:</strong> {selectedPet.gender ? selectedPet.gender.charAt(0).toUpperCase() + selectedPet.gender.slice(1) : 'N/A'}
+                </div>
+                <div>
+                  <strong>Date of Birth:</strong> {formatDate(selectedPet.dateOfBirth)}
+                </div>
+                <div>
+                  <strong>Weight:</strong> {selectedPet.weight ? `${selectedPet.weight} ${selectedPet.weightUnit}` : 'N/A'}
+                </div>
+                <div className="col-span-2">
+                  <strong>Notes:</strong> {selectedPet.notes || 'No notes available'}
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
         <AlertDialogContent>
@@ -363,25 +335,11 @@ export default function PetsPage() {
         </AlertDialogContent>
       </AlertDialog>
 
-      <div className="relative h-48 rounded-xl overflow-hidden">
-        <img
-          src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b"
-          alt="Pet Care"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-transparent flex items-center p-8">
-          <div className="text-white">
-            <h2 className="text-2xl font-bold mb-2">Pet Profiles</h2>
-            <p>Keep detailed records of all pets</p>
-          </div>
-        </div>
-      </div>
-
       <div className="bg-white rounded-lg shadow">
         <Table>
           <TableHeader>
             <TableRow>
-              {columns.map((column) => (
+              {renderColumns.map((column) => (
                 <TableHead key={column.header}>{column.header}</TableHead>
               ))}
             </TableRow>
@@ -389,7 +347,7 @@ export default function PetsPage() {
           <TableBody>
             {pets?.map((pet) => (
               <TableRow key={pet.id}>
-                {columns.map((column) => (
+                {renderColumns.map((column) => (
                   <TableCell key={`${pet.id}-${column.header}`}>
                     {column.cell(pet)}
                   </TableCell>
