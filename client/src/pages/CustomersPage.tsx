@@ -605,6 +605,8 @@ export default function CustomersPage() {
                   weightUnit: "kg",
                   gender: "unknown"
                 }}
+                customers={customersQuery.data || []}
+                customerId={selectedCustomer.id}
                 addPet={addPet}
               />
             </div>
