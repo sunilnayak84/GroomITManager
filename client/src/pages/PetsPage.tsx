@@ -111,19 +111,19 @@ export default function PetsPage() {
     }
     
     try {
-      // Ensure we're passing a string ID and the update data separately
-      if (!selectedPet?.id) {
-        throw new Error('Selected pet ID is required for update');
-      }
-      
-      const petId = selectedPet.id.toString();
       console.log('Update pet data:', {
-        petId,
+        petId: selectedPet.id,
         updateData: data,
         selectedPet
       });
 
-      await updatePet(petId, data);
+      // Convert customerId to string if it's a number
+      const updateData = {
+        ...data,
+        customerId: data.customerId.toString(),
+      };
+
+      await updatePet(selectedPet.id, updateData);
       
       toast({
         title: "Success",
