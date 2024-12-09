@@ -32,62 +32,6 @@ import {
 
 import React, { useState, useEffect } from "react";
 
-const columns = [
-  {
-    header: "Pet",
-    cell: (pet: Pet) => (
-      <div className="flex items-center gap-3">
-        {pet.image && (
-          <img
-            src={pet.image}
-            alt={pet.name}
-            className="h-10 w-10 rounded-full"
-          />
-        )}
-        <div>
-          <div className="font-medium">{pet.name}</div>
-          <div className="text-sm text-muted-foreground capitalize">
-            {pet.breed} · {pet.type}
-          </div>
-        </div>
-      </div>
-    ),
-  },
-  {
-    header: "Owner",
-    cell: (pet: Pet) => {
-      if (pet.owner) {
-        return `${pet.owner.firstName} ${pet.owner.lastName}`;
-      }
-      return 'N/A';
-    },
-  },
-  {
-    header: "Age",
-    cell: (pet: Pet) => pet.age || "N/A",
-  },
-  {
-    header: "Gender",
-    cell: (pet: Pet) => 
-      pet.gender ? pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1) : "N/A",
-  },
-  {
-    header: "Actions",
-    cell: (pet: Pet) => (
-      <Button 
-        variant="outline" 
-        size="sm"
-        onClick={() => {
-          setSelectedPet(pet);
-          setShowPetDetails(true);
-        }}
-      >
-        View Details
-      </Button>
-    ),
-  },
-];
-
 export default function PetsPage() {
   const { pets, isLoading, updatePet, deletePet, addPet } = usePets();
   const { customers } = useCustomers();
@@ -97,11 +41,68 @@ export default function PetsPage() {
   const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
 
+  const columns = [
+    {
+      header: "Pet",
+      cell: (pet: Pet) => (
+        <div className="flex items-center gap-3">
+          {pet.image && (
+            <img
+              src={pet.image}
+              alt={pet.name}
+              className="h-10 w-10 rounded-full"
+            />
+          )}
+          <div>
+            <div className="font-medium">{pet.name}</div>
+            <div className="text-sm text-muted-foreground capitalize">
+              {pet.breed} · {pet.type}
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      header: "Owner",
+      cell: (pet: Pet) => {
+        if (pet.owner) {
+          return `${pet.owner.firstName} ${pet.owner.lastName}`;
+        }
+        return 'N/A';
+      },
+    },
+    {
+      header: "Age",
+      cell: (pet: Pet) => pet.age || "N/A",
+    },
+    {
+      header: "Gender",
+      cell: (pet: Pet) => 
+        pet.gender ? pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1) : "N/A",
+    },
+    {
+      header: "Actions",
+      cell: (pet: Pet) => (
+        <Button 
+          variant="outline" 
+          size="sm"
+          onClick={() => {
+            setSelectedPet(pet);
+            setShowPetDetails(true);
+          }}
+        >
+          View Details
+        </Button>
+      ),
+    },
+  ];
+
   useEffect(() => {
     if (pets) {
       console.log('PetsPage Debug:', {
         petsCount: pets.length,
         pets: pets.map(p => ({
+
           id: p.id,
           name: p.name,
           customerId: p.customerId,
@@ -240,6 +241,7 @@ export default function PetsPage() {
         <DialogContent className="sm:max-w-[425px]">
           {isEditing ? (
             <>
+
               <DialogHeader>
                 <DialogTitle>{selectedPet ? 'Edit Pet' : 'Add New Pet'}</DialogTitle>
               </DialogHeader>
@@ -264,8 +266,10 @@ export default function PetsPage() {
                 addPet={addPet}
               />
             </>
+
           ) : selectedPet && (
             <>
+
               <DialogHeader>
                 <DialogTitle className="text-center">Pet Details</DialogTitle>
                 <div className="flex justify-center gap-2 mt-2">
@@ -324,6 +328,7 @@ export default function PetsPage() {
                 </div>
               </div>
             </>
+
           )}
         </DialogContent>
       </Dialog>
