@@ -27,22 +27,6 @@ export const insertCustomerSchema = customerSchema.omit({
 export const petSchema = z.object({
   id: z.string(),
   firebaseId: z.string().nullable(),
-  name: z.string(),
-  type: z.enum(["dog", "cat", "bird", "fish", "other"]),
-  breed: z.string(),
-  customerId: z.string(),
-  dateOfBirth: z.string().nullable(),
-  age: z.number().nullable(),
-  gender: z.enum(["male", "female", "unknown"]).nullable(),
-  weight: z.string().nullable(),
-  weightUnit: z.enum(["kg", "lbs"]).default("kg"),
-  image: z.string().nullable(),
-  notes: z.string().nullable(),
-  createdAt: z.date(),
-  updatedAt: z.date().optional(),
-});
-
-export const insertPetSchema = z.object({
   name: z.string().min(1, "Pet name is required"),
   type: z.enum(["dog", "cat", "bird", "fish", "other"]),
   breed: z.string().min(1, "Pet breed is required"),
@@ -54,7 +38,8 @@ export const insertPetSchema = z.object({
   weightUnit: z.enum(["kg", "lbs"]).default("kg"),
   image: z.union([z.string(), z.instanceof(File)]).nullable(),
   notes: z.string().nullable(),
-  submissionId: z.string().optional(),
+  createdAt: z.date(),
+  updatedAt: z.date().optional(),
   owner: z.object({
     id: z.string(),
     firstName: z.string(),
@@ -62,7 +47,17 @@ export const insertPetSchema = z.object({
     name: z.string(),
     phone: z.string(),
     email: z.string()
-  }).nullable().optional()
+  }).nullable()
+});
+
+export const insertPetSchema = petSchema.omit({
+  id: true,
+  firebaseId: true,
+  createdAt: true,
+  updatedAt: true
+}).extend({
+  submissionId: z.string().optional(),
+  image: z.union([z.string(), z.instanceof(File)]).nullable()
 });
 
 // Schema for Appointment

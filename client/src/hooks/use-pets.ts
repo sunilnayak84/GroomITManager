@@ -9,6 +9,7 @@ import { useState } from 'react';
 
 export type Pet = {
   id: string;
+  firebaseId?: string | null;
   customerId: string;  // Firebase document ID
   name: string;
   type: "dog" | "cat" | "bird" | "fish" | "other";
@@ -21,6 +22,8 @@ export type Pet = {
   weightUnit: "kg" | "lbs";
   notes: string | null;
   submissionId?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
   owner?: {
     id: string;
     firstName: string;
