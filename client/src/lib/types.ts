@@ -69,6 +69,14 @@ export type InsertPet = Omit<z.infer<typeof insertPetSchema>, 'id'> & {
   id?: number;
   firebaseId?: string | null;
   image?: string | null;
+  imageUrl?: string | null;
+  owner?: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    phone?: string;
+    email?: string;
+  };
 };
 
 // Common utility types
