@@ -325,7 +325,7 @@ export default function CustomersPage() {
     <div className="container mx-auto py-6 space-y-4">
       <div className="relative h-48 rounded-xl overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1534705867302-2a42a4ccf079"
+          src="https://images.unsplash.com/photo-1573497620053-ea5300f94f21"
           alt="Professional Customer Service"
           className="w-full h-full object-cover"
         />
