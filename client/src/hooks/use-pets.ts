@@ -228,8 +228,7 @@ export function usePets() {
           const existingPet = await checkDuplicateSubmission(petData.submissionId);
           if (existingPet) {
             console.log('ADD_PET: Duplicate submission detected', { submissionId: petData.submissionId });
-            toast.success("This pet has already been submitted.");
-            return null; // Return null to indicate duplicate submission
+            return { isDuplicate: true };
           }
         }
 
@@ -290,27 +289,36 @@ export function usePets() {
         throw error;
       }
     },
-    onSuccess: (data) => {
-      // Update local state for pet count
-      const customerId = data.customerId;
-      queryClient.setQueryData(['customers'], (oldData) => {
-        if (oldData) {
-          return oldData.map(customer => {
-            if (customer.id === customerId) {
-              return {
-                ...customer,
-                petCount: (customer.petCount || 0) + 1 // Increment pet count
-              };
-            }
-            return customer;
-          });
+    onSuccess={async (data) => {
+      try {
+        console.log('ADD_PET: Submitting pet data', { data });
+        const result = await addPet({
+          ...data,
+          customerId: selectedCustomer.id,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+    
+        // Check for duplicate submission
+        if (result?.isDuplicate) {
+          return; // Exit if it's a duplicate
         }
-        return oldData;
-      });
-      // Invalidate queries to ensure fresh data
-      queryClient.invalidateQueries({ queryKey: ['pets'] });
-      queryClient.invalidateQueries({ queryKey: ['customers'] });
-    },
+    
+        setShowAddPet(false);
+        await queryClient.invalidateQueries({ queryKey: ['pets'] });
+        toast({
+          title: "Success",
+          description: "Pet added successfully",
+        });
+      } catch (error) {
+        console.error('ADD_PET: Error adding pet:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: error instanceof Error ? error.message : "Failed to add pet",
+        });
+      }
+    }},
     onError: (error) => {
       console.error('ADD_PET: Mutation error:', error);
     }
