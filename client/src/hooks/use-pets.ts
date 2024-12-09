@@ -205,10 +205,20 @@ export function usePets() {
       throw error;
     }
   };
+
   const addPetMutation = useMutation({
     mutationFn: async (petData: InsertPet) => {
       try {
         console.log('ADD_PET: Starting to add pet', { petData });
+
+        // Check for duplicate submission
+        if (petData.submissionId) {
+          const existingPet = await checkDuplicateSubmission(petData.submissionId);
+          if (existingPet) {
+            console.log('ADD_PET: Duplicate submission detected', { submissionId: petData.submissionId });
+            return existingPet;
+          }
+        }
 
         // Validate required fields
         if (!petData.name || !petData.breed || !petData.type || !petData.customerId) {
@@ -280,11 +290,10 @@ export function usePets() {
       }
     },
     onSuccess: () => {
-      toast.success('Pet added successfully');
+      queryClient.invalidateQueries({ queryKey: ['pets'] });
     },
     onError: (error) => {
       console.error('ADD_PET: Mutation error:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to add pet');
     }
   });
 
