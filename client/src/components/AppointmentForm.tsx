@@ -28,15 +28,15 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function AppointmentForm() {
   const { addAppointment } = useAppointments();
-  const { data: pets } = usePets();
+  const { pets } = usePets();
   const { toast } = useToast();
 
-  const defaultGroomerId = "1";
+  const defaultGroomerId = 1;
   const form = useForm<Omit<Appointment, 'id' | 'createdAt'>>({
     resolver: zodResolver(insertAppointmentSchema),
     defaultValues: {
       petId: 0,
-      groomerId: parseInt(defaultGroomerId),
+      groomerId: defaultGroomerId,
       date: new Date(),
       status: "pending",
       notes: "",
@@ -87,7 +87,7 @@ export default function AppointmentForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {(pets || []).map((pet: any) => (
+                    {(pets || []).map((pet) => (
                       <SelectItem key={pet.id} value={pet.id.toString()}>
                         {pet.name} - {pet.breed}
                       </SelectItem>
