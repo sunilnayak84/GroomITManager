@@ -36,7 +36,7 @@ interface PetFormProps {
   customerId?: string;
   selectedCustomer?: Customer;
   isEditing?: boolean;
-  addPet: (data: InsertPet) => Promise<string>;
+  onSubmit: (data: InsertPet) => Promise<any>;
 }
 
 export function PetForm({
@@ -149,7 +149,7 @@ export function PetForm({
 
       console.log('Submitting pet data:', petData);
       
-      const result = await addPet(petData);
+      const result = await onSubmit(petData);
       console.log('Pet creation result:', result);
 
       if (result) {
