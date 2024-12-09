@@ -19,18 +19,14 @@ const petFormSchema = z.object({
   customerId: z.coerce.number().min(1, { message: "Customer is required" }),
   dateOfBirth: z.string().nullable(),
   age: z.coerce.number().nullable(),
-  gender: z.enum(["male", "female", "unknown"] as const),
+  gender: z.enum(["male", "female", "unknown"] as const).nullable(),
   weight: z.string().nullable(),
   weightUnit: z.enum(["kg", "lbs"] as const).default("kg"),
   image: z.union([z.string(), z.instanceof(File), z.null()]).nullable(),
   notes: z.string().nullable(),
-  owner: z.object({
-    id: z.number(),
-    firstName: z.string(),
-    lastName: z.string(),
-    phone: z.string().optional(),
-    email: z.string().optional()
-  }).optional()
+  id: z.number().optional(),
+  firebaseId: z.string().nullable().optional(),
+  imageUrl: z.string().nullable().optional()
 });
 
 type PetFormSchema = z.infer<typeof petFormSchema>;
@@ -39,7 +35,7 @@ interface PetFormProps {
   onSuccess?: (data: PetFormSchema) => void;
   onCancel?: () => void;
   defaultValues?: Partial<InsertPet>;
-  pet?: Pet;
+  pet?: InsertPet & { id?: number };
   customers?: Customer[];
   updatePet?: (id: number, data: Partial<InsertPet>) => Promise<void>;
   addPet: (data: InsertPet) => Promise<Pet>;
@@ -106,8 +102,8 @@ export const PetForm: React.FC<PetFormProps> = ({
       name: defaultValues?.name || pet?.name || "",
       type: defaultValues?.type || pet?.type || "dog",
       breed: defaultValues?.breed || pet?.breed || "",
-      customerId: Number(defaultValues?.customerId || pet?.customerId) || undefined,
-      dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
+      customerId: Number(defaultValues?.customerId || pet?.customerId) || 0,
+      dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth) || null,
       age: Number(defaultValues?.age || pet?.age) || null,
       gender: (defaultValues?.gender || pet?.gender || "unknown") as PetGender,
       weight: defaultValues?.weight?.toString() || pet?.weight?.toString() || null,
@@ -203,9 +199,6 @@ export const PetForm: React.FC<PetFormProps> = ({
         throw new Error("Customer ID is required");
       }
 
-      // Extract owner information if available
-      const owner = pet?.owner || defaultValues?.owner;
-
       const petData: InsertPet = {
         name: data.name,
         type: data.type,
@@ -216,11 +209,10 @@ export const PetForm: React.FC<PetFormProps> = ({
         age: data.age,
         weight: data.weight?.toString() || null,
         weightUnit: data.weightUnit,
-        image: null, // Will be updated after file upload
-        imageUrl: data.image instanceof File ? null : data.image?.toString() || null,
+        image: data.image instanceof File ? null : data.image,
         notes: data.notes,
-        owner,
-        firebaseId: pet?.firebaseId || null
+        firebaseId: data.firebaseId || null,
+        imageUrl: data.imageUrl || null
       };
 
       if (pet?.id) {
@@ -410,8 +402,9 @@ export const PetForm: React.FC<PetFormProps> = ({
             <FormItem>
               <FormLabel>Gender</FormLabel>
               <Select 
-                onValueChange={(value) => field.onChange(value as PetGender)}
-                value={field.value || "unknown"}
+                onValueChange={(value: string) => field.onChange(value as PetGender)}
+                value={field.value}
+                defaultValue="unknown"
               >
                 <FormControl>
                   <SelectTrigger>

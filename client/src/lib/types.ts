@@ -65,10 +65,20 @@ export type PetFormData = Omit<Pet, 'id'> & {
   };
 };
 
-export type InsertPet = Omit<z.infer<typeof insertPetSchema>, 'id'> & {
+export type InsertPet = {
+  name: string;
+  type: "dog" | "cat" | "bird" | "fish" | "other";
+  breed: string;
+  customerId: number;
+  dateOfBirth: string | null;
+  age: number | null;
+  gender: "male" | "female" | "unknown" | null;
+  weight: string | null;
+  weightUnit: "kg" | "lbs";
+  image: string | null;
+  notes: string | null;
   id?: number;
   firebaseId?: string | null;
-  image?: string | null;
   imageUrl?: string | null;
   owner?: {
     id: number;
