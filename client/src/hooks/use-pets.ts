@@ -237,7 +237,27 @@ export function usePets() {
           throw new Error('Required fields are missing');
         }
 
-        const result = await createPet(petData);
+        // Handle image upload if present
+        let imageUrl = petData.image;
+        if (petData.image instanceof File) {
+          try {
+            imageUrl = await uploadFile(
+              petData.image,
+              `pets/${petData.customerId}/${Date.now()}_${petData.image.name}`
+            );
+          } catch (uploadError) {
+            console.error('ADD_PET: Image upload failed:', uploadError);
+            throw new Error('Failed to upload pet image');
+          }
+        }
+
+        // Prepare pet data with image URL
+        const petDataWithImage = {
+          ...petData,
+          image: imageUrl
+        };
+
+        const result = await createPet(petDataWithImage);
         return result;
       } catch (error) {
         console.error('ADD_PET: Error adding pet:', error);
