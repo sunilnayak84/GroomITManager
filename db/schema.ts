@@ -2,6 +2,24 @@ import { pgTable, integer, varchar, text, timestamp, boolean } from "drizzle-orm
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// States for Indian addresses
+export const INDIAN_STATES = [
+  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
+  "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka",
+  "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram",
+  "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu",
+  "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal",
+  "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
+  "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
+] as const;
+
+// Service categories specific to Indian market
+export const SERVICE_CATEGORIES = {
+  PREMIUM: "Premium",    // Premium grooming with luxury spa treatments and specialty products
+  STANDARD: "Standard",  // Regular grooming services with standard Indian products
+  BASIC: "Basic",       // Essential grooming needs at affordable price point
+} as const;
+
 // Branches table with enhanced Indian address format
 export const branches = pgTable("branches", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
@@ -18,23 +36,6 @@ export const branches = pgTable("branches", {
   gstin: varchar("gstin", { length: 15 }), // GST registration number
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow(),
-});
-
-// Branch schema validation with Indian-specific rules
-export const insertBranchSchema = createInsertSchema(branches, {
-  name: z.string().min(2, "Branch name must be at least 2 characters"),
-  nameHindi: z.string().optional(),
-  address: z.string().min(10, "Address must be at least 10 characters"),
-  landmark: z.string().optional(),
-  area: z.string().min(2, "Area/Locality is required"),
-  city: z.string().min(2, "City is required"),
-  state: z.enum(INDIAN_STATES, {
-    required_error: "Please select a valid Indian state",
-  }),
-  pincode: z.string().regex(/^[1-9][0-9]{5}$/, "Invalid pincode format"),
-  phone: z.string().regex(/^[6-9]\d{9}$/, "Invalid Indian mobile number"),
-  alternatePhone: z.string().regex(/^[6-9]\d{9}$/, "Invalid Indian mobile number").optional(),
-  gstin: z.string().regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/, "Invalid GSTIN format").optional(),
 });
 
 // Working days table with enhanced scheduling
@@ -108,73 +109,6 @@ export const inventory = pgTable("inventory", {
   updatedAt: timestamp("updated_at"),
 });
 
-// Service categories specific to Indian market
-export const SERVICE_CATEGORIES = {
-  PREMIUM: "Premium",    // Premium grooming with luxury spa treatments and specialty products
-  STANDARD: "Standard",  // Regular grooming services with standard Indian products
-  BASIC: "Basic",       // Essential grooming needs at affordable price point
-} as const;
-
-// States for Indian addresses
-export const INDIAN_STATES = [
-  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
-  "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka",
-  "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram",
-  "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu",
-  "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal",
-  "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
-  "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
-] as const;
-
-// Additional validation schemas
-export const insertServiceSchema = createInsertSchema(services, {
-  name: z.string().min(2, "Service name must be at least 2 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-  duration: z.number().min(15, "Duration must be at least 15 minutes"),
-  priceINR: z.number().min(0, "Price cannot be negative"),
-  category: z.enum([SERVICE_CATEGORIES.PREMIUM, SERVICE_CATEGORIES.STANDARD, SERVICE_CATEGORIES.BASIC]),
-  petTypes: z.array(z.string()).min(1, "At least one pet type must be specified"),
-  includedServices: z.array(z.string()),
-});
-
-export const insertUserSchema = createInsertSchema(users, {
-  email: z.string().email("Invalid email format"),
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
-  role: z.enum(["admin", "groomer", "staff"]),
-  specialties: z.array(z.string()).optional(),
-  petTypePreferences: z.array(z.string()).optional(),
-  experienceYears: z.number().min(0).optional(),
-  certifications: z.array(z.string()).optional(),
-  availability: z.string().optional(), // JSON string
-  maxDailyAppointments: z.number().min(1).optional(),
-});
-
-export const insertWorkingDaysSchema = createInsertSchema(workingDays, {
-  dayOfWeek: z.number().min(0).max(6),
-  openingTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/),
-  closingTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/),
-  breakStart: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/).optional(),
-  breakEnd: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/).optional(),
-  maxDailyAppointments: z.number().min(1).optional(),
-});
-
-// Export types
-export type Branch = typeof branches.$inferSelect;
-export type InsertBranch = typeof branches.$inferInsert;
-
-export type WorkingDays = typeof workingDays.$inferSelect;
-export type InsertWorkingDays = typeof workingDays.$inferInsert;
-
-export type User = typeof users.$inferSelect;
-export type InsertUser = typeof users.$inferInsert;
-
-export type Service = typeof services.$inferSelect;
-export type InsertService = typeof services.$inferInsert;
-
-export type Inventory = typeof inventory.$inferSelect;
-export type InsertInventory = typeof inventory.$inferInsert;
-
 // Customers table
 export const customers = pgTable("customers", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
@@ -212,7 +146,7 @@ export const appointments = pgTable("appointments", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   petId: integer("pet_id").notNull().references(() => pets.id),
   serviceId: integer("service_id").notNull().references(() => services.id),
-  groomerId: integer("groomer_id").notNull().references(() => users.id),
+  groomerId: varchar("groomer_id").notNull().references(() => users.id),
   branchId: integer("branch_id").notNull().references(() => branches.id),
   date: timestamp("date").notNull(),
   status: varchar("status", { length: 50 }).notNull().default("pending"),
@@ -231,6 +165,70 @@ export const serviceProducts = pgTable("service_products", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Schema Validations
+export const insertBranchSchema = createInsertSchema(branches, {
+  name: z.string().min(2, "Branch name must be at least 2 characters"),
+  nameHindi: z.string().optional(),
+  address: z.string().min(10, "Address must be at least 10 characters"),
+  landmark: z.string().optional(),
+  area: z.string().min(2, "Area/Locality is required"),
+  city: z.string().min(2, "City is required"),
+  state: z.enum(INDIAN_STATES, {
+    required_error: "Please select a valid Indian state",
+  }),
+  pincode: z.string().regex(/^[1-9][0-9]{5}$/, "Invalid pincode format"),
+  phone: z.string().regex(/^[6-9]\d{9}$/, "Invalid Indian mobile number"),
+  alternatePhone: z.string().regex(/^[6-9]\d{9}$/, "Invalid Indian mobile number").optional(),
+  gstin: z.string().regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/, "Invalid GSTIN format").optional(),
+});
+
+export const insertWorkingDaysSchema = createInsertSchema(workingDays, {
+  dayOfWeek: z.number().min(0).max(6),
+  openingTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/),
+  closingTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/),
+  breakStart: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/).optional(),
+  breakEnd: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/).optional(),
+  maxDailyAppointments: z.number().min(1).optional(),
+});
+
+export const insertServiceSchema = createInsertSchema(services, {
+  name: z.string().min(2, "Service name must be at least 2 characters"),
+  nameHindi: z.string().optional(),
+  description: z.string().min(10, "Description must be at least 10 characters"),
+  descriptionHindi: z.string().optional(),
+  duration: z.number().min(15, "Duration must be at least 15 minutes"),
+  priceINR: z.number().min(0, "Price cannot be negative"),
+  gstRate: z.number().min(0).max(28).optional(), // Standard GST rates in India
+  category: z.enum([SERVICE_CATEGORIES.PREMIUM, SERVICE_CATEGORIES.STANDARD, SERVICE_CATEGORIES.BASIC]),
+  petTypes: z.array(z.string()).min(1, "At least one pet type must be specified"),
+  includedServices: z.array(z.string()),
+});
+
+export const insertUserSchema = createInsertSchema(users, {
+  email: z.string().email("Invalid email format"),
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  phone: z.string().regex(/^[6-9]\d{9}$/, "Invalid Indian mobile number"),
+  role: z.enum(["admin", "groomer", "staff"]),
+  specialties: z.array(z.string()).optional(),
+  petTypePreferences: z.array(z.string()).optional(),
+  experienceYears: z.number().min(0).optional(),
+  certifications: z.array(z.string()).optional(),
+  availability: z.string().optional(),
+  maxDailyAppointments: z.number().min(1).optional(),
+});
+
+export const insertInventorySchema = createInsertSchema(inventory, {
+  name: z.string().min(2, "Product name must be at least 2 characters"),
+  category: z.string().min(1, "Category is required"),
+  currentStock: z.number().min(0, "Stock cannot be negative"),
+  minimumStock: z.number().min(0, "Minimum stock cannot be negative"),
+  unit: z.string().min(1, "Unit is required"),
+  pricePerUnitINR: z.number().min(0, "Price cannot be negative"),
+  supplier: z.string().optional(),
+  gstRate: z.number().min(0).max(28).optional(), // Standard GST rates in India
+  branchId: z.number().min(1, "Branch must be selected").optional(),
+});
+
 export const insertPetSchema = createInsertSchema(pets, {
   name: z.string().min(1, "Pet name is required"),
   type: z.string().min(1, "Pet type is required"),
@@ -245,10 +243,19 @@ export const insertPetSchema = createInsertSchema(pets, {
   notes: z.string().nullable(),
 });
 
+export const insertCustomerSchema = createInsertSchema(customers, {
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  email: z.string().email("Invalid email format"),
+  phone: z.string().regex(/^[6-9]\d{9}$/, "Invalid Indian mobile number"),
+  address: z.string().optional(),
+  gender: z.string().optional(),
+});
+
 export const insertAppointmentSchema = createInsertSchema(appointments, {
   petId: z.number().min(1, "Pet must be selected"),
   serviceId: z.number().min(1, "Service must be selected"),
-  groomerId: z.number().min(1, "Groomer must be selected"),
+  groomerId: z.string().min(1, "Groomer must be selected"),
   branchId: z.number().min(1, "Branch must be selected"),
   date: z.date().min(new Date(), "Appointment date must be in the future"),
   status: z.enum(["pending", "confirmed", "completed", "cancelled"]),
@@ -256,17 +263,21 @@ export const insertAppointmentSchema = createInsertSchema(appointments, {
   productsUsed: z.string().optional(),
 });
 
-export const insertInventorySchema = createInsertSchema(inventory, {
-  name: z.string().min(2, "Product name must be at least 2 characters"),
-  category: z.string().min(1, "Category is required"),
-  currentStock: z.number().min(0, "Stock cannot be negative"),
-  minimumStock: z.number().min(0, "Minimum stock cannot be negative"),
-  unit: z.string().min(1, "Unit is required"),
-  pricePerUnitINR: z.number().min(0, "Price cannot be negative"),
-  supplier: z.string().optional(),
-  gstRate: z.number().min(0).max(100).optional(),
-  branchId: z.number().min(1, "Branch must be selected").optional(),
-});
+// Export types
+export type Branch = typeof branches.$inferSelect;
+export type InsertBranch = typeof branches.$inferInsert;
+
+export type WorkingDays = typeof workingDays.$inferSelect;
+export type InsertWorkingDays = typeof workingDays.$inferInsert;
+
+export type User = typeof users.$inferSelect;
+export type InsertUser = typeof users.$inferInsert;
+
+export type Service = typeof services.$inferSelect;
+export type InsertService = typeof services.$inferInsert;
+
+export type Inventory = typeof inventory.$inferSelect;
+export type InsertInventory = typeof inventory.$inferInsert;
 
 export type Customer = typeof customers.$inferSelect;
 export type InsertCustomer = typeof customers.$inferInsert;
@@ -276,3 +287,6 @@ export type InsertPet = typeof pets.$inferInsert;
 
 export type Appointment = typeof appointments.$inferSelect;
 export type InsertAppointment = typeof appointments.$inferInsert;
+
+export type ServiceProduct = typeof serviceProducts.$inferSelect;
+export type InsertServiceProduct = typeof serviceProducts.$inferInsert;
