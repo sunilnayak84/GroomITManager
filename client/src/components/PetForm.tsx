@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { usePets } from "../hooks/use-pets";
 import { useCustomers } from "../hooks/use-customers";
 import { useToast } from "@/hooks/use-toast";
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Upload } from "lucide-react";
 
 const petFormSchema = z.object({
@@ -104,7 +104,7 @@ export const PetForm: React.FC<PetFormProps> = ({
   }, [initialCustomers, fetchedCustomers]);
 
   // Form initialization with memoized default values
-  const initialValues = React.useMemo(() => ({
+  const initialValues = useMemo(() => ({
     name: defaultValues?.name || pet?.name || "",
     type: (defaultValues?.type || pet?.type || "dog") as "dog" | "cat" | "bird" | "fish" | "other",
     breed: defaultValues?.breed || pet?.breed || "",
