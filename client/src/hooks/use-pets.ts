@@ -229,7 +229,7 @@ export function usePets() {
           if (existingPet) {
             console.log('ADD_PET: Duplicate submission detected', { submissionId: petData.submissionId });
             toast.success("This pet has already been submitted.");
-            // Proceed to add the pet anyway
+            return null; // Return null to indicate duplicate submission
           }
         }
 
@@ -271,32 +271,20 @@ export function usePets() {
 
         console.log('ADD_PET: Adding pet with data:', cleanedData);
         
-        // Start a transaction to ensure atomicity
-        let petId: string;
-        await runTransaction(db, async (transaction) => {
-          // First create the pet
-          petId = await createPet(cleanedData);
-          
-          // Then update the customer's pet count
-          if (cleanedData.customerId) {
-            const customerRef = doc(customersCollection, cleanedData.customerId);
-            const customerDoc = await transaction.get(customerRef);
-            if (!customerDoc.exists()) {
-              throw new Error('Customer not found');
-            }
-            const currentCount = customerDoc.data().petCount || 0;
-            transaction.update(customerRef, {
-              petCount: currentCount + 1,
-              updatedAt: timestamp
-            });
-          }
-        });
+        const petId = await createPet(cleanedData);
+        
+        if (!petId) {
+          throw new Error('Failed to create pet - no ID returned');
+        }
 
-        // Wait for queries to be invalidated before returning
-        await queryClient.invalidateQueries({ queryKey: ['pets'] });
-        await queryClient.invalidateQueries({ queryKey: ['customers'] });
+        // Invalidate queries to trigger a refresh
+        queryClient.invalidateQueries(['pets']);
+        queryClient.invalidateQueries(['customers']);
 
-        return { id: petId, ...cleanedData };
+        return {
+          id: petId,
+          ...cleanedData
+        };
       } catch (error) {
         console.error('ADD_PET: Error adding pet:', error);
         throw error;

@@ -136,7 +136,7 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
     const customerRef = doc(customersCollection, customerIdStr);
     const petRef = doc(petsCollection);
     
-    // Check for existing submission
+    // Check for duplicate submission before starting transaction
     if (pet.submissionId) {
       const existingPetQuery = query(
         petsCollection,
@@ -177,7 +177,18 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
           }
         }
 
+        // Get current pet count from the customer document
+        const currentPetCount = customerDoc.data()?.petCount || 0;
         const actualPetCount = petsSnapshot.size;
+        
+        // Log any discrepancy between stored count and actual count
+        if (currentPetCount !== actualPetCount) {
+          console.log('FIRESTORE: Pet count mismatch detected', {
+            storedCount: currentPetCount,
+            actualCount: actualPetCount
+          });
+        }
+
         const timestamp = new Date().toISOString();
         
         const petData = {
