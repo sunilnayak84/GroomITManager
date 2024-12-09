@@ -322,14 +322,30 @@ export default function CustomersPage() {
   }
 
   return (
-    <div className="p-4 space-y-4">
-      <div className="flex items-center gap-2 mb-4">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search customers..."
-            className="pl-9"
-          />
+    <div className="container mx-auto py-6 space-y-4">
+      <div className="relative h-48 rounded-xl overflow-hidden">
+        <img
+          src="https://images.unsplash.com/photo-1450778869180-41d0601e046e"
+          alt="Professional Pet Care"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-transparent flex items-center p-8">
+          <div className="text-white">
+            <h2 className="text-2xl font-bold">Customer Management</h2>
+            <p>Keep track of all your valued customers</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-between items-center mb-6 gap-4">
+        <div className="flex-1 max-w-md">
+          <div className="relative">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search customers..."
+              className="pl-10 h-12 text-base bg-white shadow-sm"
+            />
+          </div>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
@@ -470,32 +486,18 @@ export default function CustomersPage() {
         </Dialog>
       </div>
 
-      <div className="relative h-48 rounded-xl overflow-hidden">
-        <img
-          src="https://images.unsplash.com/photo-1450778869180-41d0601e046e"
-          alt="Professional Pet Care"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-transparent flex items-center p-8">
-          <div className="text-white">
-            <h2 className="text-2xl font-bold">Customer Management</h2>
-            <p>Keep track of all your valued customers</p>
+      <div className="rounded-xl border bg-white shadow-sm">
+        {customersQuery.isLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <Loader2 className="h-8 w-8 animate-spin" />
           </div>
-        </div>
+        ) : (
+          <DataTable 
+            columns={columns} 
+            data={customersQuery.data || []} 
+          />
+        )}
       </div>
-
-      
-
-      {customersQuery.isLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin" />
-        </div>
-      ) : (
-        <DataTable 
-          columns={columns} 
-          data={customersQuery.data || []} 
-        />
-      )}
 
       {/* Pet List Dialog */}
       <Dialog open={showPetList} onOpenChange={setShowPetList}>
