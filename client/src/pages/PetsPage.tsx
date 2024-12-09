@@ -281,28 +281,21 @@ export default function PetsPage() {
                 <DialogTitle>{selectedPet ? 'Edit Pet' : 'Add New Pet'}</DialogTitle>
               </DialogHeader>
               <PetForm
-                onSuccess={async (data) => {
-                  try {
-                    if (selectedPet) {
-                      await handleUpdatePet(data);
-                    } else {
-                      await addPet(data);
-                    }
-                    setShowPetDetails(false);
-                    setIsEditing(false);
-                    await refetch();
-                    toast({
-                      title: "Success",
-                      description: selectedPet ? "Pet updated successfully" : "Pet added successfully",
-                    });
-                  } catch (error) {
-                    console.error('Error handling pet:', error);
-                    toast({
-                      variant: "destructive",
-                      title: "Error",
-                      description: error instanceof Error ? error.message : "Failed to handle pet",
-                    });
+                onSubmit={async (data) => {
+                  if (selectedPet) {
+                    return handleUpdatePet(data);
+                  } else {
+                    return addPet(data);
                   }
+                }}
+                onSuccess={async (data) => {
+                  setShowPetDetails(false);
+                  setIsEditing(false);
+                  await refetch();
+                  toast({
+                    title: "Success",
+                    description: selectedPet ? "Pet updated successfully" : "Pet added successfully",
+                  });
                 }}
                 onCancel={() => {
                   setIsEditing(false);
