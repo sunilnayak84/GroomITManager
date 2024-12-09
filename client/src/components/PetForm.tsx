@@ -181,7 +181,7 @@ export const PetForm: React.FC<PetFormProps> = ({
         age: data.age,
         weight: data.weight?.toString() || null,
         weightUnit: data.weightUnit,
-        image: null, // Will be updated after file upload
+        image: data.image instanceof File ? data.image : null, // Will be updated after file upload
         imageUrl: data.image instanceof File ? null : data.image?.toString() || null,
         notes: data.notes,
         owner,
