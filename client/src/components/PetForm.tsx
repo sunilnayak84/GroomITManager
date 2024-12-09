@@ -84,10 +84,11 @@ export const PetForm: React.FC<PetFormProps> = ({
   );
   
   const [imagePreview, setImagePreview] = useState<string | null | undefined>(
-    defaultValues?.imageUrl || pet?.imageUrl || defaultValues?.image?.toString() || pet?.image || null
+    defaultValues?.image?.toString() || pet?.image || null
   );
   
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   // Customer data preparation
   const { data: fetchedCustomers } = useCustomers();
@@ -104,15 +105,15 @@ export const PetForm: React.FC<PetFormProps> = ({
     resolver: zodResolver(petFormSchema),
     defaultValues: {
       name: defaultValues?.name || pet?.name || "",
-      type: defaultValues?.type || pet?.type || "dog",
+      type: (defaultValues?.type || pet?.type || "dog") as "dog" | "cat" | "bird" | "fish" | "other",
       breed: defaultValues?.breed || pet?.breed || "",
-      customerId: Number(defaultValues?.customerId || pet?.customerId) || undefined,
+      customerId: Number(defaultValues?.customerId || pet?.customerId) || 0,
       dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
       age: Number(defaultValues?.age || pet?.age) || null,
-      gender: (defaultValues?.gender || pet?.gender || "unknown") as PetGender,
+      gender: (defaultValues?.gender || pet?.gender || "unknown") as "male" | "female" | "unknown",
       weight: defaultValues?.weight?.toString() || pet?.weight?.toString() || null,
-      weightUnit: defaultValues?.weightUnit || pet?.weightUnit || "kg",
-      image: defaultValues?.imageUrl || pet?.imageUrl || defaultValues?.image || pet?.image || null,
+      weightUnit: (defaultValues?.weightUnit || pet?.weightUnit || "kg") as "kg" | "lbs",
+      image: defaultValues?.image || pet?.image || null,
       notes: defaultValues?.notes || pet?.notes || null,
       owner: defaultValues?.owner || pet?.owner
     }
@@ -122,24 +123,22 @@ export const PetForm: React.FC<PetFormProps> = ({
     if (defaultValues || pet) {
       const formDefaults = {
         name: defaultValues?.name || pet?.name || "",
-        type: defaultValues?.type || pet?.type || "dog",
+        type: (defaultValues?.type || pet?.type || "dog") as "dog" | "cat" | "bird" | "fish" | "other",
         breed: defaultValues?.breed || pet?.breed || "",
         customerId: Number(defaultValues?.customerId || pet?.customerId),
         dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
         age: Number(defaultValues?.age || pet?.age) || null,
-        gender: (defaultValues?.gender || pet?.gender || "unknown") as PetGender,
+        gender: (defaultValues?.gender || pet?.gender || "unknown") as "male" | "female" | "unknown",
         weight: defaultValues?.weight?.toString() || pet?.weight?.toString() || null,
-        weightUnit: defaultValues?.weightUnit || pet?.weightUnit || "kg",
-        image: defaultValues?.imageUrl || pet?.imageUrl || defaultValues?.image || pet?.image || null,
+        weightUnit: (defaultValues?.weightUnit || pet?.weightUnit || "kg") as "kg" | "lbs",
+        image: defaultValues?.image || pet?.image || null,
         notes: defaultValues?.notes || pet?.notes || null,
         owner: defaultValues?.owner || pet?.owner
       };
 
       form.reset(formDefaults);
       
-      if (defaultValues?.imageUrl || pet?.imageUrl) {
-        setImagePreview(defaultValues?.imageUrl || pet?.imageUrl);
-      } else if (defaultValues?.image || pet?.image) {
+      if (defaultValues?.image || pet?.image) {
         setImagePreview(defaultValues?.image?.toString() || pet?.image || null);
       }
 
@@ -153,96 +152,67 @@ export const PetForm: React.FC<PetFormProps> = ({
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Validate file type and size
-    const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
-    const maxSize = 5 * 1024 * 1024; // 5MB
-
-    if (!validTypes.includes(file.type)) {
-      toast({
-        title: "Invalid File Type",
-        description: "Please upload a valid image (JPEG, PNG, or GIF)",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (file.size > maxSize) {
-      toast({
-        title: "File Too Large",
-        description: "Image must be less than 5MB",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    try {
-      form.setValue('image', file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    } catch (error) {
-      console.error('Image processing error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to process image",
-        variant: "destructive"
-      });
+    if (file) {
+      setSelectedImage(file);
+      setImagePreview(URL.createObjectURL(file));
+      form.setValue("image", file);
     }
   };
 
   const onSubmit = async (data: PetFormSchema) => {
+    if (isSubmitting) return;
+
     setIsSubmitting(true);
     try {
-      const customerId = Number(data.customerId);
+      const customerId = Number(data.customerId || defaultValues?.customerId);
       
       if (!customerId) {
         throw new Error("Customer ID is required");
       }
 
-      // Extract owner information if available
       const owner = pet?.owner || defaultValues?.owner;
+      const currentDate = new Date();
 
       const petData: InsertPet = {
         name: data.name,
         type: data.type,
         breed: data.breed,
         customerId,
-        dateOfBirth: data.dateOfBirth,
-        gender: data.gender,
-        age: data.age,
+        dateOfBirth: data.dateOfBirth || null,
+        gender: data.gender || "unknown",
+        age: data.age || null,
         weight: data.weight?.toString() || null,
-        weightUnit: data.weightUnit,
-        image: null, // Will be updated after file upload
+        weightUnit: data.weightUnit || "kg",
+        image: data.image instanceof File ? data.image : null,
         imageUrl: data.image instanceof File ? null : data.image?.toString() || null,
-        notes: data.notes,
+        notes: data.notes || null,
         owner,
-        firebaseId: pet?.firebaseId || null
+        firebaseId: pet?.firebaseId || null,
+        createdAt: currentDate,
+        updatedAt: currentDate
       };
 
       if (pet?.id) {
         await updatePetFn(pet.id, petData);
         toast({
-          title: "Pet Updated",
+          title: "Success",
           description: `${data.name} has been updated successfully.`,
         });
       } else {
-        const addedPet = await addPet(petData);
+        await addPet(petData);
         toast({
-          title: "Pet Added",
+          title: "Success",
           description: `${data.name} has been added successfully.`,
         });
-        onSuccess?.(data);
       }
 
+      onSuccess?.(data);
       onCancel?.();
       form.reset();
+      setSelectedImage(null);
       setImagePreview(null);
     } catch (error) {
-      console.error('Pet form submission error:', error);
+      console.error('Error submitting pet form:', error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to save pet",
@@ -470,6 +440,47 @@ export const PetForm: React.FC<PetFormProps> = ({
             )}
           />
         </div>
+
+        <FormField
+          control={form.control}
+          name="image"
+          render={({ field: { value, onChange, ...field } }) => (
+            <FormItem>
+              <FormLabel>Image</FormLabel>
+              <FormControl>
+                <div className="flex items-center gap-4">
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                    id="pet-image"
+                    {...field}
+                  />
+                  <label
+                    htmlFor="pet-image"
+                    className="flex items-center gap-2 px-4 py-2 border rounded-md cursor-pointer hover:bg-gray-50"
+                  >
+                    <Upload className="w-4 h-4" />
+                    <span>Upload Image</span>
+                  </label>
+                  {selectedImage && (
+                    <span className="text-sm text-gray-500">
+                      {selectedImage.name}
+                    </span>
+                  )}
+                  {imagePreview && (
+                    <img
+                      src={imagePreview}
+                      alt="Pet"
+                      className="w-16 h-16 object-cover rounded-md"
+                    />
+                  )}
+                </div>
+              </FormControl>
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}

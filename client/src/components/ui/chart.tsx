@@ -137,7 +137,7 @@ const ChartTooltipContent = React.forwardRef<
       }
 
       const [item] = payload
-      const key = `${labelKey || item.dataKey || item.name || "value"}`
+      const key = `${labelKey || item.dataKey || item.name || "value"}` as string
       const itemConfig = getPayloadConfigFromPayload(config, item, key)
       const value =
         !labelKey && typeof label === "string"
@@ -183,8 +183,8 @@ const ChartTooltipContent = React.forwardRef<
       >
         {!nestLabel ? tooltipLabel : null}
         <div className="grid gap-1.5">
-          {payload.map((item, index) => {
-            const key = `${nameKey || item.name || item.dataKey || "value"}`
+          {payload.map((item: any, index: number) => {
+            const key = `${nameKey || item.name || item.dataKey || "value"}` as string
             const itemConfig = getPayloadConfigFromPayload(config, item, key)
             const indicatorColor = color || item.payload.fill || item.color
 
@@ -199,7 +199,7 @@ const ChartTooltipContent = React.forwardRef<
                 {formatter && item?.value !== undefined && item.name ? (
                   formatter(item.value, item.name, item, index, item.payload)
                 ) : (
-                  <>
+                  <React.Fragment>
                     {itemConfig?.icon ? (
                       <itemConfig.icon />
                     ) : (
@@ -242,7 +242,7 @@ const ChartTooltipContent = React.forwardRef<
                         </span>
                       )}
                     </div>
-                  </>
+                  </React.Fragment>
                 )}
               </div>
             )
@@ -283,8 +283,8 @@ const ChartLegendContent = React.forwardRef<
           className
         )}
       >
-        {payload.map((item) => {
-          const key = `${nameKey || item.dataKey || "value"}`
+        {payload.map((item: any) => {
+          const key = `${nameKey || item.dataKey || "value"}` as string
           const itemConfig = getPayloadConfigFromPayload(config, item, key)
 
           return (

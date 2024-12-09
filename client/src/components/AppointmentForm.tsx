@@ -35,8 +35,10 @@ export default function AppointmentForm() {
   const form = useForm<Omit<Appointment, 'id' | 'createdAt'>>({
     resolver: zodResolver(insertAppointmentSchema),
     defaultValues: {
-      petId: 0,
-      groomerId: parseInt(defaultGroomerId),
+      petId: "",
+      serviceId: "",
+      groomerId: defaultGroomerId,
+      branchId: "1",
       date: new Date(),
       status: "pending",
       notes: "",

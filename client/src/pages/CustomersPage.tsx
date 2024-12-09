@@ -573,16 +573,38 @@ export default function CustomersPage() {
             <div>
               {/* We'll reuse the PetForm component but pre-fill the customer */}
               <PetForm
-                onSuccess={(data) => {
-                  setShowAddPet(false);
-                  // Invalidate pets query to refresh the list
-                  queryClient.invalidateQueries({ queryKey: ['pets'] });
-                  toast({
-                    title: "Success",
-                    description: "Pet added successfully",
-                  });
+                onSuccess={async (data) => {
+                  try {
+                    console.log('ADD_PET: Submitting pet data', { data });
+                    await addPet({
+                      ...data,
+                      customerId: selectedCustomer.id,
+                      createdAt: new Date(),
+                      updatedAt: new Date()
+                    });
+                    
+                    setShowAddPet(false);
+                    // Invalidate pets query to refresh the list
+                    await queryClient.invalidateQueries({ queryKey: ['pets'] });
+                    toast({
+                      title: "Success",
+                      description: "Pet added successfully",
+                    });
+                  } catch (error) {
+                    console.error('ADD_PET: Error adding pet:', error);
+                    toast({
+                      variant: "destructive",
+                      title: "Error",
+                      description: error instanceof Error ? error.message : "Failed to add pet",
+                    });
+                  }
                 }}
-                defaultValues={{ customerId: selectedCustomer.id }}
+                defaultValues={{ 
+                  customerId: selectedCustomer.id,
+                  type: "dog",
+                  weightUnit: "kg",
+                  gender: "unknown"
+                }}
                 addPet={addPet}
               />
             </div>

@@ -32,8 +32,8 @@ export type Pet = {
 export function usePets() {
   const queryClient = useQueryClient();
 
-  const { data: pets = [], isLoading, ...rest } = useQuery<Pet[]>({
-    queryKey: ['pets'],
+  const { data: pets, isLoading, ...rest } = useQuery<Pet[], Error>({
+    queryKey: ["pets"],
     queryFn: async () => {
       try {
         console.log('FETCH_PETS: Starting to fetch pets');
@@ -310,7 +310,7 @@ export function usePets() {
 
   return {
     pets,
-    isLoading: rest.isLoading,
+    isLoading,
     addPet,
     updatePet,
     deletePet,

@@ -116,10 +116,12 @@ export type AppointmentWithRelations = Appointment & {
     name: string;
     breed: string;
     image: string | null;
+    customer: Customer;
   };
-  customer: {
-    firstName: string;
-    lastName: string;
+  service: {
+    name: string;
+    duration: number;
+    price: number;
   };
   groomer: {
     name: string;
