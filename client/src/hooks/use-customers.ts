@@ -10,7 +10,7 @@ export function useCustomers() {
   const queryClient = useQueryClient();
 
   const addCustomerMutation = useMutation({
-    mutationFn: async (customer: Omit<Customer, 'id'>) => {
+    mutationFn: async (customer: InsertCustomer) => {
       // Detailed validation and logging
       const validationErrors: string[] = [];
 
@@ -131,31 +131,41 @@ export function useCustomers() {
 
   const deleteCustomerMutationHook = useMutation({
     mutationFn: deleteCustomerMutation,
-    onSuccess: (deletedId) => {
-      console.log('Delete mutation succeeded for customer:', deletedId);
+    onMutate: async (deletedId) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ["customers"] });
+      await queryClient.cancelQueries({ queryKey: ["pets"] });
+
+      // Snapshot the previous value
+      const previousCustomers = queryClient.getQueryData<Customer[]>(["customers"]);
+
       // Optimistically update the cache
-      queryClient.setQueryData<Customer[]>(["customers"], (old) => 
+      queryClient.setQueryData<Customer[]>(["customers"], old => 
         old?.filter(customer => customer.id !== deletedId) || []
       );
-      
-      // Force refetch to ensure consistency
-      Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["customers"] }),
-        queryClient.invalidateQueries({ queryKey: ["pets"] })
-      ]).catch(error => {
-        console.error('Error refetching data after deletion:', error);
-      });
 
-      // Show success toast
+      return { previousCustomers };
+    },
+    onSuccess: (deletedId) => {
+      console.log('Delete mutation succeeded for customer:', deletedId);
       toast.success("Customer deleted successfully");
     },
-    onError: (error) => {
+    onError: (error, _, context) => {
       console.error('Delete mutation error:', error);
+      // Rollback to the previous state
+      if (context?.previousCustomers) {
+        queryClient.setQueryData(["customers"], context.previousCustomers);
+      }
       toast.error(
         error instanceof Error 
           ? error.message 
           : "Unable to delete customer"
       );
+    },
+    onSettled: () => {
+      // Always refetch after error or success to ensure consistency
+      queryClient.invalidateQueries({ queryKey: ["customers"] });
+      queryClient.invalidateQueries({ queryKey: ["pets"] });
     }
   });
 
@@ -229,39 +239,45 @@ export function useCustomers() {
     };
   }, [queryClient]);
 
+  const customersQuery = useQuery({
+    queryKey: ["customers"],
+    queryFn: async () => {
+      try {
+        const querySnapshot = await getDocs(customersCollection);
+        const customers = querySnapshot.docs.map(doc => {
+          const customerData = doc.data();
+          return {
+            id: doc.id,
+            ...customerData,
+            // Ensure createdAt is a valid Date object
+            createdAt: customerData.createdAt 
+              ? new Date(customerData.createdAt) 
+              : new Date(),
+            petCount: customerData.petCount || 0,
+            gender: customerData.gender || null
+          } satisfies Customer;
+        });
+
+        console.log('USE CUSTOMERS: Fetched customers', {
+          customerCount: customers.length,
+          customerIds: customers.map(c => c.id),
+          customerNames: customers.map(c => `${c.firstName} ${c.lastName}`)
+        });
+
+        return customers;
+      } catch (error) {
+        console.error('Error fetching customers:', error);
+        throw error;
+      }
+    },
+  });
+
   return {
-    customersQuery: useQuery({
-      queryKey: ["customers"],
-      queryFn: async () => {
-        try {
-          const querySnapshot = await getDocs(customersCollection);
-          const customers = querySnapshot.docs.map(doc => {
-            const customerData = doc.data();
-            return {
-              id: doc.id,
-              ...customerData,
-              // Ensure createdAt is a valid Date object
-              createdAt: customerData.createdAt 
-                ? new Date(customerData.createdAt) 
-                : undefined
-            } as Customer;
-          });
-
-          console.error('USE CUSTOMERS: Fetched customers', {
-            customerCount: customers.length,
-            customerIds: customers.map(c => c.id),
-            customerNames: customers.map(c => `${c.firstName} ${c.lastName}`)
-          });
-
-          return customers;
-        } catch (error) {
-          console.error('Error fetching customers:', error);
-          throw error;
-        }
-      },
-    }),
+    customers: customersQuery.data || [],
+    customersQuery,
     addCustomerMutation,
     updateCustomerMutation,
-    deleteCustomerMutationHook
+    deleteCustomerMutationHook,
+    isLoading: customersQuery.isLoading
   };
 }

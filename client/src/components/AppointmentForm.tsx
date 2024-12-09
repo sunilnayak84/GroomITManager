@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertAppointmentSchema, type InsertAppointment } from "@/lib/schema";
+import { insertAppointmentSchema, type InsertAppointment, type Appointment } from "@db/schema";
 import { Button } from "@/components/ui/button";
 import {
   DialogContent,
@@ -24,47 +24,44 @@ import {
 } from "@/components/ui/select";
 import { useAppointments } from "../hooks/use-appointments";
 import { usePets } from "../hooks/use-pets";
-import { useServices } from "../hooks/use-services";
 import { useToast } from "@/hooks/use-toast";
 
 export default function AppointmentForm() {
   const { addAppointment } = useAppointments();
   const { data: pets } = usePets();
-  const { data: services } = useServices();
   const { toast } = useToast();
 
-  const defaultGroomerId = "1"; // This should come from authentication or context
-  const form = useForm<InsertAppointment>({
+  const defaultGroomerId = "1";
+  const form = useForm<Omit<Appointment, 'id' | 'createdAt'>>({
     resolver: zodResolver(insertAppointmentSchema),
     defaultValues: {
       petId: "",
       serviceId: "",
       groomerId: defaultGroomerId,
-      branchId: 1,
+      branchId: "1",
       date: new Date(),
       status: "pending",
       notes: "",
-      productsUsed: null
     },
   });
 
-  async function onSubmit(values: InsertAppointment) {
+  async function onSubmit(values: Omit<Appointment, 'id' | 'createdAt'>) {
+    const data = {
+      ...values,
+      status: 'pending' as const,
+      date: new Date(values.date)
+    };
     try {
-      const data = {
-        ...values,
-        date: new Date(values.date)
-      };
       await addAppointment(data);
       toast({
         title: "Success",
         description: "Appointment scheduled successfully",
       });
-      form.reset();
     } catch (error) {
       toast({
+        variant: "destructive",
         title: "Error",
         description: "Failed to schedule appointment",
-        variant: "destructive",
       });
     }
   }
@@ -84,7 +81,7 @@ export default function AppointmentForm() {
                 <FormLabel>Pet</FormLabel>
                 <Select
                   onValueChange={(value) => field.onChange(parseInt(value))}
-                  value={field.value.toString()}
+                  defaultValue={field.value.toString()}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -92,9 +89,9 @@ export default function AppointmentForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {pets?.map((pet) => (
+                    {(pets || []).map((pet: any) => (
                       <SelectItem key={pet.id} value={pet.id.toString()}>
-                        {pet.name}
+                        {pet.name} - {pet.breed}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -102,47 +99,23 @@ export default function AppointmentForm() {
               </FormItem>
             )}
           />
-
-          <FormField
-            control={form.control}
-            name="serviceId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Service</FormLabel>
-                <Select
-                  onValueChange={(value) => field.onChange(parseInt(value))}
-                  value={field.value.toString()}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a service" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {services?.map((service) => (
-                      <SelectItem key={service.id} value={service.id.toString()}>
-                        {service.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormItem>
-            )}
-          />
-
           <FormField
             control={form.control}
             name="date"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Date</FormLabel>
+                <FormLabel>Date & Time</FormLabel>
                 <FormControl>
-                  <Input type="datetime-local" {...field} />
+                  <Input 
+                    type="datetime-local" 
+                    {...field}
+                    value={field.value.toISOString().slice(0, 16)}
+                    onChange={(e) => field.onChange(new Date(e.target.value))}
+                  />
                 </FormControl>
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="notes"
@@ -150,13 +123,14 @@ export default function AppointmentForm() {
               <FormItem>
                 <FormLabel>Notes</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} value={field.value ?? ''} />
                 </FormControl>
               </FormItem>
             )}
           />
-
-          <Button type="submit">Schedule</Button>
+          <Button type="submit" className="w-full">
+            Schedule Appointment
+          </Button>
         </form>
       </Form>
     </DialogContent>

@@ -15,7 +15,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
-import { insertCustomerSchema, type InsertCustomer, type Customer } from "../../../db/schema";
+import { insertCustomerSchema, type InsertCustomer } from "@/lib/schema";
+import type { Customer } from "@/lib/schema";
+import type { Pet } from "@/hooks/use-pets";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
@@ -31,6 +33,30 @@ export default function CustomersPage() {
   const [showAddPet, setShowAddPet] = useState(false);
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+  const formatDate = (date: { seconds: number; nanoseconds: number; } | string | Date | null | undefined) => {
+    if (!date) return 'N/A';
+    try {
+      // Handle Firestore timestamp
+      if (typeof date === 'object' && 'seconds' in date) {
+        return new Date(date.seconds * 1000).toLocaleDateString();
+      }
+      // Handle Date object
+      if (date instanceof Date) {
+        return date.toLocaleDateString();
+      }
+      // Handle string date
+      if (typeof date === 'string') {
+        const parsedDate = new Date(date);
+        return !isNaN(parsedDate.getTime()) ? parsedDate.toLocaleDateString() : 'Invalid Date';
+      }
+      return 'N/A';
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Invalid Date';
+    }
+  };
+  const [showPetDetails, setShowPetDetails] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -41,8 +67,15 @@ export default function CustomersPage() {
     deleteCustomerMutationHook, 
     addCustomerMutation 
   } = useCustomers();
-  const { data: pets, isLoading: isPetsLoading } = usePets();
+  const { pets = [], isLoading: isPetsLoading, addPet } = usePets();
   const queryClient = useQueryClient();
+
+  // Memoize the pets data
+  const petsData = useMemo(() => ({
+    petsAvailable: !!pets,
+    petsCount: pets?.length,
+    petsMap: new Map(pets?.map(p => [p.id, p]) ?? [])
+  }), [pets]);
 
   const form = useForm<InsertCustomer>({
     resolver: zodResolver(insertCustomerSchema),
@@ -51,7 +84,6 @@ export default function CustomersPage() {
       lastName: "",
       email: "",
       phone: "",
-      password: undefined,
       gender: undefined,
       address: "",
     },
@@ -110,86 +142,59 @@ export default function CustomersPage() {
     },
     {
       header: "Pet Count",
-      cell: (row: Customer) => {
-        console.log('PET_COUNT_DEBUG:', {
-          customerId: row.id,
-          petCount: row.petCount,
-          customerName: `${row.firstName} ${row.lastName}`
-        });
-        
-        return (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              className="text-lg font-medium"
-              onClick={() => {
-                console.log('Opening pet list for customer:', {
-                  customerId: row.id,
-                  customerName: `${row.firstName} ${row.lastName}`,
-                  petCount: row.petCount
-                });
-                setSelectedCustomer(row);
-                setShowPetList(true);
-              }}
-            >
-              {row.petCount || 0}
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => {
-                setSelectedCustomer(row);
-                setShowAddPet(true);
-              }}
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
-        );
-      },
+      cell: (row: Customer) => (
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            className="text-lg font-medium"
+            onClick={() => {
+              setSelectedCustomer(row);
+              setShowPetList(true);
+            }}
+          >
+            {row.petCount || 0}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              setSelectedCustomer(row);
+              setShowAddPet(true);
+            }}
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
     },
     {
       header: "Actions",
-      cell: (row: Customer) => {
-        const customerPets = useMemo(() => {
-          if (!row.id || !pets) return [];
-          return pets.filter(pet => pet.customerId === row.id);
-        }, [row.id, pets]);
-        return (
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => {
-              setSelectedCustomer(row);
-              setShowCustomerDetails(true);
-            }}
-          >
-            View Details
-          </Button>
-        );
-      },
+      cell: (row: Customer) => (
+        <Button 
+          variant="outline" 
+          size="sm"
+          onClick={() => {
+            setSelectedCustomer(row);
+            setShowCustomerDetails(true);
+          }}
+        >
+          View Details
+        </Button>
+      ),
     },
   ];
 
+  // Memoize the filtered pets for the selected customer
   const selectedCustomerPets = useMemo(() => {
-    if (!selectedCustomer || !pets) {
-      console.log('PETS_DEBUG: No pets or customer', { 
-        hasSelectedCustomer: !!selectedCustomer, 
-        hasPets: !!pets,
-        selectedCustomerId: selectedCustomer?.id,
-        petsCount: pets?.length
-      });
-      return [];
-    }
-    const filteredPets = pets.filter(pet => pet.customerId === selectedCustomer.id);
-    console.log('PETS_DEBUG: Filtered pets', { 
-      selectedCustomerId: selectedCustomer.id,
-      totalPets: pets.length,
-      filteredPets,
-      filteredCount: filteredPets.length
-    });
-    return filteredPets;
-  }, [selectedCustomer, pets]);
+    if (!selectedCustomer?.id || !Array.isArray(pets)) return [];
+    return pets.filter(pet => pet.customerId?.toString() === selectedCustomer.id.toString());
+  }, [selectedCustomer?.id, pets]);
+
+  // Memoize the pets map for quick lookup
+  const petsMap = useMemo(() => {
+    if (!Array.isArray(pets)) return new Map();
+    return new Map(pets.map(pet => [pet.customerId?.toString(), pet]));
+  }, [pets]);
 
   async function onSubmit(data: InsertCustomer) {
     setIsSubmitting(true);
@@ -244,7 +249,6 @@ export default function CustomersPage() {
       await addCustomerMutation.mutateAsync({
         ...data,
         createdAt: new Date(),
-        password: data.password || null,
         address: data.address || null
       });
 
@@ -282,16 +286,24 @@ export default function CustomersPage() {
   async function editCustomer(data: InsertCustomer) {
     try {
       // Use the updateCustomerMutation from the hook
+      if (!selectedCustomer?.id) {
+        throw new Error('No customer selected for update');
+      }
+      
       await updateCustomerMutation.mutateAsync({ 
-        id: selectedCustomer?.id, 
+        id: selectedCustomer.id, 
         data: {
           ...data,
-          createdAt: selectedCustomer?.createdAt,
+          createdAt: selectedCustomer.createdAt || new Date(),
         }
       });
       
-      // Update the selected customer
-      setSelectedCustomer(prev => prev ? { ...prev, ...data } : null);
+      // Update the selected customer with type casting for gender
+      setSelectedCustomer(prev => prev ? {
+        ...prev,
+        ...data,
+        gender: data.gender as "male" | "female" | "other" | null
+      } : null);
       
       setIsSubmitting(false);
       setIsEditing(false);
@@ -486,12 +498,12 @@ export default function CustomersPage() {
 
       {/* Pet List Dialog */}
       <Dialog open={showPetList} onOpenChange={setShowPetList}>
-        <DialogContent className="sm:max-w-[425px]" aria-describedby="pet-list-description">
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Pets for {selectedCustomer ? `${selectedCustomer.firstName} ${selectedCustomer.lastName}` : ''}</DialogTitle>
-            <p id="pet-list-description" className="text-sm text-muted-foreground">
+            <div className="text-sm text-muted-foreground">
               View and manage pets for this customer
-            </p>
+            </div>
           </DialogHeader>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -513,22 +525,23 @@ export default function CustomersPage() {
                 <div className="flex justify-center items-center py-8">
                   <Loader2 className="h-6 w-6 animate-spin" />
                 </div>
-              ) : selectedCustomerPets.length === 0 ? (
+              ) : !selectedCustomerPets || selectedCustomerPets.length === 0 ? (
                 <div className="text-center text-muted-foreground py-8">
-                  No pets found for this customer
+                  <p>No pets found for this customer</p>
+                  <p className="text-sm text-muted-foreground mt-2">Click the "Add Pet" button to add a new pet.</p>
                 </div>
               ) : (
                 selectedCustomerPets.map(pet => (
                   <div key={pet.id} className="flex items-center gap-4 p-4 border rounded-lg hover:bg-accent transition-colors">
                     <img
-                      src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
+                      src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(pet.name)}`}
                       alt={pet.name}
                       className="w-12 h-12 rounded-full"
                     />
                     <div className="flex-1">
                       <div className="font-medium">{pet.name}</div>
                       <div className="text-sm text-muted-foreground capitalize">
-                        {pet.breed} · {pet.type}
+                        {pet.breed || 'Unknown breed'} · {pet.type || 'Unknown type'}
                       </div>
                     </div>
                     <Button
@@ -536,10 +549,8 @@ export default function CustomersPage() {
                       size="sm"
                       className="ml-auto"
                       onClick={() => {
-                        toast({
-                          title: "Coming Soon",
-                          description: "Pet details view will be available soon!",
-                        });
+                        setSelectedPet(pet);
+                        setShowPetDetails(true);
                       }}
                     >
                       View
@@ -562,14 +573,17 @@ export default function CustomersPage() {
             <div>
               {/* We'll reuse the PetForm component but pre-fill the customer */}
               <PetForm
-                onSuccess={() => {
+                onSuccess={(data) => {
                   setShowAddPet(false);
+                  // Invalidate pets query to refresh the list
+                  queryClient.invalidateQueries({ queryKey: ['pets'] });
                   toast({
                     title: "Success",
                     description: "Pet added successfully",
                   });
                 }}
                 defaultValues={{ customerId: selectedCustomer.id }}
+                addPet={addPet}
               />
             </div>
           )}
@@ -608,10 +622,14 @@ export default function CustomersPage() {
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
-                      onClick={async () => {
+                      onClick={() => {
                         if (!selectedCustomer) return;
-                        await deleteCustomerMutationHook.mutateAsync(selectedCustomer.id);
-                        setShowCustomerDetails(false);
+                        deleteCustomerMutationHook.mutate(selectedCustomer.id, {
+                          onSuccess: () => {
+                            setShowCustomerDetails(false);
+                            setSelectedCustomer(null);
+                          }
+                        });
                       }}
                     >
                       Delete
@@ -808,10 +826,8 @@ export default function CustomersPage() {
                             size="sm"
                             className="ml-auto"
                             onClick={() => {
-                              toast({
-                                title: "Coming Soon",
-                                description: "Pet details view will be available soon!",
-                              });
+                              setSelectedPet(pet);
+                              setShowPetDetails(true);
                             }}
                           >
                             View
@@ -820,6 +836,55 @@ export default function CustomersPage() {
                       ))}
                     </div>
                   </div>
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Pet Details Dialog */}
+      <Dialog open={showPetDetails} onOpenChange={setShowPetDetails}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Pet Details</DialogTitle>
+          </DialogHeader>
+          {selectedPet && (
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                <img
+                  src={selectedPet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${selectedPet.name}`}
+                  alt={selectedPet.name}
+                  className="w-20 h-20 rounded-full bg-primary/10"
+                />
+                <div>
+                  <h2 className="text-2xl font-bold">{selectedPet.name}</h2>
+                  <p className="text-muted-foreground capitalize">{selectedPet.type} • {selectedPet.breed}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Basic Information</h3>
+                  <p><span className="text-muted-foreground">Type:</span> {selectedPet.type}</p>
+                  <p><span className="text-muted-foreground">Breed:</span> {selectedPet.breed}</p>
+                  <p><span className="text-muted-foreground">Gender:</span> {selectedPet.gender || 'Not specified'}</p>
+                  <p><span className="text-muted-foreground">Age:</span> {selectedPet.age || 'Not specified'}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Additional Information</h3>
+                  <p><span className="text-muted-foreground">Date of Birth:</span> {
+                    formatDate(selectedPet.dateOfBirth)
+                  }</p>
+                  <p><span className="text-muted-foreground">Weight:</span> {selectedPet.weight ? `${selectedPet.weight} ${selectedPet.weightUnit}` : 'Not specified'}</p>
+                </div>
+              </div>
+
+              {selectedPet.notes && (
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Notes</h3>
+                  <p className="text-sm text-muted-foreground">{selectedPet.notes}</p>
                 </div>
               )}
             </div>
