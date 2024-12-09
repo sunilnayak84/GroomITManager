@@ -32,100 +32,102 @@ export type Pet = {
 export function usePets() {
   const queryClient = useQueryClient();
 
-  const { data: pets, isLoading, ...rest } = useQuery<Pet[], Error>({
-    queryKey: ["pets"],
-    queryFn: async () => {
-      try {
-        console.log('FETCH_PETS: Starting to fetch pets');
-        const q = query(petsCollection);
-        const querySnapshot = await getDocs(q);
-        
-        if (querySnapshot.empty) {
-          console.log('FETCH_PETS: No pets found in collection');
-          return [];
-        }
-        
-        // First, fetch all customers to create a lookup map
-        const customersQuery = query(customersCollection);
-        const customersSnapshot = await getDocs(customersQuery);
-        
-        const customersMap = new Map(
-          customersSnapshot.docs.map(doc => {
-            const data = doc.data();
-            return [
-              doc.id,  // Use the Firebase document ID as the key
-              {
-                id: doc.id,
-                firstName: data.firstName,
-                lastName: data.lastName,
-                phone: data.phone,
-                email: data.email
-              }
-            ];
-          })
-        );
-
-        console.log('FETCH_PETS: Available customers:', 
-          Array.from(customersMap.entries()).map(([id, data]) => ({
-            id,
-            name: `${data.firstName} ${data.lastName}`
-          }))
-        );
-
-        const fetchedPets = querySnapshot.docs.map((doc) => {
-          const petData = doc.data();
-          const customerId = petData.customerId;  // Use the raw customerId
-          const customerDetails = customersMap.get(customerId);
-          
-          console.log('FETCH_PETS: Processing pet data:', {
-            petId: doc.id,
-            customerId,
-            petName: petData.name,
-            customerDetails: customerDetails ? {
-              id: customerDetails.id,
-              name: `${customerDetails.firstName} ${customerDetails.lastName}`
-            } : null
-          });
-
-          const pet: PetWithRelations = {
-            id: doc.id,
-            customerId: customerId,
-            name: petData.name,
-            type: petData.type || 'dog',
-            breed: petData.breed,
-            image: petData.image || null,
-            dateOfBirth: petData.dateOfBirth || null,
-            age: petData.age || null,
-            gender: petData.gender || null,
-            weight: petData.weight || null,
-            weightUnit: petData.weightUnit || 'kg',
-            notes: petData.notes || null,
-            owner: customerDetails ? {
-              id: customerDetails.id,
-              firstName: customerDetails.firstName,
-              lastName: customerDetails.lastName,
-              name: `${customerDetails.firstName} ${customerDetails.lastName}`,
-              phone: customerDetails.phone || '',
-              email: customerDetails.email || ''
-            } : null
-          };
-
-          return pet;
-        });
-
-        console.log('FETCH_PETS: Completed fetching pets', {
-          totalPets: fetchedPets.length,
-          pets: fetchedPets
-        });
-
-        return fetchedPets;
-      } catch (error) {
-        console.error('FETCH_PETS: Error fetching pets:', error);
-        throw error;
+  const fetchPets = async () => {
+    try {
+      console.log('FETCH_PETS: Starting to fetch pets');
+      const q = query(petsCollection);
+      const querySnapshot = await getDocs(q);
+      
+      if (querySnapshot.empty) {
+        console.log('FETCH_PETS: No pets found in collection');
+        return [];
       }
-    },
-    retry: 2,
-    staleTime: 1000 * 60 * 5 // 5 minutes
+      
+      // First, fetch all customers to create a lookup map
+      const customersQuery = query(customersCollection);
+      const customersSnapshot = await getDocs(customersQuery);
+      
+      const customersMap = new Map(
+        customersSnapshot.docs.map(doc => {
+          const data = doc.data();
+          return [
+            doc.id,  // Use the Firebase document ID as the key
+            {
+              id: doc.id,
+              firstName: data.firstName,
+              lastName: data.lastName,
+              phone: data.phone,
+              email: data.email
+            }
+          ];
+        })
+      );
+
+      console.log('FETCH_PETS: Available customers:', 
+        Array.from(customersMap.entries()).map(([id, data]) => ({
+          id,
+          name: `${data.firstName} ${data.lastName}`
+        }))
+      );
+
+      const fetchedPets = querySnapshot.docs.map((doc) => {
+        const petData = doc.data();
+        const customerId = petData.customerId;  // Use the raw customerId
+        const customerDetails = customersMap.get(customerId);
+        
+        console.log('FETCH_PETS: Processing pet data:', {
+          petId: doc.id,
+          customerId,
+          petName: petData.name,
+          customerDetails: customerDetails ? {
+            id: customerDetails.id,
+            name: `${customerDetails.firstName} ${customerDetails.lastName}`
+          } : null
+        });
+
+        const pet: Pet = {
+          id: doc.id,
+          customerId: customerId,
+          name: petData.name,
+          type: petData.type || 'dog',
+          breed: petData.breed,
+          image: petData.image || null,
+          dateOfBirth: petData.dateOfBirth || null,
+          age: petData.age || null,
+          gender: petData.gender || null,
+          weight: petData.weight || null,
+          weightUnit: petData.weightUnit || 'kg',
+          notes: petData.notes || null,
+          owner: customerDetails ? {
+            id: customerDetails.id,
+            firstName: customerDetails.firstName,
+            lastName: customerDetails.lastName,
+            name: `${customerDetails.firstName} ${customerDetails.lastName}`,
+            phone: customerDetails.phone || '',
+            email: customerDetails.email || ''
+          } : null
+        };
+
+        return pet;
+      });
+
+      console.log('FETCH_PETS: Completed fetching pets', {
+        totalPets: fetchedPets.length,
+        pets: fetchedPets
+      });
+
+      return fetchedPets;
+    } catch (error) {
+      console.error('FETCH_PETS: Error fetching pets:', error);
+      throw error;
+    }
+  };
+
+  const { data: pets, isLoading } = useQuery({
+    queryKey: ['pets'],
+    queryFn: fetchPets,
+    staleTime: 0, // Always fetch fresh data
+    cacheTime: 0  // Don't cache the results
   });
 
   const updatePet = async (petId: string, updateData: Partial<InsertPet>) => {
@@ -268,10 +270,71 @@ export function usePets() {
       if (result?.isDuplicate) {
         return; // Exit if it's a duplicate submission
       }
-      await queryClient.invalidateQueries({ queryKey: ['pets'] });
+      // Invalidate both pets and customers queries
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['pets'] }),
+        queryClient.invalidateQueries({ queryKey: ['customers'] })
+      ]);
+      await queryClient.refetchQueries({ queryKey: ['pets'] });
     },
     onError: (error: Error) => {
       console.error('ADD_PET: Mutation error:', error);
+    }
+  });
+
+  const updatePetMutation = useMutation({
+    mutationFn: async ({ petId, updateData }: { petId: string; updateData: Partial<Pet> }) => {
+      try {
+        console.log('UPDATE_PET: Starting update', { 
+          petId, 
+          updateData,
+          petIdType: typeof petId,
+          updateDataType: typeof updateData
+        });
+
+        // Handle image upload if present
+        let imageUrl = updateData.image;
+        if (updateData.image instanceof File) {
+          try {
+            imageUrl = await uploadFile(
+              updateData.image,
+              `pets/${updateData.customerId}/${Date.now()}_${updateData.image.name}`
+            );
+          } catch (uploadError) {
+            console.error('UPDATE_PET: Image upload failed:', uploadError);
+            throw new Error('Failed to upload pet image');
+          }
+        }
+
+        const updateDataWithImage = {
+          ...updateData,
+          image: imageUrl
+        };
+
+        console.log('UPDATE_PET: Preparing to update with data:', updateDataWithImage);
+        await updatePet(petId, updateDataWithImage);
+
+        console.log('UPDATE_PET: Successfully updated pet:', {
+          petId,
+          cleanData: updateDataWithImage
+        });
+
+        return { success: true };
+      } catch (error) {
+        console.error('UPDATE_PET: Error updating pet:', error);
+        throw error;
+      }
+    },
+    onSuccess: async () => {
+      // Invalidate both pets and customers queries
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['pets'] }),
+        queryClient.invalidateQueries({ queryKey: ['customers'] })
+      ]);
+      await queryClient.refetchQueries({ queryKey: ['pets'] });
+    },
+    onError: (error) => {
+      console.error('UPDATE_PET: Mutation error:', error);
     }
   });
 
@@ -313,9 +376,9 @@ export function usePets() {
     pets,
     isLoading,
     addPet,
-    updatePet,
+    updatePet: updatePetMutation.mutateAsync,
     deletePet,
     addPetMutation,
-    ...rest
+    updatePetMutation,
   };
 }

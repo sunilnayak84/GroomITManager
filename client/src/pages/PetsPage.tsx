@@ -33,7 +33,14 @@ import {
 import React, { useState, useEffect } from "react";
 
 export default function PetsPage() {
-  const { pets, isLoading, updatePet, deletePet, addPet } = usePets();
+  const { 
+    pets, 
+    isLoading, 
+    addPet, 
+    updatePet,
+    addPetMutation,
+    updatePetMutation
+  } = usePets();
   const { customers } = useCustomers();
   const [showPetDetails, setShowPetDetails] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -122,53 +129,16 @@ export default function PetsPage() {
   }, [pets, customers]);
 
   const handleUpdatePet = async (data: InsertPet) => {
-    if (!selectedPet?.id) {
-      console.error('No pet selected for update');
-      return;
+    if (!selectedPet) {
+      throw new Error('No pet selected for update');
     }
-    
-    try {
-      // Find customer by ID
-      const owner = customers?.find(c => c.firebaseId === data.customerId || c.id === data.customerId);
-      if (!owner) {
-        throw new Error('Customer not found');
-      }
-
-      // Prepare update data with owner information
-      const updateData = {
+    await updatePet({ 
+      petId: selectedPet.id, 
+      updateData: {
         ...data,
-        customerId: owner.firebaseId || owner.id,
-        owner: {
-          id: owner.firebaseId || owner.id,
-          firstName: owner.firstName,
-          lastName: owner.lastName,
-          phone: owner.phone || '',
-          email: owner.email || ''
-        }
-      };
-
-      console.log('Update pet data:', {
-        petId: selectedPet.id,
-        updateData
-      });
-
-      await updatePet(selectedPet.id, updateData);
-      
-      toast({
-        title: "Success",
-        description: "Pet updated successfully",
-      });
-      setIsEditing(false);
-      setShowPetDetails(false);
-      setSelectedPet(null);
-    } catch (error) {
-      console.error('Error updating pet:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update pet",
-        variant: "destructive",
-      });
-    }
+        customerId: selectedPet.customerId
+      }
+    });
   };
 
   const getOwnerName = (pet: Pet) => {
@@ -360,7 +330,7 @@ export default function PetsPage() {
             <AlertDialogAction
               onClick={async () => {
                 if (selectedPet) {
-                  await deletePet(selectedPet.id);
+                  await updatePetMutation(selectedPet.id);
                   setShowDeleteConfirm(false);
                   setShowPetDetails(false);
                   setSelectedPet(null);
