@@ -248,13 +248,15 @@ export function usePets() {
 
         console.log('ADD_PET: Adding pet with data:', cleanedData);
         
-        // Create pet using Firestore utility
-        const petId = await createPet(cleanedData);
-        
-        // Update customer's pet count using the Firebase document ID
-        if (cleanedData.customerId) {
-          const customerRef = doc(customersCollection, cleanedData.customerId);
-          await runTransaction(db, async (transaction) => {
+        // Start a transaction to ensure atomicity
+        let petId: string;
+        await runTransaction(db, async (transaction) => {
+          // First create the pet
+          petId = await createPet(cleanedData);
+          
+          // Then update the customer's pet count
+          if (cleanedData.customerId) {
+            const customerRef = doc(customersCollection, cleanedData.customerId);
             const customerDoc = await transaction.get(customerRef);
             if (!customerDoc.exists()) {
               throw new Error('Customer not found');
@@ -264,8 +266,12 @@ export function usePets() {
               petCount: currentCount + 1,
               updatedAt: timestamp
             });
-          });
-        }
+          }
+        });
+
+        // Wait for queries to be invalidated before returning
+        await queryClient.invalidateQueries({ queryKey: ['pets'] });
+        await queryClient.invalidateQueries({ queryKey: ['customers'] });
 
         return { id: petId, ...cleanedData };
       } catch (error) {
@@ -274,7 +280,6 @@ export function usePets() {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pets'] });
       toast.success('Pet added successfully');
     },
     onError: (error) => {
