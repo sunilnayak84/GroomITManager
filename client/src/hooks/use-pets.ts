@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Pet as PetType, InsertPet } from "@db/schema";
-import { getDocs, doc, runTransaction, increment, collection, addDoc, serverTimestamp, query, updateDoc, deleteDoc, getDoc } from 'firebase/firestore';
+import { getDocs, doc, runTransaction, increment, collection, addDoc, serverTimestamp, query, updateDoc, deleteDoc, getDoc, where } from 'firebase/firestore';
 import { db } from "../lib/firebase";
 import { petsCollection, customersCollection, createPet } from "../lib/firestore";
 import { uploadFile } from "../lib/storage";
@@ -202,6 +202,18 @@ export function usePets() {
       return true;
     } catch (error) {
       console.error('UPDATE_PET: Error updating pet:', error);
+      throw error;
+    }
+  };
+
+  // Function to check for duplicate submission ID
+  const checkDuplicateSubmission = async (submissionId: string) => {
+    try {
+      const q = query(petsCollection, where('submissionId', '==', submissionId));
+      const querySnapshot = await getDocs(q);
+      return !querySnapshot.empty;
+    } catch (error) {
+      console.error('Error checking for duplicate submission:', error);
       throw error;
     }
   };
