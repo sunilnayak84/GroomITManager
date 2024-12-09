@@ -10,7 +10,7 @@ const petsCollection = collection(db, "pets");
 export function usePets() {
   const queryClient = useQueryClient();
 
-  const { data: pets, ...rest } = useQuery<Pet[]>({
+  const { data: pets, ...rest } = useQuery<Pet[], Error>({
     queryKey: ["pets"],
     queryFn: async () => {
       const snapshot = await getDocs(petsCollection);

@@ -64,6 +64,9 @@ export function PetForm({
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null | undefined>(
+    defaultValues?.image?.toString() || pet?.image || null
+  );
 
   const customers = useMemo(() => customersQuery || [], [customersQuery]);
 
@@ -99,6 +102,7 @@ export function PetForm({
     const file = e.target.files?.[0];
     if (file) {
       setSelectedImage(file);
+      setImagePreview(URL.createObjectURL(file));
       form.setValue("image", file);
     }
   };
@@ -124,6 +128,7 @@ export function PetForm({
       onSuccess?.(data);
       form.reset();
       setSelectedImage(null);
+      setImagePreview(null);
     } catch (error) {
       console.error("Error submitting pet form:", error);
       toast({
@@ -337,9 +342,9 @@ export function PetForm({
                       {selectedImage.name}
                     </span>
                   )}
-                  {typeof value === "string" && value && (
+                  {imagePreview && (
                     <img
-                      src={value}
+                      src={imagePreview}
                       alt="Pet"
                       className="w-16 h-16 object-cover rounded-md"
                     />

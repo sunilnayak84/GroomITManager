@@ -49,11 +49,11 @@ export const insertPetSchema = petSchema.omit({
 
 // Schema for Appointment
 export const appointmentSchema = z.object({
-  id: z.number(),
-  petId: z.number(),
-  serviceId: z.number(),
+  id: z.string(),
+  petId: z.string(),
+  serviceId: z.string(),
   groomerId: z.string(),
-  branchId: z.number(),
+  branchId: z.string(),
   date: z.date(),
   status: z.enum(["pending", "confirmed", "completed", "cancelled"]),
   notes: z.string().nullable(),
@@ -120,10 +120,7 @@ export type AppointmentWithRelations = Appointment & {
     name: string;
     breed: string;
     image: string | null;
-    customer: {
-      firstName: string;
-      lastName: string;
-    };
+    customer: Customer;
   };
   service: {
     name: string;
