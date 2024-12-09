@@ -323,12 +323,21 @@ export default function CustomersPage() {
 
   return (
     <div className="p-4 space-y-4">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Customers</h1>
+      <div className="flex items-center gap-2 mb-4">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search customers..."
+            className="pl-9"
+          />
+        </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline" size="sm">
-              <Plus className="mr-2 h-4 w-4" /> Add Customer
+            <Button
+              size="lg"
+              className="h-12 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+            >
+              <Plus className="mr-2 h-5 w-5" /> Add Customer
             </Button>
           </DialogTrigger>
           <DialogContent>
@@ -475,15 +484,7 @@ export default function CustomersPage() {
         </div>
       </div>
 
-      <div className="flex items-center gap-2 mb-4">
-        <div className="relative max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search customers..."
-            className="pl-9"
-          />
-        </div>
-      </div>
+      
 
       {customersQuery.isLoading ? (
         <div className="flex justify-center items-center h-64">
