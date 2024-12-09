@@ -38,6 +38,7 @@ export default function PetsPage() {
     isLoading, 
     addPet, 
     updatePet,
+    refetch,
     addPetMutation,
     updatePetMutation
   } = usePets();
@@ -225,6 +226,7 @@ export default function PetsPage() {
                     }
                     setShowPetDetails(false);
                     setIsEditing(false);
+                    await refetch(); // Explicitly refetch after mutation
                     toast({
                       title: "Success",
                       description: selectedPet ? "Pet updated successfully" : "Pet added successfully",

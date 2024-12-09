@@ -123,7 +123,7 @@ export function usePets() {
     }
   };
 
-  const { data: pets, isLoading } = useQuery({
+  const { data: pets, isLoading, refetch } = useQuery({
     queryKey: ['pets'],
     queryFn: fetchPets,
     staleTime: 0, // Always fetch fresh data
@@ -270,12 +270,8 @@ export function usePets() {
       if (result?.isDuplicate) {
         return; // Exit if it's a duplicate submission
       }
-      // Invalidate both pets and customers queries
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['pets'] }),
-        queryClient.invalidateQueries({ queryKey: ['customers'] })
-      ]);
-      await queryClient.refetchQueries({ queryKey: ['pets'] });
+      await queryClient.invalidateQueries({ queryKey: ['pets'] });
+      await refetch(); // Explicitly refetch after successful mutation
     },
     onError: (error: Error) => {
       console.error('ADD_PET: Mutation error:', error);
@@ -326,12 +322,8 @@ export function usePets() {
       }
     },
     onSuccess: async () => {
-      // Invalidate both pets and customers queries
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['pets'] }),
-        queryClient.invalidateQueries({ queryKey: ['customers'] })
-      ]);
-      await queryClient.refetchQueries({ queryKey: ['pets'] });
+      await queryClient.invalidateQueries({ queryKey: ['pets'] });
+      await refetch(); // Explicitly refetch after successful mutation
     },
     onError: (error) => {
       console.error('UPDATE_PET: Mutation error:', error);
@@ -377,6 +369,7 @@ export function usePets() {
     isLoading,
     addPet,
     updatePet: updatePetMutation.mutateAsync,
+    refetch,
     deletePet,
     addPetMutation,
     updatePetMutation,
