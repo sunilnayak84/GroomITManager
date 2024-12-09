@@ -132,40 +132,55 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
     // Convert customerId to string if it's a number
     const customerIdStr = pet.customerId.toString();
 
-    // Verify customer exists
+    // Create references
     const customerRef = doc(customersCollection, customerIdStr);
-    const customerDoc = await getDoc(customerRef);
-
-    if (!customerDoc.exists()) {
-      throw new Error(`Customer with ID ${customerIdStr} does not exist`);
-    }
-
     const petRef = doc(petsCollection);
     
-    // Log before setDoc
-    console.log('FIRESTORE: Pet reference created', { petRefId: petRef.id });
+    // Use a transaction to create pet and update customer count atomically
+    const petId = await runTransaction(db, async (transaction) => {
+      // Verify customer exists within transaction
+      const customerDoc = await transaction.get(customerRef);
+      if (!customerDoc.exists()) {
+        throw new Error(`Customer with ID ${customerIdStr} does not exist`);
+      }
 
-    // Prepare pet data for Firestore
-    const petData = {
-      ...pet,
-      id: petRef.id,
-      customerId: customerIdStr, // Store customerId as string in Firestore
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
+      // Get current pet count
+      const currentCount = customerDoc.data().petCount || 0;
 
-    console.log('FIRESTORE: About to save pet data', { petData });
+      // Prepare pet data for Firestore
+      const timestamp = new Date().toISOString();
+      const petData = {
+        ...pet,
+        id: petRef.id,
+        customerId: customerIdStr,
+        createdAt: timestamp,
+        updatedAt: timestamp
+      };
 
-    // Save to Firestore
-    await setDoc(petRef, petData);
+      console.log('FIRESTORE: About to save pet data in transaction', { 
+        petId: petRef.id,
+        petData,
+        currentPetCount: currentCount 
+      });
 
-    // Log after setDoc
-    console.log('FIRESTORE: Pet document created successfully', { 
-      petId: petRef.id, 
-      petData
+      // Create pet document
+      transaction.set(petRef, petData);
+
+      // Update customer's pet count
+      transaction.update(customerRef, {
+        petCount: currentCount + 1,
+        updatedAt: timestamp
+      });
+
+      return petRef.id;
     });
 
-    return petRef.id;
+    console.log('FIRESTORE: Pet created successfully in transaction', { 
+      petId,
+      customerId: customerIdStr
+    });
+
+    return petId;
   } catch (error) {
     console.error('FIRESTORE: Critical error in createPet', { 
       error: error instanceof Error ? error.message : 'Unknown error',

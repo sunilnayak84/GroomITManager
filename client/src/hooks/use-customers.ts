@@ -206,30 +206,16 @@ export function useCustomers() {
           }
         });
 
-        // Update customers with new pet counts in Firestore
-        const updatePromises = currentCustomers.map(async (customer) => {
-          const newPetCount = petCounts.get(customer.id) || 0;
-          
-          // Only update if the pet count is different
-          if (customer.petCount !== newPetCount) {
-            try {
-              await updateCustomerDoc(customer.id, { 
-                petCount: newPetCount,
-                updatedAt: new Date()
-              });
-            } catch (error) {
-              console.error(`Failed to update pet count for customer ${customer.id}:`, error);
-            }
-          }
-        });
+        // Update customers in cache only, don't trigger Firestore updates
+        const updatedCustomers = currentCustomers.map(customer => ({
+          ...customer,
+          petCount: petCounts.get(customer.id) || 0
+        }));
 
-        // Wait for all updates to complete
-        await Promise.all(updatePromises);
-
-        // Invalidate customers query to trigger a refetch
-        queryClient.invalidateQueries({ queryKey: ["customers"] });
+        // Update cache without triggering a refetch
+        queryClient.setQueryData(["customers"], updatedCustomers);
       } catch (error) {
-        console.error('Error updating pet counts:', error);
+        console.error('Error updating pet counts in cache:', error);
       }
     });
 
