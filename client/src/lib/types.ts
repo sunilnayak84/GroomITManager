@@ -71,14 +71,13 @@ export type InsertPet = {
   type: "dog" | "cat" | "bird" | "fish" | "other";
   breed: string;
   customerId: string;
-  dateOfBirth?: string | null;
-  age?: number | null;
-  gender?: "male" | "female" | "unknown" | null;
-  weight?: string | null;
-  weightUnit?: "kg" | "lbs";
-  image?: string | File | null;
-  imageUrl?: string | null;
-  notes?: string | null;
+  dateOfBirth: string | null;
+  age: number | null;
+  gender: "male" | "female" | "unknown";
+  weight: string | null;
+  weightUnit: "kg" | "lbs";
+  image: string | File | null;
+  notes: string | null;
   owner?: {
     id: string;
     firstName: string;
@@ -86,9 +85,6 @@ export type InsertPet = {
     phone?: string;
     email?: string;
   };
-  firebaseId?: string | null;
-  createdAt?: Date;
-  updatedAt?: Date | null;
 };
 
 // Common utility types
