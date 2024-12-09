@@ -160,17 +160,38 @@ export const PetForm: React.FC<PetFormProps> = ({
   };
 
   const onSubmit = async (data: PetFormSchema) => {
+    console.log('PetForm: ENTER onSubmit', { 
+      data, 
+      isSubmitting, 
+      onSuccess: !!onSuccess, 
+      onCancel: !!onCancel 
+    });
+
+    // Prevent multiple submissions
+    if (isSubmitting) {
+      console.warn('PetForm: Submission already in progress');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
+      console.log('PetForm: Before customerId conversion', { 
+        rawCustomerId: data.customerId, 
+        convertedCustomerId: Number(data.customerId) 
+      });
+
       const customerId = Number(data.customerId);
       
       console.log('PetForm: Submitting pet data', { 
         data, 
         customerId, 
-        imageType: data.image ? typeof data.image : 'no image' 
+        imageType: data.image ? typeof data.image : 'no image',
+        defaultValues,
+        pet
       });
 
       if (!customerId) {
+        console.error('PetForm: Customer ID is missing or invalid');
         throw new Error("Customer ID is required");
       }
 
@@ -194,36 +215,57 @@ export const PetForm: React.FC<PetFormProps> = ({
         firebaseId: pet?.firebaseId || null
       };
 
-      console.log('PetForm: Prepared pet data for submission', { petData });
+      console.log('PetForm: Prepared pet data for submission', { 
+        petData, 
+        addPetFunction: !!addPet,
+        updatePetFunction: !!updatePetFn 
+      });
 
+      let result;
       if (pet?.id) {
-        await updatePetFn(pet.id, petData);
+        console.log('PetForm: Updating existing pet', { petId: pet.id });
+        result = await updatePetFn(pet.id, petData);
         toast({
           title: "Pet Updated",
           description: `${data.name} has been updated successfully.`,
         });
       } else {
-        const addedPet = await addPet(petData);
-        console.log('PetForm: Pet added successfully', { addedPet });
-        toast({
-          title: "Pet Added",
-          description: `${data.name} has been added successfully.`,
-        });
-        onSuccess?.(data);
+        console.log('PetForm: Adding new pet', { petData });
+        try {
+          result = await addPet(petData);
+          console.log('PetForm: Pet added successfully', { result });
+          toast({
+            title: "Pet Added",
+            description: `${data.name} has been added successfully.`,
+          });
+          onSuccess?.(data);
+        } catch (addError) {
+          console.error('PetForm: Error adding pet', { 
+            error: addError, 
+            petData 
+          });
+          throw addError;
+        }
       }
 
+      console.log('PetForm: Post-submission actions');
       onCancel?.();
       form.reset();
       setSelectedImage(null);
       setImagePreview(null);
     } catch (error) {
-      console.error('Pet form submission error:', error);
+      console.error('PetForm: Submission error', { 
+        error, 
+        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+        data 
+      });
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to save pet",
         variant: "destructive",
       });
     } finally {
+      console.log('PetForm: Setting isSubmitting to false');
       setIsSubmitting(false);
     }
   };
