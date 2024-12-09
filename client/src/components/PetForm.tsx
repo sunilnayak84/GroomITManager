@@ -167,17 +167,23 @@ export function PetForm({
         form.reset();
         setImagePreview(null);
         
-        if (onSuccess) {
-          onSuccess({
-            ...petData,
-            id: result // Pass the created pet ID back
-          });
-        }
-
         toast({
           title: "Success",
           description: "Pet added successfully",
         });
+
+        // Call onSuccess with the result after the toast
+        if (onSuccess) {
+          onSuccess({
+            ...petData,
+            id: result.petId || result // Handle both old and new result formats
+          });
+        }
+
+        // If onCancel is provided (dialog mode), close the dialog
+        if (onCancel) {
+          onCancel();
+        }
       } else {
         throw new Error("Failed to create pet - no result returned");
       }
