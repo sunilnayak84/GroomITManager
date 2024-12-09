@@ -1,0 +1,164 @@
+CISPL SignerDigital Loaded
+client:495 [vite] connecting...
+client:614 [vite] connected.
+chunk-RPCDYKBN.js?v=751543d8:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:35 Firebase initialized successfully
+content.js:1 CISPL SignerDigital Loaded
+use-customers.ts:232 FETCH_CUSTOMERS: Starting customer fetch
+use-pets.ts:39 FETCH_PETS: Starting to fetch pets
+use-customers.ts:247 FETCH_CUSTOMERS: Processed customer: {id: 'uLzGYzLqKlEu94wxCHgE', firebaseId: 'uLzGYzLqKlEu94wxCHgE', name: 'test user'}
+use-customers.ts:255 USE CUSTOMERS: Fetched customers {customerCount: 1, customerIds: Array(1), customerNames: Array(1)}
+use-pets.ts:68 FETCH_PETS: Available customers: [{…}]
+use-pets.ts:80 FETCH_PETS: Processing pet data: {petId: '0dQZx2wTHzwhBXgyEFdh', customerId: 'uLzGYzLqKlEu94wxCHgE', petName: 'test', customerDetails: {…}}
+use-pets.ts:80 FETCH_PETS: Processing pet data: {petId: 'O69cpd8dj15LFPMixK2X', customerId: 'uLzGYzLqKlEu94wxCHgE', petName: 'test', customerDetails: {…}}
+use-pets.ts:116 FETCH_PETS: Completed fetching pets {totalPets: 2, pets: Array(2)}
+PetForm.tsx:90 PetForm: Initializing form with values: {defaultValues: {…}, pet: {…}, customerId: 'uLzGYzLqKlEu94wxCHgE', availableCustomers: Array(1)}
+PetForm.tsx:90 PetForm: Initializing form with values: {defaultValues: {…}, pet: {…}, customerId: 'uLzGYzLqKlEu94wxCHgE', availableCustomers: Array(1)}
+PetForm.tsx:212 Warning: Each child in a list should have a unique "key" prop.
+
+Check the render method of `Controller`. See https://reactjs.org/link/warning-keys for more information.
+    at _c11 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/select.tsx:195:13)
+    at Controller (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-SVWJYMPS.js?v=751543d8:313:35)
+    at FormField (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/form.tsx:32:6)
+    at div
+    at form
+    at FormProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-SVWJYMPS.js?v=751543d8:102:11)
+    at PetForm (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/PetForm.tsx:44:3)
+    at div
+    at div
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-RLTE5R7I.js?v=751543d8:41:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-CGOS4OHX.js?v=751543d8:204:7
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-UACHJROW.js?v=751543d8:52:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-UACHJROW.js?v=751543d8:33:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-RLTE5R7I.js?v=751543d8:41:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-GQLVYKHD.js?v=751543d8:47:5
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-V2JKGL3G.js?v=751543d8:226:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-V2JKGL3G.js?v=751543d8:149:58
+    at Presence (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-KVF63LH3.js?v=751543d8:24:11)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-V2JKGL3G.js?v=751543d8:140:64
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-UACHJROW.js?v=751543d8:52:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-UACHJROW.js?v=751543d8:33:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-RLTE5R7I.js?v=751543d8:41:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-CGOS4OHX.js?v=751543d8:403:22
+    at Presence (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-KVF63LH3.js?v=751543d8:24:11)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-CGOS4OHX.js?v=751543d8:58:15)
+    at DialogPortal (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-V2JKGL3G.js?v=751543d8:103:11)
+    at _c3 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/dialog.tsx:49:12)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-CGOS4OHX.js?v=751543d8:58:15)
+    at Dialog (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-V2JKGL3G.js?v=751543d8:44:5)
+    at div
+    at CustomersPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/CustomersPage.tsx:46:27)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/wouter.js?v=751543d8:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/wouter.js?v=751543d8:379:17)
+    at main
+    at div
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:18:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:35:31)
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/@tanstack_react-query.js?v=751543d8:2797:3)
+printWarning @ react_jsx-dev-runtime.js?v=751543d8:64
+error @ react_jsx-dev-runtime.js?v=751543d8:48
+validateExplicitKey @ react_jsx-dev-runtime.js?v=751543d8:724
+validateChildKeys @ react_jsx-dev-runtime.js?v=751543d8:737
+jsxWithValidation @ react_jsx-dev-runtime.js?v=751543d8:855
+render @ PetForm.tsx:212
+Controller @ chunk-SVWJYMPS.js?v=751543d8:313
+renderWithHooks @ chunk-RPCDYKBN.js?v=751543d8:11548
+mountIndeterminateComponent @ chunk-RPCDYKBN.js?v=751543d8:14926
+beginWork @ chunk-RPCDYKBN.js?v=751543d8:15914
+beginWork$1 @ chunk-RPCDYKBN.js?v=751543d8:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=751543d8:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=751543d8:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=751543d8:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=751543d8:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=751543d8:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=751543d8:18627Understand this errorAI
+chunk-V2JKGL3G.js?v=751543d8:330 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-V2JKGL3G.js?v=751543d8:330
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=751543d8:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=751543d8:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=751543d8:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=751543d8:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=751543d8:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=751543d8:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=751543d8:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=751543d8:19416
+commitRoot @ chunk-RPCDYKBN.js?v=751543d8:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=751543d8:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=751543d8:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=751543d8:18627Understand this warningAI
+chunk-V2JKGL3G.js?v=751543d8:330 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-V2JKGL3G.js?v=751543d8:330
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=751543d8:16915
+invokePassiveEffectMountInDEV @ chunk-RPCDYKBN.js?v=751543d8:18324
+invokeEffectsInDev @ chunk-RPCDYKBN.js?v=751543d8:19701
+commitDoubleInvokeEffectsInDEV @ chunk-RPCDYKBN.js?v=751543d8:19686
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=751543d8:19503
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=751543d8:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=751543d8:19416
+commitRoot @ chunk-RPCDYKBN.js?v=751543d8:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=751543d8:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=751543d8:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=751543d8:18627Understand this warningAI
+chunk-KBTYAULA.js?v=751543d8:64 Warning: Each child in a list should have a unique "key" prop.
+
+Check the render method of `Select`. It was passed a child from SelectItemText. See https://reactjs.org/link/warning-keys for more information.
+    at option
+    at Select (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/@radix-ui_react-select.js?v=751543d8:2334:5)
+    at div
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/form.tsx:71:6
+    at Controller (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-SVWJYMPS.js?v=751543d8:313:35)
+    at FormField (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/form.tsx:32:6)
+    at div
+    at form
+    at FormProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-SVWJYMPS.js?v=751543d8:102:11)
+    at PetForm (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/PetForm.tsx:44:3)
+    at div
+    at div
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-RLTE5R7I.js?v=751543d8:41:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-CGOS4OHX.js?v=751543d8:204:7
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-UACHJROW.js?v=751543d8:52:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-UACHJROW.js?v=751543d8:33:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-RLTE5R7I.js?v=751543d8:41:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-GQLVYKHD.js?v=751543d8:47:5
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-V2JKGL3G.js?v=751543d8:226:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-V2JKGL3G.js?v=751543d8:149:58
+    at Presence (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-KVF63LH3.js?v=751543d8:24:11)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-V2JKGL3G.js?v=751543d8:140:64
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-UACHJROW.js?v=751543d8:52:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-UACHJROW.js?v=751543d8:33:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-RLTE5R7I.js?v=751543d8:41:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-CGOS4OHX.js?v=751543d8:403:22
+    at Presence (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-KVF63LH3.js?v=751543d8:24:11)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-CGOS4OHX.js?v=751543d8:58:15)
+    at DialogPortal (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-V2JKGL3G.js?v=751543d8:103:11)
+    at _c3 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/dialog.tsx:49:12)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-CGOS4OHX.js?v=751543d8:58:15)
+    at Dialog (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/chunk-V2JKGL3G.js?v=751543d8:44:5)
+    at div
+    at CustomersPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/CustomersPage.tsx:46:27)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/wouter.js?v=751543d8:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/wouter.js?v=751543d8:379:17)
+    at main
+    at div
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:18:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:35:31)
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/@fs/home/runner/GroomITManager/node_modules/.vite/deps/@tanstack_react-query.js?v=751543d8:2797:3)
+printWarning @ chunk-KBTYAULA.js?v=751543d8:64
+error @ chunk-KBTYAULA.js?v=751543d8:48
+validateExplicitKey @ chunk-KBTYAULA.js?v=751543d8:724
+validateChildKeys @ chunk-KBTYAULA.js?v=751543d8:737
+jsxWithValidation @ chunk-KBTYAULA.js?v=751543d8:846
+jsxWithValidationStatic @ chunk-KBTYAULA.js?v=751543d8:883
+Select @ @radix-ui_react-select.js?v=751543d8:2405
+renderWithHooks @ chunk-RPCDYKBN.js?v=751543d8:11548
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=751543d8:14582
+beginWork @ chunk-RPCDYKBN.js?v=751543d8:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=751543d8:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=751543d8:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=751543d8:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=751543d8:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=751543d8:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=751543d8:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=751543d8:18627Understand this errorAI
+PetForm.tsx:90 PetForm: Initializing form with values: {defaultValues: {…}, pet: {…}, customerId: 'uLzGYzLqKlEu94wxCHgE', availableCustomers: Array(1)}
+PetForm.tsx:90 PetForm: Initializing form with values: {defaultValues: {…}, pet: {…}, customerId: 'uLzGYzLqKlEu94wxCHgE', availableCustomers: Array(1)}

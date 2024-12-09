@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Upload } from "lucide-react";
 
 const petSchema = z.object({
@@ -57,7 +57,7 @@ export function PetForm({
       name: defaultValues?.name ?? "",
       type: defaultValues?.type ?? "dog",
       breed: defaultValues?.breed ?? "",
-      customerId: customerId ?? "",
+      customerId: "",
       dateOfBirth: defaultValues?.dateOfBirth ?? null,
       age: defaultValues?.age ?? null,
       gender: defaultValues?.gender ?? "unknown",
@@ -68,35 +68,34 @@ export function PetForm({
     },
   });
 
-  // Set customerId when the form is initialized and customers are available
-  React.useEffect(() => {
-    const currentCustomerId = form.getValues().customerId;
-    if ((!currentCustomerId || currentCustomerId === "") && customers && customers.length > 0) {
-      const defaultCustomer = customerId 
-        ? customers.find(c => c.firebaseId === customerId || c.id === customerId) 
-        : customers[0];
+  // Set initial customer when form loads
+  useEffect(() => {
+    if (customers.length > 0) {
+      let selectedCustomer;
       
-      if (defaultCustomer) {
-        console.log('Setting customer:', {
-          customerId: defaultCustomer.firebaseId || defaultCustomer.id,
-          customerName: `${defaultCustomer.firstName} ${defaultCustomer.lastName}`
+      if (customerId) {
+        // Try to find customer by Firebase ID or regular ID
+        selectedCustomer = customers.find(c => 
+          (c.firebaseId && c.firebaseId === customerId) || 
+          c.id.toString() === customerId
+        );
+      }
+      
+      // If no specific customer found, use the first one
+      if (!selectedCustomer) {
+        selectedCustomer = customers[0];
+      }
+
+      if (selectedCustomer) {
+        const effectiveId = selectedCustomer.firebaseId || selectedCustomer.id.toString();
+        console.log('Setting initial customer:', {
+          customerId: effectiveId,
+          customerName: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`
         });
-        form.setValue('customerId', defaultCustomer.firebaseId || defaultCustomer.id);
+        form.setValue('customerId', effectiveId);
       }
     }
-  }, [customers, form, customerId]);
-
-  // Debug log for form initialization
-  console.log('PetForm: Initializing form with values:', {
-    defaultValues: form.getValues(),
-    pet: defaultValues,
-    customerId,
-    availableCustomers: customers?.map(c => ({
-      id: c.id,
-      firebaseId: c.firebaseId,
-      name: `${c.firstName} ${c.lastName}`
-    }))
-  });
+  }, [customers, customerId, form]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -114,25 +113,13 @@ export function PetForm({
       console.log('Form submission started:', { data });
 
       // Find customer by either firebaseId or id
-      const selectedCustomer = customers?.find(c => 
-        c.firebaseId === data.customerId || c.id === data.customerId
+      const selectedCustomer = customers.find(c => 
+        (c.firebaseId && c.firebaseId === data.customerId) || 
+        c.id.toString() === data.customerId
       );
 
-      console.log('Selected customer:', { 
-        customerId: data.customerId, 
-        foundCustomer: selectedCustomer ? {
-          id: selectedCustomer.id,
-          firebaseId: selectedCustomer.firebaseId,
-          name: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`
-        } : null
-      });
-
       if (!selectedCustomer) {
-        throw new Error("Selected customer not found. Please select a valid customer.");
-      }
-
-      if (!data.name || !data.breed || !data.type) {
-        throw new Error("Please fill in all required fields");
+        throw new Error("Selected customer not found");
       }
 
       // Clean and prepare the pet data
@@ -140,16 +127,16 @@ export function PetForm({
         name: data.name.trim(),
         type: data.type,
         breed: data.breed.trim(),
-        customerId: selectedCustomer.firebaseId || selectedCustomer.id,
+        customerId: selectedCustomer.firebaseId || selectedCustomer.id.toString(),
         dateOfBirth: data.dateOfBirth,
-        age: data.age ? (typeof data.age === 'string' ? parseInt(data.age) : data.age) : null,
+        age: data.age,
         gender: data.gender,
         weight: data.weight?.trim() ?? null,
         weightUnit: data.weightUnit,
         image: data.image,
         notes: data.notes?.trim() ?? null,
         owner: {
-          id: selectedCustomer.firebaseId || selectedCustomer.id,
+          id: selectedCustomer.firebaseId || selectedCustomer.id.toString(),
           firstName: selectedCustomer.firstName,
           lastName: selectedCustomer.lastName,
           phone: selectedCustomer.phone || '',
@@ -184,8 +171,7 @@ export function PetForm({
   };
 
   // Show message if no customers available
-  if (!Array.isArray(customers) || customers.length === 0) {
-    console.log('PetForm: Customers data:', { customers });
+  if (customers.length === 0) {
     return (
       <div className="p-4 text-center">
         <p className="text-red-500">Please add at least one customer before adding a pet.</p>
@@ -202,19 +188,29 @@ export function PetForm({
             name="customerId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Customer*</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormLabel>Owner*</FormLabel>
+                <Select 
+                  onValueChange={field.onChange} 
+                  value={field.value}
+                  defaultValue={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select customer" />
+                      <SelectValue placeholder="Select owner" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {customers.map((customer) => (
-                      <SelectItem key={customer.firebaseId} value={customer.firebaseId!}>
-                        {customer.firstName} {customer.lastName}
-                      </SelectItem>
-                    ))}
+                    {customers.map((customer) => {
+                      const value = customer.firebaseId || customer.id.toString();
+                      return (
+                        <SelectItem 
+                          key={value} 
+                          value={value}
+                        >
+                          {customer.firstName} {customer.lastName}
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </FormItem>
@@ -226,7 +222,7 @@ export function PetForm({
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name*</FormLabel>
+                <FormLabel>Pet Name*</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -240,7 +236,7 @@ export function PetForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Pet Type*</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select pet type" />
@@ -313,7 +309,7 @@ export function PetForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Gender</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select gender" />
@@ -349,7 +345,7 @@ export function PetForm({
               render={({ field }) => (
                 <FormItem className="w-24">
                   <FormLabel>Unit</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue />
