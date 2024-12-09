@@ -9,8 +9,9 @@ import { Button } from "@/components/ui/button";
 import { usePets } from "../hooks/use-pets";
 import { useCustomers } from "../hooks/use-customers";
 import { useToast } from "@/hooks/use-toast";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { Upload } from "lucide-react";
+import { uploadFile } from "../lib/storage";
 
 const petFormSchema = z.object({
   name: z.string().min(1, { message: "Pet name is required" }),
@@ -18,40 +19,22 @@ const petFormSchema = z.object({
   breed: z.string().min(1, { message: "Breed is required" }),
   customerId: z.string().min(1, { message: "Customer is required" }),
   dateOfBirth: z.string().nullable(),
-  age: z.union([z.number(), z.string()]).nullable().transform(val => {
-    if (!val) return null;
-    return typeof val === 'string' ? Number(val) : val;
-  }),
+  age: z.number().nullable(),
   gender: z.enum(["male", "female", "unknown"] as const),
   weight: z.string().nullable(),
-  weightUnit: z.enum(["kg", "lbs"] as const).default("kg"),
+  weightUnit: z.enum(["kg", "lbs"] as const),
   image: z.union([z.string(), z.instanceof(File), z.null()]).nullable(),
-  notes: z.string().nullable(),
-  owner: z.object({
-    id: z.string(),
-    firstName: z.string(),
-    lastName: z.string(),
-    phone: z.string().optional(),
-    email: z.string().optional()
-  }).optional()
-}).transform(data => ({
-  ...data,
-  customerId: data.customerId.toString(),
-  age: data.age ? Number(data.age) : null,
-  weight: data.weight || null,
-  notes: data.notes || null,
-  dateOfBirth: data.dateOfBirth || null
-}));
+  notes: z.string().nullable()
+});
 
-type PetFormSchema = z.infer<typeof petFormSchema>;
+type FormValues = z.infer<typeof petFormSchema>;
 
 interface PetFormProps {
-  onSuccess?: (data: PetFormSchema) => void;
+  onSuccess?: (data: FormValues) => void;
   onCancel?: () => void;
   defaultValues?: Partial<InsertPet>;
   pet?: Pet;
   customerId: string;
-  updatePet?: (id: string, data: Partial<InsertPet>) => Promise<void>;
   addPet: (data: InsertPet) => Promise<Pet>;
   id?: string;
 }
@@ -62,138 +45,97 @@ export const PetForm: React.FC<PetFormProps> = ({
   defaultValues,
   pet,
   customerId,
-  updatePet: externalUpdatePet,
   addPet,
   id
 }) => {
-  const { updatePet: usePetsUpdatePet } = usePets();
   const { toast } = useToast();
-
-  // Convert date values to proper format
-  const convertToDate = (dateValue: Date | string | null | undefined): string | null => {
-    if (!dateValue) return null;
-    
-    if (dateValue instanceof Date) {
-      return dateValue.toISOString().split('T')[0];
-    }
-    
-    if (typeof dateValue === 'string') {
-      const parsedDate = new Date(dateValue);
-      return !isNaN(parsedDate.getTime()) 
-        ? parsedDate.toISOString().split('T')[0]
-        : null;
-    }
-    
-    return null;
-  };
-
+  const { customers } = useCustomers();
+  
   // State management
-  const [imagePreview, setImagePreview] = useState<string | null | undefined>(
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(
     defaultValues?.image?.toString() || pet?.image || null
   );
-  
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
-  // Customer data preparation
-  const defaultFormValues = useMemo(() => ({
-    name: defaultValues?.name || pet?.name || "",
-    type: (defaultValues?.type || pet?.type || "dog") as "dog" | "cat" | "bird" | "fish" | "other",
-    breed: defaultValues?.breed || pet?.breed || "",
-    customerId: customerId,
-    dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
-    age: defaultValues?.age || pet?.age || null,
-    gender: (defaultValues?.gender || pet?.gender || "unknown") as "male" | "female" | "unknown",
-    weight: defaultValues?.weight || pet?.weight || null,
-    weightUnit: (defaultValues?.weightUnit || pet?.weightUnit || "kg") as "kg" | "lbs",
-    image: defaultValues?.image || pet?.image || null,
-    notes: defaultValues?.notes || pet?.notes || null
-  }), [defaultValues, pet, customerId]);
-
-  const form = useForm<PetFormSchema>({
+  // Form initialization
+  const form = useForm<FormValues>({
     resolver: zodResolver(petFormSchema),
-    mode: "onChange",
-    defaultValues: defaultFormValues
+    defaultValues: {
+      name: defaultValues?.name || pet?.name || "",
+      type: defaultValues?.type || pet?.type || "dog",
+      breed: defaultValues?.breed || pet?.breed || "",
+      customerId: customerId || "",
+      dateOfBirth: defaultValues?.dateOfBirth?.toString() || pet?.dateOfBirth?.toString() || null,
+      age: defaultValues?.age || pet?.age || null,
+      gender: defaultValues?.gender || pet?.gender || "unknown",
+      weight: defaultValues?.weight?.toString() || pet?.weight?.toString() || null,
+      weightUnit: defaultValues?.weightUnit || pet?.weightUnit || "kg",
+      image: defaultValues?.image || pet?.image || null,
+      notes: defaultValues?.notes || pet?.notes || null
+    }
   });
 
-  // Update form when default values change
-  useEffect(() => {
-    if (defaultValues || pet) {
-      form.reset(defaultFormValues);
-    }
-  }, [defaultFormValues, form]);
-
-  useEffect(() => {
-    if (defaultValues || pet) {
-      const formDefaults = {
-        name: defaultValues?.name || pet?.name || "",
-        type: (defaultValues?.type || pet?.type || "dog") as "dog" | "cat" | "bird" | "fish" | "other",
-        breed: defaultValues?.breed || pet?.breed || "",
-        customerId: customerId,
-        dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
-        age: Number(defaultValues?.age || pet?.age) || null,
-        gender: (defaultValues?.gender || pet?.gender || "unknown") as "male" | "female" | "unknown",
-        weight: defaultValues?.weight?.toString() || pet?.weight?.toString() || null,
-        weightUnit: (defaultValues?.weightUnit || pet?.weightUnit || "kg") as "kg" | "lbs",
-        image: defaultValues?.image || pet?.image || null,
-        notes: defaultValues?.notes || pet?.notes || null,
-        owner: defaultValues?.owner || pet?.owner
-      };
-
-      form.reset(formDefaults);
-      
-      if (defaultValues?.image || pet?.image) {
-        setImagePreview(defaultValues?.image?.toString() || pet?.image || null);
-      }
-    }
-  }, [defaultValues, pet, form]);
-
-  const updatePetFn = externalUpdatePet || usePetsUpdatePet;
-
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle image change
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setSelectedImage(file);
       setImagePreview(URL.createObjectURL(file));
       form.setValue("image", file);
     }
   };
 
-  const onSubmit = async (data: PetFormSchema) => {
-    if (isSubmitting) {
-      return;
-    }
-
+  // Form submission
+  const onSubmit = async (data: FormValues) => {
+    if (isSubmitting) return;
+    
     setIsSubmitting(true);
     try {
       console.log('Form submission started:', { data });
 
-      // Handle image upload if it's a File
-      let imageUrl = data.image;
-      if (data.image instanceof File) {
-        // For now, we'll just use the file name as the URL
-        // In a real app, you would upload this to storage
-        imageUrl = data.image.name;
+      // Find customer details
+      const selectedCustomer = customers?.find(c => c.id === data.customerId);
+      if (!selectedCustomer) {
+        throw new Error("Selected customer not found");
       }
 
+      // Handle image upload if needed
+      let imageUrl = data.image;
+      if (data.image instanceof File) {
+        try {
+          imageUrl = await uploadFile(
+            data.image,
+            `pets/${data.customerId}/${Date.now()}_${data.image.name}`
+          );
+        } catch (error) {
+          console.error('Image upload failed:', error);
+          throw new Error('Failed to upload image');
+        }
+      }
+
+      // Prepare pet data
       const petData: InsertPet = {
-        name: data.name,
+        name: data.name.trim(),
         type: data.type,
-        breed: data.breed,
-        customerId: customerId, // Use the provided customerId
+        breed: data.breed.trim(),
+        customerId: data.customerId,
         dateOfBirth: data.dateOfBirth,
         age: data.age,
-        gender: data.gender as PetGender,
+        gender: data.gender,
         weight: data.weight,
         weightUnit: data.weightUnit,
         image: imageUrl,
         notes: data.notes,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        owner: {
+          id: selectedCustomer.id,
+          firstName: selectedCustomer.firstName,
+          lastName: selectedCustomer.lastName,
+          phone: selectedCustomer.phone,
+          email: selectedCustomer.email
+        }
       };
 
       console.log('Submitting pet data:', petData);
-
+      
       const newPet = await addPet(petData);
       console.log('Pet created successfully:', newPet);
 
@@ -278,7 +220,12 @@ export const PetForm: React.FC<PetFormProps> = ({
               <FormItem>
                 <FormLabel>Date of Birth</FormLabel>
                 <FormControl>
-                  <Input type="date" {...field} value={field.value || ''} />
+                  <Input 
+                    type="date" 
+                    {...field} 
+                    value={field.value || ''} 
+                    onChange={(e) => field.onChange(e.target.value || null)}
+                  />
                 </FormControl>
               </FormItem>
             )}
@@ -291,7 +238,12 @@ export const PetForm: React.FC<PetFormProps> = ({
               <FormItem>
                 <FormLabel>Age</FormLabel>
                 <FormControl>
-                  <Input type="number" {...field} value={field.value || ''} />
+                  <Input 
+                    type="number" 
+                    {...field} 
+                    value={field.value || ''} 
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+                  />
                 </FormControl>
               </FormItem>
             )}
@@ -327,7 +279,7 @@ export const PetForm: React.FC<PetFormProps> = ({
                 <FormItem className="flex-1">
                   <FormLabel>Weight</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} value={field.value || ''} />
+                    <Input {...field} value={field.value || ''} />
                   </FormControl>
                 </FormItem>
               )}
@@ -406,6 +358,7 @@ export const PetForm: React.FC<PetFormProps> = ({
             )}
           />
         </div>
+
         <div className="sticky bottom-0 bg-white pt-4 pb-2 flex justify-end gap-4">
           {onCancel && (
             <Button type="button" variant="outline" onClick={onCancel}>
