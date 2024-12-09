@@ -342,46 +342,42 @@ export function usePets() {
 
   const addPet = addPetMutation.mutateAsync;
 
-  const deletePet = async (id: string) => {
-    try {
-      const petRef = doc(db, 'pets', id);
-      const petDoc = await getDoc(petRef);
-
-      if (!petDoc.exists()) {
-        throw new Error('Pet not found');
+  const deletePetMutation = useMutation({
+    mutationFn: async (petId: string) => {
+      try {
+        console.log('DELETE_PET: Starting deletion', { petId });
+        const petRef = doc(petsCollection, petId);
+        await deleteDoc(petRef);
+        console.log('DELETE_PET: Successfully deleted pet', { petId });
+        return { success: true };
+      } catch (error) {
+        console.error('DELETE_PET: Error deleting pet:', error);
+        throw error;
       }
-
-      const petData = petDoc.data();
-      const customerId = petData.customerId;
-
-      await deleteDoc(petRef);
-
-      if (customerId) {
-        const customerRef = doc(db, 'customers', customerId);
-        await runTransaction(db, async (transaction) => {
-          transaction.update(customerRef, {
-            petCount: increment(-1),
-            updatedAt: serverTimestamp()
-          });
-        });
-      }
-
+    },
+    onSuccess: async () => {
+      // Wait a bit for Firestore to settle
+      await new Promise(resolve => setTimeout(resolve, 1000));
       await queryClient.invalidateQueries({ queryKey: ['pets'] });
-      return { id };
-    } catch (error) {
-      console.error('DELETE_PET: Error deleting pet:', error);
-      throw error;
+      setRefreshKey(prev => prev + 1);
+      await refetch();
+    },
+    onError: (error) => {
+      console.error('DELETE_PET: Mutation error:', error);
     }
-  };
+  });
+
+  const deletePet = deletePetMutation.mutateAsync;
 
   return {
     pets,
     isLoading,
     addPet,
     updatePet: updatePetMutation.mutateAsync,
-    refetch,
     deletePet,
+    refetch,
     addPetMutation,
     updatePetMutation,
+    deletePetMutation
   };
 }

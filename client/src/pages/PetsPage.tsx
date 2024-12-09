@@ -38,9 +38,11 @@ export default function PetsPage() {
     isLoading, 
     addPet, 
     updatePet,
+    deletePet,
     refetch,
     addPetMutation,
-    updatePetMutation
+    updatePetMutation,
+    deletePetMutation
   } = usePets();
   const { customers } = useCustomers();
   const [showPetDetails, setShowPetDetails] = useState(false);
@@ -330,10 +332,23 @@ export default function PetsPage() {
             <AlertDialogAction
               onClick={async () => {
                 if (selectedPet) {
-                  await updatePetMutation(selectedPet.id);
-                  setShowDeleteConfirm(false);
-                  setShowPetDetails(false);
-                  setSelectedPet(null);
+                  try {
+                    await deletePet(selectedPet.id);
+                    setShowDeleteConfirm(false);
+                    setShowPetDetails(false);
+                    setSelectedPet(null);
+                    toast({
+                      title: "Success",
+                      description: "Pet deleted successfully"
+                    });
+                  } catch (error) {
+                    console.error('Error deleting pet:', error);
+                    toast({
+                      variant: "destructive",
+                      title: "Error",
+                      description: error instanceof Error ? error.message : "Failed to delete pet"
+                    });
+                  }
                 }
               }}
             >
