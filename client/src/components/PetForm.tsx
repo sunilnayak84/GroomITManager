@@ -103,35 +103,45 @@ export const PetForm: React.FC<PetFormProps> = ({
     ].filter((customer): customer is Customer => !!customer && typeof customer.id === 'number');
   }, [initialCustomers, fetchedCustomers]);
 
-  // Form initialization with memoized default values
-  const initialValues = useMemo(() => ({
-    name: defaultValues?.name || pet?.name || "",
-    type: (defaultValues?.type || pet?.type || "dog") as "dog" | "cat" | "bird" | "fish" | "other",
-    breed: defaultValues?.breed || pet?.breed || "",
-    customerId: (defaultValues?.customerId || pet?.customerId || '').toString(),
-    dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
-    age: Number(defaultValues?.age || pet?.age) || null,
-    gender: (defaultValues?.gender || pet?.gender || "unknown") as "male" | "female" | "unknown",
-    weight: defaultValues?.weight?.toString() || pet?.weight?.toString() || null,
-    weightUnit: (defaultValues?.weightUnit || pet?.weightUnit || "kg") as "kg" | "lbs",
-    image: defaultValues?.image || pet?.image || null,
-    notes: defaultValues?.notes || pet?.notes || null,
-    owner: defaultValues?.owner || pet?.owner
-  }), [defaultValues, pet]);
-
   const form = useForm<PetFormSchema>({
     resolver: zodResolver(petFormSchema),
     mode: "onChange",
-    defaultValues: initialValues
+    defaultValues: {
+      name: "",
+      type: "dog",
+      breed: "",
+      customerId: "",
+      dateOfBirth: null,
+      age: null,
+      gender: "unknown",
+      weight: null,
+      weightUnit: "kg",
+      image: null,
+      notes: null
+    }
   });
 
-  // Update form when default values change
+  // Update form when pet or defaultValues change
   useEffect(() => {
     if (defaultValues || pet) {
-      console.log('Setting form values:', { defaultValues, pet });
-      form.reset(initialValues);
+      const formValues = {
+        name: defaultValues?.name || pet?.name || "",
+        type: (defaultValues?.type || pet?.type || "dog") as "dog" | "cat" | "bird" | "fish" | "other",
+        breed: defaultValues?.breed || pet?.breed || "",
+        customerId: defaultValues?.customerId?.toString() || pet?.customerId?.toString() || "",
+        dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
+        age: defaultValues?.age || pet?.age || null,
+        gender: (defaultValues?.gender || pet?.gender || "unknown") as "male" | "female" | "unknown",
+        weight: defaultValues?.weight || pet?.weight || null,
+        weightUnit: (defaultValues?.weightUnit || pet?.weightUnit || "kg") as "kg" | "lbs",
+        image: defaultValues?.image || pet?.image || null,
+        notes: defaultValues?.notes || pet?.notes || null
+      };
+
+      console.log('Setting form values:', formValues);
+      form.reset(formValues);
     }
-  }, [form, initialValues]);
+  }, [defaultValues, pet, form]);
 
   useEffect(() => {
     if (defaultValues || pet) {
@@ -174,8 +184,6 @@ export const PetForm: React.FC<PetFormProps> = ({
   };
 
   const onSubmit = async (data: PetFormSchema) => {
-    console.log('Form submission started:', { data, isSubmitting });
-    
     if (isSubmitting) {
       console.log('Form submission blocked - already submitting');
       return;
@@ -183,15 +191,10 @@ export const PetForm: React.FC<PetFormProps> = ({
 
     setIsSubmitting(true);
     try {
-      console.log('Processing form data:', { 
-        formData: data,
-        defaultValues,
-        pet
-      });
+      console.log('Form submission started:', { data });
 
       if (!data.customerId) {
-        console.error('Missing customer ID');
-        throw new Error("Customer ID is required");
+        throw new Error("Please select a customer");
       }
 
       // Find the selected customer's details
@@ -200,43 +203,37 @@ export const PetForm: React.FC<PetFormProps> = ({
         throw new Error("Selected customer not found");
       }
 
-      const owner = {
-        id: selectedCustomer.id.toString(),
-        firstName: selectedCustomer.firstName,
-        lastName: selectedCustomer.lastName,
-        phone: selectedCustomer.phone,
-        email: selectedCustomer.email
-      };
-
       // Handle image data
-      let imageToUpload = null;
-      let existingImageUrl = null;
-      
+      let finalImage: string | File | null = null;
       if (data.image instanceof File) {
-        imageToUpload = data.image;
+        finalImage = data.image;
       } else if (typeof data.image === 'string' && data.image.length > 0) {
-        existingImageUrl = data.image;
+        finalImage = data.image;
       }
 
-      // Prepare pet data for Firebase
+      // Prepare pet data
       const petData: InsertPet = {
         name: data.name.trim(),
         type: data.type,
         breed: data.breed.trim(),
         customerId: data.customerId,
         dateOfBirth: data.dateOfBirth || null,
-        gender: data.gender,
         age: data.age ? Number(data.age) : null,
+        gender: data.gender,
         weight: data.weight?.trim() || null,
         weightUnit: data.weightUnit,
-        image: imageToUpload || existingImageUrl,
+        image: finalImage,
         notes: data.notes?.trim() || null,
-        owner,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        owner: {
+          id: selectedCustomer.id.toString(),
+          firstName: selectedCustomer.firstName,
+          lastName: selectedCustomer.lastName,
+          phone: selectedCustomer.phone,
+          email: selectedCustomer.email
+        }
       };
 
-      console.log('Submitting pet data to Firebase:', petData);
+      console.log('Submitting pet data:', petData);
 
       console.log('Submitting pet data:', petData);
 
