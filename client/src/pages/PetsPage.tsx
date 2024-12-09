@@ -140,9 +140,9 @@ export default function PetsPage() {
       <div className="relative h-[200px] rounded-lg overflow-hidden mb-6 bg-gradient-to-r from-purple-500 to-pink-500">
         <div className="absolute inset-0">
           <img
-            src="/pets-banner.jpg"
+            src="/image.png"
             alt="Pets Banner"
-            className="w-full h-full object-cover opacity-25"
+            className="w-full h-full object-cover opacity-30"
           />
           <div className="absolute inset-0 bg-[url('/pets-pattern.svg')] opacity-10" />
         </div>
