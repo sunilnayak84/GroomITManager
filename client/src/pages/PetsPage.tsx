@@ -142,11 +142,10 @@ export default function PetsPage() {
           <img
             src="/image.png"
             alt="Pets Banner"
-            className="w-full h-full object-cover opacity-30"
+            className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-[url('/pets-pattern.svg')] opacity-10" />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/60 to-pink-500/60" />
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/80 to-pink-500/80" />
         <div className="relative p-8 flex flex-col h-full justify-between">
           <div className="flex items-center justify-between">
             <div>
