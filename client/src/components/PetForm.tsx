@@ -114,12 +114,9 @@ export function PetForm({
     
     setIsSubmitting(true);
 
-    // Create a unique submission ID at the start
-    const submissionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${Math.random().toString(36).substr(2, 9)}`;
-    console.log('Generated submission ID:', submissionId);
-
     try {
-      console.log('Form submission started:', { data, submissionId });
+      const submissionId = `${Date.now()}-${Math.random().toString(36).substring(2)}`;
+      console.log('Generated submission ID:', submissionId);
 
       // Find customer by either firebaseId or id
       const selectedCustomer = customers.find(c => 
@@ -131,51 +128,37 @@ export function PetForm({
         throw new Error("Selected customer not found");
       }
 
-      // Clean and prepare the pet data
-      const petData: InsertPet = {
-        name: data.name.trim(),
-        type: data.type,
-        breed: data.breed.trim(),
-        customerId: selectedCustomer.firebaseId || selectedCustomer.id.toString(),
-        dateOfBirth: data.dateOfBirth,
-        age: data.age,
-        gender: data.gender,
-        weight: data.weight?.trim() ?? null,
-        weightUnit: data.weightUnit,
-        image: data.image,
-        notes: data.notes?.trim() ?? null,
+      const petData = {
+        ...data,
+        customerId: selectedCustomer.id,
+        dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null,
         owner: {
-          id: selectedCustomer.firebaseId || selectedCustomer.id.toString(),
+          id: selectedCustomer.id,
           firstName: selectedCustomer.firstName,
           lastName: selectedCustomer.lastName,
+          name: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`,
           phone: selectedCustomer.phone || '',
           email: selectedCustomer.email || ''
         },
-        submissionId // Add submission ID to track duplicates
+        submissionId
       };
 
-      console.log('Submitting pet data:', { ...petData, submissionId });
-      
+      console.log('Submitting pet data:', petData);
       const result = await addPet(petData);
-      console.log('Pet creation result:', result);
 
-      if (result) {
-        toast({
-          title: "Success",
-          description: "Pet added successfully",
-        });
-
-        // Only reset form and call onSuccess after confirmed success
-        form.reset();
-        setImagePreview(null);
-        
-        if (onSuccess) {
-          onSuccess(petData);
-        }
-      } else {
-        throw new Error("Failed to create pet - no result returned");
+      if (result?.isDuplicate) {
+        console.log('Duplicate submission detected');
+        return;
       }
-      
+
+      toast({
+        title: "Success",
+        description: "Pet added successfully",
+      });
+
+      form.reset();
+      setImagePreview(null);
+      onSuccess?.(petData);
     } catch (error) {
       console.error('Error submitting pet form:', error);
       toast({

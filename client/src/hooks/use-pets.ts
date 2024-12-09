@@ -237,76 +237,20 @@ export function usePets() {
           throw new Error('Required fields are missing');
         }
 
-        // Handle image upload if present
-        let imageUrl = petData.image;
-        if (petData.image instanceof File) {
-          try {
-            imageUrl = await uploadFile(
-              petData.image,
-              `pets/${petData.customerId}/${Date.now()}_${petData.image.name}`
-            );
-          } catch (uploadError) {
-            console.error('ADD_PET: Image upload failed:', uploadError);
-            throw new Error('Failed to upload pet image');
-          }
-        }
-
-        // Prepare pet data with Firebase-compatible structure
-        const timestamp = serverTimestamp();
-        const newPetData = {
-          ...petData,
-          image: imageUrl,
-          createdAt: timestamp,
-          updatedAt: timestamp
-        };
-
-        // Clean the data
-        const cleanedData = Object.entries(newPetData).reduce((acc, [key, value]) => {
-          if (value !== undefined && value !== '') {
-            acc[key] = value === '' ? null : value;
-          }
-          return acc;
-        }, {});
-
-        console.log('ADD_PET: Adding pet with data:', cleanedData);
-        
-        const petId = await createPet(cleanedData);
-        
-        if (!petId) {
-          throw new Error('Failed to create pet - no ID returned');
-        }
-
-        // Invalidate queries to trigger a refresh
-        queryClient.invalidateQueries(['pets']);
-        queryClient.invalidateQueries(['customers']);
-
-        return {
-          id: petId,
-          ...cleanedData
-        };
+        const result = await createPet(petData);
+        return result;
       } catch (error) {
         console.error('ADD_PET: Error adding pet:', error);
         throw error;
       }
     },
-    onSuccess: async (data) => {
-      try {
-        console.log('ADD_PET: Submitting pet data', { data });
-        const result = await addPet(data);
-
-        // Check for duplicate submission
-        if (result?.isDuplicate) {
-          return; // Exit if it's a duplicate
-        }
-
-        await queryClient.invalidateQueries({ queryKey: ['pets'] });
-        return result; // Return the result so the component can handle UI updates
-      } catch (error) {
-        console.error('ADD_PET: Error adding pet:', error);
-        throw error; // Let the component handle the error
+    onSuccess: async (result) => {
+      if (result?.isDuplicate) {
+        return; // Exit if it's a duplicate submission
       }
+      await queryClient.invalidateQueries({ queryKey: ['pets'] });
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       console.error('ADD_PET: Mutation error:', error);
     }
   });
