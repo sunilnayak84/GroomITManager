@@ -1,4 +1,4 @@
-import { collection, doc, setDoc, getDoc, getDocs, deleteDoc, query, where, DocumentData, CollectionReference } from 'firebase/firestore';
+import { collection, doc, setDoc, getDoc, getDocs, deleteDoc, query, where, DocumentData, CollectionReference, runTransaction } from 'firebase/firestore';
 import { db } from './firebase';
 import type { User, Customer, Pet, Appointment } from '@db/schema';
 
