@@ -20,12 +20,12 @@ export type InsertCustomer = z.infer<typeof insertCustomerSchema>;
 
 // Pet types
 export type Pet = {
-  id: number;
+  id: string;
   name: string;
   type: "dog" | "cat" | "bird" | "fish" | "other";
   breed: string;
-  customerId: number;
-  dateOfBirth: string | null;
+  customerId: string;
+  dateOfBirth: string | { seconds: number; nanoseconds: number; } | null;
   age: number | null;
   gender: "male" | "female" | "unknown" | null;
   weight: string | null;
@@ -33,14 +33,14 @@ export type Pet = {
   image: string | null;
   notes: string | null;
   owner?: {
-    id: number;
+    id: string;
     firstName: string;
     lastName: string;
     phone?: string;
     email?: string;
   };
-  createdAt: Date;
-  updatedAt: Date | null;
+  createdAt: Date | { seconds: number; nanoseconds: number; };
+  updatedAt: Date | { seconds: number; nanoseconds: number; } | null;
   firebaseId?: string | null;
 };
 

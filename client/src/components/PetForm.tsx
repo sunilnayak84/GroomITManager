@@ -41,9 +41,9 @@ interface PetFormProps {
   defaultValues?: Partial<InsertPet>;
   pet?: Pet;
   customers?: Customer[];
-  updatePet?: (id: number, data: Partial<InsertPet>) => Promise<void>;
+  updatePet?: (id: string, data: Partial<InsertPet>) => Promise<void>;
   addPet: (data: InsertPet) => Promise<Pet>;
-  id?: number;
+  id?: string;
 }
 
 export const PetForm: React.FC<PetFormProps> = ({
