@@ -74,7 +74,7 @@ export function usePets() {
 
       const fetchedPets = querySnapshot.docs.map((doc) => {
         const petData = doc.data();
-        const customerId = petData.customerId;  // Use the raw customerId
+        const customerId = petData.customerId;
         const customerDetails = customersMap.get(customerId);
         
         console.log('FETCH_PETS: Processing pet data:', {
@@ -87,7 +87,7 @@ export function usePets() {
           } : null
         });
 
-        const pet: Pet = {
+        return {
           id: doc.id,
           customerId: customerId,
           name: petData.name,
@@ -109,8 +109,6 @@ export function usePets() {
             email: customerDetails.email || ''
           } : null
         };
-
-        return pet;
       });
 
       console.log('FETCH_PETS: Completed fetching pets', {
@@ -128,10 +126,12 @@ export function usePets() {
   const { data: pets, isLoading, refetch } = useQuery({
     queryKey: ['pets', refreshKey],
     queryFn: fetchPets,
-    staleTime: 0, // Always fetch fresh data
-    cacheTime: 0,  // Don't cache the results
+    staleTime: 0,
+    cacheTime: 0,
     refetchOnWindowFocus: true,
-    refetchOnMount: true
+    refetchOnMount: true,
+    retry: 2,
+    retryDelay: 1000
   });
 
   const updatePet = async (petId: string, updateData: Partial<InsertPet>) => {
@@ -274,9 +274,13 @@ export function usePets() {
       if (result?.isDuplicate) {
         return; // Exit if it's a duplicate submission
       }
+      
+      // Wait a bit for Firestore to settle
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
       await queryClient.invalidateQueries({ queryKey: ['pets'] });
-      setRefreshKey(prev => prev + 1); // Force a refresh
-      await refetch(); // Explicitly refetch after successful mutation
+      setRefreshKey(prev => prev + 1);
+      await refetch();
     },
     onError: (error: Error) => {
       console.error('ADD_PET: Mutation error:', error);

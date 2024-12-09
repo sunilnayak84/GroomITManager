@@ -47,6 +47,7 @@ export default function PetsPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [data, setData] = useState<Pet[]>([]);
   const { toast } = useToast();
 
   const columns = [
@@ -121,22 +122,8 @@ export default function PetsPage() {
 
   useEffect(() => {
     if (pets && customers) {
-      const tableData = pets.map((pet) => ({
-        id: pet.id,
-        name: pet.name,
-        type: pet.type,
-        breed: pet.breed,
-        owner: getOwnerName(pet),
-        image: pet.image,
-        customerId: pet.customerId,
-        dateOfBirth: pet.dateOfBirth,
-        age: pet.age,
-        gender: pet.gender,
-        weight: pet.weight,
-        weightUnit: pet.weightUnit,
-        notes: pet.notes,
-      }));
-      // setData(tableData); // This line is commented out because the function setData is not defined in this code snippet
+      console.log('Setting table data:', { pets, customers });
+      setData(pets);
     }
   }, [pets, customers]);
 
@@ -237,7 +224,7 @@ export default function PetsPage() {
                     }
                     setShowPetDetails(false);
                     setIsEditing(false);
-                    await refetch(); // Explicitly refetch after mutation
+                    await refetch();
                     toast({
                       title: "Success",
                       description: selectedPet ? "Pet updated successfully" : "Pet added successfully",
@@ -366,7 +353,7 @@ export default function PetsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {pets?.map((pet) => (
+            {data?.map((pet) => (
               <TableRow key={pet.id}>
                 {renderColumns.map((column) => (
                   <TableCell key={`${pet.id}-${column.header}`}>
