@@ -130,7 +130,7 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
     }
 
     // Verify customer exists
-    const customerRef = doc(db, 'customers', pet.customerId);
+    const customerRef = doc(db, 'customers', pet.customerId.toString());
     const customerDoc = await getDoc(customerRef);
 
     if (!customerDoc.exists()) {
@@ -266,9 +266,9 @@ export async function deleteCustomerAndRelated(id: string) {
   }
 }
 
-export async function updatePet(id: string, data: Partial<Pet>) {
+export async function updatePet(id: number, data: Partial<Pet>) {
   try {
-    const petRef = doc(petsCollection, id);
+    const petRef = doc(petsCollection, id.toString());
     await setDoc(petRef, {
       ...data,
       updatedAt: new Date()
