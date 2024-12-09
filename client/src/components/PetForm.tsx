@@ -17,13 +17,16 @@ const petFormSchema = z.object({
   type: z.enum(["dog", "cat", "bird", "fish", "other"] as const),
   breed: z.string().min(1, { message: "Breed is required" }),
   customerId: z.string().min(1, { message: "Customer is required" }),
-  dateOfBirth: z.string().nullable(),
-  age: z.number().nullable().or(z.string().transform(val => val ? Number(val) : null)),
+  dateOfBirth: z.string().nullish(),
+  age: z.union([z.number(), z.string(), z.null()]).transform(val => {
+    if (!val) return null;
+    return typeof val === 'string' ? Number(val) : val;
+  }),
   gender: z.enum(["male", "female", "unknown"] as const),
-  weight: z.string().nullable(),
+  weight: z.string().nullish(),
   weightUnit: z.enum(["kg", "lbs"] as const).default("kg"),
-  image: z.union([z.string(), z.instanceof(File), z.null()]).nullable(),
-  notes: z.string().nullable(),
+  image: z.union([z.string(), z.instanceof(File), z.null()]).nullish(),
+  notes: z.string().nullish(),
   owner: z.object({
     id: z.string(),
     firstName: z.string(),
@@ -31,10 +34,7 @@ const petFormSchema = z.object({
     phone: z.string().optional(),
     email: z.string().optional()
   }).optional()
-}).transform(data => ({
-  ...data,
-  age: data.age ? Number(data.age) : null
-}));
+});
 
 type PetFormSchema = z.infer<typeof petFormSchema>;
 
@@ -103,51 +103,35 @@ export const PetForm: React.FC<PetFormProps> = ({
     ].filter((customer): customer is Customer => !!customer && typeof customer.id === 'number');
   }, [initialCustomers, fetchedCustomers]);
 
-  // Form initialization
-  console.log('Initializing form with values:', {
-    defaultValues,
-    pet
-  });
+  // Form initialization with memoized default values
+  const initialValues = React.useMemo(() => ({
+    name: defaultValues?.name || pet?.name || "",
+    type: (defaultValues?.type || pet?.type || "dog") as "dog" | "cat" | "bird" | "fish" | "other",
+    breed: defaultValues?.breed || pet?.breed || "",
+    customerId: (defaultValues?.customerId || pet?.customerId || '').toString(),
+    dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
+    age: Number(defaultValues?.age || pet?.age) || null,
+    gender: (defaultValues?.gender || pet?.gender || "unknown") as "male" | "female" | "unknown",
+    weight: defaultValues?.weight?.toString() || pet?.weight?.toString() || null,
+    weightUnit: (defaultValues?.weightUnit || pet?.weightUnit || "kg") as "kg" | "lbs",
+    image: defaultValues?.image || pet?.image || null,
+    notes: defaultValues?.notes || pet?.notes || null,
+    owner: defaultValues?.owner || pet?.owner
+  }), [defaultValues, pet]);
 
   const form = useForm<PetFormSchema>({
     resolver: zodResolver(petFormSchema),
     mode: "onChange",
-    defaultValues: {
-      name: "",
-      type: "dog",
-      breed: "",
-      customerId: "",
-      dateOfBirth: null,
-      age: null,
-      gender: "unknown",
-      weight: null,
-      weightUnit: "kg",
-      image: null,
-      notes: null,
-      owner: undefined
-    }
+    defaultValues: initialValues
   });
 
-  // Set form values when pet or defaultValues change
+  // Update form when default values change
   useEffect(() => {
     if (defaultValues || pet) {
       console.log('Setting form values:', { defaultValues, pet });
-      form.reset({
-        name: defaultValues?.name || pet?.name || "",
-        type: (defaultValues?.type || pet?.type || "dog") as "dog" | "cat" | "bird" | "fish" | "other",
-        breed: defaultValues?.breed || pet?.breed || "",
-        customerId: (defaultValues?.customerId || pet?.customerId || '').toString(),
-        dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
-        age: Number(defaultValues?.age || pet?.age) || null,
-        gender: (defaultValues?.gender || pet?.gender || "unknown") as "male" | "female" | "unknown",
-        weight: defaultValues?.weight?.toString() || pet?.weight?.toString() || null,
-        weightUnit: (defaultValues?.weightUnit || pet?.weightUnit || "kg") as "kg" | "lbs",
-        image: defaultValues?.image || pet?.image || null,
-        notes: defaultValues?.notes || pet?.notes || null,
-        owner: defaultValues?.owner || pet?.owner
-      });
+      form.reset(initialValues);
     }
-  }, [defaultValues, pet, form]);
+  }, [form, initialValues]);
 
   useEffect(() => {
     if (defaultValues || pet) {
@@ -234,23 +218,25 @@ export const PetForm: React.FC<PetFormProps> = ({
         existingImageUrl = data.image;
       }
 
+      // Prepare pet data for Firebase
       const petData: InsertPet = {
         name: data.name.trim(),
         type: data.type,
         breed: data.breed.trim(),
         customerId: data.customerId,
-        dateOfBirth: data.dateOfBirth,
+        dateOfBirth: data.dateOfBirth || null,
         gender: data.gender,
-        age: typeof data.age === 'string' ? Number(data.age) : data.age,
+        age: data.age ? Number(data.age) : null,
         weight: data.weight?.trim() || null,
         weightUnit: data.weightUnit,
-        image: imageToUpload,
-        imageUrl: existingImageUrl,
+        image: imageToUpload || existingImageUrl,
         notes: data.notes?.trim() || null,
-        owner: owner,
+        owner,
         createdAt: new Date(),
         updatedAt: new Date()
       };
+
+      console.log('Submitting pet data to Firebase:', petData);
 
       console.log('Submitting pet data:', petData);
 
