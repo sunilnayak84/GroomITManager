@@ -33,7 +33,7 @@ interface PetFormProps {
   onCancel?: () => void;
   defaultValues?: Partial<InsertPet>;
   customers?: Customer[];
-  customerId: string;
+  customerId?: string;
   addPet: (data: InsertPet) => Promise<any>;
 }
 
@@ -57,7 +57,7 @@ export function PetForm({
       name: defaultValues?.name ?? "",
       type: defaultValues?.type ?? "dog",
       breed: defaultValues?.breed ?? "",
-      customerId: customerId.toString(),
+      customerId: customerId ?? (customers?.[0]?.firebaseId ?? ""),
       dateOfBirth: defaultValues?.dateOfBirth ?? null,
       age: defaultValues?.age ?? null,
       gender: defaultValues?.gender ?? "unknown",
@@ -93,7 +93,7 @@ export function PetForm({
         name: data.name.trim(),
         type: data.type,
         breed: data.breed.trim(),
-        customerId: selectedCustomer.id, // Using Firebase document ID directly
+        customerId: selectedCustomer.id,
         dateOfBirth: data.dateOfBirth,
         age: typeof data.age === 'string' ? parseInt(data.age) : data.age,
         gender: data.gender,
@@ -133,6 +133,15 @@ export function PetForm({
       setIsSubmitting(false);
     }
   };
+
+  // Show message if no customers available
+  if (!customers || customers.length === 0) {
+    return (
+      <div className="p-4 text-center">
+        <p className="text-red-500">Please add at least one customer before adding a pet.</p>
+      </div>
+    );
+  }
 
   return (
     <Form {...form}>
