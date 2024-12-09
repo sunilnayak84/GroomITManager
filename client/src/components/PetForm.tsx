@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Upload } from "lucide-react";
 
 const petSchema = z.object({
@@ -34,7 +34,9 @@ interface PetFormProps {
   defaultValues?: Partial<InsertPet>;
   customers?: Customer[];
   customerId?: string;
-  addPet: (data: InsertPet) => Promise<any>;
+  selectedCustomer?: Customer;
+  isEditing?: boolean;
+  addPet: (data: InsertPet) => Promise<string>;
 }
 
 export function PetForm({
@@ -43,10 +45,13 @@ export function PetForm({
   defaultValues,
   customers = [],
   customerId,
+  selectedCustomer: initialSelectedCustomer,
+  isEditing = false,
   addPet
 }: PetFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionId, setSubmissionId] = useState<string | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(
     typeof defaultValues?.image === 'string' ? defaultValues.image : null
   );
@@ -57,7 +62,7 @@ export function PetForm({
       name: defaultValues?.name ?? "",
       type: defaultValues?.type ?? "dog",
       breed: defaultValues?.breed ?? "",
-      customerId: "",
+      customerId: customerId ?? "",
       dateOfBirth: defaultValues?.dateOfBirth ?? null,
       age: defaultValues?.age ?? null,
       gender: defaultValues?.gender ?? "unknown",
@@ -72,20 +77,15 @@ export function PetForm({
   useEffect(() => {
     if (customers.length > 0) {
       let selectedCustomer;
-      
       if (customerId) {
-        // Try to find customer by Firebase ID or regular ID
         selectedCustomer = customers.find(c => 
           (c.firebaseId && c.firebaseId === customerId) || 
           c.id.toString() === customerId
         );
       }
-      
-      // If no specific customer found, use the first one
       if (!selectedCustomer) {
         selectedCustomer = customers[0];
       }
-
       if (selectedCustomer) {
         const effectiveId = selectedCustomer.firebaseId || selectedCustomer.id.toString();
         console.log('Setting initial customer:', {
@@ -105,8 +105,7 @@ export function PetForm({
     }
   };
 
-  // Debounced submit handler
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = useCallback(async (data: FormData) => {
     if (isSubmitting) {
       console.log('Form submission blocked - already submitting');
       return;
@@ -114,12 +113,14 @@ export function PetForm({
     
     setIsSubmitting(true);
 
-    // Create a unique submission ID at the start
-    const submissionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    console.log('Generated submission ID:', submissionId);
-
     try {
-      console.log('Form submission started:', { data, submissionId });
+      // Generate submission ID if not already set
+      const currentSubmissionId = submissionId || `${Date.now()}-${Math.random().toString(36).substring(2)}`;
+      if (!submissionId) {
+        setSubmissionId(currentSubmissionId);
+      }
+
+      console.log('Form submission started:', { data, submissionId: currentSubmissionId });
 
       // Find customer by either firebaseId or id
       const selectedCustomer = customers.find(c => 
@@ -131,30 +132,22 @@ export function PetForm({
         throw new Error("Selected customer not found");
       }
 
-      // Clean and prepare the pet data
-      const petData: InsertPet = {
-        name: data.name.trim(),
-        type: data.type,
-        breed: data.breed.trim(),
-        customerId: selectedCustomer.firebaseId || selectedCustomer.id.toString(),
-        dateOfBirth: data.dateOfBirth,
-        age: data.age,
-        gender: data.gender,
-        weight: data.weight?.trim() ?? null,
-        weightUnit: data.weightUnit,
-        image: data.image,
-        notes: data.notes?.trim() ?? null,
+      const petData = {
+        ...data,
+        customerId: selectedCustomer.id.toString(),
+        dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null,
         owner: {
-          id: selectedCustomer.firebaseId || selectedCustomer.id.toString(),
+          id: selectedCustomer.id,
           firstName: selectedCustomer.firstName,
           lastName: selectedCustomer.lastName,
+          name: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`,
           phone: selectedCustomer.phone || '',
           email: selectedCustomer.email || ''
         },
-        submissionId // Add submission ID to track duplicates
+        submissionId: currentSubmissionId
       };
 
-      console.log('Submitting pet data:', { ...petData, submissionId });
+      console.log('Submitting pet data:', petData);
       
       const result = await addPet(petData);
       console.log('Pet creation result:', result);
@@ -165,32 +158,25 @@ export function PetForm({
           description: "Pet added successfully",
         });
 
-        // Only reset form and call onSuccess after confirmed success
         form.reset();
         setImagePreview(null);
-        
-        if (onSuccess) {
-          onSuccess(petData);
-        }
-      } else {
-        throw new Error("Failed to create pet - no result returned");
+        setSubmissionId(null);
+        onSuccess?.(petData);
       }
-      
     } catch (error) {
       console.error('Error submitting pet form:', error);
       toast({
         title: "Error",
         description: error instanceof Error 
           ? error.message 
-          : "Failed to add pet. Please check all required fields and try again.",
+          : "Failed to add pet. Please try again.",
         variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [isSubmitting, submissionId, customers, addPet, form, onSuccess, toast]);
 
-  // Show message if no customers available
   if (customers.length === 0) {
     return (
       <div className="p-4 text-center">

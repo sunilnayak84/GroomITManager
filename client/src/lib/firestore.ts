@@ -111,7 +111,7 @@ export async function createCustomer(customer: Omit<Customer, 'id'>) {
   }
 }
 
-// Pet operations with error handling
+// Pet operations with error handling and improved transaction logic
 export async function createPet(pet: Omit<Pet, 'id'>) {
   try {
     console.log('FIRESTORE: Attempting to create pet', { pet });
@@ -122,7 +122,7 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
     }
 
     // Ensure required fields are present
-    const requiredFields = ['name', 'type', 'breed', 'customerId'];
+    const requiredFields = ['name', 'type', 'breed', 'customerId', 'submissionId'];
     for (const field of requiredFields) {
       if (!pet[field]) {
         throw new Error(`Missing required field: ${field}`);
@@ -135,8 +135,8 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
     // Create references
     const customerRef = doc(customersCollection, customerIdStr);
     const petRef = doc(petsCollection);
-    
-    // Check for existing submission
+
+    // Check for duplicate submission before starting transaction
     if (pet.submissionId) {
       const existingPetQuery = query(
         petsCollection,
@@ -192,7 +192,8 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
         console.log('FIRESTORE: Transaction details', { 
           petId: petRef.id,
           customerId: customerIdStr,
-          currentPetCount: actualPetCount,
+          currentStoredCount: customerDoc.data()?.petCount || 0,
+          actualPetCount,
           newPetData: petData
         });
 
