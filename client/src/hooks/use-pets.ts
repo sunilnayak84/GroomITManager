@@ -292,12 +292,7 @@ export function usePets() {
     onSuccess: async (data) => {
       try {
         console.log('ADD_PET: Submitting pet data', { data });
-        const result = await addPet({
-          ...data,
-          customerId: selectedCustomer.id,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        });
+        const result = await addPet(data);
 
         // Check for duplicate submission
         if (result?.isDuplicate) {
