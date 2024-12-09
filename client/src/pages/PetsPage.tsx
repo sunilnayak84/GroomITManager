@@ -85,22 +85,36 @@ export default function PetsPage() {
       throw new Error('No pet selected for update');
     }
     
-    // Ensure data types match the schema
-    const updateData: InsertPet = {
-      ...data,
-      customerId: selectedPet.customerId,
-      dateOfBirth: data.dateOfBirth || null,
-      age: data.age || null,
-      gender: data.gender || null,
-      weight: data.weight || null,
-      notes: data.notes || null,
-      image: data.image || null
-    };
+    try {
+      // Ensure data types match the schema
+      const updateData: InsertPet = {
+        ...data,
+        customerId: selectedPet.customerId,
+        dateOfBirth: data.dateOfBirth || null,
+        age: data.age || null,
+        gender: data.gender || null,
+        weight: data.weight || null,
+        notes: data.notes || null,
+        image: data.image || null
+      };
 
-    await updatePet({ 
-      petId: selectedPet.id, 
-      updateData
-    });
+      await updatePet({ 
+        petId: selectedPet.id, 
+        updateData
+      });
+
+      toast({
+        title: "Success",
+        description: "Pet details updated successfully",
+      });
+    } catch (error) {
+      console.error('Error updating pet:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to update pet details",
+      });
+    }
   };
 
   const getOwnerName = (pet: Pet) => {
