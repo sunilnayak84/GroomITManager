@@ -17,16 +17,16 @@ const petFormSchema = z.object({
   type: z.enum(["dog", "cat", "bird", "fish", "other"] as const),
   breed: z.string().min(1, { message: "Breed is required" }),
   customerId: z.string().min(1, { message: "Customer is required" }),
-  dateOfBirth: z.string().nullish(),
-  age: z.union([z.number(), z.string(), z.null()]).transform(val => {
+  dateOfBirth: z.string().nullable(),
+  age: z.union([z.number(), z.string()]).nullable().transform(val => {
     if (!val) return null;
     return typeof val === 'string' ? Number(val) : val;
   }),
   gender: z.enum(["male", "female", "unknown"] as const),
-  weight: z.string().nullish(),
+  weight: z.string().nullable(),
   weightUnit: z.enum(["kg", "lbs"] as const).default("kg"),
-  image: z.union([z.string(), z.instanceof(File), z.null()]).nullish(),
-  notes: z.string().nullish(),
+  image: z.union([z.string(), z.instanceof(File), z.null()]).nullable(),
+  notes: z.string().nullable(),
   owner: z.object({
     id: z.string(),
     firstName: z.string(),
@@ -34,7 +34,14 @@ const petFormSchema = z.object({
     phone: z.string().optional(),
     email: z.string().optional()
   }).optional()
-});
+}).transform(data => ({
+  ...data,
+  customerId: data.customerId.toString(),
+  age: data.age ? Number(data.age) : null,
+  weight: data.weight || null,
+  notes: data.notes || null,
+  dateOfBirth: data.dateOfBirth || null
+}));
 
 type PetFormSchema = z.infer<typeof petFormSchema>;
 
@@ -103,45 +110,32 @@ export const PetForm: React.FC<PetFormProps> = ({
     ].filter((customer): customer is Customer => !!customer && typeof customer.id === 'number');
   }, [initialCustomers, fetchedCustomers]);
 
+  const defaultFormValues = useMemo(() => ({
+    name: defaultValues?.name || pet?.name || "",
+    type: (defaultValues?.type || pet?.type || "dog") as "dog" | "cat" | "bird" | "fish" | "other",
+    breed: defaultValues?.breed || pet?.breed || "",
+    customerId: defaultValues?.customerId?.toString() || pet?.customerId?.toString() || "",
+    dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
+    age: defaultValues?.age || pet?.age || null,
+    gender: (defaultValues?.gender || pet?.gender || "unknown") as "male" | "female" | "unknown",
+    weight: defaultValues?.weight || pet?.weight || null,
+    weightUnit: (defaultValues?.weightUnit || pet?.weightUnit || "kg") as "kg" | "lbs",
+    image: defaultValues?.image || pet?.image || null,
+    notes: defaultValues?.notes || pet?.notes || null
+  }), [defaultValues, pet]);
+
   const form = useForm<PetFormSchema>({
     resolver: zodResolver(petFormSchema),
     mode: "onChange",
-    defaultValues: {
-      name: "",
-      type: "dog",
-      breed: "",
-      customerId: "",
-      dateOfBirth: null,
-      age: null,
-      gender: "unknown",
-      weight: null,
-      weightUnit: "kg",
-      image: null,
-      notes: null
-    }
+    defaultValues: defaultFormValues
   });
 
-  // Update form when pet or defaultValues change
+  // Update form when default values change
   useEffect(() => {
     if (defaultValues || pet) {
-      const formValues = {
-        name: defaultValues?.name || pet?.name || "",
-        type: (defaultValues?.type || pet?.type || "dog") as "dog" | "cat" | "bird" | "fish" | "other",
-        breed: defaultValues?.breed || pet?.breed || "",
-        customerId: defaultValues?.customerId?.toString() || pet?.customerId?.toString() || "",
-        dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
-        age: defaultValues?.age || pet?.age || null,
-        gender: (defaultValues?.gender || pet?.gender || "unknown") as "male" | "female" | "unknown",
-        weight: defaultValues?.weight || pet?.weight || null,
-        weightUnit: (defaultValues?.weightUnit || pet?.weightUnit || "kg") as "kg" | "lbs",
-        image: defaultValues?.image || pet?.image || null,
-        notes: defaultValues?.notes || pet?.notes || null
-      };
-
-      console.log('Setting form values:', formValues);
-      form.reset(formValues);
+      form.reset(defaultFormValues);
     }
-  }, [defaultValues, pet, form]);
+  }, [defaultFormValues, form]);
 
   useEffect(() => {
     if (defaultValues || pet) {
@@ -185,7 +179,6 @@ export const PetForm: React.FC<PetFormProps> = ({
 
   const onSubmit = async (data: PetFormSchema) => {
     if (isSubmitting) {
-      console.log('Form submission blocked - already submitting');
       return;
     }
 
@@ -203,35 +196,43 @@ export const PetForm: React.FC<PetFormProps> = ({
         throw new Error("Selected customer not found");
       }
 
-      // Handle image data
-      let finalImage: string | File | null = null;
+      // Handle image upload if it's a File
+      let imageUrl = data.image;
       if (data.image instanceof File) {
-        finalImage = data.image;
-      } else if (typeof data.image === 'string' && data.image.length > 0) {
-        finalImage = data.image;
+        try {
+          imageUrl = await uploadFile(
+            data.image,
+            `pets/${data.customerId}/${Date.now()}_${data.image.name}`
+          );
+        } catch (uploadError) {
+          console.error('Image upload failed:', uploadError);
+          throw new Error('Failed to upload pet image');
+        }
       }
 
-      // Prepare pet data
+      // Prepare pet data for Firebase
       const petData: InsertPet = {
         name: data.name.trim(),
         type: data.type,
         breed: data.breed.trim(),
         customerId: data.customerId,
-        dateOfBirth: data.dateOfBirth || null,
-        age: data.age ? Number(data.age) : null,
+        dateOfBirth: data.dateOfBirth,
+        age: data.age,
         gender: data.gender,
-        weight: data.weight?.trim() || null,
+        weight: data.weight,
         weightUnit: data.weightUnit,
-        image: finalImage,
-        notes: data.notes?.trim() || null,
-        owner: {
+        image: imageUrl,
+        notes: data.notes,
+        owner: selectedCustomer ? {
           id: selectedCustomer.id.toString(),
           firstName: selectedCustomer.firstName,
           lastName: selectedCustomer.lastName,
           phone: selectedCustomer.phone,
           email: selectedCustomer.email
-        }
+        } : undefined
       };
+
+      console.log('Prepared pet data for submission:', petData);
 
       console.log('Submitting pet data:', petData);
 
