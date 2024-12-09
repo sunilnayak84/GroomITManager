@@ -51,7 +51,7 @@ export default function ServicesPage() {
       name: "",
       description: "",
       duration: 60,
-      price: 0,
+      priceINR: 0,
     },
   });
 
@@ -62,7 +62,7 @@ export default function ServicesPage() {
         name: selectedService.name,
         description: selectedService.description,
         duration: selectedService.duration,
-        price: selectedService.price,
+        priceINR: selectedService.priceINR,
       });
     }
   }, [selectedService, isEditing, form]);
@@ -83,11 +83,11 @@ export default function ServicesPage() {
     }
   };
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
+  const formatPrice = (priceINR: number) => {
+    return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'USD',
-    }).format(price / 100);
+      currency: 'INR',
+    }).format(priceINR);
   };
 
   const formatDuration = (minutes: number) => {
@@ -115,7 +115,7 @@ export default function ServicesPage() {
     },
     {
       header: "Price",
-      cell: (service: Service) => formatPrice(service.price),
+      cell: (service: Service) => formatPrice(service.priceINR),
     },
     {
       header: "Status",
@@ -296,10 +296,10 @@ export default function ServicesPage() {
 
               <FormField
                 control={form.control}
-                name="price"
+                name="priceINR"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Price (in cents)</FormLabel>
+                    <FormLabel>Price (in INR)</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
