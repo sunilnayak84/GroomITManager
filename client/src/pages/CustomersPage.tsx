@@ -375,6 +375,7 @@ export default function CustomersPage() {
                         <FormControl>
                           <Input {...field} placeholder="John" />
                         </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -387,6 +388,7 @@ export default function CustomersPage() {
                         <FormControl>
                           <Input {...field} placeholder="Doe" />
                         </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
