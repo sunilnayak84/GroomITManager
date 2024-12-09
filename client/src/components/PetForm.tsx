@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { toast } from 'react-toastify';
 import React, { useState, useEffect } from "react";
 import { Upload } from "lucide-react";
 
@@ -34,6 +35,7 @@ interface PetFormProps {
   defaultValues?: Partial<InsertPet>;
   customers?: Customer[];
   customerId?: string;
+  selectedCustomer?: Customer;
   addPet: (data: InsertPet) => Promise<any>;
 }
 
@@ -43,6 +45,7 @@ export function PetForm({
   defaultValues,
   customers = [],
   customerId,
+  selectedCustomer,
   addPet
 }: PetFormProps) {
   const { toast } = useToast();
@@ -72,7 +75,6 @@ export function PetForm({
   useEffect(() => {
     if (customers.length > 0) {
       let selectedCustomer;
-      
       if (customerId) {
         // Try to find customer by Firebase ID or regular ID
         selectedCustomer = customers.find(c => 
@@ -80,12 +82,10 @@ export function PetForm({
           c.id.toString() === customerId
         );
       }
-      
       // If no specific customer found, use the first one
       if (!selectedCustomer) {
         selectedCustomer = customers[0];
       }
-
       if (selectedCustomer) {
         const effectiveId = selectedCustomer.firebaseId || selectedCustomer.id.toString();
         console.log('Setting initial customer:', {
