@@ -5,6 +5,7 @@ import { db } from "../lib/firebase";
 import { petsCollection, customersCollection, createPet } from "../lib/firestore";
 import { uploadFile } from "../lib/storage";
 import { toast } from "../lib/toast";
+import { useState } from 'react';
 
 export type Pet = {
   id: string;
@@ -31,6 +32,7 @@ export type Pet = {
 
 export function usePets() {
   const queryClient = useQueryClient();
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const fetchPets = async () => {
     try {
@@ -124,10 +126,12 @@ export function usePets() {
   };
 
   const { data: pets, isLoading, refetch } = useQuery({
-    queryKey: ['pets'],
+    queryKey: ['pets', refreshKey],
     queryFn: fetchPets,
     staleTime: 0, // Always fetch fresh data
-    cacheTime: 0  // Don't cache the results
+    cacheTime: 0,  // Don't cache the results
+    refetchOnWindowFocus: true,
+    refetchOnMount: true
   });
 
   const updatePet = async (petId: string, updateData: Partial<InsertPet>) => {
@@ -271,6 +275,7 @@ export function usePets() {
         return; // Exit if it's a duplicate submission
       }
       await queryClient.invalidateQueries({ queryKey: ['pets'] });
+      setRefreshKey(prev => prev + 1); // Force a refresh
       await refetch(); // Explicitly refetch after successful mutation
     },
     onError: (error: Error) => {
@@ -323,6 +328,7 @@ export function usePets() {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['pets'] });
+      setRefreshKey(prev => prev + 1); // Force a refresh
       await refetch(); // Explicitly refetch after successful mutation
     },
     onError: (error) => {

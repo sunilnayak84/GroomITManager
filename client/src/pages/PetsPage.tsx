@@ -106,26 +106,37 @@ export default function PetsPage() {
   ];
 
   useEffect(() => {
-    if (pets) {
-      console.log('PetsPage Debug:', {
-        petsCount: pets.length,
-        pets: pets.map(p => ({
+    console.log('PetsPage Debug:', {
+      petsCount: pets?.length,
+      pets
+    });
+  }, [pets]);
 
-          id: p.id,
-          name: p.name,
-          customerId: p.customerId,
-          owner: p.owner
-        }))
-      });
-    }
-    if (customers) {
-      console.log('PetsPage Customers Debug:', {
-        customersCount: customers.length,
-        customers: customers.map(c => ({
-          id: c.id,
-          name: `${c.firstName} ${c.lastName}`
-        }))
-      });
+  useEffect(() => {
+    console.log('PetsPage Customers Debug:', {
+      customersCount: customers?.length,
+      customers
+    });
+  }, [customers]);
+
+  useEffect(() => {
+    if (pets && customers) {
+      const tableData = pets.map((pet) => ({
+        id: pet.id,
+        name: pet.name,
+        type: pet.type,
+        breed: pet.breed,
+        owner: getOwnerName(pet),
+        image: pet.image,
+        customerId: pet.customerId,
+        dateOfBirth: pet.dateOfBirth,
+        age: pet.age,
+        gender: pet.gender,
+        weight: pet.weight,
+        weightUnit: pet.weightUnit,
+        notes: pet.notes,
+      }));
+      // setData(tableData); // This line is commented out because the function setData is not defined in this code snippet
     }
   }, [pets, customers]);
 
