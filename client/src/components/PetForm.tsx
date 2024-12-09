@@ -160,29 +160,17 @@ export function PetForm({
       console.log('Pet creation result:', result);
 
       if (result) {
-        // Only show toast and reset if we're still mounted
-        if (!isSubmitting) return;
-
-        // Only reset form and call onSuccess after confirmed success
-        form.reset();
-        setImagePreview(null);
-        
         toast({
           title: "Success",
           description: "Pet added successfully",
         });
 
-        // Call onSuccess with the result after the toast
+        // Only reset form and call onSuccess after confirmed success
+        form.reset();
+        setImagePreview(null);
+        
         if (onSuccess) {
-          onSuccess({
-            ...petData,
-            id: result.petId || result // Handle both old and new result formats
-          });
-        }
-
-        // If onCancel is provided (dialog mode), close the dialog
-        if (onCancel) {
-          onCancel();
+          onSuccess(petData);
         }
       } else {
         throw new Error("Failed to create pet - no result returned");
