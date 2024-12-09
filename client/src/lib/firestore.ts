@@ -138,41 +138,54 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
     
     // Use a transaction to create pet and update customer count atomically
     const petId = await runTransaction(db, async (transaction) => {
-      // Verify customer exists within transaction
-      const customerDoc = await transaction.get(customerRef);
-      if (!customerDoc.exists()) {
-        throw new Error(`Customer with ID ${customerIdStr} does not exist`);
+      try {
+        // Verify customer exists within transaction
+        const customerDoc = await transaction.get(customerRef);
+        if (!customerDoc.exists()) {
+          throw new Error(`Customer with ID ${customerIdStr} does not exist`);
+        }
+
+        // Get current pet count from customer document
+        const customerData = customerDoc.data();
+        const currentCount = customerData?.petCount || 0;
+
+        // Query existing pets for this customer to double-check count
+        const petsQuery = query(petsCollection, where('customerId', '==', customerIdStr));
+        const petsSnapshot = await getDocs(petsQuery);
+        const actualPetCount = petsSnapshot.size;
+
+        // Use the actual count from the query
+        const timestamp = new Date().toISOString();
+        const petData = {
+          ...pet,
+          id: petRef.id,
+          customerId: customerIdStr,
+          createdAt: timestamp,
+          updatedAt: timestamp
+        };
+
+        console.log('FIRESTORE: Transaction details', { 
+          petId: petRef.id,
+          customerId: customerIdStr,
+          currentStoredCount: currentCount,
+          actualPetCount,
+          newPetData: petData
+        });
+
+        // Create pet document
+        transaction.set(petRef, petData);
+
+        // Update customer's pet count using the actual count + 1
+        transaction.update(customerRef, {
+          petCount: actualPetCount + 1,
+          updatedAt: timestamp
+        });
+
+        return petRef.id;
+      } catch (error) {
+        console.error('FIRESTORE: Transaction failed', error);
+        throw error;
       }
-
-      // Get current pet count
-      const currentCount = customerDoc.data().petCount || 0;
-
-      // Prepare pet data for Firestore
-      const timestamp = new Date().toISOString();
-      const petData = {
-        ...pet,
-        id: petRef.id,
-        customerId: customerIdStr,
-        createdAt: timestamp,
-        updatedAt: timestamp
-      };
-
-      console.log('FIRESTORE: About to save pet data in transaction', { 
-        petId: petRef.id,
-        petData,
-        currentPetCount: currentCount 
-      });
-
-      // Create pet document
-      transaction.set(petRef, petData);
-
-      // Update customer's pet count
-      transaction.update(customerRef, {
-        petCount: currentCount + 1,
-        updatedAt: timestamp
-      });
-
-      return petRef.id;
     });
 
     console.log('FIRESTORE: Pet created successfully in transaction', { 

@@ -1,0 +1,33 @@
+Form submission started: {data: {…}}
+PetForm.tsx:147 Submitting pet data: {name: 'ewew', type: 'dog', breed: 'ewew', customerId: 'uLzGYzLqKlEu94wxCHgE', dateOfBirth: null, …}
+use-pets.ts:211 ADD_PET: Starting to add pet {petData: {…}}
+use-pets.ts:249 ADD_PET: Adding pet with data: {name: 'ewew', type: 'dog', breed: 'ewew', customerId: 'uLzGYzLqKlEu94wxCHgE', dateOfBirth: null, …}
+firestore.ts:117 FIRESTORE: Attempting to create pet {pet: {…}}
+firestore.ts:160 FIRESTORE: About to save pet data in transaction {petId: 'csx7KM1E98ByYUQF68CQ', petData: {…}, currentPetCount: 2}
+firestore.ts:178 FIRESTORE: Pet created successfully in transaction {petId: 'csx7KM1E98ByYUQF68CQ', customerId: 'uLzGYzLqKlEu94wxCHgE'}
+PetForm.tsx:91 Setting initial customer: {customerId: 'uLzGYzLqKlEu94wxCHgE', customerName: 'test user'}
+use-pets.ts:39 FETCH_PETS: Starting to fetch pets
+toast.ts:4 Success: Pet added successfully
+CustomersPage.tsx:578 ADD_PET: Submitting pet data {data: {…}}
+use-pets.ts:211 ADD_PET: Starting to add pet {petData: {…}}
+use-pets.ts:249 ADD_PET: Adding pet with data: {name: 'ewew', type: 'dog', breed: 'ewew', customerId: 'uLzGYzLqKlEu94wxCHgE', dateOfBirth: null, …}
+firestore.ts:117 FIRESTORE: Attempting to create pet {pet: {…}}
+use-pets.ts:68 FETCH_PETS: Available customers: [{…}]
+use-pets.ts:80 FETCH_PETS: Processing pet data: {petId: 'csx7KM1E98ByYUQF68CQ', customerId: 'uLzGYzLqKlEu94wxCHgE', petName: 'ewew', customerDetails: {…}}
+use-pets.ts:116 FETCH_PETS: Completed fetching pets {totalPets: 1, pets: Array(1)}
+PetForm.tsx:91 Setting initial customer: {customerId: 'uLzGYzLqKlEu94wxCHgE', customerName: 'test user'}
+firestore.ts:160 FIRESTORE: About to save pet data in transaction {petId: 'hjVl5wmr7X2WmOfbLG6J', petData: {…}, currentPetCount: 4}
+firestore.ts:178 FIRESTORE: Pet created successfully in transaction {petId: 'hjVl5wmr7X2WmOfbLG6J', customerId: 'uLzGYzLqKlEu94wxCHgE'}
+PetForm.tsx:91 Setting initial customer: {customerId: 'uLzGYzLqKlEu94wxCHgE', customerName: 'test user'}
+use-pets.ts:39 FETCH_PETS: Starting to fetch pets
+toast.ts:4 Success: Pet added successfully
+use-pets.ts:39 FETCH_PETS: Starting to fetch pets
+use-pets.ts:68 FETCH_PETS: Available customers: [{…}]
+use-pets.ts:80 FETCH_PETS: Processing pet data: {petId: 'csx7KM1E98ByYUQF68CQ', customerId: 'uLzGYzLqKlEu94wxCHgE', petName: 'ewew', customerDetails: {…}}
+use-pets.ts:80 FETCH_PETS: Processing pet data: {petId: 'hjVl5wmr7X2WmOfbLG6J', customerId: 'uLzGYzLqKlEu94wxCHgE', petName: 'ewew', customerDetails: {…}}
+use-pets.ts:116 FETCH_PETS: Completed fetching pets {totalPets: 2, pets: Array(2)}
+use-pets.ts:68 FETCH_PETS: Available customers: [{…}]
+use-pets.ts:80 FETCH_PETS: Processing pet data: {petId: 'csx7KM1E98ByYUQF68CQ', customerId: 'uLzGYzLqKlEu94wxCHgE', petName: 'ewew', customerDetails: {…}}
+use-pets.ts:80 FETCH_PETS: Processing pet data: {petId: 'hjVl5wmr7X2WmOfbLG6J', customerId: 'uLzGYzLqKlEu94wxCHgE', petName: 'ewew', customerDetails: {…}}
+use-pets.ts:116 FETCH_PETS: Completed fetching pets {totalPets: 2, pets: Array(2)}
+PetForm.tsx:91 Setting initial customer: {customerId: 'uLzGYzLqKlEu94wxCHgE', customerName: 'test user'}

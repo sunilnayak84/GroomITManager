@@ -106,7 +106,10 @@ export function PetForm({
   };
 
   const onSubmit = async (data: FormData) => {
-    if (isSubmitting) return;
+    if (isSubmitting) {
+      console.log('Form submission blocked - already submitting');
+      return;
+    }
     
     setIsSubmitting(true);
     try {
@@ -121,6 +124,10 @@ export function PetForm({
       if (!selectedCustomer) {
         throw new Error("Selected customer not found");
       }
+
+      // Generate a submission ID to track duplicate submissions
+      const submissionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      console.log('Generated submission ID:', submissionId);
 
       // Clean and prepare the pet data
       const petData: InsertPet = {
@@ -141,12 +148,14 @@ export function PetForm({
           lastName: selectedCustomer.lastName,
           phone: selectedCustomer.phone || '',
           email: selectedCustomer.email || ''
-        }
+        },
+        submissionId // Add submission ID to track duplicates
       };
 
-      console.log('Submitting pet data:', petData);
+      console.log('Submitting pet data:', { ...petData, submissionId });
       
-      await addPet(petData);
+      const result = await addPet(petData);
+      console.log('Pet creation result:', result);
 
       toast({
         title: "Success",
@@ -156,6 +165,11 @@ export function PetForm({
       if (onSuccess) {
         onSuccess(petData);
       }
+
+      // Reset form after successful submission
+      form.reset();
+      setImagePreview(null);
+      
     } catch (error) {
       console.error('Error submitting pet form:', error);
       toast({
