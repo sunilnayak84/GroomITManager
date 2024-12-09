@@ -247,11 +247,25 @@ export default function PetsPage() {
               </DialogHeader>
               <PetForm
                 onSuccess={async (data) => {
-                  if (selectedPet) {
-                    await handleUpdatePet(data);
-                  } else {
-                    await addPet(data);
+                  try {
+                    if (selectedPet) {
+                      await handleUpdatePet(data);
+                    } else {
+                      await addPet(data);
+                    }
                     setShowPetDetails(false);
+                    setIsEditing(false);
+                    toast({
+                      title: "Success",
+                      description: selectedPet ? "Pet updated successfully" : "Pet added successfully",
+                    });
+                  } catch (error) {
+                    console.error('Error handling pet:', error);
+                    toast({
+                      variant: "destructive",
+                      title: "Error",
+                      description: error instanceof Error ? error.message : "Failed to handle pet",
+                    });
                   }
                 }}
                 onCancel={() => {
@@ -263,7 +277,7 @@ export default function PetsPage() {
                 customers={customers}
                 defaultValues={selectedPet ?? undefined}
                 customerId={selectedPet?.customerId ?? (customers?.length > 0 ? customers[0].firebaseId : undefined)}
-                addPet={addPet}
+                isEditing={!!selectedPet}
               />
             </>
 

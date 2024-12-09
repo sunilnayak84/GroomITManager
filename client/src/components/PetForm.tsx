@@ -36,7 +36,7 @@ interface PetFormProps {
   customers?: Customer[];
   customerId?: string;
   selectedCustomer?: Customer;
-  addPet: (data: InsertPet) => Promise<any>;
+  isEditing?: boolean;
 }
 
 export function PetForm({
@@ -45,8 +45,8 @@ export function PetForm({
   defaultValues,
   customers = [],
   customerId,
-  selectedCustomer,
-  addPet
+  selectedCustomer: initialSelectedCustomer,
+  isEditing = false
 }: PetFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -144,12 +144,7 @@ export function PetForm({
       };
 
       console.log('Submitting pet data:', petData);
-      const result = await addPet(petData);
-
-      if (result?.isDuplicate) {
-        console.log('Duplicate submission detected');
-        return;
-      }
+      // Removed addPet call
 
       toast({
         title: "Success",
