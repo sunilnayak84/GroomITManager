@@ -85,36 +85,22 @@ export default function PetsPage() {
       throw new Error('No pet selected for update');
     }
     
-    try {
-      // Ensure data types match the schema
-      const updateData: InsertPet = {
-        ...data,
-        customerId: selectedPet.customerId,
-        dateOfBirth: data.dateOfBirth || null,
-        age: data.age || null,
-        gender: data.gender || null,
-        weight: data.weight || null,
-        notes: data.notes || null,
-        image: data.image || null
-      };
+    // Ensure data types match the schema
+    const updateData: InsertPet = {
+      ...data,
+      customerId: selectedPet.customerId,
+      dateOfBirth: data.dateOfBirth || null,
+      age: data.age || null,
+      gender: data.gender || null,
+      weight: data.weight || null,
+      notes: data.notes || null,
+      image: data.image || null
+    };
 
-      await updatePet({ 
-        petId: selectedPet.id, 
-        updateData
-      });
-
-      toast({
-        title: "Success",
-        description: "Pet details updated successfully",
-      });
-    } catch (error) {
-      console.error('Error updating pet:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update pet details",
-      });
-    }
+    await updatePet({ 
+      petId: selectedPet.id, 
+      updateData
+    });
   };
 
   const getOwnerName = (pet: Pet) => {
@@ -151,42 +137,63 @@ export default function PetsPage() {
 
   return (
     <div className="container mx-auto py-6 space-y-4">
-      <div className="relative h-[200px] rounded-lg overflow-hidden mb-6 bg-gradient-to-r from-blue-500 to-blue-700">
+      <div className="relative h-[200px] rounded-lg overflow-hidden mb-6 bg-gradient-to-r from-purple-500 to-pink-500">
         <div className="absolute inset-0">
-          <img
-            src="/pets-banner.jpg"
-            alt="Pets Banner"
-            className="w-full h-full object-cover opacity-50"
-          />
+          <div className="w-full h-full bg-[url('/pets-pattern.svg')] opacity-10" />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/50 to-blue-700/50" />
-        <div className="relative p-6 flex flex-col h-full justify-end">
-          <h1 className="text-3xl font-bold text-white mb-2">Pets</h1>
-          <p className="text-white/90">Here's a list of all pets in your system</p>
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/50 to-pink-500/50" />
+        <div className="relative p-8 flex flex-col h-full justify-between">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold text-white mb-2">Pets Management</h1>
+              <p className="text-white/90 text-lg">Manage and track all your furry friends in one place</p>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
+              <p className="text-white text-sm">Total Pets</p>
+              <p className="text-white text-2xl font-bold">{filteredPets?.length || 0}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-white/80 text-sm">
+            <span>🐶 Dogs</span>
+            <span>•</span>
+            <span>🐱 Cats</span>
+            <span>•</span>
+            <span>🦜 Birds</span>
+            <span>•</span>
+            <span>🐠 Fish</span>
+            <span>•</span>
+            <span>🐾 Others</span>
+          </div>
         </div>
       </div>
 
-      <div className="flex justify-between items-center mb-6">
-        <div className="relative w-[300px]">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search pets..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-8"
-          />
+      <div className="flex justify-between items-center mb-6 gap-4">
+        <div className="flex-1 max-w-md">
+          <div className="relative">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by pet name, owner, or breed..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 h-12 text-base bg-white shadow-sm"
+            />
+          </div>
         </div>
-        <Button onClick={() => {
-          setSelectedPet(null);
-          setIsEditing(false);
-          setShowPetDetails(true);
-        }}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Pet
+        <Button
+          size="lg"
+          onClick={() => {
+            setSelectedPet(null);
+            setIsEditing(false);
+            setShowPetDetails(true);
+          }}
+          className="h-12 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+        >
+          <Plus className="mr-2 h-5 w-5" />
+          Add New Pet
         </Button>
       </div>
 
-      <div className="rounded-md border">
+      <div className="rounded-xl border bg-white shadow-sm">
         <Table>
           <TableHeader>
             <TableRow>
@@ -201,29 +208,56 @@ export default function PetsPage() {
             {filteredPets?.map((pet) => (
               <TableRow key={pet.id}>
                 <TableCell>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     {pet.image ? (
-                      <Avatar>
+                      <Avatar className="h-12 w-12 border-2 border-purple-100">
                         <AvatarImage src={pet.image} alt={pet.name} />
-                        <AvatarFallback>{pet.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                        <AvatarFallback className="bg-gradient-to-br from-purple-100 to-pink-100 text-purple-600">
+                          {pet.name.substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
                       </Avatar>
                     ) : (
-                      <Avatar>
-                        <AvatarFallback>{pet.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                      <Avatar className="h-12 w-12 border-2 border-purple-100">
+                        <AvatarFallback className="bg-gradient-to-br from-purple-100 to-pink-100 text-purple-600">
+                          {pet.name.substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
                       </Avatar>
                     )}
                     <div>
-                      <div className="font-medium">{pet.name}</div>
-                      <div className="text-sm text-muted-foreground">{pet.breed} · {pet.type}</div>
+                      <div className="font-semibold text-base">{pet.name}</div>
+                      <div className="text-sm text-muted-foreground flex items-center gap-2">
+                        <span className="capitalize">{pet.type}</span>
+                        <span>•</span>
+                        <span>{pet.breed}</span>
+                      </div>
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>{pet.owner?.name || 'N/A'}</TableCell>
-                <TableCell>{pet.age || 'N/A'}</TableCell>
-                <TableCell>{pet.gender || 'Unknown'}</TableCell>
+                <TableCell>
+                  <div className="font-medium">{pet.owner?.name || 'N/A'}</div>
+                  {pet.owner?.email && (
+                    <div className="text-sm text-muted-foreground">{pet.owner.email}</div>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <div className="flex flex-col">
+                    <span className="font-medium">{pet.age || 'N/A'}</span>
+                    <span className="text-sm text-muted-foreground">Years old</span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${
+                    pet.gender === 'male' ? 'bg-blue-100 text-blue-700' :
+                    pet.gender === 'female' ? 'bg-pink-100 text-pink-700' :
+                    'bg-gray-100 text-gray-700'
+                  }`}>
+                    {pet.gender ? pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1) : 'Unknown'}
+                  </span>
+                </TableCell>
                 <TableCell className="text-right">
                   <Button
-                    variant="ghost"
+                    variant="outline"
+                    className="hover:bg-purple-50 hover:text-purple-600"
                     onClick={() => {
                       setSelectedPet(pet);
                       setShowPetDetails(true);
