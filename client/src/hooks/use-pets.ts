@@ -274,7 +274,13 @@ export function usePets() {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pets'] });
+      // Invalidate both pets and customers queries
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['pets'] }),
+        queryClient.invalidateQueries({ queryKey: ['customers'] })
+      ]).catch(error => {
+        console.error('Error invalidating queries:', error);
+      });
       toast.success('Pet added successfully');
     },
     onError: (error) => {
