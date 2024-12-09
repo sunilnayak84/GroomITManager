@@ -30,7 +30,7 @@ export const petSchema = z.object({
   name: z.string(),
   type: z.enum(["dog", "cat", "bird", "fish", "other"]),
   breed: z.string(),
-  customerId: z.number(),
+  customerId: z.string(),
   dateOfBirth: z.string().nullable(),
   age: z.number().nullable(),
   gender: z.enum(["male", "female", "unknown"]).nullable(),
@@ -59,10 +59,10 @@ export const insertPetSchema = z.object({
 // Schema for Appointment
 export const appointmentSchema = z.object({
   id: z.string(),
-  petId: z.number(),
-  serviceId: z.number(),
-  groomerId: z.number(),
-  branchId: z.number(),
+  petId: z.string(),
+  serviceId: z.string(),
+  groomerId: z.string(),
+  branchId: z.string(),
   date: z.date(),
   status: z.enum(["pending", "confirmed", "completed", "cancelled"]),
   notes: z.string().nullable(),
@@ -77,10 +77,10 @@ export const insertAppointmentSchema = appointmentSchema.omit({
   updatedAt: true,
 }).extend({
   date: z.date().min(new Date(), "Appointment date must be in the future"),
-  petId: z.number().min(1, "Pet must be selected"),
-  serviceId: z.number().min(1, "Service must be selected"),
-  groomerId: z.number().min(1, "Groomer must be selected"),
-  branchId: z.number().min(1, "Branch must be selected"),
+  petId: z.string().min(1, "Pet must be selected"),
+  serviceId: z.string().min(1, "Service must be selected"),
+  groomerId: z.string().min(1, "Groomer must be selected"),
+  branchId: z.string().min(1, "Branch must be selected"),
 });
 
 // Schema for User (Groomer)
