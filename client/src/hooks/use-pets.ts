@@ -289,7 +289,7 @@ export function usePets() {
         throw error;
       }
     },
-    onSuccess={async (data) => {
+    onSuccess: async (data) => {
       try {
         console.log('ADD_PET: Submitting pet data', { data });
         const result = await addPet({
@@ -318,7 +318,7 @@ export function usePets() {
           description: error instanceof Error ? error.message : "Failed to add pet",
         });
       }
-    }},
+    },},
     onError: (error) => {
       console.error('ADD_PET: Mutation error:', error);
     }
