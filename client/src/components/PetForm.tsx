@@ -16,8 +16,12 @@ const petFormSchema = z.object({
   name: z.string().min(1, { message: "Pet name is required" }),
   type: z.enum(["dog", "cat", "bird", "fish", "other"] as const),
   breed: z.string().min(1, { message: "Breed is required" }),
-  customerId: z.coerce.number().min(1, { message: "Customer is required" }),
-  dateOfBirth: z.string().nullable(),
+  customerId: z.string().min(1, { message: "Customer is required" }),
+  dateOfBirth: z.union([
+    z.string(),
+    z.object({ seconds: z.number(), nanoseconds: z.number() }),
+    z.null()
+  ]).nullable(),
   age: z.coerce.number().nullable(),
   gender: z.enum(["male", "female", "unknown"] as const),
   weight: z.string().nullable(),
@@ -25,7 +29,7 @@ const petFormSchema = z.object({
   image: z.union([z.string(), z.instanceof(File), z.null()]).nullable(),
   notes: z.string().nullable(),
   owner: z.object({
-    id: z.number(),
+    id: z.string(),
     firstName: z.string(),
     lastName: z.string(),
     phone: z.string().optional(),
@@ -164,7 +168,7 @@ export const PetForm: React.FC<PetFormProps> = ({
 
     setIsSubmitting(true);
     try {
-      const customerId = Number(data.customerId || defaultValues?.customerId);
+      const customerId = (data.customerId || defaultValues?.customerId || '').toString();
       
       if (!customerId) {
         throw new Error("Customer ID is required");
@@ -172,6 +176,15 @@ export const PetForm: React.FC<PetFormProps> = ({
 
       const owner = pet?.owner || defaultValues?.owner;
       const currentDate = new Date();
+
+      // Handle image data
+      let imageData = null;
+      let imageUrl = null;
+      if (data.image instanceof File) {
+        imageData = data.image;
+      } else if (typeof data.image === 'string') {
+        imageUrl = data.image;
+      }
 
       const petData: InsertPet = {
         name: data.name,
@@ -183,8 +196,8 @@ export const PetForm: React.FC<PetFormProps> = ({
         age: data.age || null,
         weight: data.weight?.toString() || null,
         weightUnit: data.weightUnit || "kg",
-        image: data.image instanceof File ? data.image : null,
-        imageUrl: data.image instanceof File ? null : data.image?.toString() || null,
+        image: imageData,
+        imageUrl: imageUrl,
         notes: data.notes || null,
         owner,
         firebaseId: pet?.firebaseId || null,
@@ -237,8 +250,8 @@ export const PetForm: React.FC<PetFormProps> = ({
               <FormItem>
                 <FormLabel>Customer Owner</FormLabel>
                 <Select
-                  onValueChange={(value) => field.onChange(Number(value))}
-                  value={field.value?.toString()}
+                  onValueChange={(value) => field.onChange(value)}
+                  value={field.value || ''}
                 >
                   <FormControl>
                     <SelectTrigger>
