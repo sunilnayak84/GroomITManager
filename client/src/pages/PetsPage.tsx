@@ -281,7 +281,7 @@ export default function PetsPage() {
                 <DialogTitle>{selectedPet ? 'Edit Pet' : 'Add New Pet'}</DialogTitle>
               </DialogHeader>
               <PetForm
-                onSubmit={async (data) => {
+                handleSubmit={async (data) => {
                   if (selectedPet) {
                     return handleUpdatePet(data);
                   } else {

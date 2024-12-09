@@ -36,7 +36,7 @@ interface PetFormProps {
   customerId?: string;
   selectedCustomer?: Customer;
   isEditing?: boolean;
-  onSubmit: (data: InsertPet) => Promise<any>;
+  handleSubmit: (data: InsertPet) => Promise<any>;
 }
 
 export function PetForm({
@@ -47,7 +47,7 @@ export function PetForm({
   customerId,
   selectedCustomer: initialSelectedCustomer,
   isEditing = false,
-  addPet
+  handleSubmit: submitForm
 }: PetFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -149,7 +149,7 @@ export function PetForm({
 
       console.log('Submitting pet data:', petData);
       
-      const result = await onSubmit(petData);
+      const result = await submitForm(petData);
       console.log('Pet creation result:', result);
 
       if (result) {
@@ -175,7 +175,7 @@ export function PetForm({
     } finally {
       setIsSubmitting(false);
     }
-  }, [isSubmitting, submissionId, customers, addPet, form, onSuccess, toast]);
+  }, [isSubmitting, submissionId, customers, submitForm, form, onSuccess, toast]);
 
   if (customers.length === 0) {
     return (
