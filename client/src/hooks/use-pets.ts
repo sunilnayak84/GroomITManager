@@ -298,25 +298,17 @@ export function usePets() {
           createdAt: new Date(),
           updatedAt: new Date()
         });
-    
+
         // Check for duplicate submission
         if (result?.isDuplicate) {
           return; // Exit if it's a duplicate
         }
-    
-        setShowAddPet(false);
+
         await queryClient.invalidateQueries({ queryKey: ['pets'] });
-        toast({
-          title: "Success",
-          description: "Pet added successfully",
-        });
+        return result; // Return the result so the component can handle UI updates
       } catch (error) {
         console.error('ADD_PET: Error adding pet:', error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: error instanceof Error ? error.message : "Failed to add pet",
-        });
+        throw error; // Let the component handle the error
       }
     },
     onError: (error) => {
