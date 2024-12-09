@@ -93,7 +93,7 @@ export function PetForm({
         name: data.name.trim(),
         type: data.type,
         breed: data.breed.trim(),
-        customerId: selectedCustomer.firebaseId!, // Use Firebase ID
+        customerId: data.customerId,  // Use the selected customer ID directly
         dateOfBirth: data.dateOfBirth,
         age: typeof data.age === 'string' ? parseInt(data.age) : data.age,
         gender: data.gender,
@@ -101,13 +101,13 @@ export function PetForm({
         weightUnit: data.weightUnit,
         image: data.image,
         notes: data.notes?.trim() ?? null,
-        owner: {
+        owner: selectedCustomer ? {
           id: selectedCustomer.firebaseId!,
           firstName: selectedCustomer.firstName,
           lastName: selectedCustomer.lastName,
           phone: selectedCustomer.phone || '',
           email: selectedCustomer.email || ''
-        }
+        } : undefined
       };
 
       console.log('Submitting pet data:', petData);

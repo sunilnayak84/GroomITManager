@@ -8,7 +8,7 @@ import { toast } from "../lib/toast";
 
 export type Pet = {
   id: string;
-  customerId: number;
+  customerId: string;  // Firebase document ID
   name: string;
   type: "dog" | "cat" | "bird" | "fish" | "other";
   breed: string;

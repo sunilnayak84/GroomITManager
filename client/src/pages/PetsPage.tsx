@@ -127,12 +127,18 @@ export default function PetsPage() {
     }
     
     try {
+      // Ensure customerId is string (Firebase ID)
+      const updateData: InsertPet = {
+        ...data,
+        customerId: data.customerId.toString()
+      };
+
       console.log('Update pet data:', {
         petId: selectedPet.id,
-        updateData: data
+        updateData
       });
 
-      await updatePet(selectedPet.id, data);
+      await updatePet(selectedPet.id, updateData);
       
       toast({
         title: "Success",
