@@ -243,11 +243,13 @@ export function useCustomers() {
     queryKey: ["customers"],
     queryFn: async () => {
       try {
+        console.log('FETCH_CUSTOMERS: Starting customer fetch');
         const querySnapshot = await getDocs(customersCollection);
         const customers = querySnapshot.docs.map(doc => {
           const customerData = doc.data();
-          return {
+          const customer = {
             id: doc.id,
+            firebaseId: doc.id, // Explicitly add firebaseId for component usage
             ...customerData,
             // Ensure createdAt is a valid Date object
             createdAt: customerData.createdAt 
@@ -256,6 +258,12 @@ export function useCustomers() {
             petCount: customerData.petCount || 0,
             gender: customerData.gender || null
           } satisfies Customer;
+          console.log('FETCH_CUSTOMERS: Processed customer:', {
+            id: customer.id,
+            firebaseId: customer.firebaseId,
+            name: `${customer.firstName} ${customer.lastName}`
+          });
+          return customer;
         });
 
         console.log('USE CUSTOMERS: Fetched customers', {

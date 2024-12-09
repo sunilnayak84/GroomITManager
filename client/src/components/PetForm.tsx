@@ -57,7 +57,7 @@ export function PetForm({
       name: defaultValues?.name ?? "",
       type: defaultValues?.type ?? "dog",
       breed: defaultValues?.breed ?? "",
-      customerId: customerId ?? (customers?.[0]?.firebaseId ?? ""),
+      customerId: customerId ?? "",
       dateOfBirth: defaultValues?.dateOfBirth ?? null,
       age: defaultValues?.age ?? null,
       gender: defaultValues?.gender ?? "unknown",
@@ -66,6 +66,36 @@ export function PetForm({
       image: defaultValues?.image ?? null,
       notes: defaultValues?.notes ?? null,
     },
+  });
+
+  // Set customerId when the form is initialized and customers are available
+  React.useEffect(() => {
+    const currentCustomerId = form.getValues().customerId;
+    if ((!currentCustomerId || currentCustomerId === "") && customers && customers.length > 0) {
+      const defaultCustomer = customerId 
+        ? customers.find(c => c.firebaseId === customerId || c.id === customerId) 
+        : customers[0];
+      
+      if (defaultCustomer) {
+        console.log('Setting customer:', {
+          customerId: defaultCustomer.firebaseId || defaultCustomer.id,
+          customerName: `${defaultCustomer.firstName} ${defaultCustomer.lastName}`
+        });
+        form.setValue('customerId', defaultCustomer.firebaseId || defaultCustomer.id);
+      }
+    }
+  }, [customers, form, customerId]);
+
+  // Debug log for form initialization
+  console.log('PetForm: Initializing form with values:', {
+    defaultValues: form.getValues(),
+    pet: defaultValues,
+    customerId,
+    availableCustomers: customers?.map(c => ({
+      id: c.id,
+      firebaseId: c.firebaseId,
+      name: `${c.firstName} ${c.lastName}`
+    }))
   });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,9 +113,26 @@ export function PetForm({
     try {
       console.log('Form submission started:', { data });
 
-      const selectedCustomer = customers?.find(c => c.firebaseId === data.customerId);
+      // Find customer by either firebaseId or id
+      const selectedCustomer = customers?.find(c => 
+        c.firebaseId === data.customerId || c.id === data.customerId
+      );
+
+      console.log('Selected customer:', { 
+        customerId: data.customerId, 
+        foundCustomer: selectedCustomer ? {
+          id: selectedCustomer.id,
+          firebaseId: selectedCustomer.firebaseId,
+          name: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`
+        } : null
+      });
+
       if (!selectedCustomer) {
-        throw new Error("Selected customer not found");
+        throw new Error("Selected customer not found. Please select a valid customer.");
+      }
+
+      if (!data.name || !data.breed || !data.type) {
+        throw new Error("Please fill in all required fields");
       }
 
       // Clean and prepare the pet data
@@ -93,21 +140,21 @@ export function PetForm({
         name: data.name.trim(),
         type: data.type,
         breed: data.breed.trim(),
-        customerId: data.customerId,  // Use the selected customer ID directly
+        customerId: selectedCustomer.firebaseId || selectedCustomer.id,
         dateOfBirth: data.dateOfBirth,
-        age: typeof data.age === 'string' ? parseInt(data.age) : data.age,
+        age: data.age ? (typeof data.age === 'string' ? parseInt(data.age) : data.age) : null,
         gender: data.gender,
         weight: data.weight?.trim() ?? null,
         weightUnit: data.weightUnit,
         image: data.image,
         notes: data.notes?.trim() ?? null,
-        owner: selectedCustomer ? {
-          id: selectedCustomer.firebaseId!,
+        owner: {
+          id: selectedCustomer.firebaseId || selectedCustomer.id,
           firstName: selectedCustomer.firstName,
           lastName: selectedCustomer.lastName,
           phone: selectedCustomer.phone || '',
           email: selectedCustomer.email || ''
-        } : undefined
+        }
       };
 
       console.log('Submitting pet data:', petData);
@@ -126,7 +173,9 @@ export function PetForm({
       console.error('Error submitting pet form:', error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to add pet",
+        description: error instanceof Error 
+          ? error.message 
+          : "Failed to add pet. Please check all required fields and try again.",
         variant: "destructive",
       });
     } finally {
@@ -135,7 +184,8 @@ export function PetForm({
   };
 
   // Show message if no customers available
-  if (!customers || customers.length === 0) {
+  if (!Array.isArray(customers) || customers.length === 0) {
+    console.log('PetForm: Customers data:', { customers });
     return (
       <div className="p-4 text-center">
         <p className="text-red-500">Please add at least one customer before adding a pet.</p>
@@ -147,6 +197,30 @@ export function PetForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-h-[80vh] overflow-y-auto p-4">
         <div className="space-y-4">
+          <FormField
+            control={form.control}
+            name="customerId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Customer*</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select customer" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {customers.map((customer) => (
+                      <SelectItem key={customer.firebaseId} value={customer.firebaseId!}>
+                        {customer.firstName} {customer.lastName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name="name"
