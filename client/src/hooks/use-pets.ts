@@ -322,7 +322,6 @@ export function usePets() {
     onError: (error) => {
       console.error('ADD_PET: Mutation error:', error);
     }
-  });
 
   const addPet = addPetMutation.mutateAsync;
 
