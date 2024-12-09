@@ -210,6 +210,11 @@ export function usePets() {
       try {
         console.log('ADD_PET: Starting to add pet', { petData });
 
+        // Validate required fields
+        if (!petData.name || !petData.breed || !petData.type || !petData.customerId) {
+          throw new Error('Required fields are missing');
+        }
+
         // Handle image upload if present
         let imageUrl = petData.image;
         if (petData.image instanceof File) {
@@ -225,41 +230,44 @@ export function usePets() {
         }
 
         // Prepare pet data with Firebase-compatible structure
+        const timestamp = serverTimestamp();
         const newPetData = {
           ...petData,
-          customerId: petData.customerId, // Ensure we're using the Firebase document ID
           image: imageUrl,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp()
+          createdAt: timestamp,
+          updatedAt: timestamp
         };
 
         // Clean the data
-        Object.keys(newPetData).forEach(key => {
-          if (newPetData[key] === undefined) {
-            delete newPetData[key];
+        const cleanedData = Object.entries(newPetData).reduce((acc, [key, value]) => {
+          if (value !== undefined && value !== '') {
+            acc[key] = value === '' ? null : value;
           }
-          if (newPetData[key] === '') {
-            newPetData[key] = null;
-          }
-        });
+          return acc;
+        }, {});
 
-        console.log('ADD_PET: Adding pet with data:', newPetData);
+        console.log('ADD_PET: Adding pet with data:', cleanedData);
         
         // Create pet using Firestore utility
-        const petId = await createPet(newPetData);
+        const petId = await createPet(cleanedData);
         
         // Update customer's pet count using the Firebase document ID
-        if (newPetData.customerId) {
-          const customerRef = doc(customersCollection, newPetData.customerId);
+        if (cleanedData.customerId) {
+          const customerRef = doc(customersCollection, cleanedData.customerId);
           await runTransaction(db, async (transaction) => {
+            const customerDoc = await transaction.get(customerRef);
+            if (!customerDoc.exists()) {
+              throw new Error('Customer not found');
+            }
+            const currentCount = customerDoc.data().petCount || 0;
             transaction.update(customerRef, {
-              petCount: increment(1),
-              updatedAt: serverTimestamp()
+              petCount: currentCount + 1,
+              updatedAt: timestamp
             });
           });
         }
 
-        return { id: petId, ...newPetData };
+        return { id: petId, ...cleanedData };
       } catch (error) {
         console.error('ADD_PET: Error adding pet:', error);
         throw error;

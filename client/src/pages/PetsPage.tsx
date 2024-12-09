@@ -127,10 +127,23 @@ export default function PetsPage() {
     }
     
     try {
-      // Ensure customerId is string (Firebase ID)
-      const updateData: InsertPet = {
+      // Find customer by ID
+      const owner = customers?.find(c => c.firebaseId === data.customerId || c.id === data.customerId);
+      if (!owner) {
+        throw new Error('Customer not found');
+      }
+
+      // Prepare update data with owner information
+      const updateData = {
         ...data,
-        customerId: data.customerId.toString()
+        customerId: owner.firebaseId || owner.id,
+        owner: {
+          id: owner.firebaseId || owner.id,
+          firstName: owner.firstName,
+          lastName: owner.lastName,
+          phone: owner.phone || '',
+          email: owner.email || ''
+        }
       };
 
       console.log('Update pet data:', {

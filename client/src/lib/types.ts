@@ -24,8 +24,8 @@ export type Pet = {
   name: string;
   type: "dog" | "cat" | "bird" | "fish" | "other";
   breed: string;
-  customerId: string;
-  dateOfBirth: string | { seconds: number; nanoseconds: number; } | null;
+  customerId: string;  // Firebase document ID
+  dateOfBirth: string | null;
   age: number | null;
   gender: "male" | "female" | "unknown" | null;
   weight: string | null;
@@ -33,14 +33,14 @@ export type Pet = {
   image: string | null;
   notes: string | null;
   owner?: {
-    id: string;
+    id: string;  // Firebase document ID
     firstName: string;
     lastName: string;
-    phone?: string;
-    email?: string;
+    phone: string;
+    email: string;
   };
-  createdAt: Date | { seconds: number; nanoseconds: number; };
-  updatedAt: Date | { seconds: number; nanoseconds: number; } | null;
+  createdAt: string;
+  updatedAt: string | null;
   firebaseId?: string | null;
 };
 
@@ -66,14 +66,13 @@ export type PetFormData = Omit<Pet, 'id'> & {
 };
 
 export type InsertPet = {
-  id?: string;
   name: string;
   type: "dog" | "cat" | "bird" | "fish" | "other";
   breed: string;
   customerId: string;  // Firebase document ID
   dateOfBirth: string | null;
   age: number | null;
-  gender: "male" | "female" | "unknown";
+  gender: "male" | "female" | "unknown" | null;
   weight: string | null;
   weightUnit: "kg" | "lbs";
   image: string | File | null;
@@ -82,11 +81,9 @@ export type InsertPet = {
     id: string;  // Firebase document ID
     firstName: string;
     lastName: string;
-    phone?: string;
-    email?: string;
+    phone: string;
+    email: string;
   };
-  createdAt?: Date;
-  updatedAt?: Date;
 };
 
 // Common utility types
