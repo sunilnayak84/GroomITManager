@@ -1,0 +1,946 @@
+ERROR(TypeScript)  Property 'data' does not exist on type '{ error: Error; isError: true; isPending: false; isLoadingError: false; isRefetchError: true; isSuccess: false; status: "error"; dataUpdatedAt: number; errorUpdatedAt: number; failureCount: number; ... 18 more ...; addPetMutation: UseMutationResult<...>; } | { ...; } | { ...; } | { ...; } | { ...; }'.
+ FILE  /home/runner/GroomITManager/client/src/components/AppointmentForm.tsx:31:11
+
+    29 | export default function AppointmentForm() {
+    30 |   const { addAppointment } = useAppointments();
+  > 31 |   const { data: pets } = usePets();
+       |           ^^^^
+    32 |   const { toast } = useToast();
+    33 |
+    34 |   const defaultGroomerId = "1";
+
+ ERROR(TypeScript)  Type 'number' is not assignable to type 'string'.
+ FILE  /home/runner/GroomITManager/client/src/components/AppointmentForm.tsx:39:7
+
+    37 |     defaultValues: {
+    38 |       petId: 0,
+  > 39 |       groomerId: parseInt(defaultGroomerId),
+       |       ^^^^^^^^^
+    40 |       date: new Date(),
+    41 |       status: "pending",
+    42 |       notes: "",
+
+ ERROR(TypeScript)  Cannot find name 'Customer'.
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:21:15
+
+    19 |   defaultValues?: Partial<InsertPet>;
+    20 |   pet?: InsertPet & { id?: string };
+  > 21 |   customers?: Customer[];
+       |               ^^^^^^^^
+    22 |   updatePet?: (id: string, data: Partial<InsertPet>) => Promise<void>;
+    23 |   addPet: (data: InsertPet) => Promise<InsertPet>;
+    24 |   id?: string;
+
+ ERROR(TypeScript)  Property 'data' does not exist on type '{ customers: { createdAt: Date; petCount: number; gender: string | null; id: number; firebaseId: string | null; firstName: string; lastName: string; email: string; phone: string; address: string | null; }[]; ... 4 more ...; isLoading: boolean; }'.
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:102:11
+
+    100 |
+    101 |   // Prepare customers list
+  > 102 |   const { data: fetchedCustomers } = useCustomers();
+        |           ^^^^
+    103 |   const customerOptions = useMemo(() => {
+    104 |     const allCustomers = [...(customers || [])];
+    105 |     return [
+
+ ERROR(TypeScript)  Type 'Date | undefined' is not assignable to type 'string | null | undefined'.
+  Type 'Date' is not assignable to type 'string'.
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:119:7
+
+    117 |       breed: defaultValues?.breed || pet?.breed || "",
+    118 |       customerId: defaultValues?.customerId || pet?.customerId || "",
+  > 119 |       dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
+        |       ^^^^^^^^^^^
+    120 |       age: defaultValues?.age || pet?.age || null,
+    121 |       gender: defaultValues?.gender || pet?.gender || null,
+    122 |       weight: defaultValues?.weight || pet?.weight || null,
+
+ ERROR(TypeScript)  Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ dateOfBirth: Date | undefined; customerId: string | undefined; weight: string; weightUnit: "kg" | "lbs"; gender: "male" | "female" | "unknown"; notes: string; age: number | undefined; ... 4 more ...; id?: string | undefined; }'.
+  No index signature with a parameter of type 'string' was found on type '{ dateOfBirth: Date | undefined; customerId: string | undefined; weight: string; weightUnit: "kg" | "lbs"; gender: "male" | "female" | "unknown"; notes: string; age: number | undefined; ... 4 more ...; id?: string | undefined; }'.
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:149:9
+
+    147 |       // Remove undefined values
+    148 |       Object.keys(formDefaults).forEach(key => 
+  > 149 |         formDefaults[key] === undefined && delete formDefaults[key]
+        |         ^^^^^^^^^^^^^^^^^
+    150 |       );
+    151 |
+    152 |       form.reset(formDefaults);
+
+ ERROR(TypeScript)  Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ dateOfBirth: Date | undefined; customerId: string | undefined; weight: string; weightUnit: "kg" | "lbs"; gender: "male" | "female" | "unknown"; notes: string; age: number | undefined; ... 4 more ...; id?: string | undefined; }'.
+  No index signature with a parameter of type 'string' was found on type '{ dateOfBirth: Date | undefined; customerId: string | undefined; weight: string; weightUnit: "kg" | "lbs"; gender: "male" | "female" | "unknown"; notes: string; age: number | undefined; ... 4 more ...; id?: string | undefined; }'.
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:149:51
+
+    147 |       // Remove undefined values
+    148 |       Object.keys(formDefaults).forEach(key => 
+  > 149 |         formDefaults[key] === undefined && delete formDefaults[key]
+        |                                                   ^^^^^^^^^^^^^^^^^
+    150 |       );
+    151 |
+    152 |       form.reset(formDefaults);
+
+ ERROR(TypeScript)  Argument of type '{ dateOfBirth: Date | undefined; customerId: string | undefined; weight: string; weightUnit: "kg" | "lbs"; gender: "male" | "female" | "unknown"; notes: string; age: number | undefined; ... 4 more ...; id?: string; }' is not assignable to parameter of type '{ name: string; gender: "male" | "female" | "unknown" | null; customerId: string; type: "other" | "dog" | "cat" | "bird" | "fish"; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: "kg" | "lbs"; image: string | null; notes: string | null; } | { ...; } | ResetAction<......'.
+  Type '{ dateOfBirth: Date | undefined; customerId: string | undefined; weight: string; weightUnit: "kg" | "lbs"; gender: "male" | "female" | "unknown"; notes: string; age: number | undefined; ... 4 more ...; id?: string; }' is not assignable to type '{ name: string; gender: "male" | "female" | "unknown" | null; customerId: string; type: "other" | "dog" | "cat" | "bird" | "fish"; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: "kg" | "lbs"; image: string | null; notes: string | null; } | { ...; }'.
+    Type '{ dateOfBirth: Date | undefined; customerId: string | undefined; weight: string; weightUnit: "kg" | "lbs"; gender: "male" | "female" | "unknown"; notes: string; age: number | undefined; ... 4 more ...; id?: string; }' is not assignable to type '{ name?: string | undefined; gender?: "male" | "female" | "unknown" | null | undefined; customerId?: string | undefined; type?: "other" | "dog" | "cat" | "bird" | "fish" | undefined; ... 6 more ...; notes?: string | ... 1 more ... | undefined; }'.
+      Types of property 'dateOfBirth' are incompatible.
+        Type 'Date | undefined' is not assignable to type 'string | null | undefined'.
+          Type 'Date' is not assignable to type 'string'.
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:152:18
+
+    150 |       );
+    151 |
+  > 152 |       form.reset(formDefaults);
+        |                  ^^^^^^^^^^^^
+    153 |       
+    154 |       // Set image preview if there's an existing image
+    155 |       if (defaultValues?.imageUrl || pet?.imageUrl) {
+
+ ERROR(TypeScript)  Property 'imageUrl' does not exist on type 'Partial<{ name: string; gender: "male" | "female" | "unknown" | null; customerId: string; type: "other" | "dog" | "cat" | "bird" | "fish"; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: "kg" | "lbs"; image: string | null; notes: string | null; }>'.
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:155:26
+
+    153 |       
+    154 |       // Set image preview if there's an existing image
+  > 155 |       if (defaultValues?.imageUrl || pet?.imageUrl) {
+        |                          ^^^^^^^^
+    156 |         setImagePreview(defaultValues?.imageUrl || pet?.imageUrl);
+    157 |       }
+    158 |
+
+ ERROR(TypeScript)  Property 'imageUrl' does not exist on type '{ name: string; gender: "male" | "female" | "unknown" | null; customerId: string; type: "other" | "dog" | "cat" | "bird" | "fish"; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: "kg" | "lbs"; image: string | null; notes: string | null; } & { ...; }'.
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:155:43
+
+    153 |       
+    154 |       // Set image preview if there's an existing image
+  > 155 |       if (defaultValues?.imageUrl || pet?.imageUrl) {
+        |                                           ^^^^^^^^
+    156 |         setImagePreview(defaultValues?.imageUrl || pet?.imageUrl);
+    157 |       }
+    158 |
+
+ ERROR(TypeScript)  Property 'imageUrl' does not exist on type 'Partial<{ name: string; gender: "male" | "female" | "unknown" | null; customerId: string; type: "other" | "dog" | "cat" | "bird" | "fish"; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: "kg" | "lbs"; image: string | null; notes: string | null; }>'.
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:156:40
+
+    154 |       // Set image preview if there's an existing image
+    155 |       if (defaultValues?.imageUrl || pet?.imageUrl) {
+  > 156 |         setImagePreview(defaultValues?.imageUrl || pet?.imageUrl);
+        |                                        ^^^^^^^^
+    157 |       }
+    158 |
+    159 |       // Update selected customer ID
+
+ ERROR(TypeScript)  Property 'imageUrl' does not exist on type '{ name: string; gender: "male" | "female" | "unknown" | null; customerId: string; type: "other" | "dog" | "cat" | "bird" | "fish"; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: "kg" | "lbs"; image: string | null; notes: string | null; } & { ...; }'.
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:156:57
+
+    154 |       // Set image preview if there's an existing image
+    155 |       if (defaultValues?.imageUrl || pet?.imageUrl) {
+  > 156 |         setImagePreview(defaultValues?.imageUrl || pet?.imageUrl);
+        |                                                         ^^^^^^^^
+    157 |       }
+    158 |
+    159 |       // Update selected customer ID
+
+ ERROR(TypeScript)  Cannot find name 'PetFormData'. Did you mean 'FormData'?
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:168:33
+
+    166 |   const updatePet = externalUpdatePet || usePetsUpdatePet;
+    167 |
+  > 168 |   const onSubmit = async (data: PetFormData) => {
+        |                                 ^^^^^^^^^^^
+    169 |     setIsSubmitting(true);
+    170 |     try {
+    171 |       const customerId = defaultValues?.customerId || data.customerId || selectedCustomerId;
+
+ ERROR(TypeScript)  Argument of type '{ name: stri gender: "male" | "female" | "unknown" | null; cuserId: string; type: "other" | "dog" | "cat" | "bir| "fish"; breed: string; dateOfBirth: string | nulage: number | null; weight: string | null; weightUnit: "kg" | "lbs"; image: string | null; notes: string | null; }' is not assignable to parameter of type 'Partial<{ name: string; customerId: number; type: string; breed: string; firebaseId?: string | null | undefined; gender?: string | null | undefined; createdAt?: Date | null | undefined; ... 5 more ...; notes?: string | ... 1 more ... | undefined; }> & Partial<...>'.
+  Type '{ name: string; gender: "male" | "female" | "unknown" | null; customerId: string; type: "other" | "dog" | "cat" | "bird" | "fish"; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: "kg" | "lbs"; image: string | null; notes: string | null; }' is not assignable to type 'Partial<{ name: string; customerId: number; type: string; breed: string; firebaseId?: string | null | undefined; gender?: string | null | undefined; createdAt?: Date | null | undefined; dateOfBirth?: string | ... 1 more ... | undefined; ... 4 more ...; notes?: string | ... 1 more ... | undefined; }>'.
+    Types of property 'customerId' are incompatible.
+      Type 'string' is not assignable to type 'number'.
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:203:44
+
+    201 |         });
+    202 |         
+  > 203 |         await updatePet(pet.id.toString(), petData);
+        |                                            ^^^^^^^
+    204 |         toast({
+    205 |           title: "Pet Updated",
+    206 |           description: `${data.name} has been updated successfully.`,
+
+ ERROR(TypeScript)  Argument of type 'File' is not assignable to parameter of type 'string'.
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:290:30
+
+    288 |
+    289 |       // Set image for form
+  > 290 |       form.setValue('image', file);
+        |                              ^^^^
+    291 |
+    292 |       // Create preview
+    293 |       const reader = new FileReader();
+
+ ERROR(TypeScript)  Property 'owner' does not exist on type '{ name: string; gender: "male" | "female" | "unknown" | null; customerId: string; type: "other" | "dog" | "cat" | "bird" | "fish"; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: "kg" | "lbs"; image: string | null; notes: string | null; } & { ...; }'.
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:343:15
+
+    341 |
+    342 |         {/* Owner Details */}
+  > 343 |         {pet?.owner && (
+        |               ^^^^^
+    344 |           <div className="text-sm text-gray-600 mt-2">
+    345 |             <p>Owner: {pet.owner.name}</p>
+    346 |             {pet.owner.phone && <p>Phone: {pet.owner.phone}</p>}
+
+ ERROR(TypeScript)  Property 'owner' does not exist on type '{ name: string; gender: "male" | "female" | "unknown" | null; customerId: string; type: "other" | "dog" | "cat" | "bird" | "fish"; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: "kg" | "lbs"; image: string | null; notes: string | null; } & { ...; }'.
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:345:28
+
+    343 |         {pet?.owner && (
+    344 |           <div className="text-sm text-gray-600 mt-2">
+  > 345 |             <p>Owner: {pet.owner.name}</p>
+        |                            ^^^^^
+    346 |             {pet.owner.phone && <p>Phone: {pet.owner.phone}</p>}
+    347 |             {pet.owner.email && <p>Email: {pet.owner.email}</p>}
+    348 |           </div>
+
+ ERROR(TypeScript)  Property 'owner' does not exist on type '{ name: string; gender: "male" | "female" | "unknown" | null; customerId: string; type: "other" | "dog" | "cat" | "bird" | "fish"; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: "kg" | "lbs"; image: string | null; notes: string | null; } & { ...; }'.
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:346:18
+
+    344 |           <div className="text-sm text-gray-600 mt-2">
+    345 |             <p>Owner: {pet.owner.name}</p>
+  > 346 |             {pet.owner.phone && <p>Phone: {pet.owner.phone}</p>}
+        |                  ^^^^^
+    347 |             {pet.owner.email && <p>Email: {pet.owner.email}</p>}
+    348 |           </div>
+    349 |         )}
+
+ ERROR(TypeScript)  Property 'owner' does not exist on type '{ name: string; gender: "male" | "female" | "unknown" | null; customerId: string; type: "other" | "dog" | "cat" | "bird" | "fish"; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: "kg" | "lbs"; image: string | null; notes: string | null; } & { ...; }'.
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:346:48
+
+    344 |           <div className="text-sm text-gray-600 mt-2">
+    345 |             <p>Owner: {pet.owner.name}</p>
+  > 346 |             {pet.owner.phone && <p>Phone: {pet.owner.phone}</p>}
+        |                                                ^^^^^
+    347 |             {pet.owner.email && <p>Email: {pet.owner.email}</p>}
+    348 |           </div>
+    349 |         )}
+
+ ERROR(TypeScript)  Property 'owner' does not exist on type '{ name: string; gender: "male" | "female" | "unknown" | null; customerId: string; type: "other" | "dog" | "cat" | "bird" | "fish"; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: "kg" | "lbs"; image: string | null; notes: string | null; } & { ...; }'.
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:347:18
+
+    345 |             <p>Owner: {pet.owner.name}</p>
+    346 |             {pet.owner.phone && <p>Phone: {pet.owner.phone}</p>}
+  > 347 |             {pet.owner.email && <p>Email: {pet.owner.email}</p>}
+        |                  ^^^^^
+    348 |           </div>
+    349 |         )}
+    350 |
+
+ ERROR(TypeScript)  Property 'owner' does not exist on type '{ name: string; gender: "male" | "female" | "unknown" | null; customerId: string; type: "other" | "dog" | "cat" | "bird" | "fish"; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: "kg" | "lbs"; image: string | null; notes: string | null; } & { ...; }'.
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:347:48
+
+    345 |             <p>Owner: {pet.owner.name}</p>
+    346 |             {pet.owner.phone && <p>Phone: {pet.owner.phone}</p>}
+  > 347 |             {pet.owner.email && <p>Email: {pet.owner.email}</p>}
+        |                                                ^^^^^
+    348 |           </div>
+    349 |         )}
+    350 |
+
+ ERROR(TypeScript)  Type '"male" | "female" | "unknown" | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+ FILE  /home/runner/GroomITManager/client/src/components/PetForm.tsx:461:17
+
+    459 |               <Select 
+    460 |                 onValueChange={field.onChange}
+  > 461 |                 value={field.value}
+        |                 ^^^^^
+    462 |               >
+    463 |                 <FormControl>
+    464 |                   <SelectTrigger>
+
+ ERROR(TypeScript)  Cannot find module 'recharts' or its corresponding type declarations.
+ FILE  /home/runner/GroomITManager/client/src/components/ui/chart.tsx:2:36
+
+    1 | import * as React from "react"
+  > 2 | import * as RechartsPrimitive from "recharts"
+      |                                    ^^^^^^^^^^
+    3 |
+    4 | import { cn } from "@/lib/utils"
+    5 |
+
+ ERROR(TypeScript)  Parameter 'item' implicitly has an 'any' type.
+ FILE  /home/runner/GroomITManager/client/src/components/ui/chart.tsx:186:25
+
+    184 |         {!nestLabel ? tooltipLabel : null}
+    185 |         <div className="grid gap-1.5">
+  > 186 |           {payload.map((item, index) => {
+        |                         ^^^^
+    187 |             const key = `${nameKey || item.name || item.dataKey || "value"}`
+    188 |             const itemConfig = getPayloadConfigFromPayload(config, item, key)
+    189 |             const indicatorColor = color || item.payload.fill || item.color
+
+ ERROR(TypeScript)  Parameter 'index' implicitly has an 'any' type.
+ FILE  /home/runner/GroomITManager/client/src/components/ui/chart.tsx:186:31
+
+    184 |         {!nestLabel ? tooltipLabel : null}
+    185 |         <div className="grid gap-1.5">
+  > 186 |           {payload.map((item, index) => {
+        |                               ^^^^^
+    187 |             const key = `${nameKey || item.name || item.dataKey || "value"}`
+    188 |             const itemConfig = getPayloadConfigFromPayload(config, item, key)
+    189 |             const indicatorColor = color || item.payload.fill || item.color
+
+ ERROR(TypeScript)  Parameter 'item' implicitly has an 'any' type.
+ FILE  /home/runner/GroomITManager/client/src/components/ui/chart.tsx:286:23
+
+    284 |         )}
+    285 |       >
+  > 286 |         {payload.map((item) => {
+        |                       ^^^^
+    287 |           const key = `${nameKey || item.dataKey || "value"}`
+    288 |           const itemConfig = getPayloadConfigFromPayload(config, item, key)
+    289 |
+
+ ERROR(TypeScript)  Argument of type '{ createdAt: Date; status: string; date: Date; branchId: number; updatedAt: Date | null; notes: string | null; petId: number; serviceId: number; groomerId: string; productsUsed: string | null; }' is not assignable to parameter of type 'WithFieldValue<{ date: Date; id: number; createdAt: Date | null; branchId: number; updatedAt: Date | null; notes: string | null; petId: number; serviceId: number; groomerId: string; status: string; productsUsed: string | null; }>'.
+  Property 'id' is missing in type '{ createdAt: Date; status: string; date: Date; branchId: number; updatedAt: Date | null; notes: string | null; petId: number; serviceId: number; groomerId: string; productsUsed: string | null; }' but required in type '{ date: FieldValue | WithFieldValue<Date>; id: number | FieldValue; createdAt: FieldValue | WithFieldValue<Date | null>; ... 7 more ...; productsUsed: FieldValue | WithFieldValue<...>; }'.
+ FILE  /home/runner/GroomITManager/client/src/hooks/use-appointments.ts:69:59
+
+    67 |   const addAppointmentMutation = useMutation({
+    68 |     mutationFn: async (appointmentData: Omit<Appointment, 'id' | 'createdAt'>) => {
+  > 69 |       const docRef = await addDoc(appointmentsCollection, {
+       |                                                           ^
+  > 70 |         ...appointmentData,
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 71 |         createdAt: new Date(),
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 72 |         status: appointmentData.status || 'pending'
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 73 |       });
+       | ^^^^^^^^
+    74 |       return {
+    75 |         id: parseInt(docRef.id),
+    76 |         ...appointmentData,
+
+ ERROR(TypeScript)  Cannot find name 'InsertCustomer'.
+ FILE  /home/runner/GroomITManager/client/src/hooks/use-customers.ts:13:34
+
+    11 |
+    12 |   const addCustomerMutation = useMutation({
+  > 13 |     mutationFn: async (customer: InsertCustomer) => {
+       |                                  ^^^^^^^^^^^^^^
+    14 |       // Detailed validation and logging
+    15 |       const validationErrors: string[] = [];
+    16 |
+
+ ERROR(TypeScript)  This comparison appears to be unintentional because the types 'number' and 'string' have no overlap.
+ FILE  /home/runner/GroomITManager/client/src/hooks/use-customers.ts:144:33
+
+    142 |       // Optimistically update the cache
+    143 |       queryClient.setQueryData<Customer[]>(["customers"], old => 
+  > 144 |         old?.filter(customer => customer.id !== deletedId) || []
+        |                                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+    145 |       );
+    146 |
+    147 |       return { previousCustomers };
+
+ ERROR(TypeScript)  'id' is specified more than once, so this usage will be overwritten.
+ FILE  /home/runner/GroomITManager/client/src/hooks/use-customers.ts:180:11
+
+    178 |         const customerData = doc.data();
+    179 |         return {
+  > 180 |           id: doc.id,
+        |           ^^^^^^^^^^
+    181 |           ...customerData,
+    182 |           createdAt: customerData.createdAt 
+    183 |             ? new Date(customerData.createdAt) 
+
+ ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string'.
+ FILE  /home/runner/GroomITManager/client/src/hooks/use-customers.ts:211:45
+
+    209 |         // Update customers with new pet counts in Firestore
+    210 |         const updatePromises = currentCustomers.map(async (customer) => {
+  > 211 |           const newPetCount = petCounts.get(customer.id) || 0;
+        |                                             ^^^^^^^^^^^
+    212 |           
+    213 |           // Only update if the pet count is different
+    214 |           if (customer.petCount !== newPetCount) {
+
+ ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string'.
+ FILE  /home/runner/GroomITManager/client/src/hooks/use-customers.ts:216:39
+
+    214 |           if (customer.petCount !== newPetCount) {
+    215 |             try {
+  > 216 |               await updateCustomerDoc(customer.id, { 
+        |                                       ^^^^^^^^^^^
+    217 |                 petCount: newPetCount,
+    218 |                 updatedAt: new Date()
+    219 |               });
+
+ ERROR(TypeScript)  'id' is specified more than once, so this usage will be overwritten.
+ FILE  /home/runner/GroomITManager/client/src/hooks/use-customers.ts:250:13
+
+    248 |           const customerData = doc.data();
+    249 |           return {
+  > 250 |             id: doc.id,
+        |             ^^^^^^^^^^
+    251 |             ...customerData,
+    252 |             // Ensure createdAt is a valid Date object
+    253 |             createdAt: customerData.createdAt 
+
+ ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string'.
+ FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:78:52
+
+    76 |           const petData = doc.data();
+    77 |           const customerId = petData.customerId;  // Use the raw customerId
+  > 78 |           const customerDetails = customersMap.get(customerId);
+       |                                                    ^^^^^^^^^^
+    79 |           
+    80 |           console.log('FETCH_PETS: Processing pet data:', {
+    81 |             petId: doc.id,
+
+ ERROR(TypeScript)  Cannot find name 'PetWithRelations'.
+ FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:90:22
+
+    88 |           });
+    89 |
+  > 90 |           const pet: PetWithRelations = {
+       |                      ^^^^^^^^^^^^^^^^
+    91 |             id: doc.id,
+    92 |             customerId: customerId,
+    93 |             name: petData.name,
+
+ ERROR(TypeScript)  The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.
+ FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:164:11
+
+    162 |       // Handle image upload if present
+    163 |       let imageUrl = updateData.image;
+  > 164 |       if (updateData.image instanceof File) {
+        |           ^^^^^^^^^^^^^^^^
+    165 |         try {
+    166 |           imageUrl = await uploadFile(
+    167 |             updateData.image,
+
+ ERROR(TypeScript)  Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ image: string | null | undefined; updatedAt: FieldValue; name?: string | undefined; customerId?: number | undefined; type?: string | undefined; breed?: string | undefined; ... 7 more ...; notes?: string | ... 1 more ... | undefined; }'.
+  No index signature with a parameter of type 'string' was found on type '{ image: string | null | undefined; updatedAt: FieldValue; name?: string | undefined; customerId?: number | undefined; type?: string | undefined; breed?: string | undefined; ... 7 more ...; notes?: string | ... 1 more ... | undefined; }'.
+ FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:185:13
+
+    183 |       // Remove undefined values
+    184 |       Object.keys(cleanData).forEach(key => {
+  > 185 |         if (cleanData[key] === undefined) {
+        |             ^^^^^^^^^^^^^^
+    186 |           delete cleanData[key];
+    187 |         }
+    188 |         if (cleanData[key] === '') {
+
+ ERROR(TypeScript)  Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ image: string | null | undefined; updatedAt: FieldValue; name?: string | undefined; customerId?: number | undefined; type?: string | undefined; breed?: string | undefined; ... 7 more ...; notes?: string | ... 1 more ... | undefined; }'.
+  No index signature with a parameter of type 'string' was found on type '{ image: string | null | undefined; updatedAt: FieldValue; name?: string | undefined; customerId?: number | undefined; type?: string | undefined; breed?: string | undefined; ... 7 more ...; notes?: string | ... 1 more ... | undefined; }'.
+ FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:186:18
+
+    184 |       Object.keys(cleanData).forEach(key => {
+    185 |         if (cleanData[key] === undefined) {
+  > 186 |           delete cleanData[key];
+        |                  ^^^^^^^^^^^^^^
+    187 |         }
+    188 |         if (cleanData[key] === '') {
+    189 |           cleanData[key] = null;
+
+ ERROR(TypeScript)  Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ image: string | null | undefined; updatedAt: FieldValue; name?: string | undefined; customerId?: number | undefined; type?: string | undefined; breed?: string | undefined; ... 7 more ...; notes?: string | ... 1 more ... | undefined; }'.
+  No index signature with a parameter of type 'string' was found on type '{ image: string | null | undefined; updatedAt: FieldValue; name?: string | undefined; customerId?: number | undefined; type?: string | undefined; breed?: string | undefined; ... 7 more ...; notes?: string | ... 1 more ... | undefined; }'.
+ FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:188:13
+
+    186 |           delete cleanData[key];
+    187 |         }
+  > 188 |         if (cleanData[key] === '') {
+        |             ^^^^^^^^^^^^^^
+    189 |           cleanData[key] = null;
+    190 |         }
+    191 |       });
+
+ ERROR(TypeScript)  Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ image: string | null | undefined; updatedAt: FieldValue; name?: string | undefined; customerId?: number | undefined; type?: string | undefined; breed?: string | undefined; ... 7 more ...; notes?: string | ... 1 more ... | undefined; }'.
+  No index signature with a parameter of type 'string' was found on type '{ image: string | null | undefined; updatedAt: FieldValue; name?: string | undefined; customerId?: number | undefined; type?: string | undefined; breed?: string | undefined; ... 7 more ...; notes?: string | ... 1 more ... | undefined; }'.
+ FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:189:11
+
+    187 |         }
+    188 |         if (cleanData[key] === '') {
+  > 189 |           cleanData[key] = null;
+        |           ^^^^^^^^^^^^^^
+    190 |         }
+    191 |       });
+    192 |
+
+ ERROR(TypeScript)  The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.
+ FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:215:13
+
+    213 |         // Handle image upload if present
+    214 |         let imageUrl = petData.image;
+  > 215 |         if (petData.image instanceof File) {
+        |             ^^^^^^^^^^^^^
+    216 |           try {
+    217 |             imageUrl = await uploadFile(
+    218 |               petData.image,
+
+ ERROR(TypeScript)  Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ image: string | null | undefined; createdAt: Date; updatedAt: Date; name: string; customerId: number; type: string; breed: string; firebaseId?: string | null | undefined; gender?: string | ... 1 more ... | undefined; ... 4 more ...; notes?: string | ... 1 more ... | undefined; }'.
+  No index signature with a parameter of type 'string' was found on type '{ image: string | null | undefined; createdAt: Date; updatedAt: Date; name: string; customerId: number; type: string; breed: string; firebaseId?: string | null | undefined; gender?: string | ... 1 more ... | undefined; ... 4 more ...; notes?: string | ... 1 more ... | undefined; }'.
+ FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:237:15
+
+    235 |         // Remove undefined values and empty strings
+    236 |         Object.keys(newPetData).forEach(key => {
+  > 237 |           if (newPetData[key] === undefined) {
+        |               ^^^^^^^^^^^^^^^
+    238 |             delete newPetData[key];
+    239 |           }
+    240 |           if (newPetData[key] === '') {
+
+ ERROR(TypeScript)  Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ image: string | null | undefined; createdAt: Date; updatedAt: Date; name: string; customerId: number; type: string; breed: string; firebaseId?: string | null | undefined; gender?: string | ... 1 more ... | undefined; ... 4 more ...; notes?: string | ... 1 more ... | undefined; }'.
+  No index signature with a parameter of type 'string' was found on type '{ image: string | null | undefined; createdAt: Date; updatedAt: Date; name: string; customerId: number; type: string; breed: string; firebaseId?: string | null | undefined; gender?: string | ... 1 more ... | undefined; ... 4 more ...; notes?: string | ... 1 more ... | undefined; }'.
+ FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:238:20
+
+    236 |         Object.keys(newPetData).forEach(key => {
+    237 |           if (newPetData[key] === undefined) {
+  > 238 |             delete newPetData[key];
+        |                    ^^^^^^^^^^^^^^^
+    239 |           }
+    240 |           if (newPetData[key] === '') {
+    241 |             newPetData[key] = null;
+
+ ERROR(TypeScript)  Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ image: string | null | undefined; createdAt: Date; updatedAt: Date; name: string; customerId: number; type: string; breed: string; firebaseId?: string | null | undefined; gender?: string | ... 1 more ... | undefined; ... 4 more ...; notes?: string | ... 1 more ... | undefined; }'.
+  No index signature with a parameter of type 'string' was found on type '{ image: string | null | undefined; createdAt: Date; updatedAt: Date; name: string; customerId: number; type: string; breed: string; firebaseId?: string | null | undefined; gender?: string | ... 1 more ... | undefined; ... 4 more ...; notes?: string | ... 1 more ... | undefined; }'.
+ FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:240:15
+
+    238 |             delete newPetData[key];
+    239 |           }
+  > 240 |           if (newPetData[key] === '') {
+        |               ^^^^^^^^^^^^^^^
+    241 |             newPetData[key] = null;
+    242 |           }
+    243 |         });
+
+ ERROR(TypeScript)  Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ image: string | null | undefined; createdAt: Date; updatedAt: Date; name: string; customerId: number; type: string; breed: string; firebaseId?: string | null | undefined; gender?: string | ... 1 more ... | undefined; ... 4 more ...; notes?: string | ... 1 more ... | undefined; }'.
+  No index signature with a parameter of type 'string' was found on type '{ image: string | null | undefined; createdAt: Date; updatedAt: Date; name: string; customerId: number; type: string; breed: string; firebaseId?: string | null | undefined; gender?: string | ... 1 more ... | undefined; ... 4 more ...; notes?: string | ... 1 more ... | undefined; }'.
+ FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:241:13
+
+    239 |           }
+    240 |           if (newPetData[key] === '') {
+  > 241 |             newPetData[key] = null;
+        |             ^^^^^^^^^^^^^^^
+    242 |           }
+    243 |         });
+    244 |
+
+ ERROR(TypeScript)  Argument of type '{ image: string | null | undefined; createdAt: Date; updatedAt: Date; name: string; customerId: number; type: string; breed: string; firebaseId?: string | null | undefined; gender?: string | ... 1 more ... | undefined; ... 4 more ...; notes?: string | ... 1 more ... | undefined; }' is not assignable to parameter of type 'Omit<{ id: number; name: string; createdAt: Date | null; firebaseId: string | null; gender: string | null; customerId: number; type: string; breed: string; dateOfBirth: string | null; ... 4 more ...; notes: string | null; }, "id">'.
+  Types of property 'firebaseId' are incompatible.
+    Type 'string | null | undefined' is not assignable to type 'string | null'.
+      Type 'undefined' is not assignable to type 'string | null'.
+ FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:248:39
+
+    246 |         
+    247 |         // Create pet using Firestore utility
+  > 248 |         const petId = await createPet(newPetData);
+        |                                       ^^^^^^^^^^
+    249 |         
+    250 |         // Update customer's pet count
+    251 |         if (newPetData.customerId) {
+
+ ERROR(TypeScript)  Property 'isLoading' does not exist on type '{ error: Error; isError: true; isPending: false; isLoadingError: false; isRefetchError: true; isSuccess: false; status: "error"; dataUpdatedAt: number; errorUpdatedAt: number; failureCount: number; ... 12 more ...; promise: Promise<...>; } | { ...; } | { ...; } | { ...; } | { ...; }'.
+  Property 'isLoading' does not exist on type '{ error: Error; isError: true; isPending: false; isLoadingError: false; isRefetchError: true; isSuccess: false; status: "error"; dataUpdatedAt: number; errorUpdatedAt: number; failureCount: number; ... 12 more ...; promise: Promise<...>; }'.
+ FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:313:21
+
+    311 |   return {
+    312 |     pets,
+  > 313 |     isLoading: rest.isLoading,
+        |                     ^^^^^^^^^
+    314 |     addPet,
+    315 |     updatePet,
+    316 |     deletePet,
+
+ ERROR(TypeScript)  Argument of type '{ id: string; email: string; name: string; role: string; createdAt: Date; branchId: number | null; }' is not assignable to parameter of type 'WithFieldValue<{ id: string; email: string; name: string; phone: string; role: string; isActive: boolean; createdAt: Date | null; branchId: number | null; isGroomer: boolean; specialties: string[] | null; ... 5 more ...; updatedAt: Date | null; }>'.
+  Type '{ id: string; email: string; name: string; role: string; createdAt: Date; branchId: number | null; }' is missing the following properties from type '{ id: string | FieldValue; email: string | FieldValue; name: string | FieldValue; phone: string | FieldValue; role: string | FieldValue; ... 10 more ...; updatedAt: FieldValue | WithFieldValue<...>; }': phone, isActive, isGroomer, specialties, and 6 more.
+ FILE  /home/runner/GroomITManager/client/src/lib/firestore.ts:20:27
+
+    18 |   try {
+    19 |     const userRef = doc(usersCollection, user.id.toString());
+  > 20 |     await setDoc(userRef, {
+       |                           ^
+  > 21 |       id: user.id,
+       | ^^^^^^^^^^^^^^^^^^
+  > 22 |       email: user.email,
+       | ^^^^^^^^^^^^^^^^^^
+  > 23 |       name: user.name,
+       | ^^^^^^^^^^^^^^^^^^
+  > 24 |       role: user.role,
+       | ^^^^^^^^^^^^^^^^^^
+  > 25 |       createdAt: new Date(),
+       | ^^^^^^^^^^^^^^^^^^
+  > 26 |       branchId: user.branchId || null
+       | ^^^^^^^^^^^^^^^^^^
+  > 27 |     });
+       | ^^^^^^
+    28 |     return true;
+    29 |   } catch (error) {
+    30 |     console.error('Error creating user document:', error);
+
+ ERROR(TypeScript)  Argument of type '{ id: string; createdAt: string; petCount: number; email: string; phone: string; address: string | null; firebaseId: string | null; firstName: string; lastName: string; gender: string | null; }' is not assignable to parameter of type 'WithFieldValue<{ id: number; email: string; phone: string; address: string | null; createdAt: Date | null; firebaseId: string | null; firstName: string; lastName: string; gender: string | null; petCount: number; }>'.
+  Type '{ id: string; createdAt: string; petCount: number; email: string; phone: string; address: string | null; firebaseId: string | null; firstName: string; lastName: string; gender: string | null; }' is not assignable to type '{ id: number | FieldValue; email: string | FieldValue; phone: string | FieldValue; address: FieldValue | WithFieldValue<string | null>; ... 5 more ...; petCount: number | FieldValue; }'.
+    Types of property 'id' are incompatible.
+      Type 'string' is not assignable to type 'number | FieldValue'.
+ FILE  /home/runner/GroomITManager/client/src/lib/firestore.ts:100:31
+
+     98 |
+     99 |     // Save to Firestore
+  > 100 |     await setDoc(customerRef, customerData);
+        |                               ^^^^^^^^^^^^
+    101 |     
+    102 |     console.log('FIRESTORE: Customer created successfully', { id: customerRef.id });
+    103 |     return customerRef.id;
+
+ ERROR(TypeScript)  Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'Omit<{ id: number; name: string; createdAt: Date | null; firebaseId: string | null; gender: string | null; customerId: number; type: string; breed: string; dateOfBirth: string | null; ... 4 more ...; notes: string | null; }, "id">'.
+  No index signature with a parameter of type 'string' was found on type 'Omit<{ id: number; name: string; createdAt: Date | null; firebaseId: string | null; gender: string | null; customerId: number; type: string; breed: string; dateOfBirth: string | null; ... 4 more ...; notes: string | null; }, "id">'.
+ FILE  /home/runner/GroomITManager/client/src/lib/firestore.ts:127:12
+
+    125 |     const requiredFields = ['name', 'type', 'breed', 'customerId'];
+    126 |     for (const field of requiredFields) {
+  > 127 |       if (!pet[field]) {
+        |            ^^^^^^^^^^
+    128 |         throw new Error(`Missing required field: ${field}`);
+    129 |       }
+    130 |     }
+
+ ERROR(TypeScript)  No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'number' is not assignable to parameter of type 'string'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path?: string | undefined, ...pathSegments: string[]): DocumentReference<unknown, DocumentData>', gave the following error.
+    Argument of type 'Firestore' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'Firestore' is missing the following properties from type 'CollectionReference<unknown, DocumentData>': id, path, parent, withConverter, and 2 more.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'Firestore' is missing the following properties from type 'DocumentReference<unknown, DocumentData>': converter, firestore, id, path, and 2 more.
+ FILE  /home/runner/GroomITManager/client/src/lib/firestore.ts:133:25
+
+    131 |
+    132 |     // Verify customer exists
+  > 133 |     const customerRef = doc(db, 'customers', pet.customerId);
+        |                         ^^^
+    134 |     const customerDoc = await getDoc(customerRef);
+    135 |
+    136 |     if (!customerDoc.exists()) {
+
+ ERROR(TypeScript)  Argument of type '{ firebaseId: string; customerId: number; createdAt: Date; updatedAt: Date; name: string; gender: string | null; type: string; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: string | null; image: string | null; notes: string | null; }' is not assignable to parameter of type 'WithFieldValue<{ id: number; name: string; createdAt: Date | null; firebaseId: string | null; gender: string | null; customerId: number; type: string; breed: string; dateOfBirth: string | null; ... 4 more ...; notes: string | null; }>'.
+  Property 'id' is missing in type '{ firebaseId: string; customerId: number; createdAt: Date; updatedAt: Date; name: string; gender: string | null; type: string; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: string | null; image: string | null; notes: string | null; }' but required in type '{ id: number | FieldValue; name: string | FieldValue; createdAt: FieldValue | WithFieldValue<Date | null>; firebaseId: FieldValue | WithFieldValue<...>; ... 9 more ...; notes: FieldValue | WithFieldValue<...>; }'.
+ FILE  /home/runner/GroomITManager/client/src/lib/firestore.ts:154:26
+
+    152 |     };
+    153 |
+  > 154 |     await setDoc(petRef, petData);
+        |                          ^^^^^^^
+    155 |
+    156 |     // Log after setDoc
+    157 |     console.error('FIRESTORE: Pet document created successfully', { 
+
+ ERROR(TypeScript)  Argument of type '{ createdAt: Date; date: Date; branchId: number; updatedAt: Date | null; notes: string | null; petId: number; serviceId: number; groomerId: string; status: string; productsUsed: string | null; }' is not assignable to parameter of type 'WithFieldValue<{ date: Date; id: number; createdAt: Date | null; branchId: number; updatedAt: Date | null; notes: string | null; petId: number; serviceId: number; groomerId: string; status: string; productsUsed: string | null; }>'.
+  Property 'id' is missing in type '{ createdAt: Date; date: Date; branchId: number; updatedAt: Date | null; notes: string | null; petId: number; serviceId: number; groomerId: string; status: string; productsUsed: string | null; }' but required in type '{ date: FieldValue | WithFieldValue<Date>; id: number | FieldValue; createdAt: FieldValue | WithFieldValue<Date | null>; ... 7 more ...; productsUsed: FieldValue | WithFieldValue<...>; }'.
+ FILE  /home/runner/GroomITManager/client/src/lib/firestore.ts:176:34
+
+    174 |   try {
+    175 |     const appointmentRef = doc(appointmentsCollection);
+  > 176 |     await setDoc(appointmentRef, {
+        |                                  ^
+  > 177 |       ...appointment,
+        | ^^^^^^^^^^^^^^^^^^^^^
+  > 178 |       createdAt: new Date()
+        | ^^^^^^^^^^^^^^^^^^^^^
+  > 179 |     });
+        | ^^^^^^
+    180 |     return appointmentRef.id;
+    181 |   } catch (error) {
+    182 |     console.error('Error creating appointment:', error);
+
+ ERROR(TypeScript)  Type 'string | undefined' is not assignable to type 'Date | null | undefined'.
+  Type 'string' is not assignable to type 'Date'.
+ FILE  /home/runner/GroomITManager/client/src/lib/firestore.ts:195:7
+
+    193 |     const processedData = { ...data };
+    194 |     if (processedData.createdAt) {
+  > 195 |       processedData.createdAt = processedData.createdAt instanceof Date 
+        |       ^^^^^^^^^^^^^^^^^^^^^^^
+    196 |         ? processedData.createdAt.toISOString() 
+    197 |         : (processedData.createdAt ? new Date(processedData.createdAt).toISOString() : undefined);
+    198 |     }
+
+ ERROR(TypeScript)  Object literal may only specify known properties, and 'updatedAt' does not exist in type 'PartialWithFieldValue<{ id: number; email: string; phone: string; address: string | null; createdAt: Date | null; firebaseId: string | null; firstName: string; lastName: string; gender: string | null; petCount: number; }>'.
+ FILE  /home/runner/GroomITManager/client/src/lib/firestore.ts:202:7
+
+    200 |     await setDoc(customerRef, {
+    201 |       ...processedData,
+  > 202 |       updatedAt: new Date().toISOString()
+        |       ^^^^^^^^^
+    203 |     }, { merge: true });
+    204 |     return true;
+    205 |   } catch (error) {
+
+ ERROR(TypeScript)  Object literal may only specify known properties, and 'updatedAt' does not exist in type 'PartialWithFieldValue<{ id: number; name: string; createdAt: Date | null; firebaseId: string | null; gender: string | null; customerId: number; type: string; breed: string; dateOfBirth: string | null; ... 4 more ...; notes: string | null; }>'.
+ FILE  /home/runner/GroomITManager/client/src/lib/firestore.ts:274:7
+
+    272 |     await setDoc(petRef, {
+    273 |       ...data,
+  > 274 |       updatedAt: new Date()
+        |       ^^^^^^^^^
+    275 |     }, { merge: true });
+    276 |     return true;
+    277 |   } catch (error) {
+
+ ERROR(TypeScript)  Object literal may only specify known properties, and 'queryFn' does not exist in type 'QueryClientConfig'.
+ FILE  /home/runner/GroomITManager/client/src/lib/queryClient.ts:12:3
+
+    10 |     }
+    11 |   },
+  > 12 |   queryFn: async ({ queryKey }) => {
+       |   ^^^^^^^
+    13 |     // Get current user's token
+    14 |     const user = auth.currentUser;
+    15 |     const token = user ? await user.getIdToken() : null;
+
+ ERROR(TypeScript)  Binding element 'queryKey' implicitly has an 'any' type.
+ FILE  /home/runner/GroomITManager/client/src/lib/queryClient.ts:12:21
+
+    10 |     }
+    11 |   },
+  > 12 |   queryFn: async ({ queryKey }) => {
+       |                     ^^^^^^^^
+    13 |     // Get current user's token
+    14 |     const user = auth.currentUser;
+    15 |     const token = user ? await user.getIdToken() : null;
+
+ ERROR(TypeScript)  Import declaration conflicts with local declaration of 'AppointmentWithRelations'.
+ FILE  /home/runner/GroomITManager/client/src/pages/AppointmentsPage.tsx:10:47
+
+     8 | import { Badge } from "@/components/ui/badge";
+     9 | import { format } from "date-fns";
+  > 10 | import { appointmentSchema, type Appointment, type AppointmentWithRelations } from "@/lib/schema";
+       |                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    11 |
+    12 | // Get status type from the schema to ensure it matches database
+    13 | type AppointmentStatus = "pending" | "confirmed" | "completed" | "cancelled";
+
+ ERROR(TypeScript)  Property 'firstName' does not exist on type '{ name: string; }'.
+ FILE  /home/runner/GroomITManager/client/src/pages/AppointmentsPage.tsx:56:64
+
+    54 |     {
+    55 |       header: "Customer",
+  > 56 |       cell: (row: AppointmentWithRelations) => `${row.customer.firstName} ${row.customer.lastName}`,
+       |                                                                ^^^^^^^^^
+    57 |     },
+    58 |     {
+    59 |       header: "Groomer",
+
+ ERROR(TypeScript)  Property 'lastName' does not exist on type '{ name: string; }'.
+ FILE  /home/runner/GroomITManager/client/src/pages/AppointmentsPage.tsx:56:90
+
+    54 |     {
+    55 |       header: "Customer",
+  > 56 |       cell: (row: AppointmentWithRelations) => `${row.customer.firstName} ${row.customer.lastName}`,
+       |                                                                                          ^^^^^^^^
+    57 |     },
+    58 |     {
+    59 |       header: "Groomer",
+
+ ERROR(TypeScript)  Type 'AppointmentWithRelations[]' is not assignable to type 'AppointmentWithRelations[]'. Two different types with this name exist, but they are unrelated.
+  Type 'AppointmentWithRelations' is not assignable to type 'AppointmentWithRelations'. Two different types with this name exist, but they are unrelated.
+    Type 'AppointmentWithRelations' is not assignable to type 'Omit<{ date: Date; id: string; createdAt: Date; branchId: string; notes: string | null; petId: string; serviceId: string; groomerId: string; status: "pending" | "confirmed" | "completed" | "cancelled"; productsUsed: string | null; updatedAt?: Date | undefined; }, "status">'.
+      Types of property 'id' are incompatible.
+        Type 'number' is not assignable to type 'string'.
+ FILE  /home/runner/GroomITManager/client/src/pages/AppointmentsPage.tsx:109:9
+
+    107 |       <DataTable
+    108 |         columns={columns}
+  > 109 |         data={appointments || []}
+        |         ^^^^
+    110 |         isLoading={isLoading}
+    111 |       />
+    112 |     </div>
+
+ ERROR(TypeScript)  Type '{ createdAt: Date; petCount: number; gender: string | null; id: number; firebaseId: string | null; firstName: string; lastName: string; email: string; phone: string; address: string | null; }[]' is not assignable to type '{ id: string; firebaseId: string | null; firstName: string; lastName: string; email: string; phone: string; address: string | null; gender: "male" | "female" | "other" | null; petCount: number; createdAt: Date; updatedAt?: Date | undefined; }[]'.
+  Type '{ createdAt: Date; petCount: number; gender: string | null; id: number; firebaseId: string | null; firstName: string; lastName: string; email: string; phone: string; address: string | null; }' is not assignable to type '{ id: string; firebaseId: string | null; firstName: string; lastName: string; email: string; phone: string; address: string | null; gender: "male" | "female" | "other" | null; petCount: number; createdAt: Date; updatedAt?: Date | undefined; }'.
+    Types of property 'id' are incompatible.
+      Type 'number' is not assignable to type 'string'.
+ FILE  /home/runner/GroomITManager/client/src/pages/CustomersPage.tsx:495:11
+
+    493 |         <DataTable 
+    494 |           columns={columns} 
+  > 495 |           data={customersQuery.data || []} 
+        |           ^^^^
+    496 |         />
+    497 |       )}
+    498 |
+
+ ERROR(TypeScript)  Type 'UseMutateAsyncFunction<{ image: string | null | undefined; createdAt: Date; updatedAt: Date; name: string; customerId: number; type: string; breed: string; firebaseId?: string | null | undefined; gender?: string | ... 1 more ... | undefined; ... 5 more ...; id: string; }, Error, { ...; }, unknown>' is not assignable to type '(data: { name: string; gender: "male" | "female" | "unknown" | null; customerId: string; type: "other" | "dog" | "cat" | "bird" | "fish"; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: "kg" | "lbs"; image: string | null; notes: string | null; }) => Promise<...>'.
+  Types of parameters 'variables' and 'data' are incompatible.
+    Type '{ name: string; gender: "male" | "female" | "unknown" | null; customerId: string; type: "other" | "dog" | "cat" | "bird" | "fish"; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: "kg" | "lbs"; image: string | null; notes: string | null; }' is not assignable to type '{ name: string; customerId: number; type: string; breed: string; firebaseId?: string | null | undefined; gender?: string | null | undefined; createdAt?: Date | null | undefined; dateOfBirth?: string | ... 1 more ... | undefined; ... 4 more ...; notes?: string | ... 1 more ... | undefined; }'.
+      Types of property 'customerId' are incompatible.
+        Type 'string' is not assignable to type 'number'.
+ FILE  /home/runner/GroomITManager/client/src/pages/CustomersPage.tsx:586:17
+
+    584 |                 }}
+    585 |                 defaultValues={{ customerId: selectedCustomer.id }}
+  > 586 |                 addPet={addPet}
+        |                 ^^^^^^
+    587 |               />
+    588 |             </div>
+    589 |           )}
+
+ ERROR(TypeScript)  Argument of type '(c: { id: string; firstName: string; lastName: string; }) => { id: string; name: string; }' is not assignable to parameter of type '(value: { createdAt: Date; petCount: number; gender: string | null; id: number; firebaseId: string | null; firstName: string; lastName: string; email: string; phone: string; address: string | null; }, index: number, array: { ...; }[]) => { ...; }'.
+  Types of parameters 'c' and 'value' are incompatible.
+    Type '{ createdAt: Date; petCount: number; gender: string | null; id: number; firebaseId: string | null; firstName: string; lastName: string; email: string; phone: string; address: string | null; }' is not assignable to type '{ id: string; firstName: string; lastName: string; }'.
+      Types of property 'id' are incompatible.
+        Type 'number' is not assignable to type 'string'.
+ FILE  /home/runner/GroomITManager/client/src/pages/PetsPage.tsx:65:34
+
+    63 |       console.log('PetsPage Customers Debug:', JSON.stringify({
+    64 |         customersCount: customers.length,
+  > 65 |         customers: customers.map((c: { id: string; firstName: string; lastName: string; }) => ({
+       |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 66 |           id: c.id,
+       | ^^^^^^^^^^^^^^^^^^^
+  > 67 |           name: `${c.firstName} ${c.lastName}`
+       | ^^^^^^^^^^^^^^^^^^^
+  > 68 |         }))
+       | ^^^^^^^^^^^
+    69 |       }, null, 2));
+    70 |     }
+    71 |   }, [pets, customers]);
+
+ ERROR(TypeScript)  No overload matches this call.
+  Overload 1 of 2, '(predicate: (value: { createdAt: Date; petCount: number; gender: string | null; id: number; firebaseId: string | null; firstName: string; lastName: string; email: string; phone: string; address: string | null; }, index: number, obj: { ...; }[]) => value is { ...; }, thisArg?: any): { ...; } | undefined', gave the following error.
+    Argument of type '(c: { id: string; firstName: string; lastName: string; }) => boolean' is not assignable to parameter of type '(value: { createdAt: Date; petCount: number; gender: string | null; id: number; firebaseId: string | null; firstName: string; lastName: string; email: string; phone: string; address: string | null; }, index: number, obj: { ...; }[]) => value is { ...; }'.
+      Types of parameters 'c' and 'value' are incompatible.
+        Type '{ createdAt: Date; petCount: number; gender: string | null; id: number; firebaseId: string | null; firstName: string; lastName: string; email: string; phone: string; address: string | null; }' is not assignable to type '{ id: string; firstName: string; lastName: string; }'.
+          Types of property 'id' are incompatible.
+            Type 'number' is not assignable to type 'string'.
+  Overload 2 of 2, '(predicate: (value: { createdAt: Date; petCount: number; gender: string | null; id: number; firebaseId: string | null; firstName: string; lastName: string; email: string; phone: string; address: string | null; }, index: number, obj: { ...; }[]) => unknown, thisArg?: any): { ...; } | undefined', gave the following error.
+    Argument of type '(c: { id: string; firstName: string; lastName: string; }) => boolean' is not assignable to parameter of type '(value: { createdAt: Date; petCount: number; gender: string | null; id: number; firebaseId: string | null; firstName: string; lastName: string; email: string; phone: string; address: string | null; }, index: number, obj: { ...; }[]) => unknown'.
+      Types of parameters 'c' and 'value' are incompatible.
+        Type '{ createdAt: Date; petCount: number; gender: string | null; id: number; firebaseId: string | null; firstName: string; lastName: string; email: string; phone: string; address: string | null; }' is not assignable to type '{ id: string; firstName: string; lastName: string; }'.
+          Types of property 'id' are incompatible.
+            Type 'number' is not assignable to type 'string'.
+ FILE  /home/runner/GroomITManager/client/src/pages/PetsPage.tsx:101:35
+
+     99 |       return `${pet.owner.firstName} ${pet.owner.lastName}`;
+    100 |     }
+  > 101 |     const owner = customers?.find((c: { id: string; firstName: string; lastName: string; }) => 
+        |                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 102 |       parseInt(c.id) === pet.customerId
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    103 |     );
+    104 |     return owner ? `${owner.firstName} ${owner.lastName}` : 'N/A';
+    105 |   };
+
+ ERROR(TypeScript)  Type 'string | { seconds: number; nanoseconds: number; } | undefined' is not assignable to type 'string | null | undefined'.
+  Type '{ seconds: number; nanoseconds: number; }' is not assignable to type 'string'.
+ FILE  /home/runner/GroomITManager/client/src/pages/PetsPage.tsx:170:9
+
+    168 |         breed: selectedPet.breed,
+    169 |         customerId: parseInt(selectedPet.customerId.toString()),
+  > 170 |         dateOfBirth: selectedPet.dateOfBirth || undefined,
+        |         ^^^^^^^^^^^
+    171 |         age: selectedPet.age || undefined,
+    172 |         gender: selectedPet.gender || undefined,
+    173 |         weight: selectedPet.weight || undefined,
+
+ ERROR(TypeScript)  Argument of type '{ name: string; gender: "male" | "female" | "unknown" | null; customerId: string; type: "other" | "dog" | "cat" | "bird" | "fish"; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: "kg" | "lbs"; image: string | null; notes: string | null; }' is not assignable to parameter of type '{ name: string; customerId: number; type: string; breed: string; firebaseId?: string | null | undefined; gender?: string | null | undefined; createdAt?: Date | null | undefined; dateOfBirth?: string | ... 1 more ... | undefined; ... 4 more ...; notes?: string | ... 1 more ... | undefined; }'.
+  Types of property 'customerId' are incompatible.
+    Type 'string' is not assignable to type 'number'.
+ FILE  /home/runner/GroomITManager/client/src/pages/PetsPage.tsx:265:56
+
+    263 |                 </DialogHeader>
+    264 |                 <PetForm
+  > 265 |                   onSuccess={(data) => handleUpdatePet(data)}
+        |                                                        ^^^^
+    266 |                   onCancel={() => setIsEditing(false)}
+    267 |                   customers={customers}
+    268 |                   defaultValues={selectedPet}
+
+ ERROR(TypeScript)  Type 'Pet' is not assignable to type 'Partial<{ name: string; gender: "male" | "female" | "unknown" | null; customerId: string; type: "other" | "dog" | "cat" | "bird" | "fish"; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: "kg" | "lbs"; image: string | null; notes: string | null; }>'.
+  Types of property 'customerId' are incompatible.
+    Type 'number' is not assignable to type 'string'.
+ FILE  /home/runner/GroomITManager/client/src/pages/PetsPage.tsx:268:19
+
+    266 |                   onCancel={() => setIsEditing(false)}
+    267 |                   customers={customers}
+  > 268 |                   defaultValues={selectedPet}
+        |                   ^^^^^^^^^^^^^
+    269 |                   pet={selectedPet}
+    270 |                   id={selectedPet?.id}
+    271 |                   addPet={addPet}
+
+ ERROR(TypeScript)  Type 'Pet' is not assignable to type '{ name: string; gender: "male" | "female" | "unknown" | null; customerId: string; type: "other" | "dog" | "cat" | "bird" | "fish"; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: "kg" | "lbs"; image: string | null; notes: string | null; } & { ...; }'.
+  Type 'Pet' is not assignable to type '{ name: string; gender: "male" | "female" | "unknown" | null; customerId: string; type: "other" | "dog" | "cat" | "bird" | "fish"; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: "kg" | "lbs"; image: string | null; notes: string | null; }'.
+    Types of property 'customerId' are incompatible.
+      Type 'number' is not assignable to type 'string'.
+ FILE  /home/runner/GroomITManager/client/src/pages/PetsPage.tsx:269:19
+
+    267 |                   customers={customers}
+    268 |                   defaultValues={selectedPet}
+  > 269 |                   pet={selectedPet}
+        |                   ^^^
+    270 |                   id={selectedPet?.id}
+    271 |                   addPet={addPet}
+    272 |                 />
+
+ ERROR(TypeScript)  Type 'UseMutateAsyncFunction<{ image: string | null | undefined; createdAt: Date; updatedAt: Date; name: string; customerId: number; type: string; breed: string; firebaseId?: string | null | undefined; gender?: string | ... 1 more ... | undefined; ... 5 more ...; id: string; }, Error, { ...; }, unknown>' is not assignable to type '(data: { name: string; gender: "male" | "female" | "unknown" | null; customerId: string; type: "other" | "dog" | "cat" | "bird" | "fish"; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: "kg" | "lbs"; image: string | null; notes: string | null; }) => Promise<...>'.
+  Types of parameters 'variables' and 'data' are incompatible.
+    Type '{ name: string; gender: "male" | "female" | "unknown" | null; customerId: string; type: "other" | "dog" | "cat" | "bird" | "fish"; breed: string; dateOfBirth: string | null; age: number | null; weight: string | null; weightUnit: "kg" | "lbs"; image: string | null; notes: string | null; }' is not assignable to type '{ name: string; customerId: number; type: string; breed: string; firebaseId?: string | null | undefined; gender?: string | null | undefined; createdAt?: Date | null | undefined; dateOfBirth?: string | ... 1 more ... | undefined; ... 4 more ...; notes?: string | ... 1 more ... | undefined; }'.
+      Types of property 'customerId' are incompatible.
+        Type 'string' is not assignable to type 'number'.
+ FILE  /home/runner/GroomITManager/client/src/pages/PetsPage.tsx:271:19
+
+    269 |                   pet={selectedPet}
+    270 |                   id={selectedPet?.id}
+  > 271 |                   addPet={addPet}
+        |                   ^^^^^^
+    272 |                 />
+    273 |               </>
+    274 |             ) : (
+
+ ERROR(TypeScript)  Property 'priceINR' does not exist on type 'Service'.
+ FILE  /home/runner/GroomITManager/client/src/pages/ServicesPage.tsx:65:35
+
+    63 |         description: selectedService.description,
+    64 |         duration: selectedService.duration,
+  > 65 |         priceINR: selectedService.priceINR,
+       |                                   ^^^^^^^^
+    66 |       });
+    67 |     }
+    68 |   }, [selectedService, isEditing, form]);
+
+ ERROR(TypeScript)  Property 'priceINR' does not exist on type 'Service'.
+ FILE  /home/runner/GroomITManager/client/src/pages/ServicesPage.tsx:118:55
+
+    116 |     {
+    117 |       header: "Price",
+  > 118 |       cell: (service: Service) => formatPrice(service.priceINR),
+        |                                                       ^^^^^^^^
+    119 |     },
+    120 |     {
+    121 |       header: "Status",
+
+ ERROR(TypeScript)  No overload matches this call.
+  Overload 1 of 2, '(value: { id: string | SQL<unknown> | Placeholder<string, any>; name: string | SQL<unknown> | Placeholder<string, any>; phone: string | SQL<unknown> | Placeholder<string, any>; ... 12 more ...; availability?: string | ... 3 more ... | undefined; }): PgInsertBase<...>', gave the following error.
+    Argument of type '{ id: string; email: string; name: string; role: "staff" | "admin"; }' is not assignable to parameter of type '{ id: string | SQL<unknown> | Placeholder<string, any>; name: string | SQL<unknown> | Placeholder<string, any>; phone: string | SQL<unknown> | Placeholder<string, any>; ... 12 more ...; availability?: string | ... 3 more ... | undefined; }'.
+      Property 'phone' is missing in type '{ id: string; email: string; name: string; role: "staff" | "admin"; }' but required in type '{ id: string | SQL<unknown> | Placeholder<string, any>; name: string | SQL<unknown> | Placeholder<string, any>; phone: string | SQL<unknown> | Placeholder<string, any>; ... 12 more ...; availability?: string | ... 3 more ... | undefined; }'.
+  Overload 2 of 2, '(values: { id: string | SQL<unknown> | Placeholder<string, any>; name: string | SQL<unknown> | Placeholder<string, any>; phone: string | SQL<unknown> | Placeholder<string, any>; ... 12 more ...; availability?: string | ... 3 more ... | undefined; }[]): PgInsertBase<...>', gave the following error.
+    Object literal may only specify known properties, and 'id' does not exist in type '{ id: string | SQL<unknown> | Placeholder<string, any>; name: string | SQL<unknown> | Placeholder<string, any>; phone: string | SQL<unknown> | Placeholder<string, any>; ... 12 more ...; availability?: string | ... 3 more ... | undefined; }[]'.
+ FILE  /home/runner/GroomITManager/server/auth.ts:85:30
+
+    83 |
+    84 |     if (!existingUser) {
+  > 85 |       await db.insert(users).values({
+       |                              ^^^^^^
+    86 |         id: user.id,
+    87 |         email: user.email,
+    88 |         name: user.name,
+
+ ERROR(TypeScript)  Type 'string' is not assignable to type '"staff" | "admin"'.
+ FILE  /home/runner/GroomITManager/server/auth.ts:168:11
+
+    166 |           email: decodedToken.email || '',
+    167 |           name: decodedToken.name || decodedToken.email || '',
+  > 168 |           role: existingUser?.role || 'staff'
+        |           ^^^^
+    169 |         };
+    170 |
+    171 |         next();
+
+[TypeScript] Found 75 errors. Watching for file changes.

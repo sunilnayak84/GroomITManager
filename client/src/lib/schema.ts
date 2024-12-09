@@ -2,14 +2,14 @@ import { z } from "zod";
 
 // Schema for Customer
 export const customerSchema = z.object({
-  id: z.number(),
-  firstName: z.string(),
-  lastName: z.string(),
-  email: z.string().email(),
-  phone: z.string(),
+  id: z.string(),
+  firebaseId: z.string().nullable(),
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  email: z.string().email("Invalid email format"),
+  phone: z.string().min(10, "Phone number must be at least 10 digits"),
   address: z.string().nullable(),
   gender: z.enum(["male", "female", "other"]).nullable(),
-  firebaseId: z.string().nullable(),
   petCount: z.number().default(0),
   createdAt: z.date(),
   updatedAt: z.date().optional(),
@@ -17,6 +17,7 @@ export const customerSchema = z.object({
 
 export const insertCustomerSchema = customerSchema.omit({
   id: true,
+  firebaseId: true,
   petCount: true,
   createdAt: true,
   updatedAt: true,
@@ -24,12 +25,12 @@ export const insertCustomerSchema = customerSchema.omit({
 
 // Schema for Pet
 export const petSchema = z.object({
-  id: z.number(),
+  id: z.string(),
+  firebaseId: z.string().nullable(),
   name: z.string(),
   type: z.enum(["dog", "cat", "bird", "fish", "other"]),
   breed: z.string(),
-  customerId: z.number(),
-  firebaseId: z.string().nullable(),
+  customerId: z.string(),
   dateOfBirth: z.string().nullable(),
   age: z.number().nullable(),
   gender: z.enum(["male", "female", "unknown"]).nullable(),
@@ -37,52 +38,49 @@ export const petSchema = z.object({
   weightUnit: z.enum(["kg", "lbs"]).default("kg"),
   image: z.string().nullable(),
   notes: z.string().nullable(),
-  createdAt: z.date().nullable(),
-  updatedAt: z.date().nullable(),
+  createdAt: z.date(),
+  updatedAt: z.date().optional(),
 });
 
-export const insertPetSchema = petSchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
+export const insertPetSchema = z.object({
+  name: z.string().min(1, "Pet name is required"),
+  type: z.enum(["dog", "cat", "bird", "fish", "other"]),
+  breed: z.string().min(1, "Pet breed is required"),
+  customerId: z.string().min(1, "Customer must be selected"),
+  dateOfBirth: z.string().nullable(),
+  age: z.number().nullable(),
+  gender: z.enum(["male", "female", "unknown"]).nullable(),
+  weight: z.string().nullable(),
+  weightUnit: z.enum(["kg", "lbs"]).default("kg"),
+  image: z.string().nullable(),
+  notes: z.string().nullable(),
 });
 
 // Schema for Appointment
 export const appointmentSchema = z.object({
-  id: z.number(),
-  petId: z.number(),
-  serviceId: z.number(),
+  id: z.string(),
+  petId: z.string(),
+  serviceId: z.string(),
   groomerId: z.string(),
-  branchId: z.number(),
+  branchId: z.string(),
   date: z.date(),
   status: z.enum(["pending", "confirmed", "completed", "cancelled"]),
   notes: z.string().nullable(),
   productsUsed: z.string().nullable(),
-  createdAt: z.date().nullable(),
-  updatedAt: z.date().nullable(),
+  createdAt: z.date(),
+  updatedAt: z.date().optional(),
 });
 
 export const insertAppointmentSchema = appointmentSchema.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
-});
-
-// Schema for Service
-export const serviceSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  description: z.string().nullable(),
-  duration: z.number(),
-  price: z.number(),
-  createdAt: z.date(),
-  updatedAt: z.date().optional(),
-});
-
-export const insertServiceSchema = serviceSchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
+}).extend({
+  date: z.date().min(new Date(), "Appointment date must be in the future"),
+  petId: z.string().min(1, "Pet must be selected"),
+  serviceId: z.string().min(1, "Service must be selected"),
+  groomerId: z.string().min(1, "Groomer must be selected"),
+  branchId: z.string().min(1, "Branch must be selected"),
 });
 
 // Schema for User (Groomer)
@@ -109,8 +107,6 @@ export type Pet = z.infer<typeof petSchema>;
 export type InsertPet = z.infer<typeof insertPetSchema>;
 export type Appointment = z.infer<typeof appointmentSchema>;
 export type InsertAppointment = z.infer<typeof insertAppointmentSchema>;
-export type Service = z.infer<typeof serviceSchema>;
-export type InsertService = z.infer<typeof insertServiceSchema>;
 export type User = z.infer<typeof userSchema>;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 
@@ -120,15 +116,10 @@ export type AppointmentWithRelations = Appointment & {
     name: string;
     breed: string;
     image: string | null;
-    customer: {
-      firstName: string;
-      lastName: string;
-    };
   };
-  service: {
-    name: string;
-    duration: number;
-    price: number;
+  customer: {
+    firstName: string;
+    lastName: string;
   };
   groomer: {
     name: string;

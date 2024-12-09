@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { type InsertPet, type Pet } from "@/lib/schema";
+import { type InsertPet, type Customer, type Pet, type PetGender } from "@/lib/types";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -11,121 +11,238 @@ import { useCustomers } from "../hooks/use-customers";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect, useMemo } from "react";
 import { Upload } from "lucide-react";
-import { format } from "date-fns";
-
-export type PetFormData = {
-  name: string;
-  type: "dog" | "cat" | "bird" | "fish" | "other";
-  breed: string;
-  customerId: number;
-  dateOfBirth?: string;
-  age?: number;
-  gender?: "male" | "female" | "unknown";
-  weight?: string;
-  weightUnit?: "kg" | "lbs";
-  image?: File | string | null;
-  notes?: string;
-};
-
-export type PetFormProps = {
-  onSuccess?: (data: PetFormData) => void;
-  onCancel?: () => void;
-  defaultValues?: Partial<PetFormData>;
-  pet?: Pet;
-  updatePetFn?: (id: number, data: Partial<PetFormData>) => Promise<void>;
-};
 
 const petFormSchema = z.object({
   name: z.string().min(1, { message: "Pet name is required" }),
-  type: z.enum(["dog", "cat", "bird", "fish", "other"], { 
-    required_error: "Pet type is required",
-    invalid_type_error: "Invalid pet type selected"
-  }),
+  type: z.enum(["dog", "cat", "bird", "fish", "other"] as const),
   breed: z.string().min(1, { message: "Breed is required" }),
-  customerId: z.number().min(1, { message: "Customer is required" }),
-  dateOfBirth: z.string().nullable().optional(),
-  age: z.number().nullable().optional(),
-  gender: z.enum(["male", "female", "unknown"]).nullable().optional(),
-  weight: z.string().nullable().optional(),
-  weightUnit: z.enum(["kg", "lbs"]).default("kg"),
-  image: z.any().optional().nullable(),
-  notes: z.string().nullable().optional()
+  customerId: z.coerce.number().min(1, { message: "Customer is required" }),
+  dateOfBirth: z.string().nullable(),
+  age: z.coerce.number().nullable(),
+  gender: z.enum(["male", "female", "unknown"] as const),
+  weight: z.string().nullable(),
+  weightUnit: z.enum(["kg", "lbs"] as const).default("kg"),
+  image: z.union([z.string(), z.instanceof(File), z.null()]).nullable(),
+  notes: z.string().nullable(),
+  owner: z.object({
+    id: z.number(),
+    firstName: z.string(),
+    lastName: z.string(),
+    phone: z.string().optional(),
+    email: z.string().optional()
+  }).optional()
 });
 
-export function PetForm({
+type PetFormSchema = z.infer<typeof petFormSchema>;
+
+interface PetFormProps {
+  onSuccess?: (data: PetFormSchema) => void;
+  onCancel?: () => void;
+  defaultValues?: Partial<InsertPet>;
+  pet?: Pet;
+  customers?: Customer[];
+  updatePet?: (id: number, data: Partial<InsertPet>) => Promise<void>;
+  addPet: (data: InsertPet) => Promise<Pet>;
+  id?: number;
+}
+
+export const PetForm: React.FC<PetFormProps> = ({
   onSuccess,
   onCancel,
+  customers: initialCustomers,
   defaultValues,
   pet,
-  updatePetFn,
-}: PetFormProps) {
-  const { addPet } = usePets();
-  const { data: customersQuery } = useCustomers();
+  updatePet: externalUpdatePet,
+  addPet,
+  id
+}) => {
+  const { updatePet: usePetsUpdatePet } = usePets();
   const { toast } = useToast();
+
+  // Convert date values to proper format
+  const convertToDate = (dateValue: Date | string | null | undefined): string | null => {
+    if (!dateValue) return null;
+    
+    if (dateValue instanceof Date) {
+      return dateValue.toISOString().split('T')[0];
+    }
+    
+    if (typeof dateValue === 'string') {
+      const parsedDate = new Date(dateValue);
+      return !isNaN(parsedDate.getTime()) 
+        ? parsedDate.toISOString().split('T')[0]
+        : null;
+    }
+    
+    return null;
+  };
+
+  // State management
+  const [selectedCustomerId, setSelectedCustomerId] = useState<number | undefined>(
+    defaultValues?.customerId ? Number(defaultValues.customerId) : 
+    pet?.customerId ? Number(pet.customerId) : undefined
+  );
+  
+  const [imagePreview, setImagePreview] = useState<string | null | undefined>(
+    defaultValues?.imageUrl || pet?.imageUrl || defaultValues?.image?.toString() || pet?.image || null
+  );
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
-  const customers = useMemo(() => customersQuery || [], [customersQuery]);
+  // Customer data preparation
+  const { data: fetchedCustomers } = useCustomers();
+  const customerOptions = useMemo(() => {
+    const allCustomers = [...(initialCustomers || [])];
+    return [
+      ...allCustomers,
+      ...(fetchedCustomers || [])
+    ].filter((customer): customer is Customer => !!customer && typeof customer.id === 'number');
+  }, [initialCustomers, fetchedCustomers]);
 
-  const form = useForm<PetFormData>({
+  // Form initialization
+  const form = useForm<PetFormSchema>({
     resolver: zodResolver(petFormSchema),
     defaultValues: {
-      ...defaultValues,
-      customerId: defaultValues?.customerId || 0,
-      type: defaultValues?.type || "dog",
-      weightUnit: defaultValues?.weightUnit || "kg",
-    },
+      name: defaultValues?.name || pet?.name || "",
+      type: defaultValues?.type || pet?.type || "dog",
+      breed: defaultValues?.breed || pet?.breed || "",
+      customerId: Number(defaultValues?.customerId || pet?.customerId) || undefined,
+      dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
+      age: Number(defaultValues?.age || pet?.age) || null,
+      gender: (defaultValues?.gender || pet?.gender || "unknown") as PetGender,
+      weight: defaultValues?.weight?.toString() || pet?.weight?.toString() || null,
+      weightUnit: defaultValues?.weightUnit || pet?.weightUnit || "kg",
+      image: defaultValues?.imageUrl || pet?.imageUrl || defaultValues?.image || pet?.image || null,
+      notes: defaultValues?.notes || pet?.notes || null,
+      owner: defaultValues?.owner || pet?.owner
+    }
   });
 
   useEffect(() => {
-    if (pet) {
-      form.reset({
-        name: pet.name,
-        type: pet.type,
-        breed: pet.breed,
-        customerId: pet.customerId,
-        dateOfBirth: pet.dateOfBirth || undefined,
-        age: pet.age || undefined,
-        gender: pet.gender || undefined,
-        weight: pet.weight || undefined,
-        weightUnit: pet.weightUnit,
-        notes: pet.notes || undefined,
-        image: pet.image || undefined,
-      });
-    }
-  }, [pet, form]);
+    if (defaultValues || pet) {
+      const formDefaults = {
+        name: defaultValues?.name || pet?.name || "",
+        type: defaultValues?.type || pet?.type || "dog",
+        breed: defaultValues?.breed || pet?.breed || "",
+        customerId: Number(defaultValues?.customerId || pet?.customerId),
+        dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
+        age: Number(defaultValues?.age || pet?.age) || null,
+        gender: (defaultValues?.gender || pet?.gender || "unknown") as PetGender,
+        weight: defaultValues?.weight?.toString() || pet?.weight?.toString() || null,
+        weightUnit: defaultValues?.weightUnit || pet?.weightUnit || "kg",
+        image: defaultValues?.imageUrl || pet?.imageUrl || defaultValues?.image || pet?.image || null,
+        notes: defaultValues?.notes || pet?.notes || null,
+        owner: defaultValues?.owner || pet?.owner
+      };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      form.reset(formDefaults);
+      
+      if (defaultValues?.imageUrl || pet?.imageUrl) {
+        setImagePreview(defaultValues?.imageUrl || pet?.imageUrl);
+      } else if (defaultValues?.image || pet?.image) {
+        setImagePreview(defaultValues?.image?.toString() || pet?.image || null);
+      }
+
+      if (formDefaults.customerId) {
+        setSelectedCustomerId(formDefaults.customerId);
+      }
+    }
+  }, [defaultValues, pet, form]);
+
+  const updatePetFn = externalUpdatePet || usePetsUpdatePet;
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setSelectedImage(file);
-      form.setValue("image", file);
+    if (!file) return;
+
+    // Validate file type and size
+    const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+
+    if (!validTypes.includes(file.type)) {
+      toast({
+        title: "Invalid File Type",
+        description: "Please upload a valid image (JPEG, PNG, or GIF)",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (file.size > maxSize) {
+      toast({
+        title: "File Too Large",
+        description: "Image must be less than 5MB",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      form.setValue('image', file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Image processing error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to process image",
+        variant: "destructive"
+      });
     }
   };
 
-  const onSubmit = async (data: PetFormData) => {
+  const onSubmit = async (data: PetFormSchema) => {
+    setIsSubmitting(true);
     try {
-      setIsSubmitting(true);
+      const customerId = Number(data.customerId);
+      
+      if (!customerId) {
+        throw new Error("Customer ID is required");
+      }
 
-      if (pet?.id && updatePetFn) {
-        await updatePetFn(pet.id, data);
+      // Extract owner information if available
+      const owner = pet?.owner || defaultValues?.owner;
+
+      const petData: InsertPet = {
+        name: data.name,
+        type: data.type,
+        breed: data.breed,
+        customerId,
+        dateOfBirth: data.dateOfBirth,
+        gender: data.gender,
+        age: data.age,
+        weight: data.weight?.toString() || null,
+        weightUnit: data.weightUnit,
+        image: null, // Will be updated after file upload
+        imageUrl: data.image instanceof File ? null : data.image?.toString() || null,
+        notes: data.notes,
+        owner,
+        firebaseId: pet?.firebaseId || null
+      };
+
+      if (pet?.id) {
+        await updatePetFn(pet.id, petData);
         toast({
           title: "Pet Updated",
           description: `${data.name} has been updated successfully.`,
         });
       } else {
-        await addPet(data);
+        const addedPet = await addPet(petData);
         toast({
           title: "Pet Added",
           description: `${data.name} has been added successfully.`,
         });
+        onSuccess?.(data);
       }
 
-      onSuccess?.(data);
+      onCancel?.();
       form.reset();
-      setSelectedImage(null);
+      setImagePreview(null);
     } catch (error) {
-      console.error("Error submitting pet form:", error);
+      console.error('Pet form submission error:', error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to save pet",
@@ -138,43 +255,72 @@ export function PetForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="customerId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Customer</FormLabel>
-              <Select
-                onValueChange={(value) => field.onChange(parseInt(value))}
-                value={field.value?.toString()}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select customer" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {customers.map((customer) => (
-                    <SelectItem
-                      key={customer.id}
-                      value={customer.id.toString()}
-                    >
-                      {customer.firstName} {customer.lastName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormItem>
-          )}
-        />
+      <form 
+        onSubmit={form.handleSubmit(onSubmit)} 
+        className="space-y-4 p-4 max-h-[60vh] overflow-y-auto pr-2"
+      >
+        {!defaultValues?.customerId && (
+          <FormField
+            control={form.control}
+            name="customerId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Customer Owner</FormLabel>
+                <Select
+                  onValueChange={(value) => field.onChange(Number(value))}
+                  value={field.value?.toString()}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Customer" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {customerOptions.map((customer) => (
+                      <SelectItem 
+                        key={customer.id} 
+                        value={customer.id.toString()}
+                      >
+                        {customer.firstName} {customer.lastName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )}
+          />
+        )}
+
+        <div className="flex flex-col items-center mb-6">
+          <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-2 relative overflow-hidden">
+            {imagePreview ? (
+              <img 
+                src={imagePreview} 
+                alt="Pet preview" 
+                className="w-full h-full object-cover" 
+              />
+            ) : (
+              <Upload className="w-8 h-8 text-gray-400" />
+            )}
+          </div>
+          <Input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="hidden"
+            id="pet-image"
+          />
+          <label htmlFor="pet-image" className="text-sm text-primary cursor-pointer">
+            Choose Photo
+          </label>
+        </div>
 
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Name *</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -187,19 +333,22 @@ export function PetForm({
           name="type"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Type</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
+              <FormLabel>Pet Type *</FormLabel>
+              <Select 
+                onValueChange={field.onChange}
+                value={field.value}
+              >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
+                    <SelectValue placeholder="Select pet type" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {["dog", "cat", "bird", "fish", "other"].map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type.charAt(0).toUpperCase() + type.slice(1)}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="dog">Dog</SelectItem>
+                  <SelectItem value="cat">Cat</SelectItem>
+                  <SelectItem value="bird">Bird</SelectItem>
+                  <SelectItem value="fish">Fish</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
             </FormItem>
@@ -211,7 +360,7 @@ export function PetForm({
           name="breed"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Breed</FormLabel>
+              <FormLabel>Breed *</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -229,10 +378,25 @@ export function PetForm({
                 <Input
                   type="date"
                   {...field}
-                  value={field.value || ""}
-                  onChange={(e) => {
-                    field.onChange(e.target.value);
-                  }}
+                  value={field.value || ''}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="age"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Age</FormLabel>
+              <FormControl>
+                <Input 
+                  type="number"
+                  {...field}
+                  onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+                  value={field.value || ''}
                 />
               </FormControl>
             </FormItem>
@@ -245,9 +409,9 @@ export function PetForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Gender</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                value={field.value || undefined}
+              <Select 
+                onValueChange={(value) => field.onChange(value as PetGender)}
+                value={field.value || "unknown"}
               >
                 <FormControl>
                   <SelectTrigger>
@@ -255,11 +419,9 @@ export function PetForm({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {["male", "female", "unknown"].map((gender) => (
-                    <SelectItem key={gender} value={gender}>
-                      {gender.charAt(0).toUpperCase() + gender.slice(1)}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="male">Male</SelectItem>
+                  <SelectItem value="female">Female</SelectItem>
+                  <SelectItem value="unknown">Unknown</SelectItem>
                 </SelectContent>
               </Select>
             </FormItem>
@@ -274,29 +436,29 @@ export function PetForm({
               <FormItem>
                 <FormLabel>Weight</FormLabel>
                 <FormControl>
-                  <Input
-                    type="text"
+                  <Input 
+                    type="number" 
+                    step="0.1" 
                     {...field}
-                    value={field.value || ""}
+                    value={field.value || ''}
                   />
                 </FormControl>
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="weightUnit"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Unit</FormLabel>
-                <Select
+                <Select 
                   onValueChange={field.onChange}
                   value={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="Unit" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -311,69 +473,37 @@ export function PetForm({
 
         <FormField
           control={form.control}
-          name="image"
-          render={({ field: { value, onChange, ...field } }) => (
-            <FormItem>
-              <FormLabel>Image</FormLabel>
-              <FormControl>
-                <div className="flex items-center gap-4">
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="hidden"
-                    id="pet-image"
-                    {...field}
-                  />
-                  <label
-                    htmlFor="pet-image"
-                    className="flex items-center gap-2 px-4 py-2 border rounded-md cursor-pointer hover:bg-gray-50"
-                  >
-                    <Upload className="w-4 h-4" />
-                    <span>Upload Image</span>
-                  </label>
-                  {selectedImage && (
-                    <span className="text-sm text-gray-500">
-                      {selectedImage.name}
-                    </span>
-                  )}
-                  {typeof value === "string" && value && (
-                    <img
-                      src={value}
-                      alt="Pet"
-                      className="w-16 h-16 object-cover rounded-md"
-                    />
-                  )}
-                </div>
-              </FormControl>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
           name="notes"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Notes</FormLabel>
+              <FormLabel>Additional Info</FormLabel>
               <FormControl>
-                <Input {...field} value={field.value || ""} />
+                <Input {...field} value={field.value || ''} />
               </FormControl>
             </FormItem>
           )}
         />
 
-        <div className="flex justify-end gap-4">
+        <div className="flex justify-end gap-2">
           {onCancel && (
-            <Button type="button" variant="outline" onClick={onCancel}>
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={onCancel}
+            >
               Cancel
             </Button>
           )}
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Saving..." : pet ? "Update Pet" : "Add Pet"}
+          <Button 
+            type="submit" 
+            disabled={isSubmitting}
+          >
+            {pet ? "Update" : "Add"} Pet
           </Button>
         </div>
       </form>
     </Form>
   );
-}
+};
+
+export default PetForm;
