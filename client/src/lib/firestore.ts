@@ -129,12 +129,15 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
       }
     }
 
+    // Convert customerId to string if it's a number
+    const customerIdStr = pet.customerId.toString();
+
     // Verify customer exists
-    const customerRef = doc(db, 'customers', pet.customerId.toString());
+    const customerRef = doc(customersCollection, customerIdStr);
     const customerDoc = await getDoc(customerRef);
 
     if (!customerDoc.exists()) {
-      throw new Error(`Customer with ID ${pet.customerId} does not exist`);
+      throw new Error(`Customer with ID ${customerIdStr} does not exist`);
     }
 
     const petRef = doc(petsCollection);
@@ -145,12 +148,15 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
     // Prepare pet data for Firestore
     const petData = {
       ...pet,
-      firebaseId: petRef.id, // Store the Firebase-generated ID separately
-      customerId: pet.customerId, // Ensure customerId is stored
-      createdAt: pet.createdAt instanceof Date ? pet.createdAt : new Date(),
-      updatedAt: new Date()
+      id: petRef.id,
+      customerId: customerIdStr, // Store customerId as string in Firestore
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
 
+    console.log('FIRESTORE: About to save pet data', { petData });
+
+    // Save to Firestore
     await setDoc(petRef, petData);
 
     // Log after setDoc
@@ -161,7 +167,7 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
 
     return petRef.id;
   } catch (error) {
-    console.log('FIRESTORE: Critical error in createPet', { 
+    console.error('FIRESTORE: Critical error in createPet', { 
       error: error instanceof Error ? error.message : 'Unknown error',
       pet 
     });

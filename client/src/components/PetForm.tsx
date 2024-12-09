@@ -180,7 +180,7 @@ export const PetForm: React.FC<PetFormProps> = ({
         name: data.name,
         type: data.type,
         breed: data.breed,
-        customerId: data.customerId,
+        customerId: customerId, // Use the provided customerId
         dateOfBirth: data.dateOfBirth,
         age: data.age,
         gender: data.gender as PetGender,
