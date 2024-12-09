@@ -105,13 +105,19 @@ export const PetForm: React.FC<PetFormProps> = ({
   }, [initialCustomers, fetchedCustomers]);
 
   // Form initialization
+  console.log('Initializing form with values:', {
+    defaultValues,
+    pet
+  });
+
   const form = useForm<PetFormSchema>({
     resolver: zodResolver(petFormSchema),
+    mode: "onChange",
     defaultValues: {
       name: defaultValues?.name || pet?.name || "",
       type: (defaultValues?.type || pet?.type || "dog") as "dog" | "cat" | "bird" | "fish" | "other",
       breed: defaultValues?.breed || pet?.breed || "",
-      customerId: Number(defaultValues?.customerId || pet?.customerId) || 0,
+      customerId: (defaultValues?.customerId || pet?.customerId || '').toString(),
       dateOfBirth: convertToDate(defaultValues?.dateOfBirth || pet?.dateOfBirth),
       age: Number(defaultValues?.age || pet?.age) || null,
       gender: (defaultValues?.gender || pet?.gender || "unknown") as "male" | "female" | "unknown",
@@ -164,13 +170,26 @@ export const PetForm: React.FC<PetFormProps> = ({
   };
 
   const onSubmit = async (data: PetFormSchema) => {
-    if (isSubmitting) return;
+    console.log('Form submission started:', { data, isSubmitting });
+    
+    if (isSubmitting) {
+      console.log('Form submission blocked - already submitting');
+      return;
+    }
 
     setIsSubmitting(true);
     try {
+      console.log('Processing form data:', { 
+        formData: data,
+        defaultValues,
+        pet
+      });
+
       const customerId = (data.customerId || defaultValues?.customerId || '').toString();
+      console.log('Customer ID:', { customerId, raw: data.customerId });
       
       if (!customerId) {
+        console.error('Missing customer ID');
         throw new Error("Customer ID is required");
       }
 
@@ -239,7 +258,13 @@ export const PetForm: React.FC<PetFormProps> = ({
   return (
     <Form {...form}>
       <form 
-        onSubmit={form.handleSubmit(onSubmit)} 
+        onSubmit={(e) => {
+          console.log('Form submit event triggered');
+          form.handleSubmit((data) => {
+            console.log('Form validation passed, calling onSubmit');
+            return onSubmit(data);
+          })(e);
+        }} 
         className="space-y-4 p-4 max-h-[60vh] overflow-y-auto pr-2"
       >
         {!defaultValues?.customerId && (
