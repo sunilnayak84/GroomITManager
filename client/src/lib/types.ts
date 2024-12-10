@@ -18,6 +18,27 @@ export const customerSchema = z.object({
 export type Customer = z.infer<typeof customerSchema>;
 export type InsertCustomer = Omit<Customer, "id" | "createdAt" | "updatedAt">;
 
+export type PetType = "dog" | "cat" | "bird" | "fish" | "other";
+export type Gender = "male" | "female" | "other" | "unknown";
+export type WeightUnit = "kg" | "lbs";
+
+export interface PetInput {
+  name: string;
+  type: PetType;
+  breed: string;
+  customerId: string;
+  dateOfBirth?: string | null;
+  age?: number | null;
+  gender?: Gender | null;
+  weight?: string | null;
+  weightUnit?: WeightUnit;
+  notes?: string | null;
+  image?: string | File | null;
+  submissionId?: string;
+}
+
+export type InsertPet = Omit<PetInput, "id">;
+
 export const petSchema = z.object({
   id: z.number(),
   image: z.string().nullable(),

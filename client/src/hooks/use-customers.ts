@@ -5,6 +5,8 @@ import { customersCollection, createCustomer, updateCustomer as updateCustomerDo
 import { useEffect } from "react";
 import { db } from "../lib/firebase";
 import { toast } from '../lib/toast';
+import { type Customer as CustomerType, type InsertCustomer } from '@/lib/types';
+
 
 export function useCustomers() {
   const queryClient = useQueryClient();
@@ -102,7 +104,7 @@ export function useCustomers() {
   });
 
   const updateCustomerMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: Partial<Omit<Customer, 'id'>> }) => {
+    mutationFn: async ({ id, data }: { id: string; data: Partial<Omit<CustomerType, 'id'>> }) => {
       await updateCustomerDoc(id, data);
       return {
         id,
@@ -137,10 +139,10 @@ export function useCustomers() {
       await queryClient.cancelQueries({ queryKey: ["pets"] });
 
       // Snapshot the previous value
-      const previousCustomers = queryClient.getQueryData<Customer[]>(["customers"]);
+      const previousCustomers = queryClient.getQueryData<CustomerType[]>(["customers"]);
 
       // Optimistically update the cache
-      queryClient.setQueryData<Customer[]>(["customers"], old => 
+      queryClient.setQueryData<CustomerType[]>(["customers"], old => 
         old?.filter(customer => customer.id !== String(deletedId)) || []
       );
 
@@ -182,7 +184,7 @@ export function useCustomers() {
           createdAt: customerData.createdAt 
             ? new Date(customerData.createdAt) 
             : undefined
-        } as Customer;
+        } as CustomerType;
       });
 
       // Update customers in cache
@@ -194,7 +196,7 @@ export function useCustomers() {
     const petsUnsubscribe = onSnapshot(petsCollection, async (snapshot) => {
       try {
         // Get current customers from cache
-        const currentCustomers = queryClient.getQueryData<Customer[]>(["customers"]) || [];
+        const currentCustomers = queryClient.getQueryData<CustomerType[]>(["customers"]) || [];
         
         // Count pets for each customer
         const petCounts = new Map<string, number>();
@@ -243,7 +245,7 @@ export function useCustomers() {
               : new Date(),
             petCount: customerData.petCount || 0,
             gender: customerData.gender || null
-          } satisfies Customer;
+          } satisfies CustomerType;
           console.log('FETCH_CUSTOMERS: Processed customer:', {
             id: customer.id,
             firebaseId: customer.firebaseId,

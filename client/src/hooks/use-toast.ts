@@ -17,10 +17,10 @@ interface State {
 
 const memoryState: State = { toasts: [] }
 
-type ToastFunction = {
-  (props: ToastProps): { id: string; dismiss: () => void; update: (props: ToasterToast) => void }
-  success: (message: string) => void
-  error: (message: string) => void
+interface ToastFunction {
+  (props: ToastProps): { id: string; dismiss: () => void; update: (props: ToasterToast) => void };
+  success(message: string): void;
+  error(message: string): void;
 }
 
 const toast = ((props: ToastProps) => {
