@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import React, { useState, useEffect, useCallback } from "react";
 import { Upload } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 const petSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -52,6 +53,7 @@ export function PetForm({
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionId, setSubmissionId] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [imagePreview, setImagePreview] = useState<string | null>(
     typeof defaultValues?.image === 'string' ? defaultValues.image : null
   );
@@ -144,7 +146,10 @@ export function PetForm({
           phone: selectedCustomer.phone || '',
           email: selectedCustomer.email || ''
         },
-        submissionId: currentSubmissionId
+        submissionId: currentSubmissionId,
+        onUploadProgress: (progress: number) => {
+          setUploadProgress(progress);
+        }
       };
 
       console.log('Submitting pet data:', petData);
@@ -399,6 +404,14 @@ export function PetForm({
                         Upload Image
                       </Button>
                     </div>
+                    {uploadProgress > 0 && uploadProgress < 100 && (
+                      <div className="w-full mt-4">
+                        <Progress value={uploadProgress} className="w-full" />
+                        <p className="text-sm text-muted-foreground mt-1 text-center">
+                          Uploading: {Math.round(uploadProgress)}%
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </FormControl>
               </FormItem>
