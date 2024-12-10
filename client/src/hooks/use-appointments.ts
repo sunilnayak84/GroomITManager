@@ -4,13 +4,13 @@ import { collection, getDocs, addDoc, onSnapshot, query, getDoc, doc } from 'fir
 import { appointmentsCollection, petsCollection, customersCollection, usersCollection } from "../lib/firestore";
 import React from "react";
 
-// Helper function to safely convert to Date
 // Helper function to convert Date | null to Date | undefined
 const toDateOrUndefined = (value: unknown): Date | undefined => {
   const date = toSafeDate(value);
   return date === null ? undefined : date;
 };
 
+// Helper function to safely convert to Date
 const toSafeDate = (value: unknown): Date | null => {
   if (!value) return null;
   if (value instanceof Date) return value;
@@ -74,7 +74,7 @@ export function useAppointments() {
             notes: appointmentData.notes ?? null,
             productsUsed: appointmentData.productsUsed ?? null,
             createdAt: createdDate,
-            updatedAt: toSafeDate(appointmentData.updatedAt),
+            updatedAt: toDateOrUndefined(appointmentData.updatedAt),
             pet: {
               name: petData.name,
               breed: petData.breed,
@@ -102,25 +102,26 @@ export function useAppointments() {
 
   const addAppointmentMutation = useMutation({
     mutationFn: async (appointmentData: InsertAppointment) => {
-      // Ensure all required fields are present and properly typed
+      // Ensure all required fields are present and properly typed for Firestore
       const processedData = {
         petId: Number(appointmentData.petId),
         serviceId: Number(appointmentData.serviceId),
         groomerId: String(appointmentData.groomerId),
         branchId: Number(appointmentData.branchId),
         date: toSafeDate(appointmentData.date) || new Date(),
-        status: (appointmentData.status || 'pending') as AppointmentWithRelations['status'],
+        status: appointmentData.status || 'pending',
         notes: appointmentData.notes ?? null,
         productsUsed: appointmentData.productsUsed ?? null,
         createdAt: new Date(),
         updatedAt: null
-      };
+      } as const;
 
       const docRef = await addDoc(appointmentsCollection, processedData);
       
       return {
         id: docRef.id,
-        ...processedData
+        ...processedData,
+        status: processedData.status as AppointmentWithRelations['status']
       };
     },
     onSuccess: () => {
@@ -181,7 +182,7 @@ export function useAppointments() {
             notes: appointmentData.notes ?? null,
             productsUsed: appointmentData.productsUsed ?? null,
             createdAt: createdDate,
-            updatedAt: toSafeDate(appointmentData.updatedAt),
+            updatedAt: toDateOrUndefined(appointmentData.updatedAt),
             pet: {
               name: petData.name,
               breed: petData.breed,
