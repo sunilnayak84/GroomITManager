@@ -1,28 +1,13 @@
-import { useState, useEffect, useTransition, Suspense, Component, type ReactNode } from "react";
+import { useState } from "react";
 import { Plus } from "lucide-react";
-
-class ErrorBoundary extends Component<{ children: ReactNode, fallback: ReactNode }> {
-  state = { hasError: false };
-  
-  static getDerivedStateFromError() {
-    return { hasError: true };
-  }
-  
-  render() {
-    if (this.state.hasError) {
-      return this.props.fallback;
-    }
-    return this.props.children;
-  }
-}
 import { format } from "date-fns";
 import { useInventory } from "@/hooks/use-inventory";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import {
   Table,
@@ -47,7 +32,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-// Define the schema for the form
+// Schema definition
 const inventoryFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
   category: z.string().min(1, "Category is required"),
@@ -61,65 +46,11 @@ const inventoryFormSchema = z.object({
 
 type InventoryFormData = z.infer<typeof inventoryFormSchema>;
 
-import type { InventoryItem } from "@/hooks/use-inventory";
-
 export default function InventoryPage() {
-  const [isPending, startTransition] = useTransition();
-  const [showDialog, setShowDialog] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
-
-  const handleDialogChange = (open: boolean) => {
-    startTransition(() => {
-      setShowDialog(open);
-      if (!open) {
-        setSelectedItem(null);
-      }
-    });
-  };
-
-  const handleItemSelect = (item: InventoryItem | null) => {
-    startTransition(() => {
-      setSelectedItem(item);
-      setShowDialog(true);
-    });
-  };
-
-  return (
-    <div className="h-full">
-      <Suspense fallback={
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-lg">Loading inventory management...</div>
-        </div>
-      }>
-        <ErrorBoundary fallback={<div>Something went wrong</div>}>
-          <InventoryContent 
-            showDialog={showDialog}
-            selectedItem={selectedItem}
-            onDialogChange={handleDialogChange}
-            onItemSelect={handleItemSelect}
-            isPending={isPending}
-          />
-        </ErrorBoundary>
-      </Suspense>
-    </div>
-  );
-}
-
-function InventoryContent({
-  showDialog,
-  selectedItem,
-  onDialogChange,
-  onItemSelect,
-  isPending
-}: {
-  showDialog: boolean;
-  selectedItem: InventoryItem | null;
-  onDialogChange: (open: boolean) => void;
-  onItemSelect: (item: InventoryItem | null) => void;
-  isPending: boolean;
-}) {
   const { toast } = useToast();
   const { inventory, isLoading, addInventoryItem, updateInventoryItem, deleteInventoryItem } = useInventory();
+  const [showDialog, setShowDialog] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
 
   const form = useForm<InventoryFormData>({
     resolver: zodResolver(inventoryFormSchema),
@@ -135,38 +66,35 @@ function InventoryContent({
     },
   });
 
-  useEffect(() => {
-    if (!showDialog) {
+  // Reset form when dialog closes
+  const handleDialogChange = (open: boolean) => {
+    setShowDialog(open);
+    if (!open) {
+      setSelectedItem(null);
       form.reset();
     }
-  }, [showDialog, form]);
+  };
 
-  useEffect(() => {
-    if (selectedItem) {
-      form.reset({
-        name: selectedItem.name,
-        category: selectedItem.category,
-        quantity: selectedItem.quantity,
-        unit: selectedItem.unit,
-        minimum_quantity: selectedItem.minimum_quantity,
-        cost_per_unit: selectedItem.cost_per_unit,
-        supplier: selectedItem.supplier || '',
-        description: selectedItem.description || '',
-      });
-    }
-  }, [selectedItem, form]);
+  // Set form values when editing an item
+  const handleEdit = (item: any) => {
+    setSelectedItem(item);
+    form.reset({
+      name: item.name,
+      category: item.category,
+      quantity: item.quantity,
+      unit: item.unit,
+      minimum_quantity: item.minimum_quantity,
+      cost_per_unit: item.cost_per_unit,
+      supplier: item.supplier || '',
+      description: item.description || '',
+    });
+    setShowDialog(true);
+  };
 
   const onSubmit = async (data: InventoryFormData) => {
     try {
       const itemData = {
-        name: data.name,
-        description: data.description,
-        quantity: data.quantity,
-        minimum_quantity: data.minimum_quantity,
-        unit: data.unit,
-        cost_per_unit: data.cost_per_unit,
-        category: data.category,
-        supplier: data.supplier,
+        ...data,
         isActive: true,
       };
 
@@ -184,8 +112,7 @@ function InventoryContent({
         });
       }
 
-      onDialogChange(false);
-      form.reset();
+      handleDialogChange(false);
     } catch (error) {
       toast({
         title: "Error",
@@ -221,9 +148,8 @@ function InventoryContent({
 
       <div className="flex justify-between items-center mb-6">
         <Button 
-          onClick={() => onDialogChange(true)}
+          onClick={() => handleDialogChange(true)}
           className="ml-auto h-12 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-          disabled={isPending}
         >
           <Plus className="mr-2 h-5 w-5" />
           Add New Item
@@ -239,14 +165,13 @@ function InventoryContent({
               <TableHead>Quantity</TableHead>
               <TableHead>Unit</TableHead>
               <TableHead>Reorder Point</TableHead>
-              <TableHead>Last Restocked</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {inventory.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-10">
+                <TableCell colSpan={6} className="text-center py-10">
                   No inventory items found
                 </TableCell>
               </TableRow>
@@ -275,17 +200,11 @@ function InventoryContent({
                   <TableCell>{item.unit}</TableCell>
                   <TableCell>{item.minimum_quantity}</TableCell>
                   <TableCell>
-                    {item.last_restock_date 
-                      ? format(item.last_restock_date, 'PP')
-                      : 'Never'}
-                  </TableCell>
-                  <TableCell>
                     <div className="flex items-center gap-2">
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => onItemSelect(item)}
-                        disabled={isPending}
+                        onClick={() => handleEdit(item)}
                       >
                         Edit
                       </Button>
@@ -310,7 +229,6 @@ function InventoryContent({
                             }
                           }
                         }}
-                        disabled={isPending}
                       >
                         Delete
                       </Button>
@@ -323,7 +241,7 @@ function InventoryContent({
         </Table>
       </div>
 
-      <Dialog open={showDialog} onOpenChange={onDialogChange}>
+      <Dialog open={showDialog} onOpenChange={handleDialogChange}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
@@ -378,6 +296,7 @@ function InventoryContent({
                           step="1" 
                           {...field}
                           onChange={(e) => field.onChange(Number(e.target.value))}
+                          value={field.value}
                         />
                       </FormControl>
                       <FormMessage />
@@ -413,6 +332,7 @@ function InventoryContent({
                           min="0" 
                           {...field}
                           onChange={(e) => field.onChange(Number(e.target.value))}
+                          value={field.value}
                         />
                       </FormControl>
                       <FormMessage />
@@ -433,6 +353,7 @@ function InventoryContent({
                           step="0.01" 
                           {...field}
                           onChange={(e) => field.onChange(Number(e.target.value))}
+                          value={field.value}
                         />
                       </FormControl>
                       <FormMessage />
@@ -481,12 +402,11 @@ function InventoryContent({
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => onDialogChange(false)}
-                  disabled={isPending}
+                  onClick={() => handleDialogChange(false)}
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isPending}>
+                <Button type="submit">
                   {selectedItem ? "Update Item" : "Add Item"}
                 </Button>
               </div>
