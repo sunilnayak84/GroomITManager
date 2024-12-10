@@ -7,10 +7,11 @@ import AppointmentForm from "../components/AppointmentForm";
 import { DataTable } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { z } from "zod";
 import { appointmentSchema, type Appointment, type AppointmentWithRelations } from "@/lib/schema";
 
-// Get status type from the schema to ensure it matches database
-type AppointmentStatus = "pending" | "confirmed" | "completed" | "cancelled";
+// Get status type from the schema
+type AppointmentStatus = z.infer<typeof appointmentSchema>["status"];
 
 const statusColors: Record<AppointmentStatus, string> = {
   pending: "bg-yellow-100 text-yellow-800",
@@ -18,9 +19,6 @@ const statusColors: Record<AppointmentStatus, string> = {
   completed: "bg-green-100 text-green-800",
   cancelled: "bg-red-100 text-red-800",
 };
-
-// Use the type from schema instead of redefining
-type AppointmentStatus = "pending" | "confirmed" | "completed" | "cancelled";
 
 export default function AppointmentsPage() {
   const [open, setOpen] = useState(false);
@@ -106,7 +104,7 @@ export default function AppointmentsPage() {
 
       <DataTable
         columns={columns}
-        data={appointments || []}
+        data={(appointments || []) as AppointmentWithRelations[]}
         isLoading={isLoading}
       />
     </div>
