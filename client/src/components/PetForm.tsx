@@ -58,8 +58,6 @@ export function PetForm({
 }: PetFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submissionId, setSubmissionId] = useState<string | null>(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [imagePreview, setImagePreview] = useState<string | null>(
     typeof defaultValues?.image === 'string' ? defaultValues.image : null
   );
@@ -105,19 +103,23 @@ export function PetForm({
     }
   }, [customers, customerId, form]);
 
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Error",
+          description: "Please upload an image file",
+          variant: "destructive",
+        });
+        return;
+      }
+
       try {
-        setImagePreview(URL.createObjectURL(file));
+        const imageUrl = URL.createObjectURL(file);
+        setImagePreview(imageUrl);
         form.setValue("image", file);
-        
-        // Update progress state to show initial progress
-        setUploadProgress(0);
-        
-        // Create a new submission ID for this upload
-        const uploadId = `${Date.now()}-${Math.random().toString(36).substring(2)}`;
-        setSubmissionId(uploadId);
       } catch (error) {
         console.error('Error handling image:', error);
         toast({
@@ -130,92 +132,66 @@ export function PetForm({
   };
 
   const onSubmit = useCallback(async (data: FormData) => {
-    if (isSubmitting) {
-      console.log('Form submission blocked - already submitting');
-      return;
-    }
+    if (isSubmitting) return;
     
     setIsSubmitting(true);
 
     try {
-      // Generate submission ID if not already set
-      const currentSubmissionId = submissionId || `${Date.now()}-${Math.random().toString(36).substring(2)}`;
-      if (!submissionId) {
-        setSubmissionId(currentSubmissionId);
-      }
-
-      console.log('Form submission started:', { data, submissionId: currentSubmissionId });
-
-      // Find customer by either firebaseId or id
       const selectedCustomer = customers.find(c => 
-        (c.firebaseId && c.firebaseId === data.customerId) || 
+        c.firebaseId === data.customerId || 
         c.id.toString() === data.customerId
       );
-
+      
       if (!selectedCustomer) {
         throw new Error("Selected customer not found");
       }
 
-      const petData = {
-        ...data,
-        customerId: selectedCustomer.firebaseId || selectedCustomer.id.toString(),
+      const customerId = selectedCustomer.firebaseId || selectedCustomer.id.toString();
+      
+      const petData: InsertPet = {
+        name: data.name,
+        type: data.type,
+        breed: data.breed,
+        customerId,
         dateOfBirth: data.dateOfBirth || null,
-        age: data.age || null,
+        age: typeof data.age === 'string' ? parseInt(data.age) : data.age,
         gender: data.gender || null,
         weight: data.weight || null,
         weightUnit: data.weightUnit,
         notes: data.notes || null,
+        image: data.image,
         owner: {
-          id: selectedCustomer.firebaseId || selectedCustomer.id.toString(),
-          firstName: selectedCustomer.firstName,
-          lastName: selectedCustomer.lastName,
+          id: customerId,
           name: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`,
-          phone: selectedCustomer.phone || '',
-          email: selectedCustomer.email || ''
-        },
-        submissionId: currentSubmissionId,
-        onUploadProgress: (progress: number) => {
-          console.log('Upload progress:', progress);
-          setUploadProgress(Math.round(progress * 100));
+          email: selectedCustomer.email
         }
       };
 
       console.log('Submitting pet data:', petData);
-      
       const result = await submitForm(petData);
-      console.log('Pet creation result:', result);
 
       if (result) {
-        // Reset form state
-        setUploadProgress(0);
         setImagePreview(null);
-        setSubmissionId(null);
         form.reset();
         
         toast({
           title: "Success",
-          description: "Pet added successfully",
+          description: isEditing ? "Pet updated successfully" : "Pet added successfully",
         });
         
         onSuccess?.(petData);
       }
     } catch (error) {
       console.error('Error submitting pet form:', error);
-      
-      // Reset upload progress on error
-      setUploadProgress(0);
-      
       toast({
         title: "Error",
-        description: error instanceof Error 
-          ? error.message 
-          : "Failed to add pet. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to save pet",
         variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
     }
-  }, [isSubmitting, submissionId, customers, submitForm, form, onSuccess, toast]);
+  }, [isSubmitting, customers, submitForm, form, onSuccess, toast, isEditing]);
 
   if (customers.length === 0) {
     return (
@@ -261,14 +237,7 @@ export function PetForm({
                         Upload Image
                       </Button>
                     </div>
-                    {uploadProgress > 0 && uploadProgress < 100 && (
-                      <div className="w-full mt-4">
-                        <Progress value={uploadProgress} className="w-full" />
-                        <p className="text-sm text-muted-foreground mt-1 text-center">
-                          Uploading: {Math.round(uploadProgress)}%
-                        </p>
-                      </div>
-                    )}
+                    
                   </div>
                 </FormControl>
               </FormItem>
