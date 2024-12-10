@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { Appointment, AppointmentWithRelations } from "@/lib/schema";
-import { collection, getDocs, addDoc, onSnapshot, query, getDoc, doc, type WithFieldValue } from 'firebase/firestore';
+import type { AppointmentWithRelations, InsertAppointment } from "@/lib/schema";
+import { collection, getDocs, addDoc, onSnapshot, query, getDoc, doc } from 'firebase/firestore';
 import { appointmentsCollection, petsCollection, customersCollection, usersCollection } from "../lib/firestore";
 import React from "react";
 
@@ -11,47 +11,65 @@ export function useAppointments() {
     queryKey: ["appointments"],
     queryFn: async () => {
       const querySnapshot = await getDocs(appointmentsCollection);
-      const appointments = [];
+      const appointments: AppointmentWithRelations[] = [];
 
       for (const appointmentDoc of querySnapshot.docs) {
         const appointmentData = appointmentDoc.data();
-        
-        // Get pet details
-        const petDoc = await getDoc(doc(petsCollection, appointmentData.petId));
-        const petData = petDoc.data();
-        
-        // Get customer details through pet's customerId
-        const customerDoc = await getDoc(doc(customersCollection, petData?.customerId));
-        const customerData = customerDoc.data();
-        
-        // Get groomer details
-        const groomerDoc = await getDoc(doc(usersCollection, appointmentData.groomerId));
-        const groomerData = groomerDoc.data();
+        if (!appointmentData) continue;
 
-        appointments.push({
-          id: appointmentDoc.id,
-          petId: appointmentData.petId,
-          serviceId: appointmentData.serviceId,
-          groomerId: appointmentData.groomerId,
-          branchId: appointmentData.branchId,
-          date: appointmentData.date.toDate(),
-          status: appointmentData.status || 'pending',
-          notes: appointmentData.notes,
-          productsUsed: appointmentData.productsUsed,
-          createdAt: appointmentData.createdAt.toDate(),
-          pet: {
-            name: petData?.name || '',
-            breed: petData?.breed || '',
-            image: petData?.image || null
-          },
-          customer: {
-            firstName: customerData?.firstName || '',
-            lastName: customerData?.lastName || ''
-          },
-          groomer: {
-            name: groomerData?.name || ''
+        try {
+          // Get pet details
+          const petDoc = await getDoc(doc(petsCollection, String(appointmentData.petId)));
+          const petData = petDoc.data();
+          if (!petData) continue;
+
+          // Get customer details through pet's customerId
+          const customerDoc = await getDoc(doc(customersCollection, String(petData.customerId)));
+          const customerData = customerDoc.data();
+          if (!customerData) continue;
+
+          // Get groomer details
+          const groomerDoc = await getDoc(doc(usersCollection, appointmentData.groomerId));
+          const groomerData = groomerDoc.data();
+          if (!groomerData) continue;
+
+          const status = appointmentData.status as AppointmentWithRelations['status'];
+          if (!['pending', 'confirmed', 'completed', 'cancelled'].includes(status)) {
+            console.error('Invalid appointment status:', status);
+            continue;
           }
-        });
+
+          const appointment: AppointmentWithRelations = {
+            id: appointmentDoc.id,
+            petId: Number(appointmentData.petId),
+            serviceId: Number(appointmentData.serviceId),
+            groomerId: appointmentData.groomerId,
+            branchId: Number(appointmentData.branchId),
+            date: appointmentData.date instanceof Date ? appointmentData.date : new Date(appointmentData.date),
+            status,
+            notes: appointmentData.notes ?? null,
+            productsUsed: appointmentData.productsUsed ?? null,
+            createdAt: appointmentData.createdAt instanceof Date ? appointmentData.createdAt : new Date(appointmentData.createdAt),
+            updatedAt: appointmentData.updatedAt ? new Date(appointmentData.updatedAt) : null,
+            pet: {
+              name: petData.name,
+              breed: petData.breed,
+              image: petData.image ?? null
+            },
+            customer: {
+              firstName: customerData.firstName,
+              lastName: customerData.lastName
+            },
+            groomer: {
+              name: groomerData.name
+            }
+          };
+
+          appointments.push(appointment);
+        } catch (error) {
+          console.error('Error processing appointment:', appointmentDoc.id, error);
+          continue;
+        }
       }
 
       return appointments;
@@ -59,65 +77,98 @@ export function useAppointments() {
   });
 
   const addAppointmentMutation = useMutation({
-    mutationFn: async (appointmentData: Omit<AppointmentWithRelations, 'id' | 'createdAt' | 'pet' | 'customer' | 'groomer'>) => {
-      const docRef = await addDoc(appointmentsCollection, {
-        ...appointmentData,
+    mutationFn: async (appointmentData: InsertAppointment) => {
+      // Ensure all required fields are present and properly typed
+      const processedData = {
+        petId: Number(appointmentData.petId),
+        serviceId: Number(appointmentData.serviceId),
+        groomerId: String(appointmentData.groomerId),
+        branchId: Number(appointmentData.branchId),
+        date: appointmentData.date instanceof Date ? appointmentData.date : new Date(appointmentData.date),
+        status: (appointmentData.status || 'pending') as AppointmentWithRelations['status'],
+        notes: appointmentData.notes ?? null,
+        productsUsed: appointmentData.productsUsed ?? null,
         createdAt: new Date(),
-        status: appointmentData.status || 'pending'
-      });
+        updatedAt: null
+      };
+
+      const docRef = await addDoc(appointmentsCollection, processedData);
+      
       return {
         id: docRef.id,
-        ...appointmentData,
-        createdAt: new Date()
+        ...processedData
       };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
     },
+    onError: (error) => {
+      console.error('Failed to add appointment:', error);
+      throw error;
+    }
   });
 
   // Set up real-time updates
   React.useEffect(() => {
     const q = query(appointmentsCollection);
     const unsubscribe = onSnapshot(q, async (snapshot) => {
-      const appointments = [];
+      const appointments: AppointmentWithRelations[] = [];
       
       for (const appointmentDoc of snapshot.docs) {
-        const appointmentData = appointmentDoc.data();
-        
-        // Get pet details
-        const petDoc = await getDoc(doc(petsCollection, appointmentData.petId.toString()));
-        const petData = petDoc.data();
-        
-        // Get customer details through pet's customerId
-        const customerDoc = await getDoc(doc(customersCollection, petData?.customerId.toString()));
-        const customerData = customerDoc.data();
-        
-        // Get groomer details
-        const groomerDoc = await getDoc(doc(usersCollection, appointmentData.groomerId.toString()));
-        const groomerData = groomerDoc.data();
+        try {
+          const appointmentData = appointmentDoc.data();
+          if (!appointmentData) continue;
 
-        appointments.push({
-          id: parseInt(appointmentDoc.id),
-          petId: appointmentData.petId,
-          groomerId: appointmentData.groomerId,
-          date: appointmentData.date,
-          status: appointmentData.status || 'pending',
-          notes: appointmentData.notes,
-          createdAt: appointmentData.createdAt,
-          pet: {
-            name: petData?.name || '',
-            breed: petData?.breed || '',
-            image: petData?.image || null
-          },
-          customer: {
-            firstName: customerData?.firstName || '',
-            lastName: customerData?.lastName || ''
-          },
-          groomer: {
-            name: groomerData?.name || ''
+          // Get pet details
+          const petDoc = await getDoc(doc(petsCollection, String(appointmentData.petId)));
+          const petData = petDoc.data();
+          if (!petData) continue;
+
+          // Get customer details
+          const customerDoc = await getDoc(doc(customersCollection, String(petData.customerId)));
+          const customerData = customerDoc.data();
+          if (!customerData) continue;
+
+          // Get groomer details
+          const groomerDoc = await getDoc(doc(usersCollection, appointmentData.groomerId));
+          const groomerData = groomerDoc.data();
+          if (!groomerData) continue;
+
+          const status = appointmentData.status as AppointmentWithRelations['status'];
+          if (!['pending', 'confirmed', 'completed', 'cancelled'].includes(status)) {
+            console.error('Invalid appointment status:', status);
+            continue;
           }
-        });
+
+          appointments.push({
+            id: appointmentDoc.id,
+            petId: Number(appointmentData.petId),
+            serviceId: Number(appointmentData.serviceId),
+            groomerId: appointmentData.groomerId,
+            branchId: Number(appointmentData.branchId),
+            date: appointmentData.date instanceof Date ? appointmentData.date : new Date(appointmentData.date),
+            status,
+            notes: appointmentData.notes ?? null,
+            productsUsed: appointmentData.productsUsed ?? null,
+            createdAt: appointmentData.createdAt instanceof Date ? appointmentData.createdAt : new Date(appointmentData.createdAt),
+            updatedAt: appointmentData.updatedAt ? new Date(appointmentData.updatedAt) : null,
+            pet: {
+              name: petData.name,
+              breed: petData.breed,
+              image: petData.image ?? null
+            },
+            customer: {
+              firstName: customerData.firstName,
+              lastName: customerData.lastName
+            },
+            groomer: {
+              name: groomerData.name
+            }
+          });
+        } catch (error) {
+          console.error('Error processing appointment update:', appointmentDoc.id, error);
+          continue;
+        }
       }
       
       queryClient.setQueryData(["appointments"], appointments);

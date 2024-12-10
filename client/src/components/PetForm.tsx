@@ -131,15 +131,16 @@ export function PetForm({
     setIsSubmitting(true);
 
     try {
-      const selectedCustomer = hideCustomerField 
-        ? { id: customerId } 
+      // Get the selected customer with proper type checking
+      const selectedCustomer = hideCustomerField && customerId
+        ? { id: customerId, firstName: '', lastName: '', email: null }
         : customers.find(c => 
-            c.firebaseId === data.customerId || 
-            c.id.toString() === data.customerId
+            (c.firebaseId && c.firebaseId === data.customerId) || 
+            (c.id && c.id.toString() === data.customerId)
           );
       
-      if (!selectedCustomer) {
-        throw new Error("Selected customer not found");
+      if (!selectedCustomer?.id) {
+        throw new Error("Selected customer not found or invalid customer ID");
       }
 
       const effectiveCustomerId = selectedCustomer.id.toString();
@@ -148,19 +149,25 @@ export function PetForm({
         name: data.name,
         type: data.type,
         breed: data.breed,
-        customerId: effectiveCustomerId,
+        customerId: String(effectiveCustomerId),
         dateOfBirth: data.dateOfBirth || null,
         age: data.age !== null ? Number(data.age) : null,
         gender: data.gender || null,
-        weight: data.weight || null,
-        weightUnit: data.weightUnit,
+        weight: data.weight ? Number(data.weight) : null,
+        weightUnit: data.weightUnit as "kg" | "lbs",
         notes: data.notes || null,
         image: data.image,
-        owner: hideCustomerField ? defaultValues?.owner : {
-          id: effectiveCustomerId,
-          name: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`,
-          email: selectedCustomer.email || null
-        }
+        owner: hideCustomerField 
+          ? defaultValues?.owner ?? null
+          : selectedCustomer 
+            ? {
+                id: effectiveCustomerId,
+                name: selectedCustomer.firstName && selectedCustomer.lastName 
+                  ? `${selectedCustomer.firstName} ${selectedCustomer.lastName}`
+                  : 'Unknown',
+                email: selectedCustomer.email ?? null
+              }
+            : null
       };
 
       const result = await submitForm(petData);
