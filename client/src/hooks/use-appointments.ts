@@ -112,8 +112,8 @@ export function useAppointments() {
         notes: appointmentData.notes ?? null,
         productsUsed: appointmentData.productsUsed ?? null,
         createdAt: new Date(),
-        updatedAt: undefined
-      };
+        updatedAt: null
+      } as const;
 
       // Add the document to Firestore
       const docRef = await addDoc(appointmentsCollection, documentData);
