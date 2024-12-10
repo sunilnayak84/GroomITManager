@@ -1,4 +1,4 @@
-import { useState, Suspense } from "react";
+import { useState } from "react";
 import { Plus } from "lucide-react";
 import { useInventory } from "@/hooks/use-inventory";
 import {
@@ -32,7 +32,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 // Schema definition
-const inventoryFormSchema = z.object({
+const inventoryItemSchema = z.object({
   name: z.string().min(1, "Name is required"),
   category: z.string().min(1, "Category is required"),
   quantity: z.number().min(0, "Quantity must be 0 or greater"),
@@ -43,26 +43,15 @@ const inventoryFormSchema = z.object({
   description: z.string().optional(),
 });
 
-type InventoryFormData = z.infer<typeof inventoryFormSchema>;
+type InventoryFormData = z.infer<typeof inventoryItemSchema>;
 
-// Separate loading component
-function LoadingState() {
-  return (
-    <div className="flex items-center justify-center h-[50vh]">
-      <div className="text-lg">Loading inventory...</div>
-    </div>
-  );
-}
-
-// Main inventory content component
-function InventoryContent() {
+export default function InventoryPage() {
   const { toast } = useToast();
-  const { inventory, isLoading, addInventoryItem, updateInventoryItem, deleteInventoryItem } = useInventory();
-  const [showDialog, setShowDialog] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { data: inventory, isLoading, error, addInventoryItem } = useInventory();
 
   const form = useForm<InventoryFormData>({
-    resolver: zodResolver(inventoryFormSchema),
+    resolver: zodResolver(inventoryItemSchema),
     defaultValues: {
       name: "",
       category: "",
@@ -75,87 +64,56 @@ function InventoryContent() {
     },
   });
 
-  const handleDialogChange = (open: boolean) => {
-    setShowDialog(open);
-    if (!open) {
-      setSelectedItem(null);
-      form.reset();
-    }
-  };
-
-  const handleEdit = (item: any) => {
-    setSelectedItem(item);
-    form.reset({
-      name: item.name,
-      category: item.category,
-      quantity: item.quantity,
-      unit: item.unit,
-      minimum_quantity: item.minimum_quantity,
-      cost_per_unit: item.cost_per_unit,
-      supplier: item.supplier || "",
-      description: item.description || "",
-    });
-    setShowDialog(true);
-  };
-
   const onSubmit = async (data: InventoryFormData) => {
     try {
-      const itemData = {
+      await addInventoryItem({
         ...data,
         isActive: true,
-      };
-
-      if (selectedItem) {
-        await updateInventoryItem(selectedItem.item_id, itemData);
-        toast({
-          title: "Success",
-          description: "Item updated successfully"
-        });
-      } else {
-        await addInventoryItem(itemData);
-        toast({
-          title: "Success",
-          description: "Item added successfully"
-        });
-      }
-
-      handleDialogChange(false);
+      });
+      
+      toast({
+        title: "Success",
+        description: "Item added successfully",
+      });
+      
+      setIsDialogOpen(false);
+      form.reset();
     } catch (error) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to save inventory item",
+        description: error instanceof Error ? error.message : "Failed to add item",
         variant: "destructive",
       });
     }
   };
 
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-red-500">Error loading inventory: {error.message}</div>
+      </div>
+    );
+  }
+
   if (isLoading) {
-    return <LoadingState />;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Loading inventory...</div>
+      </div>
+    );
   }
 
   return (
     <div className="container mx-auto py-6 space-y-4">
-      <div className="relative h-48 rounded-xl overflow-hidden">
-        <img
-          src="https://images.unsplash.com/photo-1635859890085-ec8cb5466802"
-          alt="Inventory Management"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-transparent flex items-center p-8">
-          <div className="text-white">
-            <h2 className="text-2xl font-bold">Inventory Management</h2>
-            <p>Track and manage your stock levels and consumables</p>
-          </div>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Inventory</h1>
+          <p className="text-muted-foreground">Manage your inventory items</p>
         </div>
-      </div>
-
-      <div className="flex justify-end mb-6">
-        <Button
-          onClick={() => handleDialogChange(true)}
-          className="h-12 px-6"
-        >
-          <Plus className="mr-2 h-5 w-5" />
-          Add New Item
+        
+        <Button onClick={() => setIsDialogOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" />
+          Add Item
         </Button>
       </div>
 
@@ -163,81 +121,30 @@ function InventoryContent() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Item Name</TableHead>
+              <TableHead>Name</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Quantity</TableHead>
               <TableHead>Unit</TableHead>
-              <TableHead>Reorder Point</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead>Minimum Quantity</TableHead>
+              <TableHead>Cost per Unit</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {!inventory || inventory.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-10">
+                <TableCell colSpan={6} className="text-center py-4">
                   No inventory items found
                 </TableCell>
               </TableRow>
             ) : (
               inventory.map((item) => (
-                <TableRow key={item.item_id}>
+                <TableRow key={item.id}>
                   <TableCell>{item.name}</TableCell>
                   <TableCell>{item.category}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <span className={`font-medium ${
-                        item.quantity <= item.minimum_quantity
-                          ? "text-red-500"
-                          : item.quantity <= item.minimum_quantity * 1.5
-                            ? "text-yellow-500"
-                            : "text-green-500"
-                      }`}>
-                        {item.quantity}
-                      </span>
-                      <span className="text-muted-foreground">{item.unit}</span>
-                    </div>
-                    {item.quantity <= item.minimum_quantity && (
-                      <span className="text-sm text-red-500">Low stock!</span>
-                    )}
-                  </TableCell>
+                  <TableCell>{item.quantity}</TableCell>
                   <TableCell>{item.unit}</TableCell>
                   <TableCell>{item.minimum_quantity}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(item)}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-red-500 hover:text-red-700"
-                        onClick={() => {
-                          if (window.confirm("Are you sure you want to delete this item?")) {
-                            deleteInventoryItem(item.item_id)
-                              .then(() => {
-                                toast({
-                                  title: "Success",
-                                  description: "Item deleted successfully"
-                                });
-                              })
-                              .catch((error) => {
-                                toast({
-                                  title: "Error",
-                                  description: error instanceof Error ? error.message : "Failed to delete item",
-                                  variant: "destructive"
-                                });
-                              });
-                          }
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </TableCell>
+                  <TableCell>${item.cost_per_unit.toFixed(2)}</TableCell>
                 </TableRow>
               ))
             )}
@@ -245,14 +152,12 @@ function InventoryContent() {
         </Table>
       </div>
 
-      <Dialog open={showDialog} onOpenChange={handleDialogChange}>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              {selectedItem ? "Edit Item" : "Add New Item"}
-            </DialogTitle>
+            <DialogTitle>Add Inventory Item</DialogTitle>
             <DialogDescription>
-              Enter the inventory item details below
+              Add a new item to your inventory
             </DialogDescription>
           </DialogHeader>
 
@@ -263,9 +168,9 @@ function InventoryContent() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Item Name</FormLabel>
+                    <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter item name" {...field} />
+                      <Input placeholder="Item name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -279,7 +184,7 @@ function InventoryContent() {
                   <FormItem>
                     <FormLabel>Category</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter category" {...field} />
+                      <Input placeholder="Item category" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -297,7 +202,6 @@ function InventoryContent() {
                         <Input
                           type="number"
                           min="0"
-                          step="1"
                           {...field}
                           onChange={(e) => field.onChange(Number(e.target.value))}
                         />
@@ -314,7 +218,7 @@ function InventoryContent() {
                     <FormItem>
                       <FormLabel>Unit</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., ml, pieces" {...field} />
+                        <Input placeholder="e.g., pieces, ml" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -371,7 +275,7 @@ function InventoryContent() {
                     <FormLabel>Supplier (Optional)</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter supplier name"
+                        placeholder="Supplier name"
                         {...field}
                         value={field.value || ""}
                       />
@@ -403,12 +307,12 @@ function InventoryContent() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => handleDialogChange(false)}
+                  onClick={() => setIsDialogOpen(false)}
                 >
                   Cancel
                 </Button>
                 <Button type="submit">
-                  {selectedItem ? "Update Item" : "Add Item"}
+                  Add Item
                 </Button>
               </div>
             </form>
@@ -416,14 +320,5 @@ function InventoryContent() {
         </DialogContent>
       </Dialog>
     </div>
-  );
-}
-
-// Main component with Suspense wrapper
-export default function InventoryPage() {
-  return (
-    <Suspense fallback={<LoadingState />}>
-      <InventoryContent />
-    </Suspense>
   );
 }
