@@ -99,11 +99,27 @@ export function PetForm({
     }
   }, [customers, customerId, form]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setImagePreview(URL.createObjectURL(file));
-      form.setValue("image", file);
+      try {
+        setImagePreview(URL.createObjectURL(file));
+        form.setValue("image", file);
+        
+        // Update progress state to show initial progress
+        setUploadProgress(0);
+        
+        // Create a new submission ID for this upload
+        const uploadId = `${Date.now()}-${Math.random().toString(36).substring(2)}`;
+        setSubmissionId(uploadId);
+      } catch (error) {
+        console.error('Error handling image:', error);
+        toast({
+          title: "Error",
+          description: "Failed to process image. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -136,7 +152,7 @@ export function PetForm({
 
       const petData = {
         ...data,
-        customerId: selectedCustomer.id.toString(),
+        customerId: parseInt(selectedCustomer.id.toString(), 10), // Convert to number
         dateOfBirth: data.dateOfBirth || null,
         owner: {
           id: selectedCustomer.id,
@@ -148,7 +164,8 @@ export function PetForm({
         },
         submissionId: currentSubmissionId,
         onUploadProgress: (progress: number) => {
-          setUploadProgress(progress);
+          console.log('Upload progress:', progress);
+          setUploadProgress(Math.round(progress));
         }
       };
 
@@ -158,18 +175,25 @@ export function PetForm({
       console.log('Pet creation result:', result);
 
       if (result) {
+        // Reset form state
+        setUploadProgress(0);
+        setImagePreview(null);
+        setSubmissionId(null);
+        form.reset();
+        
         toast({
           title: "Success",
           description: "Pet added successfully",
         });
-
-        form.reset();
-        setImagePreview(null);
-        setSubmissionId(null);
+        
         onSuccess?.(petData);
       }
     } catch (error) {
       console.error('Error submitting pet form:', error);
+      
+      // Reset upload progress on error
+      setUploadProgress(0);
+      
       toast({
         title: "Error",
         description: error instanceof Error 
