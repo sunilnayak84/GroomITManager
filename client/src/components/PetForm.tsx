@@ -145,29 +145,27 @@ export function PetForm({
 
       const effectiveCustomerId = selectedCustomer.id.toString();
       
+      const ownerData = hideCustomerField
+        ? (defaultValues?.owner ?? null)
+        : {
+            id: effectiveCustomerId,
+            name: `${selectedCustomer.firstName || ''} ${selectedCustomer.lastName || ''}`.trim() || 'Unknown',
+            email: selectedCustomer.email ?? null
+          };
+      
       const petData: InsertPet = {
         name: data.name,
         type: data.type,
         breed: data.breed,
-        customerId: String(effectiveCustomerId),
+        customerId: effectiveCustomerId,
         dateOfBirth: data.dateOfBirth || null,
         age: data.age !== null ? Number(data.age) : null,
         gender: data.gender || null,
-        weight: data.weight ? Number(data.weight) : null,
-        weightUnit: data.weightUnit as "kg" | "lbs",
+        weight: data.weight || null,
+        weightUnit: data.weightUnit,
         notes: data.notes || null,
         image: data.image,
-        owner: hideCustomerField 
-          ? defaultValues?.owner ?? null
-          : selectedCustomer 
-            ? {
-                id: effectiveCustomerId,
-                name: selectedCustomer.firstName && selectedCustomer.lastName 
-                  ? `${selectedCustomer.firstName} ${selectedCustomer.lastName}`
-                  : 'Unknown',
-                email: selectedCustomer.email ?? null
-              }
-            : null
+        owner: ownerData
       };
 
       const result = await submitForm(petData);
@@ -407,7 +405,7 @@ export function PetForm({
                       value={field.value ?? ''}
                       onChange={(e) => {
                         const value = e.target.value;
-                        field.onChange(value ? String(value) : null);
+                        field.onChange(value || null);
                       }}
                     />
                   </FormControl>
