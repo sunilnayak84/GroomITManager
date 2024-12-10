@@ -124,7 +124,7 @@ function dispatch(action: Action) {
   })
 }
 
-function createToast(props: ToastProps) {
+function toast(props: ToastProps) {
   const id = genId()
 
   const update = (props: ToasterToast) =>
@@ -154,15 +154,15 @@ function createToast(props: ToastProps) {
   }
 }
 
-export const toast = {
-  create: createToast,
-  success: (message: string) => {
-    createToast({ title: "Success", description: message, variant: "default" })
-  },
-  error: (message: string) => {
-    createToast({ title: "Error", description: message, variant: "destructive" })
-  }
+toast.success = (message: string) => {
+  toast({ title: "Success", description: message, variant: "default" })
 }
+
+toast.error = (message: string) => {
+  toast({ title: "Error", description: message, variant: "destructive" })
+}
+
+export { toast }
 
 export function useToast() {
   const [state, setState] = React.useState<State>(memoryState)
