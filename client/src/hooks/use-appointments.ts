@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AppointmentWithRelations, InsertAppointment } from "@/lib/schema";
-import { collection, getDocs, addDoc, onSnapshot, query, getDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, onSnapshot, query, getDoc, doc, WithFieldValue, DocumentData } from 'firebase/firestore';
 import { appointmentsCollection, petsCollection, customersCollection, usersCollection } from "../lib/firestore";
 import React from "react";
 
@@ -102,27 +102,44 @@ export function useAppointments() {
 
   const addAppointmentMutation = useMutation({
     mutationFn: async (appointmentData: InsertAppointment) => {
-      // Ensure all required fields are present and properly typed for Firestore
-      const processedData = {
+      // Define the document structure with proper Firebase field value types
+      type AppointmentDocumentData = {
+        petId: number;
+        serviceId: number;
+        groomerId: string;
+        branchId: number;
+        date: Date;
+        status: AppointmentWithRelations['status'];
+        notes: string | null;
+        productsUsed: string | null;
+        createdAt: Date;
+        updatedAt?: Date;
+      };
+
+      // Create the document data with correct types
+      const documentData: AppointmentDocumentData = {
         petId: Number(appointmentData.petId),
         serviceId: Number(appointmentData.serviceId),
         groomerId: String(appointmentData.groomerId),
         branchId: Number(appointmentData.branchId),
-        date: toSafeDate(appointmentData.date) || new Date(),
+        date: new Date(appointmentData.date),
         status: appointmentData.status || 'pending',
         notes: appointmentData.notes ?? null,
         productsUsed: appointmentData.productsUsed ?? null,
         createdAt: new Date(),
-        updatedAt: null
-      } as const;
+      };
 
-      const docRef = await addDoc(appointmentsCollection, processedData);
+      // Add the document to Firestore with proper typing
+      const docRef = await addDoc(
+        appointmentsCollection,
+        documentData as WithFieldValue<DocumentData>
+      );
       
+      // Return the appointment data with the new ID and correct typing
       return {
         id: docRef.id,
-        ...processedData,
-        status: processedData.status as AppointmentWithRelations['status']
-      };
+        ...documentData,
+      } as Omit<AppointmentWithRelations, 'pet' | 'customer' | 'groomer'>;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
