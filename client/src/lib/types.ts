@@ -51,6 +51,15 @@ export const petSchema = z.object({
 export type Pet = z.infer<typeof petSchema>;
 
 // Schema for pet insertion
+// Define owner type schema
+export const ownerSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string().nullable()
+});
+
+export type Owner = z.infer<typeof ownerSchema>;
+
 export const insertPetSchema = petSchema
   .omit({ 
     id: true, 
@@ -60,6 +69,7 @@ export const insertPetSchema = petSchema
   .extend({
     image: z.union([z.string(), z.instanceof(File), z.null()]),
     submissionId: z.string().optional(),
+    owner: ownerSchema.nullable()
   });
 
 export type InsertPet = z.infer<typeof insertPetSchema>;
