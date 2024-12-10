@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import { useInventory } from "@/hooks/use-inventory";
 import {
   Dialog,
   DialogContent,
@@ -30,27 +29,32 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { collection, getDocs, addDoc, query } from 'firebase/firestore';
+import { db } from "@/lib/firebase";
 
 // Schema definition
 const inventoryItemSchema = z.object({
   name: z.string().min(1, "Name is required"),
   category: z.string().min(1, "Category is required"),
-  quantity: z.number().min(0, "Quantity must be 0 or greater"),
+  quantity: z.coerce.number().min(0, "Quantity must be 0 or greater"),
   unit: z.string().min(1, "Unit is required"),
-  minimum_quantity: z.number().min(0, "Minimum quantity must be 0 or greater"),
-  cost_per_unit: z.number().min(0, "Cost must be 0 or greater"),
+  minimum_quantity: z.coerce.number().min(0, "Minimum quantity must be 0 or greater"),
+  cost_per_unit: z.coerce.number().min(0, "Cost must be 0 or greater"),
   supplier: z.string().optional(),
   description: z.string().optional(),
 });
 
-type InventoryFormData = z.infer<typeof inventoryItemSchema>;
+type InventoryItem = z.infer<typeof inventoryItemSchema>;
 
 export default function InventoryPage() {
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { data: inventory, isLoading, error, addInventoryItem } = useInventory();
+  const [inventory, setInventory] = useState<Array<InventoryItem & { id: string }>>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm<InventoryFormData>({
+  const form = useForm<InventoryItem>({
     resolver: zodResolver(inventoryItemSchema),
     defaultValues: {
       name: "",
@@ -64,41 +68,67 @@ export default function InventoryPage() {
     },
   });
 
-  const onSubmit = async (data: InventoryFormData) => {
+  // Load inventory data
+  useState(() => {
+    const loadInventory = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const querySnapshot = await getDocs(query(collection(db, 'inventory')));
+        const items = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setInventory(items as Array<InventoryItem & { id: string }>);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load inventory');
+        toast({
+          title: "Error",
+          description: "Failed to load inventory items",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadInventory();
+  }, [toast]);
+
+  const onSubmit = async (data: InventoryItem) => {
+    if (isSubmitting) return;
+
     try {
-      await addInventoryItem({
+      setIsSubmitting(true);
+      const docRef = await addDoc(collection(db, 'inventory'), {
         ...data,
+        createdAt: new Date(),
         isActive: true,
       });
-      
+
+      setInventory(prev => [...prev, { ...data, id: docRef.id }]);
+      setIsDialogOpen(false);
+      form.reset();
+
       toast({
         title: "Success",
         description: "Item added successfully",
       });
-      
-      setIsDialogOpen(false);
-      form.reset();
-    } catch (error) {
+    } catch (err) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to add item",
+        description: err instanceof Error ? err.message : "Failed to add item",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-red-500">Error loading inventory: {error.message}</div>
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Loading inventory...</div>
+        <div className="text-red-500">Error loading inventory: {error}</div>
       </div>
     );
   }
@@ -130,7 +160,13 @@ export default function InventoryPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {!inventory || inventory.length === 0 ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-4">
+                  Loading inventory...
+                </TableCell>
+              </TableRow>
+            ) : inventory.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="text-center py-4">
                   No inventory items found
@@ -311,8 +347,11 @@ export default function InventoryPage() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit">
-                  Add Item
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Adding..." : "Add Item"}
                 </Button>
               </div>
             </form>
