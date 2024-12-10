@@ -1,4 +1,4 @@
-import { Home, Calendar, Users, PawPrint, LogOut } from "lucide-react";
+import { Home, Calendar, Users, PawPrint, LogOut, Package } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useUser } from "../hooks/use-user";
 import { Button } from "./ui/button";
@@ -14,6 +14,7 @@ export default function Sidebar() {
     { href: "/customers", icon: Users, label: "Customers" },
     { href: "/services", icon: Calendar, label: "Services" },
     { href: "/pets", icon: PawPrint, label: "Pets" },
+    { href: "/inventory", icon: Package, label: "Inventory" },
   ];
 
   return (
