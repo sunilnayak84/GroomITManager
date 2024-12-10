@@ -1,4 +1,4 @@
-import { pgTable, integer, varchar, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import { pgTable, integer, varchar, text, timestamp, boolean, decimal } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -75,18 +75,23 @@ export const users = pgTable("users", {
 
 // Services table with India-specific categories and multilingual support
 export const services = pgTable("services", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  id: varchar("id", { length: 255 }).primaryKey(), // Changed to varchar for service_id
   name: varchar("name", { length: 255 }).notNull(),
-  nameHindi: varchar("name_hindi", { length: 255 }), // Hindi name for the service
-  description: text("description").notNull(),
-  descriptionHindi: text("description_hindi"), // Hindi description
+  description: text("description"),
   duration: integer("duration").notNull(), // Duration in minutes
-  priceINR: integer("price_inr").notNull(), // Price in INR (Indian Rupees)
-  gstRate: integer("gst_rate"), // GST rate percentage
-  category: varchar("category", { length: 50 }).notNull(), // Premium, Standard, Basic categories
-  petTypes: text("pet_types").array(), // Array of pet types this service is available for
-  includedServices: text("included_services").array(), // Array of included sub-services
+  price: integer("price").notNull(), // Price in INR
   isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at"),
+});
+
+// Service consumables relation table
+export const serviceConsumables = pgTable("service_consumables", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  serviceId: varchar("service_id", { length: 255 }).notNull().references(() => services.id),
+  itemId: varchar("item_id", { length: 255 }).notNull(), // References inventory item
+  itemName: varchar("item_name", { length: 255 }).notNull(),
+  quantityUsed: decimal("quantity_used").notNull(), // Decimal for precise measurements
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at"),
 });
@@ -193,15 +198,16 @@ export const insertWorkingDaysSchema = createInsertSchema(workingDays, {
 
 export const insertServiceSchema = createInsertSchema(services, {
   name: z.string().min(2, "Service name must be at least 2 characters"),
-  nameHindi: z.string().optional(),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-  descriptionHindi: z.string().optional(),
+  description: z.string().optional(),
   duration: z.number().min(15, "Duration must be at least 15 minutes"),
-  priceINR: z.number().min(0, "Price cannot be negative"),
-  gstRate: z.number().min(0).max(28).optional(), // Standard GST rates in India
-  category: z.enum([SERVICE_CATEGORIES.PREMIUM, SERVICE_CATEGORIES.STANDARD, SERVICE_CATEGORIES.BASIC]),
-  petTypes: z.array(z.string()).min(1, "At least one pet type must be specified"),
-  includedServices: z.array(z.string()),
+  price: z.number().min(0, "Price cannot be negative"),
+  isActive: z.boolean().default(true),
+});
+
+export const insertServiceConsumableSchema = createInsertSchema(serviceConsumables, {
+  itemId: z.string().min(1, "Item ID is required"),
+  itemName: z.string().min(1, "Item name is required"),
+  quantityUsed: z.number().positive("Quantity must be greater than 0"),
 });
 
 export const insertUserSchema = createInsertSchema(users, {

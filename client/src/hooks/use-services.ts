@@ -1,21 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { Service as ServiceType, InsertService } from "@db/schema";
 import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, query } from 'firebase/firestore';
 import { db } from "../lib/firebase";
 import { toast } from "../lib/toast";
+import type { Service, InsertService, ServiceConsumable } from "@/lib/service-types";
 
 // Collection reference
 const servicesCollection = collection(db, 'services');
-
-export type Service = {
-  id: string;
-  name: string;
-  description: string;
-  duration: number;
-  price: number;
-  isActive: boolean;
-  createdAt: Date;
-};
 
 export function useServices() {
   const queryClient = useQueryClient();
@@ -36,14 +26,16 @@ export function useServices() {
         const fetchedServices = querySnapshot.docs.map((doc) => {
           const data = doc.data();
           return {
-            id: doc.id,
+            service_id: doc.id,
             name: data.name,
-            description: data.description,
+            description: data.description || undefined,
             duration: data.duration,
-            price: data.price,
+            price: data.price || 0,
+            consumables: data.consumables || [],
             isActive: data.isActive ?? true,
-            createdAt: data.createdAt?.toDate() || new Date(),
-          };
+            created_at: data.created_at?.toDate() || new Date(),
+            updated_at: data.updated_at?.toDate() || new Date(),
+          } as Service;
         });
 
         console.log('FETCH_SERVICES: Completed fetching services', {
@@ -63,16 +55,36 @@ export function useServices() {
   const addService = async (serviceData: InsertService) => {
     try {
       const docRef = doc(servicesCollection);
-      const newService = {
-        ...serviceData,
+      const newService: Service = {
+        service_id: docRef.id,
+        name: serviceData.name,
+        description: serviceData.description,
+        duration: serviceData.duration,
+        price: serviceData.price,
+        consumables: serviceData.consumables || [],
         isActive: true,
-        createdAt: new Date()
+        created_at: new Date(),
+        updated_at: new Date()
       };
 
-      await setDoc(docRef, newService);
+      await setDoc(docRef, {
+        name: newService.name,
+        description: newService.description,
+        duration: newService.duration,
+        price: newService.price,
+        consumables: newService.consumables.map(c => ({
+          item_id: c.item_id,
+          item_name: c.item_name,
+          quantity_used: c.quantity_used
+        })),
+        isActive: newService.isActive,
+        created_at: newService.created_at,
+        updated_at: newService.updated_at
+      });
+
       await queryClient.invalidateQueries({ queryKey: ['services'] });
       toast.success('Service added successfully');
-      return { id: docRef.id, ...newService };
+      return newService;
     } catch (error) {
       console.error('ADD_SERVICE: Error adding service:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to add service');
@@ -80,13 +92,24 @@ export function useServices() {
     }
   };
 
-  const updateService = async (id: string, updateData: Partial<InsertService>) => {
+  const updateService = async (service_id: string, updateData: Partial<InsertService>) => {
     try {
-      const serviceRef = doc(servicesCollection, id);
-      await updateDoc(serviceRef, {
+      const serviceRef = doc(servicesCollection, service_id);
+      const updatePayload = {
         ...updateData,
-        updatedAt: new Date()
-      });
+        updated_at: new Date()
+      };
+
+      // If consumables are being updated, ensure they're properly formatted
+      if (updateData.consumables) {
+        updatePayload.consumables = updateData.consumables.map(consumable => ({
+          item_id: consumable.item_id,
+          item_name: consumable.item_name,
+          quantity_used: consumable.quantity_used
+        }));
+      }
+
+      await updateDoc(serviceRef, updatePayload);
       await queryClient.invalidateQueries({ queryKey: ['services'] });
       toast.success('Service updated successfully');
       return true;
