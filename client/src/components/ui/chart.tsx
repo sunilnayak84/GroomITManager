@@ -121,8 +121,10 @@ interface ChartTooltipContentProps extends React.HTMLAttributes<HTMLDivElement> 
   color?: string;
 }
 
-const ChartTooltipContent = React.forwardRef<HTMLDivElement, ChartTooltipContentProps>(
-  (
+const ChartTooltipContent = React.forwardRef<
+  HTMLDivElement,
+  ChartTooltipContentProps
+>((
     {
       active,
       payload,
