@@ -1,5 +1,20 @@
-import { useState, useEffect, useTransition, Suspense } from "react";
+import { useState, useEffect, useTransition, Suspense, Component, type ReactNode } from "react";
 import { Plus } from "lucide-react";
+
+class ErrorBoundary extends Component<{ children: ReactNode, fallback: ReactNode }> {
+  state = { hasError: false };
+  
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
 import { format } from "date-fns";
 import { useInventory } from "@/hooks/use-inventory";
 import {
@@ -49,20 +64,6 @@ type InventoryFormData = z.infer<typeof inventoryFormSchema>;
 import type { InventoryItem } from "@/hooks/use-inventory";
 
 export default function InventoryPage() {
-  return (
-    <div className="h-full">
-      <Suspense fallback={
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-lg">Loading inventory management...</div>
-        </div>
-      }>
-        <InventoryManager />
-      </Suspense>
-    </div>
-  );
-}
-
-function InventoryManager() {
   const [isPending, startTransition] = useTransition();
   const [showDialog, setShowDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
@@ -84,13 +85,23 @@ function InventoryManager() {
   };
 
   return (
-    <InventoryContent 
-      showDialog={showDialog}
-      selectedItem={selectedItem}
-      onDialogChange={handleDialogChange}
-      onItemSelect={handleItemSelect}
-      isPending={isPending}
-    />
+    <div className="h-full">
+      <Suspense fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-lg">Loading inventory management...</div>
+        </div>
+      }>
+        <ErrorBoundary fallback={<div>Something went wrong</div>}>
+          <InventoryContent 
+            showDialog={showDialog}
+            selectedItem={selectedItem}
+            onDialogChange={handleDialogChange}
+            onItemSelect={handleItemSelect}
+            isPending={isPending}
+          />
+        </ErrorBoundary>
+      </Suspense>
+    </div>
   );
 }
 
