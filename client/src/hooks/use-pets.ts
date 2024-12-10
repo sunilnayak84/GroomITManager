@@ -1,17 +1,19 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { Pet as PetType, InsertPet } from "@db/schema";
 import { getDocs, doc, runTransaction, increment, collection, addDoc, serverTimestamp, query, updateDoc, deleteDoc, getDoc, where } from 'firebase/firestore';
 import { db } from "../lib/firebase";
-import { petsCollection, customersCollection, createPet } from "../lib/firestore";
+import { petsCollection, customersCollection } from "../lib/firestore";
 import { uploadFile } from "../lib/storage";
-import { toast } from "../lib/toast";
 import { useState } from 'react';
-
-import type { Pet as BasePet } from "../lib/types";
 
 export type PetType = 'dog' | 'cat' | 'bird' | 'fish' | 'other';
 export type WeightUnit = 'kg' | 'lbs';
 export type Gender = 'male' | 'female' | 'unknown';
+
+export type Owner = {
+  id: string;
+  name: string;
+  email: string | null;
+}
 
 export interface Pet {
   id: string;
@@ -23,17 +25,13 @@ export interface Pet {
   age: number | null;
   gender: Gender | null;
   weight: number | null;
-  weightUnit: WeightUnit | null;
+  weightUnit: WeightUnit;
   notes: string | null;
   image: string | null;
   createdAt: string;
   updatedAt: string | null;
   submissionId?: string;
-  owner?: {
-    id: string;
-    name: string;
-    email: string | null;
-  } | null;
+  owner?: Owner | null;
 }
 
 export interface PetInput {
@@ -42,24 +40,21 @@ export interface PetInput {
   breed: string;
   customerId: string;
   dateOfBirth?: string | null;
-  age?: number | null;
+  age?: string | number | null;
   gender?: Gender | null;
-  weight?: number | null;
-  weightUnit?: WeightUnit | null;
+  weight?: string | number | null;
+  weightUnit?: WeightUnit;
   notes?: string | null;
   image?: File | string | null;
-  owner?: {
-    id: string;
-    name: string;
-    email: string | null;
-  } | null;
+  owner?: Owner | null;
 }
 
-// Helper type for file uploads
-type FileUpload = {
-  file: File;
-  path: string;
-};
+// Helper function to convert string to number safely
+function toNumber(value: string | number | null | undefined): number | null {
+  if (value === null || value === undefined || value === '') return null;
+  const num = typeof value === 'string' ? parseFloat(value) : value;
+  return isNaN(num) ? null : num;
+}
 
 export function usePets() {
   const queryClient = useQueryClient();
@@ -84,24 +79,17 @@ export function usePets() {
         customersSnapshot.docs.map(doc => {
           const data = doc.data();
           return [
-            doc.id,  // Use the Firebase document ID as the key
+            doc.id,
             {
               id: doc.id,
-              firstName: data.firstName,
-              lastName: data.lastName,
-              phone: data.phone,
+              name: `${data.firstName} ${data.lastName}`,
               email: data.email
             }
           ];
         })
       );
 
-      console.log('FETCH_PETS: Available customers:', 
-        Array.from(customersMap.entries()).map(([id, data]) => ({
-          id,
-          name: `${data.firstName} ${data.lastName}`
-        }))
-      );
+      console.log('FETCH_PETS: Available customers:', Array.from(customersMap.entries()));
 
       const fetchedPets = querySnapshot.docs.map((doc) => {
         const petData = doc.data();
@@ -112,10 +100,7 @@ export function usePets() {
           petId: doc.id,
           customerId,
           petName: petData.name,
-          customerDetails: customerDetails ? {
-            id: customerDetails.id,
-            name: `${customerDetails.firstName} ${customerDetails.lastName}`
-          } : null
+          customerDetails
         });
 
         return {
@@ -126,19 +111,14 @@ export function usePets() {
           breed: petData.breed,
           image: petData.image || null,
           dateOfBirth: petData.dateOfBirth || null,
-          age: petData.age || null,
+          age: toNumber(petData.age),
           gender: petData.gender || null,
-          weight: petData.weight || null,
+          weight: toNumber(petData.weight),
           weightUnit: petData.weightUnit || 'kg',
           notes: petData.notes || null,
-          owner: customerDetails ? {
-            id: customerDetails.id,
-            firstName: customerDetails.firstName,
-            lastName: customerDetails.lastName,
-            name: `${customerDetails.firstName} ${customerDetails.lastName}`,
-            phone: customerDetails.phone || '',
-            email: customerDetails.email || ''
-          } : null
+          createdAt: petData.createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
+          updatedAt: petData.updatedAt?.toDate?.()?.toISOString() || null,
+          owner: customerDetails || null
         };
       });
 
@@ -158,111 +138,12 @@ export function usePets() {
     queryKey: ['pets', refreshKey],
     queryFn: fetchPets,
     staleTime: 0,
-    cacheTime: 0,
+    gcTime: 0,
     refetchOnWindowFocus: true,
     refetchOnMount: true,
     retry: 2,
     retryDelay: 1000
   });
-
-  const updatePet = async (petId: string, updateData: Partial<InsertPet>) => {
-    try {
-      console.log('UPDATE_PET: Starting update', { 
-        petId, 
-        updateData,
-        petIdType: typeof petId,
-        updateDataType: typeof updateData 
-      });
-
-      // Validate parameters
-      if (!petId) {
-        throw new Error('Pet ID is required');
-      }
-
-      if (typeof petId !== 'string') {
-        throw new Error(`Invalid pet ID type: ${typeof petId}. Expected string.`);
-      }
-
-      if (!updateData || typeof updateData !== 'object') {
-        throw new Error('Update data must be a valid object');
-      }
-
-      // Create document reference
-      const petRef = doc(petsCollection, petId);
-      
-      // Check if document exists
-      const petDoc = await getDoc(petRef);
-      if (!petDoc.exists()) {
-        throw new Error(`Pet with ID ${petId} not found`);
-      }
-
-      // Handle image upload if present
-      let imageUrl = updateData.image;
-      if (updateData.image instanceof File) {
-        try {
-          imageUrl = await uploadFile(
-            updateData.image,
-            `pets/${updateData.customerId}/${Date.now()}_${updateData.image.name}`
-          );
-        } catch (uploadError) {
-          console.error('UPDATE_PET: Image upload failed:', uploadError);
-          throw new Error('Failed to upload pet image');
-        }
-      }
-
-      // Prepare update data - only include fields we want to save
-      const cleanData = {
-        name: updateData.name,
-        type: updateData.type,
-        breed: updateData.breed,
-        customerId: updateData.customerId,
-        dateOfBirth: updateData.dateOfBirth,
-        age: updateData.age,
-        gender: updateData.gender,
-        weight: updateData.weight,
-        weightUnit: updateData.weightUnit,
-        notes: updateData.notes,
-        image: imageUrl,
-        updatedAt: serverTimestamp()
-      };
-
-      // Remove undefined values
-      Object.keys(cleanData).forEach(key => {
-        if (cleanData[key] === undefined) {
-          delete cleanData[key];
-        }
-        if (cleanData[key] === '') {
-          cleanData[key] = null;
-        }
-      });
-
-      console.log('UPDATE_PET: Preparing to update with data:', cleanData);
-
-      // Update document
-      await updateDoc(petRef, cleanData);
-
-      // Invalidate queries
-      await queryClient.invalidateQueries({ queryKey: ['pets'] });
-
-      console.log('UPDATE_PET: Successfully updated pet:', { petId, cleanData });
-      return true;
-    } catch (error) {
-      console.error('UPDATE_PET: Error updating pet:', error);
-      throw error;
-    }
-  };
-
-  // Function to check for duplicate submission ID
-  const checkDuplicateSubmission = async (submissionId: string) => {
-    try {
-      const q = query(petsCollection, where('submissionId', '==', submissionId));
-      const querySnapshot = await getDocs(q);
-      return !querySnapshot.empty;
-    } catch (error) {
-      console.error('Error checking for duplicate submission:', error);
-      throw error;
-    }
-  };
 
   const addPetMutation = useMutation({
     mutationFn: async (petData: PetInput) => {
@@ -273,9 +154,14 @@ export function usePets() {
         const submissionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         console.log('ADD_PET: Using submission ID:', submissionId);
 
-        // Validate required fields
-        if (!petData.name || !petData.breed || !petData.type || !petData.customerId) {
-          throw new Error('Required fields are missing');
+        // Check for duplicate submission
+        const duplicateSnapshot = await getDocs(
+          query(petsCollection, where('submissionId', '==', submissionId))
+        );
+        
+        if (!duplicateSnapshot.empty) {
+          console.log('ADD_PET: Duplicate submission detected', { submissionId });
+          return { isDuplicate: true, pet: duplicateSnapshot.docs[0].data() };
         }
 
         // Handle image upload if present
@@ -293,59 +179,17 @@ export function usePets() {
           imageUrl = petData.image;
         }
 
-        // Create optimistic Pet object
-        const optimisticPet: Pet = {
-          id: `temp-${Date.now()}`,
+        // Create the new pet document
+        const newPetData = {
           name: petData.name,
           type: petData.type,
           breed: petData.breed,
           customerId: petData.customerId,
           dateOfBirth: petData.dateOfBirth || null,
-          age: petData.age || null,
+          age: toNumber(petData.age),
           gender: petData.gender || null,
-          weight: petData.weight || null,
-          weightUnit: petData.weightUnit || null,
-          notes: petData.notes || null,
-          image: imageUrl,
-          createdAt: new Date().toISOString(),
-          updatedAt: null,
-          submissionId,
-          owner: petData.owner || null
-        };
-
-        // Check for duplicate submission
-        const duplicateQuery = query(petsCollection, where('submissionId', '==', submissionId));
-        const duplicateSnapshot = await getDocs(duplicateQuery);
-        
-        if (!duplicateSnapshot.empty) {
-          console.log('ADD_PET: Duplicate submission detected', { submissionId });
-          return { isDuplicate: true, existingPet: duplicateSnapshot.docs[0].data() };
-        }
-
-        // First verify if customer exists
-        const customerRef = doc(db, 'customers', petData.customerId);
-        const customerSnapshot = await getDoc(customerRef);
-        
-        if (!customerSnapshot.exists()) {
-          console.error('ADD_PET: Customer not found:', petData.customerId);
-          throw new Error('Customer not found');
-        }
-
-        // Create new pet document reference
-        const newPetRef = doc(db, 'pets');
-
-        // Prepare pet data
-        const petDataWithImage = {
-          id: newPetRef.id,
-          name: petData.name,
-          type: petData.type,
-          breed: petData.breed,
-          customerId: petData.customerId,
-          dateOfBirth: petData.dateOfBirth || null,
-          age: petData.age || null,
-          gender: petData.gender || null,
-          weight: petData.weight || null,
-          weightUnit: petData.weightUnit || null,
+          weight: toNumber(petData.weight),
+          weightUnit: petData.weightUnit || 'kg',
           notes: petData.notes || null,
           image: imageUrl,
           submissionId,
@@ -353,38 +197,37 @@ export function usePets() {
           updatedAt: null
         };
 
-        // Use transaction for atomic operations
-        const result = await runTransaction(db, async (transaction) => {
-          // Set the pet document and update customer atomically
-          transaction.set(newPetRef, petDataWithImage);
-          transaction.update(customerRef, {
-            petCount: increment(1)
-          });
+        // Create the pet document with auto-generated ID
+        const newPetDoc = await addDoc(collection(db, 'pets'), newPetData);
+        console.log('ADD_PET: Created new pet document with ID:', newPetDoc.id);
 
-          return {
-            ...petDataWithImage,
-            id: newPetRef.id,
-            createdAt: new Date().toISOString(),
-            optimisticPet
-          };
+        // Update customer's pet count
+        const customerRef = doc(db, 'customers', petData.customerId);
+        await updateDoc(customerRef, {
+          petCount: increment(1)
         });
 
-        console.log('ADD_PET: Successfully added pet:', result);
+        // Return the created pet with all necessary fields
+        const result = {
+          ...newPetData,
+          id: newPetDoc.id,
+          createdAt: new Date().toISOString(),
+          owner: petData.owner || null
+        };
+
+        console.log('ADD_PET: Successfully created pet:', result);
         return result;
       } catch (error) {
-        console.error('ADD_PET: Error adding pet:', error);
+        console.error('ADD_PET: Error in mutation:', error);
         throw error;
       }
     },
     onSuccess: async (result) => {
-      if (result?.isDuplicate) {
-        console.log('ADD_PET: Handling duplicate submission', result);
-        return;
+      if (!('isDuplicate' in result)) {
+        await queryClient.invalidateQueries({ queryKey: ['pets'] });
+        setRefreshKey(prev => prev + 1);
+        await refetch();
       }
-      
-      await queryClient.invalidateQueries({ queryKey: ['pets'] });
-      setRefreshKey(prev => prev + 1);
-      await refetch();
     },
     onError: (error: Error) => {
       console.error('ADD_PET: Mutation error:', error);
@@ -392,78 +235,39 @@ export function usePets() {
   });
 
   const updatePetMutation = useMutation({
-    mutationFn: async ({ petId, updateData }: { petId: string; updateData: Partial<InsertPet> }) => {
+    mutationFn: async ({ petId, updateData }: { petId: string; updateData: Partial<PetInput> }) => {
       try {
-        console.log('UPDATE_PET: Starting update', { 
-          petId, 
-          updateData
-        });
-
-        // Handle image upload if present
-        let imageUrl = updateData.image;
-        if (updateData.image instanceof File) {
-          try {
-            imageUrl = await uploadFile(
-              updateData.image,
-              `pets/${updateData.customerId}/${Date.now()}_${updateData.image.name}`
-            );
-          } catch (uploadError) {
-            console.error('UPDATE_PET: Image upload failed:', uploadError);
-            throw new Error('Failed to upload pet image');
-          }
+        const petRef = doc(petsCollection, petId);
+        const petDoc = await getDoc(petRef);
+        
+        if (!petDoc.exists()) {
+          throw new Error('Pet not found');
         }
 
-        // Create optimistic update
-        const updateDataWithImage = {
-          ...updateData,
-          image: imageUrl,
+        let imageUrl = updateData.image;
+        if (updateData.image instanceof File) {
+          const path = `pets/${updateData.customerId}/${Date.now()}_${updateData.image.name}`;
+          imageUrl = await uploadFile(updateData.image, path);
+        }
+
+        const updates = {
+          ...(updateData.name && { name: updateData.name }),
+          ...(updateData.type && { type: updateData.type }),
+          ...(updateData.breed && { breed: updateData.breed }),
+          ...(updateData.customerId && { customerId: updateData.customerId }),
+          ...(('dateOfBirth' in updateData) && { dateOfBirth: updateData.dateOfBirth }),
+          ...(('age' in updateData) && { age: toNumber(updateData.age) }),
+          ...(('gender' in updateData) && { gender: updateData.gender }),
+          ...(('weight' in updateData) && { weight: toNumber(updateData.weight) }),
+          ...(updateData.weightUnit && { weightUnit: updateData.weightUnit }),
+          ...(('notes' in updateData) && { notes: updateData.notes }),
+          ...(imageUrl && { image: imageUrl }),
           updatedAt: serverTimestamp()
         };
 
-        // Create document references
-        const petDocRef = doc(petsCollection, petId);
-        const petDoc = await getDoc(petDocRef);
-
-        if (!petDoc.exists()) {
-          throw new Error('Pet document not found');
-        }
-
-        // Apply optimistic update
-        const existingPet = pets?.find(p => p.id === petId);
-        if (existingPet) {
-          const optimisticPet: Pet = {
-            ...existingPet,
-            ...updateDataWithImage,
-            id: petId,
-            updatedAt: new Date().toISOString()
-          };
-
-          // Update local state optimistically
-          const updatedPets = pets.map(p => 
-            p.id === petId ? optimisticPet : p
-          );
-          queryClient.setQueryData(['pets'], updatedPets);
-        }
-
-        // Perform the actual update using transaction
-        await runTransaction(db, async (transaction) => {
-          const petSnapshot = await transaction.get(petDocRef);
-          if (!petSnapshot.exists()) {
-            throw new Error('Pet document not found during transaction');
-          }
-
-          transaction.update(petDocRef, updateDataWithImage);
-        });
-
-        console.log('UPDATE_PET: Successfully updated pet:', {
-          petId,
-          updateData: updateDataWithImage
-        });
-
+        await updateDoc(petRef, updates);
         return { success: true };
       } catch (error) {
-        // Revert optimistic update on error
-        await queryClient.invalidateQueries({ queryKey: ['pets'] });
         console.error('UPDATE_PET: Error updating pet:', error);
         throw error;
       }
@@ -472,69 +276,43 @@ export function usePets() {
       await queryClient.invalidateQueries({ queryKey: ['pets'] });
       setRefreshKey(prev => prev + 1);
       await refetch();
-    },
-    onError: (error) => {
-      console.error('UPDATE_PET: Mutation error:', error);
     }
   });
-
-  const addPet = addPetMutation.mutateAsync;
 
   const deletePetMutation = useMutation({
     mutationFn: async (petId: string) => {
-      try {
-        console.log('DELETE_PET: Starting deletion', { petId });
-
-        // Use transaction to delete pet and update customer's pet count atomically
-        await runTransaction(db, async (transaction) => {
-          // Get pet document first to get customerId
-          const petRef = doc(petsCollection, petId);
-          const petDoc = await transaction.get(petRef);
-
-          if (!petDoc.exists()) {
-            throw new Error('Pet not found');
-          }
-
-          const petData = petDoc.data();
-          const customerId = petData.customerId;
-
-          // Delete pet
-          transaction.delete(petRef);
-
-          // Update customer's pet count
-          const customerRef = doc(customersCollection, customerId);
-          transaction.update(customerRef, {
-            petCount: increment(-1)
-          });
-        });
-
-        console.log('DELETE_PET: Successfully deleted pet', { petId });
-        return { success: true };
-      } catch (error) {
-        console.error('DELETE_PET: Error deleting pet:', error);
-        throw error;
+      const petRef = doc(petsCollection, petId);
+      const petDoc = await getDoc(petRef);
+      
+      if (!petDoc.exists()) {
+        throw new Error('Pet not found');
       }
+
+      const { customerId } = petDoc.data();
+      const customerRef = doc(customersCollection, customerId);
+
+      await runTransaction(db, async (transaction) => {
+        transaction.delete(petRef);
+        transaction.update(customerRef, {
+          petCount: increment(-1)
+        });
+      });
+
+      return { success: true };
     },
     onSuccess: async () => {
-      // Wait a bit for Firestore to settle
-      await new Promise(resolve => setTimeout(resolve, 1000));
       await queryClient.invalidateQueries({ queryKey: ['pets'] });
       setRefreshKey(prev => prev + 1);
       await refetch();
-    },
-    onError: (error) => {
-      console.error('DELETE_PET: Mutation error:', error);
     }
   });
-
-  const deletePet = deletePetMutation.mutateAsync;
 
   return {
     pets,
     isLoading,
-    addPet,
+    addPet: addPetMutation.mutateAsync,
     updatePet: updatePetMutation.mutateAsync,
-    deletePet,
+    deletePet: deletePetMutation.mutateAsync,
     refetch,
     addPetMutation,
     updatePetMutation,
