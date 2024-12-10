@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { Plus } from "lucide-react";
-import { format } from "date-fns";
 import { useInventory } from "@/hooks/use-inventory";
 import {
   Dialog,
@@ -46,7 +45,17 @@ const inventoryFormSchema = z.object({
 
 type InventoryFormData = z.infer<typeof inventoryFormSchema>;
 
-export default function InventoryPage() {
+// Separate loading component
+function LoadingState() {
+  return (
+    <div className="flex items-center justify-center h-[50vh]">
+      <div className="text-lg">Loading inventory...</div>
+    </div>
+  );
+}
+
+// Main inventory content component
+function InventoryContent() {
   const { toast } = useToast();
   const { inventory, isLoading, addInventoryItem, updateInventoryItem, deleteInventoryItem } = useInventory();
   const [showDialog, setShowDialog] = useState(false);
@@ -66,7 +75,6 @@ export default function InventoryPage() {
     },
   });
 
-  // Reset form when dialog closes
   const handleDialogChange = (open: boolean) => {
     setShowDialog(open);
     if (!open) {
@@ -75,7 +83,6 @@ export default function InventoryPage() {
     }
   };
 
-  // Set form values when editing an item
   const handleEdit = (item: any) => {
     setSelectedItem(item);
     form.reset({
@@ -85,8 +92,8 @@ export default function InventoryPage() {
       unit: item.unit,
       minimum_quantity: item.minimum_quantity,
       cost_per_unit: item.cost_per_unit,
-      supplier: item.supplier || '',
-      description: item.description || '',
+      supplier: item.supplier || "",
+      description: item.description || "",
     });
     setShowDialog(true);
   };
@@ -123,11 +130,7 @@ export default function InventoryPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Loading inventory management...</div>
-      </div>
-    );
+    return <LoadingState />;
   }
 
   return (
@@ -146,10 +149,10 @@ export default function InventoryPage() {
         </div>
       </div>
 
-      <div className="flex justify-between items-center mb-6">
-        <Button 
+      <div className="flex justify-end mb-6">
+        <Button
           onClick={() => handleDialogChange(true)}
-          className="ml-auto h-12 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+          className="h-12 px-6"
         >
           <Plus className="mr-2 h-5 w-5" />
           Add New Item
@@ -169,7 +172,7 @@ export default function InventoryPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {inventory.length === 0 ? (
+            {!inventory || inventory.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="text-center py-10">
                   No inventory items found
@@ -183,11 +186,11 @@ export default function InventoryPage() {
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <span className={`font-medium ${
-                        item.quantity <= item.minimum_quantity 
-                          ? 'text-red-500' 
-                          : item.quantity <= item.minimum_quantity * 1.5 
-                            ? 'text-yellow-500' 
-                            : 'text-green-500'
+                        item.quantity <= item.minimum_quantity
+                          ? "text-red-500"
+                          : item.quantity <= item.minimum_quantity * 1.5
+                            ? "text-yellow-500"
+                            : "text-green-500"
                       }`}>
                         {item.quantity}
                       </span>
@@ -212,21 +215,22 @@ export default function InventoryPage() {
                         variant="outline"
                         size="sm"
                         className="text-red-500 hover:text-red-700"
-                        onClick={async () => {
-                          if (window.confirm('Are you sure you want to delete this item?')) {
-                            try {
-                              await deleteInventoryItem(item.item_id);
-                              toast({
-                                title: "Success",
-                                description: "Item deleted successfully"
+                        onClick={() => {
+                          if (window.confirm("Are you sure you want to delete this item?")) {
+                            deleteInventoryItem(item.item_id)
+                              .then(() => {
+                                toast({
+                                  title: "Success",
+                                  description: "Item deleted successfully"
+                                });
+                              })
+                              .catch((error) => {
+                                toast({
+                                  title: "Error",
+                                  description: error instanceof Error ? error.message : "Failed to delete item",
+                                  variant: "destructive"
+                                });
                               });
-                            } catch (error) {
-                              toast({
-                                title: "Error",
-                                description: error instanceof Error ? error.message : "Failed to delete item",
-                                variant: "destructive"
-                              });
-                            }
                           }
                         }}
                       >
@@ -290,13 +294,12 @@ export default function InventoryPage() {
                     <FormItem>
                       <FormLabel>Quantity</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
-                          min="0" 
-                          step="1" 
+                        <Input
+                          type="number"
+                          min="0"
+                          step="1"
                           {...field}
                           onChange={(e) => field.onChange(Number(e.target.value))}
-                          value={field.value}
                         />
                       </FormControl>
                       <FormMessage />
@@ -327,12 +330,11 @@ export default function InventoryPage() {
                     <FormItem>
                       <FormLabel>Minimum Quantity</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
-                          min="0" 
+                        <Input
+                          type="number"
+                          min="0"
                           {...field}
                           onChange={(e) => field.onChange(Number(e.target.value))}
-                          value={field.value}
                         />
                       </FormControl>
                       <FormMessage />
@@ -345,15 +347,14 @@ export default function InventoryPage() {
                   name="cost_per_unit"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Cost per Unit (₹)</FormLabel>
+                      <FormLabel>Cost per Unit</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
-                          min="0" 
-                          step="0.01" 
+                        <Input
+                          type="number"
+                          min="0"
+                          step="0.01"
                           {...field}
                           onChange={(e) => field.onChange(Number(e.target.value))}
-                          value={field.value}
                         />
                       </FormControl>
                       <FormMessage />
@@ -369,10 +370,10 @@ export default function InventoryPage() {
                   <FormItem>
                     <FormLabel>Supplier (Optional)</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="Enter supplier name" 
-                        {...field} 
-                        value={field.value || ''}
+                      <Input
+                        placeholder="Enter supplier name"
+                        {...field}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -387,10 +388,10 @@ export default function InventoryPage() {
                   <FormItem>
                     <FormLabel>Description (Optional)</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="Item description" 
+                      <Input
+                        placeholder="Item description"
                         {...field}
-                        value={field.value || ''}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -415,5 +416,14 @@ export default function InventoryPage() {
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+// Main component with Suspense wrapper
+export default function InventoryPage() {
+  return (
+    <Suspense fallback={<LoadingState />}>
+      <InventoryContent />
+    </Suspense>
   );
 }
