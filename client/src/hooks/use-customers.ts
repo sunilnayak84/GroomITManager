@@ -141,7 +141,7 @@ export function useCustomers() {
 
       // Optimistically update the cache
       queryClient.setQueryData<Customer[]>(["customers"], old => 
-        old?.filter(customer => customer.id !== deletedId) || []
+        old?.filter(customer => customer.id !== String(deletedId)) || []
       );
 
       return { previousCustomers };

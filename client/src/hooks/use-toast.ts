@@ -123,8 +123,25 @@ function dispatch(action: Action) {
   })
 }
 
-export function toast({...props}: ToastProps) {
-  const id = genId()
+export const toast = {
+  ...({...props}: ToastProps) => {
+    const id = genId()
+    return {
+      id,
+      dismiss: () => dispatch({ type: "DISMISS_TOAST", toastId: id }),
+      update: (props: ToasterToast) => dispatch({
+        type: "UPDATE_TOAST",
+        toast: { ...props, id },
+      })
+    }
+  },
+  success: (message: string) => {
+    toast({ title: "Success", description: message, variant: "success" });
+  },
+  error: (message: string) => {
+    toast({ title: "Error", description: message, variant: "destructive" });
+  }
+}
 
   const update = (props: ToasterToast) =>
     dispatch({

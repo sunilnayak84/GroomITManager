@@ -34,7 +34,7 @@ export const petSchema = z.object({
   dateOfBirth: z.string().nullable(),
   age: z.number().nullable(),
   gender: z.enum(["male", "female", "unknown"]).nullable(),
-  weight: z.string().nullable(),
+  weight: z.number().nullable(),
   weightUnit: z.enum(["kg", "lbs"]).default("kg"),
   image: z.union([z.string(), z.instanceof(File)]).nullable(),
   notes: z.string().nullable(),
@@ -121,6 +121,12 @@ export interface Customer {
   createdAt: Date;
   updatedAt: Date | null;
   firebaseId: string | null;
+  name?: string;
+}
+
+export interface ToastProps {
+  success: (message: string) => void;
+  error: (message: string) => void;
 }
 
 export type InsertCustomer = Omit<Customer, 'id' | 'createdAt' | 'updatedAt' | 'firebaseId' | 'petCount'>;
