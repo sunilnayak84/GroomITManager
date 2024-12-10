@@ -49,9 +49,12 @@ type InventoryFormData = z.infer<typeof inventoryFormSchema>;
 // Import the type from our hook
 import type { InventoryItem } from "@/hooks/use-inventory";
 
+import { Suspense, useTransition } from "react";
+
 export default function InventoryPage() {
   const [showItemDialog, setShowItemDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
+  const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
   const { inventory, isLoading, addInventoryItem, updateInventoryItem, deleteInventoryItem } = useInventory();
 
@@ -94,59 +97,66 @@ export default function InventoryPage() {
   }, [selectedItem, form]);
 
   const onSubmit = async (data: InventoryFormData) => {
-    try {
-      const itemData = {
-        name: data.name,
-        description: data.description,
-        quantity: data.quantity,
-        minimum_quantity: data.minimum_quantity,
-        unit: data.unit,
-        cost_per_unit: data.cost_per_unit,
-        category: data.category,
-        supplier: data.supplier,
-        isActive: true,
-      };
+    startTransition(async () => {
+      try {
+        const itemData = {
+          name: data.name,
+          description: data.description,
+          quantity: data.quantity,
+          minimum_quantity: data.minimum_quantity,
+          unit: data.unit,
+          cost_per_unit: data.cost_per_unit,
+          category: data.category,
+          supplier: data.supplier,
+          isActive: true,
+        };
 
-      if (selectedItem) {
-        await updateInventoryItem(selectedItem.item_id, itemData);
+        if (selectedItem) {
+          await updateInventoryItem(selectedItem.item_id, itemData);
+          toast({
+            title: "Success",
+            description: "Item updated successfully"
+          });
+        } else {
+          await addInventoryItem(itemData);
+          toast({
+            title: "Success",
+            description: "Item added successfully"
+          });
+        }
+
+        setShowItemDialog(false);
+        form.reset();
+      } catch (error) {
         toast({
-          title: "Success",
-          description: "Item updated successfully"
-        });
-      } else {
-        await addInventoryItem(itemData);
-        toast({
-          title: "Success",
-          description: "Item added successfully"
+          title: "Error",
+          description: error instanceof Error ? error.message : "Failed to save inventory item",
+          variant: "destructive",
         });
       }
-
-      setShowItemDialog(false);
-      form.reset();
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to save inventory item",
-        variant: "destructive",
-      });
-    }
+    });
   };
 
   return (
-    <div className="container mx-auto py-6 space-y-4">
-      <div className="relative h-48 rounded-xl overflow-hidden">
-        <img
-          src="https://images.unsplash.com/photo-1635859890085-ec8cb5466802"
-          alt="Inventory Management"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-transparent flex items-center p-8">
-          <div className="text-white">
-            <h2 className="text-2xl font-bold">Inventory Management</h2>
-            <p>Track and manage your stock levels and consumables</p>
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Loading inventory management...</div>
+      </div>
+    }>
+      <div className="container mx-auto py-6 space-y-4">
+        <div className="relative h-48 rounded-xl overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1635859890085-ec8cb5466802"
+            alt="Inventory Management"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-transparent flex items-center p-8">
+            <div className="text-white">
+              <h2 className="text-2xl font-bold">Inventory Management</h2>
+              <p>Track and manage your stock levels and consumables</p>
+            </div>
           </div>
         </div>
-      </div>
 
       <div className="flex justify-between items-center mb-6">
         <Button 
