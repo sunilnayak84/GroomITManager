@@ -1,64 +1,68 @@
 import { z } from "zod";
-import { customerSchema, insertCustomerSchema, petSchema, insertPetSchema } from "@db/schema";
 
-// Customer types
-export type Customer = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  address: string | null;
-  gender: string | null;
-  petCount: number;
-  createdAt: string;
-  updatedAt: string | null;
-  firebaseId?: string | null;
-};
+export const customerSchema = z.object({
+  id: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string().email(),
+  phone: z.string(),
+  address: z.string().nullable(),
+  gender: z.enum(["male", "female", "other"]).nullable(),
+  petCount: z.number().default(0),
+  createdAt: z.string(),
+  updatedAt: z.string().nullable(),
+  firebaseId: z.string().nullable(),
+});
 
+export const insertCustomerSchema = customerSchema.omit({ 
+  id: true,
+  petCount: true,
+  createdAt: true,
+  updatedAt: true,
+  firebaseId: true 
+});
+
+// Customer types are inferred from the Zod schema
+export type Customer = z.infer<typeof customerSchema>;
 export type InsertCustomer = z.infer<typeof insertCustomerSchema>;
 
-// Pet types
-export type Pet = {
-  id: string;
-  name: string;
-  type: "dog" | "cat" | "bird" | "fish" | "other";
-  breed: string;
-  customerId: string;  // Firebase document ID
-  dateOfBirth: string | null;
-  age: number | null;
-  gender: "male" | "female" | "unknown" | null;
-  weight: string | null;
-  weightUnit: "kg" | "lbs";
-  image: string | null;
-  notes: string | null;
-  owner: {
-    id: string;  // Firebase document ID
-    name: string;
-    email: string | null;
-  } | null;
-  createdAt: string;
-  updatedAt: string | null;
-};
+export const petSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  type: z.enum(["dog", "cat", "bird", "fish", "other"]),
+  breed: z.string(),
+  customerId: z.string(),
+  dateOfBirth: z.string().nullable(),
+  age: z.number().nullable(),
+  gender: z.enum(["male", "female", "unknown"]).nullable(),
+  weight: z.string().nullable(),
+  weightUnit: z.enum(["kg", "lbs"]),
+  image: z.string().nullable(),
+  notes: z.string().nullable(),
+  owner: z.object({
+    id: z.string(),
+    name: z.string(),
+    email: z.string().nullable()
+  }).nullable(),
+  createdAt: z.string(),
+  updatedAt: z.string().nullable()
+});
 
-export type InsertPet = {
-  name: string;
-  type: "dog" | "cat" | "bird" | "fish" | "other";
-  breed: string;
-  customerId: string;
-  dateOfBirth: string | null;
-  age: number | null;
-  gender: "male" | "female" | "unknown" | null;
-  weight: string | null;
-  weightUnit: "kg" | "lbs";
-  image: string | File | null;
-  notes: string | null;
-  owner: {
-    id: string;
-    name: string;
-    email: string | null;
-  } | null;
-};
+export type Pet = z.infer<typeof petSchema>;
+
+// Schema for pet insertion
+export const insertPetSchema = petSchema
+  .omit({ 
+    id: true, 
+    createdAt: true, 
+    updatedAt: true 
+  })
+  .extend({
+    image: z.union([z.string(), z.instanceof(File), z.null()]),
+    submissionId: z.string().optional(),
+  });
+
+export type InsertPet = z.infer<typeof insertPetSchema>;
 
 export const PetGenderEnum = {
   MALE: "male",
@@ -69,22 +73,7 @@ export const PetGenderEnum = {
 export type PetGender = typeof PetGenderEnum[keyof typeof PetGenderEnum];
 
 // Form data types
-export type PetFormData = Omit<Pet, 'id'> & {
-  id?: string;
-  image?: File | string | null;
-  owner?: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    phone?: string;
-    email?: string;
-  } | null;
-};
-
-export type InsertPet = Omit<Pet, 'id' | 'createdAt' | 'updatedAt' | 'firebaseId'> & {
-  image: string | File | null;
-  submissionId?: string;
-};
+export type PetFormData = InsertPet;
 
 // Common utility types
 export type WithId<T> = T & { id: number };

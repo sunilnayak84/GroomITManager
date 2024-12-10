@@ -20,7 +20,7 @@ import type { Customer } from "@/lib/schema";
 import type { Pet } from "@/hooks/use-pets";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { DataTable } from "@/components/ui/data-table";
 import { useToast } from "@/hooks/use-toast";
 import { PetForm } from "@/components/PetForm";
@@ -69,6 +69,36 @@ export default function CustomersPage() {
   } = useCustomers();
   const { pets = [], isLoading: isPetsLoading, addPet } = usePets();
   const queryClient = useQueryClient();
+  
+  // Convert pets to proper type
+  const typedPets = useMemo(() => 
+    pets.map(pet => ({
+      ...pet,
+      type: pet.type as "dog" | "cat" | "bird" | "fish" | "other",
+      gender: pet.gender as "male" | "female" | "unknown" | null
+    })), 
+    [pets]
+  );
+
+  // Type guard for Pet type
+  const isPet = (pet: any): pet is Pet => {
+    return pet && 
+      typeof pet.id === 'string' && 
+      typeof pet.name === 'string' &&
+      ['dog', 'cat', 'bird', 'fish', 'other'].includes(pet.type);
+  };
+
+  // Convert customer data to match the expected type
+  const customersData = useMemo(() => {
+    return (customersQuery.data || []).map(customer => ({
+      ...customer,
+      id: String(customer.id),
+      gender: customer.gender as "male" | "female" | "other" | null,
+      createdAt: typeof customer.createdAt === 'string' ? customer.createdAt : new Date().toISOString(),
+      updatedAt: customer.updatedAt ? new Date(customer.updatedAt).toISOString() : null,
+      petCount: customer.petCount || 0
+    }));
+  }, [customersQuery.data]);
 
   // Memoize the pets data
   const petsData = useMemo(() => ({
@@ -496,7 +526,7 @@ export default function CustomersPage() {
         ) : (
           <DataTable 
             columns={columns} 
-            data={customersQuery.data || []} 
+            data={customersData} 
           />
         )}
       </div>
@@ -554,7 +584,15 @@ export default function CustomersPage() {
                       size="sm"
                       className="ml-auto"
                       onClick={() => {
-                        setSelectedPet(pet);
+                        const typedPet: Pet = {
+                          ...pet,
+                          type: pet.type as "dog" | "cat" | "bird" | "fish" | "other",
+                          gender: pet.gender as "male" | "female" | "unknown" | null,
+                          customerId: pet.customerId.toString(),
+                          createdAt: pet.createdAt || new Date().toISOString(),
+                          updatedAt: pet.updatedAt || null
+                        };
+                        setSelectedPet(typedPet);
                         setShowPetDetails(true);
                       }}
                     >
@@ -579,21 +617,43 @@ export default function CustomersPage() {
               {/* We'll reuse the PetForm component but pre-fill the customer */}
               <PetForm
                 handleSubmit={async (data) => {
+                  if (!selectedCustomer) return false;
+                  
                   try {
-                    await addPet({
-                      ...data,
-                      customerId: selectedCustomer.id,
+                    // Ensure proper type conversion and validation
+                    const petData: InsertPet = {
+                      name: data.name,
+                      type: data.type,
+                      breed: data.breed,
+                      customerId: selectedCustomer.id.toString(),
+                      dateOfBirth: data.dateOfBirth,
+                      age: data.age,
+                      gender: data.gender,
+                      weight: data.weight,
+                      weightUnit: data.weightUnit || "kg",
+                      image: data.image,
+                      notes: data.notes,
                       owner: {
-                        id: selectedCustomer.id,
+                        id: selectedCustomer.id.toString(),
                         name: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`,
-                        email: selectedCustomer.email
+                        email: selectedCustomer.email || null
                       }
-                    });
-                    await queryClient.invalidateQueries({ queryKey: ['pets'] });
+                    };
+
+                    console.log('Submitting pet data:', petData);
+                    await addPet(petData);
+                    
+                    // Refresh both pets and customers data
+                    await Promise.all([
+                      queryClient.invalidateQueries({ queryKey: ['pets'] }),
+                      queryClient.invalidateQueries({ queryKey: ['customers'] })
+                    ]);
+                    
                     toast({
                       title: "Success",
                       description: "Pet added successfully",
                     });
+                    
                     setShowAddPet(false);
                     return true;
                   } catch (error) {
