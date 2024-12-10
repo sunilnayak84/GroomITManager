@@ -30,7 +30,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { inventoryItemSchema } from "@/hooks/use-inventory";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/components/ui/use-toast";
 
 function ErrorFallback({ error }: { error: Error }) {
   return (
@@ -57,14 +57,13 @@ export default function InventoryPage() {
       minimum_quantity: 0,
       unit: "units",
       cost_per_unit: 0,
-      category: "",
+      category: "uncategorized",
       supplier: "",
       isActive: true,
+      last_restock_date: undefined,
     },
   });
 
-  const { toast } = useToast();
-  
   async function onSubmit(data: InsertInventoryItem) {
     try {
       await addInventoryItem(data);
@@ -73,6 +72,7 @@ export default function InventoryPage() {
       toast({
         title: "Success",
         description: "Item added to inventory successfully",
+        variant: "default",
       });
     } catch (error) {
       console.error('Error adding inventory item:', error);

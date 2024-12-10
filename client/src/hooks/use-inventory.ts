@@ -121,7 +121,11 @@ export function useInventory() {
 
       await setDoc(docRef, firestoreData);
       await queryClient.invalidateQueries({ queryKey: ['inventory'] });
-      toast.success('Item added to inventory');
+      toast({
+        title: "Success",
+        description: "Item added to inventory",
+        variant: "default"
+      });
       
       return {
         item_id: docRef.id,
@@ -131,7 +135,11 @@ export function useInventory() {
       };
     } catch (error) {
       console.error('ADD_INVENTORY: Error adding item:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to add inventory item');
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : 'Failed to add inventory item',
+        variant: "destructive"
+      });
       throw error;
     }
   };
@@ -149,11 +157,19 @@ export function useInventory() {
 
       await updateDoc(itemRef, updatePayload);
       await queryClient.invalidateQueries({ queryKey: ['inventory'] });
-      toast.success('Inventory item updated');
+      toast({
+        title: "Success",
+        description: "Inventory item updated",
+        variant: "default"
+      });
       return true;
     } catch (error) {
       console.error('UPDATE_INVENTORY: Error updating item:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to update inventory item');
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : 'Failed to update inventory item',
+        variant: "destructive"
+      });
       throw error;
     }
   };
@@ -164,11 +180,19 @@ export function useInventory() {
       const itemRef = doc(inventoryCollection, item_id);
       await deleteDoc(itemRef);
       await queryClient.invalidateQueries({ queryKey: ['inventory'] });
-      toast.success('Inventory item deleted');
+      toast({
+        title: "Success",
+        description: "Inventory item deleted",
+        variant: "default"
+      });
       return true;
     } catch (error) {
       console.error('DELETE_INVENTORY: Error deleting item:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to delete inventory item');
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : 'Failed to delete inventory item',
+        variant: "destructive"
+      });
       throw error;
     }
   };
@@ -208,11 +232,19 @@ export function useInventory() {
       });
 
       await queryClient.invalidateQueries({ queryKey: ['inventory'] });
-      toast.success('Usage recorded successfully');
+      toast({
+        title: "Success",
+        description: "Usage recorded successfully",
+        variant: "default"
+      });
       return usage;
     } catch (error) {
       console.error('RECORD_USAGE: Error recording usage:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to record usage');
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : 'Failed to record usage',
+        variant: "destructive"
+      });
       return null;
     }
   };
