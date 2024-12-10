@@ -13,17 +13,23 @@ import { Progress } from "@/components/ui/progress";
 
 const petSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  type: z.enum(["dog", "cat", "bird", "fish", "other"]),
+  type: z.enum(["dog", "cat", "bird", "fish", "other"], {
+    required_error: "Pet type is required"
+  }),
   breed: z.string().min(1, "Breed is required"),
   customerId: z.string().min(1, "Customer is required"),
   dateOfBirth: z.string().nullable(),
   age: z.union([z.number(), z.string()]).nullable().transform(val => 
     val ? (typeof val === 'string' ? Number(val) : val) : null
   ),
-  gender: z.enum(["male", "female", "unknown"]),
+  gender: z.enum(["male", "female", "unknown"], {
+    required_error: "Gender is required"
+  }).default("unknown"),
   weight: z.string().nullable(),
-  weightUnit: z.enum(["kg", "lbs"]),
-  image: z.union([z.string(), z.instanceof(File), z.null()]),
+  weightUnit: z.enum(["kg", "lbs"], {
+    required_error: "Weight unit is required"
+  }).default("kg"),
+  image: z.union([z.string(), z.instanceof(File), z.null()]).nullable(),
   notes: z.string().nullable(),
 });
 
@@ -152,10 +158,15 @@ export function PetForm({
 
       const petData = {
         ...data,
-        customerId: parseInt(selectedCustomer.id.toString(), 10), // Convert to number
+        customerId: selectedCustomer.firebaseId || selectedCustomer.id.toString(),
         dateOfBirth: data.dateOfBirth || null,
+        age: data.age || null,
+        gender: data.gender || null,
+        weight: data.weight || null,
+        weightUnit: data.weightUnit,
+        notes: data.notes || null,
         owner: {
-          id: selectedCustomer.id,
+          id: selectedCustomer.firebaseId || selectedCustomer.id.toString(),
           firstName: selectedCustomer.firstName,
           lastName: selectedCustomer.lastName,
           name: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`,
@@ -165,7 +176,7 @@ export function PetForm({
         submissionId: currentSubmissionId,
         onUploadProgress: (progress: number) => {
           console.log('Upload progress:', progress);
-          setUploadProgress(Math.round(progress));
+          setUploadProgress(Math.round(progress * 100));
         }
       };
 
