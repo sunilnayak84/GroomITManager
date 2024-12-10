@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Upload } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
@@ -19,13 +19,11 @@ const petSchema = z.object({
   breed: z.string().min(1, "Breed is required"),
   customerId: z.string().min(1, "Customer is required"),
   dateOfBirth: z.string().nullable(),
-  age: z.union([z.number(), z.string()]).nullable().transform(val => 
-    val ? (typeof val === 'string' ? Number(val) : val) : null
-  ),
+  age: z.number().nullable().or(z.string().transform(val => val ? Number(val) : null)),
   gender: z.enum(["male", "female", "unknown"], {
     required_error: "Gender is required"
-  }).default("unknown"),
-  weight: z.string().nullable(),
+  }).nullable(),
+  weight: z.string().nullable().or(z.number().transform(String)),
   weightUnit: z.enum(["kg", "lbs"], {
     required_error: "Weight unit is required"
   }).default("kg"),
@@ -61,6 +59,41 @@ export function PetForm({
   const [imagePreview, setImagePreview] = useState<string | null>(
     typeof defaultValues?.image === 'string' ? defaultValues.image : null
   );
+  
+  // Create a unique key for the form data based on whether we're editing or creating
+  const formStorageKey = useMemo(() => {
+    return `pet-form-${customerId || 'new'}-${isEditing ? 'edit' : 'draft'}`;
+  }, [customerId, isEditing]);
+
+  // Debounce function
+  const debounce = (func: Function, wait: number) => {
+    let timeout: NodeJS.Timeout;
+    return (...args: any[]) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), wait);
+    };
+  };
+
+  // Save form data to localStorage
+  const saveFormToStorage = useCallback((data: Partial<FormData> & { image?: File | string | null }) => {
+    try {
+      // Convert File object to null for storage
+      const storageData = {
+        ...data,
+        image: typeof data.image === 'string' ? data.image : null,
+        lastUpdated: new Date().toISOString()
+      };
+      localStorage.setItem(formStorageKey, JSON.stringify(storageData));
+    } catch (error) {
+      console.error('Error saving form data:', error);
+    }
+  }, [formStorageKey]);
+
+  // Debounced save function
+  const debouncedSave = useMemo(
+    () => debounce((data: Partial<FormData>) => saveFormToStorage(data), 1000),
+    [saveFormToStorage]
+  );
 
   const form = useForm<FormData>({
     resolver: zodResolver(petSchema),
@@ -70,14 +103,57 @@ export function PetForm({
       breed: defaultValues?.breed ?? "",
       customerId: customerId ?? "",
       dateOfBirth: defaultValues?.dateOfBirth ?? null,
-      age: defaultValues?.age ?? null,
+      age: defaultValues?.age ? Number(defaultValues.age) : null,
       gender: defaultValues?.gender ?? "unknown",
-      weight: defaultValues?.weight ?? null,
+      weight: defaultValues?.weight ? String(defaultValues.weight) : null,
       weightUnit: defaultValues?.weightUnit ?? "kg",
       image: defaultValues?.image ?? null,
       notes: defaultValues?.notes ?? null,
     },
   });
+
+  // Restore saved form data on mount
+  useEffect(() => {
+    try {
+      const savedData = localStorage.getItem(formStorageKey);
+      if (savedData) {
+        const parsedData = JSON.parse(savedData);
+        // Only restore if the data is less than 24 hours old
+        const lastUpdated = new Date(parsedData.lastUpdated);
+        const isRecent = new Date().getTime() - lastUpdated.getTime() < 24 * 60 * 60 * 1000;
+        
+        if (isRecent && !defaultValues?.id) {  // Don't restore if editing existing pet
+          delete parsedData.lastUpdated;
+          Object.entries(parsedData).forEach(([key, value]) => {
+            if (value !== undefined) {
+              if (key === 'weight' && value !== null) {
+                form.setValue(key as keyof FormData, String(value));
+              } else if (key === 'age' && value !== null) {
+                form.setValue(key as keyof FormData, Number(value));
+              } else {
+                form.setValue(key as keyof FormData, value);
+              }
+            }
+          });
+          
+          // Restore image preview if exists
+          if (parsedData.image && typeof parsedData.image === 'string') {
+            setImagePreview(parsedData.image);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error restoring form data:', error);
+    }
+  }, [formStorageKey, form, defaultValues?.id]);
+
+  // Subscribe to form changes for autosave
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      debouncedSave(value);
+    });
+    return () => subscription.unsubscribe();
+  }, [form, debouncedSave]);
 
   // Set initial customer when form loads
   useEffect(() => {
@@ -154,16 +230,16 @@ export function PetForm({
         breed: data.breed,
         customerId,
         dateOfBirth: data.dateOfBirth || null,
-        age: typeof data.age === 'string' ? parseInt(data.age) : data.age,
+        age: data.age !== null ? Number(data.age) : null,
         gender: data.gender || null,
-        weight: data.weight || null,
+        weight: typeof data.weight === 'number' ? String(data.weight) : data.weight,
         weightUnit: data.weightUnit,
         notes: data.notes || null,
         image: data.image,
         owner: {
           id: customerId,
           name: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`,
-          email: selectedCustomer.email
+          email: selectedCustomer.email || null
         }
       };
 
@@ -171,6 +247,8 @@ export function PetForm({
       const result = await submitForm(petData);
 
       if (result) {
+        // Clear saved form data
+        localStorage.removeItem(formStorageKey);
         setImagePreview(null);
         form.reset();
         
@@ -394,7 +472,16 @@ export function PetForm({
                 <FormItem className="flex-1">
                   <FormLabel>Weight</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value ?? ''} />
+                    <Input 
+                      type="number"
+                      step="0.01"
+                      {...field}
+                      value={field.value ?? ''}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        field.onChange(value ? String(value) : null);
+                      }}
+                    />
                   </FormControl>
                 </FormItem>
               )}
