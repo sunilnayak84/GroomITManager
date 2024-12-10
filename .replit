@@ -22,9 +22,16 @@ name = "Project"
 mode = "parallel"
 author = "agent"
 
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
 [[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Development Server"
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+waitForPort = 5000
 
 [[workflows.workflow]]
 name = "Development Server"
@@ -40,3 +47,18 @@ task = "packager.installForAll"
 task = "shell.exec"
 args = "cd client && npm run dev"
 waitForPort = 5173
+
+[[workflows.workflow]]
+name = "Express Server"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+waitForPort = 5000
