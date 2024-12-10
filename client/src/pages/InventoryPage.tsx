@@ -31,6 +31,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { Suspense, useTransition } from "react";
 
 // Define the schema for the form
 const inventoryFormSchema = z.object({
@@ -48,8 +49,6 @@ type InventoryFormData = z.infer<typeof inventoryFormSchema>;
 
 // Import the type from our hook
 import type { InventoryItem } from "@/hooks/use-inventory";
-
-import { Suspense, useTransition } from "react";
 
 export default function InventoryPage() {
   const [showItemDialog, setShowItemDialog] = useState(false);
@@ -158,289 +157,290 @@ export default function InventoryPage() {
           </div>
         </div>
 
-      <div className="flex justify-between items-center mb-6">
-        <Button 
-          onClick={() => setShowItemDialog(true)}
-          className="ml-auto h-12 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-        >
-          <Plus className="mr-2 h-5 w-5" />
-          Add New Item
-        </Button>
-      </div>
+        <div className="flex justify-between items-center mb-6">
+          <Button 
+            onClick={() => setShowItemDialog(true)}
+            className="ml-auto h-12 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+          >
+            <Plus className="mr-2 h-5 w-5" />
+            Add New Item
+          </Button>
+        </div>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Item Name</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Quantity</TableHead>
-              <TableHead>Unit</TableHead>
-              <TableHead>Reorder Point</TableHead>
-              <TableHead>Last Restocked</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-10">
-                  Loading inventory items...
-                </TableCell>
+                <TableHead>Item Name</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>Quantity</TableHead>
+                <TableHead>Unit</TableHead>
+                <TableHead>Reorder Point</TableHead>
+                <TableHead>Last Restocked</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
-            ) : inventory.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} className="text-center py-10">
-                  No inventory items found
-                </TableCell>
-              </TableRow>
-            ) : (
-              inventory.map((item) => (
-                <TableRow key={item.item_id}>
-                  <TableCell>{item.name}</TableCell>
-                  <TableCell>{item.category}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <span className={`font-medium ${
-                        item.quantity <= item.minimum_quantity 
-                          ? 'text-red-500' 
-                          : item.quantity <= item.minimum_quantity * 1.5 
-                            ? 'text-yellow-500' 
-                            : 'text-green-500'
-                      }`}>
-                        {item.quantity}
-                      </span>
-                      <span className="text-muted-foreground">{item.unit}</span>
-                    </div>
-                    {item.quantity <= item.minimum_quantity && (
-                      <span className="text-sm text-red-500">Low stock!</span>
-                    )}
-                  </TableCell>
-                  <TableCell>{item.unit}</TableCell>
-                  <TableCell>{item.minimum_quantity}</TableCell>
-                  <TableCell>
-                    {item.last_restock_date 
-                      ? format(item.last_restock_date, 'PP')
-                      : 'Never'}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedItem(item);
-                          setShowItemDialog(true);
-                        }}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-red-500 hover:text-red-700"
-                        onClick={async () => {
-                          if (window.confirm('Are you sure you want to delete this item?')) {
-                            try {
-                              await deleteInventoryItem(item.item_id);
-                              toast({
-                                title: "Success",
-                                description: "Item deleted successfully"
-                              });
-                            } catch (error) {
-                              toast({
-                                title: "Error",
-                                description: error instanceof Error ? error.message : "Failed to delete item",
-                                variant: "destructive"
-                              });
-                            }
-                          }
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    </div>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-10">
+                    Loading inventory items...
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ) : inventory.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-10">
+                    No inventory items found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                inventory.map((item) => (
+                  <TableRow key={item.item_id}>
+                    <TableCell>{item.name}</TableCell>
+                    <TableCell>{item.category}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <span className={`font-medium ${
+                          item.quantity <= item.minimum_quantity 
+                            ? 'text-red-500' 
+                            : item.quantity <= item.minimum_quantity * 1.5 
+                              ? 'text-yellow-500' 
+                              : 'text-green-500'
+                        }`}>
+                          {item.quantity}
+                        </span>
+                        <span className="text-muted-foreground">{item.unit}</span>
+                      </div>
+                      {item.quantity <= item.minimum_quantity && (
+                        <span className="text-sm text-red-500">Low stock!</span>
+                      )}
+                    </TableCell>
+                    <TableCell>{item.unit}</TableCell>
+                    <TableCell>{item.minimum_quantity}</TableCell>
+                    <TableCell>
+                      {item.last_restock_date 
+                        ? format(item.last_restock_date, 'PP')
+                        : 'Never'}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedItem(item);
+                            setShowItemDialog(true);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-red-500 hover:text-red-700"
+                          onClick={async () => {
+                            if (window.confirm('Are you sure you want to delete this item?')) {
+                              try {
+                                await deleteInventoryItem(item.item_id);
+                                toast({
+                                  title: "Success",
+                                  description: "Item deleted successfully"
+                                });
+                              } catch (error) {
+                                toast({
+                                  title: "Error",
+                                  description: error instanceof Error ? error.message : "Failed to delete item",
+                                  variant: "destructive"
+                                });
+                              }
+                            }
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+
+        <Dialog open={showItemDialog} onOpenChange={setShowItemDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                {selectedItem ? "Edit Item" : "Add New Item"}
+              </DialogTitle>
+              <DialogDescription>
+                Enter the inventory item details below
+              </DialogDescription>
+            </DialogHeader>
+
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Item Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter item name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter category" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="quantity"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Quantity</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number" 
+                            min="0" 
+                            step="1" 
+                            {...field}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="unit"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Unit</FormLabel>
+                        <FormControl>
+                          <Input placeholder="e.g., ml, pieces" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="minimum_quantity"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Minimum Quantity</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number" 
+                            min="0" 
+                            {...field}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="cost_per_unit"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Cost per Unit (₹)</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number" 
+                            min="0" 
+                            step="0.01" 
+                            {...field}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="supplier"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Supplier (Optional)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Enter supplier name" 
+                          {...field} 
+                          value={field.value || ''}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description (Optional)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Item description" 
+                          {...field}
+                          value={field.value || ''}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex justify-end gap-4 pt-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setShowItemDialog(false);
+                      form.reset();
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={isPending}>
+                    {selectedItem ? "Update Item" : "Add Item"}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
       </div>
-
-      <Dialog open={showItemDialog} onOpenChange={setShowItemDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {selectedItem ? "Edit Item" : "Add New Item"}
-            </DialogTitle>
-            <DialogDescription>
-              Enter the inventory item details below
-            </DialogDescription>
-          </DialogHeader>
-
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Item Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter item name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter category" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="quantity"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Quantity</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="number" 
-                          min="0" 
-                          step="1" 
-                          {...field}
-                          onChange={(e) => field.onChange(Number(e.target.value))}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="unit"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Unit</FormLabel>
-                      <FormControl>
-                        <Input placeholder="e.g., ml, pieces" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="minimum_quantity"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Minimum Quantity</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="number" 
-                          min="0" 
-                          {...field}
-                          onChange={(e) => field.onChange(Number(e.target.value))}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="cost_per_unit"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Cost per Unit (₹)</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="number" 
-                          min="0" 
-                          step="0.01" 
-                          {...field}
-                          onChange={(e) => field.onChange(Number(e.target.value))}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <FormField
-                control={form.control}
-                name="supplier"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Supplier (Optional)</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="Enter supplier name" 
-                        {...field} 
-                        value={field.value || ''}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description (Optional)</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="Item description" 
-                        {...field}
-                        value={field.value || ''}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex justify-end gap-4 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    setShowItemDialog(false);
-                    form.reset();
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit">
-                  {selectedItem ? "Update Item" : "Add Item"}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
-    </div>
+    </Suspense>
   );
 }
