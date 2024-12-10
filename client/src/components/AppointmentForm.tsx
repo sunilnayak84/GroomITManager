@@ -3,9 +3,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { insertAppointmentSchema, type InsertAppointment, type Appointment } from "@db/schema";
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -28,7 +30,7 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function AppointmentForm() {
   const { addAppointment } = useAppointments();
-  const { data: pets } = usePets();
+  const { pets } = usePets();
   const { toast } = useToast();
 
   const defaultGroomerId = "1";
@@ -83,8 +85,8 @@ export default function AppointmentForm() {
               <FormItem>
                 <FormLabel>Pet</FormLabel>
                 <Select
-                  onValueChange={(value) => field.onChange(parseInt(value))}
-                  defaultValue={field.value.toString()}
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -92,8 +94,8 @@ export default function AppointmentForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {(pets || []).map((pet: any) => (
-                      <SelectItem key={pet.id} value={pet.id.toString()}>
+                    {(pets || []).map((pet) => (
+                      <SelectItem key={pet.id} value={pet.id}>
                         {pet.name} - {pet.breed}
                       </SelectItem>
                     ))}
@@ -112,7 +114,7 @@ export default function AppointmentForm() {
                   <Input 
                     type="datetime-local" 
                     {...field}
-                    value={field.value.toISOString().slice(0, 16)}
+                    value={field.value instanceof Date ? field.value.toISOString().slice(0, 16) : ''}
                     onChange={(e) => field.onChange(new Date(e.target.value))}
                   />
                 </FormControl>

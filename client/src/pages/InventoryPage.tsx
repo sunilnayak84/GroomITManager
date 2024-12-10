@@ -1,4 +1,4 @@
-import { useState, useEffect, Suspense, useTransition } from "react";
+import { useState, useEffect, useTransition, Suspense } from "react";
 import { Plus } from "lucide-react";
 import { format } from "date-fns";
 import { useInventory } from "@/hooks/use-inventory";
@@ -48,14 +48,6 @@ type InventoryFormData = z.infer<typeof inventoryFormSchema>;
 
 import type { InventoryItem } from "@/hooks/use-inventory";
 
-function LoadingFallback() {
-  return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="text-lg">Loading inventory management...</div>
-    </div>
-  );
-}
-
 export default function InventoryPage() {
   const [isPending, startTransition] = useTransition();
   const [showDialog, setShowDialog] = useState(false);
@@ -79,7 +71,11 @@ export default function InventoryPage() {
 
   return (
     <div className="h-full">
-      <Suspense fallback={<LoadingFallback />}>
+      <Suspense fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-lg">Loading inventory management...</div>
+        </div>
+      }>
         <InventoryContent 
           showDialog={showDialog}
           selectedItem={selectedItem}
@@ -182,6 +178,14 @@ function InventoryContent({
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Loading inventory management...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto py-6 space-y-4">
       <div className="relative h-48 rounded-xl overflow-hidden">
@@ -223,13 +227,7 @@ function InventoryContent({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={7} className="text-center py-10">
-                  Loading inventory items...
-                </TableCell>
-              </TableRow>
-            ) : inventory.length === 0 ? (
+            {inventory.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center py-10">
                   No inventory items found
