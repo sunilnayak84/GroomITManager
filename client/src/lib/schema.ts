@@ -115,19 +115,38 @@ export type User = z.infer<typeof userSchema>;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 
 // Additional types for appointments with relations
-export type AppointmentWithRelations = Appointment & {
+export type AppointmentWithRelations = Omit<Appointment, "status"> & {
+  status: "pending" | "confirmed" | "completed" | "cancelled";
   pet: {
+    id: string;
     name: string;
     breed: string;
     image: string | null;
-    customer: Customer;
   };
-  service: {
+  customer: {
     name: string;
-    duration: number;
-    price: number;
   };
   groomer: {
     name: string;
   };
+  service?: {
+    name: string;
+    duration: number;
+    price: number;
+  };
 };
+
+// Additional types for inventory usage
+export const inventoryUsageSchema = z.object({
+  usage_id: z.string(),
+  item_id: z.string(),
+  quantity_used: z.number().min(0, "Usage quantity must be positive"),
+  service_id: z.string().optional(),
+  appointment_id: z.string().optional(),
+  used_by: z.string(),
+  used_at: z.date(),
+  notes: z.string().optional(),
+});
+
+export type InventoryUsage = z.infer<typeof inventoryUsageSchema>;
+export type InsertInventoryUsage = Omit<InventoryUsage, "usage_id" | "used_at">;

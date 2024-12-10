@@ -37,10 +37,10 @@ export default function AppointmentForm() {
   const form = useForm<Omit<Appointment, 'id' | 'createdAt'>>({
     resolver: zodResolver(insertAppointmentSchema),
     defaultValues: {
-      petId: "",
-      serviceId: "",
-      groomerId: defaultGroomerId,
-      branchId: "1",
+      petId: 0,
+      serviceId: 0,
+      groomerId: parseInt(defaultGroomerId) || 0,
+      branchId: 1,
       date: new Date(),
       status: "pending",
       notes: "",
@@ -85,8 +85,8 @@ export default function AppointmentForm() {
               <FormItem>
                 <FormLabel>Pet</FormLabel>
                 <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  onValueChange={(value) => field.onChange(parseInt(value))}
+                  defaultValue={field.value?.toString()}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -95,7 +95,10 @@ export default function AppointmentForm() {
                   </FormControl>
                   <SelectContent>
                     {(pets || []).map((pet) => (
-                      <SelectItem key={pet.id} value={pet.id}>
+                      <SelectItem 
+                        key={pet.id} 
+                        value={typeof pet.id === 'string' ? parseInt(pet.id) : pet.id}
+                      >
                         {pet.name} - {pet.breed}
                       </SelectItem>
                     ))}
