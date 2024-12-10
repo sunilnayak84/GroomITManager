@@ -450,8 +450,135 @@ export default function InventoryPage() {
                             <DialogHeader>
                               <DialogTitle>Edit Inventory Item</DialogTitle>
                             </DialogHeader>
-                            {/* We'll implement the edit form later */}
-                            <div>Edit form will go here</div>
+                            <Form {...form}>
+                              <form onSubmit={form.handleSubmit((data) => updateInventoryItem(item.item_id, data))} className="space-y-4">
+                                <FormField
+                                  control={form.control}
+                                  name="name"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Name</FormLabel>
+                                      <FormControl>
+                                        <Input {...field} defaultValue={item.name} />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <div className="grid grid-cols-2 gap-4">
+                                  <FormField
+                                    control={form.control}
+                                    name="quantity"
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel>Quantity</FormLabel>
+                                        <FormControl>
+                                          <Input
+                                            type="number"
+                                            {...field}
+                                            defaultValue={item.quantity}
+                                            onChange={e => field.onChange(Number(e.target.value))}
+                                          />
+                                        </FormControl>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                  <FormField
+                                    control={form.control}
+                                    name="minimum_quantity"
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel>Minimum Quantity</FormLabel>
+                                        <FormControl>
+                                          <Input
+                                            type="number"
+                                            {...field}
+                                            defaultValue={item.minimum_quantity}
+                                            onChange={e => field.onChange(Number(e.target.value))}
+                                          />
+                                        </FormControl>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                  <FormField
+                                    control={form.control}
+                                    name="unit"
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel>Unit</FormLabel>
+                                        <FormControl>
+                                          <Input {...field} defaultValue={item.unit} />
+                                        </FormControl>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                  <FormField
+                                    control={form.control}
+                                    name="cost_per_unit"
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel>Cost per Unit</FormLabel>
+                                        <FormControl>
+                                          <Input
+                                            type="number"
+                                            step="0.01"
+                                            {...field}
+                                            defaultValue={item.cost_per_unit}
+                                            onChange={e => field.onChange(Number(e.target.value))}
+                                          />
+                                        </FormControl>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                </div>
+                                <FormField
+                                  control={form.control}
+                                  name="category"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Category</FormLabel>
+                                      <FormControl>
+                                        <Input {...field} defaultValue={item.category} />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={form.control}
+                                  name="supplier"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Supplier</FormLabel>
+                                      <FormControl>
+                                        <Input {...field} defaultValue={item.supplier || ''} />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={form.control}
+                                  name="description"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Description</FormLabel>
+                                      <FormControl>
+                                        <Input {...field} defaultValue={item.description || ''} />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <Button type="submit" className="w-full">Update Item</Button>
+                              </form>
+                            </Form>
                           </DialogContent>
                         </Dialog>
                         <AlertDialog>
