@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, query, serverTimestamp } from 'firebase/firestore';
+import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, query, serverTimestamp, getDoc } from 'firebase/firestore';
 import { db } from "../lib/firebase";
 import { toast } from "../lib/toast";
 import { z } from "zod";
@@ -45,10 +45,12 @@ export type UpdateInventoryItem = Partial<Omit<InventoryItem, 'item_id' | 'creat
 export function useInventory() {
   const queryClient = useQueryClient();
 
-  // Fetch inventory items
-  const { data: inventory = [], isLoading, ...rest } = useQuery<InventoryItem[]>({
+  // Fetch inventory items with proper error handling and no suspense
+  const { data: inventory = [], isLoading, error, ...rest } = useQuery({
     queryKey: ['inventory'],
     staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: 2,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       try {
         console.log('FETCH_INVENTORY: Starting to fetch inventory items');
@@ -62,30 +64,30 @@ export function useInventory() {
 
         const items = querySnapshot.docs.map((doc) => {
           const data = doc.data();
-          return inventoryItemSchema.parse({
-            item_id: doc.id,
-            name: data.name,
-            description: data.description,
-            quantity: data.quantity,
-            minimum_quantity: data.minimum_quantity,
-            unit: data.unit,
-            cost_per_unit: data.cost_per_unit,
-            category: data.category,
-            supplier: data.supplier,
-            last_restock_date: data.last_restock_date?.toDate(),
-            isActive: data.isActive ?? true,
-            created_at: data.created_at.toDate(),
-            updated_at: data.updated_at?.toDate(),
-          });
-        });
+          try {
+            return inventoryItemSchema.parse({
+              item_id: doc.id,
+              name: data.name || '',
+              description: data.description,
+              quantity: data.quantity || 0,
+              minimum_quantity: data.minimum_quantity || 0,
+              unit: data.unit || 'units',
+              cost_per_unit: data.cost_per_unit || 0,
+              category: data.category || 'uncategorized',
+              supplier: data.supplier,
+              last_restock_date: data.last_restock_date?.toDate(),
+              isActive: data.isActive ?? true,
+              created_at: data.created_at?.toDate() || new Date(),
+              updated_at: data.updated_at?.toDate(),
+            });
+          } catch (parseError) {
+            console.error('FETCH_INVENTORY: Error parsing item:', { id: doc.id, error: parseError });
+            return null;
+          }
+        }).filter((item): item is InventoryItem => item !== null);
 
-        console.log('FETCH_INVENTORY: Completed fetching inventory', {
-          count: items.length,
-          items: items.map(item => ({
-            id: item.item_id,
-            name: item.name,
-            quantity: item.quantity
-          }))
+        console.log('FETCH_INVENTORY: Successfully fetched inventory', {
+          count: items.length
         });
 
         return items;
@@ -94,41 +96,39 @@ export function useInventory() {
         throw error;
       }
     },
-    staleTime: 1000 * 60 * 5 // 5 minutes
   });
 
   // Add inventory item
   const addInventoryItem = async (itemData: InsertInventoryItem) => {
     try {
       const docRef = doc(inventoryCollection);
-      const timestamp = new Date().toISOString();
+      const timestamp = serverTimestamp();
       
-      const newItem: InventoryItem = {
-        item_id: docRef.id,
-        ...itemData,
-        created_at: new Date(timestamp),
-        updated_at: new Date(timestamp)
-      };
-
       const firestoreData = {
-        name: newItem.name,
-        description: newItem.description,
-        quantity: newItem.quantity,
-        minimum_quantity: newItem.minimum_quantity,
-        unit: newItem.unit,
-        cost_per_unit: newItem.cost_per_unit,
-        category: newItem.category,
-        supplier: newItem.supplier,
-        last_restock_date: newItem.last_restock_date,
-        isActive: newItem.isActive,
-        created_at: serverTimestamp(),
-        updated_at: serverTimestamp()
+        name: itemData.name,
+        description: itemData.description,
+        quantity: itemData.quantity,
+        minimum_quantity: itemData.minimum_quantity,
+        unit: itemData.unit,
+        cost_per_unit: itemData.cost_per_unit,
+        category: itemData.category,
+        supplier: itemData.supplier,
+        last_restock_date: itemData.last_restock_date,
+        isActive: itemData.isActive,
+        created_at: timestamp,
+        updated_at: timestamp
       };
 
       await setDoc(docRef, firestoreData);
       await queryClient.invalidateQueries({ queryKey: ['inventory'] });
       toast.success('Item added to inventory');
-      return newItem;
+      
+      return {
+        item_id: docRef.id,
+        ...itemData,
+        created_at: new Date(),
+        updated_at: new Date()
+      };
     } catch (error) {
       console.error('ADD_INVENTORY: Error adding item:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to add inventory item');
@@ -140,11 +140,11 @@ export function useInventory() {
   const updateInventoryItem = async (item_id: string, updateData: UpdateInventoryItem) => {
     try {
       const itemRef = doc(inventoryCollection, item_id);
-      const timestamp = new Date().toISOString();
+      const timestamp = serverTimestamp();
       
       const updatePayload = {
         ...updateData,
-        updated_at: serverTimestamp()
+        updated_at: timestamp
       };
 
       await updateDoc(itemRef, updatePayload);
@@ -159,9 +159,9 @@ export function useInventory() {
   };
 
   // Delete inventory item
-  const deleteInventoryItem = async (id: string) => {
+  const deleteInventoryItem = async (item_id: string) => {
     try {
-      const itemRef = doc(inventoryCollection, id);
+      const itemRef = doc(inventoryCollection, item_id);
       await deleteDoc(itemRef);
       await queryClient.invalidateQueries({ queryKey: ['inventory'] });
       toast.success('Inventory item deleted');
@@ -178,21 +178,25 @@ export function useInventory() {
     try {
       // First, check if we have enough quantity
       const itemRef = doc(inventoryCollection, usageData.item_id);
-      const itemSnap = await getDocs(query(inventoryCollection, doc(usageData.item_id)));
-      const itemData = itemSnap.docs[0]?.data();
+      const itemSnap = await getDoc(itemRef);
       
+      if (!itemSnap.exists()) {
+        throw new Error('Item not found');
+      }
+      
+      const itemData = itemSnap.data();
       if (!itemData || itemData.quantity < usageData.quantity_used) {
         throw new Error('Insufficient quantity available');
       }
 
       // Record the usage
       const usageRef = doc(collection(db, 'inventory_usage'));
-      const timestamp = new Date().toISOString();
+      const timestamp = new Date();
       
       const usage: InventoryUsage = {
         usage_id: usageRef.id,
         ...usageData,
-        used_at: new Date(timestamp)
+        used_at: timestamp
       };
 
       await setDoc(usageRef, usage);
@@ -209,13 +213,14 @@ export function useInventory() {
     } catch (error) {
       console.error('RECORD_USAGE: Error recording usage:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to record usage');
-      throw error;
+      return null;
     }
   };
 
   return {
     inventory,
     isLoading,
+    error,
     addInventoryItem,
     updateInventoryItem,
     deleteInventoryItem,
