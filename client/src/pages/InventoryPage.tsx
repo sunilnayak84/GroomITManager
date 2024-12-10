@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
+import { format } from "date-fns";
+import { useInventory } from "@/hooks/use-inventory";
 import {
   Dialog,
   DialogContent,
@@ -30,53 +32,95 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-// Define the schema for inventory items
-const inventoryItemSchema = z.object({
+// Define the schema for the form
+const inventoryFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
   category: z.string().min(1, "Category is required"),
   quantity: z.number().min(0, "Quantity must be 0 or greater"),
   unit: z.string().min(1, "Unit is required"),
-  reorderPoint: z.number().min(0, "Reorder point must be 0 or greater"),
-  cost: z.number().min(0, "Cost must be 0 or greater"),
-  supplier: z.string().nullable(),
-  notes: z.string().nullable(),
+  minimum_quantity: z.number().min(0, "Minimum quantity must be 0 or greater"),
+  cost_per_unit: z.number().min(0, "Cost must be 0 or greater"),
+  supplier: z.string().optional(),
+  description: z.string().optional(),
 });
 
-type InventoryItem = z.infer<typeof inventoryItemSchema> & {
-  id: string;
-  lastRestocked: Date;
-  createdAt: Date;
-  updatedAt: Date;
-};
+type InventoryFormData = z.infer<typeof inventoryFormSchema>;
+
+// Import the type from our hook
+import type { InventoryItem } from "@/hooks/use-inventory";
 
 export default function InventoryPage() {
   const [showItemDialog, setShowItemDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
   const { toast } = useToast();
+  const { inventory, isLoading, addInventoryItem, updateInventoryItem, deleteInventoryItem } = useInventory();
 
-  const form = useForm({
-    resolver: zodResolver(inventoryItemSchema),
+  const form = useForm<InventoryFormData>({
+    resolver: zodResolver(inventoryFormSchema),
     defaultValues: {
       name: "",
       category: "",
       quantity: 0,
       unit: "",
-      reorderPoint: 0,
-      cost: 0,
-      supplier: null,
-      notes: null,
+      minimum_quantity: 0,
+      cost_per_unit: 0,
+      supplier: "",
+      description: "",
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof inventoryItemSchema>) => {
-    try {
-      // TODO: Implement inventory item creation/update
-      toast({
-        title: "Success",
-        description: selectedItem 
-          ? "Inventory item updated successfully" 
-          : "Inventory item added successfully",
+  // Reset form when dialog closes
+  useEffect(() => {
+    if (!showItemDialog) {
+      setSelectedItem(null);
+      form.reset();
+    }
+  }, [showItemDialog, form]);
+
+  // Set form values when editing an item
+  useEffect(() => {
+    if (selectedItem) {
+      form.reset({
+        name: selectedItem.name,
+        category: selectedItem.category,
+        quantity: selectedItem.quantity,
+        unit: selectedItem.unit,
+        minimum_quantity: selectedItem.minimum_quantity,
+        cost_per_unit: selectedItem.cost_per_unit,
+        supplier: selectedItem.supplier || '',
+        description: selectedItem.description || '',
       });
+    }
+  }, [selectedItem, form]);
+
+  const onSubmit = async (data: InventoryFormData) => {
+    try {
+      const itemData = {
+        name: data.name,
+        description: data.description,
+        quantity: data.quantity,
+        minimum_quantity: data.minimum_quantity,
+        unit: data.unit,
+        cost_per_unit: data.cost_per_unit,
+        category: data.category,
+        supplier: data.supplier,
+        isActive: true,
+      };
+
+      if (selectedItem) {
+        await updateInventoryItem(selectedItem.item_id, itemData);
+        toast({
+          title: "Success",
+          description: "Item updated successfully"
+        });
+      } else {
+        await addInventoryItem(itemData);
+        toast({
+          title: "Success",
+          description: "Item added successfully"
+        });
+      }
+
       setShowItemDialog(false);
       form.reset();
     } catch (error) {
@@ -128,12 +172,88 @@ export default function InventoryPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {/* TODO: Add inventory items mapping */}
-            <TableRow>
-              <TableCell colSpan={7} className="text-center py-10">
-                No inventory items found
-              </TableCell>
-            </TableRow>
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center py-10">
+                  Loading inventory items...
+                </TableCell>
+              </TableRow>
+            ) : inventory.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center py-10">
+                  No inventory items found
+                </TableCell>
+              </TableRow>
+            ) : (
+              inventory.map((item) => (
+                <TableRow key={item.item_id}>
+                  <TableCell>{item.name}</TableCell>
+                  <TableCell>{item.category}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <span className={`font-medium ${
+                        item.quantity <= item.minimum_quantity 
+                          ? 'text-red-500' 
+                          : item.quantity <= item.minimum_quantity * 1.5 
+                            ? 'text-yellow-500' 
+                            : 'text-green-500'
+                      }`}>
+                        {item.quantity}
+                      </span>
+                      <span className="text-muted-foreground">{item.unit}</span>
+                    </div>
+                    {item.quantity <= item.minimum_quantity && (
+                      <span className="text-sm text-red-500">Low stock!</span>
+                    )}
+                  </TableCell>
+                  <TableCell>{item.unit}</TableCell>
+                  <TableCell>{item.minimum_quantity}</TableCell>
+                  <TableCell>
+                    {item.last_restock_date 
+                      ? format(item.last_restock_date, 'PP')
+                      : 'Never'}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedItem(item);
+                          setShowItemDialog(true);
+                        }}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-red-500 hover:text-red-700"
+                        onClick={async () => {
+                          if (window.confirm('Are you sure you want to delete this item?')) {
+                            try {
+                              await deleteInventoryItem(item.item_id);
+                              toast({
+                                title: "Success",
+                                description: "Item deleted successfully"
+                              });
+                            } catch (error) {
+                              toast({
+                                title: "Error",
+                                description: error instanceof Error ? error.message : "Failed to delete item",
+                                variant: "destructive"
+                              });
+                            }
+                          }
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>
@@ -218,10 +338,10 @@ export default function InventoryPage() {
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
-                  name="reorderPoint"
+                  name="minimum_quantity"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Reorder Point</FormLabel>
+                      <FormLabel>Minimum Quantity</FormLabel>
                       <FormControl>
                         <Input 
                           type="number" 
@@ -237,10 +357,10 @@ export default function InventoryPage() {
 
                 <FormField
                   control={form.control}
-                  name="cost"
+                  name="cost_per_unit"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Cost (₹)</FormLabel>
+                      <FormLabel>Cost per Unit (₹)</FormLabel>
                       <FormControl>
                         <Input 
                           type="number" 
@@ -276,13 +396,13 @@ export default function InventoryPage() {
 
               <FormField
                 control={form.control}
-                name="notes"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Notes (Optional)</FormLabel>
+                    <FormLabel>Description (Optional)</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="Additional notes" 
+                        placeholder="Item description" 
                         {...field}
                         value={field.value || ''}
                       />
