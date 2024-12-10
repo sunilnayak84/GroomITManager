@@ -102,22 +102,21 @@ export function useAppointments() {
 
   const addAppointmentMutation = useMutation({
     mutationFn: async (appointmentData: InsertAppointment) => {
-      // Define the document structure with proper Firebase field value types
-      type AppointmentDocumentData = {
+      // Use type intersection to ensure proper typing with Firebase
+      type FirestoreAppointment = {
         petId: number;
         serviceId: number;
         groomerId: string;
         branchId: number;
         date: Date;
-        status: AppointmentWithRelations['status'];
+        status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
         notes: string | null;
         productsUsed: string | null;
         createdAt: Date;
-        updatedAt?: Date;
       };
 
-      // Create the document data with correct types
-      const documentData: AppointmentDocumentData = {
+      // Prepare the document data
+      const documentData: WithFieldValue<FirestoreAppointment> = {
         petId: Number(appointmentData.petId),
         serviceId: Number(appointmentData.serviceId),
         groomerId: String(appointmentData.groomerId),
@@ -127,19 +126,20 @@ export function useAppointments() {
         notes: appointmentData.notes ?? null,
         productsUsed: appointmentData.productsUsed ?? null,
         createdAt: new Date(),
+        updatedAt: undefined
       };
 
-      // Add the document to Firestore with proper typing
-      const docRef = await addDoc(
-        appointmentsCollection,
-        documentData as WithFieldValue<DocumentData>
-      );
+      // Add the document to Firestore
+      const docRef = await addDoc(appointmentsCollection, documentData);
       
-      // Return the appointment data with the new ID and correct typing
-      return {
+      // Return the appointment data with the new ID
+      const returnData: Omit<AppointmentWithRelations, 'pet' | 'customer' | 'groomer'> = {
         id: docRef.id,
         ...documentData,
-      } as Omit<AppointmentWithRelations, 'pet' | 'customer' | 'groomer'>;
+        updatedAt: undefined
+      };
+
+      return returnData;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
