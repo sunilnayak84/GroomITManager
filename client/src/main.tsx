@@ -1,4 +1,4 @@
-import { StrictMode } from "react";
+import { StrictMode, lazy } from "react";
 import { createRoot } from "react-dom/client";
 import { Switch, Route } from "wouter";
 import "./index.css";
@@ -38,6 +38,7 @@ function Router() {
         <Route path="/customers" component={CustomersPage} />
         <Route path="/pets" component={PetsPage} />
         <Route path="/services" component={ServicesPage} />
+        <Route path="/inventory" component={lazy(() => import('./pages/InventoryPage'))} />
         <Route>404 Page Not Found</Route>
       </Switch>
     </Layout>
