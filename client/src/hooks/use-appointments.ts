@@ -5,6 +5,12 @@ import { appointmentsCollection, petsCollection, customersCollection, usersColle
 import React from "react";
 
 // Helper function to safely convert to Date
+// Helper function to convert Date | null to Date | undefined
+const toDateOrUndefined = (value: unknown): Date | undefined => {
+  const date = toSafeDate(value);
+  return date === null ? undefined : date;
+};
+
 const toSafeDate = (value: unknown): Date | null => {
   if (!value) return null;
   if (value instanceof Date) return value;
@@ -51,18 +57,24 @@ export function useAppointments() {
             continue;
           }
 
+          const createdDate = toSafeDate(appointmentData.createdAt);
+          if (!createdDate) {
+            console.error('Invalid created date for appointment:', appointmentDoc.id);
+            continue;
+          }
+
           const appointment: AppointmentWithRelations = {
             id: appointmentDoc.id,
             petId: Number(appointmentData.petId),
             serviceId: Number(appointmentData.serviceId),
             groomerId: appointmentData.groomerId,
             branchId: Number(appointmentData.branchId),
-            date: appointmentData.date instanceof Date ? appointmentData.date : new Date(appointmentData.date),
+            date: toSafeDate(appointmentData.date) || new Date(),
             status,
             notes: appointmentData.notes ?? null,
             productsUsed: appointmentData.productsUsed ?? null,
-            createdAt: appointmentData.createdAt instanceof Date ? appointmentData.createdAt : new Date(appointmentData.createdAt),
-            updatedAt: appointmentData.updatedAt ? new Date(appointmentData.updatedAt) : null,
+            createdAt: createdDate,
+            updatedAt: toSafeDate(appointmentData.updatedAt),
             pet: {
               name: petData.name,
               breed: petData.breed,
@@ -96,7 +108,7 @@ export function useAppointments() {
         serviceId: Number(appointmentData.serviceId),
         groomerId: String(appointmentData.groomerId),
         branchId: Number(appointmentData.branchId),
-        date: appointmentData.date instanceof Date ? appointmentData.date : new Date(appointmentData.date),
+        date: toSafeDate(appointmentData.date) || new Date(),
         status: (appointmentData.status || 'pending') as AppointmentWithRelations['status'],
         notes: appointmentData.notes ?? null,
         productsUsed: appointmentData.productsUsed ?? null,
@@ -152,18 +164,24 @@ export function useAppointments() {
             continue;
           }
 
+          const createdDate = toSafeDate(appointmentData.createdAt);
+          if (!createdDate) {
+            console.error('Invalid created date for appointment:', appointmentDoc.id);
+            continue;
+          }
+
           appointments.push({
             id: appointmentDoc.id,
             petId: Number(appointmentData.petId),
             serviceId: Number(appointmentData.serviceId),
             groomerId: appointmentData.groomerId,
             branchId: Number(appointmentData.branchId),
-            date: appointmentData.date instanceof Date ? appointmentData.date : new Date(appointmentData.date),
+            date: toSafeDate(appointmentData.date) || new Date(),
             status,
             notes: appointmentData.notes ?? null,
             productsUsed: appointmentData.productsUsed ?? null,
-            createdAt: appointmentData.createdAt instanceof Date ? appointmentData.createdAt : new Date(appointmentData.createdAt),
-            updatedAt: appointmentData.updatedAt ? new Date(appointmentData.updatedAt) : null,
+            createdAt: createdDate,
+            updatedAt: toSafeDate(appointmentData.updatedAt),
             pet: {
               name: petData.name,
               breed: petData.breed,
