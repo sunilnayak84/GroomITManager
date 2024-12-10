@@ -137,7 +137,7 @@ export function PetForm({
       const petData = {
         ...data,
         customerId: selectedCustomer.id.toString(),
-        dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null,
+        dateOfBirth: data.dateOfBirth || null,
         owner: {
           id: selectedCustomer.id,
           firstName: selectedCustomer.firstName,
@@ -194,6 +194,52 @@ export function PetForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-h-[80vh] overflow-y-auto p-4">
         <div className="space-y-4">
+          <FormField
+            control={form.control}
+            name="image"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Pet Image</FormLabel>
+                <FormControl>
+                  <div className="flex flex-col items-center gap-4">
+                    {imagePreview && (
+                      <img
+                        src={imagePreview}
+                        alt="Pet preview"
+                        className="w-32 h-32 object-cover rounded-full"
+                      />
+                    )}
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
+                        id="pet-image"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => document.getElementById('pet-image')?.click()}
+                      >
+                        <Upload className="w-4 h-4 mr-2" />
+                        Upload Image
+                      </Button>
+                    </div>
+                    {uploadProgress > 0 && uploadProgress < 100 && (
+                      <div className="w-full mt-4">
+                        <Progress value={uploadProgress} className="w-full" />
+                        <p className="text-sm text-muted-foreground mt-1 text-center">
+                          Uploading: {Math.round(uploadProgress)}%
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name="customerId"
@@ -372,51 +418,7 @@ export function PetForm({
             />
           </div>
 
-          <FormField
-            control={form.control}
-            name="image"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Image</FormLabel>
-                <FormControl>
-                  <div className="flex flex-col items-center gap-4">
-                    {imagePreview && (
-                      <img
-                        src={imagePreview}
-                        alt="Pet preview"
-                        className="w-32 h-32 object-cover rounded-full"
-                      />
-                    )}
-                    <div className="flex items-center gap-2">
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="hidden"
-                        id="pet-image"
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => document.getElementById('pet-image')?.click()}
-                      >
-                        <Upload className="w-4 h-4 mr-2" />
-                        Upload Image
-                      </Button>
-                    </div>
-                    {uploadProgress > 0 && uploadProgress < 100 && (
-                      <div className="w-full mt-4">
-                        <Progress value={uploadProgress} className="w-full" />
-                        <p className="text-sm text-muted-foreground mt-1 text-center">
-                          Uploading: {Math.round(uploadProgress)}%
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </FormControl>
-              </FormItem>
-            )}
-          />
+          
 
           <FormField
             control={form.control}
