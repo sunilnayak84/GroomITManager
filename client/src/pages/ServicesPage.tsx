@@ -18,7 +18,7 @@ import { useServices } from "@/hooks/use-services";
 import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertServiceSchema, type InsertService } from "@db/schema";
+import { insertServiceSchema, type InsertService } from "@/lib/service-types";
 import type { Service } from "@/hooks/use-services";
 import {
   AlertDialog,
@@ -51,7 +51,9 @@ export default function ServicesPage() {
       name: "",
       description: "",
       duration: 60,
-      priceINR: 0,
+      price: 0,
+      consumables: [],
+      isActive: true
     },
   });
 
@@ -296,7 +298,7 @@ export default function ServicesPage() {
 
               <FormField
                 control={form.control}
-                name="priceINR"
+                name="price"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Price (in INR)</FormLabel>
