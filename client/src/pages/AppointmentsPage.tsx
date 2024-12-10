@@ -19,12 +19,8 @@ const statusColors: Record<AppointmentStatus, string> = {
   cancelled: "bg-red-100 text-red-800",
 };
 
-type AppointmentWithRelations = Omit<Appointment, 'status'> & {
-  pet: { name: string; breed: string; image: string | null };
-  customer: { name: string };
-  groomer: { name: string };
-  status: AppointmentStatus;
-};
+// Use the type from schema instead of redefining
+type AppointmentStatus = "pending" | "confirmed" | "completed" | "cancelled";
 
 export default function AppointmentsPage() {
   const [open, setOpen] = useState(false);
@@ -53,7 +49,11 @@ export default function AppointmentsPage() {
     },
     {
       header: "Customer",
-      cell: (row: AppointmentWithRelations) => `${row.customer.firstName} ${row.customer.lastName}`,
+      cell: (row: AppointmentWithRelations) => (
+        <div className="font-medium">
+          {`${row.customer.firstName} ${row.customer.lastName}`}
+        </div>
+      ),
     },
     {
       header: "Groomer",

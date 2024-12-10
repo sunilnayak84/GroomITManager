@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertAppointmentSchema, type InsertAppointment, type Appointment } from "@db/schema";
+import { z } from "zod";
+import { insertAppointmentSchema, type InsertAppointment } from "@/lib/schema";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -34,20 +35,21 @@ export default function AppointmentForm() {
   const { toast } = useToast();
 
   const defaultGroomerId = "1";
-  const form = useForm<Omit<Appointment, 'id' | 'createdAt'>>({
+  const form = useForm<z.infer<typeof insertAppointmentSchema>>({
     resolver: zodResolver(insertAppointmentSchema),
     defaultValues: {
-      petId: 0,
-      serviceId: 0,
-      groomerId: parseInt(defaultGroomerId) || 0,
-      branchId: 1,
+      petId: "",
+      serviceId: "",
+      groomerId: defaultGroomerId,
+      branchId: "1",
       date: new Date(),
       status: "pending",
       notes: "",
+      productsUsed: null
     },
   });
 
-  async function onSubmit(values: Omit<Appointment, 'id' | 'createdAt'>) {
+  async function onSubmit(values: z.infer<typeof insertAppointmentSchema>) {
     const data = {
       ...values,
       status: 'pending' as const,
@@ -85,8 +87,8 @@ export default function AppointmentForm() {
               <FormItem>
                 <FormLabel>Pet</FormLabel>
                 <Select
-                  onValueChange={(value) => field.onChange(parseInt(value))}
-                  defaultValue={field.value?.toString()}
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -97,7 +99,7 @@ export default function AppointmentForm() {
                     {(pets || []).map((pet) => (
                       <SelectItem 
                         key={pet.id} 
-                        value={typeof pet.id === 'string' ? parseInt(pet.id) : pet.id}
+                        value={pet.id.toString()}
                       >
                         {pet.name} - {pet.breed}
                       </SelectItem>

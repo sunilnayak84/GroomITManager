@@ -16,15 +16,28 @@ export const appointmentsCollection = typedCollection<Appointment>('appointments
 // User operations with error handling
 export async function createUserDocument(user: User) {
   try {
-    const userRef = doc(usersCollection, user.id.toString());
-    await setDoc(userRef, {
-      id: user.id,
+    const userRef = doc(usersCollection, user.id);
+    const timestamp = new Date();
+    
+    const userData = {
       email: user.email,
       name: user.name,
+      phone: user.phone || '',
       role: user.role,
-      createdAt: new Date(),
-      branchId: user.branchId || null
-    });
+      isActive: true,
+      createdAt: timestamp,
+      branchId: user.branchId || null,
+      isGroomer: user.isGroomer || false,
+      specialties: user.specialties || [],
+      petTypePreferences: user.petTypePreferences || [],
+      experienceYears: user.experienceYears || null,
+      certifications: user.certifications || [],
+      availability: user.availability || null,
+      maxDailyAppointments: user.maxDailyAppointments || null,
+      updatedAt: null
+    };
+
+    await setDoc(userRef, userData);
     return true;
   } catch (error) {
     console.error('Error creating user document:', error);
@@ -42,18 +55,8 @@ export async function createCustomer(customer: Omit<Customer, 'id'>) {
     }
 
     // Validate required fields
-    const requiredFields: (keyof Omit<Customer, 'id'>)[] = [
-      'firstName', 
-      'lastName', 
-      'email', 
-      'phone', 
-      'gender'
-    ];
-
-    const missingFields = requiredFields.filter(field => {
-      const value = customer[field];
-      return value === undefined || value === null || value === '';
-    });
+    const requiredFields = ['firstName', 'lastName', 'email', 'phone'] as const;
+    const missingFields = requiredFields.filter(field => !customer[field]);
 
     if (missingFields.length > 0) {
       console.error('FIRESTORE: Missing required customer fields', { 
@@ -63,34 +66,21 @@ export async function createCustomer(customer: Omit<Customer, 'id'>) {
       throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
     }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(customer.email)) {
-      console.error('FIRESTORE: Invalid email format', { email: customer.email });
-      throw new Error('Invalid email format');
-    }
-
-    // Validate phone number (remove non-digit characters)
-    const phoneDigits = customer.phone.replace(/\D/g, '');
-    if (phoneDigits.length < 10) {
-      console.error('FIRESTORE: Invalid phone number', { phone: customer.phone });
-      throw new Error('Phone number must be at least 10 digits');
-    }
-
     // Create customer reference
     const customerRef = doc(customersCollection);
+    const timestamp = new Date();
     
-    // Ensure createdAt is a valid Date
-    const createdAt = customer.createdAt instanceof Date 
-      ? customer.createdAt 
-      : (customer.createdAt ? new Date(customer.createdAt) : new Date());
-    
-    // Prepare customer data for Firestore
+    // Prepare customer data for Firestore with proper types
     const customerData = {
-      ...customer,
-      id: customerRef.id, // Use the Firestore document ID directly
-      createdAt: createdAt.toISOString(), // Store as ISO string for consistent serialization
-      petCount: customer.petCount || 0
+      firstName: customer.firstName,
+      lastName: customer.lastName,
+      email: customer.email,
+      phone: customer.phone,
+      address: customer.address || null,
+      gender: customer.gender || null,
+      petCount: 0,
+      firebaseId: null,
+      createdAt: timestamp
     };
 
     // Log the data being saved
@@ -235,18 +225,28 @@ export async function updateCustomer(id: string, data: Partial<Customer>) {
   try {
     const customerRef = doc(customersCollection, id);
     
-    // Ensure createdAt is handled correctly if present
-    const processedData = { ...data };
-    if (processedData.createdAt) {
-      processedData.createdAt = processedData.createdAt instanceof Date 
-        ? processedData.createdAt.toISOString() 
-        : (processedData.createdAt ? new Date(processedData.createdAt).toISOString() : undefined);
+    // Create a type-safe processed data object
+    const processedData: Partial<Customer> & { updatedAt: string } = {
+      ...data,
+      updatedAt: new Date().toISOString()
+    };
+
+    // Handle date conversion if createdAt is present
+    if (data.createdAt) {
+      processedData.createdAt = data.createdAt instanceof Date 
+        ? data.createdAt
+        : new Date(data.createdAt);
     }
 
-    await setDoc(customerRef, {
-      ...processedData,
-      updatedAt: new Date().toISOString()
-    }, { merge: true });
+    // Create a clean object without undefined values
+    const cleanedData = Object.entries(processedData).reduce((acc, [key, value]) => {
+      if (value !== undefined) {
+        acc[key as keyof typeof processedData] = value;
+      }
+      return acc;
+    }, {} as Partial<Customer> & { updatedAt: string });
+
+    await setDoc(customerRef, cleanedData, { merge: true });
     return true;
   } catch (error) {
     console.error('Error updating customer:', error);
@@ -324,27 +324,29 @@ export async function updatePet(id: string, data: Partial<Pet>) {
     }
 
     const timestamp = new Date().toISOString();
-    const updateData = {
+    const updateData: Partial<Pet> & { updatedAt: string } = {
       ...data,
       updatedAt: timestamp
     };
 
-    // Remove any undefined values
-    Object.keys(updateData).forEach(key => {
-      if (updateData[key] === undefined) {
-        delete updateData[key];
+    // Create a type-safe version of the update data
+    const cleanedData = Object.entries(updateData).reduce((acc, [key, value]) => {
+      if (value !== undefined) {
+        acc[key as keyof typeof updateData] = value;
       }
-    });
+      return acc;
+    }, {} as Partial<Pet> & { updatedAt: string });
 
-    await setDoc(petRef, updateData, { merge: true });
-    console.log('FIRESTORE: Pet updated successfully', { id, updateData });
+    await setDoc(petRef, cleanedData, { merge: true });
+    console.log('FIRESTORE: Pet updated successfully', { id, updateData: cleanedData });
     
+    const currentData = petDoc.data();
     return {
       success: true,
       pet: {
-        id,
-        ...petDoc.data(),
-        ...updateData
+        ...currentData,
+        ...cleanedData,
+        id // Keep id at the end to ensure it's not overwritten
       }
     };
   } catch (error) {
