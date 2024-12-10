@@ -1,4 +1,4 @@
-import { StrictMode, lazy } from "react";
+import { StrictMode, lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { Switch, Route } from "wouter";
 import "./index.css";
@@ -14,16 +14,38 @@ import ServicesPage from "./pages/ServicesPage";
 import { Loader2 } from "lucide-react";
 import { useUser } from "./hooks/use-user";
 import Layout from "./components/Layout";
+import { ErrorBoundary } from "react-error-boundary";
+
+// Loading component for suspense fallback
+function LoadingSpinner() {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+    </div>
+  );
+}
+
+// Error fallback component
+function ErrorFallback({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen p-4">
+      <h2 className="text-lg font-semibold text-red-600 mb-2">Something went wrong</h2>
+      <pre className="text-sm text-gray-500 mb-4">{error.message}</pre>
+      <button
+        onClick={resetErrorBoundary}
+        className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
+      >
+        Try again
+      </button>
+    </div>
+  );
+}
 
 function Router() {
   const { user, isLoading } = useUser();
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (!user) {
@@ -32,24 +54,30 @@ function Router() {
 
   return (
     <Layout>
-      <Switch>
-        <Route path="/" component={HomePage} />
-        <Route path="/appointments" component={AppointmentsPage} />
-        <Route path="/customers" component={CustomersPage} />
-        <Route path="/pets" component={PetsPage} />
-        <Route path="/services" component={ServicesPage} />
-        <Route path="/inventory" component={lazy(() => import('./pages/InventoryPage'))} />
-        <Route>404 Page Not Found</Route>
-      </Switch>
+      <ErrorBoundary FallbackComponent={ErrorFallback}>
+        <Suspense fallback={<LoadingSpinner />}>
+          <Switch>
+            <Route path="/" component={HomePage} />
+            <Route path="/appointments" component={AppointmentsPage} />
+            <Route path="/customers" component={CustomersPage} />
+            <Route path="/pets" component={PetsPage} />
+            <Route path="/services" component={ServicesPage} />
+            <Route path="/inventory" component={lazy(() => import('./pages/InventoryPage'))} />
+            <Route>404 Page Not Found</Route>
+          </Switch>
+        </Suspense>
+      </ErrorBoundary>
     </Layout>
   );
 }
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <Router />
-      <Toaster />
-    </QueryClientProvider>
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <QueryClientProvider client={queryClient}>
+        <Router />
+        <Toaster />
+      </QueryClientProvider>
+    </ErrorBoundary>
   </StrictMode>
 );
