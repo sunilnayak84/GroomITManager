@@ -48,7 +48,6 @@ export function useInventory() {
   // Fetch inventory items
   const { data: inventory = [], isLoading, ...rest } = useQuery<InventoryItem[]>({
     queryKey: ['inventory'],
-    suspense: true,
     staleTime: 1000 * 60 * 5, // 5 minutes
     queryFn: async () => {
       try {
