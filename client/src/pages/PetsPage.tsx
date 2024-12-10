@@ -37,16 +37,12 @@ export default function PetsPage() {
     addPet, 
     updatePet,
     deletePet,
-    refetch,
-    addPetMutation,
-    updatePetMutation,
-    deletePetMutation
+    refetch 
   } = usePets();
   const { customers } = useCustomers();
-  const [showPetDetails, setShowPetDetails] = useState(false);
+  const [showPetModal, setShowPetModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
   const [data, setData] = useState<Pet[]>([]);
   const [optimisticPets, setOptimisticPets] = useState<{ [key: string]: Pet }>({});
   const { toast } = useToast();
@@ -61,23 +57,7 @@ export default function PetsPage() {
   }, [data, searchQuery]);
 
   useEffect(() => {
-    console.log('PetsPage Debug:', {
-      petsCount: pets?.length,
-      pets
-    });
-  }, [pets]);
-
-  useEffect(() => {
-    console.log('PetsPage Customers Debug:', {
-      customersCount: customers?.length,
-      customers
-    });
-  }, [customers]);
-
-  useEffect(() => {
     if (pets && customers) {
-      console.log('Setting table data:', { pets, customers });
-      // Merge optimistic updates with actual data
       const mergedPets = pets.map(pet => {
         const optimisticUpdate = optimisticPets[pet.id];
         return optimisticUpdate || pet;
@@ -91,7 +71,6 @@ export default function PetsPage() {
       throw new Error('No pet selected for update');
     }
 
-    // Create optimistic update with type safety
     const optimisticPet: Pet = {
       ...selectedPet,
       name: formData.name,
@@ -107,10 +86,8 @@ export default function PetsPage() {
       image: typeof formData.image === 'string' ? formData.image : selectedPet.image,
       owner: formData.owner || null,
       updatedAt: new Date().toISOString(),
-      submissionId: formData.submissionId
     };
 
-    // Apply optimistic update
     setOptimisticPets(prev => ({
       ...prev,
       [selectedPet.id]: optimisticPet
@@ -122,27 +99,17 @@ export default function PetsPage() {
         updateData: formData
       });
       
-      // On success, clear the optimistic update
       setOptimisticPets(prev => {
         const { [selectedPet.id]: _, ...rest } = prev;
         return rest;
       });
     } catch (error) {
-      // On error, revert the optimistic update
       setOptimisticPets(prev => {
         const { [selectedPet.id]: _, ...rest } = prev;
         return rest;
       });
       throw error;
     }
-  };
-
-  const getOwnerName = (pet: Pet) => {
-    if (pet.owner) {
-      return `${pet.owner.firstName} ${pet.owner.lastName}`;
-    }
-    const owner = customers?.find(c => c.id === pet.customerId);
-    return owner ? `${owner.firstName} ${owner.lastName}` : 'N/A';
   };
 
   const formatDate = (date: { seconds: number; nanoseconds: number; } | string | Date | null | undefined) => {
@@ -201,8 +168,7 @@ export default function PetsPage() {
           size="lg"
           onClick={() => {
             setSelectedPet(null);
-            setIsEditing(false);
-            setShowPetDetails(true);
+            setShowPetModal(true);
           }}
           className="h-12 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
         >
@@ -278,7 +244,7 @@ export default function PetsPage() {
                     className="hover:bg-purple-50 hover:text-purple-600"
                     onClick={() => {
                       setSelectedPet(pet);
-                      setShowPetDetails(true);
+                      setShowPetModal(true);
                     }}
                   >
                     View Details
@@ -298,136 +264,55 @@ export default function PetsPage() {
       </div>
 
       <Dialog 
-        open={showPetDetails} 
+        open={showPetModal}
         onOpenChange={(open) => {
-          setShowPetDetails(open);
+          setShowPetModal(open);
           if (!open) {
             setSelectedPet(null);
-            setIsEditing(false);
           }
         }}
       >
-        <DialogContent className="sm:max-w-[425px]">
-          {isEditing ? (
-            <>
-
-              <DialogHeader>
-                <DialogTitle>{selectedPet ? 'Edit Pet' : 'Add New Pet'}</DialogTitle>
-                <DialogDescription>
-                  {selectedPet ? 'Update the pet information below.' : 'Fill in the pet details below.'}
-                </DialogDescription>
-              </DialogHeader>
-              <PetForm
-                handleSubmit={async (data) => {
-                  try {
-                    if (selectedPet) {
-                      await handleUpdatePet(data);
-                    } else {
-                      await addPet(data);
-                    }
-                    
-                    await refetch();
-                    
-                    // Batch state updates together
-                    setTimeout(() => {
-                      toast({
-                        title: "Success",
-                        description: selectedPet ? "Pet updated successfully" : "Pet added successfully",
-                      });
-                      setIsEditing(false);
-                      setShowPetDetails(false);
-                    }, 0);
-                    
-                    return true;
-                  } catch (error) {
-                    console.error('Error handling pet:', error);
-                    toast({
-                      variant: "destructive",
-                      title: "Error",
-                      description: error instanceof Error ? error.message : "Failed to handle pet",
-                    });
-                    return false;
-                  }
-                }}
-                onSuccess={async () => {
-                  // Success is handled in handleSubmit
-                }}
-                onCancel={() => {
-                  setIsEditing(false);
-                  if (!selectedPet) {
-                    setShowPetDetails(false);
-                  }
-                }}
-                customers={customers}
-                defaultValues={selectedPet ?? undefined}
-                customerId={selectedPet?.customerId ?? (customers?.[0]?.firebaseId ?? '')}
-                isEditing={!!selectedPet}
-              />
-            </>
-
-          ) : selectedPet && (
-            <>
-
-              <DialogHeader>
-                <DialogTitle className="text-center">Pet Details</DialogTitle>
-                <div className="flex justify-center gap-2 mt-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsEditing(true)}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    onClick={() => setShowDeleteConfirm(true)}
-                  >
-                    Delete
-                  </Button>
-                </div>
-              </DialogHeader>
-
-              {selectedPet.image && (
-                <div className="flex justify-center mb-4">
-                  <img
-                    src={selectedPet.image}
-                    alt={`${selectedPet.name}'s photo`}
-                    className="rounded-full w-24 h-24 object-cover"
-                  />
-                </div>
-              )}
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <strong>Name:</strong> {selectedPet.name}
-                </div>
-                <div>
-                  <strong>Type:</strong> {selectedPet.type}
-                </div>
-                <div>
-                  <strong>Breed:</strong> {selectedPet.breed}
-                </div>
-                <div>
-                  <strong>Owner:</strong> {getOwnerName(selectedPet)}
-                </div>
-                <div>
-                  <strong>Age:</strong> {selectedPet.age || 'N/A'}
-                </div>
-                <div>
-                  <strong>Gender:</strong> {selectedPet.gender ? selectedPet.gender.charAt(0).toUpperCase() + selectedPet.gender.slice(1) : 'N/A'}
-                </div>
-                <div>
-                  <strong>Date of Birth:</strong> {formatDate(selectedPet.dateOfBirth)}
-                </div>
-                <div>
-                  <strong>Weight:</strong> {selectedPet.weight ? `${selectedPet.weight} ${selectedPet.weightUnit}` : 'N/A'}
-                </div>
-                <div className="col-span-2">
-                  <strong>Notes:</strong> {selectedPet.notes || 'No notes available'}
-                </div>
-              </div>
-            </>
-
-          )}
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>{selectedPet ? 'Edit Pet' : 'Add New Pet'}</DialogTitle>
+            <DialogDescription>
+              {selectedPet ? 'Update the pet information below.' : 'Fill in the pet details below.'}
+            </DialogDescription>
+          </DialogHeader>
+          <PetForm
+            handleSubmit={async (data) => {
+              try {
+                if (selectedPet) {
+                  await handleUpdatePet(data);
+                } else {
+                  await addPet(data);
+                }
+                
+                await refetch();
+                
+                toast({
+                  title: "Success",
+                  description: selectedPet ? "Pet updated successfully" : "Pet added successfully",
+                });
+                setShowPetModal(false);
+                
+                return true;
+              } catch (error) {
+                console.error('Error handling pet:', error);
+                toast({
+                  variant: "destructive",
+                  title: "Error",
+                  description: error instanceof Error ? error.message : "Failed to handle pet",
+                });
+                return false;
+              }
+            }}
+            onCancel={() => setShowPetModal(false)}
+            customers={customers}
+            defaultValues={selectedPet ?? undefined}
+            customerId={selectedPet?.customerId ?? (customers?.[0]?.firebaseId ?? '')}
+            isEditing={!!selectedPet}
+          />
         </DialogContent>
       </Dialog>
 
@@ -447,7 +332,7 @@ export default function PetsPage() {
                   try {
                     await deletePet(selectedPet.id);
                     setShowDeleteConfirm(false);
-                    setShowPetDetails(false);
+                    setShowPetModal(false);
                     setSelectedPet(null);
                     toast({
                       title: "Success",
