@@ -234,9 +234,18 @@ export function usePets() {
         let imageUrl = petData.image;
         if (petData.image instanceof File) {
           try {
+            // Track upload progress
+            const onProgress = (progress: number) => {
+              console.log('Upload progress:', progress);
+              if (typeof petData.onUploadProgress === 'function') {
+                petData.onUploadProgress(progress);
+              }
+            };
+
             imageUrl = await uploadFile(
               petData.image,
-              `pets/${petData.customerId}/${Date.now()}_${petData.image.name}`
+              `pets/${petData.customerId}/${Date.now()}_${petData.image.name}`,
+              onProgress
             );
           } catch (uploadError) {
             console.error('ADD_PET: Image upload failed:', uploadError);
