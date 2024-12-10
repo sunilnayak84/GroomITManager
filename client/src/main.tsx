@@ -10,6 +10,7 @@ import AuthPage from "./pages/AuthPage";
 import AppointmentsPage from "./pages/AppointmentsPage";
 import CustomersPage from "./pages/CustomersPage";
 import PetsPage from "./pages/PetsPage";
+import ServicesPage from "./pages/ServicesPage";
 import { Loader2 } from "lucide-react";
 import { useUser } from "./hooks/use-user";
 import Layout from "./components/Layout";
@@ -36,6 +37,7 @@ function Router() {
         <Route path="/appointments" component={AppointmentsPage} />
         <Route path="/customers" component={CustomersPage} />
         <Route path="/pets" component={PetsPage} />
+        <Route path="/services" component={ServicesPage} />
         <Route>404 Page Not Found</Route>
       </Switch>
     </Layout>
