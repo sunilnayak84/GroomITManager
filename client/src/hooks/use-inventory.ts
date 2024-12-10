@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, query, serverTimestamp, getDoc } from 'firebase/firestore';
 import { db } from "../lib/firebase";
-import { toast } from "../lib/toast";
+import { toast } from "@/components/ui/use-toast";
 import { z } from "zod";
 
 // Collection reference
