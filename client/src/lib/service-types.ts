@@ -16,8 +16,12 @@ export const serviceSchema = z.object({
   price: z.number().min(0, "Price cannot be negative"),
   consumables: z.array(serviceConsumableSchema).default([]),
   isActive: z.boolean().default(true),
-  created_at: z.date(),
-  updated_at: z.date(),
+  created_at: z.string().or(z.date()).transform(val => 
+    typeof val === 'string' ? new Date(val) : val
+  ),
+  updated_at: z.string().or(z.date()).transform(val => 
+    typeof val === 'string' ? new Date(val) : val
+  ),
 });
 
 // Export types based on the schema
@@ -30,7 +34,14 @@ export const insertServiceSchema = serviceSchema.omit({
   created_at: true,
   updated_at: true,
 }).extend({
-  consumables: z.array(serviceConsumableSchema).optional().default([])
+  consumables: z.array(serviceConsumableSchema).optional().default([]),
+  name: z.string().min(2, "Service name must be at least 2 characters"),
+  price: z.number().min(0, "Price cannot be negative").default(0),
+  duration: z.number().min(15, "Duration must be at least 15 minutes").default(30)
 });
 
 export type InsertService = z.infer<typeof insertServiceSchema>;
+
+// Schema for updating a service
+export const updateServiceSchema = insertServiceSchema.partial();
+export type UpdateService = z.infer<typeof updateServiceSchema>;
