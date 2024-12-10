@@ -176,7 +176,12 @@ function setupGracefulShutdown(server: any) {
     }
 
     // Start the server
-    const PORT = 5000;
+    const PORT = parseInt(process.env.PORT || '3001', 10);
+    if (isNaN(PORT) || PORT < 1 || PORT > 65535) {
+      log('Invalid port number specified', 'error');
+      process.exit(1);
+    }
+    
     server.listen(PORT, "0.0.0.0", () => {
       log(`Server listening on port ${PORT}`, 'info');
     }).on('error', (error: any) => {
