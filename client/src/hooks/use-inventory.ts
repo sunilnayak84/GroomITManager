@@ -1,11 +1,20 @@
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, query, serverTimestamp, getDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, query, where, orderBy, serverTimestamp, getDoc } from 'firebase/firestore';
 import { db } from "../lib/firebase";
 import { toast } from "@/components/ui/use-toast";
 import { z } from "zod";
 
-// Collection reference
+// Collection references
 const inventoryCollection = collection(db, 'inventory');
+const usageHistoryCollection = collection(db, 'inventory_usage_history');
+
+// Helper to format date for Firestore
+const formatDate = (date: Date) => {
+  return {
+    toFirestore: () => date,
+    fromFirestore: (snapshot: any) => snapshot.toDate(),
+  };
+};
 
 // Define schema for inventory items
 export const inventoryItemSchema = z.object({
@@ -20,8 +29,21 @@ export const inventoryItemSchema = z.object({
   supplier: z.string().optional(),
   last_restock_date: z.date().optional(),
   isActive: z.boolean().default(true),
+  quantity_per_use: z.number().min(0, "Quantity per use must be non-negative").default(0),
+  service_linked: z.boolean().default(false),
   created_at: z.date(),
   updated_at: z.date().optional(),
+});
+
+export const inventoryUsageHistorySchema = z.object({
+  usage_id: z.string(),
+  item_id: z.string(),
+  quantity_used: z.number().min(0, "Usage quantity must be positive"),
+  service_id: z.string().optional(),
+  appointment_id: z.string().optional(),
+  used_by: z.string(),
+  used_at: z.date(),
+  notes: z.string().optional(),
 });
 
 export const inventoryUsageSchema = z.object({
@@ -249,6 +271,27 @@ export function useInventory() {
     }
   };
 
+  // Fetch usage history for an item
+  const getUsageHistory = async (itemId: string) => {
+    try {
+      const q = query(
+        usageHistoryCollection,
+        where('item_id', '==', itemId),
+        orderBy('used_at', 'desc')
+      );
+      
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(doc => ({
+        usage_id: doc.id,
+        ...doc.data(),
+        used_at: doc.data().used_at.toDate(),
+      }));
+    } catch (error) {
+      console.error('Error fetching usage history:', error);
+      return [];
+    }
+  };
+
   return {
     inventory,
     isLoading,
@@ -257,6 +300,7 @@ export function useInventory() {
     updateInventoryItem,
     deleteInventoryItem,
     recordUsage,
+    getUsageHistory,
     ...rest
   };
 }

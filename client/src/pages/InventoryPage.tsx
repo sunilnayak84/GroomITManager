@@ -1,4 +1,4 @@
-import { Plus, Search, Edit, Trash2, History, Package, AlertTriangle } from "lucide-react";
+import { Plus, Search, Edit, Trash2, History, Package, AlertTriangle, Droplets } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {
   Dialog,
   DialogContent,
@@ -26,6 +37,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useInventory, type InsertInventoryItem } from "@/hooks/use-inventory";
+import { ConsumablesUsageModal } from "@/components/ConsumablesUsageModal";
 import { ErrorBoundary } from "react-error-boundary";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -45,8 +57,36 @@ function ErrorFallback({ error }: { error: Error }) {
 
 export default function InventoryPage() {
   const [open, setOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<{
+    id: string;
+    name: string;
+    quantity: number;
+    unit: string;
+  } | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const { inventory, isLoading, error, addInventoryItem, updateInventoryItem, deleteInventoryItem, recordUsage } = useInventory();
+  const [selectedHistoryItem, setSelectedHistoryItem] = useState<string | null>(null);
+  const [usageHistory, setUsageHistory] = useState<any[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+  const { inventory, isLoading, error, addInventoryItem, updateInventoryItem, deleteInventoryItem, recordUsage, getUsageHistory } = useInventory();
+
+  // Fetch usage history when an item is selected
+  const handleViewHistory = async (itemId: string) => {
+    setSelectedHistoryItem(itemId);
+    setIsLoadingHistory(true);
+    try {
+      const history = await getUsageHistory(itemId);
+      setUsageHistory(history);
+    } catch (error) {
+      console.error('Error fetching usage history:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch usage history",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  };
 
   const form = useForm<InsertInventoryItem>({
     resolver: zodResolver(inventoryItemSchema.omit({ item_id: true, created_at: true, updated_at: true })),
@@ -327,15 +367,117 @@ export default function InventoryPage() {
                     <TableCell>{item.supplier || '-'}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Button variant="ghost" size="icon">
-                          <History className="h-4 w-4" />
+                        <Dialog open={selectedHistoryItem === item.item_id} onOpenChange={(open) => {
+                          if (open) {
+                            handleViewHistory(item.item_id);
+                          } else {
+                            setSelectedHistoryItem(null);
+                            setUsageHistory([]);
+                          }
+                        }}>
+                          <DialogTrigger asChild>
+                            <Button variant="ghost" size="icon" title="View Usage History">
+                              <History className="h-4 w-4" />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-3xl">
+                            <DialogHeader>
+                              <DialogTitle>Usage History - {item.name}</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-4">
+                              <Table>
+                                <TableHeader>
+                                  <TableRow>
+                                    <TableHead>Date</TableHead>
+                                    <TableHead>Quantity Used</TableHead>
+                                    <TableHead>Used By</TableHead>
+                                    <TableHead>Service</TableHead>
+                                    <TableHead>Notes</TableHead>
+                                  </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                  {isLoadingHistory ? (
+                                    <TableRow>
+                                      <TableCell colSpan={5} className="text-center py-4">
+                                        <div className="flex items-center justify-center space-x-2">
+                                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+                                          <span>Loading history...</span>
+                                        </div>
+                                      </TableCell>
+                                    </TableRow>
+                                  ) : usageHistory.length === 0 ? (
+                                    <TableRow>
+                                      <TableCell colSpan={5} className="text-center text-muted-foreground">
+                                        No usage history available
+                                      </TableCell>
+                                    </TableRow>
+                                  ) : (
+                                    usageHistory.map((usage) => (
+                                      <TableRow key={usage.usage_id}>
+                                        <TableCell>{new Date(usage.used_at).toLocaleDateString()}</TableCell>
+                                        <TableCell>{usage.quantity_used} {item.unit}</TableCell>
+                                        <TableCell>{usage.used_by}</TableCell>
+                                        <TableCell>{usage.service_id || '-'}</TableCell>
+                                        <TableCell>{usage.notes || '-'}</TableCell>
+                                      </TableRow>
+                                    ))
+                                  )}
+                                </TableBody>
+                              </Table>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          title="Record Usage"
+                          onClick={() => setSelectedItem({
+                            id: item.item_id,
+                            name: item.name,
+                            quantity: item.quantity,
+                            unit: item.unit,
+                          })}
+                        >
+                          <Droplets className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="text-red-500">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="ghost" size="icon" title="Edit Item">
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Edit Inventory Item</DialogTitle>
+                            </DialogHeader>
+                            {/* We'll implement the edit form later */}
+                            <div>Edit form will go here</div>
+                          </DialogContent>
+                        </Dialog>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="ghost" size="icon" className="text-red-500" title="Delete Item">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Inventory Item</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete {item.name}? This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => deleteInventoryItem(item.item_id)}
+                                className="bg-red-500 hover:bg-red-600"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -345,6 +487,18 @@ export default function InventoryPage() {
           </Table>
         </div>
       </ErrorBoundary>
+
+      {/* Consumables Usage Modal */}
+      {selectedItem && (
+        <ConsumablesUsageModal
+          isOpen={!!selectedItem}
+          onClose={() => setSelectedItem(null)}
+          itemId={selectedItem.id}
+          itemName={selectedItem.name}
+          currentQuantity={selectedItem.quantity}
+          unit={selectedItem.unit}
+        />
+      )}
     </div>
   );
 }
