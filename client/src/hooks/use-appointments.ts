@@ -103,6 +103,7 @@ export function useAppointments() {
   const addAppointmentMutation = useMutation({
     mutationFn: async (appointmentData: InsertAppointment) => {
       const documentData = {
+        id: crypto.randomUUID(),
         petId: Number(appointmentData.petId),
         serviceId: Number(appointmentData.serviceId),
         groomerId: String(appointmentData.groomerId),
@@ -113,7 +114,7 @@ export function useAppointments() {
         productsUsed: appointmentData.productsUsed ?? null,
         createdAt: new Date(),
         updatedAt: null
-      } as const;
+      };
 
       // Add the document to Firestore
       const docRef = await addDoc(appointmentsCollection, documentData);

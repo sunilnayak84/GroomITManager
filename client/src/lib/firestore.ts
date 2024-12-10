@@ -9,9 +9,9 @@ function typedCollection<T = DocumentData>(collectionName: string): CollectionRe
 
 // Collection references with proper typing
 export const usersCollection = typedCollection<User>('users');
-export const customersCollection = typedCollection<Customer>('customers');
-export const petsCollection = typedCollection<Pet>('pets');
-export const appointmentsCollection = typedCollection<Appointment>('appointments');
+export const customersCollection = collection(db, 'customers');
+export const petsCollection = collection(db, 'pets');
+export const appointmentsCollection = collection(db, 'appointments');
 
 // User operations with error handling
 export async function createUserDocument(user: User) {

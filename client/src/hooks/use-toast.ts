@@ -8,7 +8,7 @@ type ToasterToast = ToastProps & {
   id: string
   title?: string
   description?: string
-  action?: ToastActionElement
+  action?: React.ReactElement
 }
 
 const actionTypes = {
