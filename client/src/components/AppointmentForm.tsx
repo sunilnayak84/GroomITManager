@@ -38,10 +38,10 @@ export default function AppointmentForm() {
   const form = useForm<z.infer<typeof insertAppointmentSchema>>({
     resolver: zodResolver(insertAppointmentSchema),
     defaultValues: {
-      petId: "",
-      serviceId: "",
+      petId: undefined,
+      serviceId: undefined,
       groomerId: defaultGroomerId,
-      branchId: "1",
+      branchId: 1,
       date: new Date(),
       status: "pending",
       notes: "",
@@ -87,8 +87,8 @@ export default function AppointmentForm() {
               <FormItem>
                 <FormLabel>Pet</FormLabel>
                 <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  onValueChange={(value) => field.onChange(Number(value))}
+                  defaultValue={field.value?.toString()}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -99,7 +99,7 @@ export default function AppointmentForm() {
                     {(pets || []).map((pet) => (
                       <SelectItem 
                         key={pet.id} 
-                        value={pet.id.toString()}
+                        value={String(pet.id)}
                       >
                         {pet.name} - {pet.breed}
                       </SelectItem>

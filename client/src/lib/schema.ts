@@ -63,10 +63,10 @@ export const insertPetSchema = petSchema.omit({
 // Schema for Appointment
 export const appointmentSchema = z.object({
   id: z.string(),
-  petId: z.string(),
-  serviceId: z.string(),
+  petId: z.number(),
+  serviceId: z.number(),
   groomerId: z.string(),
-  branchId: z.string(),
+  branchId: z.number(),
   date: z.date(),
   status: z.enum(["pending", "confirmed", "completed", "cancelled"]),
   notes: z.string().nullable(),
@@ -82,10 +82,10 @@ export const insertAppointmentSchema = appointmentSchema.omit({
   updatedAt: true,
 }).extend({
   date: z.date().min(new Date(), "Appointment date must be in the future"),
-  petId: z.string().min(1, "Pet must be selected"),
-  serviceId: z.string().min(1, "Service must be selected"),
+  petId: z.number().min(1, "Pet must be selected"),
+  serviceId: z.number().min(1, "Service must be selected"),
   groomerId: z.string().min(1, "Groomer must be selected"),
-  branchId: z.string().min(1, "Branch must be selected"),
+  branchId: z.number().min(1, "Branch must be selected"),
   status: z.enum(["pending", "confirmed", "completed", "cancelled"]).default("pending"),
   notes: z.string().nullable(),
   productsUsed: z.string().nullable()
