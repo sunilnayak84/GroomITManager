@@ -12,6 +12,7 @@ export const customerSchema = z.object({
   createdAt: z.string(),
   updatedAt: z.string().nullable(),
   firebaseId: z.string().nullable(),
+  name: z.string().optional(),
 });
 
 export const insertCustomerSchema = customerSchema.omit({ 

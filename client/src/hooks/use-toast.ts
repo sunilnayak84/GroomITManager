@@ -1,6 +1,6 @@
 
 import * as React from "react"
-import type { ToastProps } from "@/components/ui/toast"
+import { ToastActionElement, type ToastProps } from "@/components/ui/toast"
 
 const TOAST_LIMIT = 1
 const TOAST_REMOVE_DELAY = 5000
@@ -9,7 +9,7 @@ type ToasterToast = ToastProps & {
   id: string
   title?: string
   description?: string
-  action?: React.ReactElement
+  action?: ToastActionElement
 }
 
 const actionTypes = {
@@ -155,9 +155,9 @@ function createToast(props: ToastProps) {
 }
 
 export const toast = {
-  ...createToast,
+  create: createToast,
   success: (message: string) => {
-    createToast({ title: "Success", description: message, variant: "success" })
+    createToast({ title: "Success", description: message, variant: "default" })
   },
   error: (message: string) => {
     createToast({ title: "Error", description: message, variant: "destructive" })
