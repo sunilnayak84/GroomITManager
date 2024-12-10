@@ -37,8 +37,6 @@ export interface PetInput {
   submissionId?: string;
 }
 
-export type InsertPet = Omit<PetInput, "id">;
-
 export const petSchema = z.object({
   id: z.number(),
   image: z.string().nullable(),
@@ -57,4 +55,7 @@ export const petSchema = z.object({
 });
 
 export type Pet = z.infer<typeof petSchema>;
-export type InsertPet = Omit<Pet, "id" | "createdAt" | "firebaseId">;
+export type InsertPet = Omit<PetInput, "id" | "submissionId"> & {
+  createdAt?: string | null;
+  firebaseId?: string | null;
+};
