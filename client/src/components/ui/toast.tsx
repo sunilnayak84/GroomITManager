@@ -39,36 +39,37 @@ const toastVariants = cva(
 
 export type ToastActionElement = React.ReactElement<typeof ToastPrimitives.Action>
 
-export interface ToastProps
-  extends React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root>,
-    VariantProps<typeof toastVariants> {
+export interface ToastCustomProps {
   title?: string
   description?: string
   action?: ToastActionElement
 }
 
+interface BaseToastProps
+  extends Omit<React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root>, keyof ToastCustomProps>,
+    VariantProps<typeof toastVariants>,
+    ToastCustomProps {}
+
 const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
-  ToastProps
->(({ className, variant, title, description, action, ...props }, ref) => {
-  return (
-    <ToastPrimitives.Root
-      ref={ref}
-      className={cn(toastVariants({ variant }), className)}
-      {...props}
-    >
-      <div className="grid gap-1">
-        {title && <div className="text-sm font-semibold">{title}</div>}
-        {description && <div className="text-sm opacity-90">{description}</div>}
-      </div>
-      {action}
-      <ToastPrimitives.Close className="absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100">
-        <X className="h-4 w-4" />
-      </ToastPrimitives.Close>
-    </ToastPrimitives.Root>
-  )
-})
+  BaseToastProps
+>(({ className, variant, title, description, action, ...props }, ref) => (
+  <ToastPrimitives.Root
+    ref={ref}
+    className={cn(toastVariants({ variant }), className)}
+    {...props}
+  >
+    <div className="grid gap-1">
+      {title && <div className="text-sm font-semibold">{title}</div>}
+      {description && <div className="text-sm opacity-90">{description}</div>}
+    </div>
+    {action}
+    <ToastPrimitives.Close className="absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100">
+      <X className="h-4 w-4" />
+    </ToastPrimitives.Close>
+  </ToastPrimitives.Root>
+))
 Toast.displayName = ToastPrimitives.Root.displayName
 
+export type ToastProps = BaseToastProps
 export { Toast, ToastProvider, ToastViewport }
-export type { ToastProps }

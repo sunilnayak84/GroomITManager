@@ -42,11 +42,11 @@ args = "Development Server"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Client Dev Server"
+args = "Express Server"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Express Server"
+args = "Client Dev Server"
 
 [[workflows.workflow]]
 name = "Express Server"
@@ -90,5 +90,5 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd client && npm run dev"
+args = "cd client && npm run dev -- --port 5173 --host 0.0.0.0"
 waitForPort = 5173
