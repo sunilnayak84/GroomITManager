@@ -43,7 +43,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-export function ServicesPage() {
+export default function ServicesPage() {
   const { services, isLoading, addService, updateService, deleteService } = useServices();
   const [showServiceDialog, setShowServiceDialog] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
