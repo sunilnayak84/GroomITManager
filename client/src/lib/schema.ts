@@ -34,7 +34,7 @@ export const petSchema = z.object({
   dateOfBirth: z.string().nullable(),
   age: z.number().nullable(),
   gender: z.enum(["male", "female", "unknown"]).nullable(),
-  weight: z.string().nullable(),
+  weight: z.number().nullable(),
   weightUnit: z.enum(["kg", "lbs"]).default("kg"),
   image: z.union([z.string(), z.instanceof(File)]).nullable(),
   notes: z.string().nullable(),
@@ -109,8 +109,27 @@ export const insertUserSchema = userSchema.omit({
 });
 
 // Types
-export type Customer = z.infer<typeof customerSchema>;
-export type InsertCustomer = z.infer<typeof insertCustomerSchema>;
+export interface Customer {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string | null;
+  gender: "male" | "female" | "other" | null;
+  petCount: number;
+  createdAt: Date;
+  updatedAt: Date | null;
+  firebaseId: string | null;
+  name?: string;
+}
+
+export interface ToastProps {
+  success: (message: string) => void;
+  error: (message: string) => void;
+}
+
+export type InsertCustomer = Omit<Customer, 'id' | 'createdAt' | 'updatedAt' | 'firebaseId' | 'petCount'>;
 export type Pet = z.infer<typeof petSchema>;
 export type InsertPet = z.infer<typeof insertPetSchema>;
 export type Appointment = z.infer<typeof appointmentSchema>;
