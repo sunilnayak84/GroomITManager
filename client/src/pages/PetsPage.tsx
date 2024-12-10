@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { usePets } from "@/hooks/use-pets";
 import { useCustomers } from "@/hooks/use-customers";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { PetForm } from "@/components/PetForm";
 import {
@@ -279,23 +279,44 @@ export default function PetsPage() {
 
               <DialogHeader>
                 <DialogTitle>{selectedPet ? 'Edit Pet' : 'Add New Pet'}</DialogTitle>
+                <DialogDescription>
+                  {selectedPet ? 'Update the pet information below.' : 'Fill in the pet details below.'}
+                </DialogDescription>
               </DialogHeader>
               <PetForm
                 handleSubmit={async (data) => {
-                  if (selectedPet) {
-                    return handleUpdatePet(data);
-                  } else {
-                    return addPet(data);
+                  try {
+                    if (selectedPet) {
+                      await handleUpdatePet(data);
+                    } else {
+                      await addPet(data);
+                    }
+                    
+                    await refetch();
+                    
+                    // Batch state updates together
+                    setTimeout(() => {
+                      toast({
+                        title: "Success",
+                        description: selectedPet ? "Pet updated successfully" : "Pet added successfully",
+                      });
+                      setIsEditing(false);
+                      setShowPetDetails(false);
+                    }, 0);
+                    
+                    return true;
+                  } catch (error) {
+                    console.error('Error handling pet:', error);
+                    toast({
+                      variant: "destructive",
+                      title: "Error",
+                      description: error instanceof Error ? error.message : "Failed to handle pet",
+                    });
+                    return false;
                   }
                 }}
-                onSuccess={async (data) => {
-                  setShowPetDetails(false);
-                  setIsEditing(false);
-                  await refetch();
-                  toast({
-                    title: "Success",
-                    description: selectedPet ? "Pet updated successfully" : "Pet added successfully",
-                  });
+                onSuccess={async () => {
+                  // Success is handled in handleSubmit
                 }}
                 onCancel={() => {
                   setIsEditing(false);

@@ -1,0 +1,168 @@
+chunk-XUCJ35ZX.js?v=9eac0413:332 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-XUCJ35ZX.js?v=9eac0413:332
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=9eac0413:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=9eac0413:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=9eac0413:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=9eac0413:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=9eac0413:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=9eac0413:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=9eac0413:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=9eac0413:19416
+commitRoot @ chunk-RPCDYKBN.js?v=9eac0413:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=9eac0413:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=9eac0413:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=9eac0413:18627Understand this warningAI
+chunk-XUCJ35ZX.js?v=9eac0413:332 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-XUCJ35ZX.js?v=9eac0413:332
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=9eac0413:16915
+invokePassiveEffectMountInDEV @ chunk-RPCDYKBN.js?v=9eac0413:18324
+invokeEffectsInDev @ chunk-RPCDYKBN.js?v=9eac0413:19701
+commitDoubleInvokeEffectsInDEV @ chunk-RPCDYKBN.js?v=9eac0413:19686
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=9eac0413:19503
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=9eac0413:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=9eac0413:19416
+commitRoot @ chunk-RPCDYKBN.js?v=9eac0413:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=9eac0413:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=9eac0413:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=9eac0413:18627Understand this warningAI
+PetForm.tsx:91 Setting initial customer: {customerId: 'uLzGYzLqKlEu94wxCHgE', customerName: 'test user'}
+PetForm.tsx:91 Setting initial customer: {customerId: 'uLzGYzLqKlEu94wxCHgE', customerName: 'test user'}
+PetForm.tsx:123 Form submission started: {data: {…}, submissionId: '1733811062461-d4pd63i1jmt'}
+PetForm.tsx:150 Submitting pet data: {name: 'new', type: 'dog', breed: 'new', customerId: 'uLzGYzLqKlEu94wxCHgE', dateOfBirth: null, …}
+use-pets.ts:318 UPDATE_PET: Starting update {petId: 'A2b6DySBzXVUKb4o2sT0', updateData: {…}, petIdType: 'string', updateDataType: 'object'}
+storage.ts:11 File uploaded successfully: {metadata: {…}, ref: _Reference}
+storage.ts:15 File download URL: https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/pets%2FuLzGYzLqKlEu94wxCHgE%2F1733811062479_pet-image.jpg?alt=media&token=f910fcc1-1694-4679-8902-6691d354e080
+use-pets.ts:344 UPDATE_PET: Preparing to update with data: {name: 'new', type: 'dog', breed: 'new', customerId: 'uLzGYzLqKlEu94wxCHgE', dateOfBirth: null, …}
+use-pets.ts:140 UPDATE_PET: Starting update {petId: 'A2b6DySBzXVUKb4o2sT0', updateData: {…}, petIdType: 'string', updateDataType: 'object'}
+use-pets.ts:200 UPDATE_PET: Preparing to update with data: {name: 'new', type: 'dog', breed: 'new', customerId: 'uLzGYzLqKlEu94wxCHgE', dateOfBirth: null, …}
+use-pets.ts:40 FETCH_PETS: Starting to fetch pets
+use-pets.ts:69 FETCH_PETS: Available customers: (2) [{…}, {…}]
+use-pets.ts:81 FETCH_PETS: Processing pet data: {petId: '7Ew9wLS7imzLCVPzCnel', customerId: 'uLzGYzLqKlEu94wxCHgE', petName: 'kj', customerDetails: {…}}
+use-pets.ts:81 FETCH_PETS: Processing pet data: {petId: 'A2b6DySBzXVUKb4o2sT0', customerId: 'uLzGYzLqKlEu94wxCHgE', petName: 'new', customerDetails: {…}}
+use-pets.ts:81 FETCH_PETS: Processing pet data: {petId: 'SRLEPWFaJuHE5r1ZcNeb', customerId: 'q9lM7L7tk6B3M9m3q3wN', petName: 'kjnjkn', customerDetails: {…}}
+use-pets.ts:81 FETCH_PETS: Processing pet data: {petId: 'tBqXG0YqQwEu8bTcZGM6', customerId: 'q9lM7L7tk6B3M9m3q3wN', petName: '2eq', customerDetails: {…}}
+use-pets.ts:81 FETCH_PETS: Processing pet data: {petId: 'zXBDhrqc37KbZpgAPaRk', customerId: 'q9lM7L7tk6B3M9m3q3wN', petName: 'ddwd', customerDetails: {…}}
+use-pets.ts:115 FETCH_PETS: Completed fetching pets {totalPets: 5, pets: Array(5)}
+use-pets.ts:208 UPDATE_PET: Successfully updated pet: {petId: 'A2b6DySBzXVUKb4o2sT0', cleanData: {…}}
+use-pets.ts:347 UPDATE_PET: Successfully updated pet: {petId: 'A2b6DySBzXVUKb4o2sT0', cleanData: {…}}
+use-pets.ts:40 FETCH_PETS: Starting to fetch pets
+PetsPage.tsx:63 PetsPage Debug: {petsCount: 5, pets: Array(5)}
+PetsPage.tsx:78 Setting table data: {pets: Array(5), customers: Array(2)}
+use-pets.ts:69 FETCH_PETS: Available customers: (2) [{…}, {…}]
+use-pets.ts:81 FETCH_PETS: Processing pet data: {petId: '7Ew9wLS7imzLCVPzCnel', customerId: 'uLzGYzLqKlEu94wxCHgE', petName: 'kj', customerDetails: {…}}
+use-pets.ts:81 FETCH_PETS: Processing pet data: {petId: 'A2b6DySBzXVUKb4o2sT0', customerId: 'uLzGYzLqKlEu94wxCHgE', petName: 'new', customerDetails: {…}}
+use-pets.ts:81 FETCH_PETS: Processing pet data: {petId: 'SRLEPWFaJuHE5r1ZcNeb', customerId: 'q9lM7L7tk6B3M9m3q3wN', petName: 'kjnjkn', customerDetails: {…}}
+use-pets.ts:81 FETCH_PETS: Processing pet data: {petId: 'tBqXG0YqQwEu8bTcZGM6', customerId: 'q9lM7L7tk6B3M9m3q3wN', petName: '2eq', customerDetails: {…}}
+use-pets.ts:81 FETCH_PETS: Processing pet data: {petId: 'zXBDhrqc37KbZpgAPaRk', customerId: 'q9lM7L7tk6B3M9m3q3wN', petName: 'ddwd', customerDetails: {…}}
+use-pets.ts:115 FETCH_PETS: Completed fetching pets {totalPets: 5, pets: Array(5)}
+use-pets.ts:40 FETCH_PETS: Starting to fetch pets
+use-pets.ts:40 FETCH_PETS: Starting to fetch pets
+PetsPage.tsx:63 PetsPage Debug: {petsCount: undefined, pets: undefined}
+use-pets.ts:69 FETCH_PETS: Available customers: (2) [{…}, {…}]
+use-pets.ts:81 FETCH_PETS: Processing pet data: {petId: '7Ew9wLS7imzLCVPzCnel', customerId: 'uLzGYzLqKlEu94wxCHgE', petName: 'kj', customerDetails: {…}}
+use-pets.ts:81 FETCH_PETS: Processing pet data: {petId: 'A2b6DySBzXVUKb4o2sT0', customerId: 'uLzGYzLqKlEu94wxCHgE', petName: 'new', customerDetails: {…}}
+use-pets.ts:81 FETCH_PETS: Processing pet data: {petId: 'SRLEPWFaJuHE5r1ZcNeb', customerId: 'q9lM7L7tk6B3M9m3q3wN', petName: 'kjnjkn', customerDetails: {…}}
+use-pets.ts:81 FETCH_PETS: Processing pet data: {petId: 'tBqXG0YqQwEu8bTcZGM6', customerId: 'q9lM7L7tk6B3M9m3q3wN', petName: '2eq', customerDetails: {…}}
+use-pets.ts:81 FETCH_PETS: Processing pet data: {petId: 'zXBDhrqc37KbZpgAPaRk', customerId: 'q9lM7L7tk6B3M9m3q3wN', petName: 'ddwd', customerDetails: {…}}
+use-pets.ts:115 FETCH_PETS: Completed fetching pets {totalPets: 5, pets: Array(5)}
+PetsPage.tsx:63 PetsPage Debug: {petsCount: 5, pets: Array(5)}
+PetsPage.tsx:78 Setting table data: {pets: Array(5), customers: Array(2)}
+PetForm.tsx:91 Setting initial customer: {customerId: 'uLzGYzLqKlEu94wxCHgE', customerName: 'test user'}
+chunk-XUCJ35ZX.js?v=9eac0413:332 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-XUCJ35ZX.js?v=9eac0413:332
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=9eac0413:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=9eac0413:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=9eac0413:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=9eac0413:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=9eac0413:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=9eac0413:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=9eac0413:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=9eac0413:19416
+commitRoot @ chunk-RPCDYKBN.js?v=9eac0413:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=9eac0413:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=9eac0413:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=9eac0413:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=9eac0413:554
+flush @ @tanstack_react-query.js?v=9eac0413:568
+batch @ @tanstack_react-query.js?v=9eac0413:586
+dispatch_fn @ @tanstack_react-query.js?v=9eac0413:995
+setData @ @tanstack_react-query.js?v=9eac0413:695
+onSuccess @ @tanstack_react-query.js?v=9eac0413:896
+resolve @ @tanstack_react-query.js?v=9eac0413:455
+Promise.then
+run @ @tanstack_react-query.js?v=9eac0413:497
+start @ @tanstack_react-query.js?v=9eac0413:535
+fetch @ @tanstack_react-query.js?v=9eac0413:925
+executeFetch_fn @ @tanstack_react-query.js?v=9eac0413:2212
+setOptions @ @tanstack_react-query.js?v=9eac0413:1956
+(anonymous) @ @tanstack_react-query.js?v=9eac0413:3024
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=9eac0413:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=9eac0413:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=9eac0413:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=9eac0413:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=9eac0413:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=9eac0413:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=9eac0413:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=9eac0413:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=9eac0413:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=9eac0413:19432
+commitRoot @ chunk-RPCDYKBN.js?v=9eac0413:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=9eac0413:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=9eac0413:18718
+workLoop @ chunk-RPCDYKBN.js?v=9eac0413:197
+flushWork @ chunk-RPCDYKBN.js?v=9eac0413:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=9eac0413:384Understand this warningAI
+PetForm.tsx:91 Setting initial customer: {customerId: 'uLzGYzLqKlEu94wxCHgE', customerName: 'test user'}
+chunk-XUCJ35ZX.js?v=9eac0413:332 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-XUCJ35ZX.js?v=9eac0413:332
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=9eac0413:16915
+invokePassiveEffectMountInDEV @ chunk-RPCDYKBN.js?v=9eac0413:18324
+invokeEffectsInDev @ chunk-RPCDYKBN.js?v=9eac0413:19701
+commitDoubleInvokeEffectsInDEV @ chunk-RPCDYKBN.js?v=9eac0413:19686
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=9eac0413:19503
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=9eac0413:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=9eac0413:19416
+commitRoot @ chunk-RPCDYKBN.js?v=9eac0413:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=9eac0413:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=9eac0413:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=9eac0413:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=9eac0413:554
+flush @ @tanstack_react-query.js?v=9eac0413:568
+batch @ @tanstack_react-query.js?v=9eac0413:586
+dispatch_fn @ @tanstack_react-query.js?v=9eac0413:995
+setData @ @tanstack_react-query.js?v=9eac0413:695
+onSuccess @ @tanstack_react-query.js?v=9eac0413:896
+resolve @ @tanstack_react-query.js?v=9eac0413:455
+Promise.then
+run @ @tanstack_react-query.js?v=9eac0413:497
+start @ @tanstack_react-query.js?v=9eac0413:535
+fetch @ @tanstack_react-query.js?v=9eac0413:925
+executeFetch_fn @ @tanstack_react-query.js?v=9eac0413:2212
+setOptions @ @tanstack_react-query.js?v=9eac0413:1956
+(anonymous) @ @tanstack_react-query.js?v=9eac0413:3024
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=9eac0413:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=9eac0413:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=9eac0413:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=9eac0413:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=9eac0413:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=9eac0413:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=9eac0413:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=9eac0413:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=9eac0413:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=9eac0413:19432
+commitRoot @ chunk-RPCDYKBN.js?v=9eac0413:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=9eac0413:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=9eac0413:18718
+workLoop @ chunk-RPCDYKBN.js?v=9eac0413:197
+flushWork @ chunk-RPCDYKBN.js?v=9eac0413:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=9eac0413:384Understand this warningAI
+use-pets.ts:69 FETCH_PETS: Available customers: (2) [{…}, {…}]
+use-pets.ts:81 FETCH_PETS: Processing pet data: {petId: '7Ew9wLS7imzLCVPzCnel', customerId: 'uLzGYzLqKlEu94wxCHgE', petName: 'kj', customerDetails: {…}}
+use-pets.ts:81 FETCH_PETS: Processing pet data: {petId: 'A2b6DySBzXVUKb4o2sT0', customerId: 'uLzGYzLqKlEu94wxCHgE', petName: 'new', customerDetails: {…}}
+use-pets.ts:81 FETCH_PETS: Processing pet data: {petId: 'SRLEPWFaJuHE5r1ZcNeb', customerId: 'q9lM7L7tk6B3M9m3q3wN', petName: 'kjnjkn', customerDetails: {…}}
+use-pets.ts:81 FETCH_PETS: Processing pet data: {petId: 'tBqXG0YqQwEu8bTcZGM6', customerId: 'q9lM7L7tk6B3M9m3q3wN', petName: '2eq', customerDetails: {…}}
+use-pets.ts:81 FETCH_PETS: Processing pet data: {petId: 'zXBDhrqc37KbZpgAPaRk', customerId: 'q9lM7L7tk6B3M9m3q3wN', petName: 'ddwd', customerDetails: {…}}
+use-pets.ts:115 FETCH_PETS: Completed fetching pets {totalPets: 5, pets: Array(5)}
+PetForm.tsx:153
