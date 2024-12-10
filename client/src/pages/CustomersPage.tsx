@@ -578,41 +578,44 @@ export default function CustomersPage() {
             <div>
               {/* We'll reuse the PetForm component but pre-fill the customer */}
               <PetForm
-                onSuccess={async (data) => {
+                handleSubmit={async (data) => {
                   try {
-                    console.log('ADD_PET: Submitting pet data', { data });
                     await addPet({
                       ...data,
                       customerId: selectedCustomer.id,
-                      createdAt: new Date(),
-                      updatedAt: new Date()
+                      owner: {
+                        id: selectedCustomer.id,
+                        name: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`,
+                        email: selectedCustomer.email
+                      }
                     });
-                    
-                    setShowAddPet(false);
-                    // Invalidate pets query to refresh the list
                     await queryClient.invalidateQueries({ queryKey: ['pets'] });
                     toast({
                       title: "Success",
                       description: "Pet added successfully",
                     });
+                    setShowAddPet(false);
+                    return true;
                   } catch (error) {
-                    console.error('ADD_PET: Error adding pet:', error);
+                    console.error('Error adding pet:', error);
                     toast({
                       variant: "destructive",
                       title: "Error",
                       description: error instanceof Error ? error.message : "Failed to add pet",
                     });
+                    return false;
                   }
                 }}
-                defaultValues={{ 
+                defaultValues={{
                   customerId: selectedCustomer.id,
                   type: "dog",
                   weightUnit: "kg",
                   gender: "unknown"
                 }}
-                customers={customersQuery.data || []}
+                hideCustomerField={true}
                 customerId={selectedCustomer.id}
-                addPet={addPet}
+                customers={customersQuery.data || []}
+                onCancel={() => setShowAddPet(false)}
               />
             </div>
           )}
