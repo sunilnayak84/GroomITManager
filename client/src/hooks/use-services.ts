@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, query } from 'firebase/firestore';
 import { db } from "../lib/firebase";
 import { toast } from "../lib/toast";
@@ -6,6 +6,9 @@ import type { Service, InsertService, ServiceConsumable } from "@/lib/service-ty
 
 // Collection reference
 const servicesCollection = collection(db, 'services');
+
+// Export the Service type for use in other components
+export type { Service };
 
 export function useServices() {
   const queryClient = useQueryClient();
@@ -31,7 +34,11 @@ export function useServices() {
             description: data.description || undefined,
             duration: data.duration,
             price: data.price || 0,
-            consumables: data.consumables || [],
+            consumables: (data.consumables || []).map((c: ServiceConsumable) => ({
+              item_id: c.item_id,
+              item_name: c.item_name,
+              quantity_used: c.quantity_used
+            })),
             isActive: data.isActive ?? true,
             created_at: data.created_at?.toDate() || new Date(),
             updated_at: data.updated_at?.toDate() || new Date(),

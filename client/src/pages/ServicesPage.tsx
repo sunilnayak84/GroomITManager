@@ -1,4 +1,5 @@
-import { Button } from "@/components/ui/button";
+import React, { useState } from "react";
+import { useServices } from "@/hooks/use-services";
 import {
   Dialog,
   DialogContent,
@@ -6,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ConsumablesModal } from "@/components/ConsumablesModal";
 import {
   Table,
   TableBody,
@@ -14,12 +16,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useServices } from "@/hooks/use-services";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertServiceSchema, type InsertService } from "@/lib/service-types";
-import type { Service } from "@/hooks/use-services";
+import { insertServiceSchema, type InsertService, type Service, type ServiceConsumable } from "@/lib/service-types";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,18 +42,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import React, { useState } from "react";
 
-export default function ServicesPage() {
+export function ServicesPage() {
   const { services, isLoading, addService, updateService, deleteService } = useServices();
   const [showServiceDialog, setShowServiceDialog] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const [showConsumablesModal, setShowConsumablesModal] = useState(false);
 
   const { toast } = useToast();
 
@@ -50,74 +57,60 @@ export default function ServicesPage() {
     defaultValues: {
       name: "",
       description: "",
-      duration: 60,
+      duration: 30,
       price: 0,
       consumables: [],
-      isActive: true
     },
   });
 
-  // Populate form when service is selected for editing
-  React.useEffect(() => {
-    if (selectedService && isEditing) {
-      form.reset({
-        name: selectedService.name,
-        description: selectedService.description,
-        duration: selectedService.duration,
-        priceINR: selectedService.priceINR,
-      });
-    }
-  }, [selectedService, isEditing, form]);
-
-  const handleSubmit = async (data: InsertService) => {
+  const onSubmit = async (data: InsertService) => {
     try {
-      if (isEditing && selectedService) {
-        await updateService(selectedService.id, data);
+      if (selectedService) {
+        await updateService(selectedService.service_id, data);
       } else {
         await addService(data);
       }
       setShowServiceDialog(false);
-      setSelectedService(null);
-      setIsEditing(false);
       form.reset();
+      setSelectedService(null);
     } catch (error) {
-      console.error('Error handling service:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to save service",
+        variant: "destructive",
+      });
     }
   };
 
-  const formatPrice = (priceINR: number) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-    }).format(priceINR);
+  const handleEdit = (service: Service) => {
+    setSelectedService(service);
+    form.reset({
+      name: service.name,
+      description: service.description,
+      duration: service.duration,
+      price: service.price,
+      consumables: service.consumables,
+    });
+    setShowServiceDialog(true);
   };
 
-  const formatDuration = (minutes: number) => {
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-    if (hours > 0) {
-      return `${hours}h ${remainingMinutes}m`;
-    }
-    return `${minutes}m`;
+  const handleDelete = (service: Service) => {
+    setSelectedService(service);
+    setShowDeleteConfirm(true);
   };
 
   const columns = [
     {
-      header: "Service",
-      cell: (service: Service) => (
-        <div>
-          <div className="font-medium">{service.name}</div>
-          <div className="text-sm text-muted-foreground">{service.description}</div>
-        </div>
-      ),
+      header: "Name",
+      cell: (service: Service) => service.name,
     },
     {
       header: "Duration",
-      cell: (service: Service) => formatDuration(service.duration),
+      cell: (service: Service) => `${service.duration} mins`,
     },
     {
       header: "Price",
-      cell: (service: Service) => formatPrice(service.priceINR),
+      cell: (service: Service) => `₹${service.price}`,
     },
     {
       header: "Status",
@@ -125,7 +118,7 @@ export default function ServicesPage() {
         <Switch
           checked={service.isActive}
           onCheckedChange={async (checked) => {
-            await updateService(service.id, { isActive: checked });
+            await updateService(service.service_id, { isActive: checked });
           }}
         />
       ),
@@ -134,24 +127,13 @@ export default function ServicesPage() {
       header: "Actions",
       cell: (service: Service) => (
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              setSelectedService(service);
-              setIsEditing(true);
-              setShowServiceDialog(true);
-            }}
-          >
+          <Button variant="outline" size="sm" onClick={() => handleEdit(service)}>
             Edit
           </Button>
           <Button
             variant="destructive"
             size="sm"
-            onClick={() => {
-              setSelectedService(service);
-              setShowDeleteConfirm(true);
-            }}
+            onClick={() => handleDelete(service)}
           >
             Delete
           </Button>
@@ -160,61 +142,27 @@ export default function ServicesPage() {
     },
   ];
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Services</h2>
-          <p className="text-muted-foreground">
-            Manage your grooming services and packages
-          </p>
-        </div>
-        <Button
-          onClick={() => {
-            setIsEditing(false);
-            setSelectedService(null);
-            form.reset();
-            setShowServiceDialog(true);
-          }}
-        >
-          Add Service
-        </Button>
+    <div className="container mx-auto py-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Services Management</h1>
+        <Button onClick={() => setShowServiceDialog(true)}>Add Service</Button>
       </div>
 
-      <div className="relative h-48 rounded-xl overflow-hidden">
-        <img
-          src="https://images.unsplash.com/photo-1516734212186-a967f81ad0d7"
-          alt="Pet Grooming Services"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-transparent flex items-center p-8">
-          <div className="text-white">
-            <h2 className="text-2xl font-bold mb-2">Service Management</h2>
-            <p>Create and manage your grooming packages</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-lg shadow">
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              {columns.map((column) => (
-                <TableHead key={column.header}>{column.header}</TableHead>
+              {columns.map((column, index) => (
+                <TableHead key={index}>{column.header}</TableHead>
               ))}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {services?.map((service) => (
-              <TableRow key={service.id}>
-                {columns.map((column) => (
-                  <TableCell key={`${service.id}-${column.header}`}>
-                    {column.cell(service)}
-                  </TableCell>
+            {services.map((service) => (
+              <TableRow key={service.service_id}>
+                {columns.map((column, index) => (
+                  <TableCell key={index}>{column.cell(service)}</TableCell>
                 ))}
               </TableRow>
             ))}
@@ -222,29 +170,19 @@ export default function ServicesPage() {
         </Table>
       </div>
 
-      <Dialog
-        open={showServiceDialog}
-        onOpenChange={(open) => {
-          setShowServiceDialog(open);
-          if (!open) {
-            setSelectedService(null);
-            setIsEditing(false);
-            form.reset();
-          }
-        }}
-      >
+      <Dialog open={showServiceDialog} onOpenChange={setShowServiceDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{isEditing ? 'Edit Service' : 'Add Service'}</DialogTitle>
+            <DialogTitle>
+              {selectedService ? "Edit Service" : "Add New Service"}
+            </DialogTitle>
             <DialogDescription>
-              {isEditing
-                ? "Update the service details below"
-                : "Fill in the details to create a new service"}
+              Enter the service details below
             </DialogDescription>
           </DialogHeader>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
                 name="name"
@@ -268,7 +206,6 @@ export default function ServicesPage() {
                     <FormControl>
                       <Textarea
                         placeholder="Service description"
-                        className="resize-none"
                         {...field}
                       />
                     </FormControl>
@@ -286,7 +223,8 @@ export default function ServicesPage() {
                     <FormControl>
                       <Input
                         type="number"
-                        min="1"
+                        min="15"
+                        step="15"
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value))}
                       />
@@ -301,11 +239,12 @@ export default function ServicesPage() {
                 name="price"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Price (in INR)</FormLabel>
+                    <FormLabel>Price (₹)</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         min="0"
+                        step="1"
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value))}
                       />
@@ -315,17 +254,30 @@ export default function ServicesPage() {
                 )}
               />
 
-              <div className="flex justify-end gap-2">
+              <div className="flex justify-between items-center">
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => setShowServiceDialog(false)}
+                  onClick={() => setShowConsumablesModal(true)}
                 >
-                  Cancel
+                  Manage Consumables
                 </Button>
-                <Button type="submit">
-                  {isEditing ? 'Update Service' : 'Add Service'}
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setShowServiceDialog(false);
+                      form.reset();
+                      setSelectedService(null);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit">
+                    {selectedService ? "Update Service" : "Add Service"}
+                  </Button>
+                </div>
               </div>
             </form>
           </Form>
@@ -335,10 +287,10 @@ export default function ServicesPage() {
       <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure you want to delete this service?</AlertDialogTitle>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the service
-              and remove it from all future appointments.
+              This action cannot be undone. This will permanently delete the
+              service.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -346,7 +298,7 @@ export default function ServicesPage() {
             <AlertDialogAction
               onClick={async () => {
                 if (selectedService) {
-                  await deleteService(selectedService.id);
+                  await deleteService(selectedService.service_id);
                   setShowDeleteConfirm(false);
                   setSelectedService(null);
                 }
@@ -357,6 +309,16 @@ export default function ServicesPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <ConsumablesModal
+        open={showConsumablesModal}
+        onOpenChange={setShowConsumablesModal}
+        initialConsumables={form.getValues("consumables")}
+        onSave={(consumables) => {
+          form.setValue("consumables", consumables);
+          setShowConsumablesModal(false);
+        }}
+      />
     </div>
   );
 }
