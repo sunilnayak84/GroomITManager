@@ -1,0 +1,126 @@
+CISPL SignerDigital Loaded
+chunk-RPCDYKBN.js?v=4bcc27d8:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:35 Firebase initialized successfully
+29Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warningAI
+content.js:1 CISPL SignerDigital Loaded
+use-pets.ts:31 FETCH_PETS: Starting to fetch pets
+use-customers.ts:232 FETCH_CUSTOMERS: Starting customer fetch
+use-customers.ts:247 FETCH_CUSTOMERS: Processed customer: {id: 'q9lM7L7tk6B3M9m3q3wN', firebaseId: 'q9lM7L7tk6B3M9m3q3wN', name: 'test test'}
+use-customers.ts:247 FETCH_CUSTOMERS: Processed customer: {id: 'uLzGYzLqKlEu94wxCHgE', firebaseId: 'uLzGYzLqKlEu94wxCHgE', name: 'test user'}
+use-customers.ts:255 USE CUSTOMERS: Fetched customers {customerCount: 2, customerIds: Array(2), customerNames: Array(2)}
+use-pets.ts:60 FETCH_PETS: Available customers: (2) [{…}, {…}]
+use-pets.ts:72 FETCH_PETS: Processing pet data: {petId: 'A2b6DySBzXVUKb4o2sT0', customerId: 'uLzGYzLqKlEu94wxCHgE', petName: 'new edit', customerDetails: {…}}
+use-pets.ts:72 FETCH_PETS: Processing pet data: {petId: 'SRLEPWFaJuHE5r1ZcNeb', customerId: 'q9lM7L7tk6B3M9m3q3wN', petName: 'edit', customerDetails: {…}}
+use-pets.ts:72 FETCH_PETS: Processing pet data: {petId: 'tBqXG0YqQwEu8bTcZGM6', customerId: 'q9lM7L7tk6B3M9m3q3wN', petName: 'edited', customerDetails: {…}}
+use-pets.ts:72 FETCH_PETS: Processing pet data: {petId: 'zXBDhrqc37KbZpgAPaRk', customerId: 'q9lM7L7tk6B3M9m3q3wN', petName: 'ddwd', customerDetails: {…}}
+use-pets.ts:106 FETCH_PETS: Completed fetching pets {totalPets: 4, pets: Array(4)}
+PetForm.tsx:97 Setting initial customer: {customerId: 'q9lM7L7tk6B3M9m3q3wN', customerName: 'test test'}
+PetForm.tsx:97 Setting initial customer: {customerId: 'q9lM7L7tk6B3M9m3q3wN', customerName: 'test test'}
+PetForm.tsx:170 Submitting pet data: {name: 'lolo', type: 'dog', breed: 'ghgh', customerId: 'q9lM7L7tk6B3M9m3q3wN', dateOfBirth: null, …}
+use-pets.ts:231 ADD_PET: Starting to add pet {petData: {…}}
+use-pets.ts:235 ADD_PET: Using submission ID: 1733814509653-gq7mmn54f
+storage.ts:11 File uploaded successfully: {metadata: {…}, ref: _Reference}
+storage.ts:15 File download URL: https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/pets%2Fq9lM7L7tk6B3M9m3q3wN%2F1733814509653_Logo-Groomery.png?alt=media&token=edf52722-454e-4d7e-9223-4ec86929afe6
+use-pets.ts:330 ADD_PET: Error adding pet: TypeError: Cannot read properties of undefined (reading 'path')
+    at __PRIVATE_toName (firebase_firestore.js?v=4bcc27d8:6852:51)
+    at firebase_firestore.js?v=4bcc27d8:14725:35
+    at Array.map (<anonymous>)
+    at __PRIVATE_invokeBatchGetDocumentsRpc (firebase_firestore.js?v=4bcc27d8:14725:23)
+    at Transaction$2.lookup (firebase_firestore.js?v=4bcc27d8:14736:6)
+    at Transaction.get (firebase_firestore.js?v=4bcc27d8:17503:30)
+    at Transaction.get (firebase_firestore.js?v=4bcc27d8:17545:18)
+    at use-pets.ts:290:51
+    at __PRIVATE_TransactionRunner.updateFunction (firebase_firestore.js?v=4bcc27d8:17565:43)
+    at __PRIVATE_TransactionRunner.hu (firebase_firestore.js?v=4bcc27d8:14837:22)
+mutationFn @ use-pets.ts:330
+await in mutationFn
+fn @ @tanstack_react-query.js?v=4bcc27d8:1188
+run @ @tanstack_react-query.js?v=4bcc27d8:493
+start @ @tanstack_react-query.js?v=4bcc27d8:535
+execute @ @tanstack_react-query.js?v=4bcc27d8:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=4bcc27d8:2622
+handleSubmit @ PetsPage.tsx:288
+(anonymous) @ PetForm.tsx:171
+(anonymous) @ chunk-SVWJYMPS.js?v=4bcc27d8:1681
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=4bcc27d8:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=4bcc27d8:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=4bcc27d8:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=4bcc27d8:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=4bcc27d8:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=4bcc27d8:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=4bcc27d8:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=4bcc27d8:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=4bcc27d8:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=4bcc27d8:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=4bcc27d8:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=4bcc27d8:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=4bcc27d8:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=4bcc27d8:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=4bcc27d8:5449Understand this errorAI
+use-pets.ts:345 ADD_PET: Mutation error: TypeError: Cannot read properties of undefined (reading 'path')
+    at __PRIVATE_toName (firebase_firestore.js?v=4bcc27d8:6852:51)
+    at firebase_firestore.js?v=4bcc27d8:14725:35
+    at Array.map (<anonymous>)
+    at __PRIVATE_invokeBatchGetDocumentsRpc (firebase_firestore.js?v=4bcc27d8:14725:23)
+    at Transaction$2.lookup (firebase_firestore.js?v=4bcc27d8:14736:6)
+    at Transaction.get (firebase_firestore.js?v=4bcc27d8:17503:30)
+    at Transaction.get (firebase_firestore.js?v=4bcc27d8:17545:18)
+    at use-pets.ts:290:51
+    at __PRIVATE_TransactionRunner.updateFunction (firebase_firestore.js?v=4bcc27d8:17565:43)
+    at __PRIVATE_TransactionRunner.hu (firebase_firestore.js?v=4bcc27d8:14837:22)
+onError @ use-pets.ts:345
+execute @ @tanstack_react-query.js?v=4bcc27d8:1253
+await in execute
+mutate @ @tanstack_react-query.js?v=4bcc27d8:2622
+handleSubmit @ PetsPage.tsx:288
+(anonymous) @ PetForm.tsx:171
+(anonymous) @ chunk-SVWJYMPS.js?v=4bcc27d8:1681
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=4bcc27d8:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=4bcc27d8:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=4bcc27d8:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=4bcc27d8:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=4bcc27d8:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=4bcc27d8:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=4bcc27d8:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=4bcc27d8:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=4bcc27d8:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=4bcc27d8:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=4bcc27d8:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=4bcc27d8:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=4bcc27d8:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=4bcc27d8:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=4bcc27d8:5449Understand this errorAI
+PetsPage.tsx:301 Error handling pet: TypeError: Cannot read properties of undefined (reading 'path')
+    at __PRIVATE_toName (firebase_firestore.js?v=4bcc27d8:6852:51)
+    at firebase_firestore.js?v=4bcc27d8:14725:35
+    at Array.map (<anonymous>)
+    at __PRIVATE_invokeBatchGetDocumentsRpc (firebase_firestore.js?v=4bcc27d8:14725:23)
+    at Transaction$2.lookup (firebase_firestore.js?v=4bcc27d8:14736:6)
+    at Transaction.get (firebase_firestore.js?v=4bcc27d8:17503:30)
+    at Transaction.get (firebase_firestore.js?v=4bcc27d8:17545:18)
+    at use-pets.ts:290:51
+    at __PRIVATE_TransactionRunner.updateFunction (firebase_firestore.js?v=4bcc27d8:17565:43)
+    at __PRIVATE_TransactionRunner.hu (firebase_firestore.js?v=4bcc27d8:14837:22)
+handleSubmit @ PetsPage.tsx:301
+await in handleSubmit
+(anonymous) @ PetForm.tsx:171
+(anonymous) @ chunk-SVWJYMPS.js?v=4bcc27d8:1681
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=4bcc27d8:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=4bcc27d8:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=4bcc27d8:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=4bcc27d8:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=4bcc27d8:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=4bcc27d8:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=4bcc27d8:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=4bcc27d8:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=4bcc27d8:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=4bcc27d8:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=4bcc27d8:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=4bcc27d8:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=4bcc27d8:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=4bcc27d8:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=4bcc27d8:5449Understand this errorAI

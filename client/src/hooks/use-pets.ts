@@ -9,17 +9,56 @@ import { useState } from 'react';
 
 import type { Pet as BasePet } from "../lib/types";
 
-export type Pet = BasePet & {
+export type PetType = 'dog' | 'cat' | 'bird' | 'fish' | 'other';
+export type WeightUnit = 'kg' | 'lbs';
+export type Gender = 'male' | 'female' | 'unknown';
+
+export interface Pet {
+  id: string;
+  name: string;
+  type: PetType;
+  breed: string;
+  customerId: string;
+  dateOfBirth: string | null;
+  age: number | null;
+  gender: Gender | null;
+  weight: number | null;
+  weightUnit: WeightUnit | null;
+  notes: string | null;
+  image: string | null;
+  createdAt: string;
+  updatedAt: string | null;
   submissionId?: string;
-  image: string | File | null;
   owner?: {
     id: string;
-    firstName: string;
-    lastName: string;
     name: string;
-    phone: string;
-    email: string;
+    email: string | null;
   } | null;
+}
+
+export interface PetInput {
+  name: string;
+  type: PetType;
+  breed: string;
+  customerId: string;
+  dateOfBirth?: string | null;
+  age?: number | null;
+  gender?: Gender | null;
+  weight?: number | null;
+  weightUnit?: WeightUnit | null;
+  notes?: string | null;
+  image?: File | string | null;
+  owner?: {
+    id: string;
+    name: string;
+    email: string | null;
+  } | null;
+}
+
+// Helper type for file uploads
+type FileUpload = {
+  file: File;
+  path: string;
 };
 
 export function usePets() {
@@ -226,12 +265,12 @@ export function usePets() {
   };
 
   const addPetMutation = useMutation({
-    mutationFn: async (petData: InsertPet) => {
+    mutationFn: async (petData: PetInput) => {
       try {
         console.log('ADD_PET: Starting to add pet', { petData });
 
-        // Generate submission ID if not provided
-        const submissionId = petData.submissionId || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        // Generate submission ID
+        const submissionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         console.log('ADD_PET: Using submission ID:', submissionId);
 
         // Validate required fields
@@ -240,26 +279,18 @@ export function usePets() {
         }
 
         // Handle image upload if present
-        let imageUrl = petData.image;
+        let imageUrl: string | null = null;
         if (petData.image instanceof File) {
           try {
-            // Track upload progress
-            const onProgress = (progress: number) => {
-              console.log('Upload progress:', progress);
-              if (typeof petData.onUploadProgress === 'function') {
-                petData.onUploadProgress(progress);
-              }
-            };
-
-            imageUrl = await uploadFile(
-              petData.image,
-              `pets/${petData.customerId}/${Date.now()}_${petData.image.name}`,
-              onProgress
-            );
+            const path = `pets/${petData.customerId}/${Date.now()}_${petData.image.name}`;
+            imageUrl = await uploadFile(petData.image, path);
+            console.log('ADD_PET: Image uploaded successfully:', imageUrl);
           } catch (uploadError) {
             console.error('ADD_PET: Image upload failed:', uploadError);
             throw new Error('Failed to upload pet image');
           }
+        } else if (typeof petData.image === 'string') {
+          imageUrl = petData.image;
         }
 
         // Create optimistic Pet object
@@ -273,58 +304,72 @@ export function usePets() {
           age: petData.age || null,
           gender: petData.gender || null,
           weight: petData.weight || null,
-          weightUnit: petData.weightUnit,
+          weightUnit: petData.weightUnit || null,
           notes: petData.notes || null,
           image: imageUrl,
           createdAt: new Date().toISOString(),
           updatedAt: null,
-          firebaseId: null,
           submissionId,
           owner: petData.owner || null
         };
 
-        // Use transaction to create pet and update customer's pet count atomically
+        // Check for duplicate submission
+        const duplicateQuery = query(petsCollection, where('submissionId', '==', submissionId));
+        const duplicateSnapshot = await getDocs(duplicateQuery);
+        
+        if (!duplicateSnapshot.empty) {
+          console.log('ADD_PET: Duplicate submission detected', { submissionId });
+          return { isDuplicate: true, existingPet: duplicateSnapshot.docs[0].data() };
+        }
+
+        // First verify if customer exists
+        const customerRef = doc(db, 'customers', petData.customerId);
+        const customerSnapshot = await getDoc(customerRef);
+        
+        if (!customerSnapshot.exists()) {
+          console.error('ADD_PET: Customer not found:', petData.customerId);
+          throw new Error('Customer not found');
+        }
+
+        // Create new pet document reference
+        const newPetRef = doc(db, 'pets');
+
+        // Prepare pet data
+        const petDataWithImage = {
+          id: newPetRef.id,
+          name: petData.name,
+          type: petData.type,
+          breed: petData.breed,
+          customerId: petData.customerId,
+          dateOfBirth: petData.dateOfBirth || null,
+          age: petData.age || null,
+          gender: petData.gender || null,
+          weight: petData.weight || null,
+          weightUnit: petData.weightUnit || null,
+          notes: petData.notes || null,
+          image: imageUrl,
+          submissionId,
+          createdAt: serverTimestamp(),
+          updatedAt: null
+        };
+
+        // Use transaction for atomic operations
         const result = await runTransaction(db, async (transaction) => {
-          // Check for duplicate submission
-          const q = query(petsCollection, where('submissionId', '==', submissionId));
-          const querySnapshot = await transaction.get(q);
-          
-          if (!querySnapshot.empty) {
-            console.log('ADD_PET: Duplicate submission detected', { submissionId });
-            return { isDuplicate: true, existingPet: querySnapshot.docs[0].data() };
-          }
-
-          // Prepare pet data - only include fields we want to save
-          const petDataWithImage = {
-            name: petData.name,
-            type: petData.type,
-            breed: petData.breed,
-            customerId: petData.customerId,
-            dateOfBirth: petData.dateOfBirth,
-            age: petData.age,
-            gender: petData.gender,
-            weight: petData.weight,
-            weightUnit: petData.weightUnit,
-            notes: petData.notes,
-            image: imageUrl,
-            submissionId,
-            createdAt: serverTimestamp()
-          };
-
-          // Create pet document
-          const petRef = doc(petsCollection);
-          transaction.set(petRef, petDataWithImage);
-
-          // Update customer's pet count
-          const customerRef = doc(customersCollection, petData.customerId);
+          // Set the pet document and update customer atomically
+          transaction.set(newPetRef, petDataWithImage);
           transaction.update(customerRef, {
             petCount: increment(1)
           });
 
-          return { id: petRef.id, ...petDataWithImage, optimisticPet };
+          return {
+            ...petDataWithImage,
+            id: newPetRef.id,
+            createdAt: new Date().toISOString(),
+            optimisticPet
+          };
         });
 
-        console.log('ADD_PET: Successfully added pet', result);
+        console.log('ADD_PET: Successfully added pet:', result);
         return result;
       } catch (error) {
         console.error('ADD_PET: Error adding pet:', error);
@@ -372,8 +417,16 @@ export function usePets() {
         const updateDataWithImage = {
           ...updateData,
           image: imageUrl,
-          updatedAt: new Date().toISOString()
+          updatedAt: serverTimestamp()
         };
+
+        // Create document references
+        const petDocRef = doc(petsCollection, petId);
+        const petDoc = await getDoc(petDocRef);
+
+        if (!petDoc.exists()) {
+          throw new Error('Pet document not found');
+        }
 
         // Apply optimistic update
         const existingPet = pets?.find(p => p.id === petId);
@@ -392,8 +445,15 @@ export function usePets() {
           queryClient.setQueryData(['pets'], updatedPets);
         }
 
-        // Perform the actual update
-        await updatePet(petId, updateDataWithImage);
+        // Perform the actual update using transaction
+        await runTransaction(db, async (transaction) => {
+          const petSnapshot = await transaction.get(petDocRef);
+          if (!petSnapshot.exists()) {
+            throw new Error('Pet document not found during transaction');
+          }
+
+          transaction.update(petDocRef, updateDataWithImage);
+        });
 
         console.log('UPDATE_PET: Successfully updated pet:', {
           petId,

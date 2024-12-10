@@ -1,0 +1,111 @@
+Setting initial customer: {customerId: 'q9lM7L7tk6B3M9m3q3wN', customerName: 'test test'}customerId: "q9lM7L7tk6B3M9m3q3wN"customerName: "test test"[[Prototype]]: Object
+PetForm.tsx:97 Setting initial customer: {customerId: 'q9lM7L7tk6B3M9m3q3wN', customerName: 'test test'}customerId: "q9lM7L7tk6B3M9m3q3wN"customerName: "test test"[[Prototype]]: Object
+PetForm.tsx:170 Submitting pet data: {name: 'fewfew', type: 'dog', breed: 'dwedew', customerId: 'q9lM7L7tk6B3M9m3q3wN', dateOfBirth: null, …}age: nullbreed: "dwedew"customerId: "q9lM7L7tk6B3M9m3q3wN"dateOfBirth: nullgender: "male"image: File {name: 'open.jpg', lastModified: 1732170125091, lastModifiedDate: Thu Nov 21 2024 11:52:05 GMT+0530 (India Standard Time), webkitRelativePath: '', size: 1889291, …}name: "fewfew"notes: nullowner: {id: 'q9lM7L7tk6B3M9m3q3wN', name: 'test test', email: 'test@test.com'}type: "dog"weight: nullweightUnit: "kg"[[Prototype]]: Object
+use-pets.ts:237 ADD_PET: Starting to add pet {petData: {…}}petData: {name: 'fewfew', type: 'dog', breed: 'dwedew', customerId: 'q9lM7L7tk6B3M9m3q3wN', dateOfBirth: null, …}[[Prototype]]: Object
+use-pets.ts:241 ADD_PET: Using submission ID: 1733814762639-tfqlvr2i0
+storage.ts:11 File uploaded successfully: {metadata: {…}, ref: _Reference}metadata: {type: 'file', bucket: 'replit-5ac6a.firebasestorage.app', generation: '1733814764778154', metageneration: '1', fullPath: 'pets/q9lM7L7tk6B3M9m3q3wN/1733814762639_open.jpg', …}ref: _Reference {_service: FirebaseStorageImpl, _location: _Location}[[Prototype]]: Object
+storage.ts:15 File download URL: https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/pets%2Fq9lM7L7tk6B3M9m3q3wN%2F1733814762639_open.jpg?alt=media&token=2d13be32-b43a-4ac0-89c1-3799f58aa52a
+use-pets.ts:262 ADD_PET: Image uploaded successfully: https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/pets%2Fq9lM7L7tk6B3M9m3q3wN%2F1733814762639_open.jpg?alt=media&token=2d13be32-b43a-4ac0-89c1-3799f58aa52a
+use-pets.ts:351 ADD_PET: Error adding pet: TypeError: Cannot read properties of undefined (reading 'path')
+    at __PRIVATE_toName (firebase_firestore.js?v=4bcc27d8:6852:51)
+    at firebase_firestore.js?v=4bcc27d8:14725:35
+    at Array.map (<anonymous>)
+    at __PRIVATE_invokeBatchGetDocumentsRpc (firebase_firestore.js?v=4bcc27d8:14725:23)
+    at Transaction$2.lookup (firebase_firestore.js?v=4bcc27d8:14736:6)
+    at Transaction.get (firebase_firestore.js?v=4bcc27d8:17503:30)
+    at Transaction.get (firebase_firestore.js?v=4bcc27d8:17545:18)
+    at use-pets.ts:294:51
+    at __PRIVATE_TransactionRunner.updateFunction (firebase_firestore.js?v=4bcc27d8:17565:43)
+    at __PRIVATE_TransactionRunner.hu (firebase_firestore.js?v=4bcc27d8:14837:22)
+mutationFn @ use-pets.ts:351
+await in mutationFn
+fn @ @tanstack_react-query.js?v=4bcc27d8:1188
+run @ @tanstack_react-query.js?v=4bcc27d8:493
+start @ @tanstack_react-query.js?v=4bcc27d8:535
+execute @ @tanstack_react-query.js?v=4bcc27d8:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=4bcc27d8:2622
+handleSubmit @ PetsPage.tsx:288
+(anonymous) @ PetForm.tsx:171
+(anonymous) @ chunk-SVWJYMPS.js?v=4bcc27d8:1681
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=4bcc27d8:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=4bcc27d8:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=4bcc27d8:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=4bcc27d8:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=4bcc27d8:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=4bcc27d8:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=4bcc27d8:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=4bcc27d8:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=4bcc27d8:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=4bcc27d8:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=4bcc27d8:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=4bcc27d8:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=4bcc27d8:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=4bcc27d8:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=4bcc27d8:5449Understand this errorAI
+use-pets.ts:366 ADD_PET: Mutation error: TypeError: Cannot read properties of undefined (reading 'path')
+    at __PRIVATE_toName (firebase_firestore.js?v=4bcc27d8:6852:51)
+    at firebase_firestore.js?v=4bcc27d8:14725:35
+    at Array.map (<anonymous>)
+    at __PRIVATE_invokeBatchGetDocumentsRpc (firebase_firestore.js?v=4bcc27d8:14725:23)
+    at Transaction$2.lookup (firebase_firestore.js?v=4bcc27d8:14736:6)
+    at Transaction.get (firebase_firestore.js?v=4bcc27d8:17503:30)
+    at Transaction.get (firebase_firestore.js?v=4bcc27d8:17545:18)
+    at use-pets.ts:294:51
+    at __PRIVATE_TransactionRunner.updateFunction (firebase_firestore.js?v=4bcc27d8:17565:43)
+    at __PRIVATE_TransactionRunner.hu (firebase_firestore.js?v=4bcc27d8:14837:22)
+onError @ use-pets.ts:366
+execute @ @tanstack_react-query.js?v=4bcc27d8:1253
+await in execute
+mutate @ @tanstack_react-query.js?v=4bcc27d8:2622
+handleSubmit @ PetsPage.tsx:288
+(anonymous) @ PetForm.tsx:171
+(anonymous) @ chunk-SVWJYMPS.js?v=4bcc27d8:1681
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=4bcc27d8:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=4bcc27d8:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=4bcc27d8:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=4bcc27d8:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=4bcc27d8:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=4bcc27d8:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=4bcc27d8:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=4bcc27d8:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=4bcc27d8:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=4bcc27d8:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=4bcc27d8:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=4bcc27d8:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=4bcc27d8:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=4bcc27d8:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=4bcc27d8:5449Understand this errorAI
+PetsPage.tsx:301 Error handling pet: TypeError: Cannot read properties of undefined (reading 'path')
+    at __PRIVATE_toName (firebase_firestore.js?v=4bcc27d8:6852:51)
+    at firebase_firestore.js?v=4bcc27d8:14725:35
+    at Array.map (<anonymous>)
+    at __PRIVATE_invokeBatchGetDocumentsRpc (firebase_firestore.js?v=4bcc27d8:14725:23)
+    at Transaction$2.lookup (firebase_firestore.js?v=4bcc27d8:14736:6)
+    at Transaction.get (firebase_firestore.js?v=4bcc27d8:17503:30)
+    at Transaction.get (firebase_firestore.js?v=4bcc27d8:17545:18)
+    at use-pets.ts:294:51
+    at __PRIVATE_TransactionRunner.updateFunction (firebase_firestore.js?v=4bcc27d8:17565:43)
+    at __PRIVATE_TransactionRunner.hu (firebase_firestore.js?v=4bcc27d8:14837:22)
+handleSubmit @ PetsPage.tsx:301
+await in handleSubmit
+(anonymous) @ PetForm.tsx:171
+(anonymous) @ chunk-SVWJYMPS.js?v=4bcc27d8:1681
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=4bcc27d8:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=4bcc27d8:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=4bcc27d8:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=4bcc27d8:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=4bcc27d8:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=4bcc27d8:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=4bcc27d8:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=4bcc27d8:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=4bcc27d8:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=4bcc27d8:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=4bcc27d8:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=4bcc27d8:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=4bcc27d8:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=4bcc27d8:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=4bcc27d8:5449Understand this errorAI
