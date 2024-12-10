@@ -18,34 +18,46 @@ function log(message: string, type: 'info' | 'error' | 'warn' = 'info') {
   console.log(`${formattedTime} [express] ${prefix} ${message}`);
 }
 
-// Initialize Firebase Admin
-const serviceAccount = {
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-  privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n')
-};
+// Initialize Firebase Admin if credentials are available
+try {
+  const serviceAccount = {
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+    privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n')
+  };
 
-if (!serviceAccount.projectId || !serviceAccount.clientEmail || !serviceAccount.privateKey) {
-  console.error('Missing Firebase credentials');
-  process.exit(1);
+  if (serviceAccount.projectId && serviceAccount.clientEmail && serviceAccount.privateKey) {
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
+    });
+    log('Firebase Admin initialized successfully', 'info');
+  } else {
+    log('Firebase credentials not found, skipping Firebase initialization', 'warn');
+  }
+} catch (error) {
+  log(`Firebase initialization error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'warn');
+  // Continue without Firebase - we'll handle authentication differently
 }
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
-});
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set('trust proxy', 1);
 
-// Add CORS configuration for development
+// CORS configuration
+const isDevelopment = app.get("env") === "development";
 app.use((req, res, next) => {
-  const origin = req.get('origin') || 'http://localhost:5000';
-  res.header("Access-Control-Allow-Origin", origin);
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Cookie");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Expose-Headers", "Set-Cookie");
+  const origin = isDevelopment 
+    ? (req.get('origin') || 'http://localhost:5000') 
+    : req.get('origin');
+    
+  if (origin) {
+    res.header("Access-Control-Allow-Origin", origin);
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.header("Access-Control-Expose-Headers", "Set-Cookie");
+  }
+
   if (req.method === "OPTIONS") {
     return res.sendStatus(200);
   }
@@ -135,22 +147,35 @@ function setupGracefulShutdown(server: any) {
       throw new Error("Cannot start server without database connection");
     }
 
-    registerRoutes(app);
+    // Register routes with error handling
+    try {
+      registerRoutes(app);
+      log("Routes registered successfully", 'info');
+    } catch (error) {
+      log(`Failed to register routes: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+      throw error;
+    }
+
     const server = createServer(app);
 
     // Set up graceful shutdown
     setupGracefulShutdown(server);
 
-    // importantly only setup vite in development and after
-    // setting up all the other routes so the catch-all route
-    // doesn't interfere with the other routes
-    if (app.get("env") === "development") {
-      await setupVite(app, server);
-    } else {
-      serveStatic(app);
+    // Setup Vite or static serving based on environment
+    try {
+      if (app.get("env") === "development") {
+        await setupVite(app, server);
+        log("Vite middleware setup complete", 'info');
+      } else {
+        serveStatic(app);
+        log("Static file serving setup complete", 'info');
+      }
+    } catch (error) {
+      log(`Failed to setup frontend serving: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+      throw error;
     }
 
-    // ALWAYS serve the app on port 5000
+    // Start the server
     const PORT = 5000;
     server.listen(PORT, "0.0.0.0", () => {
       log(`Server listening on port ${PORT}`, 'info');
