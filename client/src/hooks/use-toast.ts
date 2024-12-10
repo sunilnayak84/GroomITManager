@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import type { ToastProps } from "@/components/ui/toast"
 
@@ -123,31 +124,15 @@ function dispatch(action: Action) {
   })
 }
 
-export const toast = {
-  ...({...props}: ToastProps) => {
-    const id = genId()
-    return {
-      id,
-      dismiss: () => dispatch({ type: "DISMISS_TOAST", toastId: id }),
-      update: (props: ToasterToast) => dispatch({
-        type: "UPDATE_TOAST",
-        toast: { ...props, id },
-      })
-    }
-  },
-  success: (message: string) => {
-    toast({ title: "Success", description: message, variant: "success" });
-  },
-  error: (message: string) => {
-    toast({ title: "Error", description: message, variant: "destructive" });
-  }
-}
+function createToast(props: ToastProps) {
+  const id = genId()
 
   const update = (props: ToasterToast) =>
     dispatch({
       type: "UPDATE_TOAST",
       toast: { ...props, id },
     })
+
   const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id })
 
   dispatch({
@@ -163,9 +148,19 @@ export const toast = {
   })
 
   return {
-    id: id,
+    id,
     dismiss,
     update,
+  }
+}
+
+export const toast = {
+  ...createToast,
+  success: (message: string) => {
+    createToast({ title: "Success", description: message, variant: "success" })
+  },
+  error: (message: string) => {
+    createToast({ title: "Error", description: message, variant: "destructive" })
   }
 }
 
