@@ -154,6 +154,13 @@ function setupGracefulShutdown(server: any) {
     const PORT = 5000;
     server.listen(PORT, "0.0.0.0", () => {
       log(`Server listening on port ${PORT}`, 'info');
+    }).on('error', (error: any) => {
+      if (error.code === 'EADDRINUSE') {
+        log(`Port ${PORT} is already in use. Please free up the port and try again.`, 'error');
+      } else {
+        log(`Failed to start server: ${error.message}`, 'error');
+      }
+      process.exit(1);
     });
 
   } catch (error: any) {

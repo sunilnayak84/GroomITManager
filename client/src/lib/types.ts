@@ -32,23 +32,32 @@ export type Pet = {
   weightUnit: "kg" | "lbs";
   image: string | null;
   notes: string | null;
-  owner?: {
+  owner: {
     id: string;  // Firebase document ID
-    firstName: string;
-    lastName: string;
     name: string;
-    phone: string;
-    email: string;
+    email: string | null;
   } | null;
   createdAt: string;
   updatedAt: string | null;
-  firebaseId?: string | null;
-  submissionId?: string;
 };
 
-export type InsertPet = Omit<Pet, 'id' | 'createdAt' | 'updatedAt' | 'firebaseId'> & {
+export type InsertPet = {
+  name: string;
+  type: "dog" | "cat" | "bird" | "fish" | "other";
+  breed: string;
+  customerId: string;
+  dateOfBirth: string | null;
+  age: number | null;
+  gender: "male" | "female" | "unknown" | null;
+  weight: string | null;
+  weightUnit: "kg" | "lbs";
   image: string | File | null;
-  submissionId?: string;
+  notes: string | null;
+  owner: {
+    id: string;
+    name: string;
+    email: string | null;
+  } | null;
 };
 
 export const PetGenderEnum = {
