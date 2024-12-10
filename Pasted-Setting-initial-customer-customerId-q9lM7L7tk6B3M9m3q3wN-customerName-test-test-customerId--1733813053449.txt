@@ -1,0 +1,184 @@
+Setting initial customer: {customerId: 'q9lM7L7tk6B3M9m3q3wN', customerName: 'test test'}customerId: "q9lM7L7tk6B3M9m3q3wN"customerName: "test test"[[Prototype]]: Object
+PetForm.tsx:93 Setting initial customer: {customerId: 'q9lM7L7tk6B3M9m3q3wN', customerName: 'test test'}customerId: "q9lM7L7tk6B3M9m3q3wN"customerName: "test test"[[Prototype]]: Object
+use-pets.ts:31 FETCH_PETS: Starting to fetch pets
+use-pets.ts:60 FETCH_PETS: Available customers: (2) [{…}, {…}]0: {id: 'q9lM7L7tk6B3M9m3q3wN', name: 'test test'}1: {id: 'uLzGYzLqKlEu94wxCHgE', name: 'test user'}length: 2[[Prototype]]: Array(0)
+use-pets.ts:72 FETCH_PETS: Processing pet data: {petId: 'A2b6DySBzXVUKb4o2sT0', customerId: 'uLzGYzLqKlEu94wxCHgE', petName: 'new edit', customerDetails: {…}}customerDetails: {id: 'uLzGYzLqKlEu94wxCHgE', name: 'test user'}customerId: "uLzGYzLqKlEu94wxCHgE"petId: "A2b6DySBzXVUKb4o2sT0"petName: "new edit"[[Prototype]]: Object
+use-pets.ts:72 FETCH_PETS: Processing pet data: {petId: 'SRLEPWFaJuHE5r1ZcNeb', customerId: 'q9lM7L7tk6B3M9m3q3wN', petName: 'edit', customerDetails: {…}}customerDetails: {id: 'q9lM7L7tk6B3M9m3q3wN', name: 'test test'}customerId: "q9lM7L7tk6B3M9m3q3wN"petId: "SRLEPWFaJuHE5r1ZcNeb"petName: "edit"[[Prototype]]: Object
+use-pets.ts:72 FETCH_PETS: Processing pet data: {petId: 'tBqXG0YqQwEu8bTcZGM6', customerId: 'q9lM7L7tk6B3M9m3q3wN', petName: 'edited', customerDetails: {…}}customerDetails: {id: 'q9lM7L7tk6B3M9m3q3wN', name: 'test test'}customerId: "q9lM7L7tk6B3M9m3q3wN"petId: "tBqXG0YqQwEu8bTcZGM6"petName: "edited"[[Prototype]]: Object
+use-pets.ts:72 FETCH_PETS: Processing pet data: {petId: 'zXBDhrqc37KbZpgAPaRk', customerId: 'q9lM7L7tk6B3M9m3q3wN', petName: 'ddwd', customerDetails: {…}}customerDetails: {id: 'q9lM7L7tk6B3M9m3q3wN', name: 'test test'}customerId: "q9lM7L7tk6B3M9m3q3wN"petId: "zXBDhrqc37KbZpgAPaRk"petName: "ddwd"[[Prototype]]: Object
+use-pets.ts:106 FETCH_PETS: Completed fetching pets {totalPets: 4, pets: Array(4)}pets: (4) [{…}, {…}, {…}, {…}]totalPets: 4[[Prototype]]: Object
+chunk-FV6IQ5BK.js?v=4bcc27d8:332 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-FV6IQ5BK.js?v=4bcc27d8:332
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=4bcc27d8:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=4bcc27d8:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=4bcc27d8:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=4bcc27d8:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=4bcc27d8:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=4bcc27d8:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=4bcc27d8:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=4bcc27d8:19416
+commitRoot @ chunk-RPCDYKBN.js?v=4bcc27d8:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=4bcc27d8:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=4bcc27d8:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=4bcc27d8:18627Understand this warningAI
+chunk-FV6IQ5BK.js?v=4bcc27d8:332 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-FV6IQ5BK.js?v=4bcc27d8:332
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=4bcc27d8:16915
+invokePassiveEffectMountInDEV @ chunk-RPCDYKBN.js?v=4bcc27d8:18324
+invokeEffectsInDev @ chunk-RPCDYKBN.js?v=4bcc27d8:19701
+commitDoubleInvokeEffectsInDEV @ chunk-RPCDYKBN.js?v=4bcc27d8:19686
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=4bcc27d8:19503
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=4bcc27d8:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=4bcc27d8:19416
+commitRoot @ chunk-RPCDYKBN.js?v=4bcc27d8:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=4bcc27d8:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=4bcc27d8:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=4bcc27d8:18627Understand this warningAI
+PetForm.tsx:93 Setting initial customer: {customerId: 'q9lM7L7tk6B3M9m3q3wN', customerName: 'test test'}customerId: "q9lM7L7tk6B3M9m3q3wN"customerName: "test test"[[Prototype]]: Object
+chunk-FV6IQ5BK.js?v=4bcc27d8:332 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-FV6IQ5BK.js?v=4bcc27d8:332
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=4bcc27d8:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=4bcc27d8:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=4bcc27d8:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=4bcc27d8:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=4bcc27d8:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=4bcc27d8:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=4bcc27d8:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=4bcc27d8:19416
+commitRoot @ chunk-RPCDYKBN.js?v=4bcc27d8:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=4bcc27d8:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=4bcc27d8:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=4bcc27d8:18627Understand this warningAI
+PetForm.tsx:93 Setting initial customer: {customerId: 'q9lM7L7tk6B3M9m3q3wN', customerName: 'test test'}customerId: "q9lM7L7tk6B3M9m3q3wN"customerName: "test test"[[Prototype]]: Object
+chunk-FV6IQ5BK.js?v=4bcc27d8:332 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-FV6IQ5BK.js?v=4bcc27d8:332
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=4bcc27d8:16915
+invokePassiveEffectMountInDEV @ chunk-RPCDYKBN.js?v=4bcc27d8:18324
+invokeEffectsInDev @ chunk-RPCDYKBN.js?v=4bcc27d8:19701
+commitDoubleInvokeEffectsInDEV @ chunk-RPCDYKBN.js?v=4bcc27d8:19686
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=4bcc27d8:19503
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=4bcc27d8:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=4bcc27d8:19416
+commitRoot @ chunk-RPCDYKBN.js?v=4bcc27d8:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=4bcc27d8:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=4bcc27d8:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=4bcc27d8:18627Understand this warningAI
+use-pets.ts:31 FETCH_PETS: Starting to fetch pets
+use-pets.ts:60 FETCH_PETS: Available customers: (2) [{…}, {…}]0: {id: 'q9lM7L7tk6B3M9m3q3wN', name: 'test test'}1: {id: 'uLzGYzLqKlEu94wxCHgE', name: 'test user'}length: 2[[Prototype]]: Array(0)
+use-pets.ts:72 FETCH_PETS: Processing pet data: {petId: 'A2b6DySBzXVUKb4o2sT0', customerId: 'uLzGYzLqKlEu94wxCHgE', petName: 'new edit', customerDetails: {…}}customerDetails: {id: 'uLzGYzLqKlEu94wxCHgE', name: 'test user'}customerId: "uLzGYzLqKlEu94wxCHgE"petId: "A2b6DySBzXVUKb4o2sT0"petName: "new edit"[[Prototype]]: Object
+use-pets.ts:72 FETCH_PETS: Processing pet data: {petId: 'SRLEPWFaJuHE5r1ZcNeb', customerId: 'q9lM7L7tk6B3M9m3q3wN', petName: 'edit', customerDetails: {…}}customerDetails: {id: 'q9lM7L7tk6B3M9m3q3wN', name: 'test test'}customerId: "q9lM7L7tk6B3M9m3q3wN"petId: "SRLEPWFaJuHE5r1ZcNeb"petName: "edit"[[Prototype]]: Object
+use-pets.ts:72 FETCH_PETS: Processing pet data: {petId: 'tBqXG0YqQwEu8bTcZGM6', customerId: 'q9lM7L7tk6B3M9m3q3wN', petName: 'edited', customerDetails: {…}}customerDetails: {id: 'q9lM7L7tk6B3M9m3q3wN', name: 'test test'}customerId: "q9lM7L7tk6B3M9m3q3wN"petId: "tBqXG0YqQwEu8bTcZGM6"petName: "edited"[[Prototype]]: Object
+use-pets.ts:72 FETCH_PETS: Processing pet data: {petId: 'zXBDhrqc37KbZpgAPaRk', customerId: 'q9lM7L7tk6B3M9m3q3wN', petName: 'ddwd', customerDetails: {…}}customerDetails: {id: 'q9lM7L7tk6B3M9m3q3wN', name: 'test test'}customerId: "q9lM7L7tk6B3M9m3q3wN"petId: "zXBDhrqc37KbZpgAPaRk"petName: "ddwd"[[Prototype]]: Object
+use-pets.ts:106 FETCH_PETS: Completed fetching pets {totalPets: 4, pets: Array(4)}pets: (4) [{…}, {…}, {…}, {…}]totalPets: 4[[Prototype]]: Object
+PetForm.tsx:93 Setting initial customer: {customerId: 'q9lM7L7tk6B3M9m3q3wN', customerName: 'test test'}customerId: "q9lM7L7tk6B3M9m3q3wN"customerName: "test test"[[Prototype]]: Object
+PetForm.tsx:93 Setting initial customer: {customerId: 'q9lM7L7tk6B3M9m3q3wN', customerName: 'test test'}customerId: "q9lM7L7tk6B3M9m3q3wN"customerName: "test test"[[Prototype]]: Object
+PetForm.tsx:125 Form submission started: {data: {…}, submissionId: '1733812961596-f5apmlfgu9'}data: {name: 'newnew', type: 'dog', breed: 'new', customerId: 'q9lM7L7tk6B3M9m3q3wN', dateOfBirth: null, …}submissionId: "1733812961596-f5apmlfgu9"[[Prototype]]: Object
+PetForm.tsx:155 Submitting pet data: {name: 'newnew', type: 'dog', breed: 'new', customerId: 'q9lM7L7tk6B3M9m3q3wN', dateOfBirth: null, …}age: nullbreed: "new"customerId: "q9lM7L7tk6B3M9m3q3wN"dateOfBirth: nullgender: "female"image: File {name: 'open.jpg', lastModified: 1732170125091, lastModifiedDate: Thu Nov 21 2024 11:52:05 GMT+0530 (India Standard Time), webkitRelativePath: '', size: 1889291, …}name: "newnew"notes: nullonUploadProgress: (progress) => {…}owner: {id: 'q9lM7L7tk6B3M9m3q3wN', firstName: 'test', lastName: 'test', name: 'test test', phone: '6515454564', …}submissionId: "1733812961596-f5apmlfgu9"type: "dog"weight: nullweightUnit: "kg"[[Prototype]]: Object
+use-pets.ts:231 ADD_PET: Starting to add pet {petData: {…}}petData: {name: 'newnew', type: 'dog', breed: 'new', customerId: 'q9lM7L7tk6B3M9m3q3wN', dateOfBirth: null, …}[[Prototype]]: Object
+use-pets.ts:235 ADD_PET: Using submission ID: 1733812961596-f5apmlfgu9
+storage.ts:11 File uploaded successfully: {metadata: {…}, ref: _Reference}metadata: {type: 'file', bucket: 'replit-5ac6a.firebasestorage.app', generation: '1733812964344127', metageneration: '1', fullPath: 'pets/q9lM7L7tk6B3M9m3q3wN/1733812961609_open.jpg', …}ref: _Reference {_service: FirebaseStorageImpl, _location: _Location}[[Prototype]]: Object
+storage.ts:15 File download URL: https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/pets%2Fq9lM7L7tk6B3M9m3q3wN%2F1733812961609_open.jpg?alt=media&token=dc0ae4d6-c9ad-4007-aee1-c391d9ede865
+use-pets.ts:330 ADD_PET: Error adding pet: TypeError: Cannot read properties of undefined (reading 'path')
+    at __PRIVATE_toName (firebase_firestore.js?v=4bcc27d8:6852:51)
+    at firebase_firestore.js?v=4bcc27d8:14725:35
+    at Array.map (<anonymous>)
+    at __PRIVATE_invokeBatchGetDocumentsRpc (firebase_firestore.js?v=4bcc27d8:14725:23)
+    at Transaction$2.lookup (firebase_firestore.js?v=4bcc27d8:14736:6)
+    at Transaction.get (firebase_firestore.js?v=4bcc27d8:17503:30)
+    at Transaction.get (firebase_firestore.js?v=4bcc27d8:17545:18)
+    at use-pets.ts:290:51
+    at __PRIVATE_TransactionRunner.updateFunction (firebase_firestore.js?v=4bcc27d8:17565:43)
+    at __PRIVATE_TransactionRunner.hu (firebase_firestore.js?v=4bcc27d8:14837:22)
+mutationFn @ use-pets.ts:330
+await in mutationFn
+fn @ @tanstack_react-query.js?v=4bcc27d8:1188
+run @ @tanstack_react-query.js?v=4bcc27d8:493
+start @ @tanstack_react-query.js?v=4bcc27d8:535
+execute @ @tanstack_react-query.js?v=4bcc27d8:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=4bcc27d8:2622
+handleSubmit @ PetsPage.tsx:288
+(anonymous) @ PetForm.tsx:157
+(anonymous) @ chunk-SVWJYMPS.js?v=4bcc27d8:1681
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=4bcc27d8:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=4bcc27d8:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=4bcc27d8:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=4bcc27d8:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=4bcc27d8:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=4bcc27d8:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=4bcc27d8:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=4bcc27d8:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=4bcc27d8:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=4bcc27d8:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=4bcc27d8:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=4bcc27d8:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=4bcc27d8:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=4bcc27d8:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=4bcc27d8:5449Understand this errorAI
+use-pets.ts:345 ADD_PET: Mutation error: TypeError: Cannot read properties of undefined (reading 'path')
+    at __PRIVATE_toName (firebase_firestore.js?v=4bcc27d8:6852:51)
+    at firebase_firestore.js?v=4bcc27d8:14725:35
+    at Array.map (<anonymous>)
+    at __PRIVATE_invokeBatchGetDocumentsRpc (firebase_firestore.js?v=4bcc27d8:14725:23)
+    at Transaction$2.lookup (firebase_firestore.js?v=4bcc27d8:14736:6)
+    at Transaction.get (firebase_firestore.js?v=4bcc27d8:17503:30)
+    at Transaction.get (firebase_firestore.js?v=4bcc27d8:17545:18)
+    at use-pets.ts:290:51
+    at __PRIVATE_TransactionRunner.updateFunction (firebase_firestore.js?v=4bcc27d8:17565:43)
+    at __PRIVATE_TransactionRunner.hu (firebase_firestore.js?v=4bcc27d8:14837:22)
+onError @ use-pets.ts:345
+execute @ @tanstack_react-query.js?v=4bcc27d8:1253
+await in execute
+mutate @ @tanstack_react-query.js?v=4bcc27d8:2622
+handleSubmit @ PetsPage.tsx:288
+(anonymous) @ PetForm.tsx:157
+(anonymous) @ chunk-SVWJYMPS.js?v=4bcc27d8:1681
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=4bcc27d8:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=4bcc27d8:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=4bcc27d8:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=4bcc27d8:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=4bcc27d8:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=4bcc27d8:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=4bcc27d8:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=4bcc27d8:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=4bcc27d8:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=4bcc27d8:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=4bcc27d8:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=4bcc27d8:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=4bcc27d8:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=4bcc27d8:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=4bcc27d8:5449Understand this errorAI
+PetsPage.tsx:301 Error handling pet: TypeError: Cannot read properties of undefined (reading 'path')
+    at __PRIVATE_toName (firebase_firestore.js?v=4bcc27d8:6852:51)
+    at firebase_firestore.js?v=4bcc27d8:14725:35
+    at Array.map (<anonymous>)
+    at __PRIVATE_invokeBatchGetDocumentsRpc (firebase_firestore.js?v=4bcc27d8:14725:23)
+    at Transaction$2.lookup (firebase_firestore.js?v=4bcc27d8:14736:6)
+    at Transaction.get (firebase_firestore.js?v=4bcc27d8:17503:30)
+    at Transaction.get (firebase_firestore.js?v=4bcc27d8:17545:18)
+    at use-pets.ts:290:51
+    at __PRIVATE_TransactionRunner.updateFunction (firebase_firestore.js?v=4bcc27d8:17565:43)
+    at __PRIVATE_TransactionRunner.hu (firebase_firestore.js?v=4bcc27d8:14837:22)
+handleSubmit @ PetsPage.tsx:301
+await in handleSubmit
+(anonymous) @ PetForm.tsx:157
+(anonymous) @ chunk-SVWJYMPS.js?v=4bcc27d8:1681
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=4bcc27d8:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=4bcc27d8:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=4bcc27d8:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=4bcc27d8:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=4bcc27d8:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=4bcc27d8:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=4bcc27d8:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=4bcc27d8:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=4bcc27d8:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=4bcc27d8:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=4bcc27d8:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=4bcc27d8:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=4bcc27d8:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=4bcc27d8:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=4bcc27d8:5449Understand this errorAI
+PetForm.tsx:158 Pet creation result: false
