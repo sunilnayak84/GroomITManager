@@ -113,6 +113,7 @@ export function useAppointments() {
         notes: string | null;
         productsUsed: string | null;
         createdAt: Date;
+        updatedAt?: Date;
       };
 
       // Prepare the document data
