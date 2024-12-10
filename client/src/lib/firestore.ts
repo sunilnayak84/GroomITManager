@@ -122,79 +122,64 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
     }
 
     // Ensure required fields are present
-    const requiredFields = ['name', 'type', 'breed', 'customerId', 'submissionId'];
+    const requiredFields = ['name', 'type', 'breed', 'customerId'];
     for (const field of requiredFields) {
       if (!pet[field]) {
         throw new Error(`Missing required field: ${field}`);
       }
     }
 
-    // Convert customerId to string if it's a number
-    const customerIdStr = pet.customerId.toString();
-
     // Create references
-    const customerRef = doc(customersCollection, customerIdStr);
+    const customerRef = doc(customersCollection, pet.customerId);
     const petRef = doc(petsCollection);
-
-    // Check for duplicate submission before starting transaction
-    if (pet.submissionId) {
-      const existingPetQuery = query(
-        petsCollection,
-        where('submissionId', '==', pet.submissionId)
-      );
-      const existingPetDocs = await getDocs(existingPetQuery);
-      if (!existingPetDocs.empty) {
-        console.log('FIRESTORE: Duplicate submission detected', {
-          submissionId: pet.submissionId
-        });
-        return existingPetDocs.docs[0].id;
-      }
-    }
+    const submissionId = pet.submissionId || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
     // Use a transaction to create pet and update customer count atomically
-    const petId = await runTransaction(db, async (transaction) => {
+    const result = await runTransaction(db, async (transaction) => {
       try {
         // Verify customer exists within transaction
         const customerDoc = await transaction.get(customerRef);
         if (!customerDoc.exists()) {
-          throw new Error(`Customer with ID ${customerIdStr} does not exist`);
+          throw new Error(`Customer with ID ${pet.customerId} does not exist`);
         }
 
-        // Query existing pets within transaction
-        const petsQuery = query(petsCollection, where('customerId', '==', customerIdStr));
+        // Check for duplicate submission
+        const duplicateQuery = query(petsCollection, where('submissionId', '==', submissionId));
+        const duplicateSnapshot = await transaction.get(duplicateQuery);
+        
+        if (!duplicateSnapshot.empty) {
+          console.log('FIRESTORE: Duplicate submission detected', {
+            submissionId
+          });
+          const duplicateDoc = duplicateSnapshot.docs[0];
+          return { 
+            isDuplicate: true, 
+            existingPet: { 
+              id: duplicateDoc.id, 
+              ...duplicateDoc.data() 
+            } 
+          };
+        }
+
+        // Query existing pets for accurate count
+        const petsQuery = query(petsCollection, where('customerId', '==', pet.customerId));
         const petsSnapshot = await getDocs(petsQuery);
-        
-        // Check for duplicate submission again inside transaction
-        if (pet.submissionId) {
-          const duplicate = petsSnapshot.docs.find(
-            doc => doc.data().submissionId === pet.submissionId
-          );
-          if (duplicate) {
-            console.log('FIRESTORE: Duplicate submission caught in transaction', {
-              submissionId: pet.submissionId
-            });
-            return duplicate.id;
-          }
-        }
-
         const actualPetCount = petsSnapshot.size;
-        const timestamp = new Date().toISOString();
         
+        const timestamp = new Date().toISOString();
         const petData = {
           ...pet,
           id: petRef.id,
-          customerId: customerIdStr,
+          submissionId,
           createdAt: timestamp,
-          updatedAt: timestamp,
-          submissionId: pet.submissionId
+          updatedAt: timestamp
         };
 
-        console.log('FIRESTORE: Transaction details', { 
+        console.log('FIRESTORE: Creating new pet', { 
           petId: petRef.id,
-          customerId: customerIdStr,
-          currentStoredCount: customerDoc.data()?.petCount || 0,
-          actualPetCount,
-          newPetData: petData
+          customerId: pet.customerId,
+          petCount: actualPetCount + 1,
+          petData
         });
 
         // Create pet document
@@ -206,19 +191,21 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
           updatedAt: timestamp
         });
 
-        return petRef.id;
+        return { 
+          success: true, 
+          pet: { 
+            id: petRef.id, 
+            ...petData 
+          } 
+        };
       } catch (error) {
         console.error('FIRESTORE: Transaction failed', error);
         throw error;
       }
     });
 
-    console.log('FIRESTORE: Pet created successfully in transaction', { 
-      petId,
-      customerId: customerIdStr
-    });
-
-    return petId;
+    console.log('FIRESTORE: Pet operation completed', result);
+    return result;
   } catch (error) {
     console.error('FIRESTORE: Critical error in createPet', { 
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -327,14 +314,41 @@ export async function deleteCustomerAndRelated(id: string) {
 
 export async function updatePet(id: string, data: Partial<Pet>) {
   try {
+    console.log('FIRESTORE: Starting pet update', { id, updateData: data });
+    
     const petRef = doc(petsCollection, id);
-    await setDoc(petRef, {
+    const petDoc = await getDoc(petRef);
+    
+    if (!petDoc.exists()) {
+      throw new Error(`Pet with ID ${id} not found`);
+    }
+
+    const timestamp = new Date().toISOString();
+    const updateData = {
       ...data,
-      updatedAt: new Date()
-    }, { merge: true });
-    return true;
+      updatedAt: timestamp
+    };
+
+    // Remove any undefined values
+    Object.keys(updateData).forEach(key => {
+      if (updateData[key] === undefined) {
+        delete updateData[key];
+      }
+    });
+
+    await setDoc(petRef, updateData, { merge: true });
+    console.log('FIRESTORE: Pet updated successfully', { id, updateData });
+    
+    return {
+      success: true,
+      pet: {
+        id,
+        ...petDoc.data(),
+        ...updateData
+      }
+    };
   } catch (error) {
-    console.error('Error updating pet:', error);
+    console.error('FIRESTORE: Error updating pet:', error);
     throw error;
   }
 }

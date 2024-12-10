@@ -70,6 +70,9 @@ export default function AppointmentForm() {
     <DialogContent>
       <DialogHeader>
         <DialogTitle>Schedule Appointment</DialogTitle>
+        <DialogDescription>
+          Book a new appointment for pet grooming services.
+        </DialogDescription>
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

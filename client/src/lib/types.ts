@@ -3,7 +3,7 @@ import { customerSchema, insertCustomerSchema, petSchema, insertPetSchema } from
 
 // Customer types
 export type Customer = {
-  id: number;
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -11,8 +11,8 @@ export type Customer = {
   address: string | null;
   gender: string | null;
   petCount: number;
-  createdAt: Date;
-  updatedAt: Date | null;
+  createdAt: string;
+  updatedAt: string | null;
   firebaseId?: string | null;
 };
 
@@ -36,12 +36,19 @@ export type Pet = {
     id: string;  // Firebase document ID
     firstName: string;
     lastName: string;
+    name: string;
     phone: string;
     email: string;
-  };
+  } | null;
   createdAt: string;
   updatedAt: string | null;
   firebaseId?: string | null;
+  submissionId?: string;
+};
+
+export type InsertPet = Omit<Pet, 'id' | 'createdAt' | 'updatedAt' | 'firebaseId'> & {
+  image: string | File | null;
+  submissionId?: string;
 };
 
 export const PetGenderEnum = {
@@ -54,36 +61,20 @@ export type PetGender = typeof PetGenderEnum[keyof typeof PetGenderEnum];
 
 // Form data types
 export type PetFormData = Omit<Pet, 'id'> & {
-  id?: number;
+  id?: string;
   image?: File | string | null;
   owner?: {
-    id: number;
+    id: string;
     firstName: string;
     lastName: string;
     phone?: string;
     email?: string;
-  };
+  } | null;
 };
 
-export type InsertPet = {
-  name: string;
-  type: "dog" | "cat" | "bird" | "fish" | "other";
-  breed: string;
-  customerId: string;  // Firebase document ID
-  dateOfBirth: string | null;
-  age: number | null;
-  gender: "male" | "female" | "unknown" | null;
-  weight: string | null;
-  weightUnit: "kg" | "lbs";
+export type InsertPet = Omit<Pet, 'id' | 'createdAt' | 'updatedAt' | 'firebaseId'> & {
   image: string | File | null;
-  notes: string | null;
-  owner?: {
-    id: string;  // Firebase document ID
-    firstName: string;
-    lastName: string;
-    phone: string;
-    email: string;
-  };
+  submissionId?: string;
 };
 
 // Common utility types
