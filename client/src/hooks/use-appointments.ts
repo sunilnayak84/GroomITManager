@@ -102,22 +102,7 @@ export function useAppointments() {
 
   const addAppointmentMutation = useMutation({
     mutationFn: async (appointmentData: InsertAppointment) => {
-      // Use type intersection to ensure proper typing with Firebase
-      type FirestoreAppointment = {
-        petId: number;
-        serviceId: number;
-        groomerId: string;
-        branchId: number;
-        date: Date;
-        status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
-        notes: string | null;
-        productsUsed: string | null;
-        createdAt: Date;
-        updatedAt?: Date;
-      };
-
-      // Prepare the document data
-      const documentData: WithFieldValue<FirestoreAppointment> = {
+      const documentData = {
         petId: Number(appointmentData.petId),
         serviceId: Number(appointmentData.serviceId),
         groomerId: String(appointmentData.groomerId),
@@ -134,10 +119,18 @@ export function useAppointments() {
       const docRef = await addDoc(appointmentsCollection, documentData);
       
       // Return the appointment data with the new ID
-      const returnData: Omit<AppointmentWithRelations, 'pet' | 'customer' | 'groomer'> = {
+      const returnData = {
         id: docRef.id,
-        ...documentData,
-        updatedAt: undefined
+        petId: documentData.petId,
+        serviceId: documentData.serviceId,
+        groomerId: documentData.groomerId,
+        branchId: documentData.branchId,
+        date: documentData.date,
+        status: documentData.status,
+        notes: documentData.notes,
+        productsUsed: documentData.productsUsed,
+        createdAt: documentData.createdAt,
+        updatedAt: documentData.updatedAt
       };
 
       return returnData;
