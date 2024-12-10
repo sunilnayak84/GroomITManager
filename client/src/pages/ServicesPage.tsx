@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Plus } from "lucide-react";
 import { useServices } from "@/hooks/use-services";
 import {
   Dialog,
@@ -143,10 +144,27 @@ export default function ServicesPage() {
   ];
 
   return (
-    <div className="container mx-auto py-6">
+    <div className="container mx-auto py-6 space-y-4">
+      <div className="relative h-48 rounded-xl overflow-hidden">
+        <img
+          src="https://images.unsplash.com/photo-1516734212186-a967f81ad0d7"
+          alt="Professional Pet Grooming Services"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-transparent flex items-center p-8">
+          <div className="text-white">
+            <h2 className="text-2xl font-bold">Services Management</h2>
+            <p>Manage your pet grooming services and treatments</p>
+          </div>
+        </div>
+      </div>
+
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Services Management</h1>
-        <Button onClick={() => setShowServiceDialog(true)}>Add Service</Button>
+        <Button onClick={() => setShowServiceDialog(true)} 
+          className="ml-auto h-12 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+          <Plus className="mr-2 h-5 w-5" />
+          Add New Service
+        </Button>
       </div>
 
       <div className="rounded-md border">
