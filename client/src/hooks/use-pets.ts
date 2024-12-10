@@ -171,9 +171,18 @@ export function usePets() {
         }
       }
 
-      // Prepare update data
+      // Prepare update data - only include fields we want to save
       const cleanData = {
-        ...updateData,
+        name: updateData.name,
+        type: updateData.type,
+        breed: updateData.breed,
+        customerId: updateData.customerId,
+        dateOfBirth: updateData.dateOfBirth,
+        age: updateData.age,
+        gender: updateData.gender,
+        weight: updateData.weight,
+        weightUnit: updateData.weightUnit,
+        notes: updateData.notes,
         image: imageUrl,
         updatedAt: serverTimestamp()
       };
@@ -285,9 +294,18 @@ export function usePets() {
             return { isDuplicate: true, existingPet: querySnapshot.docs[0].data() };
           }
 
-          // Prepare pet data
+          // Prepare pet data - only include fields we want to save
           const petDataWithImage = {
-            ...petData,
+            name: petData.name,
+            type: petData.type,
+            breed: petData.breed,
+            customerId: petData.customerId,
+            dateOfBirth: petData.dateOfBirth,
+            age: petData.age,
+            gender: petData.gender,
+            weight: petData.weight,
+            weightUnit: petData.weightUnit,
+            notes: petData.notes,
             image: imageUrl,
             submissionId,
             createdAt: serverTimestamp()
