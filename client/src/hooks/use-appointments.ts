@@ -4,6 +4,18 @@ import { collection, getDocs, addDoc, onSnapshot, query, getDoc, doc } from 'fir
 import { appointmentsCollection, petsCollection, customersCollection, usersCollection } from "../lib/firestore";
 import React from "react";
 
+// Helper function to safely convert to Date
+const toSafeDate = (value: unknown): Date | null => {
+  if (!value) return null;
+  if (value instanceof Date) return value;
+  try {
+    const date = new Date(value as string | number);
+    return isNaN(date.getTime()) ? null : date;
+  } catch {
+    return null;
+  }
+};
+
 export function useAppointments() {
   const queryClient = useQueryClient();
 
