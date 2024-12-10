@@ -51,6 +51,18 @@ type InventoryFormData = z.infer<typeof inventoryFormSchema>;
 import type { InventoryItem } from "@/hooks/use-inventory";
 
 export default function InventoryPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Loading inventory management...</div>
+      </div>
+    }>
+      <InventoryPageContent />
+    </Suspense>
+  );
+}
+
+function InventoryPageContent() {
   const [showItemDialog, setShowItemDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
   const [isPending, startTransition] = useTransition();
