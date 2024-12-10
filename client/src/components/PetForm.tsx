@@ -7,9 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Upload } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
 
 const petSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -22,7 +21,7 @@ const petSchema = z.object({
   age: z.number().nullable().or(z.string().transform(val => val ? Number(val) : null)),
   gender: z.enum(["male", "female", "unknown"], {
     required_error: "Gender is required"
-  }).nullable(),
+  }).nullish(),
   weight: z.string().nullable().or(z.number().transform(String)),
   weightUnit: z.enum(["kg", "lbs"], {
     required_error: "Weight unit is required"
@@ -34,65 +33,32 @@ const petSchema = z.object({
 type FormData = z.infer<typeof petSchema>;
 
 interface PetFormProps {
+  handleSubmit: (data: InsertPet) => Promise<any>;
   onSuccess?: (data: InsertPet) => void;
+  onError?: (error: Error) => void;
   onCancel?: () => void;
   defaultValues?: Partial<InsertPet>;
   customers?: Customer[];
   customerId?: string;
-  selectedCustomer?: Customer;
+  hideCustomerField?: boolean;
   isEditing?: boolean;
-  handleSubmit: (data: InsertPet) => Promise<any>;
 }
 
 export function PetForm({
+  handleSubmit: submitForm,
   onSuccess,
+  onError,
   onCancel,
   defaultValues,
   customers = [],
   customerId,
-  selectedCustomer: initialSelectedCustomer,
+  hideCustomerField = false,
   isEditing = false,
-  handleSubmit: submitForm
 }: PetFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(
     typeof defaultValues?.image === 'string' ? defaultValues.image : null
-  );
-  
-  // Create a unique key for the form data based on whether we're editing or creating
-  const formStorageKey = useMemo(() => {
-    return `pet-form-${customerId || 'new'}-${isEditing ? 'edit' : 'draft'}`;
-  }, [customerId, isEditing]);
-
-  // Debounce function
-  const debounce = (func: Function, wait: number) => {
-    let timeout: NodeJS.Timeout;
-    return (...args: any[]) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func(...args), wait);
-    };
-  };
-
-  // Save form data to localStorage
-  const saveFormToStorage = useCallback((data: Partial<FormData> & { image?: File | string | null }) => {
-    try {
-      // Convert File object to null for storage
-      const storageData = {
-        ...data,
-        image: typeof data.image === 'string' ? data.image : null,
-        lastUpdated: new Date().toISOString()
-      };
-      localStorage.setItem(formStorageKey, JSON.stringify(storageData));
-    } catch (error) {
-      console.error('Error saving form data:', error);
-    }
-  }, [formStorageKey]);
-
-  // Debounced save function
-  const debouncedSave = useMemo(
-    () => debounce((data: Partial<FormData>) => saveFormToStorage(data), 1000),
-    [saveFormToStorage]
   );
 
   const form = useForm<FormData>({
@@ -112,52 +78,9 @@ export function PetForm({
     },
   });
 
-  // Restore saved form data on mount
-  useEffect(() => {
-    try {
-      const savedData = localStorage.getItem(formStorageKey);
-      if (savedData) {
-        const parsedData = JSON.parse(savedData);
-        // Only restore if the data is less than 24 hours old
-        const lastUpdated = new Date(parsedData.lastUpdated);
-        const isRecent = new Date().getTime() - lastUpdated.getTime() < 24 * 60 * 60 * 1000;
-        
-        if (isRecent && !defaultValues?.id) {  // Don't restore if editing existing pet
-          delete parsedData.lastUpdated;
-          Object.entries(parsedData).forEach(([key, value]) => {
-            if (value !== undefined) {
-              if (key === 'weight' && value !== null) {
-                form.setValue(key as keyof FormData, String(value));
-              } else if (key === 'age' && value !== null) {
-                form.setValue(key as keyof FormData, Number(value));
-              } else {
-                form.setValue(key as keyof FormData, value);
-              }
-            }
-          });
-          
-          // Restore image preview if exists
-          if (parsedData.image && typeof parsedData.image === 'string') {
-            setImagePreview(parsedData.image);
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error restoring form data:', error);
-    }
-  }, [formStorageKey, form, defaultValues?.id]);
-
-  // Subscribe to form changes for autosave
-  useEffect(() => {
-    const subscription = form.watch((value) => {
-      debouncedSave(value);
-    });
-    return () => subscription.unsubscribe();
-  }, [form, debouncedSave]);
-
   // Set initial customer when form loads
   useEffect(() => {
-    if (customers.length > 0) {
+    if (!hideCustomerField && customers.length > 0) {
       let selectedCustomer;
       if (customerId) {
         selectedCustomer = customers.find(c => 
@@ -170,19 +93,14 @@ export function PetForm({
       }
       if (selectedCustomer) {
         const effectiveId = selectedCustomer.firebaseId || selectedCustomer.id.toString();
-        console.log('Setting initial customer:', {
-          customerId: effectiveId,
-          customerName: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`
-        });
         form.setValue('customerId', effectiveId);
       }
     }
-  }, [customers, customerId, form]);
+  }, [customers, customerId, form, hideCustomerField]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file type
       if (!file.type.startsWith('image/')) {
         toast({
           title: "Error",
@@ -213,42 +131,41 @@ export function PetForm({
     setIsSubmitting(true);
 
     try {
-      const selectedCustomer = customers.find(c => 
-        c.firebaseId === data.customerId || 
-        c.id.toString() === data.customerId
-      );
+      const selectedCustomer = hideCustomerField 
+        ? { id: customerId } 
+        : customers.find(c => 
+            c.firebaseId === data.customerId || 
+            c.id.toString() === data.customerId
+          );
       
       if (!selectedCustomer) {
         throw new Error("Selected customer not found");
       }
 
-      const customerId = selectedCustomer.firebaseId || selectedCustomer.id.toString();
+      const effectiveCustomerId = selectedCustomer.id.toString();
       
       const petData: InsertPet = {
         name: data.name,
         type: data.type,
         breed: data.breed,
-        customerId,
+        customerId: effectiveCustomerId,
         dateOfBirth: data.dateOfBirth || null,
         age: data.age !== null ? Number(data.age) : null,
         gender: data.gender || null,
-        weight: typeof data.weight === 'number' ? String(data.weight) : data.weight,
+        weight: data.weight || null,
         weightUnit: data.weightUnit,
         notes: data.notes || null,
         image: data.image,
-        owner: {
-          id: customerId,
+        owner: hideCustomerField ? defaultValues?.owner : {
+          id: effectiveCustomerId,
           name: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`,
           email: selectedCustomer.email || null
         }
       };
 
-      console.log('Submitting pet data:', petData);
       const result = await submitForm(petData);
 
       if (result) {
-        // Clear saved form data
-        localStorage.removeItem(formStorageKey);
         setImagePreview(null);
         form.reset();
         
@@ -261,6 +178,9 @@ export function PetForm({
       }
     } catch (error) {
       console.error('Error submitting pet form:', error);
+      if (error instanceof Error) {
+        onError?.(error);
+      }
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to save pet",
@@ -269,9 +189,9 @@ export function PetForm({
     } finally {
       setIsSubmitting(false);
     }
-  }, [isSubmitting, customers, submitForm, form, onSuccess, toast, isEditing]);
+  }, [isSubmitting, customers, submitForm, form, onSuccess, toast, isEditing, hideCustomerField, customerId, defaultValues?.owner, onError]);
 
-  if (customers.length === 0) {
+  if (!hideCustomerField && customers.length === 0) {
     return (
       <div className="p-4 text-center">
         <p className="text-red-500">Please add at least one customer before adding a pet.</p>
@@ -315,46 +235,47 @@ export function PetForm({
                         Upload Image
                       </Button>
                     </div>
-                    
                   </div>
                 </FormControl>
               </FormItem>
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="customerId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Owner*</FormLabel>
-                <Select 
-                  onValueChange={field.onChange} 
-                  value={field.value}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select owner" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {customers.map((customer) => {
-                      const value = customer.firebaseId || customer.id.toString();
-                      return (
-                        <SelectItem 
-                          key={value} 
-                          value={value}
-                        >
-                          {customer.firstName} {customer.lastName}
-                        </SelectItem>
-                      );
-                    })}
-                  </SelectContent>
-                </Select>
-              </FormItem>
-            )}
-          />
+          {!hideCustomerField && (
+            <FormField
+              control={form.control}
+              name="customerId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Owner*</FormLabel>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    value={field.value}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select owner" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {customers.map((customer) => {
+                        const value = customer.firebaseId || customer.id.toString();
+                        return (
+                          <SelectItem 
+                            key={value} 
+                            value={value}
+                          >
+                            {customer.firstName} {customer.lastName}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
+          )}
 
           <FormField
             control={form.control}
@@ -448,7 +369,7 @@ export function PetForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Gender</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select onValueChange={field.onChange} value={field.value ?? ''}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select gender" />
@@ -509,8 +430,6 @@ export function PetForm({
             />
           </div>
 
-          
-
           <FormField
             control={form.control}
             name="notes"
@@ -533,7 +452,7 @@ export function PetForm({
           )}
           <Button 
             type="submit" 
-            disabled={isSubmitting || !form.formState.isValid}
+            disabled={isSubmitting}
             className={isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}
           >
             {isSubmitting ? "Saving..." : "Save Pet"}
