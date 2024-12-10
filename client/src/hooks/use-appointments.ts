@@ -1,17 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { Appointment } from "@db/schema";
-import { collection, getDocs, addDoc, onSnapshot, query, getDoc, doc } from 'firebase/firestore';
+import type { Appointment, AppointmentWithRelations } from "@/lib/schema";
+import { collection, getDocs, addDoc, onSnapshot, query, getDoc, doc, type WithFieldValue } from 'firebase/firestore';
 import { appointmentsCollection, petsCollection, customersCollection, usersCollection } from "../lib/firestore";
 import React from "react";
-
-type AppointmentStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled';
-
-type AppointmentWithRelations = Omit<Appointment, 'status'> & {
-  pet: { name: string; breed: string; image: string | null };
-  customer: { firstName: string; lastName: string };
-  groomer: { name: string };
-  status: AppointmentStatus;
-};
 
 export function useAppointments() {
   const queryClient = useQueryClient();
@@ -26,25 +17,28 @@ export function useAppointments() {
         const appointmentData = appointmentDoc.data();
         
         // Get pet details
-        const petDoc = await getDoc(doc(petsCollection, appointmentData.petId.toString()));
+        const petDoc = await getDoc(doc(petsCollection, appointmentData.petId));
         const petData = petDoc.data();
         
         // Get customer details through pet's customerId
-        const customerDoc = await getDoc(doc(customersCollection, petData?.customerId.toString()));
+        const customerDoc = await getDoc(doc(customersCollection, petData?.customerId));
         const customerData = customerDoc.data();
         
         // Get groomer details
-        const groomerDoc = await getDoc(doc(usersCollection, appointmentData.groomerId.toString()));
+        const groomerDoc = await getDoc(doc(usersCollection, appointmentData.groomerId));
         const groomerData = groomerDoc.data();
 
         appointments.push({
-          id: parseInt(appointmentDoc.id),
+          id: appointmentDoc.id,
           petId: appointmentData.petId,
+          serviceId: appointmentData.serviceId,
           groomerId: appointmentData.groomerId,
-          date: appointmentData.date,
+          branchId: appointmentData.branchId,
+          date: appointmentData.date.toDate(),
           status: appointmentData.status || 'pending',
           notes: appointmentData.notes,
-          createdAt: appointmentData.createdAt,
+          productsUsed: appointmentData.productsUsed,
+          createdAt: appointmentData.createdAt.toDate(),
           pet: {
             name: petData?.name || '',
             breed: petData?.breed || '',
@@ -60,19 +54,19 @@ export function useAppointments() {
         });
       }
 
-      return appointments as AppointmentWithRelations[];
+      return appointments;
     },
   });
 
   const addAppointmentMutation = useMutation({
-    mutationFn: async (appointmentData: Omit<Appointment, 'id' | 'createdAt'>) => {
+    mutationFn: async (appointmentData: Omit<AppointmentWithRelations, 'id' | 'createdAt' | 'pet' | 'customer' | 'groomer'>) => {
       const docRef = await addDoc(appointmentsCollection, {
         ...appointmentData,
         createdAt: new Date(),
         status: appointmentData.status || 'pending'
       });
       return {
-        id: parseInt(docRef.id),
+        id: docRef.id,
         ...appointmentData,
         createdAt: new Date()
       };

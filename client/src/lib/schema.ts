@@ -75,6 +75,7 @@ export const appointmentSchema = z.object({
   updatedAt: z.date().optional(),
 });
 
+// Schema for appointment creation/updates
 export const insertAppointmentSchema = appointmentSchema.omit({
   id: true,
   createdAt: true,
@@ -85,6 +86,9 @@ export const insertAppointmentSchema = appointmentSchema.omit({
   serviceId: z.string().min(1, "Service must be selected"),
   groomerId: z.string().min(1, "Groomer must be selected"),
   branchId: z.string().min(1, "Branch must be selected"),
+  status: z.enum(["pending", "confirmed", "completed", "cancelled"]).default("pending"),
+  notes: z.string().nullable(),
+  productsUsed: z.string().nullable()
 });
 
 // Schema for User (Groomer)
@@ -118,13 +122,13 @@ export type InsertUser = z.infer<typeof insertUserSchema>;
 export type AppointmentWithRelations = Omit<Appointment, "status"> & {
   status: "pending" | "confirmed" | "completed" | "cancelled";
   pet: {
-    id: string;
     name: string;
     breed: string;
     image: string | null;
   };
   customer: {
-    name: string;
+    firstName: string;
+    lastName: string;
   };
   groomer: {
     name: string;
