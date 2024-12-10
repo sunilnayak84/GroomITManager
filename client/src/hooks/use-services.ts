@@ -2,7 +2,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, query } from 'firebase/firestore';
 import { db } from "../lib/firebase";
 import { toast } from "../lib/toast";
-import type { Service, InsertService, ServiceConsumable } from "@/lib/service-types";
+import type { Service, InsertService, ServiceConsumable, UpdateService } from "@/lib/service-types";
+import { serviceSchema } from "@/lib/service-types";
 
 // Collection reference
 const servicesCollection = collection(db, 'services');
@@ -28,7 +29,7 @@ export function useServices() {
 
         const fetchedServices = querySnapshot.docs.map((doc) => {
           const data = doc.data();
-          return {
+          const parsedData = serviceSchema.parse({
             service_id: doc.id,
             name: data.name,
             description: data.description || undefined,
@@ -40,9 +41,11 @@ export function useServices() {
               quantity_used: c.quantity_used
             })),
             isActive: data.isActive ?? true,
-            created_at: data.created_at?.toDate() || new Date(),
-            updated_at: data.updated_at?.toDate() || new Date(),
-          } as Service;
+            created_at: data.created_at || new Date(),
+            updated_at: data.updated_at || new Date(),
+          });
+
+          return parsedData;
         });
 
         console.log('FETCH_SERVICES: Completed fetching services', {
@@ -62,6 +65,8 @@ export function useServices() {
   const addService = async (serviceData: InsertService) => {
     try {
       const docRef = doc(servicesCollection);
+      const timestamp = new Date().toISOString();
+      
       const newService: Service = {
         service_id: docRef.id,
         name: serviceData.name,
@@ -70,11 +75,11 @@ export function useServices() {
         price: serviceData.price,
         consumables: serviceData.consumables || [],
         isActive: true,
-        created_at: new Date(),
-        updated_at: new Date()
+        created_at: new Date(timestamp),
+        updated_at: new Date(timestamp)
       };
 
-      await setDoc(docRef, {
+      const firestoreData = {
         name: newService.name,
         description: newService.description,
         duration: newService.duration,
@@ -85,10 +90,11 @@ export function useServices() {
           quantity_used: c.quantity_used
         })),
         isActive: newService.isActive,
-        created_at: newService.created_at,
-        updated_at: newService.updated_at
-      });
+        created_at: timestamp,
+        updated_at: timestamp
+      };
 
+      await setDoc(docRef, firestoreData);
       await queryClient.invalidateQueries({ queryKey: ['services'] });
       toast.success('Service added successfully');
       return newService;
@@ -99,12 +105,14 @@ export function useServices() {
     }
   };
 
-  const updateService = async (service_id: string, updateData: Partial<InsertService>) => {
+  const updateService = async (service_id: string, updateData: UpdateService) => {
     try {
       const serviceRef = doc(servicesCollection, service_id);
+      const timestamp = new Date().toISOString();
+      
       const updatePayload = {
         ...updateData,
-        updated_at: new Date()
+        updated_at: timestamp
       };
 
       // If consumables are being updated, ensure they're properly formatted
