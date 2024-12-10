@@ -48,6 +48,7 @@ export default function PetsPage() {
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [data, setData] = useState<Pet[]>([]);
+  const [optimisticPets, setOptimisticPets] = useState<{ [key: string]: Pet }>({});
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -76,31 +77,64 @@ export default function PetsPage() {
   useEffect(() => {
     if (pets && customers) {
       console.log('Setting table data:', { pets, customers });
-      setData(pets);
+      // Merge optimistic updates with actual data
+      const mergedPets = pets.map(pet => {
+        const optimisticUpdate = optimisticPets[pet.id];
+        return optimisticUpdate || pet;
+      });
+      setData(mergedPets);
     }
-  }, [pets, customers]);
+  }, [pets, customers, optimisticPets]);
 
-  const handleUpdatePet = async (data: InsertPet) => {
+  const handleUpdatePet = async (formData: InsertPet) => {
     if (!selectedPet) {
       throw new Error('No pet selected for update');
     }
-    
-    // Ensure data types match the schema
-    const updateData: InsertPet = {
-      ...data,
-      customerId: selectedPet.customerId,
-      dateOfBirth: data.dateOfBirth || null,
-      age: data.age || null,
-      gender: data.gender || null,
-      weight: data.weight || null,
-      notes: data.notes || null,
-      image: data.image || null
+
+    // Create optimistic update with type safety
+    const optimisticPet: Pet = {
+      ...selectedPet,
+      name: formData.name,
+      type: formData.type,
+      breed: formData.breed,
+      customerId: formData.customerId,
+      dateOfBirth: formData.dateOfBirth || null,
+      age: formData.age || null,
+      gender: formData.gender || null,
+      weight: formData.weight || null,
+      weightUnit: formData.weightUnit,
+      notes: formData.notes || null,
+      image: typeof formData.image === 'string' ? formData.image : selectedPet.image,
+      owner: formData.owner || null,
+      updatedAt: new Date().toISOString(),
+      submissionId: formData.submissionId
     };
 
-    await updatePet({ 
-      petId: selectedPet.id, 
-      updateData
-    });
+    // Apply optimistic update
+    setOptimisticPets(prev => ({
+      ...prev,
+      [selectedPet.id]: optimisticPet
+    }));
+
+    try {
+      await updatePet({ 
+        petId: selectedPet.id, 
+        updateData: formData
+      });
+      
+      // On success, clear the optimistic update
+      setOptimisticPets(prev => {
+        const { [selectedPet.id]: _, ...rest } = prev;
+        return rest;
+      });
+    } catch (error) {
+      // On error, revert the optimistic update
+      setOptimisticPets(prev => {
+        const { [selectedPet.id]: _, ...rest } = prev;
+        return rest;
+      });
+      throw error;
+    }
   };
 
   const getOwnerName = (pet: Pet) => {

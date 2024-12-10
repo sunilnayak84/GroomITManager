@@ -7,23 +7,11 @@ import { uploadFile } from "../lib/storage";
 import { toast } from "../lib/toast";
 import { useState } from 'react';
 
-export type Pet = {
-  id: string;
-  firebaseId?: string | null;
-  customerId: string;  // Firebase document ID
-  name: string;
-  type: "dog" | "cat" | "bird" | "fish" | "other";
-  breed: string;
-  image: string | File | null;
-  dateOfBirth: string | null;
-  age: number | null;
-  gender: "male" | "female" | "unknown" | null;
-  weight: string | null;
-  weightUnit: "kg" | "lbs";
-  notes: string | null;
+import type { Pet as BasePet } from "../lib/types";
+
+export type Pet = BasePet & {
   submissionId?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  image: string | File | null;
   owner?: {
     id: string;
     firstName: string;
@@ -237,18 +225,6 @@ export function usePets() {
         const submissionId = petData.submissionId || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         console.log('ADD_PET: Using submission ID:', submissionId);
 
-        // Check for duplicate submission using transaction
-        const duplicate = await runTransaction(db, async (transaction) => {
-          const q = query(petsCollection, where('submissionId', '==', submissionId));
-          const querySnapshot = await transaction.get(q);
-          return !querySnapshot.empty;
-        });
-
-        if (duplicate) {
-          console.log('ADD_PET: Duplicate submission detected', { submissionId });
-          return { isDuplicate: true };
-        }
-
         // Validate required fields
         if (!petData.name || !petData.breed || !petData.type || !petData.customerId) {
           throw new Error('Required fields are missing');
@@ -268,8 +244,38 @@ export function usePets() {
           }
         }
 
+        // Create optimistic Pet object
+        const optimisticPet: Pet = {
+          id: `temp-${Date.now()}`,
+          name: petData.name,
+          type: petData.type,
+          breed: petData.breed,
+          customerId: petData.customerId,
+          dateOfBirth: petData.dateOfBirth || null,
+          age: petData.age || null,
+          gender: petData.gender || null,
+          weight: petData.weight || null,
+          weightUnit: petData.weightUnit,
+          notes: petData.notes || null,
+          image: imageUrl,
+          createdAt: new Date().toISOString(),
+          updatedAt: null,
+          firebaseId: null,
+          submissionId,
+          owner: petData.owner || null
+        };
+
         // Use transaction to create pet and update customer's pet count atomically
         const result = await runTransaction(db, async (transaction) => {
+          // Check for duplicate submission
+          const q = query(petsCollection, where('submissionId', '==', submissionId));
+          const querySnapshot = await transaction.get(q);
+          
+          if (!querySnapshot.empty) {
+            console.log('ADD_PET: Duplicate submission detected', { submissionId });
+            return { isDuplicate: true, existingPet: querySnapshot.docs[0].data() };
+          }
+
           // Prepare pet data
           const petDataWithImage = {
             ...petData,
@@ -288,7 +294,7 @@ export function usePets() {
             petCount: increment(1)
           });
 
-          return { id: petRef.id, ...petDataWithImage };
+          return { id: petRef.id, ...petDataWithImage, optimisticPet };
         });
 
         console.log('ADD_PET: Successfully added pet', result);
@@ -300,11 +306,9 @@ export function usePets() {
     },
     onSuccess: async (result) => {
       if (result?.isDuplicate) {
-        return; // Exit if it's a duplicate submission
+        console.log('ADD_PET: Handling duplicate submission', result);
+        return;
       }
-      
-      // Wait a bit for Firestore to settle
-      await new Promise(resolve => setTimeout(resolve, 1000));
       
       await queryClient.invalidateQueries({ queryKey: ['pets'] });
       setRefreshKey(prev => prev + 1);
@@ -316,13 +320,11 @@ export function usePets() {
   });
 
   const updatePetMutation = useMutation({
-    mutationFn: async ({ petId, updateData }: { petId: string; updateData: Partial<Pet> }) => {
+    mutationFn: async ({ petId, updateData }: { petId: string; updateData: Partial<InsertPet> }) => {
       try {
         console.log('UPDATE_PET: Starting update', { 
           petId, 
-          updateData,
-          petIdType: typeof petId,
-          updateDataType: typeof updateData
+          updateData
         });
 
         // Handle image upload if present
@@ -339,29 +341,50 @@ export function usePets() {
           }
         }
 
+        // Create optimistic update
         const updateDataWithImage = {
           ...updateData,
-          image: imageUrl
+          image: imageUrl,
+          updatedAt: new Date().toISOString()
         };
 
-        console.log('UPDATE_PET: Preparing to update with data:', updateDataWithImage);
+        // Apply optimistic update
+        const existingPet = pets?.find(p => p.id === petId);
+        if (existingPet) {
+          const optimisticPet: Pet = {
+            ...existingPet,
+            ...updateDataWithImage,
+            id: petId,
+            updatedAt: new Date().toISOString()
+          };
+
+          // Update local state optimistically
+          const updatedPets = pets.map(p => 
+            p.id === petId ? optimisticPet : p
+          );
+          queryClient.setQueryData(['pets'], updatedPets);
+        }
+
+        // Perform the actual update
         await updatePet(petId, updateDataWithImage);
 
         console.log('UPDATE_PET: Successfully updated pet:', {
           petId,
-          cleanData: updateDataWithImage
+          updateData: updateDataWithImage
         });
 
         return { success: true };
       } catch (error) {
+        // Revert optimistic update on error
+        await queryClient.invalidateQueries({ queryKey: ['pets'] });
         console.error('UPDATE_PET: Error updating pet:', error);
         throw error;
       }
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['pets'] });
-      setRefreshKey(prev => prev + 1); // Force a refresh
-      await refetch(); // Explicitly refetch after successful mutation
+      setRefreshKey(prev => prev + 1);
+      await refetch();
     },
     onError: (error) => {
       console.error('UPDATE_PET: Mutation error:', error);
