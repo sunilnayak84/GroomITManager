@@ -1,16 +1,18 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { PetDetails } from "@/components/PetDetails";
 import { Plus, Search, Loader2 } from "lucide-react";
 import { useCustomers } from "@/hooks/use-customers";
 import { usePets } from "@/hooks/use-pets";
 import { Timestamp } from "firebase/firestore";
 import type { FirestoreTimestamp } from "@/lib/types";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
+  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -53,6 +55,8 @@ export default function CustomersPage() {
     }
   };
   const [showPetDetails, setShowPetDetails] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -63,7 +67,7 @@ export default function CustomersPage() {
     deleteCustomerMutationHook, 
     addCustomerMutation 
   } = useCustomers();
-  const { pets = [], isLoading: isPetsLoading, addPet } = usePets();
+  const { pets = [], isLoading: isPetsLoading, addPet, updatePet, deletePet } = usePets();
   const queryClient = useQueryClient();
   
   // Convert pets to proper type
@@ -645,6 +649,7 @@ export default function CustomersPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add New Pet</DialogTitle>
+            <DialogDescription>Enter the details for the new pet below.</DialogDescription>
           </DialogHeader>
           {selectedCustomer && (
             <div>
@@ -719,51 +724,9 @@ export default function CustomersPage() {
       {/* Customer Details Dialog */}
       <Dialog open={showCustomerDetails} onOpenChange={setShowCustomerDetails}>
         <DialogContent className="max-w-3xl">
-          <DialogHeader className="flex justify-between items-center">
+          <DialogHeader>
             <DialogTitle>Customer Details</DialogTitle>
-            <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setIsEditing(true)}
-              >
-                Edit
-              </Button>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button 
-                    variant="destructive" 
-                    size="sm"
-                  >
-                    Delete
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                    <p className="text-sm text-muted-foreground">
-                      This action cannot be undone. This will permanently delete the customer and all associated data.
-                    </p>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={() => {
-                        if (!selectedCustomer) return;
-                        deleteCustomerMutationHook.mutate(selectedCustomer.id, {
-                          onSuccess: () => {
-                            setShowCustomerDetails(false);
-                            setSelectedCustomer(null);
-                          }
-                        });
-                      }}
-                    >
-                      Delete
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
+            <DialogDescription className="sr-only">Customer information and details</DialogDescription>
           </DialogHeader>
           {selectedCustomer && (
             <div className="space-y-6">
@@ -928,40 +891,52 @@ export default function CustomersPage() {
                       }</p>
                     </div>
                   </div>
+                </div>
+              )}
 
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold">Pets</h3>
-                    </div>
-                    <div className="grid grid-cols-1 gap-4">
-                      {selectedCustomerPets.map(pet => (
-                        <div key={pet.id} className="flex items-center gap-4 p-4 border rounded-lg hover:bg-accent transition-colors">
-                          <img
-                            src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
-                            alt={pet.name}
-                            className="w-12 h-12 rounded-full"
-                          />
-                          <div className="flex-1">
-                            <div className="font-medium">{pet.name}</div>
-                            <div className="text-sm text-muted-foreground capitalize">
-                              {pet.breed} · {pet.type}
-                            </div>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="ml-auto"
-                            onClick={() => {
-                              setSelectedPet(pet);
-                              setShowPetDetails(true);
-                            }}
-                          >
-                            View
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+              {!isEditing && (
+                <div className="flex justify-center gap-2 mt-6">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    Edit
+                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button 
+                        variant="destructive" 
+                        size="sm"
+                      >
+                        Delete
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently delete the customer and all associated data.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => {
+                            if (!selectedCustomer) return;
+                            deleteCustomerMutationHook.mutate(selectedCustomer.id, {
+                              onSuccess: () => {
+                                setShowCustomerDetails(false);
+                                setSelectedCustomer(null);
+                              }
+                            });
+                          }}
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               )}
             </div>
@@ -971,52 +946,121 @@ export default function CustomersPage() {
 
       {/* Pet Details Dialog */}
       <Dialog open={showPetDetails} onOpenChange={setShowPetDetails}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[625px]">
           <DialogHeader>
             <DialogTitle>Pet Details</DialogTitle>
+            <DialogDescription>View and manage pet information</DialogDescription>
           </DialogHeader>
           {selectedPet && (
             <div className="space-y-6">
-              <div className="flex items-center gap-4">
-                <img
-                  src={selectedPet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${selectedPet.name}`}
-                  alt={selectedPet.name}
-                  className="w-20 h-20 rounded-full bg-primary/10"
-                />
-                <div>
-                  <h2 className="text-2xl font-bold">{selectedPet.name}</h2>
-                  <p className="text-muted-foreground capitalize">{selectedPet.type} • {selectedPet.breed}</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <h3 className="font-semibold">Basic Information</h3>
-                  <p><span className="text-muted-foreground">Type:</span> {selectedPet.type}</p>
-                  <p><span className="text-muted-foreground">Breed:</span> {selectedPet.breed}</p>
-                  <p><span className="text-muted-foreground">Gender:</span> {selectedPet.gender || 'Not specified'}</p>
-                  <p><span className="text-muted-foreground">Age:</span> {selectedPet.age || 'Not specified'}</p>
-                </div>
-
-                <div className="space-y-2">
-                  <h3 className="font-semibold">Additional Information</h3>
-                  <p><span className="text-muted-foreground">Date of Birth:</span> {
-                    formatDate(selectedPet.dateOfBirth)
-                  }</p>
-                  <p><span className="text-muted-foreground">Weight:</span> {selectedPet.weight ? `${selectedPet.weight} ${selectedPet.weightUnit}` : 'Not specified'}</p>
-                </div>
-              </div>
-
-              {selectedPet.notes && (
-                <div className="space-y-2">
-                  <h3 className="font-semibold">Notes</h3>
-                  <p className="text-sm text-muted-foreground">{selectedPet.notes}</p>
-                </div>
-              )}
+              <PetDetails 
+                pet={selectedPet}
+                formatDate={formatDate}
+                onEdit={() => {
+                  setShowEditModal(true);
+                  setShowPetDetails(false);
+                }}
+                onDelete={() => {
+                  setShowDeleteConfirm(true);
+                }}
+              />
             </div>
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Edit Pet Dialog */}
+      <Dialog open={showEditModal} onOpenChange={(open) => {
+        setShowEditModal(open);
+        if (!open) {
+          setShowPetDetails(true);
+        }
+      }}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Edit Pet</DialogTitle>
+            <DialogDescription>Update the pet information below.</DialogDescription>
+          </DialogHeader>
+          {selectedPet && <PetForm
+            handleSubmit={async (data) => {
+              try {
+                await updatePet({ 
+                  petId: selectedPet.id, 
+                  updateData: data 
+                });
+                await queryClient.invalidateQueries({ queryKey: ['pets'] });
+                setShowEditModal(false);
+                setShowPetDetails(false);
+                setSelectedPet(null);
+                toast({
+                  title: "Success",
+                  description: "Pet updated successfully"
+                });
+                return true;
+              } catch (error) {
+                console.error('Error updating pet:', error);
+                toast({
+                  variant: "destructive",
+                  title: "Error",
+                  description: error instanceof Error ? error.message : "Failed to update pet"
+                });
+                return false;
+              }
+            }}
+            onCancel={() => {
+              setShowEditModal(false);
+              setShowPetDetails(true);
+            }}
+            customers={customersData}
+            defaultValues={selectedPet}
+            customerId={selectedPet.customerId}
+            hideCustomerField={true}
+          />}
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to delete this pet?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the pet's record.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={async () => {
+              if (selectedPet) {
+                try {
+                  await deletePet(selectedPet.id);
+                  await Promise.all([
+                    queryClient.invalidateQueries({ queryKey: ['pets'] }),
+                    queryClient.invalidateQueries({ queryKey: ['customers'] })
+                  ]);
+                  await queryClient.refetchQueries({ queryKey: ['pets'] });
+                  setShowDeleteConfirm(false);
+                  setShowPetDetails(false);
+                  setSelectedPet(null);
+                  toast({
+                    title: "Success",
+                    description: "Pet deleted successfully"
+                  });
+                } catch (error) {
+                  console.error('Error deleting pet:', error);
+                  toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: error instanceof Error ? error.message : "Failed to delete pet"
+                  });
+                }
+              }
+            }}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
