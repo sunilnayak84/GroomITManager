@@ -975,6 +975,7 @@ export default function CustomersPage() {
       {/* Pet Details Dialog */}
       <Dialog open={showPetDetails} onOpenChange={setShowPetDetails}>
         <DialogContent className="sm:max-w-[625px]">
+          <DialogDescription className="sr-only">Pet Details</DialogDescription>
           {selectedPet && (
             <div className="space-y-6">
               <PetDetails 
@@ -992,6 +993,70 @@ export default function CustomersPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Edit Pet Dialog */}
+      <Dialog open={showEditModal} onOpenChange={(open) => {
+        setShowEditModal(open);
+        if (!open) {
+          setShowPetDetails(true);
+        }
+      }}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Edit Pet</DialogTitle>
+            <DialogDescription>Update the pet information below.</DialogDescription>
+          </DialogHeader>
+          {selectedPet && <PetForm
+            pet={selectedPet}
+            handleSubmit={async (data) => {
+              try {
+                // Add your update logic here
+                setShowEditModal(false);
+                setShowPetDetails(true);
+                return true;
+              } catch (error) {
+                console.error('Error updating pet:', error);
+                return false;
+              }
+            }}
+            onCancel={() => {
+              setShowEditModal(false);
+              setShowPetDetails(true);
+            }}
+            customers={customersData}
+            hideCustomerField={true}
+          />}
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to delete this pet?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the pet's record.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={async () => {
+              if (selectedPet) {
+                try {
+                  // Add your delete logic here
+                  setShowDeleteConfirm(false);
+                  setShowPetDetails(false);
+                  setSelectedPet(null);
+                } catch (error) {
+                  console.error('Error deleting pet:', error);
+                }
+              }
+            }}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
