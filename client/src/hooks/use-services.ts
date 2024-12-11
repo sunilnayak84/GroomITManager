@@ -94,7 +94,9 @@ export function useServices() {
         })),
         isActive: newService.isActive,
         created_at: timestamp,
-        updated_at: timestamp
+        updated_at: timestamp,
+        selectedServices: serviceData.selectedServices || [],
+        selectedAddons: serviceData.selectedAddons || []
       };
 
       await setDoc(docRef, firestoreData);
