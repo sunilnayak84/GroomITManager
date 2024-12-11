@@ -1,15 +1,16 @@
 import { 
   collection, doc, setDoc, getDoc, getDocs, deleteDoc, query, 
-  where, DocumentData, CollectionReference, runTransaction, 
-  QuerySnapshot, DocumentSnapshot 
+  where, DocumentData, CollectionReference, runTransaction,
+  QuerySnapshot, DocumentSnapshot, WithFieldValue, 
+  FieldValue, serverTimestamp
 } from 'firebase/firestore';
 import { db } from './firebase';
-import type { User, Customer, Pet, Appointment } from '@db/schema';
+import type { User, Customer, Pet, Appointment } from './schema';
 import { FirebaseError } from 'firebase/app';
 
-// Helper to type the collections
-function typedCollection<T = DocumentData>(collectionName: string): CollectionReference<T> {
-  return collection(db, collectionName) as CollectionReference<T>;
+// Helper to type the collections with WithFieldValue
+function typedCollection<T = DocumentData>(collectionName: string): CollectionReference<WithFieldValue<T>> {
+  return collection(db, collectionName) as CollectionReference<WithFieldValue<T>>;
 }
 
 // Collection references with proper typing
@@ -56,7 +57,7 @@ export async function createUserDocument(user: User) {
 }
 
 // Customer operations with error handling
-export async function createCustomer(customer: Omit<Customer, 'id'>) {
+export async function createCustomer(customer: Omit<Customer, 'id' | 'createdAt' | 'updatedAt' | 'firebaseId' | 'petCount'>) {
   try {
     // Validate input
     if (!customer) {
@@ -78,10 +79,11 @@ export async function createCustomer(customer: Omit<Customer, 'id'>) {
 
     // Create customer reference
     const customerRef = doc(customersCollection);
-    const timestamp = new Date();
+    const timestamp = new Date().toISOString();
     
     // Prepare customer data for Firestore with proper types
-    const customerData = {
+    const customerData: WithFieldValue<Customer> = {
+      id: customerRef.id,
       firstName: customer.firstName,
       lastName: customer.lastName,
       email: customer.email,
@@ -90,7 +92,8 @@ export async function createCustomer(customer: Omit<Customer, 'id'>) {
       gender: customer.gender || null,
       petCount: 0,
       firebaseId: null,
-      createdAt: timestamp
+      createdAt: timestamp,
+      updatedAt: null
     };
 
     // Log the data being saved
@@ -112,7 +115,7 @@ export async function createCustomer(customer: Omit<Customer, 'id'>) {
 }
 
 // Pet operations with error handling and improved transaction logic
-export async function createPet(pet: Omit<Pet, 'id'>) {
+export async function createPet(pet: Omit<Pet, 'id' | 'createdAt' | 'updatedAt' | 'firebaseId'>) {
   try {
     console.log('FIRESTORE: Attempting to create pet', { pet });
 
@@ -168,12 +171,24 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
         const actualPetCount = petsSnapshot.size;
         
         const timestamp = new Date().toISOString();
-        const petData = {
-          ...pet,
+        const petData: WithFieldValue<Pet> = {
           id: petRef.id,
+          firebaseId: null,
+          name: pet.name,
+          type: pet.type,
+          breed: pet.breed,
+          customerId: pet.customerId,
+          dateOfBirth: pet.dateOfBirth || null,
+          age: pet.age || null,
+          gender: pet.gender || null,
+          weight: pet.weight || null,
+          weightUnit: pet.weightUnit || 'kg',
+          notes: pet.notes || null,
+          image: pet.image || null,
           submissionId,
           createdAt: timestamp,
-          updatedAt: timestamp
+          updatedAt: null,
+          owner: pet.owner || null
         };
 
         console.log('FIRESTORE: Creating new pet', { 
@@ -194,10 +209,7 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
 
         return { 
           success: true, 
-          pet: { 
-            id: petRef.id, 
-            ...petData 
-          } 
+          pet: petData
         };
       } catch (error) {
         console.error('FIRESTORE: Transaction failed', error);
@@ -217,13 +229,26 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
 }
 
 // Appointment operations with error handling
-export async function createAppointment(appointment: Omit<Appointment, 'id'>) {
+export async function createAppointment(appointment: Omit<Appointment, 'id' | 'createdAt' | 'updatedAt'>) {
   try {
     const appointmentRef = doc(appointmentsCollection);
-    await setDoc(appointmentRef, {
-      ...appointment,
-      createdAt: new Date()
-    });
+    const timestamp = new Date().toISOString();
+    
+    const appointmentData: WithFieldValue<Appointment> = {
+      id: appointmentRef.id,
+      petId: appointment.petId,
+      serviceId: appointment.serviceId,
+      groomerId: appointment.groomerId,
+      branchId: appointment.branchId,
+      date: appointment.date,
+      status: appointment.status,
+      notes: appointment.notes || null,
+      productsUsed: appointment.productsUsed || null,
+      createdAt: timestamp,
+      updatedAt: null
+    };
+
+    await setDoc(appointmentRef, appointmentData);
     return appointmentRef.id;
   } catch (error) {
     console.error('Error creating appointment:', error);

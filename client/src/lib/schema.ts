@@ -11,8 +11,8 @@ export const customerSchema = z.object({
   address: z.string().nullable(),
   gender: z.enum(["male", "female", "other"]).nullable(),
   petCount: z.number().default(0),
-  createdAt: z.date(),
-  updatedAt: z.date().optional(),
+  createdAt: z.string(),
+  updatedAt: z.string().nullable(),
 });
 
 export const insertCustomerSchema = customerSchema.omit({
@@ -21,6 +21,9 @@ export const insertCustomerSchema = customerSchema.omit({
   petCount: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional()
 });
 
 // Schema for Pet
@@ -38,15 +41,13 @@ export const petSchema = z.object({
   weightUnit: z.enum(["kg", "lbs"]).default("kg"),
   image: z.union([z.string(), z.instanceof(File)]).nullable(),
   notes: z.string().nullable(),
-  createdAt: z.date(),
-  updatedAt: z.date().optional(),
+  createdAt: z.string(),
+  updatedAt: z.string().nullable(),
+  submissionId: z.string().optional(),
   owner: z.object({
     id: z.string(),
-    firstName: z.string(),
-    lastName: z.string(),
     name: z.string(),
-    phone: z.string(),
-    email: z.string()
+    email: z.string().nullable()
   }).nullable()
 });
 
@@ -63,16 +64,16 @@ export const insertPetSchema = petSchema.omit({
 // Schema for Appointment
 export const appointmentSchema = z.object({
   id: z.string(),
-  petId: z.number(),
-  serviceId: z.number(),
+  petId: z.string(),
+  serviceId: z.string(),
   groomerId: z.string(),
-  branchId: z.number(),
-  date: z.date(),
+  branchId: z.string(),
+  date: z.string(),
   status: z.enum(["pending", "confirmed", "completed", "cancelled"]),
   notes: z.string().nullable(),
   productsUsed: z.string().nullable(),
-  createdAt: z.date(),
-  updatedAt: z.date().optional(),
+  createdAt: z.string(),
+  updatedAt: z.string().nullable(),
 });
 
 // Schema for appointment creation/updates
@@ -81,11 +82,14 @@ export const insertAppointmentSchema = appointmentSchema.omit({
   createdAt: true,
   updatedAt: true,
 }).extend({
-  date: z.date().min(new Date(), "Appointment date must be in the future"),
-  petId: z.number().min(1, "Pet must be selected"),
-  serviceId: z.number().min(1, "Service must be selected"),
+  date: z.string().refine(
+    (date) => new Date(date) > new Date(),
+    "Appointment date must be in the future"
+  ),
+  petId: z.string().min(1, "Pet must be selected"),
+  serviceId: z.string().min(1, "Service must be selected"),
   groomerId: z.string().min(1, "Groomer must be selected"),
-  branchId: z.number().min(1, "Branch must be selected"),
+  branchId: z.string().min(1, "Branch must be selected"),
   status: z.enum(["pending", "confirmed", "completed", "cancelled"]).default("pending"),
   notes: z.string().nullable(),
   productsUsed: z.string().nullable()
