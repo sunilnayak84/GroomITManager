@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { insertCustomerSchema, type InsertCustomer } from "@/lib/schema";
 import type { Customer } from "@/lib/schema";
-import type { Pet } from "@/hooks/use-pets";
+import type { Pet, InsertPet, FirestoreDate } from "@/lib/types";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -34,16 +34,12 @@ export default function CustomersPage() {
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
-  const formatDate = (date: { seconds: number; nanoseconds: number; } | string | Date | null | undefined) => {
+  const formatDate = (date: FirestoreDate | string | null | undefined) => {
     if (!date) return 'N/A';
     try {
       // Handle Firestore timestamp
       if (typeof date === 'object' && 'seconds' in date) {
         return new Date(date.seconds * 1000).toLocaleDateString();
-      }
-      // Handle Date object
-      if (date instanceof Date) {
-        return date.toLocaleDateString();
       }
       // Handle string date
       if (typeof date === 'string') {
@@ -88,16 +84,32 @@ export default function CustomersPage() {
       ['dog', 'cat', 'bird', 'fish', 'other'].includes(pet.type);
   };
 
-  // Convert customer data to match the expected type
+  // Convert Firestore customer data to match the expected type
   const customersData = useMemo(() => {
-    return (customersQuery.data || []).map(customer => ({
-      ...customer,
-      id: String(customer.id),
-      gender: customer.gender as "male" | "female" | "other" | null,
-      createdAt: typeof customer.createdAt === 'string' ? customer.createdAt : new Date().toISOString(),
-      updatedAt: customer.updatedAt ? new Date(customer.updatedAt).toISOString() : null,
-      petCount: customer.petCount || 0
-    }));
+    return (customersQuery.data || []).map(customer => {
+      const createdAt = typeof customer.createdAt === 'string' 
+        ? customer.createdAt 
+        : 'seconds' in customer.createdAt 
+          ? new Date(customer.createdAt.seconds * 1000).toISOString()
+          : new Date().toISOString();
+
+      const updatedAt = customer.updatedAt
+        ? typeof customer.updatedAt === 'string'
+          ? customer.updatedAt
+          : 'seconds' in customer.updatedAt
+            ? new Date(customer.updatedAt.seconds * 1000).toISOString()
+            : null
+        : null;
+
+      return {
+        ...customer,
+        id: String(customer.id),
+        gender: customer.gender as "male" | "female" | "other" | null,
+        createdAt,
+        updatedAt,
+        petCount: typeof customer.petCount === 'number' ? customer.petCount : 0
+      };
+    });
   }, [customersQuery.data]);
 
   // Memoize the pets data
@@ -217,7 +229,21 @@ export default function CustomersPage() {
   // Memoize the filtered pets for the selected customer
   const selectedCustomerPets = useMemo(() => {
     if (!selectedCustomer?.id || !Array.isArray(pets)) return [];
-    return pets.filter(pet => pet.customerId?.toString() === selectedCustomer.id.toString());
+    return pets.filter(pet => pet.customerId?.toString() === selectedCustomer.id.toString())
+      .map(pet => ({
+        ...pet,
+        id: String(pet.id),
+        name: String(pet.name),
+        breed: String(pet.breed),
+        type: (pet.type || 'other') as Pet['type'],
+        image: pet.image ? String(pet.image) : null,
+        gender: (pet.gender || 'unknown') as Pet['gender'],
+        customerId: String(pet.customerId),
+        createdAt: typeof pet.createdAt === 'string' 
+          ? pet.createdAt 
+          : new Date().toISOString(),
+        updatedAt: null
+      }));
   }, [selectedCustomer?.id, pets]);
 
   // Memoize the pets map for quick lookup
@@ -278,9 +304,8 @@ export default function CustomersPage() {
       // Mutate using the addCustomerMutation
       await addCustomerMutation.mutateAsync({
         ...data,
-        createdAt: new Date(),
         address: data.address || null
-      });
+      } as InsertCustomer);
 
       // Reset form and close dialog
       setOpen(false);
@@ -323,9 +348,8 @@ export default function CustomersPage() {
       await updateCustomerMutation.mutateAsync({ 
         id: selectedCustomer.id, 
         data: {
-          ...data,
-          createdAt: selectedCustomer.createdAt || new Date(),
-        }
+          ...data
+        } as InsertCustomer
       });
       
       // Update the selected customer with type casting for gender
@@ -526,7 +550,7 @@ export default function CustomersPage() {
         ) : (
           <DataTable 
             columns={columns} 
-            data={customersData} 
+            data={customersData as Customer[]} 
           />
         )}
       </div>
@@ -569,14 +593,14 @@ export default function CustomersPage() {
                 selectedCustomerPets.map(pet => (
                   <div key={pet.id} className="flex items-center gap-4 p-4 border rounded-lg hover:bg-accent transition-colors">
                     <img
-                      src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(pet.name)}`}
-                      alt={pet.name}
+                      src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${String(pet.name)}`}
+                      alt={String(pet.name)}
                       className="w-12 h-12 rounded-full"
                     />
                     <div className="flex-1">
-                      <div className="font-medium">{pet.name}</div>
+                      <div className="font-medium">{String(pet.name)}</div>
                       <div className="text-sm text-muted-foreground capitalize">
-                        {pet.breed || 'Unknown breed'} · {pet.type || 'Unknown type'}
+                        {String(pet.breed) || 'Unknown breed'} · {String(pet.type) || 'Unknown type'}
                       </div>
                     </div>
                     <Button
@@ -585,12 +609,27 @@ export default function CustomersPage() {
                       className="ml-auto"
                       onClick={() => {
                         const typedPet: Pet = {
-                          ...pet,
-                          type: pet.type as "dog" | "cat" | "bird" | "fish" | "other",
-                          gender: pet.gender as "male" | "female" | "unknown" | null,
-                          customerId: pet.customerId.toString(),
-                          createdAt: pet.createdAt || new Date().toISOString(),
-                          updatedAt: pet.updatedAt || null
+                          id: String(pet.id),
+                          firebaseId: null,
+                          image: pet.image ? String(pet.image) : null,
+                          name: String(pet.name),
+                          breed: String(pet.breed),
+                          type: (pet.type || 'other') as Pet['type'],
+                          gender: (pet.gender || 'unknown') as Pet['gender'],
+                          customerId: String(pet.customerId),
+                          dateOfBirth: pet.dateOfBirth ? String(pet.dateOfBirth) : null,
+                          age: typeof pet.age === 'number' ? pet.age : null,
+                          weight: typeof pet.weight === 'number' ? String(pet.weight) : null,
+                          weightUnit: pet.weightUnit || 'kg',
+                          notes: pet.notes ? String(pet.notes) : null,
+                          createdAt: typeof pet.createdAt === 'string' ? pet.createdAt : new Date().toISOString(),
+                          updatedAt: null,
+                          submissionId: pet.submissionId ? String(pet.submissionId) : undefined,
+                          owner: pet.owner ? {
+                            id: String(pet.owner.id),
+                            name: String(pet.owner.name),
+                            email: pet.owner.email ? String(pet.owner.email) : null
+                          } : null
                         };
                         setSelectedPet(typedPet);
                         setShowPetDetails(true);

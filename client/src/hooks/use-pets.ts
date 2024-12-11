@@ -5,49 +5,7 @@ import { petsCollection, customersCollection } from "../lib/firestore";
 import { uploadFile } from "../lib/storage";
 import { useState } from 'react';
 
-export type PetType = 'dog' | 'cat' | 'bird' | 'fish' | 'other';
-export type WeightUnit = 'kg' | 'lbs';
-export type Gender = 'male' | 'female' | 'unknown';
-
-export type Owner = {
-  id: string;
-  name: string;
-  email: string | null;
-}
-
-export interface Pet {
-  id: string;
-  name: string;
-  type: PetType;
-  breed: string;
-  customerId: string;
-  dateOfBirth: string | null;
-  age: number | null;
-  gender: Gender | null;
-  weight: number | null;
-  weightUnit: WeightUnit;
-  notes: string | null;
-  image: string | null;
-  createdAt: string;
-  updatedAt: string | null;
-  submissionId?: string;
-  owner?: Owner | null;
-}
-
-export interface PetInput {
-  name: string;
-  type: PetType;
-  breed: string;
-  customerId: string;
-  dateOfBirth?: string | null;
-  age?: string | number | null;
-  gender?: Gender | null;
-  weight?: string | number | null;
-  weightUnit?: WeightUnit;
-  notes?: string | null;
-  image?: File | string | null;
-  owner?: Owner | null;
-}
+import { Pet, PetInput, PetType, WeightUnit, Gender } from '../lib/types';
 
 // Helper function to convert string to number safely
 function toNumber(value: string | number | null | undefined): number | null {
