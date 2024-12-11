@@ -584,8 +584,8 @@ export default function InventoryPage() {
               </DialogHeader>
               {selectedItem && (
                 <InventoryUsageHistory
-                  usageHistory={[]} // TODO: Implement usage history fetching
-                  isLoading={false}
+                  usageHistory={selectedItem ? useInventory().getUsageHistory(selectedItem.id).data || [] : []}
+                  isLoading={selectedItem ? useInventory().getUsageHistory(selectedItem.id).isLoading : false}
                   unit={selectedItem.unit}
                 />
               )}

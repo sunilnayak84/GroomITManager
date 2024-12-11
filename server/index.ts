@@ -179,31 +179,35 @@ function setupGracefulShutdown(server: any) {
       throw error;
     }
 
-    // Start the server on a fixed port
-    let port = Number(process.env.PORT) || 5173;
-    const maxRetries = 10;
-    let retryCount = 0;
-
-    const tryListen = () => {
-      server.listen(port, '0.0.0.0', () => {
-        log(`Server listening on http://0.0.0.0:${port}`, 'info');
-      }).on('error', (error: any) => {
-        if (error.code === 'EADDRINUSE' && retryCount < maxRetries) {
-          retryCount++;
-          port++;
-          log(`Port ${port - 1} in use, trying port ${port}`, 'warn');
-          tryListen();
-        } else {
-          log(`Failed to start server: ${error.message}`, 'error');
-          process.exit(1);
-        }
+    // Start the server with port retry logic
+    const basePort = Number(process.env.PORT) || 5173;
+    const findAvailablePort = async (startPort: number): Promise<number> => {
+      return new Promise((resolve) => {
+        const server = createServer();
+        server.listen(startPort, () => {
+          server.close(() => resolve(startPort));
+        });
+        server.on('error', () => {
+          resolve(findAvailablePort(startPort + 1));
+        });
       });
     };
 
-    tryListen();
-
+    try {
+      const port = await findAvailablePort(basePort);
+      server.listen(port, '0.0.0.0', () => {
+        log(`Server listening on http://0.0.0.0:${port}`, 'info');
+      });
+    } catch (error: any) {
+      log(`Failed to start server: ${error.message}`, 'error');
+      if (process.env.NODE_ENV !== 'development') {
+        process.exit(1);
+      }
+    }
   } catch (error: any) {
     log(`Failed to start server: ${error.message}`, 'error');
-    process.exit(1);
+    if (process.env.NODE_ENV !== 'development') {
+      process.exit(1);
+    }
   }
 })();
