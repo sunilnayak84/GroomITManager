@@ -180,7 +180,7 @@ function setupGracefulShutdown(server: any) {
     }
 
     // Start the server with port retry logic
-    const basePort = Number(process.env.PORT) || 5174;
+    const basePort = Number(process.env.PORT) || 3000;
     const findAvailablePort = async (startPort: number): Promise<number> => {
       return new Promise((resolve) => {
         const server = createServer();
