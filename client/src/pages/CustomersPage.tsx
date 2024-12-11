@@ -971,25 +971,26 @@ export default function CustomersPage() {
 
       {/* Pet Details Dialog */}
       <Dialog open={showPetDetails} onOpenChange={setShowPetDetails}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[625px]">
           <DialogHeader>
-            <DialogTitle>Pet Details</DialogTitle>
+            <DialogTitle className="text-xl font-semibold">Pet Details</DialogTitle>
+            <DialogDescription>View detailed information about this pet</DialogDescription>
           </DialogHeader>
           {selectedPet && (
-            <div className="space-y-6">
-              <div className="flex items-center gap-4">
+            <div className="space-y-6 mt-4">
+              <div className="flex items-center gap-6 bg-secondary/20 p-6 rounded-lg">
                 <img
                   src={selectedPet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${selectedPet.name}`}
                   alt={selectedPet.name}
-                  className="w-20 h-20 rounded-full bg-primary/10"
+                  className="w-24 h-24 rounded-full bg-primary/10 border-4 border-background shadow-lg"
                 />
                 <div>
-                  <h2 className="text-2xl font-bold">{selectedPet.name}</h2>
-                  <p className="text-muted-foreground capitalize">{selectedPet.type} • {selectedPet.breed}</p>
+                  <h2 className="text-2xl font-bold tracking-tight">{selectedPet.name}</h2>
+                  <p className="text-muted-foreground capitalize text-sm">{selectedPet.type} • {selectedPet.breed}</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-8">
                 <div className="space-y-2">
                   <h3 className="font-semibold">Basic Information</h3>
                   <p><span className="text-muted-foreground">Type:</span> {selectedPet.type}</p>
