@@ -648,6 +648,7 @@ export default function CustomersPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add New Pet</DialogTitle>
+            <DialogDescription>Enter the details for the new pet below.</DialogDescription>
           </DialogHeader>
           {selectedCustomer && (
             <div>
@@ -724,6 +725,7 @@ export default function CustomersPage() {
         <DialogContent className="max-w-3xl">
           <DialogHeader className="flex justify-between items-center">
             <DialogTitle>Customer Details</DialogTitle>
+            <DialogDescription className="sr-only">Customer information and details</DialogDescription>
             <div className="flex gap-2">
               <Button 
                 variant="outline" 
