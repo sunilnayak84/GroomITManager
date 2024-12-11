@@ -102,36 +102,27 @@ export function useAppointments() {
 
   const addAppointmentMutation = useMutation({
     mutationFn: async (appointmentData: InsertAppointment) => {
-      type AppointmentDocumentData = {
-        petId: number;
-        serviceId: number;
-        groomerId: string;
-        branchId: number;
-        date: Date;
-        status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
-        notes: string | null;
-        productsUsed: string | null;
-        createdAt: Date;
-      };
-
-      // Convert input data to the correct types
-      const baseData: AppointmentDocumentData = {
-        petId: Number(appointmentData.petId),
-        serviceId: Number(appointmentData.serviceId),
+      // Convert input data to the correct types for Firestore
+      const timestamp = new Date().toISOString();
+      const baseData: FirestoreAppointment = {
+        id: '', // Will be set by Firestore
+        petId: String(appointmentData.petId),
+        serviceId: String(appointmentData.serviceId),
         groomerId: String(appointmentData.groomerId),
-        branchId: Number(appointmentData.branchId),
-        date: new Date(appointmentData.date),
+        branchId: String(appointmentData.branchId),
+        date: new Date(appointmentData.date).toISOString(),
         status: appointmentData.status || 'pending',
         notes: appointmentData.notes ?? null,
         productsUsed: appointmentData.productsUsed ?? null,
-        createdAt: new Date()
+        createdAt: timestamp,
+        updatedAt: null
       };
 
       // Add the document to Firestore
       const docRef = await addDoc(appointmentsCollection, baseData);
       
       // Construct the return data with the correct type
-      const returnData = {
+      const returnData: Omit<AppointmentWithRelations, 'pet' | 'customer' | 'groomer'> = {
         id: docRef.id,
         petId: baseData.petId,
         serviceId: baseData.serviceId,
@@ -142,8 +133,8 @@ export function useAppointments() {
         notes: baseData.notes,
         productsUsed: baseData.productsUsed,
         createdAt: baseData.createdAt,
-        updatedAt: undefined
-      } satisfies Omit<AppointmentWithRelations, 'pet' | 'customer' | 'groomer'>;
+        updatedAt: null
+      };
 
       return returnData;
     },

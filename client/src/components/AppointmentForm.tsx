@@ -35,14 +35,15 @@ export default function AppointmentForm() {
   const { toast } = useToast();
 
   const defaultGroomerId = "1";
+  const defaultBranchId = "1";
   const form = useForm<z.infer<typeof insertAppointmentSchema>>({
     resolver: zodResolver(insertAppointmentSchema),
     defaultValues: {
-      petId: undefined,
-      serviceId: undefined,
+      petId: "",
+      serviceId: "",
       groomerId: defaultGroomerId,
-      branchId: 1,
-      date: new Date(),
+      branchId: defaultBranchId,
+      date: new Date().toISOString(),
       status: "pending",
       notes: "",
       productsUsed: null
@@ -50,22 +51,29 @@ export default function AppointmentForm() {
   });
 
   async function onSubmit(values: z.infer<typeof insertAppointmentSchema>) {
-    const data = {
-      ...values,
-      status: 'pending' as const,
-      date: new Date(values.date)
-    };
     try {
+      const data: z.infer<typeof insertAppointmentSchema> = {
+        ...values,
+        petId: String(values.petId),
+        serviceId: String(values.serviceId),
+        branchId: String(values.branchId),
+        status: 'pending',
+        date: new Date(values.date).toISOString(),
+        notes: values.notes || null,
+        productsUsed: values.productsUsed || null
+      };
+
       await addAppointment(data);
       toast({
         title: "Success",
         description: "Appointment scheduled successfully",
       });
     } catch (error) {
+      console.error('Failed to schedule appointment:', error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to schedule appointment",
+        description: error instanceof Error ? error.message : "Failed to schedule appointment",
       });
     }
   }
@@ -87,8 +95,8 @@ export default function AppointmentForm() {
               <FormItem>
                 <FormLabel>Pet</FormLabel>
                 <Select
-                  onValueChange={(value) => field.onChange(Number(value))}
-                  defaultValue={field.value?.toString()}
+                  onValueChange={(value) => field.onChange(value)}
+                  defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>

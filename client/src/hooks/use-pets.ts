@@ -1,11 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getDocs, doc, runTransaction, increment, collection, addDoc, serverTimestamp, query, updateDoc, deleteDoc, getDoc, where, Timestamp } from 'firebase/firestore';
+import { 
+  collection, getDocs, doc, runTransaction, increment, 
+  addDoc, serverTimestamp, query, updateDoc, deleteDoc, 
+  getDoc, where, Timestamp, FieldValue 
+} from 'firebase/firestore';
 import { db } from "../lib/firebase";
 import { petsCollection, customersCollection } from "../lib/firestore";
 import { uploadFile } from "../lib/storage";
 import { useState } from 'react';
-
-import { Pet, PetInput, PetType, WeightUnit, Gender } from '../lib/types';
+import type { Pet, PetInput, FirestorePet } from '../lib/types';
 
 // Helper function to convert string to number safely
 function toNumber(value: string | number | null | undefined): number | null {
@@ -14,10 +17,38 @@ function toNumber(value: string | number | null | undefined): number | null {
   return isNaN(num) ? null : num;
 }
 
-// Helper function to convert Firestore timestamp to ISO string
+// Helper function to convert Firestore timestamp to string
 function timestampToString(timestamp: Timestamp | null | undefined): string | null {
   if (!timestamp) return null;
   return timestamp.toDate().toISOString();
+}
+
+// Helper function to parse Firestore pet data
+function parseFirestorePet(id: string, data: FirestorePet): Pet {
+  return {
+    id,
+    firebaseId: data.firebaseId,
+    name: data.name,
+    type: data.type,
+    breed: data.breed,
+    customerId: data.customerId,
+    dateOfBirth: data.dateOfBirth || null,
+    age: toNumber(data.age),
+    gender: data.gender || null,
+    weight: toNumber(data.weight),
+    weightUnit: data.weightUnit || 'kg',
+    notes: data.notes || null,
+    image: data.image || null,
+    createdAt: typeof data.createdAt === 'string' 
+      ? data.createdAt 
+      : data.createdAt.toDate().toISOString(),
+    updatedAt: data.updatedAt 
+      ? typeof data.updatedAt === 'string'
+        ? data.updatedAt
+        : data.updatedAt.toDate().toISOString()
+      : null,
+    owner: data.owner || null
+  };
 }
 
 export function usePets() {
@@ -53,38 +84,24 @@ export function usePets() {
         })
       );
 
-      console.log('FETCH_PETS: Available customers:', Array.from(customersMap.entries()));
-
       const fetchedPets = querySnapshot.docs.map((doc) => {
-        const petData = doc.data();
+        const petData = doc.data() as FirestorePet;
         const customerId = petData.customerId;
         const customerDetails = customersMap.get(customerId?.toString());
         
-        console.log('FETCH_PETS: Processing pet data:', {
-          petId: doc.id,
-          customerId,
-          petName: petData.name,
-          customerDetails
-        });
-
-        return {
-          id: doc.id,
-          customerId: customerId?.toString(),
-          name: petData.name,
-          type: petData.type || 'dog',
-          breed: petData.breed,
-          image: petData.image || null,
-          dateOfBirth: petData.dateOfBirth || null,
-          age: toNumber(petData.age),
-          gender: petData.gender || null,
-          weight: toNumber(petData.weight),
-          weightUnit: petData.weightUnit || 'kg',
-          notes: petData.notes || null,
-          createdAt: timestampToString(petData.createdAt) || new Date().toISOString(),
-          updatedAt: timestampToString(petData.updatedAt),
-          owner: customerDetails || null
-        };
-      });
+        try {
+          return parseFirestorePet(doc.id, {
+            ...petData,
+            owner: customerDetails || null
+          });
+        } catch (error) {
+          console.error('FETCH_PETS: Error parsing pet data:', {
+            petId: doc.id,
+            error
+          });
+          return null;
+        }
+      }).filter((pet): pet is Pet => pet !== null);
 
       console.log('FETCH_PETS: Completed fetching pets', {
         totalPets: fetchedPets.length,
@@ -98,15 +115,12 @@ export function usePets() {
     }
   };
 
-  const { data: pets, isLoading, refetch } = useQuery({
+  const { data: pets = [], isLoading, error, ...rest } = useQuery({
     queryKey: ['pets', refreshKey],
     queryFn: fetchPets,
-    staleTime: 0,
-    gcTime: 0,
-    refetchOnWindowFocus: true,
-    refetchOnMount: true,
+    staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 2,
-    retryDelay: 1000
+    refetchOnWindowFocus: false
   });
 
   const addPetMutation = useMutation({
@@ -116,16 +130,18 @@ export function usePets() {
 
         // Generate submission ID
         const submissionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-        console.log('ADD_PET: Using submission ID:', submissionId);
-
+        
         // Check for duplicate submission
-        const duplicateSnapshot = await getDocs(
-          query(petsCollection, where('submissionId', '==', submissionId))
-        );
+        const duplicateQuery = query(petsCollection, where('submissionId', '==', submissionId));
+        const duplicateSnapshot = await getDocs(duplicateQuery);
         
         if (!duplicateSnapshot.empty) {
           console.log('ADD_PET: Duplicate submission detected', { submissionId });
-          return { isDuplicate: true, pet: duplicateSnapshot.docs[0].data() };
+          const duplicateDoc = duplicateSnapshot.docs[0];
+          return { 
+            isDuplicate: true, 
+            pet: parseFirestorePet(duplicateDoc.id, duplicateDoc.data() as FirestorePet)
+          };
         }
 
         // Handle image upload if present
@@ -143,7 +159,8 @@ export function usePets() {
           imageUrl = petData.image;
         }
 
-        // Create the new pet document
+        // Create the new pet document with typed data
+        const timestamp = serverTimestamp();
         const newPetData = {
           name: petData.name,
           type: petData.type,
@@ -157,30 +174,31 @@ export function usePets() {
           notes: petData.notes || null,
           image: imageUrl,
           submissionId,
-          createdAt: serverTimestamp(),
-          updatedAt: null
+          createdAt: timestamp,
+          updatedAt: null,
+          firebaseId: null
         };
 
-        // Create the pet document with auto-generated ID
-        const newPetDoc = await addDoc(collection(db, 'pets'), newPetData);
+        // Create pet document
+        const newPetDoc = await addDoc(petsCollection, newPetData);
         console.log('ADD_PET: Created new pet document with ID:', newPetDoc.id);
 
         // Update customer's pet count
-        const customerRef = doc(db, 'customers', petData.customerId);
+        const customerRef = doc(customersCollection, petData.customerId);
         await updateDoc(customerRef, {
           petCount: increment(1)
         });
 
-        // Return the created pet with all necessary fields
-        const result = {
-          ...newPetData,
-          id: newPetDoc.id,
-          createdAt: new Date().toISOString(),
-          owner: petData.owner || null
+        // Return the created pet
+        return {
+          success: true,
+          pet: {
+            id: newPetDoc.id,
+            ...newPetData,
+            createdAt: new Date().toISOString(),
+            owner: petData.owner || null
+          }
         };
-
-        console.log('ADD_PET: Successfully created pet:', result);
-        return result;
       } catch (error) {
         console.error('ADD_PET: Error in mutation:', error);
         throw error;
@@ -190,11 +208,7 @@ export function usePets() {
       if (!('isDuplicate' in result)) {
         await queryClient.invalidateQueries({ queryKey: ['pets'] });
         setRefreshKey(prev => prev + 1);
-        await refetch();
       }
-    },
-    onError: (error: Error) => {
-      console.error('ADD_PET: Mutation error:', error);
     }
   });
 
@@ -202,11 +216,7 @@ export function usePets() {
     mutationFn: async ({ petId, updateData }: { petId: string; updateData: Partial<PetInput> }) => {
       try {
         const petRef = doc(petsCollection, petId);
-        const petDoc = await getDoc(petRef);
-        
-        if (!petDoc.exists()) {
-          throw new Error('Pet not found');
-        }
+        const timestamp = serverTimestamp();
 
         let imageUrl = updateData.image;
         if (updateData.image instanceof File) {
@@ -226,7 +236,7 @@ export function usePets() {
           ...(updateData.weightUnit && { weightUnit: updateData.weightUnit }),
           ...(('notes' in updateData) && { notes: updateData.notes }),
           ...(imageUrl && { image: imageUrl }),
-          updatedAt: serverTimestamp()
+          updatedAt: timestamp
         };
 
         await updateDoc(petRef, updates);
@@ -239,7 +249,6 @@ export function usePets() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['pets'] });
       setRefreshKey(prev => prev + 1);
-      await refetch();
     }
   });
 
@@ -252,8 +261,8 @@ export function usePets() {
         throw new Error('Pet not found');
       }
 
-      const { customerId } = petDoc.data();
-      const customerRef = doc(customersCollection, customerId?.toString());
+      const petData = petDoc.data() as FirestorePet;
+      const customerRef = doc(customersCollection, petData.customerId);
 
       await runTransaction(db, async (transaction) => {
         transaction.delete(petRef);
@@ -267,17 +276,17 @@ export function usePets() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['pets'] });
       setRefreshKey(prev => prev + 1);
-      await refetch();
     }
   });
 
   return {
     pets,
     isLoading,
+    error,
     addPet: addPetMutation.mutateAsync,
     updatePet: updatePetMutation.mutateAsync,
     deletePet: deletePetMutation.mutateAsync,
-    refetch,
+    refetch: () => queryClient.invalidateQueries({ queryKey: ['pets'] }),
     addPetMutation,
     updatePetMutation,
     deletePetMutation

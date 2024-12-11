@@ -28,23 +28,24 @@ function isFirebaseError(error: unknown): error is FirebaseError {
 export async function createUserDocument(user: User) {
   try {
     const userRef = doc(usersCollection, user.id);
-    const timestamp = new Date();
+    const timestamp = new Date().toISOString();
     
-    const userData = {
+    const userData: FirestoreUser = {
+      id: user.id,
       email: user.email,
       name: user.name,
-      phone: user.phone || '',
+      phone: user.phone || null,
       role: user.role,
       isActive: true,
-      createdAt: timestamp,
       branchId: user.branchId || null,
-      isGroomer: user.isGroomer || false,
-      specialties: user.specialties || [],
-      petTypePreferences: user.petTypePreferences || [],
-      experienceYears: user.experienceYears || null,
-      certifications: user.certifications || [],
-      availability: user.availability || null,
-      maxDailyAppointments: user.maxDailyAppointments || null,
+      isGroomer: false,
+      specialties: [],
+      petTypePreferences: [],
+      experienceYears: null,
+      certifications: [],
+      availability: null,
+      maxDailyAppointments: null,
+      createdAt: timestamp,
       updatedAt: null
     };
 
@@ -125,9 +126,10 @@ export async function createPet(pet: Omit<Pet, 'id' | 'createdAt' | 'updatedAt' 
     }
 
     // Ensure required fields are present
-    const requiredFields = ['name', 'type', 'breed', 'customerId'];
+    const requiredFields = ['name', 'type', 'breed', 'customerId'] as const;
     for (const field of requiredFields) {
-      if (!pet[field]) {
+      const value = pet[field];
+      if (!value) {
         throw new Error(`Missing required field: ${field}`);
       }
     }
@@ -260,29 +262,24 @@ export async function createAppointment(appointment: Omit<Appointment, 'id' | 'c
 export async function updateCustomer(id: string, data: Partial<Customer>) {
   try {
     const customerRef = doc(customersCollection, id);
+    const timestamp = new Date().toISOString();
     
     // Create a type-safe processed data object
-    const processedData: Partial<Customer> & { updatedAt: string } = {
-      ...data,
-      updatedAt: new Date().toISOString()
+    const processedData: Partial<Customer> = {
+      ...Object.entries(data).reduce((acc, [key, value]) => {
+        if (value !== undefined) {
+          if (value instanceof Date) {
+            acc[key as keyof Customer] = value.toISOString();
+          } else {
+            acc[key as keyof Customer] = value;
+          }
+        }
+        return acc;
+      }, {} as Partial<Customer>),
+      updatedAt: timestamp
     };
 
-    // Handle date conversion if createdAt is present
-    if (data.createdAt) {
-      processedData.createdAt = data.createdAt instanceof Date 
-        ? data.createdAt
-        : new Date(data.createdAt);
-    }
-
-    // Create a clean object without undefined values
-    const cleanedData = Object.entries(processedData).reduce<Partial<Customer> & { updatedAt: string }>((acc, [key, value]) => {
-      if (value !== undefined) {
-        acc[key as keyof (Partial<Customer> & { updatedAt: string })] = value as any;
-      }
-      return acc;
-    }, { updatedAt: new Date().toISOString() });
-
-    await setDoc(customerRef, cleanedData, { merge: true });
+    await setDoc(customerRef, processedData, { merge: true });
     return true;
   } catch (error) {
     console.error('Error updating customer:', error);
@@ -394,10 +391,23 @@ export async function updatePet(id: string, data: Partial<Pet>) {
 export async function updateAppointment(id: number, data: Partial<Appointment>) {
   try {
     const appointmentRef = doc(appointmentsCollection, id.toString());
-    await setDoc(appointmentRef, {
-      ...data,
-      updatedAt: new Date()
-    }, { merge: true });
+    const timestamp = new Date().toISOString();
+    
+    const processedData = {
+      ...Object.entries(data).reduce((acc, [key, value]) => {
+        if (value !== undefined) {
+          if (value instanceof Date) {
+            acc[key] = value.toISOString();
+          } else {
+            acc[key] = value;
+          }
+        }
+        return acc;
+      }, {} as Record<string, any>),
+      updatedAt: timestamp
+    };
+
+    await setDoc(appointmentRef, processedData, { merge: true });
     return true;
   } catch (error) {
     console.error('Error updating appointment:', error);
