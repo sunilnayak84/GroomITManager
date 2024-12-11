@@ -42,7 +42,13 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ConsumablesUsageModal } from "@/components/ConsumablesUsageModal";
-import { InventoryItem, inventoryItemSchema } from "@/lib/inventory-types";
+import { 
+  InventoryItem, 
+  InsertInventoryItem, 
+  insertInventoryItemSchema 
+} from "@/lib/inventory-types";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 
 interface SelectedItem {
   id: string;
@@ -78,16 +84,34 @@ export default function InventoryPage() {
     },
   });
 
-  const onSubmit = async (data: InventoryItem) => {
+  const onSubmit = async (data: InsertInventoryItem) => {
     try {
-      if (selectedItem) {
-        await updateInventoryItem(selectedItem.id, data);
+      const formattedData: InsertInventoryItem = {
+        ...data,
+        description: data.description || null,
+        supplier: data.supplier || null,
+        location: data.location || null,
+        barcode: data.barcode || null,
+        quantity_per_use: data.quantity_per_use ?? 1,
+        service_linked: data.service_linked ?? false,
+        last_restock_date: data.last_restock_date || null,
+        isActive: data.isActive ?? true,
+        reorder_point: data.reorder_point ?? 0,
+        reorder_quantity: data.reorder_quantity ?? 0,
+        category: data.category || "",
+        cost_per_unit: data.cost_per_unit ?? 0,
+        unit: data.unit || "pieces",
+        minimum_quantity: data.minimum_quantity ?? 0,
+      };
+
+      if (selectedItem?.id) {
+        await updateInventoryItem(selectedItem.id, formattedData);
         toast({
           title: "Success",
           description: "Inventory item updated successfully",
         });
       } else {
-        await addInventoryItem(data);
+        await addInventoryItem(formattedData);
         toast({
           title: "Success",
           description: "Inventory item added successfully",
@@ -106,12 +130,15 @@ export default function InventoryPage() {
   };
 
   const handleEdit = (item: InventoryItem) => {
+    if (!item.item_id) return;
+    
     setSelectedItem({
       id: item.item_id,
       name: item.name,
       quantity: item.quantity,
       unit: item.unit,
     });
+    
     form.reset({
       name: item.name,
       quantity: item.quantity,
@@ -119,6 +146,16 @@ export default function InventoryPage() {
       supplier: item.supplier,
       description: item.description,
       minimum_quantity: item.minimum_quantity,
+      cost_per_unit: 0,
+      category: item.category || "",
+      last_restock_date: null,
+      isActive: item.isActive || true,
+      reorder_point: item.reorder_point || 0,
+      reorder_quantity: item.reorder_quantity || 0,
+      location: item.location || null,
+      barcode: item.barcode || null,
+      quantity_per_use: item.quantity_per_use || 1,
+      service_linked: item.service_linked || false,
     });
     setShowItemDialog(true);
   };
@@ -162,8 +199,9 @@ export default function InventoryPage() {
                   <TableHead>Name</TableHead>
                   <TableHead>Quantity</TableHead>
                   <TableHead>Unit</TableHead>
+                  <TableHead>Category</TableHead>
                   <TableHead>Supplier</TableHead>
-                  <TableHead>Min. Quantity</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -173,8 +211,18 @@ export default function InventoryPage() {
                     <TableCell>{item.name}</TableCell>
                     <TableCell>{item.quantity}</TableCell>
                     <TableCell>{item.unit}</TableCell>
-                    <TableCell>{item.supplier}</TableCell>
-                    <TableCell>{item.minimum_quantity}</TableCell>
+                    <TableCell>{item.category || "-"}</TableCell>
+                    <TableCell>{item.supplier || "-"}</TableCell>
+                    <TableCell>
+                      <Switch
+                        checked={item.isActive}
+                        onCheckedChange={async (checked) => {
+                          if (item.item_id) {
+                            await updateInventoryItem(item.item_id, { ...item, isActive: checked });
+                          }
+                        }}
+                      />
+                    </TableCell>
                     <TableCell>
                       <div className="flex gap-2">
                         <Button
@@ -187,12 +235,16 @@ export default function InventoryPage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => setSelectedItem({
-                            id: item.item_id,
-                            name: item.name,
-                            quantity: item.quantity,
-                            unit: item.unit,
-                          })}
+                          onClick={() => {
+                            if (item.item_id) {
+                              setSelectedItem({
+                                id: item.item_id,
+                                name: item.name,
+                                quantity: item.quantity,
+                                unit: item.unit,
+                              });
+                            }
+                          }}
                         >
                           <History className="h-4 w-4" />
                         </Button>
@@ -217,11 +269,13 @@ export default function InventoryPage() {
                               <AlertDialogAction
                                 onClick={async () => {
                                   try {
-                                    await deleteInventoryItem(item.item_id);
-                                    toast({
-                                      title: "Success",
-                                      description: "Item deleted successfully",
-                                    });
+                                    if (item.item_id) {
+                                      await deleteInventoryItem(item.item_id);
+                                      toast({
+                                        title: "Success",
+                                        description: "Item deleted successfully",
+                                      });
+                                    }
                                   } catch (error) {
                                     console.error('Error deleting item:', error);
                                     toast({
@@ -274,38 +328,136 @@ export default function InventoryPage() {
 
                   <FormField
                     control={form.control}
-                    name="quantity"
+                    name="category"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Quantity</FormLabel>
+                        <FormLabel>Category</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            placeholder="Enter quantity"
-                            {...field}
-                            onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                          />
+                          <Input placeholder="Item category" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="unit"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Unit</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Unit of measurement" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="quantity"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Quantity</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              placeholder="Enter quantity"
+                              {...field}
+                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="unit"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Unit</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Unit of measurement" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="cost_per_unit"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Cost per Unit</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              {...field}
+                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="minimum_quantity"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Minimum Quantity</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              {...field}
+                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="reorder_point"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Reorder Point</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              min="0"
+                              {...field}
+                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="reorder_quantity"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Reorder Quantity</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              min="0"
+                              {...field}
+                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
                   <FormField
                     control={form.control}
@@ -327,10 +479,10 @@ export default function InventoryPage() {
 
                   <FormField
                     control={form.control}
-                    name="description"
+                    name="location"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description</FormLabel>
+                        <FormLabel>Storage Location</FormLabel>
                         <FormControl>
                           <Input 
                             {...field} 
@@ -345,17 +497,33 @@ export default function InventoryPage() {
 
                   <FormField
                     control={form.control}
-                    name="minimum_quantity"
+                    name="barcode"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Minimum Quantity</FormLabel>
+                        <FormLabel>Barcode</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            min="0"
-                            step="0.01"
+                          <Input 
+                            {...field} 
+                            value={field.value ?? ''}
+                            onChange={(e) => field.onChange(e.target.value || null)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea
                             {...field}
-                            onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            value={field.value ?? ''}
+                            onChange={(e) => field.onChange(e.target.value || null)}
                           />
                         </FormControl>
                         <FormMessage />

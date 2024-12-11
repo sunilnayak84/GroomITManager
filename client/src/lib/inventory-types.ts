@@ -10,6 +10,14 @@ export const inventoryItemSchema = z.object({
   supplier: z.string().nullable(),
   description: z.string().nullable(),
   minimum_quantity: z.number().min(0, "Minimum quantity cannot be negative"),
+  category: z.string().min(1, "Category is required"),
+  isActive: z.boolean().default(true),
+  reorder_point: z.number().min(0, "Reorder point cannot be negative"),
+  reorder_quantity: z.number().min(0, "Reorder quantity cannot be negative"),
+  location: z.string().nullable(),
+  barcode: z.string().nullable(),
+  quantity_per_use: z.number().min(0, "Quantity per use cannot be negative").default(1),
+  service_linked: z.boolean().default(false),
   createdAt: z.union([z.string(), z.instanceof(Timestamp)]).optional(),
   updatedAt: z.union([z.string(), z.instanceof(Timestamp), z.null()]).optional(),
 });
@@ -31,7 +39,13 @@ export const usageRecordSchema = z.object({
 export type UsageRecord = z.infer<typeof usageRecordSchema>;
 
 // Helper type for inventory item creation
-export const insertInventoryItemSchema = inventoryItemSchema.extend({
+export const insertInventoryItemSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  quantity: z.number().min(0, "Quantity cannot be negative"),
+  unit: z.string().min(1, "Unit is required"),
+  supplier: z.string().nullable(),
+  description: z.string().nullable(),
+  minimum_quantity: z.number().min(0, "Minimum quantity cannot be negative"),
   cost_per_unit: z.number().min(0, "Cost per unit cannot be negative"),
   category: z.string().min(1, "Category is required"),
   last_restock_date: z.date().nullable(),
@@ -40,6 +54,10 @@ export const insertInventoryItemSchema = inventoryItemSchema.extend({
   reorder_quantity: z.number().min(0, "Reorder quantity cannot be negative"),
   location: z.string().nullable(),
   barcode: z.string().nullable(),
+  quantity_per_use: z.number().min(0, "Quantity per use cannot be negative").default(1),
+  service_linked: z.boolean().default(false),
+  createdAt: z.union([z.string(), z.instanceof(Timestamp)]).optional(),
+  updatedAt: z.union([z.string(), z.instanceof(Timestamp), z.null()]).optional()
 });
 
 export type InsertInventoryItem = z.infer<typeof insertInventoryItemSchema>;
