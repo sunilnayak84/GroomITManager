@@ -99,16 +99,13 @@ export function useAppointments() {
               continue;
             }
 
-            // In development mode, be more lenient with data validation
-            if (process.env.NODE_ENV !== 'development') {
-              // Ensure all required fields are present in production
-              const requiredFields = ['petId', 'serviceId', 'groomerId', 'branchId', 'date', 'status'];
-              const missingFields = requiredFields.filter(field => !(field in rawData));
-              if (missingFields.length > 0) {
-                console.error(`FETCH_APPOINTMENTS: Missing required fields in appointment ${appointmentDoc.id}:`, missingFields);
-                errorCount++;
-                continue;
-              }
+            // Basic validation for required fields
+            const requiredFields = ['petId', 'serviceId', 'date', 'status'];
+            const missingFields = requiredFields.filter(field => !(field in rawData));
+            if (missingFields.length > 0) {
+              console.error(`FETCH_APPOINTMENTS: Missing fields in appointment ${appointmentDoc.id}:`, missingFields);
+              errorCount++;
+              continue;
             }
 
             // Cast to our expected type

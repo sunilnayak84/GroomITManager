@@ -110,15 +110,22 @@ export const insertAppointmentSchema = appointmentSchema.omit({
         if (isNaN(appointmentDate.getTime())) return false;
         
         const now = new Date();
-        // Only compare dates, ignoring milliseconds
-        appointmentDate.setMilliseconds(0);
+        now.setSeconds(0);
         now.setMilliseconds(0);
+        
+        appointmentDate.setSeconds(0);
+        appointmentDate.setMilliseconds(0);
+        
+        // Round to nearest 15 minutes
+        const minutes = appointmentDate.getMinutes();
+        appointmentDate.setMinutes(Math.round(minutes / 15) * 15);
+        
         return appointmentDate >= now;
       } catch {
         return false;
       }
     },
-    "Please select a valid future date and time"
+    "Please select a valid future date and time (in 15-minute intervals)"
   ),
   petId: z.string().min(1, "Pet must be selected"),
   serviceId: z.string().min(1, "Service must be selected"),

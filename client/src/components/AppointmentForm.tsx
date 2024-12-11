@@ -65,40 +65,39 @@ export default function AppointmentForm() {
     
     setIsSubmitting(true);
     try {
-      // Validate required fields
-      if (!values.petId) {
-        throw new Error("Please select a pet");
-      }
-      if (!values.serviceId) {
-        throw new Error("Please select a service");
+      if (!values.petId || !values.serviceId) {
+        throw new Error("Please select both pet and service");
       }
 
-      // Ensure the date is valid before proceeding
       const appointmentDate = new Date(values.date);
       if (isNaN(appointmentDate.getTime())) {
         throw new Error("Invalid appointment date");
       }
 
-      // Validate that the appointment is not in the past
       const now = new Date();
       if (appointmentDate < now) {
         throw new Error("Appointment date must be in the future");
       }
 
-      // Validate and prepare the appointment data
-      const data: z.infer<typeof insertAppointmentSchema> = {
+      // Round minutes to nearest 15
+      appointmentDate.setMinutes(Math.round(appointmentDate.getMinutes() / 15) * 15);
+      appointmentDate.setSeconds(0);
+      appointmentDate.setMilliseconds(0);
+
+      const data = {
         petId: values.petId,
-        serviceId: values.serviceId, 
+        serviceId: values.serviceId,
         groomerId: values.groomerId,
         branchId: values.branchId,
         date: appointmentDate.toISOString(),
         status: 'pending',
-        notes: values.notes || null,
-        productsUsed: null 
+        notes: values.notes || '',
+        productsUsed: ''
       };
 
       console.log('Submitting appointment data:', data);
       await addAppointment(data);
+      setOpen(false); // Close modal after successful submission
       
       toast({
         title: "Success",
