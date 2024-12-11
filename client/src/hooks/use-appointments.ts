@@ -1,12 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AppointmentWithRelations, InsertAppointment } from "@/lib/schema";
 import { 
-  collection, getDocs, setDoc, onSnapshot, query, getDoc, doc, 
-  WithFieldValue, DocumentData, Timestamp, getFirestore,
-  DocumentReference
+  collection, getDocs, setDoc, doc, 
+  Timestamp, getDoc
 } from 'firebase/firestore';
 import { db } from "../lib/firebase";
-import { useEffect } from "react";
 
 interface FirestoreAppointmentData {
   petId: string;
@@ -21,7 +19,6 @@ interface FirestoreAppointmentData {
   updatedAt: Timestamp | null;
 }
 
-// Helper function to convert Timestamp to Date string with error handling
 const timestampToISOString = (timestamp: Timestamp | null | undefined): string => {
   if (!timestamp) return new Date().toISOString();
   try {
@@ -32,7 +29,6 @@ const timestampToISOString = (timestamp: Timestamp | null | undefined): string =
   }
 };
 
-// Helper to ensure type safety when creating Firestore data
 const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppointmentData => {
   const appointmentDate = new Date(data.date);
   if (isNaN(appointmentDate.getTime())) {
@@ -45,9 +41,9 @@ const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppoi
     groomerId: data.groomerId,
     branchId: data.branchId,
     date: Timestamp.fromDate(appointmentDate),
-    status: 'pending',
-    notes: data.notes || '',
-    productsUsed: null,
+    status: data.status,
+    notes: data.notes,
+    productsUsed: data.productsUsed,
     createdAt: Timestamp.fromDate(new Date()),
     updatedAt: null
   };
@@ -62,21 +58,15 @@ export function useAppointments() {
       try {
         console.log('FETCH_APPOINTMENTS: Starting appointment fetch');
         
-        // Verify Firebase initialization
         if (!db) {
           console.error('FETCH_APPOINTMENTS: Firebase not initialized');
           throw new Error('Firebase not initialized');
         }
 
-        // Get appointments collection
         const appointmentsRef = collection(db, 'appointments');
         console.log('FETCH_APPOINTMENTS: Created collection reference');
 
-        // Create a query ordered by date
-        const q = query(appointmentsRef);
-        console.log('FETCH_APPOINTMENTS: Created query');
-
-        const querySnapshot = await getDocs(q);
+        const querySnapshot = await getDocs(appointmentsRef);
         console.log('FETCH_APPOINTMENTS: Got snapshot with', querySnapshot.size, 'documents');
 
         if (querySnapshot.empty) {
@@ -91,200 +81,95 @@ export function useAppointments() {
         for (const appointmentDoc of querySnapshot.docs) {
           try {
             console.log('FETCH_APPOINTMENTS: Processing appointment', appointmentDoc.id);
-            const rawData = appointmentDoc.data();
-            console.log('FETCH_APPOINTMENTS: Raw data for appointment', appointmentDoc.id, ':', rawData);
+            const rawData = appointmentDoc.data() as FirestoreAppointmentData;
             
-            // Type check the raw data
-            if (!rawData || typeof rawData !== 'object') {
-              console.error('FETCH_APPOINTMENTS: Invalid appointment data structure:', appointmentDoc.id);
+            if (!rawData.petId || !rawData.groomerId) {
+              console.error('FETCH_APPOINTMENTS: Missing required fields in appointment:', appointmentDoc.id);
               errorCount++;
               continue;
             }
 
-            // Basic validation for required fields
-            const requiredFields = ['petId', 'serviceId', 'date', 'status'];
-            const missingFields = requiredFields.filter(field => !(field in rawData));
-            if (missingFields.length > 0) {
-              console.error(`FETCH_APPOINTMENTS: Missing fields in appointment ${appointmentDoc.id}:`, missingFields);
-              errorCount++;
-              continue;
-            }
-
-            // Cast to our expected type
-            const appointmentData = rawData as FirestoreAppointmentData;
+            // Get pet data
+            const petDocRef = doc(db, 'pets', rawData.petId);
+            const petDoc = await getDoc(petDocRef);
             
-            // Validate required fields
-            if (!appointmentData.petId || !appointmentData.groomerId) {
-              console.error('FETCH_APPOINTMENTS: Missing required fields in appointment:', appointmentDoc.id, appointmentData);
-              errorCount++;
-              continue;
-            }
+            let petData = {
+              name: 'Unknown Pet',
+              breed: 'Unknown Breed',
+              image: null as string | null,
+              customerId: 'unknown'
+            };
 
-            // Get related documents
-            console.log('FETCH_APPOINTMENTS: Fetching related documents for appointment:', appointmentDoc.id);
-            
-            try {
-              // Get pet document
-              const petDocRef = doc(db, 'pets', appointmentData.petId);
-              console.log('FETCH_APPOINTMENTS: Fetching pet document:', appointmentData.petId);
-              const petDoc = await getDoc(petDocRef);
-
-              // Initialize petData with development fallback
-              let petData = null;
-              if (petDoc.exists()) {
-                const rawPetData = petDoc.data();
-                petData = {
-                  name: rawPetData.name,
-                  breed: rawPetData.breed,
-                  image: rawPetData.image,
-                  customerId: rawPetData.customerId
-                };
-              }
-
-              // In production, fetch real pet data
-              if (process.env.NODE_ENV !== 'development') {
-                if (!petDoc.exists()) {
-                  console.error('FETCH_APPOINTMENTS: Pet not found:', appointmentData.petId);
-                  errorCount++;
-                  continue;
-                }
-                const rawPetData = petDoc.data();
-                if (!rawPetData) {
-                  console.error('FETCH_APPOINTMENTS: Invalid pet data for:', appointmentData.petId);
-                  errorCount++;
-                  continue;
-                }
-                petData = {
-                  name: rawPetData.name || 'Unknown Pet',
-                  breed: rawPetData.breed || 'Unknown Breed',
-                  image: rawPetData.image || null,
-                  customerId: rawPetData.customerId || 'unknown'
-                };
-              }
-              
-              console.log('FETCH_APPOINTMENTS: Pet data:', petData);
-
-              // Try to get groomer document or use fallback in development
-              let groomerData;
-              if (process.env.NODE_ENV === 'development') {
-                console.log('FETCH_APPOINTMENTS: Development mode - using fallback groomer data');
-                groomerData = {
-                  name: 'Development Groomer',
-                  id: appointmentData.groomerId
-                };
-              } else {
-                const userDocRef = doc(db, 'users', appointmentData.groomerId);
-                const userDoc = await getDoc(userDocRef);
-                
-                if (userDoc.exists()) {
-                  console.log('FETCH_APPOINTMENTS: Found groomer in users collection');
-                  groomerData = userDoc.data();
-                } else {
-                  console.log('FETCH_APPOINTMENTS: Groomer not found in users, trying staff collection');
-                  const staffDocRef = doc(db, 'staff', appointmentData.groomerId);
-                  const staffDoc = await getDoc(staffDocRef);
-                  
-                  if (staffDoc.exists()) {
-                    console.log('FETCH_APPOINTMENTS: Found groomer in staff collection');
-                    groomerData = staffDoc.data();
-                  } else {
-                    console.error('FETCH_APPOINTMENTS: Groomer not found in any collection:', appointmentData.groomerId);
-                    errorCount++;
-                    continue;
-                  }
-                }
-              }
-
-              if (!groomerData) {
-                console.error('FETCH_APPOINTMENTS: No groomer data found for ID:', appointmentData.groomerId);
-                errorCount++;
-                continue;
-              }
-
-              console.log('FETCH_APPOINTMENTS: Groomer data:', groomerData);
-
-              if (!petData || !groomerData) {
-                console.error('FETCH_APPOINTMENTS: Missing data for pet or groomer:', {
-                  appointmentId: appointmentDoc.id,
-                  hasPetData: !!petData,
-                  hasGroomerData: !!groomerData
-                });
-                errorCount++;
-                continue;
-              }
-
-              // Get customer details
-              let customerData;
-              if (process.env.NODE_ENV === 'development') {
-                console.log('FETCH_APPOINTMENTS: Development mode - using fallback customer data');
-                customerData = {
-                  firstName: 'Test',
-                  lastName: 'Customer',
-                  email: 'test@example.com',
-                  phone: '555-0123'
-                };
-              } else {
-                if (!petData.customerId) {
-                  console.error('FETCH_APPOINTMENTS: Missing customerId for pet:', appointmentData.petId);
-                  errorCount++;
-                  continue;
-                }
-
-                console.log('FETCH_APPOINTMENTS: Fetching customer document:', petData.customerId);
-                const customerDoc = await getDoc(doc(db, 'customers', petData.customerId));
-                
-                if (!customerDoc.exists()) {
-                  console.error('FETCH_APPOINTMENTS: Customer not found:', petData.customerId);
-                  errorCount++;
-                  continue;
-                }
-
-                customerData = customerDoc.data();
-                console.log('FETCH_APPOINTMENTS: Customer data:', customerData);
-
-                if (!customerData) {
-                  console.error('FETCH_APPOINTMENTS: Missing customer data for pet:', appointmentData.petId);
-                  errorCount++;
-                  continue;
-                }
-              }
-
-              // Create the appointment object with all required data
-              const appointment: AppointmentWithRelations = {
-                id: appointmentDoc.id,
-                petId: appointmentData.petId,
-                serviceId: appointmentData.serviceId,
-                groomerId: appointmentData.groomerId,
-                branchId: appointmentData.branchId,
-                date: timestampToISOString(appointmentData.date),
-                status: appointmentData.status,
-                notes: appointmentData.notes,
-                productsUsed: appointmentData.productsUsed,
-                createdAt: timestampToISOString(appointmentData.createdAt),
-                updatedAt: timestampToISOString(appointmentData.updatedAt),
-                pet: {
-                  name: petData.name,
-                  breed: petData.breed,
-                  image: petData.image || null
-                },
-                customer: {
-                  firstName: customerData.firstName,
-                  lastName: customerData.lastName
-                },
-                groomer: {
-                  name: groomerData.name
-                }
+            if (petDoc.exists()) {
+              const rawPetData = petDoc.data();
+              petData = {
+                name: rawPetData.name || 'Unknown Pet',
+                breed: rawPetData.breed || 'Unknown Breed',
+                image: rawPetData.image || null,
+                customerId: rawPetData.customerId || 'unknown'
               };
-
-              appointments.push(appointment);
-              successCount++;
-              console.log('FETCH_APPOINTMENTS: Successfully processed appointment:', appointmentDoc.id);
-
-            } catch (error) {
-              console.error('FETCH_APPOINTMENTS: Error processing related data for appointment:', appointmentDoc.id, error);
-              errorCount++;
-              continue;
             }
+
+            // Get groomer data
+            let groomerData = {
+              name: 'Unknown Groomer'
+            };
+
+            if (process.env.NODE_ENV !== 'development') {
+              const groomerDoc = await getDoc(doc(db, 'users', rawData.groomerId));
+              if (groomerDoc.exists()) {
+                const rawGroomerData = groomerDoc.data();
+                groomerData = {
+                  name: rawGroomerData.name || 'Unknown Groomer'
+                };
+              }
+            }
+
+            // Get customer data
+            let customerData = {
+              firstName: 'Unknown',
+              lastName: 'Customer'
+            };
+
+            if (process.env.NODE_ENV !== 'development' && petData.customerId !== 'unknown') {
+              const customerDoc = await getDoc(doc(db, 'customers', petData.customerId));
+              if (customerDoc.exists()) {
+                const rawCustomerData = customerDoc.data();
+                customerData = {
+                  firstName: rawCustomerData.firstName || 'Unknown',
+                  lastName: rawCustomerData.lastName || 'Customer'
+                };
+              }
+            }
+
+            const appointment: AppointmentWithRelations = {
+              id: appointmentDoc.id,
+              petId: rawData.petId,
+              serviceId: rawData.serviceId,
+              groomerId: rawData.groomerId,
+              branchId: rawData.branchId,
+              date: timestampToISOString(rawData.date),
+              status: rawData.status,
+              notes: rawData.notes,
+              productsUsed: rawData.productsUsed,
+              createdAt: timestampToISOString(rawData.createdAt),
+              updatedAt: timestampToISOString(rawData.updatedAt),
+              pet: {
+                name: petData.name,
+                breed: petData.breed,
+                image: petData.image
+              },
+              customer: {
+                firstName: customerData.firstName,
+                lastName: customerData.lastName
+              },
+              groomer: {
+                name: groomerData.name
+              }
+            };
+
+            appointments.push(appointment);
+            successCount++;
 
           } catch (error) {
             console.error('FETCH_APPOINTMENTS: Error processing appointment:', appointmentDoc.id, error);
@@ -294,8 +179,6 @@ export function useAppointments() {
         }
 
         console.log(`FETCH_APPOINTMENTS: Processed ${querySnapshot.size} appointments. Success: ${successCount}, Errors: ${errorCount}`);
-
-        console.log('FETCH_APPOINTMENTS: Successfully fetched', appointments.length, 'appointments');
         return appointments;
       } catch (error) {
         console.error('Error fetching appointments:', error);

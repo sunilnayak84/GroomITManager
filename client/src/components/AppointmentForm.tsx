@@ -30,41 +30,42 @@ import {
 import { useAppointments } from "../hooks/use-appointments";
 import { usePets } from "../hooks/use-pets";
 import { useToast } from "@/hooks/use-toast";
-import { useServices } from '../hooks/use-services'; // Import the hook for services
+import { useServices } from '../hooks/use-services';
 
 interface AppointmentFormProps {
-  setOpen: (open: boolean) => void;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
   const { addAppointment } = useAppointments();
   const { pets } = usePets();
-  const { services } = useServices(); // Get services data
+  const { services } = useServices();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const defaultGroomerId = "1";
   const defaultBranchId = "1";
+  
   const form = useForm<z.infer<typeof insertAppointmentSchema>>({
     resolver: zodResolver(insertAppointmentSchema),
     defaultValues: {
       petId: "",
-      serviceId: "1", // Default service ID
+      serviceId: "",
       groomerId: defaultGroomerId,
       branchId: defaultBranchId,
       date: (() => {
         const date = new Date();
-        date.setMinutes(date.getMinutes() + 15); // Set default time to 15 minutes from now, in 15 min increments
-        date.setMinutes(Math.round(date.getMinutes() / 15) * 15); //Round to nearest 15min
+        date.setMinutes(date.getMinutes() + 15);
+        date.setMinutes(Math.round(date.getMinutes() / 15) * 15);
         return date.toISOString();
       })(),
-      status: "pending",
-      notes: "",
+      status: "pending" as const,
+      notes: null,
       productsUsed: null
     },
   });
 
-  async function onSubmit(values: z.infer<typeof insertAppointmentSchema>): Promise<void> {
+  async function onSubmit(values: InsertAppointment) {
     if (isSubmitting) return;
     
     setIsSubmitting(true);
@@ -83,32 +84,31 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
         throw new Error("Appointment date must be in the future");
       }
 
-      // Round minutes to nearest 15
       appointmentDate.setMinutes(Math.round(appointmentDate.getMinutes() / 15) * 15);
       appointmentDate.setSeconds(0);
       appointmentDate.setMilliseconds(0);
 
-      const data = {
+      const appointmentData: InsertAppointment = {
         petId: values.petId,
         serviceId: values.serviceId,
-        groomerId: values.groomerId,
-        branchId: values.branchId,
+        groomerId: defaultGroomerId,
+        branchId: defaultBranchId,
         date: appointmentDate.toISOString(),
-        status: 'pending' as const,
-        notes: values.notes || '',
+        status: "pending" as const,
+        notes: values.notes || null,
         productsUsed: null
       };
 
-      console.log('Submitting appointment data:', data);
-      await addAppointment(data);
-      setOpen(false); // Close modal after successful submission
+      console.log('Submitting appointment data:', appointmentData);
+      await addAppointment(appointmentData);
+      setOpen(false);
       
       toast({
         title: "Success",
         description: "Appointment scheduled successfully",
       });
       
-      form.reset(); // Reset form after successful submission
+      form.reset();
     } catch (error) {
       console.error('Failed to schedule appointment:', error);
       toast({
@@ -116,7 +116,6 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to schedule appointment",
       });
-      throw error;
     } finally {
       setIsSubmitting(false);
     }
@@ -139,7 +138,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
               <FormItem>
                 <FormLabel>Pet</FormLabel>
                 <Select
-                  onValueChange={(value) => field.onChange(value)}
+                  onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
@@ -158,6 +157,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                     ))}
                   </SelectContent>
                 </Select>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -188,6 +188,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                     }}
                   />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -224,6 +225,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                 <FormControl>
                   <Input {...field} value={field.value ?? ''} />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />

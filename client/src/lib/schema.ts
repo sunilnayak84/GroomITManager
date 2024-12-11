@@ -81,11 +81,18 @@ export const insertPetSchema = petSchema.omit({
 // Schema for Appointment
 export const appointmentSchema = z.object({
   id: z.string(),
-  petId: z.string(),
-  serviceId: z.string(),
-  groomerId: z.string(),
-  branchId: z.string(),
-  date: z.string(),
+  petId: z.string().min(1, "Pet must be selected"),
+  serviceId: z.string().min(1, "Service must be selected"),
+  groomerId: z.string().min(1, "Groomer must be selected"),
+  branchId: z.string().min(1, "Branch must be selected"),
+  date: z.string().refine(
+    (date) => {
+      if (!date) return false;
+      const appointmentDate = new Date(date);
+      return !isNaN(appointmentDate.getTime());
+    },
+    "Invalid date format"
+  ),
   status: z.enum(["pending", "confirmed", "completed", "cancelled"]),
   notes: z.string().nullable(),
   productsUsed: z.string().nullable(),
@@ -97,11 +104,11 @@ export const appointmentSchema = z.object({
 export type FirestoreAppointment = z.infer<typeof appointmentSchema>;
 
 // Schema for appointment creation/updates
-export const insertAppointmentSchema = appointmentSchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-}).extend({
+export const insertAppointmentSchema = z.object({
+  petId: z.string().min(1, "Pet must be selected"),
+  serviceId: z.string().min(1, "Service must be selected"),
+  groomerId: z.string().min(1, "Groomer must be selected"),
+  branchId: z.string().min(1, "Branch must be selected"),
   date: z.string().refine(
     (date) => {
       if (!date) return false;
@@ -127,10 +134,6 @@ export const insertAppointmentSchema = appointmentSchema.omit({
     },
     "Please select a valid future date and time (in 15-minute intervals)"
   ),
-  petId: z.string().min(1, "Pet must be selected"),
-  serviceId: z.string().min(1, "Service must be selected"),
-  groomerId: z.string().min(1, "Groomer must be selected"),
-  branchId: z.string().min(1, "Branch must be selected"),
   status: z.enum(["pending", "confirmed", "completed", "cancelled"]).default("pending"),
   notes: z.string().nullable(),
   productsUsed: z.string().nullable()
