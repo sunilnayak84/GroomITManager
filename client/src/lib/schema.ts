@@ -87,18 +87,21 @@ export const insertAppointmentSchema = appointmentSchema.omit({
 }).extend({
   date: z.string().refine(
     (date) => {
+      if (!date) return false;
       try {
         const appointmentDate = new Date(date);
+        if (isNaN(appointmentDate.getTime())) return false;
+        
         const now = new Date();
-        // Reset seconds and milliseconds for more lenient comparison
-        appointmentDate.setSeconds(0, 0);
-        now.setSeconds(0, 0);
+        // Only compare dates, ignoring milliseconds
+        appointmentDate.setMilliseconds(0);
+        now.setMilliseconds(0);
         return appointmentDate >= now;
       } catch {
         return false;
       }
     },
-    "Appointment date must be in the future"
+    "Please select a valid future date and time"
   ),
   petId: z.string().min(1, "Pet must be selected"),
   serviceId: z.string().min(1, "Service must be selected"),

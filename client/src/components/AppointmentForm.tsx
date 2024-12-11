@@ -56,18 +56,38 @@ export default function AppointmentForm() {
 
   async function onSubmit(values: z.infer<typeof insertAppointmentSchema>) {
     try {
+      // Validate required fields
+      if (!values.petId) {
+        throw new Error("Please select a pet");
+      }
+
+      // Ensure the date is valid before proceeding
+      const appointmentDate = new Date(values.date);
+      if (isNaN(appointmentDate.getTime())) {
+        throw new Error("Invalid appointment date");
+      }
+
+      // Validate that the appointment is not in the past
+      const now = new Date();
+      if (appointmentDate < now) {
+        throw new Error("Appointment date must be in the future");
+      }
+
+      // Validate and prepare the appointment data
       const data: z.infer<typeof insertAppointmentSchema> = {
-        ...values,
-        petId: String(values.petId),
-        serviceId: String(values.serviceId),
-        branchId: String(values.branchId),
+        petId: values.petId,
+        serviceId: values.serviceId || '1', // Default service ID if not provided
+        groomerId: values.groomerId,
+        branchId: values.branchId,
+        date: appointmentDate.toISOString(),
         status: 'pending',
-        date: new Date(values.date).toISOString(),
         notes: values.notes || null,
-        productsUsed: values.productsUsed || null
+        productsUsed: null // Initialize as null since it's not used in the form
       };
 
+      console.log('Submitting appointment data:', data);
       await addAppointment(data);
+      
       toast({
         title: "Success",
         description: "Appointment scheduled successfully",
@@ -133,8 +153,16 @@ export default function AppointmentForm() {
                     {...field}
                     value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ''}
                     onChange={(e) => {
-                      const date = new Date(e.target.value);
-                      field.onChange(date.toISOString());
+                      try {
+                        const date = new Date(e.target.value);
+                        if (!isNaN(date.getTime())) {
+                          field.onChange(date.toISOString());
+                        } else {
+                          console.error('Invalid date input:', e.target.value);
+                        }
+                      } catch (error) {
+                        console.error('Error parsing date:', error);
+                      }
                     }}
                   />
                 </FormControl>

@@ -5,7 +5,7 @@ import { appointmentsCollection, petsCollection, customersCollection, usersColle
 import React from "react";
 
 type FirestoreAppointmentData = {
-  id?: string;
+  id: string;
   petId: string;
   serviceId: string;
   groomerId: string;
@@ -16,6 +16,13 @@ type FirestoreAppointmentData = {
   productsUsed: string | null;
   createdAt: string;
   updatedAt: string | null;
+};
+
+// Helper function to ensure date is in ISO string format
+const ensureDateString = (date: Date | string | null | undefined): string | null => {
+  if (!date) return null;
+  if (date instanceof Date) return date.toISOString();
+  return date;
 };
 
 // Helper function to convert Date | null to Date | undefined
@@ -90,12 +97,12 @@ export function useAppointments() {
             serviceId: appointmentData.serviceId as string,
             groomerId: appointmentData.groomerId as string,
             branchId: appointmentData.branchId as string,
-            date: appointmentDate,
+            date: ensureDateString(appointmentDate)!,
             status,
             notes: (appointmentData.notes as string | null) ?? null,
             productsUsed: (appointmentData.productsUsed as string | null) ?? null,
-            createdAt: createdDate,
-            updatedAt: toDateOrUndefined(appointmentData.updatedAt),
+            createdAt: ensureDateString(createdDate)!,
+            updatedAt: ensureDateString(appointmentData.updatedAt),
             pet: {
               name: petData.name as string,
               breed: petData.breed as string,
@@ -129,13 +136,12 @@ export function useAppointments() {
         
         // Prepare the data for Firestore
         const firestoreData: WithFieldValue<FirestoreAppointmentData> = {
+          id: doc(appointmentsCollection).id,
           petId: appointmentData.petId,
           serviceId: appointmentData.serviceId,
           groomerId: appointmentData.groomerId,
           branchId: appointmentData.branchId,
-          date: typeof appointmentData.date === 'string' 
-            ? appointmentData.date 
-            : appointmentData.date.toISOString(),
+          date: ensureDateString(appointmentData.date)!,
           status: appointmentData.status || 'pending',
           notes: appointmentData.notes || null,
           productsUsed: appointmentData.productsUsed || null,
@@ -144,12 +150,14 @@ export function useAppointments() {
         };
 
         console.log('Prepared Firestore data:', firestoreData);
-        const docRef = await addDoc(appointmentsCollection, firestoreData);
+        // Remove id from the data before sending to Firestore
+        const { id, ...dataWithoutId } = firestoreData;
+        const docRef = await addDoc(appointmentsCollection, dataWithoutId);
         
         return {
-          id: docRef.id,
-          ...firestoreData
-        };
+          ...dataWithoutId,
+          id: docRef.id
+        } as FirestoreAppointmentData;
       } catch (error) {
         console.error('Error adding appointment:', error);
         throw error;
@@ -215,12 +223,12 @@ export function useAppointments() {
             serviceId: appointmentData.serviceId as string,
             groomerId: appointmentData.groomerId as string,
             branchId: appointmentData.branchId as string,
-            date: appointmentDate,
+            date: ensureDateString(appointmentDate)!,
             status,
             notes: (appointmentData.notes as string | null) ?? null,
             productsUsed: (appointmentData.productsUsed as string | null) ?? null,
-            createdAt: createdDate,
-            updatedAt: toDateOrUndefined(appointmentData.updatedAt),
+            createdAt: ensureDateString(createdDate)!,
+            updatedAt: ensureDateString(appointmentData.updatedAt),
             pet: {
               name: petData.name as string,
               breed: petData.breed as string,
