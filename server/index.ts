@@ -175,38 +175,15 @@ function setupGracefulShutdown(server: any) {
       throw error;
     }
 
-    // Start the server with fallback ports
-    const tryPorts = [3000, 3001, 3002, 3003];
-    let server_started = false;
-
-    for (const PORT of tryPorts) {
-      if (server_started) break;
-
-      try {
-        await new Promise((resolve, reject) => {
-          const serverInstance = server.listen(PORT, "0.0.0.0", () => {
-            log(`Server listening on port ${PORT}`, 'info');
-            server_started = true;
-            resolve(true);
-          });
-
-          serverInstance.on('error', (error: any) => {
-            if (error.code === 'EADDRINUSE') {
-              log(`Port ${PORT} is in use, trying next port...`, 'warn');
-              resolve(false);
-            } else {
-              reject(error);
-            }
-          });
-        });
-      } catch (error: any) {
-        log(`Failed to start server: ${error.message}`, 'error');
-        process.exit(1);
-      }
-    }
-
-    if (!server_started) {
-      log('Could not find an available port in range 3000-3003', 'error');
+    // Start the server on a fixed port
+    const PORT = process.env.PORT || 3000;
+    
+    try {
+      server.listen(PORT, () => {
+        log(`Server listening on port ${PORT}`, 'info');
+      });
+    } catch (error: any) {
+      log(`Failed to start server: ${error.message}`, 'error');
       process.exit(1);
     }
 
