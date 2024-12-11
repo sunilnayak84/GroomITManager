@@ -175,23 +175,40 @@ function setupGracefulShutdown(server: any) {
       throw error;
     }
 
-    // Start the server
-    const PORT = parseInt(process.env.PORT || '3001', 10);
-    if (isNaN(PORT) || PORT < 1 || PORT > 65535) {
-      log('Invalid port number specified', 'error');
+    // Start the server with fallback ports
+    const tryPorts = [3000, 3001, 3002, 3003];
+    let server_started = false;
+
+    for (const PORT of tryPorts) {
+      if (server_started) break;
+
+      try {
+        await new Promise((resolve, reject) => {
+          const serverInstance = server.listen(PORT, "0.0.0.0", () => {
+            log(`Server listening on port ${PORT}`, 'info');
+            server_started = true;
+            resolve(true);
+          });
+
+          serverInstance.on('error', (error: any) => {
+            if (error.code === 'EADDRINUSE') {
+              log(`Port ${PORT} is in use, trying next port...`, 'warn');
+              resolve(false);
+            } else {
+              reject(error);
+            }
+          });
+        });
+      } catch (error: any) {
+        log(`Failed to start server: ${error.message}`, 'error');
+        process.exit(1);
+      }
+    }
+
+    if (!server_started) {
+      log('Could not find an available port in range 3000-3003', 'error');
       process.exit(1);
     }
-    
-    server.listen(PORT, "0.0.0.0", () => {
-      log(`Server listening on port ${PORT}`, 'info');
-    }).on('error', (error: any) => {
-      if (error.code === 'EADDRINUSE') {
-        log(`Port ${PORT} is already in use. Please free up the port and try again.`, 'error');
-      } else {
-        log(`Failed to start server: ${error.message}`, 'error');
-      }
-      process.exit(1);
-    });
 
   } catch (error: any) {
     log(`Failed to start server: ${error.message}`, 'error');

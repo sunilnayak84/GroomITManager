@@ -58,9 +58,11 @@ export function useCustomers() {
         // Log the attempt to create a customer
         console.log('ADD_CUSTOMER: Attempting to create customer', { customer });
 
+        // Create timestamp for consistent date handling
+        const timestamp = new Date().toISOString();
+
         const id = await createCustomer({
           ...customer,
-          createdAt: customer.createdAt || new Date(),
           petCount: 0 // Initialize petCount
         });
 
@@ -69,9 +71,11 @@ export function useCustomers() {
 
         return {
           id,
+          firebaseId: id,
           ...customer,
           petCount: 0,
-          createdAt: customer.createdAt || new Date()
+          createdAt: timestamp,
+          updatedAt: null
         };
       } catch (error) {
         // Log the full error details
@@ -104,16 +108,32 @@ export function useCustomers() {
   });
 
   const updateCustomerMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: Partial<Omit<CustomerType, 'id'>> }) => {
-      await updateCustomerDoc(id, data);
+    mutationFn: async ({ id, data }: { id: string; data: Partial<Omit<CustomerType, 'id' | 'firebaseId' | 'createdAt' | 'updatedAt'>> }) => {
+      const timestamp = new Date().toISOString();
+      const updateData = {
+        ...data,
+        updatedAt: timestamp
+      };
+      
+      await updateCustomerDoc(id, updateData);
       return {
         id,
-        ...data
+        firebaseId: id,
+        ...updateData
       };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["customers"] });
+      toast.success("Customer updated successfully");
     },
+    onError: (error) => {
+      console.error('UPDATE_CUSTOMER: Mutation error', { error });
+      toast.error(
+        error instanceof Error 
+          ? error.message 
+          : "Failed to update customer"
+      );
+    }
   });
 
   // Separate function for delete mutation logic
