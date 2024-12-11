@@ -176,10 +176,10 @@ function setupGracefulShutdown(server: any) {
     }
 
     // Start the server on a fixed port
-    const PORT = process.env.PORT || 3000;
+    const PORT = process.env.PORT || 5000;
     
     try {
-      server.listen(PORT, () => {
+      server.listen(PORT, '0.0.0.0', () => {
         log(`Server listening on port ${PORT}`, 'info');
       });
     } catch (error: any) {
