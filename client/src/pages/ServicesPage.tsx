@@ -78,10 +78,9 @@ export default function ServicesPage() {
   const onSubmit = async (data: InsertService) => {
     try {
       if (data.category === ServiceCategory.PACKAGE) {
-        const selectedItems = [
-          ...(data.selectedServices || []),
-          ...(data.selectedAddons || [])
-        ];
+        const selectedServices = form.getValues("selectedServices") || [];
+        const selectedAddons = form.getValues("selectedAddons") || [];
+        const selectedItems = [...selectedServices, ...selectedAddons];
 
         if (selectedItems.length === 0) {
           toast({
@@ -96,18 +95,20 @@ export default function ServicesPage() {
         const totalDuration = selectedItems.reduce((sum, item) => sum + item.duration, 0);
         const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
         
-        // Apply package discount (10% off)
-        const discountedPrice = Math.floor(totalPrice * 0.9);
-        const savedAmount = totalPrice - discountedPrice;
+        // Use manual price if provided, otherwise calculate automatic price with discount
+        const manualPrice = data.price;
+        const automaticPrice = Math.floor(totalPrice * 0.9); // 10% discount
+        const finalPrice = manualPrice || automaticPrice;
+        const savedAmount = totalPrice - finalPrice;
 
         // Create package data with all required fields
         const packageData: InsertService = {
           name: data.name,
           description: data.description || 
-            `Package including ${data.selectedServices?.length || 0} services and ${data.selectedAddons?.length || 0} add-ons. Save ₹${savedAmount} (10% off)`,
+            `Package including ${data.selectedServices?.length || 0} services and ${data.selectedAddons?.length || 0} add-ons. ${manualPrice ? 'Custom priced package' : `Save ₹${savedAmount} (10% off)`}`,
           category: ServiceCategory.PACKAGE,
           duration: totalDuration,
-          price: discountedPrice,
+          price: finalPrice,
           consumables: [], // Packages don't require consumables
           isActive: true,
           selectedServices: data.selectedServices || [],
@@ -510,9 +511,9 @@ export default function ServicesPage() {
                             type="button"
                             variant="outline"
                             size="sm"
-                            onClick={() => {
-                              const selectedServices = form.getValues("selectedServices") || [];
-                              const isAlreadySelected = selectedServices.some(s => s.service_id === service.service_id);
+                            onClick={async () => {
+                              const currentServices = form.getValues("selectedServices") || [];
+                              const isAlreadySelected = currentServices.some(s => s.service_id === service.service_id);
                               
                               if (isAlreadySelected) {
                                 toast({
@@ -523,13 +524,21 @@ export default function ServicesPage() {
                                 return;
                               }
                               
-                              form.setValue("selectedServices", [...selectedServices, {
+                              const newService = {
                                 service_id: service.service_id,
                                 name: service.name,
                                 duration: service.duration,
                                 price: service.price,
                                 category: service.category
-                              }]);
+                              };
+                              
+                              await form.setValue("selectedServices", [...currentServices, newService], {
+                                shouldValidate: true,
+                                shouldDirty: true,
+                                shouldTouch: true
+                              });
+                              
+                              form.trigger();
                               
                               toast({
                                 title: "Service Added",
@@ -557,9 +566,9 @@ export default function ServicesPage() {
                             type="button"
                             variant="outline"
                             size="sm"
-                            onClick={() => {
-                              const selectedAddons = form.getValues("selectedAddons") || [];
-                              const isAlreadySelected = selectedAddons.some(a => a.service_id === addon.service_id);
+                            onClick={async () => {
+                              const currentAddons = form.getValues("selectedAddons") || [];
+                              const isAlreadySelected = currentAddons.some(a => a.service_id === addon.service_id);
                               
                               if (isAlreadySelected) {
                                 toast({
@@ -570,13 +579,21 @@ export default function ServicesPage() {
                                 return;
                               }
                               
-                              form.setValue("selectedAddons", [...selectedAddons, {
+                              const newAddon = {
                                 service_id: addon.service_id,
                                 name: addon.name,
                                 duration: addon.duration,
                                 price: addon.price,
                                 category: addon.category
-                              }]);
+                              };
+                              
+                              await form.setValue("selectedAddons", [...currentAddons, newAddon], {
+                                shouldValidate: true,
+                                shouldDirty: true,
+                                shouldTouch: true
+                              });
+                              
+                              form.trigger();
                               
                               toast({
                                 title: "Add-on Added",
@@ -630,22 +647,81 @@ export default function ServicesPage() {
                     </div>
                   ))}
 
-                  <div className="mt-4 pt-4 border-t flex justify-between">
-                    <span className="font-semibold">Total:</span>
-                    <span>
-                      {(() => {
-                        const selected = [
-                          ...(form.getValues("selectedServices") || []),
-                          ...(form.getValues("selectedAddons") || [])
-                        ];
-                        const totalDuration = selected.reduce((sum, item) => sum + item.duration, 0);
-                        const totalPrice = selected.reduce((sum, item) => sum + item.price, 0);
-                        return `${totalDuration}min | ₹${totalPrice}`;
-                      })()}
-                    </span>
+                  <div className="mt-4 pt-4 border-t space-y-2">
+                    <div className="flex justify-between text-sm text-muted-foreground">
+                      <span>Original Total:</span>
+                      <span>
+                        {(() => {
+                          const selected = [
+                            ...(form.getValues("selectedServices") || []),
+                            ...(form.getValues("selectedAddons") || [])
+                          ];
+                          const totalPrice = selected.reduce((sum, item) => sum + item.price, 0);
+                          return `₹${totalPrice}`;
+                        })()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-sm text-muted-foreground">
+                      <span>Total Duration:</span>
+                      <span>
+                        {(() => {
+                          const selected = [
+                            ...(form.getValues("selectedServices") || []),
+                            ...(form.getValues("selectedAddons") || [])
+                          ];
+                          const totalDuration = selected.reduce((sum, item) => sum + item.duration, 0);
+                          return `${totalDuration} minutes`;
+                        })()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between font-semibold">
+                      <span>Final Price:</span>
+                      <span>
+                        {(() => {
+                          const selected = [
+                            ...(form.getValues("selectedServices") || []),
+                            ...(form.getValues("selectedAddons") || [])
+                          ];
+                          const totalPrice = selected.reduce((sum, item) => sum + item.price, 0);
+                          const manualPrice = form.getValues("price");
+                          const automaticPrice = Math.floor(totalPrice * 0.9); // 10% discount
+                          if (manualPrice) {
+                            const savings = totalPrice - manualPrice;
+                            return `₹${manualPrice} (Save ₹${savings > 0 ? savings : 0})`;
+                          }
+                          const savings = totalPrice - automaticPrice;
+                          return `₹${automaticPrice} (Save ₹${savings})`;
+                        })()}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
+
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Package Price (₹)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min="0"
+                        step="1"
+                        placeholder="Leave empty for automatic calculation"
+                        {...field}
+                        onChange={(e) => {
+                          const value = e.target.value ? parseInt(e.target.value) : undefined;
+                          field.onChange(value);
+                          form.trigger();
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <div className="flex justify-end gap-2 mt-4">
                 <Button
