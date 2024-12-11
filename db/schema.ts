@@ -141,7 +141,7 @@ export const pets = pgTable("pets", {
   gender: varchar("gender", { length: 20 }),
   weight: varchar("weight", { length: 20 }),
   weightUnit: varchar("weight_unit", { length: 10 }).default("kg"),
-  image: text("image_url"),
+  imageUrl: text("image_url"),
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -150,15 +150,13 @@ export const pets = pgTable("pets", {
 export const appointments = pgTable("appointments", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   petId: integer("pet_id").notNull().references(() => pets.id),
-  serviceId: integer("service_id").notNull().references(() => services.id),
-  groomerId: varchar("groomer_id").notNull().references(() => users.id),
-  branchId: integer("branch_id").notNull().references(() => branches.id),
-  date: timestamp("date").notNull(),
+  groomerId: integer("groomer_id").notNull(),
+  serviceType: varchar("service_type", { length: 255 }).notNull(),
   status: varchar("status", { length: 50 }).notNull().default("pending"),
+  appointmentDate: timestamp("appointment_date").notNull(),
   notes: text("notes"),
-  productsUsed: text("products_used"), // JSON string of inventory items used
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at"),
+  price: integer("price").notNull(),
 });
 
 // Service-Inventory relationship (products used in services)

@@ -166,26 +166,29 @@ function setupGracefulShutdown(server: any) {
     setupGracefulShutdown(server);
 
     // Setup Vite or static serving based on environment
-    try {
-      if (app.get("env") === "development") {
-        try {
-          await setupVite(app, server);
-          log("Vite middleware setup complete", 'info');
-        } catch (error) {
-          // Log the error but don't throw it to keep the server running
-          log(`Warning: Vite setup encountered an error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'warn');
-        }
-      } else {
-        try {
-          serveStatic(app);
-          log("Static file serving setup complete", 'info');
-        } catch (error) {
-          // Log the error but don't throw it to keep the server running
-          log(`Warning: Static serving setup encountered an error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'warn');
-        }
+    if (app.get("env") === "development") {
+      try {
+        // Ensure routes are registered before setting up Vite
+        registerRoutes(app);
+        log("Routes registered successfully", 'info');
+
+        await setupVite(app, server);
+        log("Vite middleware setup complete", 'info');
+      } catch (error) {
+        log(`Warning: Development server setup error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'warn');
       }
-    } catch (error) {
-      log(`Warning: Frontend serving setup encountered an error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'warn');
+    } else {
+      try {
+        // For production, serve static files first
+        serveStatic(app);
+        log("Static file serving setup complete", 'info');
+        
+        // Then register API routes
+        registerRoutes(app);
+        log("Routes registered successfully", 'info');
+      } catch (error) {
+        log(`Warning: Production server setup error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'warn');
+      }
     }
 
     // Start the server with fixed port
