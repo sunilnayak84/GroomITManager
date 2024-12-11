@@ -5,9 +5,13 @@ export default function Layout({ children }: PropsWithChildren) {
   return (
     <div className="min-h-screen flex">
       <Sidebar />
-      <main className="flex-1 p-6 bg-gray-50">
-        {children}
-      </main>
+      <div className="flex-1 relative">
+        <div className="origin-top-left scale-[0.7] absolute w-[143%] h-[143%]">
+          <main className="min-h-screen p-6 bg-gray-50">
+            {children}
+          </main>
+        </div>
+      </div>
     </div>
   );
 }
