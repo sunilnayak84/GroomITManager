@@ -22,7 +22,11 @@ const petSchema = z.object({
   gender: z.enum(["male", "female", "unknown", "other"], {
     required_error: "Gender is required"
   }).nullable(),
-  weight: z.string().nullable().or(z.number().transform(String)),
+  weight: z.union([
+    z.string().transform(val => val ? Number(val) : null),
+    z.number(),
+    z.null()
+  ]).nullable(),
   weightUnit: z.enum(["kg", "lbs"], {
     required_error: "Weight unit is required"
   }).default("kg"),
@@ -161,7 +165,7 @@ export function PetForm({
         dateOfBirth: data.dateOfBirth || null,
         age: data.age !== null ? Number(data.age) : null,
         gender: data.gender || null,
-        weight: data.weight || null,
+        weight: data.weight ? Number(data.weight) : null,
         weightUnit: data.weightUnit,
         notes: data.notes || null,
         image: data.image,

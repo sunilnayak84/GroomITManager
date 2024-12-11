@@ -95,8 +95,8 @@ export function InventoryUsageHistory({
           <SelectContent>
             <SelectItem value="all">All Services</SelectItem>
             {uniqueServices.map((serviceId) => (
-              <SelectItem key={serviceId} value={serviceId}>
-                Service {serviceId}
+              <SelectItem key={serviceId || ''} value={serviceId || ''}>
+                Service {serviceId || 'Unknown'}
               </SelectItem>
             ))}
           </SelectContent>

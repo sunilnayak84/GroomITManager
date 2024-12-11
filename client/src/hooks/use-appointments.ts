@@ -1,28 +1,29 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AppointmentWithRelations, InsertAppointment, Appointment } from "@/lib/schema";
-import { collection, getDocs, addDoc, onSnapshot, query, getDoc, doc, WithFieldValue, DocumentData, Timestamp } from 'firebase/firestore';
+import { 
+  collection, getDocs, setDoc, onSnapshot, query, getDoc, doc, 
+  WithFieldValue, DocumentData, Timestamp, FieldValue 
+} from 'firebase/firestore';
 import { appointmentsCollection, petsCollection, customersCollection, usersCollection } from "../lib/firestore";
 import React from "react";
 
-type FirestoreAppointmentData = {
-  id: string;
-  petId: string;
-  serviceId: string;
-  groomerId: string;
-  branchId: string;
+type FirestoreAppointmentData = Omit<Appointment, 'id'> & {
+  id?: string;
   date: string;
-  status: "pending" | "confirmed" | "completed" | "cancelled";
-  notes: string | null;
-  productsUsed: string | null;
   createdAt: string;
   updatedAt: string | null;
+  status: "pending" | "confirmed" | "completed" | "cancelled";
 };
 
+// Define the structure for Firestore document data
+type FirestoreDocumentData = Omit<FirestoreAppointmentData, 'id'>;
+
 // Helper function to ensure date is in ISO string format
-const ensureDateString = (date: Date | string | null | undefined): string | null => {
+const ensureDateString = (date: Date | string | FieldValue | null | undefined): string | null => {
   if (!date) return null;
   if (date instanceof Date) return date.toISOString();
-  return date;
+  if (date instanceof FieldValue) return null;
+  return date as string;
 };
 
 // Helper function to convert Date | null to Date | undefined
@@ -46,7 +47,7 @@ const toSafeDate = (value: unknown): Date | null => {
 export function useAppointments() {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error } = useQuery<AppointmentWithRelations[]>({
+  const { data: appointments, isLoading, error } = useQuery<AppointmentWithRelations[]>({
     queryKey: ["appointments"],
     queryFn: async () => {
       const querySnapshot = await getDocs(appointmentsCollection);
@@ -129,35 +130,32 @@ export function useAppointments() {
   });
 
   const addAppointmentMutation = useMutation({
-    mutationFn: async (appointmentData: InsertAppointment) => {
+    mutationFn: async (appointmentData: InsertAppointment): Promise<void> => {
       try {
         console.log('Adding appointment with data:', appointmentData);
         const timestamp = new Date().toISOString();
         
         // Prepare the data for Firestore
-        const firestoreData: WithFieldValue<FirestoreAppointmentData> = {
-          id: doc(appointmentsCollection).id,
+        const docRef = doc(appointmentsCollection);
+        const firestoreData = {
+          id: docRef.id,
           petId: appointmentData.petId,
           serviceId: appointmentData.serviceId,
           groomerId: appointmentData.groomerId,
           branchId: appointmentData.branchId,
-          date: ensureDateString(appointmentData.date)!,
+          date: appointmentData.date,
           status: appointmentData.status || 'pending',
           notes: appointmentData.notes || null,
           productsUsed: appointmentData.productsUsed || null,
           createdAt: timestamp,
           updatedAt: null
-        };
+        } as const;
 
-        console.log('Prepared Firestore data:', firestoreData);
-        // Remove id from the data before sending to Firestore
-        const { id, ...dataWithoutId } = firestoreData;
-        const docRef = await addDoc(appointmentsCollection, dataWithoutId);
+        // Remove the id before saving to Firestore
+        const { id, ...dataToSave } = firestoreData;
         
-        return {
-          ...dataWithoutId,
-          id: docRef.id
-        } as FirestoreAppointmentData;
+        console.log('Prepared Firestore data:', dataToSave);
+        await setDoc(docRef, dataToSave);
       } catch (error) {
         console.error('Error adding appointment:', error);
         throw error;
@@ -255,7 +253,7 @@ export function useAppointments() {
   }, [queryClient]);
 
   return {
-    data,
+    data: appointments,
     isLoading,
     error,
     addAppointment: addAppointmentMutation.mutateAsync,
