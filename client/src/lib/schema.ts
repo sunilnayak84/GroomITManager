@@ -36,7 +36,7 @@ export const petSchema = z.object({
   customerId: z.string().min(1, "Customer must be selected"),
   dateOfBirth: z.string().nullable(),
   age: z.number().nullable(),
-  gender: z.enum(["male", "female", "unknown"]).nullable(),
+  gender: z.enum(["male", "female", "other", "unknown"]).nullable(),
   weight: z.number().nullable(),
   weightUnit: z.enum(["kg", "lbs"]).default("kg"),
   image: z.union([z.string(), z.instanceof(File)]).nullable(),

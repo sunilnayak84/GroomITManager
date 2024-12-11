@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -33,6 +34,7 @@ export default function AppointmentForm() {
   const { addAppointment } = useAppointments();
   const { pets } = usePets();
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const defaultGroomerId = "1";
   const defaultBranchId = "1";
@@ -40,7 +42,7 @@ export default function AppointmentForm() {
     resolver: zodResolver(insertAppointmentSchema),
     defaultValues: {
       petId: "",
-      serviceId: "",
+      serviceId: "1", // Default service ID
       groomerId: defaultGroomerId,
       branchId: defaultBranchId,
       date: (() => {
@@ -54,7 +56,10 @@ export default function AppointmentForm() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof insertAppointmentSchema>) {
+  async function onSubmit(values: z.infer<typeof insertAppointmentSchema>): Promise<void> {
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
     try {
       // Validate required fields
       if (!values.petId) {
@@ -92,6 +97,8 @@ export default function AppointmentForm() {
         title: "Success",
         description: "Appointment scheduled successfully",
       });
+      
+      form.reset(); // Reset form after successful submission
     } catch (error) {
       console.error('Failed to schedule appointment:', error);
       toast({
@@ -99,6 +106,9 @@ export default function AppointmentForm() {
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to schedule appointment",
       });
+      throw error;
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -181,8 +191,12 @@ export default function AppointmentForm() {
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full">
-            Schedule Appointment
+          <Button 
+            type="submit" 
+            className="w-full"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Scheduling..." : "Schedule Appointment"}
           </Button>
         </form>
       </Form>
