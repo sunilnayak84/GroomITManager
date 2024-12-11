@@ -175,15 +175,23 @@ export default function ServicesPage() {
 
   const handleEdit = (service: Service) => {
     setSelectedService(service);
-    form.reset({
+    const formData = {
       name: service.name,
       description: service.description,
       category: service.category,
       duration: service.duration,
       price: service.price,
-      consumables: service.consumables,
-    });
-    setShowServiceDialog(true);
+      consumables: service.consumables || [],
+      selectedServices: service.selectedServices || [],
+      selectedAddons: service.selectedAddons || []
+    };
+    form.reset(formData);
+    
+    if (service.category === ServiceCategory.PACKAGE) {
+      setShowPackageDialog(true);
+    } else {
+      setShowServiceDialog(true);
+    }
   };
 
   const handleDelete = (service: Service) => {
