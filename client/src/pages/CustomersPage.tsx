@@ -727,32 +727,6 @@ export default function CustomersPage() {
           <DialogHeader>
             <DialogTitle>Customer Details</DialogTitle>
             <DialogDescription className="sr-only">Customer information and details</DialogDescription>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                    <p className="text-sm text-muted-foreground">
-                      This action cannot be undone. This will permanently delete the customer and all associated data.
-                    </p>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={() => {
-                        if (!selectedCustomer) return;
-                        deleteCustomerMutationHook.mutate(selectedCustomer.id, {
-                          onSuccess: () => {
-                            setShowCustomerDetails(false);
-                            setSelectedCustomer(null);
-                          }
-                        });
-                      }}
-                    >
-                      Delete
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
           </DialogHeader>
           {selectedCustomer && (
             <div className="space-y-6">
