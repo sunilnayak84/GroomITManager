@@ -68,10 +68,6 @@ args = "Start application"
 task = "workflow.run"
 args = "Server"
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Client"
-
 [[workflows.workflow]]
 name = "Start application"
 author = "agent"
@@ -101,18 +97,3 @@ task = "packager.installForAll"
 task = "shell.exec"
 args = "npm run dev"
 waitForPort = 3001
-
-[[workflows.workflow]]
-name = "Client"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "packager.installForAll"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd client && npm run dev -- --port 5175 --host 0.0.0.0"
-waitForPort = 5175

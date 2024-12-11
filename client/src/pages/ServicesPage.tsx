@@ -83,17 +83,40 @@ export default function ServicesPage() {
           ...(data.selectedAddons || [])
         ];
 
+        if (selectedItems.length === 0) {
+          toast({
+            title: "Validation Error",
+            description: "Please select at least one service or add-on for the package",
+            variant: "destructive",
+          });
+          return;
+        }
+
         const totalDuration = selectedItems.reduce((sum, item) => sum + item.duration, 0);
         const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
 
+        // Apply package discount (10% off)
+        const discountedPrice = Math.floor(totalPrice * 0.9);
+
+        // Create package data with all required fields
         const packageData: InsertService = {
-          ...data,
+          name: data.name,
+          description: data.description || `Package including ${selectedItems.length} services and add-ons with 10% discount`,
+          category: ServiceCategory.PACKAGE,
           duration: totalDuration,
-          price: totalPrice,
-          category: ServiceCategory.PACKAGE
+          price: discountedPrice,
+          consumables: [], // Packages don't require consumables
+          isActive: true,
+          selectedServices: data.selectedServices || [],
+          selectedAddons: data.selectedAddons || []
         };
 
         await addService(packageData);
+        toast({
+          title: "Success",
+          description: "Package created successfully",
+          variant: "default",
+        });
         setShowPackageDialog(false);
       } else if (selectedService) {
         await updateService(selectedService.service_id, data);
@@ -106,6 +129,7 @@ export default function ServicesPage() {
       form.reset();
       setSelectedService(null);
     } catch (error) {
+      console.error('Error submitting service:', error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to save service",
@@ -454,6 +478,17 @@ export default function ServicesPage() {
                             size="sm"
                             onClick={() => {
                               const selectedServices = form.getValues("selectedServices") || [];
+                              const isAlreadySelected = selectedServices.some(s => s.service_id === service.service_id);
+                              
+                              if (isAlreadySelected) {
+                                toast({
+                                  title: "Already Selected",
+                                  description: "This service is already in the package",
+                                  variant: "destructive"
+                                });
+                                return;
+                              }
+                              
                               form.setValue("selectedServices", [...selectedServices, {
                                 service_id: service.service_id,
                                 name: service.name,
@@ -461,6 +496,12 @@ export default function ServicesPage() {
                                 price: service.price,
                                 category: service.category
                               }]);
+                              
+                              toast({
+                                title: "Service Added",
+                                description: `Added ${service.name} to the package`,
+                                variant: "default"
+                              });
                             }}
                           >
                             Add
@@ -484,6 +525,17 @@ export default function ServicesPage() {
                             size="sm"
                             onClick={() => {
                               const selectedAddons = form.getValues("selectedAddons") || [];
+                              const isAlreadySelected = selectedAddons.some(a => a.service_id === addon.service_id);
+                              
+                              if (isAlreadySelected) {
+                                toast({
+                                  title: "Already Selected",
+                                  description: "This add-on is already in the package",
+                                  variant: "destructive"
+                                });
+                                return;
+                              }
+                              
                               form.setValue("selectedAddons", [...selectedAddons, {
                                 service_id: addon.service_id,
                                 name: addon.name,
@@ -491,6 +543,12 @@ export default function ServicesPage() {
                                 price: addon.price,
                                 category: addon.category
                               }]);
+                              
+                              toast({
+                                title: "Add-on Added",
+                                description: `Added ${addon.name} to the package`,
+                                variant: "default"
+                              });
                             }}
                           >
                             Add
