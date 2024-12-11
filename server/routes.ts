@@ -125,7 +125,7 @@ export function registerRoutes(app: Express) {
             id: pets.id,
             name: pets.name,
             breed: pets.breed,
-            imageUrl: pets.image_url
+            imageUrl: pets.imageUrl
           },
           customer: {
             id: customers.id,
