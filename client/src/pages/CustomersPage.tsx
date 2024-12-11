@@ -67,7 +67,7 @@ export default function CustomersPage() {
     deleteCustomerMutationHook, 
     addCustomerMutation 
   } = useCustomers();
-  const { pets = [], isLoading: isPetsLoading, addPet } = usePets();
+  const { pets = [], isLoading: isPetsLoading, addPet, updatePet, deletePet } = usePets();
   const queryClient = useQueryClient();
   
   // Convert pets to proper type
@@ -944,7 +944,10 @@ export default function CustomersPage() {
       {/* Pet Details Dialog */}
       <Dialog open={showPetDetails} onOpenChange={setShowPetDetails}>
         <DialogContent className="sm:max-w-[625px]">
-          <DialogDescription className="sr-only">Pet Details</DialogDescription>
+          <DialogHeader>
+            <DialogTitle>Pet Details</DialogTitle>
+            <DialogDescription>View and manage pet information</DialogDescription>
+          </DialogHeader>
           {selectedPet && (
             <div className="space-y-6">
               <PetDetails 
