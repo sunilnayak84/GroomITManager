@@ -974,22 +974,21 @@ export default function CustomersPage() {
         <DialogContent className="sm:max-w-[625px]">
           {selectedPet && (
             <div className="space-y-6">
-              <div className="flex flex-col gap-4">
-                <PetDetails 
-                  pet={selectedPet}
-                  formatDate={formatDate}
-                  onEdit={() => {
-                    setShowEditModal(true);
-                    setShowPetDetails(false);
-                  }}
-                  onDelete={() => {
-                    setShowDeleteConfirm(true);
-                  }}
-                />
-                <div className="flex items-center gap-4">
-                  <img
-                    src={selectedPet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${selectedPet.name}`}
-                    alt={selectedPet.name}
+              <PetDetails 
+                pet={selectedPet}
+                formatDate={formatDate}
+                onEdit={() => {
+                  setShowEditModal(true);
+                  setShowPetDetails(false);
+                }}
+                onDelete={() => {
+                  setShowDeleteConfirm(true);
+                }}
+              />
+              <div className="flex items-center gap-4">
+                <img
+                  src={selectedPet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${selectedPet.name}`}
+                  alt={selectedPet.name}
                   className="w-24 h-24 rounded-full bg-primary/10 border-4 border-background shadow-lg"
                 />
                 <div>
