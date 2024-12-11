@@ -133,12 +133,16 @@ export function useAppointments() {
               const petDoc = await getDoc(petDocRef);
 
               // Initialize petData with development fallback
-              let petData = process.env.NODE_ENV === 'development' ? {
-                name: 'Test Pet',
-                breed: 'Unknown',
-                image: null,
-                customerId: 'dev-customer'
-              } : null;
+              let petData = null;
+              if (petDoc.exists()) {
+                const rawPetData = petDoc.data();
+                petData = {
+                  name: rawPetData.name,
+                  breed: rawPetData.breed,
+                  image: rawPetData.image,
+                  customerId: rawPetData.customerId
+                };
+              }
 
               // In production, fetch real pet data
               if (process.env.NODE_ENV !== 'development') {

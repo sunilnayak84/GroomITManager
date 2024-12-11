@@ -167,16 +167,19 @@ export default function AppointmentForm() {
                 <FormControl>
                   <Input 
                     type="datetime-local" 
-                    step="900" // 15-minute increments
+                    step="900"
+                    min={new Date().toISOString().slice(0, 16)}
                     {...field}
                     value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ''}
                     onChange={(e) => {
                       try {
                         const date = new Date(e.target.value);
                         if (!isNaN(date.getTime())) {
+                          // Round to nearest 15 minutes
+                          const minutes = date.getMinutes();
+                          const roundedMinutes = Math.round(minutes / 15) * 15;
+                          date.setMinutes(roundedMinutes);
                           field.onChange(date.toISOString());
-                        } else {
-                          console.error('Invalid date input:', e.target.value);
                         }
                       } catch (error) {
                         console.error('Error parsing date:', error);
@@ -201,7 +204,7 @@ export default function AppointmentForm() {
                   </FormControl>
                   <SelectContent>
                     {(services || []).map((service) => (
-                      <SelectItem key={service.id} value={String(service.id)}>
+                      <SelectItem key={service.service_id} value={service.service_id}>
                         {service.name}
                       </SelectItem>
                     ))}
