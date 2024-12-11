@@ -62,8 +62,8 @@ export function useCustomers() {
         const timestamp = new Date().toISOString();
 
         const id = await createCustomer({
-          ...customer,
-          petCount: 0 // Initialize petCount
+          ...customer
+          // petCount will be initialized in createCustomer function
         });
 
         // Log successful creation

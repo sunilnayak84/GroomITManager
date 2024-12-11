@@ -27,8 +27,7 @@ import { Search, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-import type { InsertPet } from "@/lib/types";
-import type { Pet } from "@/hooks/use-pets";
+import type { InsertPet, Pet } from "@/lib/types";
 
 export default function PetsPage() {
   const { 
@@ -81,7 +80,7 @@ export default function PetsPage() {
       age: formData.age || null,
       gender: formData.gender || null,
       weight: formData.weight || null,
-      weightUnit: formData.weightUnit,
+      weightUnit: formData.weightUnit || "kg",
       notes: formData.notes || null,
       image: typeof formData.image === 'string' ? formData.image : selectedPet.image,
       owner: formData.owner || null,
