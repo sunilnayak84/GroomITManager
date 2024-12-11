@@ -1,0 +1,31 @@
+FIREBASE_INIT: Initializing Firebase with config: {apiKey: '***', authDomain: 'replit-5ac6a.firebaseapp.com', projectId: 'replit-5ac6a', storageBucket: 'replit-5ac6a.firebasestorage.app', messagingSenderId: '194114432530', …}
+firebase.ts:41 FIREBASE_INIT: Firebase initialized successfully
+client:614 [vite] connected.
+content.js:1 CISPL SignerDigital Loaded
+AppointmentsPage.tsx:26 APPOINTMENTS_PAGE: Loading state: true
+AppointmentsPage.tsx:27 APPOINTMENTS_PAGE: Appointments data: undefined
+AppointmentsPage.tsx:28 APPOINTMENTS_PAGE: Error state: null
+AppointmentsPage.tsx:26 APPOINTMENTS_PAGE: Loading state: true
+AppointmentsPage.tsx:27 APPOINTMENTS_PAGE: Appointments data: undefined
+AppointmentsPage.tsx:28 APPOINTMENTS_PAGE: Error state: null
+use-appointments.ts:63 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:73 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:77 FETCH_APPOINTMENTS: Created query
+use-pets.ts:55 FETCH_PETS: Starting to fetch pets
+use-services.ts:21 FETCH_SERVICES: Starting to fetch services
+use-appointments.ts:80 FETCH_APPOINTMENTS: Got snapshot with 0 documents
+use-appointments.ts:83 FETCH_APPOINTMENTS: No appointments found
+use-services.ts:51 FETCH_SERVICES: Completed fetching services {count: 1, services: Array(1)}
+AppointmentsPage.tsx:26 APPOINTMENTS_PAGE: Loading state: false
+AppointmentsPage.tsx:27 APPOINTMENTS_PAGE: Appointments data: []length: 0[[Prototype]]: Array(0)
+AppointmentsPage.tsx:28 APPOINTMENTS_PAGE: Error state: null
+AppointmentsPage.tsx:26 APPOINTMENTS_PAGE: Loading state: false
+AppointmentsPage.tsx:27 APPOINTMENTS_PAGE: Appointments data: []length: 0[[Prototype]]: Array(0)
+AppointmentsPage.tsx:28 APPOINTMENTS_PAGE: Error state: null
+use-pets.ts:105 FETCH_PETS: Completed fetching pets {totalPets: 7, pets: Array(7)}
+AppointmentsPage.tsx:26 APPOINTMENTS_PAGE: Loading state: false
+AppointmentsPage.tsx:27 APPOINTMENTS_PAGE: Appointments data: []
+AppointmentsPage.tsx:28 APPOINTMENTS_PAGE: Error state: null
+AppointmentsPage.tsx:26 APPOINTMENTS_PAGE: Loading state: false
+AppointmentsPage.tsx:27 APPOINTMENTS_PAGE: Appointments data: []length: 0[[Prototype]]: Array(0)
+AppointmentsPage.tsx:28 APPOINTMENTS_PAGE: Error state: null

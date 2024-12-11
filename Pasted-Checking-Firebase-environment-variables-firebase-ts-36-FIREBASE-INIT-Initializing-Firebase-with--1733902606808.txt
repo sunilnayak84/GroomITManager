@@ -1,0 +1,85 @@
+Checking Firebase environment variables...
+firebase.ts:36 FIREBASE_INIT: Initializing Firebase with config: {apiKey: '***', authDomain: 'replit-5ac6a.firebaseapp.com', projectId: 'replit-5ac6a', storageBucket: 'replit-5ac6a.firebasestorage.app', messagingSenderId: '194114432530', …}
+firebase.ts:41 FIREBASE_INIT: Firebase initialized successfully
+content.js:1 CISPL SignerDigital Loaded
+AppointmentsPage.tsx:26 APPOINTMENTS_PAGE: Loading state: true
+AppointmentsPage.tsx:27 APPOINTMENTS_PAGE: Appointments data: undefined
+AppointmentsPage.tsx:28 APPOINTMENTS_PAGE: Error state: null
+AppointmentsPage.tsx:26 APPOINTMENTS_PAGE: Loading state: true
+AppointmentsPage.tsx:27 APPOINTMENTS_PAGE: Appointments data: undefined
+AppointmentsPage.tsx:28 APPOINTMENTS_PAGE: Error state: null
+use-appointments.ts:61 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:71 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:75 FETCH_APPOINTMENTS: Created query
+use-pets.ts:55 FETCH_PETS: Starting to fetch pets
+use-services.ts:21 FETCH_SERVICES: Starting to fetch services
+use-appointments.ts:78 FETCH_APPOINTMENTS: Got snapshot with 1 documents
+use-appointments.ts:91 FETCH_APPOINTMENTS: Processing appointment L7KKFjWxAXWRbZ9iUvHv
+use-appointments.ts:93 FETCH_APPOINTMENTS: Raw data for appointment L7KKFjWxAXWRbZ9iUvHv : {date: _Timestamp, updatedAt: null, notes: 'test', productsUsed: Array(0), status: 'pending', …}createdAt: _Timestamp {seconds: 1733902408, nanoseconds: 66000000}date: _Timestamp {seconds: 1734083280, nanoseconds: 0}notes: "test"petId: "0OWkpNfQkbVdj631JAnJ"productsUsed: []serviceId: "M59XMt2e4h3J0pxWH5XU"status: "pending"updatedAt: null[[Prototype]]: Object
+use-appointments.ts:119 FETCH_APPOINTMENTS: Missing required fields in appointment: L7KKFjWxAXWRbZ9iUvHv {date: _Timestamp, updatedAt: null, notes: 'test', productsUsed: Array(0), status: 'pending', …}createdAt: _Timestamp {seconds: 1733902408, nanoseconds: 66000000}date: _Timestamp {seconds: 1734083280, nanoseconds: 0}notes: "test"petId: "0OWkpNfQkbVdj631JAnJ"productsUsed: []serviceId: "M59XMt2e4h3J0pxWH5XU"status: "pending"updatedAt: null[[Prototype]]: Object
+queryFn @ use-appointments.ts:119
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=21a6fa3c:839
+run @ @tanstack_react-query.js?v=21a6fa3c:493
+start @ @tanstack_react-query.js?v=21a6fa3c:535
+fetch @ @tanstack_react-query.js?v=21a6fa3c:925
+executeFetch_fn @ @tanstack_react-query.js?v=21a6fa3c:2212
+onSubscribe @ @tanstack_react-query.js?v=21a6fa3c:1899
+subscribe @ @tanstack_react-query.js?v=21a6fa3c:24
+(anonymous) @ @tanstack_react-query.js?v=21a6fa3c:3014
+subscribeToStore @ chunk-RPCDYKBN.js?v=21a6fa3c:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=21a6fa3c:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=21a6fa3c:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=21a6fa3c:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=21a6fa3c:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=21a6fa3c:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=21a6fa3c:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=21a6fa3c:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=21a6fa3c:19416
+commitRoot @ chunk-RPCDYKBN.js?v=21a6fa3c:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=21a6fa3c:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=21a6fa3c:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=21a6fa3c:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=21a6fa3c:554
+flush @ @tanstack_react-query.js?v=21a6fa3c:568
+batch @ @tanstack_react-query.js?v=21a6fa3c:586
+dispatch_fn @ @tanstack_react-query.js?v=21a6fa3c:995
+setData @ @tanstack_react-query.js?v=21a6fa3c:695
+onSuccess @ @tanstack_react-query.js?v=21a6fa3c:896
+resolve @ @tanstack_react-query.js?v=21a6fa3c:455
+Promise.then
+run @ @tanstack_react-query.js?v=21a6fa3c:497
+start @ @tanstack_react-query.js?v=21a6fa3c:535
+fetch @ @tanstack_react-query.js?v=21a6fa3c:925
+executeFetch_fn @ @tanstack_react-query.js?v=21a6fa3c:2212
+onSubscribe @ @tanstack_react-query.js?v=21a6fa3c:1899
+subscribe @ @tanstack_react-query.js?v=21a6fa3c:24
+(anonymous) @ @tanstack_react-query.js?v=21a6fa3c:3014
+subscribeToStore @ chunk-RPCDYKBN.js?v=21a6fa3c:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=21a6fa3c:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=21a6fa3c:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=21a6fa3c:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=21a6fa3c:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=21a6fa3c:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=21a6fa3c:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=21a6fa3c:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=21a6fa3c:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=21a6fa3c:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=21a6fa3c:19432
+commitRoot @ chunk-RPCDYKBN.js?v=21a6fa3c:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=21a6fa3c:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=21a6fa3c:18718
+workLoop @ chunk-RPCDYKBN.js?v=21a6fa3c:197
+flushWork @ chunk-RPCDYKBN.js?v=21a6fa3c:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=21a6fa3c:384Understand this errorAI
+use-appointments.ts:297 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 0, Errors: 1
+use-appointments.ts:299 FETCH_APPOINTMENTS: Successfully fetched 0 appointments
+use-services.ts:51 FETCH_SERVICES: Completed fetching services {count: 1, services: Array(1)}count: 1services: [{…}][[Prototype]]: Object
+AppointmentsPage.tsx:26 APPOINTMENTS_PAGE: Loading state: false
+AppointmentsPage.tsx:27 APPOINTMENTS_PAGE: Appointments data: []
+AppointmentsPage.tsx:28 APPOINTMENTS_PAGE: Error state: null
+AppointmentsPage.tsx:26 APPOINTMENTS_PAGE: Loading state: false
+AppointmentsPage.tsx:27 APPOINTMENTS_PAGE: Appointments data: []
+AppointmentsPage.tsx:28 APPOINTMENTS_PAGE: Error state: null
+use-pets.ts:105 FETCH_PETS: Completed fetching pets {totalPets: 7, pets: Array(7)}
