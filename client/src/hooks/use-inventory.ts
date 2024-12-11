@@ -300,8 +300,16 @@ export function useInventory() {
       }
       
       const itemData = itemSnap.data();
-      if (!itemData || itemData.quantity < usageData.quantity_used) {
-        throw new Error('Insufficient quantity available');
+      if (!itemData) {
+        throw new Error('Invalid item data');
+      }
+
+      const currentQuantity = Number(itemData.quantity) || 0;
+      const minimumQuantity = Number(itemData.minimum_quantity) || 0;
+      const reorderPoint = Number(itemData.reorder_point) || 0;
+      
+      if (currentQuantity < usageData.quantity_used) {
+        throw new Error(`Insufficient quantity available. Current stock: ${currentQuantity}`);
       }
 
       // Record the usage
@@ -316,18 +324,42 @@ export function useInventory() {
 
       await setDoc(usageRef, usage);
 
+      // Calculate new quantity
+      const newQuantity = currentQuantity - usageData.quantity_used;
+
       // Update the inventory quantity
       await updateDoc(itemRef, {
-        quantity: itemData.quantity - usageData.quantity_used,
+        quantity: newQuantity,
         updated_at: serverTimestamp()
       });
+
+      // Check stock levels and show appropriate alerts
+      if (newQuantity <= minimumQuantity) {
+        toast({
+          title: "Critical Stock Alert",
+          description: `${itemData.name} is below minimum quantity (${newQuantity} remaining)`,
+          variant: "destructive"
+        });
+      } else if (newQuantity <= reorderPoint) {
+        toast({
+          title: "Low Stock Alert",
+          description: `${itemData.name} has reached reorder point (${newQuantity} remaining)`,
+          variant: "warning"
+        });
+      }
 
       await queryClient.invalidateQueries({ queryKey: ['inventory'] });
       toast({
         title: "Success",
-        description: "Usage recorded successfully",
+        description: `Usage recorded successfully. New stock level: ${newQuantity}`,
         variant: "default"
       });
+      
+      // Also invalidate the usage history
+      await queryClient.invalidateQueries({ 
+        queryKey: ['inventory', 'usage-history', usageData.item_id]
+      });
+      
       return usage;
     } catch (error) {
       console.error('RECORD_USAGE: Error recording usage:', error);
@@ -340,25 +372,40 @@ export function useInventory() {
     }
   };
 
-  // Fetch usage history for an item
-  const getUsageHistory = async (itemId: string) => {
-    try {
-      const q = query(
-        usageHistoryCollection,
-        where('item_id', '==', itemId),
-        orderBy('used_at', 'desc')
-      );
-      
-      const snapshot = await getDocs(q);
-      return snapshot.docs.map(doc => ({
-        usage_id: doc.id,
-        ...doc.data(),
-        used_at: doc.data().used_at.toDate(),
-      }));
-    } catch (error) {
-      console.error('Error fetching usage history:', error);
-      return [];
-    }
+  // Fetch usage history for an item using React Query
+  const getUsageHistory = (itemId: string) => {
+    return useQuery({
+      queryKey: ['inventory', 'usage-history', itemId],
+      queryFn: async () => {
+        try {
+          console.log('FETCH_USAGE_HISTORY: Starting fetch for item:', itemId);
+          const q = query(
+            usageHistoryCollection,
+            where('item_id', '==', itemId),
+            orderBy('used_at', 'desc')
+          );
+          
+          const snapshot = await getDocs(q);
+          const history = snapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+              usage_id: doc.id,
+              ...data,
+              used_at: data.used_at instanceof Timestamp ? 
+                data.used_at.toDate() : 
+                new Date(data.used_at),
+            };
+          });
+          
+          console.log('FETCH_USAGE_HISTORY: Successfully fetched history:', history);
+          return history;
+        } catch (error) {
+          console.error('FETCH_USAGE_HISTORY: Error fetching history:', error);
+          throw error;
+        }
+      },
+      enabled: !!itemId,
+    });
   };
 
   return {

@@ -101,6 +101,18 @@ export function useAppointments() {
               continue;
             }
 
+            // In development mode, be more lenient with data validation
+            if (process.env.NODE_ENV !== 'development') {
+              // Ensure all required fields are present in production
+              const requiredFields = ['petId', 'serviceId', 'groomerId', 'branchId', 'date', 'status'];
+              const missingFields = requiredFields.filter(field => !(field in rawData));
+              if (missingFields.length > 0) {
+                console.error(`FETCH_APPOINTMENTS: Missing required fields in appointment ${appointmentDoc.id}:`, missingFields);
+                errorCount++;
+                continue;
+              }
+            }
+
             // Cast to our expected type
             const appointmentData = rawData as FirestoreAppointmentData;
             
@@ -120,25 +132,29 @@ export function useAppointments() {
               console.log('FETCH_APPOINTMENTS: Fetching pet document:', appointmentData.petId);
               const petDoc = await getDoc(petDocRef);
 
-              if (!petDoc.exists()) {
-                if (process.env.NODE_ENV === 'development') {
-                  console.log('FETCH_APPOINTMENTS: Development mode - using fallback pet data');
-                  petData = {
-                    name: 'Test Pet',
-                    breed: 'Unknown',
-                    image: null,
-                    customerId: 'dev-customer'
-                  };
-                } else {
+              // Initialize petData with development fallback
+              let petData = process.env.NODE_ENV === 'development' ? {
+                name: 'Test Pet',
+                breed: 'Unknown',
+                image: null,
+                customerId: 'dev-customer'
+              } : null;
+
+              // In production, fetch real pet data
+              if (process.env.NODE_ENV !== 'development') {
+                if (!petDoc.exists()) {
                   console.error('FETCH_APPOINTMENTS: Pet not found:', appointmentData.petId);
                   errorCount++;
                   continue;
                 }
-              } else {
                 petData = petDoc.data();
+                if (!petData) {
+                  console.error('FETCH_APPOINTMENTS: Invalid pet data for:', appointmentData.petId);
+                  errorCount++;
+                  continue;
+                }
               }
-
-              const petData = petDoc.data();
+              
               console.log('FETCH_APPOINTMENTS: Pet data:', petData);
 
               // Try to get groomer document or use fallback in development
@@ -191,28 +207,39 @@ export function useAppointments() {
               }
 
               // Get customer details
-              if (!petData.customerId) {
-                console.error('FETCH_APPOINTMENTS: Missing customerId for pet:', petData.id);
-                errorCount++;
-                continue;
-              }
+              let customerData;
+              if (process.env.NODE_ENV === 'development') {
+                console.log('FETCH_APPOINTMENTS: Development mode - using fallback customer data');
+                customerData = {
+                  firstName: 'Test',
+                  lastName: 'Customer',
+                  email: 'test@example.com',
+                  phone: '555-0123'
+                };
+              } else {
+                if (!petData.customerId) {
+                  console.error('FETCH_APPOINTMENTS: Missing customerId for pet:', petData.id);
+                  errorCount++;
+                  continue;
+                }
 
-              console.log('FETCH_APPOINTMENTS: Fetching customer document:', petData.customerId);
-              const customerDoc = await getDoc(doc(db, 'customers', petData.customerId));
-              
-              if (!customerDoc.exists()) {
-                console.error('FETCH_APPOINTMENTS: Customer not found:', petData.customerId);
-                errorCount++;
-                continue;
-              }
+                console.log('FETCH_APPOINTMENTS: Fetching customer document:', petData.customerId);
+                const customerDoc = await getDoc(doc(db, 'customers', petData.customerId));
+                
+                if (!customerDoc.exists()) {
+                  console.error('FETCH_APPOINTMENTS: Customer not found:', petData.customerId);
+                  errorCount++;
+                  continue;
+                }
 
-              const customerData = customerDoc.data();
-              console.log('FETCH_APPOINTMENTS: Customer data:', customerData);
+                customerData = customerDoc.data();
+                console.log('FETCH_APPOINTMENTS: Customer data:', customerData);
 
-              if (!customerData) {
-                console.error('FETCH_APPOINTMENTS: Missing customer data for pet:', petData.id);
-                errorCount++;
-                continue;
+                if (!customerData) {
+                  console.error('FETCH_APPOINTMENTS: Missing customer data for pet:', petData.id);
+                  errorCount++;
+                  continue;
+                }
               }
 
               // Create the appointment object with all required data

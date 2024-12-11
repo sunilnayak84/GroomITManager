@@ -13,7 +13,20 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
         id: 'dev-user',
         email: 'dev@example.com',
         name: 'Developer',
-        role: 'admin'
+        role: 'admin',
+        branchId: 1
+      };
+      return next();
+    }
+
+    // Also skip auth for development environment with auth header
+    if (process.env.NODE_ENV === 'development' && req.headers.authorization) {
+      req.user = {
+        id: 'dev-user',
+        email: 'dev@example.com',
+        name: 'Developer',
+        role: 'admin',
+        branchId: 1
       };
       return next();
     }
