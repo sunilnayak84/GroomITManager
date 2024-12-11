@@ -176,16 +176,25 @@ function setupGracefulShutdown(server: any) {
     }
 
     // Start the server on a fixed port
-    const PORT = process.env.PORT || 5000;
-    
-    try {
-      server.listen(PORT, '0.0.0.0', () => {
-        log(`Server listening on port ${PORT}`, 'info');
+    const PORT = process.env.PORT || 5173;
+    const HOST = '0.0.0.0';
+
+    // Try to find an available port if the default is in use
+    const startServer = (port: number) => {
+      server.listen(port, HOST, () => {
+        log(`Server listening on http://${HOST}:${port}`, 'info');
+      }).on('error', (error: any) => {
+        if (error.code === 'EADDRINUSE') {
+          log(`Port ${port} is in use, trying ${port + 1}`, 'warn');
+          startServer(port + 1);
+        } else {
+          log(`Failed to start server: ${error.message}`, 'error');
+          process.exit(1);
+        }
       });
-    } catch (error: any) {
-      log(`Failed to start server: ${error.message}`, 'error');
-      process.exit(1);
-    }
+    };
+
+    startServer(Number(PORT));
 
   } catch (error: any) {
     log(`Failed to start server: ${error.message}`, 'error');
