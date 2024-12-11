@@ -265,20 +265,22 @@ export async function updateCustomer(id: string, data: Partial<Customer>) {
     const timestamp = new Date().toISOString();
     
     // Create a type-safe processed data object
-    const processedData: Partial<Customer> = {
-      ...Object.entries(data).reduce((acc, [key, value]) => {
-        if (value !== undefined) {
-          const processedValue = value instanceof Date 
-            ? value.toISOString() 
-            : (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(value))
-              ? value
-              : value;
-          acc[key as keyof Customer] = processedValue;
+    const processedData = Object.entries(data).reduce<Record<string, unknown>>((acc, [key, value]: [string, unknown]) => {
+      if (value !== undefined) {
+        if (value && typeof value === 'object' && 'getTime' in value && typeof value.getTime === 'function') {
+          // Safe check for Date objects
+          acc[key] = (value as Date).toISOString();
+        } else if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(value)) {
+          acc[key] = value;
+        } else {
+          acc[key] = value;
         }
-        return acc;
-      }, {} as Partial<Customer>),
-      updatedAt: timestamp
-    };
+      }
+      return acc;
+    }, {});
+
+    // Add the timestamp to processed data
+    processedData.updatedAt = timestamp;
 
     await setDoc(customerRef, processedData, { merge: true });
     return true;
@@ -358,18 +360,21 @@ export async function updatePet(id: string, data: Partial<Pet>) {
     }
 
     const timestamp = new Date().toISOString();
-    const updateData: Partial<Pet> & { updatedAt: string } = {
-      ...data,
-      updatedAt: timestamp
-    };
-
+    
     // Create a type-safe version of the update data
-    const cleanedData = Object.entries(updateData).reduce<Partial<Pet> & { updatedAt: string }>((acc, [key, value]) => {
+    const cleanedData = Object.entries(data).reduce<Record<string, unknown>>((acc, [key, value]) => {
       if (value !== undefined) {
-        acc[key as keyof (Partial<Pet> & { updatedAt: string })] = value as any;
+        if (value instanceof Date) {
+          acc[key] = value.toISOString();
+        } else if (value instanceof File) {
+          // Handle File objects separately if needed
+          acc[key] = value;
+        } else {
+          acc[key] = value;
+        }
       }
       return acc;
-    }, { updatedAt: new Date().toISOString() });
+    }, { updatedAt: timestamp });
 
     await setDoc(petRef, cleanedData, { merge: true });
     console.log('FIRESTORE: Pet updated successfully', { id, updateData: cleanedData });
@@ -389,24 +394,25 @@ export async function updatePet(id: string, data: Partial<Pet>) {
   }
 }
 
-export async function updateAppointment(id: number, data: Partial<Appointment>) {
+export async function updateAppointment(id: string, data: Partial<Appointment>) {
   try {
-    const appointmentRef = doc(appointmentsCollection, id.toString());
+    const appointmentRef = doc(appointmentsCollection, id);
     const timestamp = new Date().toISOString();
     
-    const processedData = {
-      ...Object.entries(data).reduce((acc, [key, value]) => {
-        if (value !== undefined) {
-          if (value instanceof Date) {
-            acc[key] = value.toISOString();
-          } else {
-            acc[key] = value;
-          }
+    const processedData = Object.entries(data).reduce<Record<string, unknown>>((acc, [key, value]) => {
+      if (value !== undefined) {
+        // Convert any date strings to ISO format
+        if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(value)) {
+          acc[key] = value;
+        } else {
+          acc[key] = value;
         }
-        return acc;
-      }, {} as Record<string, any>),
-      updatedAt: timestamp
-    };
+      }
+      return acc;
+    }, {});
+
+    // Add the timestamp to processed data
+    processedData.updatedAt = timestamp;
 
     await setDoc(appointmentRef, processedData, { merge: true });
     return true;

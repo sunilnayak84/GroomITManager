@@ -87,19 +87,22 @@ export default function CustomersPage() {
   // Convert Firestore customer data to match the expected type
   const customersData = useMemo(() => {
     return (customersQuery.data || []).map(customer => {
-      const createdAt = typeof customer.createdAt === 'string' 
-        ? customer.createdAt 
-        : 'seconds' in customer.createdAt 
-          ? new Date(customer.createdAt.seconds * 1000).toISOString()
-          : new Date().toISOString();
+      const createdAt = (() => {
+        if (typeof customer.createdAt === 'string') return customer.createdAt;
+        if (customer.createdAt && typeof customer.createdAt === 'object' && 'seconds' in customer.createdAt) {
+          return new Date(customer.createdAt.seconds * 1000).toISOString();
+        }
+        return new Date().toISOString();
+      })();
 
-      const updatedAt = customer.updatedAt
-        ? typeof customer.updatedAt === 'string'
-          ? customer.updatedAt
-          : 'seconds' in customer.updatedAt
-            ? new Date(customer.updatedAt.seconds * 1000).toISOString()
-            : null
-        : null;
+      const updatedAt = (() => {
+        if (!customer.updatedAt) return null;
+        if (typeof customer.updatedAt === 'string') return customer.updatedAt;
+        if (typeof customer.updatedAt === 'object' && 'seconds' in customer.updatedAt) {
+          return new Date(customer.updatedAt.seconds * 1000).toISOString();
+        }
+        return null;
+      })();
 
       return {
         ...customer,
@@ -619,7 +622,7 @@ export default function CustomersPage() {
                           customerId: String(pet.customerId),
                           dateOfBirth: pet.dateOfBirth ? String(pet.dateOfBirth) : null,
                           age: typeof pet.age === 'number' ? pet.age : null,
-                          weight: typeof pet.weight === 'number' ? String(pet.weight) : null,
+                          weight: typeof pet.weight === 'number' ? pet.weight : typeof pet.weight === 'string' ? parseFloat(pet.weight) : null,
                           weightUnit: pet.weightUnit || 'kg',
                           notes: pet.notes ? String(pet.notes) : null,
                           createdAt: typeof pet.createdAt === 'string' ? pet.createdAt : new Date().toISOString(),

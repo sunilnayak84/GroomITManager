@@ -1,5 +1,8 @@
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, query, where, orderBy, serverTimestamp, getDoc } from 'firebase/firestore';
+import { 
+  collection, getDocs, doc, setDoc, updateDoc, deleteDoc, 
+  query, where, orderBy, serverTimestamp, getDoc, Timestamp 
+} from 'firebase/firestore';
 import { db } from "../lib/firebase";
 import { toast } from "@/components/ui/use-toast";
 import { z } from "zod";
@@ -97,14 +100,14 @@ export function useInventory() {
               cost_per_unit: Number(data.cost_per_unit) || 0,
               category: data.category || 'uncategorized',
               supplier: data.supplier,
-              last_restock_date: data.last_restock_date instanceof Timestamp ? 
+              last_restock_date: data.last_restock_date && 'toDate' in data.last_restock_date ? 
                 data.last_restock_date.toDate() : 
                 data.last_restock_date ? new Date(data.last_restock_date) : undefined,
               isActive: data.isActive ?? true,
-              created_at: data.created_at instanceof Timestamp ? 
+              created_at: data.created_at && 'toDate' in data.created_at ? 
                 data.created_at.toDate() : 
                 new Date(),
-              updated_at: data.updated_at instanceof Timestamp ? 
+              updated_at: data.updated_at && 'toDate' in data.updated_at ? 
                 data.updated_at.toDate() : 
                 data.updated_at ? new Date(data.updated_at) : undefined,
             };
