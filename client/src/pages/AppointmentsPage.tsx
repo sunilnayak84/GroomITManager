@@ -22,7 +22,10 @@ const statusColors: Record<AppointmentStatus, string> = {
 
 export default function AppointmentsPage() {
   const [open, setOpen] = useState(false);
-  const { data: appointments, isLoading } = useAppointments();
+  const { data: appointments, isLoading, error } = useAppointments();
+  console.log('APPOINTMENTS_PAGE: Loading state:', isLoading);
+  console.log('APPOINTMENTS_PAGE: Appointments data:', appointments);
+  console.log('APPOINTMENTS_PAGE: Error state:', error);
 
   const columns = [
     {
