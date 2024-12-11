@@ -18,25 +18,29 @@ function log(message: string, type: 'info' | 'error' | 'warn' = 'info') {
   console.log(`${formattedTime} [express] ${prefix} ${message}`);
 }
 
-// Initialize Firebase Admin if credentials are available
-try {
-  const serviceAccount = {
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-    privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n')
-  };
+// Initialize Firebase Admin if not in development mode
+if (process.env.NODE_ENV !== 'development') {
+  try {
+    const serviceAccount = {
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n')
+    };
 
-  if (serviceAccount.projectId && serviceAccount.clientEmail && serviceAccount.privateKey) {
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
-    });
-    log('Firebase Admin initialized successfully', 'info');
-  } else {
-    log('Firebase credentials not found, skipping Firebase initialization', 'warn');
+    if (serviceAccount.projectId && serviceAccount.clientEmail && serviceAccount.privateKey) {
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
+      });
+      log('Firebase Admin initialized successfully', 'info');
+    } else {
+      log('Firebase credentials not found, running in development mode', 'warn');
+    }
+  } catch (error) {
+    log(`Firebase initialization error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'warn');
+    log('Falling back to development mode', 'warn');
   }
-} catch (error) {
-  log(`Firebase initialization error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'warn');
-  // Continue without Firebase - we'll handle authentication differently
+} else {
+  log('Running in development mode - skipping Firebase initialization', 'info');
 }
 const app = express();
 app.use(express.json());
@@ -176,15 +180,27 @@ function setupGracefulShutdown(server: any) {
     }
 
     // Start the server on a fixed port
-    const PORT = process.env.PORT || 5173;
-    const HOST = '0.0.0.0';
+    let port = Number(process.env.PORT) || 5173;
+    const maxRetries = 10;
+    let retryCount = 0;
 
-    server.listen(PORT, HOST, () => {
-      log(`Server listening on http://${HOST}:${PORT}`, 'info');
-    }).on('error', (error: any) => {
-      log(`Failed to start server: ${error.message}`, 'error');
-      process.exit(1);
-    });
+    const tryListen = () => {
+      server.listen(port, '0.0.0.0', () => {
+        log(`Server listening on http://0.0.0.0:${port}`, 'info');
+      }).on('error', (error: any) => {
+        if (error.code === 'EADDRINUSE' && retryCount < maxRetries) {
+          retryCount++;
+          port++;
+          log(`Port ${port - 1} in use, trying port ${port}`, 'warn');
+          tryListen();
+        } else {
+          log(`Failed to start server: ${error.message}`, 'error');
+          process.exit(1);
+        }
+      });
+    };
+
+    tryListen();
 
   } catch (error: any) {
     log(`Failed to start server: ${error.message}`, 'error');

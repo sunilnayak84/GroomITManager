@@ -7,26 +7,67 @@ import { FirebaseUser } from '../auth';
 
 export async function authenticateFirebase(req: Request, res: Response, next: NextFunction) {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader?.startsWith('Bearer ')) {
-      return res.status(401).json({ message: 'No token provided' });
+    // Skip authentication for development mode or health check
+    if (process.env.NODE_ENV === 'development' || req.path === '/api/health') {
+      req.user = {
+        id: 'dev-user',
+        email: 'dev@example.com',
+        name: 'Developer',
+        role: 'admin'
+      };
+      return next();
     }
 
-    const token = authHeader.split('Bearer ')[1];
-    const decodedToken = await admin.auth().verifyIdToken(token);
+    const authHeader = req.headers.authorization;
+    
+    // Allow requests without auth header in development
+    if (!authHeader?.startsWith('Bearer ') && process.env.NODE_ENV === 'development') {
+      req.user = {
+        id: 'dev-user',
+        email: 'dev@example.com',
+        name: 'Developer',
+        role: 'admin'
+      };
+      return next();
+    }
+    
+    // Require auth header in production
+    if (!authHeader?.startsWith('Bearer ')) {
+      return res.status(401).json({ 
+        message: 'No token provided',
+        env: process.env.NODE_ENV
+      });
+    }
 
-    // Add user data to the request
-    req.user = {
-      id: decodedToken.uid,
-      email: decodedToken.email || '',
-      name: decodedToken.name || decodedToken.email || '',
-      role: decodedToken.role || 'staff'
-    };
-
-    next();
+    if (process.env.NODE_ENV === 'development') {
+      // Skip token verification in development
+      next();
+    } else {
+      // Verify token in production
+      try {
+        const token = authHeader.split('Bearer ')[1];
+        const decodedToken = await admin.auth().verifyIdToken(token);
+        
+        req.user = {
+          id: decodedToken.uid,
+          email: decodedToken.email || '',
+          name: decodedToken.name || decodedToken.email || '',
+          role: decodedToken.role || 'staff'
+        };
+        
+        next();
+      } catch (error) {
+        console.error('Token verification error:', error);
+        return res.status(401).json({ message: 'Invalid token' });
+      }
+    }
   } catch (error) {
-    console.error('Authentication error:', error);
-    res.status(401).json({ message: 'Invalid token' });
+    console.error('Authentication middleware error:', error);
+    // Don't expose error details in production
+    if (process.env.NODE_ENV === 'development') {
+      return res.status(500).json({ message: `Auth error: ${error}` });
+    }
+    return res.status(500).json({ message: 'Internal server error' });
   }
 }
 

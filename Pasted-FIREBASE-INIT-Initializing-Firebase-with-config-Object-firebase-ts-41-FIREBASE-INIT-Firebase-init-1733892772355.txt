@@ -1,0 +1,68 @@
+FIREBASE_INIT: Initializing Firebase with config: Object
+firebase.ts:41 FIREBASE_INIT: Firebase initialized successfully
+AppointmentsPage.tsx:26 APPOINTMENTS_PAGE: Loading state: true
+AppointmentsPage.tsx:27 APPOINTMENTS_PAGE: Appointments data: undefined
+AppointmentsPage.tsx:28 APPOINTMENTS_PAGE: Error state: null
+AppointmentsPage.tsx:26 APPOINTMENTS_PAGE: Loading state: true
+AppointmentsPage.tsx:27 APPOINTMENTS_PAGE: Appointments data: undefined
+AppointmentsPage.tsx:28 APPOINTMENTS_PAGE: Error state: null
+use-appointments.ts:63 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:73 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:77 FETCH_APPOINTMENTS: Created query
+use-pets.ts:55 FETCH_PETS: Starting to fetch pets
+use-appointments.ts:80 FETCH_APPOINTMENTS: Got snapshot with 6 documents
+use-appointments.ts:93 FETCH_APPOINTMENTS: Processing appointment 7Bg5TP4MyDOitwX01ki2
+use-appointments.ts:95 FETCH_APPOINTMENTS: Raw data for appointment 7Bg5TP4MyDOitwX01ki2 : Object
+use-appointments.ts:115 FETCH_APPOINTMENTS: Fetching related documents for appointment: 7Bg5TP4MyDOitwX01ki2
+use-appointments.ts:120 FETCH_APPOINTMENTS: Fetching pet document: iTUIUYNzZZ4PkgXGNHyd
+use-appointments.ts:124 FETCH_APPOINTMENTS: Pet not found: iTUIUYNzZZ4PkgXGNHyd
+queryFn @ use-appointments.ts:124Understand this errorAI
+use-appointments.ts:93 FETCH_APPOINTMENTS: Processing appointment AnnBy1BANOQLJbN1gvJs
+use-appointments.ts:95 FETCH_APPOINTMENTS: Raw data for appointment AnnBy1BANOQLJbN1gvJs : Object
+use-appointments.ts:115 FETCH_APPOINTMENTS: Fetching related documents for appointment: AnnBy1BANOQLJbN1gvJs
+use-appointments.ts:120 FETCH_APPOINTMENTS: Fetching pet document: WfY0amCd83XubWf4r7og
+use-pets.ts:105 FETCH_PETS: Completed fetching pets Object
+use-appointments.ts:130 FETCH_APPOINTMENTS: Pet data: Object
+use-appointments.ts:134 FETCH_APPOINTMENTS: Fetching groomer document: 1
+use-appointments.ts:138 FETCH_APPOINTMENTS: Groomer not found: 1
+queryFn @ use-appointments.ts:138Understand this errorAI
+use-appointments.ts:93 FETCH_APPOINTMENTS: Processing appointment Kex11DZu8YxQGgf2Fydk
+use-appointments.ts:95 FETCH_APPOINTMENTS: Raw data for appointment Kex11DZu8YxQGgf2Fydk : Object
+use-appointments.ts:115 FETCH_APPOINTMENTS: Fetching related documents for appointment: Kex11DZu8YxQGgf2Fydk
+use-appointments.ts:120 FETCH_APPOINTMENTS: Fetching pet document: 9wG846LMI8n2Wi5dl56Y
+use-appointments.ts:130 FETCH_APPOINTMENTS: Pet data: Object
+use-appointments.ts:134 FETCH_APPOINTMENTS: Fetching groomer document: 1
+use-appointments.ts:138 FETCH_APPOINTMENTS: Groomer not found: 1
+queryFn @ use-appointments.ts:138Understand this errorAI
+use-appointments.ts:93 FETCH_APPOINTMENTS: Processing appointment Tg9VZh1Hh42l8jJTANQq
+use-appointments.ts:95 FETCH_APPOINTMENTS: Raw data for appointment Tg9VZh1Hh42l8jJTANQq : Object
+use-appointments.ts:115 FETCH_APPOINTMENTS: Fetching related documents for appointment: Tg9VZh1Hh42l8jJTANQq
+use-appointments.ts:120 FETCH_APPOINTMENTS: Fetching pet document: JXM2GHVDgagZUFj7qCeR
+use-appointments.ts:130 FETCH_APPOINTMENTS: Pet data: Object
+use-appointments.ts:134 FETCH_APPOINTMENTS: Fetching groomer document: 1
+use-appointments.ts:138 FETCH_APPOINTMENTS: Groomer not found: 1
+queryFn @ use-appointments.ts:138Understand this errorAI
+use-appointments.ts:93 FETCH_APPOINTMENTS: Processing appointment mFW34sJJEkarhmHxwfWp
+use-appointments.ts:95 FETCH_APPOINTMENTS: Raw data for appointment mFW34sJJEkarhmHxwfWp : Object
+use-appointments.ts:115 FETCH_APPOINTMENTS: Fetching related documents for appointment: mFW34sJJEkarhmHxwfWp
+use-appointments.ts:120 FETCH_APPOINTMENTS: Fetching pet document: WfY0amCd83XubWf4r7og
+use-appointments.ts:130 FETCH_APPOINTMENTS: Pet data: Object
+use-appointments.ts:134 FETCH_APPOINTMENTS: Fetching groomer document: 1
+use-appointments.ts:138 FETCH_APPOINTMENTS: Groomer not found: 1
+queryFn @ use-appointments.ts:138Understand this errorAI
+use-appointments.ts:93 FETCH_APPOINTMENTS: Processing appointment vj9BxPuniCOSAAcTZfhR
+use-appointments.ts:95 FETCH_APPOINTMENTS: Raw data for appointment vj9BxPuniCOSAAcTZfhR : Object
+use-appointments.ts:115 FETCH_APPOINTMENTS: Fetching related documents for appointment: vj9BxPuniCOSAAcTZfhR
+use-appointments.ts:120 FETCH_APPOINTMENTS: Fetching pet document: WfY0amCd83XubWf4r7og
+use-appointments.ts:130 FETCH_APPOINTMENTS: Pet data: Object
+use-appointments.ts:134 FETCH_APPOINTMENTS: Fetching groomer document: 1
+use-appointments.ts:138 FETCH_APPOINTMENTS: Groomer not found: 1
+queryFn @ use-appointments.ts:138Understand this errorAI
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processed 6 appointments. Success: 0, Errors: 6
+use-appointments.ts:227 FETCH_APPOINTMENTS: Successfully fetched 0 appointments
+AppointmentsPage.tsx:26 APPOINTMENTS_PAGE: Loading state: false
+AppointmentsPage.tsx:27 APPOINTMENTS_PAGE: Appointments data: Array(0)
+AppointmentsPage.tsx:28 APPOINTMENTS_PAGE: Error state: null
+AppointmentsPage.tsx:26 APPOINTMENTS_PAGE: Loading state: false
+AppointmentsPage.tsx:27 APPOINTMENTS_PAGE: Appointments data: Array(0)
+AppointmentsPage.tsx:28 APPOINTMENTS_PAGE: Error state: null
