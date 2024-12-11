@@ -1031,7 +1031,11 @@ export default function CustomersPage() {
               if (selectedPet) {
                 try {
                   await deletePet(selectedPet.id);
-                  await queryClient.invalidateQueries({ queryKey: ['pets'] });
+                  await Promise.all([
+                    queryClient.invalidateQueries({ queryKey: ['pets'] }),
+                    queryClient.invalidateQueries({ queryKey: ['customers'] })
+                  ]);
+                  await queryClient.refetchQueries({ queryKey: ['pets'] });
                   setShowDeleteConfirm(false);
                   setShowPetDetails(false);
                   setSelectedPet(null);
