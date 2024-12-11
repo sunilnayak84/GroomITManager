@@ -61,7 +61,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
         )}
 
         {onEdit && onDelete && (
-          <div className="flex justify-end gap-2 mt-6">
+          <div className="flex justify-center gap-2 mt-6">
             <Button variant="outline" onClick={onDelete}>
               Delete
             </Button>
