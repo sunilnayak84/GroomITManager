@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ConsumablesUsageModal } from "@/components/ConsumablesUsageModal";
 import { toast } from "@/components/ui/use-toast";
+import { formatIndianCurrency, formatIndianDate, formatQuantity } from "@/lib/utils";
 
 import {
   Table,
@@ -220,7 +221,7 @@ export default function InventoryPage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </div>
           <div className="text-2xl font-bold">
-            ${inventory?.reduce((total, item) => total + (item.quantity * item.cost_per_unit), 0).toFixed(2) || "0.00"}
+            {formatIndianCurrency(inventory?.reduce((total, item) => total + (item.quantity * item.cost_per_unit), 0) || 0)}
           </div>
         </div>
       </div>
@@ -469,7 +470,7 @@ export default function InventoryPage() {
                       {item.quantity} {item.unit}
                     </TableCell>
                     <TableCell>{item.unit}</TableCell>
-                    <TableCell>${item.cost_per_unit.toFixed(2)}</TableCell>
+                    <TableCell>{formatIndianCurrency(item.cost_per_unit)}</TableCell>
                     <TableCell>{item.supplier || '-'}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
