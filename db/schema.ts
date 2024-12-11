@@ -136,6 +136,7 @@ export const pets = pgTable("pets", {
   type: varchar("type", { length: 50 }).notNull(),
   breed: varchar("breed", { length: 100 }).notNull(),
   size: varchar("size", { length: 50 }).notNull(),
+  imageUrl: text("image_url").notNull().default(''),
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -233,6 +234,7 @@ export const insertPetSchema = createInsertSchema(pets, {
   breed: z.string().min(1, "Pet breed is required"),
   customerId: z.number().min(1, "Customer must be selected"),
   size: z.string().min(1, "Pet size is required"),
+  imageUrl: z.string().default(''),
   notes: z.string().nullable(),
 });
 
