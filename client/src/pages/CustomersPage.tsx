@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { PetDetails } from "@/components/PetDetails";
 import { Plus, Search, Loader2 } from "lucide-react";
 import { useCustomers } from "@/hooks/use-customers";
 import { usePets } from "@/hooks/use-pets";
