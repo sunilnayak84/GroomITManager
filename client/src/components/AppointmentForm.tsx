@@ -149,7 +149,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                   <SelectContent>
                     {(pets || []).map((pet) => (
                       <SelectItem 
-                        key={pet.id} 
+                        key={String(pet.id)} 
                         value={String(pet.id)}
                       >
                         {pet.name} - {pet.breed}
@@ -206,7 +206,10 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                   </FormControl>
                   <SelectContent>
                     {(services || []).map((service) => (
-                      <SelectItem key={service.service_id} value={service.service_id}>
+                      <SelectItem 
+                        key={String(service.service_id)} 
+                        value={String(service.service_id)}
+                      >
                         {service.name}
                       </SelectItem>
                     ))}

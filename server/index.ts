@@ -179,31 +179,23 @@ function setupGracefulShutdown(server: any) {
       throw error;
     }
 
-    // Start the server with port retry logic
-    const basePort = Number(process.env.PORT) || 3000;
-    const findAvailablePort = async (startPort: number): Promise<number> => {
-      return new Promise((resolve) => {
-        const server = createServer();
-        server.listen(startPort, () => {
-          server.close(() => resolve(startPort));
+    // Start the server with fixed port
+    const serverPort = 3001;
+    const startServer = async () => {
+      try {
+        server.listen(serverPort, '0.0.0.0', () => {
+          log(`Server listening on http://0.0.0.0:${serverPort}`, 'info');
         });
-        server.on('error', () => {
-          resolve(findAvailablePort(startPort + 1));
-        });
-      });
+      } catch (error: any) {
+        log(`Failed to start server: ${error.message}`, 'error');
+        if (process.env.NODE_ENV !== 'development') {
+          process.exit(1);
+        }
+      }
     };
 
-    try {
-      const port = await findAvailablePort(basePort);
-      server.listen(port, '0.0.0.0', () => {
-        log(`Server listening on http://0.0.0.0:${port}`, 'info');
-      });
-    } catch (error: any) {
-      log(`Failed to start server: ${error.message}`, 'error');
-      if (process.env.NODE_ENV !== 'development') {
-        process.exit(1);
-      }
-    }
+    // Start the server
+    await startServer();
   } catch (error: any) {
     log(`Failed to start server: ${error.message}`, 'error');
     if (process.env.NODE_ENV !== 'development') {
