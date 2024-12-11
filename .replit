@@ -46,8 +46,20 @@ externalPort = 3003
 runButton = "Project"
 
 [[workflows.workflow]]
-name = "Server"
+name = "Project"
 mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Flask Server"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Server"
+
+[[workflows.workflow]]
+name = "Flask Server"
 author = "agent"
 
 [workflows.workflow.metadata]
@@ -55,15 +67,9 @@ agentRequireRestartOnSave = false
 
 [[workflows.workflow.tasks]]
 task = "packager.installForAll"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "NODE_ENV=development tsx watch --clear-screen=false server/index.ts"
-waitForPort = 3001
 
 [[workflows.workflow]]
 name = "Server"
-mode = "parallel"
 author = "agent"
 
 [workflows.workflow.metadata]
@@ -74,5 +80,5 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "NODE_ENV=development tsx watch --clear-screen=false server/index.ts"
+args = "NODE_ENV=development npm run dev"
 waitForPort = 3001
