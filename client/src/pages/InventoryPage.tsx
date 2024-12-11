@@ -141,12 +141,12 @@ export default function InventoryPage() {
       unit: item.unit,
     });
     
-    form.reset({
+    const formData: InsertInventoryItem = {
       name: item.name,
       quantity: item.quantity,
       unit: item.unit,
-      supplier: item.supplier || null,
-      description: item.description || null,
+      supplier: item.supplier,
+      description: item.description,
       minimum_quantity: item.minimum_quantity,
       cost_per_unit: 0,
       category: item.category || "",
@@ -154,11 +154,13 @@ export default function InventoryPage() {
       isActive: item.isActive ?? true,
       reorder_point: item.reorder_point ?? 0,
       reorder_quantity: item.reorder_quantity ?? 0,
-      location: item.location || null,
-      barcode: item.barcode || null,
+      location: item.location,
+      barcode: item.barcode,
       quantity_per_use: item.quantity_per_use ?? 1,
       service_linked: item.service_linked ?? false,
-    });
+    };
+    
+    form.reset(formData);
     setShowItemDialog(true);
   };
 
@@ -493,6 +495,7 @@ export default function InventoryPage() {
                             {...field} 
                             value={field.value ?? ''}
                             onChange={(e) => field.onChange(e.target.value || null)}
+                            placeholder="Optional storage location"
                           />
                         </FormControl>
                         <FormMessage />
@@ -511,6 +514,7 @@ export default function InventoryPage() {
                             {...field} 
                             value={field.value ?? ''}
                             onChange={(e) => field.onChange(e.target.value || null)}
+                            placeholder="Optional barcode"
                           />
                         </FormControl>
                         <FormMessage />
@@ -529,6 +533,7 @@ export default function InventoryPage() {
                             {...field}
                             value={field.value ?? ''}
                             onChange={(e) => field.onChange(e.target.value || null)}
+                            placeholder="Optional description"
                           />
                         </FormControl>
                         <FormMessage />
