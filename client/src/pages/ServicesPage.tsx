@@ -92,16 +92,19 @@ export default function ServicesPage() {
           return;
         }
 
+        // Calculate total duration and price with 10% discount
         const totalDuration = selectedItems.reduce((sum, item) => sum + item.duration, 0);
         const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
-
+        
         // Apply package discount (10% off)
         const discountedPrice = Math.floor(totalPrice * 0.9);
+        const savedAmount = totalPrice - discountedPrice;
 
         // Create package data with all required fields
         const packageData: InsertService = {
           name: data.name,
-          description: data.description || `Package including ${selectedItems.length} services and add-ons with 10% discount`,
+          description: data.description || 
+            `Package including ${data.selectedServices?.length || 0} services and ${data.selectedAddons?.length || 0} add-ons. Save ₹${savedAmount} (10% off)`,
           category: ServiceCategory.PACKAGE,
           duration: totalDuration,
           price: discountedPrice,
@@ -111,13 +114,44 @@ export default function ServicesPage() {
           selectedAddons: data.selectedAddons || []
         };
 
-        await addService(packageData);
-        toast({
-          title: "Success",
-          description: "Package created successfully",
-          variant: "default",
-        });
-        setShowPackageDialog(false);
+        // Validate package contents
+        if (!data.name.trim()) {
+          toast({
+            title: "Validation Error",
+            description: "Please provide a name for the package",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        try {
+          await addService(packageData);
+          toast({
+            title: "Success",
+            description: `Package "${data.name}" created successfully with ${selectedItems.length} items`,
+            variant: "default",
+          });
+          setShowPackageDialog(false);
+          
+          // Reset form data
+          form.reset({
+            name: "",
+            description: "",
+            category: ServiceCategory.PACKAGE,
+            duration: 30,
+            price: 0,
+            consumables: [],
+            selectedServices: [],
+            selectedAddons: []
+          });
+        } catch (error) {
+          console.error('Error creating package:', error);
+          toast({
+            title: "Error",
+            description: error instanceof Error ? error.message : "Failed to create package",
+            variant: "destructive",
+          });
+        }
       } else if (selectedService) {
         await updateService(selectedService.service_id, data);
         setShowServiceDialog(false);
