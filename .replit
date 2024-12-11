@@ -46,10 +46,10 @@ args = "cd client && npm run dev -- --port 5173 --host 0.0.0.0"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "App"
+args = "Server"
 
 [[workflows.workflow]]
-name = "App"
+name = "Server"
 author = "agent"
 
 [workflows.workflow.metadata]
@@ -60,5 +60,4 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd client && npm run dev -- --host 0.0.0.0"
-waitForPort = 5173
+args = "npm run dev"

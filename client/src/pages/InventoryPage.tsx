@@ -62,6 +62,7 @@ export default function InventoryPage() {
   const [showItemDialog, setShowItemDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [showHistoryDialog, setShowHistoryDialog] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<InsertInventoryItem>({
@@ -243,6 +244,7 @@ export default function InventoryPage() {
                                 quantity: item.quantity,
                                 unit: item.unit,
                               });
+                              setShowHistoryDialog(true);
                             }
                           }}
                         >
@@ -562,6 +564,24 @@ export default function InventoryPage() {
               unit={selectedItem.unit}
             />
           )}
+
+          <Dialog open={showHistoryDialog} onOpenChange={setShowHistoryDialog}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Usage History</DialogTitle>
+                <DialogDescription>
+                  View the usage history for this item
+                </DialogDescription>
+              </DialogHeader>
+              {selectedItem && (
+                <InventoryUsageHistory
+                  usageHistory={[]} // TODO: Implement usage history fetching
+                  isLoading={false}
+                  unit={selectedItem.unit}
+                />
+              )}
+            </DialogContent>
+          </Dialog>
         </div>
       </ErrorBoundary>
     </div>
