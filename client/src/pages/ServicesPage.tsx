@@ -112,19 +112,19 @@ export default function ServicesPage() {
           consumables: [], // Packages don't require consumables
           isActive: true,
           selectedServices: selectedServices.map(service => ({
-            service_id: service.service_id,
-            name: service.name,
-            duration: service.duration,
-            price: service.price,
-            category: service.category
-          })),
+            service_id: service.service_id || '',
+            name: service.name || '',
+            duration: service.duration || 0,
+            price: service.price || 0,
+            category: service.category || ServiceCategory.SERVICE
+          })) || [],
           selectedAddons: selectedAddons.map(addon => ({
-            service_id: addon.service_id,
-            name: addon.name,
-            duration: addon.duration,
-            price: addon.price,
-            category: addon.category
-          }))
+            service_id: addon.service_id || '',
+            name: addon.name || '',
+            duration: addon.duration || 0,
+            price: addon.price || 0,
+            category: addon.category || ServiceCategory.ADDON
+          })) || []
         };
 
         // Validate package contents
