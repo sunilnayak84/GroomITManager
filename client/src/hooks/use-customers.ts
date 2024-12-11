@@ -4,7 +4,7 @@ import { getDocs, onSnapshot, query, deleteDoc, doc, where, collection } from "f
 import { customersCollection, createCustomer, updateCustomer as updateCustomerDoc, deleteCustomerAndRelated } from "../lib/firestore";
 import { useEffect } from "react";
 import { db } from "../lib/firebase";
-import { toast } from '../lib/toast';
+import { toast } from '@/components/ui/use-toast';
 import { type Customer as CustomerType, type InsertCustomer } from '@/lib/types';
 
 
@@ -95,15 +95,20 @@ export function useCustomers() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["customers"] });
-      toast.success("Customer added successfully");
+      toast({
+        title: "Success",
+        description: "Customer added successfully"
+      });
     },
     onError: (error) => {
       console.error('ADD_CUSTOMER: Mutation error', { error });
-      toast.error(
-        error instanceof Error 
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error instanceof Error 
           ? error.message 
           : "Failed to add customer. Please try again."
-      );
+      });
     }
   });
 
@@ -111,35 +116,44 @@ export function useCustomers() {
     mutationFn: async ({ id, data }: { id: string; data: Partial<Omit<CustomerType, 'id' | 'firebaseId' | 'createdAt' | 'updatedAt'>> }) => {
       const timestamp = new Date().toISOString();
       
-      // Ensure type safety for the update data
-      const processedData: Partial<Customer> = {
+      // Create a clean update payload with proper types
+      const updatePayload = {
         ...Object.entries(data).reduce((acc, [key, value]) => {
           if (value !== undefined) {
-            acc[key as keyof Customer] = value;
+            // Only include defined values
+            acc[key] = value;
           }
           return acc;
-        }, {} as Partial<Customer>),
+        }, {} as Record<string, any>),
         updatedAt: timestamp
       };
       
-      await updateCustomerDoc(id, processedData);
+      await updateCustomerDoc(id, updatePayload);
+      
+      // Return the updated customer with correct types
       return {
         id,
         firebaseId: id,
-        ...processedData
-      } as Customer;
+        ...data,
+        updatedAt: timestamp
+      } as unknown as CustomerType;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["customers"] });
-      toast.success("Customer updated successfully");
+      toast({
+        title: "Success",
+        description: "Customer updated successfully"
+      });
     },
     onError: (error) => {
       console.error('UPDATE_CUSTOMER: Mutation error', { error });
-      toast.error(
-        error instanceof Error 
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error instanceof Error 
           ? error.message 
           : "Failed to update customer"
-      );
+      });
     }
   });
 
@@ -177,7 +191,10 @@ export function useCustomers() {
     },
     onSuccess: (deletedId) => {
       console.log('Delete mutation succeeded for customer:', deletedId);
-      toast.success("Customer deleted successfully");
+      toast({
+        title: "Success",
+        description: "Customer deleted successfully"
+      });
     },
     onError: (error, _, context) => {
       console.error('Delete mutation error:', error);
@@ -185,11 +202,13 @@ export function useCustomers() {
       if (context?.previousCustomers) {
         queryClient.setQueryData(["customers"], context.previousCustomers);
       }
-      toast.error(
-        error instanceof Error 
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error instanceof Error 
           ? error.message 
           : "Unable to delete customer"
-      );
+      });
     },
     onSettled: () => {
       // Always refetch after error or success to ensure consistency
@@ -204,13 +223,21 @@ export function useCustomers() {
     const customerQuery = query(customersCollection);
     const customerUnsubscribe = onSnapshot(customerQuery, async (snapshot) => {
       const customers = snapshot.docs.map(doc => {
-        const customerData = doc.data();
+        const data = doc.data();
         return {
           id: doc.id,
-          ...customerData,
-          createdAt: customerData.createdAt 
-            ? new Date(customerData.createdAt) 
-            : undefined
+          firebaseId: doc.id,
+          firstName: data.firstName as string,
+          lastName: data.lastName as string,
+          email: data.email as string,
+          phone: data.phone as string,
+          address: data.address as string | null,
+          gender: (data.gender as "male" | "female" | "other" | null) ?? null,
+          petCount: Number(data.petCount || 0),
+          createdAt: new Date(data.createdAt as string).toISOString(),
+          updatedAt: data.updatedAt 
+            ? new Date(data.updatedAt as string).toISOString()
+            : null
         } as CustomerType;
       });
 
