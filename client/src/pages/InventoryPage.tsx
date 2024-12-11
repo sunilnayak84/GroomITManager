@@ -59,12 +59,23 @@ interface SelectedItem {
 }
 
 export default function InventoryPage() {
-  const { inventory, isLoading, addInventoryItem, updateInventoryItem, deleteInventoryItem } = useInventory();
+  const { 
+    inventory, 
+    isLoading, 
+    addInventoryItem, 
+    updateInventoryItem, 
+    deleteInventoryItem, 
+    getUsageHistory 
+  } = useInventory();
+  
   const [showItemDialog, setShowItemDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const [showHistoryDialog, setShowHistoryDialog] = useState(false);
   const { toast } = useToast();
+  
+  // Fetch usage history only when needed
+  const usageHistoryQuery = getUsageHistory(showHistoryDialog ? selectedItem?.id : undefined);
 
   const form = useForm<InsertInventoryItem>({
     resolver: zodResolver(insertInventoryItemSchema),
@@ -574,18 +585,24 @@ export default function InventoryPage() {
             />
           )}
 
-          <Dialog open={showHistoryDialog} onOpenChange={setShowHistoryDialog}>
+          <Dialog open={showHistoryDialog} onOpenChange={(open) => {
+            setShowHistoryDialog(open);
+            if (!open) {
+              // Clear selected item when dialog closes
+              setSelectedItem(null);
+            }
+          }}>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Usage History</DialogTitle>
                 <DialogDescription>
-                  View the usage history for this item
+                  {selectedItem ? `View usage history for ${selectedItem.name}` : 'Loading...'}
                 </DialogDescription>
               </DialogHeader>
               {selectedItem && (
                 <InventoryUsageHistory
-                  usageHistory={selectedItem ? useInventory().getUsageHistory(selectedItem.id).data || [] : []}
-                  isLoading={selectedItem ? useInventory().getUsageHistory(selectedItem.id).isLoading : false}
+                  usageHistory={usageHistoryQuery.data || []}
+                  isLoading={usageHistoryQuery.isLoading}
                   unit={selectedItem.unit}
                 />
               )}

@@ -50,7 +50,8 @@ export function InventoryUsageHistory({
   const [dateFilter, setDateFilter] = useState<Date>();
   const [serviceFilter, setServiceFilter] = useState<string>("all");
 
-  const filteredHistory = usageHistory.filter((entry) => {
+  const filteredHistory = (usageHistory || []).filter((entry) => {
+    if (!entry?.used_at) return false;
     const matchesDate = !dateFilter || format(entry.used_at, 'yyyy-MM-dd') === format(dateFilter, 'yyyy-MM-dd');
     const matchesService = serviceFilter === "all" || entry.service_id === serviceFilter;
     return matchesDate && matchesService;

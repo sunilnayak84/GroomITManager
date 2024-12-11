@@ -344,7 +344,7 @@ export function useInventory() {
         toast({
           title: "Low Stock Alert",
           description: `${itemData.name} has reached reorder point (${newQuantity} remaining)`,
-          variant: "warning"
+          variant: "default"
         });
       }
 
@@ -373,14 +373,17 @@ export function useInventory() {
   };
 
   // Fetch usage history for an item using React Query
-  const getUsageHistory = (itemId: string) => {
+  const getUsageHistory = (itemId: string | undefined) => {
     return useQuery({
       queryKey: ['inventory', 'usage-history', itemId],
+      enabled: !!itemId,
+      staleTime: 1000 * 60 * 5, // 5 minutes
       queryFn: async () => {
+        if (!itemId) return [];
         try {
           console.log('FETCH_USAGE_HISTORY: Starting fetch for item:', itemId);
           const q = query(
-            usageHistoryCollection,
+            collection(db, 'inventory_usage_history'),
             where('item_id', '==', itemId),
             orderBy('used_at', 'desc')
           );
@@ -390,7 +393,12 @@ export function useInventory() {
             const data = doc.data();
             return {
               usage_id: doc.id,
-              ...data,
+              item_id: data.item_id,
+              quantity_used: Number(data.quantity_used),
+              used_by: data.used_by,
+              service_id: data.service_id,
+              appointment_id: data.appointment_id,
+              notes: data.notes,
               used_at: data.used_at instanceof Timestamp ? 
                 data.used_at.toDate() : 
                 new Date(data.used_at),
@@ -403,8 +411,7 @@ export function useInventory() {
           console.error('FETCH_USAGE_HISTORY: Error fetching history:', error);
           throw error;
         }
-      },
-      enabled: !!itemId,
+      }
     });
   };
 
