@@ -92,17 +92,6 @@ export type FirestorePet = Omit<Pet, "createdAt" | "updatedAt" | "weight"> & {
   weight: string | number | null;
 };
 
-export type Pet = z.infer<typeof petSchema>;
-export type InsertPet = Omit<PetInput, "id" | "submissionId"> & {
-  submissionId?: string;
-  firebaseId?: string | null;
-};
-
-export type FirestorePet = Omit<Pet, "createdAt" | "updatedAt"> & {
-  createdAt: FirestoreDate | string;
-  updatedAt: FirestoreDate | string | null;
-};
-
 export type FirestoreCustomer = Omit<Customer, "createdAt" | "updatedAt" | "petCount" | "gender"> & {
   createdAt: FirestoreDate | string;
   updatedAt: FirestoreDate | string | null;

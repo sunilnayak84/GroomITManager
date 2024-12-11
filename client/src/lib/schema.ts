@@ -76,6 +76,9 @@ export const appointmentSchema = z.object({
   updatedAt: z.string().nullable(),
 });
 
+// Helper type for Firebase compatibility
+export type FirestoreAppointment = z.infer<typeof appointmentSchema>;
+
 // Schema for appointment creation/updates
 export const insertAppointmentSchema = appointmentSchema.omit({
   id: true,
@@ -100,10 +103,19 @@ export const userSchema = z.object({
   id: z.string(),
   email: z.string().email(),
   name: z.string(),
+  phone: z.string().nullable(),
   role: z.enum(["admin", "groomer"]),
+  isActive: z.boolean().default(true),
   branchId: z.string().nullable(),
-  createdAt: z.date(),
-  updatedAt: z.date().optional(),
+  isGroomer: z.boolean().default(false),
+  specialties: z.array(z.string()).default([]),
+  petTypePreferences: z.array(z.string()).default([]),
+  experienceYears: z.number().nullable(),
+  certifications: z.array(z.string()).default([]),
+  availability: z.string().nullable(),
+  maxDailyAppointments: z.number().nullable(),
+  createdAt: z.string(),
+  updatedAt: z.string().nullable(),
 });
 
 export const insertUserSchema = userSchema.omit({
@@ -112,7 +124,13 @@ export const insertUserSchema = userSchema.omit({
   updatedAt: true,
 });
 
+// Helper type for Firebase compatibility
+export type FirestoreUser = z.infer<typeof userSchema>;
+
 // Types
+// Helper type for Firebase compatibility
+export type FirestoreCustomer = z.infer<typeof customerSchema>;
+
 export interface Customer {
   id: string;
   firstName: string;
@@ -122,8 +140,8 @@ export interface Customer {
   address: string | null;
   gender: "male" | "female" | "other" | null;
   petCount: number;
-  createdAt: Date;
-  updatedAt: Date | null;
+  createdAt: string;
+  updatedAt: string | null;
   firebaseId: string | null;
   name?: string;
 }
