@@ -182,8 +182,12 @@ export default function ServicesPage() {
       duration: service.duration,
       price: service.price,
       consumables: service.consumables || [],
-      selectedServices: service.selectedServices || [],
-      selectedAddons: service.selectedAddons || []
+      selectedServices: services.filter(s => 
+        service.selectedServices?.some(selected => selected.service_id === s.service_id)
+      ) || [],
+      selectedAddons: services.filter(s => 
+        service.selectedAddons?.some(selected => selected.service_id === s.service_id)
+      ) || []
     };
     form.reset(formData);
     
