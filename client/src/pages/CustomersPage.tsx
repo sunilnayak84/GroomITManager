@@ -976,15 +976,28 @@ export default function CustomersPage() {
             <DialogDescription>Update the pet information below.</DialogDescription>
           </DialogHeader>
           {selectedPet && <PetForm
-            pet={selectedPet}
             handleSubmit={async (data) => {
               try {
-                // Add your update logic here
+                await updatePet({ 
+                  petId: selectedPet.id, 
+                  updateData: data 
+                });
+                await queryClient.invalidateQueries({ queryKey: ['pets'] });
                 setShowEditModal(false);
-                setShowPetDetails(true);
+                setShowPetDetails(false);
+                setSelectedPet(null);
+                toast({
+                  title: "Success",
+                  description: "Pet updated successfully"
+                });
                 return true;
               } catch (error) {
                 console.error('Error updating pet:', error);
+                toast({
+                  variant: "destructive",
+                  title: "Error",
+                  description: error instanceof Error ? error.message : "Failed to update pet"
+                });
                 return false;
               }
             }}
@@ -993,6 +1006,8 @@ export default function CustomersPage() {
               setShowPetDetails(true);
             }}
             customers={customersData}
+            defaultValues={selectedPet}
+            customerId={selectedPet.customerId}
             hideCustomerField={true}
           />}
         </DialogContent>
@@ -1012,12 +1027,22 @@ export default function CustomersPage() {
             <AlertDialogAction onClick={async () => {
               if (selectedPet) {
                 try {
-                  // Add your delete logic here
+                  await deletePet(selectedPet.id);
+                  await queryClient.invalidateQueries({ queryKey: ['pets'] });
                   setShowDeleteConfirm(false);
                   setShowPetDetails(false);
                   setSelectedPet(null);
+                  toast({
+                    title: "Success",
+                    description: "Pet deleted successfully"
+                  });
                 } catch (error) {
                   console.error('Error deleting pet:', error);
+                  toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: error instanceof Error ? error.message : "Failed to delete pet"
+                  });
                 }
               }
             }}>
