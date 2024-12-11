@@ -97,8 +97,20 @@ export function useServices() {
         isActive: newService.isActive,
         created_at: timestamp,
         updated_at: timestamp,
-        selectedServices: serviceData.selectedServices || [],
-        selectedAddons: serviceData.selectedAddons || []
+        selectedServices: (serviceData.selectedServices || []).map(service => ({
+          service_id: service.service_id,
+          name: service.name,
+          duration: service.duration,
+          price: service.price,
+          category: service.category
+        })),
+        selectedAddons: (serviceData.selectedAddons || []).map(addon => ({
+          service_id: addon.service_id,
+          name: addon.name,
+          duration: addon.duration,
+          price: addon.price,
+          category: addon.category
+        }))
       };
 
       await setDoc(docRef, firestoreData);
