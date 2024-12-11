@@ -42,10 +42,12 @@ const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppoi
   return {
     petId: data.petId,
     serviceId: data.serviceId,
+    groomerId: data.groomerId,
+    branchId: data.branchId,
     date: Timestamp.fromDate(appointmentDate),
     status: 'pending',
     notes: data.notes || '',
-    productsUsed: [],
+    productsUsed: null,
     createdAt: Timestamp.fromDate(new Date()),
     updatedAt: null
   };

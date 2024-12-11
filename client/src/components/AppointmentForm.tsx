@@ -32,7 +32,11 @@ import { usePets } from "../hooks/use-pets";
 import { useToast } from "@/hooks/use-toast";
 import { useServices } from '../hooks/use-services'; // Import the hook for services
 
-export default function AppointmentForm() {
+interface AppointmentFormProps {
+  setOpen: (open: boolean) => void;
+}
+
+export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
   const { addAppointment } = useAppointments();
   const { pets } = usePets();
   const { services } = useServices(); // Get services data
@@ -90,9 +94,9 @@ export default function AppointmentForm() {
         groomerId: values.groomerId,
         branchId: values.branchId,
         date: appointmentDate.toISOString(),
-        status: 'pending',
+        status: 'pending' as const,
         notes: values.notes || '',
-        productsUsed: ''
+        productsUsed: null
       };
 
       console.log('Submitting appointment data:', data);
