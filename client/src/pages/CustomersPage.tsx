@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Plus, Search, Loader2 } from "lucide-react";
 import { useCustomers } from "@/hooks/use-customers";
 import { usePets } from "@/hooks/use-pets";
+import { Timestamp } from "firebase/firestore";
+import type { FirestoreTimestamp } from "@/lib/types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -34,14 +36,12 @@ export default function CustomersPage() {
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
-  const formatDate = (date: FirestoreDate | string | null | undefined) => {
+  const formatDate = (date: FirestoreTimestamp | string | null | undefined) => {
     if (!date) return 'N/A';
     try {
-      // Handle Firestore timestamp
-      if (typeof date === 'object' && 'seconds' in date) {
-        return new Date(date.seconds * 1000).toLocaleDateString();
+      if (date instanceof Timestamp) {
+        return date.toDate().toLocaleDateString();
       }
-      // Handle string date
       if (typeof date === 'string') {
         const parsedDate = new Date(date);
         return !isNaN(parsedDate.getTime()) ? parsedDate.toLocaleDateString() : 'Invalid Date';
@@ -87,29 +87,21 @@ export default function CustomersPage() {
   // Convert Firestore customer data to match the expected type
   const customersData = useMemo(() => {
     return (customersQuery.data || []).map(customer => {
-      const createdAt = (() => {
-        if (typeof customer.createdAt === 'string') return customer.createdAt;
-        if (customer.createdAt && typeof customer.createdAt === 'object' && 'seconds' in customer.createdAt) {
-          return new Date(customer.createdAt.seconds * 1000).toISOString();
-        }
-        return new Date().toISOString();
-      })();
-
-      const updatedAt = (() => {
-        if (!customer.updatedAt) return null;
-        if (typeof customer.updatedAt === 'string') return customer.updatedAt;
-        if (typeof customer.updatedAt === 'object' && 'seconds' in customer.updatedAt) {
-          return new Date(customer.updatedAt.seconds * 1000).toISOString();
+      const processTimestamp = (timestamp: FirestoreTimestamp | string | null | undefined): string | null => {
+        if (!timestamp) return null;
+        if (typeof timestamp === 'string') return timestamp;
+        if (timestamp instanceof Timestamp) {
+          return timestamp.toDate().toISOString();
         }
         return null;
-      })();
+      };
 
       return {
         ...customer,
         id: String(customer.id),
         gender: customer.gender as "male" | "female" | "other" | null,
-        createdAt,
-        updatedAt,
+        createdAt: processTimestamp(customer.createdAt) || new Date().toISOString(),
+        updatedAt: processTimestamp(customer.updatedAt),
         petCount: typeof customer.petCount === 'number' ? customer.petCount : 0
       };
     });

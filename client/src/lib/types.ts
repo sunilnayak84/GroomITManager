@@ -85,16 +85,41 @@ export const customerSchema = z.object({
   address: z.string().nullable(),
   gender: z.enum(["male", "female", "other"]).nullable(),
   petCount: z.number().default(0),
-  createdAt: z.string(),
-  updatedAt: z.string().nullable(),
+  createdAt: z.union([
+    z.string(),
+    z.custom<FirestoreTimestamp>((data) => data instanceof Timestamp),
+    z.date()
+  ]).transform(value => {
+    if (typeof value === 'string') return value;
+    if (value instanceof Date) return value.toISOString();
+    return value.toDate().toISOString();
+  }),
+  updatedAt: z.union([
+    z.string(),
+    z.custom<FirestoreTimestamp>((data) => data instanceof Timestamp),
+    z.date(),
+    z.null()
+  ]).transform(value => {
+    if (!value) return null;
+    if (typeof value === 'string') return value;
+    if (value instanceof Date) return value.toISOString();
+    return value.toDate().toISOString();
+  }).nullable(),
 });
 
 export type Customer = z.infer<typeof customerSchema>;
 export type InsertCustomer = Omit<Customer, "id" | "firebaseId" | "petCount" | "createdAt" | "updatedAt">;
 
-// Helper type for Firestore data
-export type FirestoreCustomerData = Omit<Customer, "id"> & {
+// Helper type for Firestore data with proper timestamp handling
+export type FirestoreCustomerData = Omit<Customer, "id" | "createdAt" | "updatedAt"> & {
   id?: string;
+  createdAt: FirestoreTimestamp | string;
+  updatedAt: FirestoreTimestamp | string | null;
+};
+
+export type CustomerWithTimestamp = Omit<Customer, "createdAt" | "updatedAt"> & {
+  createdAt: FirestoreTimestamp | string;
+  updatedAt: FirestoreTimestamp | string | null;
 };
 
 export type PetType = "dog" | "cat" | "bird" | "fish" | "other";
@@ -177,7 +202,16 @@ export type FirestorePet = {
   } | null;
 };
 
-export type FirestoreCustomer = WithFirestoreTimestamp<Omit<Customer, "petCount" | "gender">> & {
+export type FirestoreCustomer = {
+  id: string;
+  firebaseId: string | null;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string | null;
+  gender: "male" | "female" | "other" | null;
   petCount: number;
-  gender: Gender | null;
+  createdAt: FirestoreTimestamp;
+  updatedAt: FirestoreTimestamp | null;
 };
