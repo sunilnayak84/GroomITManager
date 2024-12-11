@@ -93,7 +93,7 @@ export default function AppointmentsPage() {
               New Appointment
             </Button>
           </DialogTrigger>
-          <AppointmentForm />
+          <AppointmentForm setOpen={setOpen} />
         </Dialog>
       </div>
 
