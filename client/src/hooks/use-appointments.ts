@@ -137,8 +137,7 @@ export function useAppointments() {
         
         // Prepare the data for Firestore
         const docRef = doc(appointmentsCollection);
-        const firestoreData = {
-          id: docRef.id,
+        const dataToSave = {
           petId: appointmentData.petId,
           serviceId: appointmentData.serviceId,
           groomerId: appointmentData.groomerId,
@@ -150,9 +149,6 @@ export function useAppointments() {
           createdAt: timestamp,
           updatedAt: null
         } as const;
-
-        // Remove the id before saving to Firestore
-        const { id, ...dataToSave } = firestoreData;
         
         console.log('Prepared Firestore data:', dataToSave);
         await setDoc(docRef, dataToSave);

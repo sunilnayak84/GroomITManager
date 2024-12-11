@@ -82,12 +82,16 @@ export async function createUserInDatabase(user: FirebaseUser) {
       .limit(1);
 
     if (!existingUser) {
-      await db.insert(users).values({
+      const userData = {
         id: user.id,
         email: user.email,
         name: user.name,
-        role: user.role
-      });
+        phone: '', // Required field
+        role: (user.role === 'admin' || user.role === 'staff') ? user.role : 'staff',
+        isGroomer: false,
+        isActive: true
+      };
+      await db.insert(users).values(userData);
 
       // Create user custom claims in Firebase
       await admin.auth().setCustomUserClaims(user.id, {

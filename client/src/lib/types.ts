@@ -30,6 +30,13 @@ export type WeightUnit = "kg" | "lbs";
 export type FirestoreDate = {
   seconds: number;
   nanoseconds: number;
+  toDate: () => Date;
+};
+
+export type FirestoreTimestamp = {
+  toDate(): Date;
+  seconds: number;
+  nanoseconds: number;
 };
 
 export interface PetInput {

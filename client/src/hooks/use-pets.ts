@@ -41,11 +41,11 @@ function parseFirestorePet(id: string, data: FirestorePet): Pet {
     image: data.image || null,
     createdAt: typeof data.createdAt === 'string' 
       ? data.createdAt 
-      : data.createdAt.toDate().toISOString(),
+      : ('toDate' in data.createdAt ? data.createdAt.toDate().toISOString() : data.createdAt),
     updatedAt: data.updatedAt 
       ? typeof data.updatedAt === 'string'
         ? data.updatedAt
-        : data.updatedAt.toDate().toISOString()
+        : ('toDate' in data.updatedAt ? data.updatedAt.toDate().toISOString() : data.updatedAt)
       : null,
     owner: data.owner || null
   };
@@ -92,7 +92,11 @@ export function usePets() {
         try {
           return parseFirestorePet(doc.id, {
             ...petData,
-            owner: customerDetails || null
+            owner: customerDetails ? {
+              id: customerDetails.id,
+              name: customerDetails.name,
+              email: customerDetails.email as string | null
+            } : null
           });
         } catch (error) {
           console.error('FETCH_PETS: Error parsing pet data:', {
@@ -180,7 +184,12 @@ export function usePets() {
         };
 
         // Create pet document
-        const newPetDoc = await addDoc(petsCollection, newPetData);
+        const firestoreData = {
+          ...newPetData,
+          owner: null, // Will be populated on fetch
+          id: null // Firestore will generate this
+        };
+        const newPetDoc = await addDoc(petsCollection, firestoreData);
         console.log('ADD_PET: Created new pet document with ID:', newPetDoc.id);
 
         // Update customer's pet count
