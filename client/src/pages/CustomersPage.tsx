@@ -934,40 +934,6 @@ export default function CustomersPage() {
                       }</p>
                     </div>
                   </div>
-
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold">Pets</h3>
-                    </div>
-                    <div className="grid grid-cols-1 gap-4">
-                      {selectedCustomerPets.map(pet => (
-                        <div key={pet.id} className="flex items-center gap-4 p-4 border rounded-lg hover:bg-accent transition-colors">
-                          <img
-                            src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
-                            alt={pet.name}
-                            className="w-12 h-12 rounded-full"
-                          />
-                          <div className="flex-1">
-                            <div className="font-medium">{pet.name}</div>
-                            <div className="text-sm text-muted-foreground capitalize">
-                              {pet.breed} · {pet.type}
-                            </div>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="ml-auto"
-                            onClick={() => {
-                              setSelectedPet(pet);
-                              setShowPetDetails(true);
-                            }}
-                          >
-                            View
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
                 </div>
               )}
             </div>
