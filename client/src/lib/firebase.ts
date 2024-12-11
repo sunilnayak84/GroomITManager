@@ -13,6 +13,7 @@ const requiredEnvVars = [
   'VITE_FIREBASE_APP_ID'
 ];
 
+console.log('Checking Firebase environment variables...');
 const missingEnvVars = requiredEnvVars.filter(varName => !import.meta.env[varName]);
 if (missingEnvVars.length > 0) {
   console.error(`Missing required Firebase environment variables: ${missingEnvVars.join(', ')}`);
@@ -26,16 +27,21 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  experimentalForceLongPolling: true // Add this for better connection stability
+  experimentalForceLongPolling: true, // Add this for better connection stability
+  experimentalAutoDetectLongPolling: true // Enable auto-detection of long polling needs
 };
 
 let app;
 try {
+  console.log('FIREBASE_INIT: Initializing Firebase with config:', {
+    ...firebaseConfig,
+    apiKey: '***' // Hide sensitive data in logs
+  });
   app = initializeApp(firebaseConfig);
-  console.log('Firebase initialized successfully');
+  console.log('FIREBASE_INIT: Firebase initialized successfully');
 } catch (error) {
-  console.error('Error initializing Firebase:', error);
-  throw error;
+  console.error('FIREBASE_INIT: Error initializing Firebase:', error);
+  throw new Error(`Failed to initialize Firebase: ${error instanceof Error ? error.message : 'Unknown error'}`);
 }
 
 export const auth = getAuth(app);
