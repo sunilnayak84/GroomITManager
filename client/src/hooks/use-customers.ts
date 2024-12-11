@@ -110,17 +110,24 @@ export function useCustomers() {
   const updateCustomerMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<Omit<CustomerType, 'id' | 'firebaseId' | 'createdAt' | 'updatedAt'>> }) => {
       const timestamp = new Date().toISOString();
-      const updateData = {
-        ...data,
+      
+      // Ensure type safety for the update data
+      const processedData: Partial<Customer> = {
+        ...Object.entries(data).reduce((acc, [key, value]) => {
+          if (value !== undefined) {
+            acc[key as keyof Customer] = value;
+          }
+          return acc;
+        }, {} as Partial<Customer>),
         updatedAt: timestamp
       };
       
-      await updateCustomerDoc(id, updateData);
+      await updateCustomerDoc(id, processedData);
       return {
         id,
         firebaseId: id,
-        ...updateData
-      };
+        ...processedData
+      } as Customer;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["customers"] });
@@ -255,17 +262,21 @@ export function useCustomers() {
         const querySnapshot = await getDocs(customersCollection);
         const customers = querySnapshot.docs.map(doc => {
           const customerData = doc.data();
-          const customer = {
+          const customer: CustomerType = {
             id: doc.id,
-            firebaseId: doc.id, // Explicitly add firebaseId for component usage
-            ...customerData,
-            // Ensure createdAt is a valid Date object
-            createdAt: customerData.createdAt 
-              ? new Date(customerData.createdAt) 
-              : new Date(),
-            petCount: customerData.petCount || 0,
-            gender: customerData.gender || null
-          } satisfies CustomerType;
+            firebaseId: doc.id,
+            firstName: customerData.firstName as string,
+            lastName: customerData.lastName as string,
+            email: customerData.email as string,
+            phone: customerData.phone as string,
+            address: customerData.address as string | null,
+            gender: (customerData.gender as "male" | "female" | "other" | null) || null,
+            petCount: Number(customerData.petCount || 0),
+            createdAt: new Date(customerData.createdAt as string).toISOString(),
+            updatedAt: customerData.updatedAt 
+              ? new Date(customerData.updatedAt as string).toISOString()
+              : null
+          };
           console.log('FETCH_CUSTOMERS: Processed customer:', {
             id: customer.id,
             firebaseId: customer.firebaseId,

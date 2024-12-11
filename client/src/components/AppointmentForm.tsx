@@ -43,7 +43,11 @@ export default function AppointmentForm() {
       serviceId: "",
       groomerId: defaultGroomerId,
       branchId: defaultBranchId,
-      date: new Date().toISOString(),
+      date: (() => {
+        const date = new Date();
+        date.setMinutes(date.getMinutes() + 30); // Set default time to 30 minutes from now
+        return date.toISOString();
+      })(),
       status: "pending",
       notes: "",
       productsUsed: null
@@ -127,8 +131,11 @@ export default function AppointmentForm() {
                   <Input 
                     type="datetime-local" 
                     {...field}
-                    value={field.value instanceof Date ? field.value.toISOString().slice(0, 16) : ''}
-                    onChange={(e) => field.onChange(new Date(e.target.value))}
+                    value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ''}
+                    onChange={(e) => {
+                      const date = new Date(e.target.value);
+                      field.onChange(date.toISOString());
+                    }}
                   />
                 </FormControl>
               </FormItem>
