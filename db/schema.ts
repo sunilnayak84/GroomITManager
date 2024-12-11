@@ -131,17 +131,11 @@ export const customers = pgTable("customers", {
 // Pets table
 export const pets = pgTable("pets", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  firebaseId: varchar("firebase_id", { length: 255 }).unique(),
   customerId: integer("customer_id").notNull().references(() => customers.id),
   name: varchar("name", { length: 255 }).notNull(),
   type: varchar("type", { length: 50 }).notNull(),
   breed: varchar("breed", { length: 100 }).notNull(),
-  dateOfBirth: varchar("date_of_birth", { length: 50 }),
-  age: integer("age"),
-  gender: varchar("gender", { length: 20 }),
-  weight: varchar("weight", { length: 20 }),
-  weightUnit: varchar("weight_unit", { length: 10 }).default("kg"),
-  imageUrl: text("image_url"),
+  size: varchar("size", { length: 50 }).notNull(),
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -151,7 +145,7 @@ export const appointments = pgTable("appointments", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   petId: integer("pet_id").notNull().references(() => pets.id),
   groomerId: integer("groomer_id").notNull(),
-  serviceType: varchar("service_type", { length: 255 }).notNull(),
+  serviceType: varchar("service_type", { length: 100 }).notNull(),
   status: varchar("status", { length: 50 }).notNull().default("pending"),
   appointmentDate: timestamp("appointment_date").notNull(),
   notes: text("notes"),
@@ -238,12 +232,7 @@ export const insertPetSchema = createInsertSchema(pets, {
   type: z.string().min(1, "Pet type is required"),
   breed: z.string().min(1, "Pet breed is required"),
   customerId: z.number().min(1, "Customer must be selected"),
-  dateOfBirth: z.string().nullable(),
-  age: z.number().nullable(),
-  gender: z.string().nullable(),
-  weight: z.string().nullable(),
-  weightUnit: z.string().default("kg"),
-  image: z.string().nullable(),
+  size: z.string().min(1, "Pet size is required"),
   notes: z.string().nullable(),
 });
 
@@ -258,13 +247,12 @@ export const insertCustomerSchema = createInsertSchema(customers, {
 
 export const insertAppointmentSchema = createInsertSchema(appointments, {
   petId: z.number().min(1, "Pet must be selected"),
-  serviceId: z.number().min(1, "Service must be selected"),
-  groomerId: z.string().min(1, "Groomer must be selected"),
-  branchId: z.number().min(1, "Branch must be selected"),
-  date: z.date().min(new Date(), "Appointment date must be in the future"),
-  status: z.enum(["pending", "confirmed", "completed", "cancelled"]),
-  notes: z.string().optional(),
-  productsUsed: z.string().optional(),
+  groomerId: z.number().min(1, "Groomer must be selected"),
+  serviceType: z.string().min(1, "Service type must be selected"),
+  status: z.enum(["pending", "confirmed", "completed", "cancelled"]).default("pending"),
+  appointmentDate: z.date().min(new Date(), "Appointment date must be in the future"),
+  price: z.number().min(0, "Price must be non-negative"),
+  notes: z.string().optional()
 });
 
 // Export types
