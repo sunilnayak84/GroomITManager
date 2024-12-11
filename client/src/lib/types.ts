@@ -1,6 +1,80 @@
-
 import { z } from "zod";
+import { Timestamp, FieldValue, DocumentData } from 'firebase/firestore';
 
+// Enhanced Firestore date types
+export type FirestoreTimestamp = Timestamp;
+export type FirestoreDate = FirestoreTimestamp;
+
+// Type guards and utility functions
+export function isFirestoreTimestamp(value: unknown): value is FirestoreTimestamp {
+  return value instanceof Timestamp;
+}
+
+export function isFirestoreDate(value: unknown): value is FirestoreDate {
+  return Boolean(
+    value &&
+    typeof value === 'object' &&
+    value instanceof Timestamp
+  );
+}
+
+// Helper to safely convert any value to a Date
+export function toDate(value: unknown): Date | null {
+  if (!value) return null;
+  if (value instanceof Date) return value;
+  if (value instanceof Timestamp) return value.toDate();
+  if (typeof value === 'string') {
+    const date = new Date(value);
+    return isNaN(date.getTime()) ? null : date;
+  }
+  return null;
+}
+
+// Helper to convert any value to an ISO string
+export function toISOString(value: unknown): string | null {
+  const date = toDate(value);
+  return date ? date.toISOString() : null;
+}
+
+export type WithFirestoreTimestamp<T> = {
+  [K in keyof T]: T[K] extends Date 
+    ? FirestoreTimestamp | string | null 
+    : T[K] extends Date | null 
+      ? FirestoreTimestamp | string | null 
+      : T[K];
+};
+
+// Type for Firestore document with optional ID
+export type WithOptionalId<T extends DocumentData> = Omit<T, 'id'> & {
+  id?: string;
+};
+
+// Helper type for Firestore operations
+export type FirestoreData<T> = Omit<T, 'id'> & {
+  id?: string;
+  createdAt?: FirestoreTimestamp | string;
+  updatedAt?: FirestoreTimestamp | string | null;
+};
+
+// Helper to convert Firestore timestamp to ISO string
+export function timestampToString(timestamp: FirestoreTimestamp | string | null | undefined): string | null {
+  if (!timestamp) return null;
+  if (typeof timestamp === 'string') return timestamp;
+  return timestamp.toDate().toISOString();
+}
+
+export function convertToFirestoreTimestamp(date: Date | string | Timestamp | null): Timestamp | null {
+  if (!date) return null;
+  if (date instanceof Timestamp) return date;
+  if (date instanceof Date) return Timestamp.fromDate(date);
+  try {
+    return Timestamp.fromDate(new Date(date));
+  } catch {
+    return null;
+  }
+}
+
+// Customer schemas and types
 export const customerSchema = z.object({
   id: z.string(),
   firebaseId: z.string().nullable(),
@@ -24,20 +98,8 @@ export type FirestoreCustomerData = Omit<Customer, "id"> & {
 };
 
 export type PetType = "dog" | "cat" | "bird" | "fish" | "other";
-export type Gender = "male" | "female" | "unknown";
+export type Gender = "male" | "female" | "unknown" | "other";
 export type WeightUnit = "kg" | "lbs";
-
-export type FirestoreDate = {
-  seconds: number;
-  nanoseconds: number;
-  toDate: () => Date;
-};
-
-export type FirestoreTimestamp = {
-  toDate(): Date;
-  seconds: number;
-  nanoseconds: number;
-};
 
 export interface PetInput {
   name: string;
@@ -57,8 +119,6 @@ export interface PetInput {
     name: string;
     email: string | null;
   } | null;
-  createdAt?: string;
-  updatedAt?: string | null;
 }
 
 export const petSchema = z.object({
@@ -93,25 +153,31 @@ export type InsertPet = Omit<PetInput, "id" | "submissionId"> & {
   firebaseId?: string | null;
 };
 
-export type FirestorePet = Omit<Pet, "createdAt" | "updatedAt" | "weight"> & {
-  createdAt: FirestoreDate | string;
-  updatedAt: FirestoreDate | string | null;
-  weight: string | number | null;
+export type FirestorePet = {
+  id: string;
+  firebaseId: string | null;
+  name: string;
+  type: PetType;
+  breed: string;
+  customerId: string;
+  dateOfBirth: string | null;
+  age: number | null;
+  gender: Gender | null;
+  weight: number | null;
+  weightUnit: WeightUnit;
+  notes: string | null;
+  image: string | null;
+  createdAt: FirestoreTimestamp;
+  updatedAt: FirestoreTimestamp | null;
+  submissionId?: string;
+  owner: {
+    id: string;
+    name: string;
+    email: string | null;
+  } | null;
 };
 
-export type FirestoreCustomer = Omit<Customer, "createdAt" | "updatedAt" | "petCount" | "gender"> & {
-  createdAt: FirestoreDate | string;
-  updatedAt: FirestoreDate | string | null;
+export type FirestoreCustomer = WithFirestoreTimestamp<Omit<Customer, "petCount" | "gender">> & {
   petCount: number;
   gender: Gender | null;
 };
-
-// Type guard for FirestoreDate
-export function isFirestoreDate(value: any): value is FirestoreDate {
-  return value && typeof value === 'object' && 'seconds' in value && 'nanoseconds' in value;
-}
-
-// Type guard for Gender
-export function isValidGender(value: any): value is Gender {
-  return value === 'male' || value === 'female' || value === 'unknown';
-}

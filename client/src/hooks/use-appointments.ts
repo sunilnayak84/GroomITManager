@@ -19,11 +19,16 @@ type FirestoreAppointmentData = Omit<Appointment, 'id'> & {
 type FirestoreDocumentData = Omit<FirestoreAppointmentData, 'id'>;
 
 // Helper function to ensure date is in ISO string format
-const ensureDateString = (date: Date | string | FieldValue | null | undefined): string | null => {
+const ensureDateString = (date: Date | string | FieldValue | Timestamp | null | undefined): string | null => {
   if (!date) return null;
   if (date instanceof Date) return date.toISOString();
   if (date instanceof FieldValue) return null;
-  return date as string;
+  if (date instanceof Timestamp) return date.toDate().toISOString();
+  if (typeof date === 'string') {
+    const parsed = new Date(date);
+    return isNaN(parsed.getTime()) ? null : parsed.toISOString();
+  }
+  return null;
 };
 
 // Helper function to convert Date | null to Date | undefined
@@ -137,7 +142,8 @@ export function useAppointments() {
         
         // Prepare the data for Firestore
         const docRef = doc(appointmentsCollection);
-        const dataToSave = {
+        const dataToSave: WithFieldValue<DocumentData> = {
+          id: docRef.id,
           petId: appointmentData.petId,
           serviceId: appointmentData.serviceId,
           groomerId: appointmentData.groomerId,
@@ -148,7 +154,7 @@ export function useAppointments() {
           productsUsed: appointmentData.productsUsed || null,
           createdAt: timestamp,
           updatedAt: null
-        } as const;
+        };
         
         console.log('Prepared Firestore data:', dataToSave);
         await setDoc(docRef, dataToSave);

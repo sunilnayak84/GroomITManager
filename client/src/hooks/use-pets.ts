@@ -2,7 +2,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   collection, getDocs, doc, runTransaction, increment, 
   addDoc, serverTimestamp, query, updateDoc, deleteDoc, 
-  getDoc, where, Timestamp, FieldValue 
+  getDoc, where, Timestamp, FieldValue, WithFieldValue,
+  DocumentData
 } from 'firebase/firestore';
 import { db } from "../lib/firebase";
 import { petsCollection, customersCollection } from "../lib/firestore";
@@ -39,14 +40,8 @@ function parseFirestorePet(id: string, data: FirestorePet): Pet {
     weightUnit: data.weightUnit || 'kg',
     notes: data.notes || null,
     image: data.image || null,
-    createdAt: typeof data.createdAt === 'string' 
-      ? data.createdAt 
-      : ('toDate' in data.createdAt ? data.createdAt.toDate().toISOString() : data.createdAt),
-    updatedAt: data.updatedAt 
-      ? typeof data.updatedAt === 'string'
-        ? data.updatedAt
-        : ('toDate' in data.updatedAt ? data.updatedAt.toDate().toISOString() : data.updatedAt)
-      : null,
+    createdAt: timestampToString(data.createdAt) ?? new Date().toISOString(),
+    updatedAt: timestampToString(data.updatedAt),
     owner: data.owner || null
   };
 }
@@ -183,11 +178,24 @@ export function usePets() {
           firebaseId: null
         };
 
-        // Create pet document
-        const firestoreData = {
-          ...newPetData,
-          owner: null, // Will be populated on fetch
-          id: null // Firestore will generate this
+        // Create pet document with proper Firestore types
+        const firestoreData: WithFieldValue<DocumentData> = {
+          name: newPetData.name,
+          type: newPetData.type,
+          breed: newPetData.breed,
+          customerId: newPetData.customerId,
+          dateOfBirth: newPetData.dateOfBirth,
+          age: newPetData.age,
+          gender: newPetData.gender,
+          weight: newPetData.weight,
+          weightUnit: newPetData.weightUnit,
+          notes: newPetData.notes,
+          image: newPetData.image,
+          firebaseId: null,
+          createdAt: serverTimestamp(),
+          updatedAt: null,
+          owner: null,
+          submissionId
         };
         const newPetDoc = await addDoc(petsCollection, firestoreData);
         console.log('ADD_PET: Created new pet document with ID:', newPetDoc.id);
