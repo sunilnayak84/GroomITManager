@@ -147,12 +147,18 @@ export function useAppointments() {
                   errorCount++;
                   continue;
                 }
-                petData = petDoc.data();
-                if (!petData) {
+                const rawPetData = petDoc.data();
+                if (!rawPetData) {
                   console.error('FETCH_APPOINTMENTS: Invalid pet data for:', appointmentData.petId);
                   errorCount++;
                   continue;
                 }
+                petData = {
+                  name: rawPetData.name || 'Unknown Pet',
+                  breed: rawPetData.breed || 'Unknown Breed',
+                  image: rawPetData.image || null,
+                  customerId: rawPetData.customerId || 'unknown'
+                };
               }
               
               console.log('FETCH_APPOINTMENTS: Pet data:', petData);
@@ -218,7 +224,7 @@ export function useAppointments() {
                 };
               } else {
                 if (!petData.customerId) {
-                  console.error('FETCH_APPOINTMENTS: Missing customerId for pet:', petData.id);
+                  console.error('FETCH_APPOINTMENTS: Missing customerId for pet:', appointmentData.petId);
                   errorCount++;
                   continue;
                 }
@@ -236,7 +242,7 @@ export function useAppointments() {
                 console.log('FETCH_APPOINTMENTS: Customer data:', customerData);
 
                 if (!customerData) {
-                  console.error('FETCH_APPOINTMENTS: Missing customer data for pet:', petData.id);
+                  console.error('FETCH_APPOINTMENTS: Missing customer data for pet:', appointmentData.petId);
                   errorCount++;
                   continue;
                 }
