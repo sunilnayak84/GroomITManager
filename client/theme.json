@@ -1,0 +1,11 @@
+{
+  "variant": "professional",
+  "primary": "hsl(260, 85%, 45%)",
+  "secondary": "hsl(200, 85%, 45%)",
+  "appearance": "light",
+  "radius": 0.5,
+  "background": "hsl(0, 0%, 100%)",
+  "foreground": "hsl(222, 47%, 11%)",
+  "muted": "hsl(210, 40%, 96%)",
+  "mutedForeground": "hsl(215, 16%, 47%)"
+}
