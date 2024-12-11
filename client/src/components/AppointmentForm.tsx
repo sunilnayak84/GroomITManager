@@ -17,6 +17,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
@@ -29,10 +30,12 @@ import {
 import { useAppointments } from "../hooks/use-appointments";
 import { usePets } from "../hooks/use-pets";
 import { useToast } from "@/hooks/use-toast";
+import { useServices } from '../hooks/use-services'; // Import the hook for services
 
 export default function AppointmentForm() {
   const { addAppointment } = useAppointments();
   const { pets } = usePets();
+  const { services } = useServices(); // Get services data
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -47,7 +50,8 @@ export default function AppointmentForm() {
       branchId: defaultBranchId,
       date: (() => {
         const date = new Date();
-        date.setMinutes(date.getMinutes() + 30); // Set default time to 30 minutes from now
+        date.setMinutes(date.getMinutes() + 15); // Set default time to 15 minutes from now, in 15 min increments
+        date.setMinutes(Math.round(date.getMinutes() / 15) * 15); //Round to nearest 15min
         return date.toISOString();
       })(),
       status: "pending",
@@ -65,6 +69,9 @@ export default function AppointmentForm() {
       if (!values.petId) {
         throw new Error("Please select a pet");
       }
+      if (!values.serviceId) {
+        throw new Error("Please select a service");
+      }
 
       // Ensure the date is valid before proceeding
       const appointmentDate = new Date(values.date);
@@ -81,13 +88,13 @@ export default function AppointmentForm() {
       // Validate and prepare the appointment data
       const data: z.infer<typeof insertAppointmentSchema> = {
         petId: values.petId,
-        serviceId: values.serviceId || '1', // Default service ID if not provided
+        serviceId: values.serviceId, 
         groomerId: values.groomerId,
         branchId: values.branchId,
         date: appointmentDate.toISOString(),
         status: 'pending',
         notes: values.notes || null,
-        productsUsed: null // Initialize as null since it's not used in the form
+        productsUsed: null 
       };
 
       console.log('Submitting appointment data:', data);
@@ -160,6 +167,7 @@ export default function AppointmentForm() {
                 <FormControl>
                   <Input 
                     type="datetime-local" 
+                    step="900" // 15-minute increments
                     {...field}
                     value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ''}
                     onChange={(e) => {
@@ -176,6 +184,30 @@ export default function AppointmentForm() {
                     }}
                   />
                 </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="serviceId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Service Type</FormLabel>
+                <Select onValueChange={field.onChange}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a service" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {(services || []).map((service) => (
+                      <SelectItem key={service.id} value={String(service.id)}>
+                        {service.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
               </FormItem>
             )}
           />
