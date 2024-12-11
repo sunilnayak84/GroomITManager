@@ -37,6 +37,20 @@ export const serviceSchema = z.object({
   updated_at: z.string().or(z.date()).transform(val => 
     typeof val === 'string' ? new Date(val) : val
   ),
+  selectedServices: z.array(z.object({
+    service_id: z.string(),
+    name: z.string(),
+    duration: z.number(),
+    price: z.number(),
+    category: z.enum([ServiceCategory.SERVICE, ServiceCategory.ADDON, ServiceCategory.PACKAGE])
+  })).optional(),
+  selectedAddons: z.array(z.object({
+    service_id: z.string(),
+    name: z.string(),
+    duration: z.number(),
+    price: z.number(),
+    category: z.enum([ServiceCategory.SERVICE, ServiceCategory.ADDON, ServiceCategory.PACKAGE])
+  })).optional()
 });
 
 // Export types based on the schema
