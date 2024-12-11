@@ -166,22 +166,23 @@ export default function AppointmentForm() {
                 <FormLabel>Date & Time</FormLabel>
                 <FormControl>
                   <Input 
-                    type="datetime-local" 
-                    step={900}
-                    min={new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
+                    type="datetime-local"
+                    step="900"
+                    min={new Date().toISOString().slice(0, 16)}
                     {...field}
-                    value={field.value ? new Date(new Date(field.value).getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16) : ''}
+                    value={field.value || ''}
                     onChange={(e) => {
-                      try {
-                        const selectedDate = new Date(e.target.value);
-                        if (!isNaN(selectedDate.getTime())) {
-                          const minutes = selectedDate.getMinutes();
-                          const roundedMinutes = Math.floor(minutes / 15) * 15;
-                          selectedDate.setMinutes(roundedMinutes, 0, 0);
-                          field.onChange(selectedDate.toISOString());
-                        }
-                      } catch (error) {
-                        console.error('Error parsing date:', error);
+                      const date = new Date(e.target.value);
+                      if (!isNaN(date.getTime())) {
+                        field.onChange(e.target.value);
+                      }
+                    }}
+                    onBlur={(e) => {
+                      const date = new Date(e.target.value);
+                      if (isNaN(date.getTime())) {
+                        field.onChange('');
+                      }
+                    }}
                       }
                     }}
                   />
