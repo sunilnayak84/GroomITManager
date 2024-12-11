@@ -40,6 +40,7 @@ export default function PetsPage() {
   } = usePets();
   const { customers } = useCustomers();
   const [showPetModal, setShowPetModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const [data, setData] = useState<Pet[]>([]);
@@ -262,8 +263,9 @@ export default function PetsPage() {
         </Table>
       </div>
 
+      {/* Add Pet Dialog */}
       <Dialog 
-        open={showPetModal}
+        open={showPetModal && !selectedPet}
         onOpenChange={(open) => {
           setShowPetModal(open);
           if (!open) {
@@ -273,28 +275,19 @@ export default function PetsPage() {
       >
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>{selectedPet ? 'Edit Pet' : 'Add New Pet'}</DialogTitle>
-            <DialogDescription>
-              {selectedPet ? 'Update the pet information below.' : 'Fill in the pet details below.'}
-            </DialogDescription>
+            <DialogTitle>Add New Pet</DialogTitle>
+            <DialogDescription>Fill in the pet details below.</DialogDescription>
           </DialogHeader>
           <PetForm
             handleSubmit={async (data) => {
               try {
-                if (selectedPet) {
-                  await handleUpdatePet(data);
-                } else {
-                  await addPet(data);
-                }
-                
+                await addPet(data);
                 await refetch();
-                
                 toast({
                   title: "Success",
-                  description: selectedPet ? "Pet updated successfully" : "Pet added successfully",
+                  description: "Pet added successfully",
                 });
                 setShowPetModal(false);
-                
                 return true;
               } catch (error) {
                 console.error('Error handling pet:', error);
@@ -308,9 +301,144 @@ export default function PetsPage() {
             }}
             onCancel={() => setShowPetModal(false)}
             customers={customers}
+            customerId={customers?.[0]?.firebaseId ?? ''}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* View/Edit Pet Dialog */}
+      {selectedPet && (
+        <Dialog 
+          open={showPetModal}
+          onOpenChange={(open) => {
+            setShowPetModal(open);
+            if (!open) {
+              setSelectedPet(null);
+            }
+          }}
+        >
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle>Pet Details</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                {selectedPet.image ? (
+                  <img
+                    src={selectedPet.image}
+                    alt={selectedPet.name}
+                    className="w-24 h-24 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-24 h-24 rounded-full bg-secondary flex items-center justify-center">
+                    <span className="text-2xl font-semibold">
+                      {selectedPet.name.substring(0, 2).toUpperCase()}
+                    </span>
+                  </div>
+                )}
+                <div>
+                  <h2 className="text-2xl font-bold">{selectedPet.name}</h2>
+                  <p className="text-muted-foreground">
+                    {selectedPet.type} • {selectedPet.breed}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-8">
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Basic Information</h3>
+                  <p><span className="text-muted-foreground">Type:</span> {selectedPet.type}</p>
+                  <p><span className="text-muted-foreground">Breed:</span> {selectedPet.breed}</p>
+                  <p><span className="text-muted-foreground">Gender:</span> {selectedPet.gender || 'Not specified'}</p>
+                  <p><span className="text-muted-foreground">Age:</span> {selectedPet.age || 'Not specified'}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Additional Information</h3>
+                  <p><span className="text-muted-foreground">Date of Birth:</span> {formatDate(selectedPet.dateOfBirth)}</p>
+                  <p><span className="text-muted-foreground">Weight:</span> {selectedPet.weight ? `${selectedPet.weight} ${selectedPet.weightUnit}` : 'Not specified'}</p>
+                  <p><span className="text-muted-foreground">Owner:</span> {selectedPet.owner?.name || 'Not specified'}</p>
+                </div>
+              </div>
+
+              {selectedPet.notes && (
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Notes</h3>
+                  <p className="text-sm text-muted-foreground">{selectedPet.notes}</p>
+                </div>
+              )}
+
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowDeleteConfirm(true);
+                  }}
+                >
+                  Delete
+                </Button>
+                <Button
+                  onClick={() => {
+                    setShowEditModal(true);
+                    setShowPetModal(false);
+                  }}
+                >
+                  Edit
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Edit Pet Dialog */}
+      <Dialog
+        open={showEditModal}
+        onOpenChange={(open) => {
+          setShowEditModal(open);
+          if (!open && selectedPet) {
+            setShowPetModal(true);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Edit Pet</DialogTitle>
+            <DialogDescription>Update the pet information below.</DialogDescription>
+          </DialogHeader>
+          <PetForm
+            handleSubmit={async (data) => {
+              try {
+                if (selectedPet) {
+                  await handleUpdatePet(data);
+                  await refetch();
+                  toast({
+                    title: "Success",
+                    description: "Pet updated successfully",
+                  });
+                  setShowEditModal(false);
+                  setShowPetModal(true);
+                  return true;
+                }
+                return false;
+              } catch (error) {
+                console.error('Error updating pet:', error);
+                toast({
+                  variant: "destructive",
+                  title: "Error",
+                  description: error instanceof Error ? error.message : "Failed to update pet",
+                });
+                return false;
+              }
+            }}
+            onCancel={() => {
+              setShowEditModal(false);
+              setShowPetModal(true);
+            }}
+            customers={customers}
             defaultValues={selectedPet ?? undefined}
-            customerId={selectedPet?.customerId ?? (customers?.[0]?.firebaseId ?? '')}
-            isEditing={!!selectedPet}
+            customerId={selectedPet?.customerId ?? ''}
+            isEditing={true}
           />
         </DialogContent>
       </Dialog>
