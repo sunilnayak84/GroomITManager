@@ -19,9 +19,9 @@ const petSchema = z.object({
   customerId: z.string().min(1, "Customer is required"),
   dateOfBirth: z.string().nullable(),
   age: z.number().nullable().or(z.string().transform(val => val ? Number(val) : null)),
-  gender: z.enum(["male", "female", "unknown"], {
+  gender: z.enum(["male", "female", "unknown", "other"], {
     required_error: "Gender is required"
-  }).nullish(),
+  }).nullable(),
   weight: z.string().nullable().or(z.number().transform(String)),
   weightUnit: z.enum(["kg", "lbs"], {
     required_error: "Weight unit is required"
