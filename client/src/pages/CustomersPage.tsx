@@ -972,12 +972,18 @@ export default function CustomersPage() {
       {/* Pet Details Dialog */}
       <Dialog open={showPetDetails} onOpenChange={setShowPetDetails}>
         <DialogContent className="sm:max-w-[625px]">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-semibold">Pet Details</DialogTitle>
-            <DialogDescription>View detailed information about this pet</DialogDescription>
-          </DialogHeader>
           {selectedPet && (
-            <div className="space-y-6 mt-4">
+            <PetDetails 
+              pet={selectedPet}
+              formatDate={formatDate}
+              onEdit={() => {
+                setShowEditModal(true);
+                setShowPetDetails(false);
+              }}
+              onDelete={() => {
+                setShowDeleteConfirm(true);
+              }}
+            />
               <div className="flex items-center gap-6 bg-secondary/20 p-6 rounded-lg">
                 <img
                   src={selectedPet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${selectedPet.name}`}
