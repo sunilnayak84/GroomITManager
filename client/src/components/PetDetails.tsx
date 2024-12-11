@@ -13,18 +13,6 @@ interface PetDetailsProps {
 export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProps) {
   return (
     <>
-      <div className="flex justify-end gap-2 mb-4">
-        {onEdit && onDelete && (
-          <>
-            <Button variant="outline" size="sm" onClick={onEdit}>
-              Edit
-            </Button>
-            <Button variant="destructive" size="sm" onClick={onDelete}>
-              Delete
-            </Button>
-          </>
-        )}
-      </div>
       <div className="space-y-6">
         <div className="flex items-center gap-4">
           {pet.image ? (
@@ -69,6 +57,17 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
           <div className="space-y-2">
             <h3 className="font-semibold">Notes</h3>
             <p className="text-sm text-muted-foreground">{pet.notes}</p>
+          </div>
+        )}
+
+        {onEdit && onDelete && (
+          <div className="flex justify-center gap-2 mt-6">
+            <Button variant="outline" size="sm" onClick={onEdit}>
+              Edit
+            </Button>
+            <Button variant="destructive" size="sm" onClick={onDelete}>
+              Delete
+            </Button>
           </div>
         )}
       </div>
