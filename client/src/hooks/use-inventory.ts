@@ -23,19 +23,21 @@ const formatDate = (date: Date) => {
 export const inventoryItemSchema = z.object({
   item_id: z.string(),
   name: z.string().min(2, "Name must be at least 2 characters"),
-  description: z.string().optional().nullable(),
+  description: z.string().nullable().default(null),
   quantity: z.number().min(0, "Quantity cannot be negative").default(0),
   minimum_quantity: z.number().min(0, "Minimum quantity cannot be negative").default(0),
   unit: z.string().min(1, "Unit is required"),
   cost_per_unit: z.number().min(0, "Cost must be non-negative").default(0),
   category: z.string().min(1, "Category is required"),
-  supplier: z.string().nullable(),
-  last_restock_date: z.union([z.date(), z.null()]).nullable(),
+  supplier: z.string().nullable().default(null),
+  last_restock_date: z.union([z.date(), z.null()]).nullable().default(null),
   isActive: z.boolean().default(true),
   quantity_per_use: z.number().min(0, "Quantity per use must be non-negative").default(1),
   service_linked: z.boolean().default(false),
   reorder_point: z.number().min(0, "Reorder point cannot be negative").default(0),
   reorder_quantity: z.number().min(0, "Reorder quantity cannot be negative").default(0),
+  location: z.string().nullable().default(null),
+  barcode: z.string().nullable().default(null),
   created_at: z.date(),
   updated_at: z.date().nullable(),
 });
@@ -91,29 +93,44 @@ export function useInventory() {
 
         const items = querySnapshot.docs.map((doc) => {
           const data = doc.data();
+          console.log('FETCH_INVENTORY: Processing item data:', { id: doc.id, data });
           try {
             const parsedData = {
               item_id: doc.id,
               name: data.name || '',
-              description: data.description,
+              description: data.description || null,
               quantity: Number(data.quantity) || 0,
               minimum_quantity: Number(data.minimum_quantity) || 0,
               unit: data.unit || 'units',
               cost_per_unit: Number(data.cost_per_unit) || 0,
               category: data.category || 'uncategorized',
-              supplier: data.supplier,
-              last_restock_date: data.last_restock_date && 'toDate' in data.last_restock_date ? 
-                data.last_restock_date.toDate() : 
-                data.last_restock_date ? new Date(data.last_restock_date) : undefined,
+              supplier: data.supplier || null,
+              last_restock_date: data.last_restock_date ? 
+                (data.last_restock_date instanceof Timestamp ? 
+                  data.last_restock_date.toDate() : 
+                  new Date(data.last_restock_date)
+                ) : null,
               isActive: data.isActive ?? true,
-              created_at: data.created_at && 'toDate' in data.created_at ? 
-                data.created_at.toDate() : 
-                new Date(),
-              updated_at: data.updated_at && 'toDate' in data.updated_at ? 
-                data.updated_at.toDate() : 
-                data.updated_at ? new Date(data.updated_at) : undefined,
+              location: data.location || null,
+              barcode: data.barcode || null,
+              quantity_per_use: Number(data.quantity_per_use) || 1,
+              service_linked: data.service_linked ?? false,
+              reorder_point: Number(data.reorder_point) || 0,
+              reorder_quantity: Number(data.reorder_quantity) || 0,
+              created_at: data.created_at ? 
+                (data.created_at instanceof Timestamp ? 
+                  data.created_at.toDate() : 
+                  new Date(data.created_at)
+                ) : new Date(),
+              updated_at: data.updated_at ? 
+                (data.updated_at instanceof Timestamp ? 
+                  data.updated_at.toDate() : 
+                  new Date(data.updated_at)
+                ) : null,
             };
-            return inventoryItemSchema.parse(parsedData);
+            const validatedItem = inventoryItemSchema.parse(parsedData);
+            console.log('FETCH_INVENTORY: Successfully parsed item:', { id: doc.id, item: validatedItem });
+            return validatedItem;
           } catch (parseError) {
             console.error('FETCH_INVENTORY: Error parsing item:', { id: doc.id, error: parseError });
             return null;
@@ -174,9 +191,13 @@ export function useInventory() {
         service_linked: itemData.service_linked ?? false,
         reorder_point: Number(itemData.reorder_point || 0),
         reorder_quantity: Number(itemData.reorder_quantity || 0),
-        created_at: timestamp,
-        updated_at: timestamp
+        location: itemData.location?.trim() || null,
+        barcode: itemData.barcode?.trim() || null,
+        created_at: serverTimestamp(),
+        updated_at: serverTimestamp()
       };
+
+      console.log('ADD_INVENTORY: Formatted data for Firestore:', firestoreData);
 
       console.log('ADD_INVENTORY: Saving item to Firestore:', firestoreData);
       await setDoc(docRef, firestoreData);

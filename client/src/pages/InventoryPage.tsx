@@ -88,23 +88,24 @@ export default function InventoryPage() {
 
   const onSubmit = async (data: InsertInventoryItem) => {
     try {
-      const formattedData: InsertInventoryItem = {
-        ...data,
-        description: data.description || null,
-        supplier: data.supplier || null,
-        location: data.location || null,
-        barcode: data.barcode || null,
-        quantity_per_use: data.quantity_per_use ?? 1,
-        service_linked: data.service_linked ?? false,
+      const formattedData = {
+        name: data.name.trim(),
+        description: data.description?.trim() || null,
+        quantity: Number(data.quantity),
+        minimum_quantity: Number(data.minimum_quantity),
+        unit: data.unit.trim(),
+        cost_per_unit: Number(data.cost_per_unit),
+        category: data.category.trim(),
+        supplier: data.supplier?.trim() || null,
         last_restock_date: data.last_restock_date || null,
         isActive: data.isActive ?? true,
-        reorder_point: data.reorder_point ?? 0,
-        reorder_quantity: data.reorder_quantity ?? 0,
-        category: data.category || "",
-        cost_per_unit: data.cost_per_unit ?? 0,
-        unit: data.unit || "pieces",
-        minimum_quantity: data.minimum_quantity ?? 0,
-      };
+        quantity_per_use: Number(data.quantity_per_use || 1),
+        service_linked: data.service_linked ?? false,
+        reorder_point: Number(data.reorder_point || 0),
+        reorder_quantity: Number(data.reorder_quantity || 0),
+        location: data.location?.trim() || null,
+        barcode: data.barcode?.trim() || null,
+      } satisfies InsertInventoryItem;
 
       if (selectedItem?.id) {
         await updateInventoryItem(selectedItem.id, formattedData);
@@ -145,8 +146,8 @@ export default function InventoryPage() {
       name: item.name,
       quantity: item.quantity,
       unit: item.unit,
-      supplier: item.supplier,
-      description: item.description,
+      supplier: item.supplier || null,
+      description: item.description || null,
       minimum_quantity: item.minimum_quantity,
       cost_per_unit: 0,
       category: item.category || "",
@@ -154,8 +155,8 @@ export default function InventoryPage() {
       isActive: item.isActive ?? true,
       reorder_point: item.reorder_point ?? 0,
       reorder_quantity: item.reorder_quantity ?? 0,
-      location: item.location,
-      barcode: item.barcode,
+      location: item.location || null,
+      barcode: item.barcode || null,
       quantity_per_use: item.quantity_per_use ?? 1,
       service_linked: item.service_linked ?? false,
     };
@@ -307,7 +308,7 @@ export default function InventoryPage() {
           </div>
 
           <Dialog open={showItemDialog} onOpenChange={setShowItemDialog}>
-            <DialogContent>
+            <DialogContent className="max-h-[80vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>
                   {selectedItem ? "Edit Item" : "Add New Item"}
