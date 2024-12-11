@@ -13,19 +13,18 @@ interface PetDetailsProps {
 export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProps) {
   return (
     <>
-      <DialogHeader>
-        <DialogTitle>Pet Details</DialogTitle>
+      <div className="flex justify-end gap-2 mb-4">
         {onEdit && onDelete && (
-          <div className="flex gap-2">
+          <>
             <Button variant="outline" size="sm" onClick={onEdit}>
               Edit
             </Button>
             <Button variant="destructive" size="sm" onClick={onDelete}>
               Delete
             </Button>
-          </div>
+          </>
         )}
-      </DialogHeader>
+      </div>
       <div className="space-y-6">
         <div className="flex items-center gap-4">
           {pet.image ? (
