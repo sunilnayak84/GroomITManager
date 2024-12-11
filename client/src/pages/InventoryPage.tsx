@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ConsumablesUsageModal } from "@/components/ConsumablesUsageModal";
 import { toast } from "@/components/ui/use-toast";
-import { formatIndianCurrency, formatIndianDate, formatQuantity } from "@/lib/utils";
+import { formatIndianCurrency, formatQuantity } from "@/lib/utils";
 
 import {
   Table,
@@ -107,7 +107,11 @@ export default function InventoryPage() {
       category: "uncategorized",
       supplier: "",
       isActive: true,
-      last_restock_date: undefined,
+      quantity_per_use: 1,
+      service_linked: false,
+      reorder_point: 0,
+      reorder_quantity: 0,
+      last_restock_date: null,
     },
   });
 
@@ -157,7 +161,7 @@ export default function InventoryPage() {
       const matchesSearch = 
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.supplier?.toLowerCase().includes(searchQuery.toLowerCase());
+        (item.supplier || '').toLowerCase().includes(searchQuery.toLowerCase());
 
       // Category filter
       const matchesCategory = selectedCategory === "all" || item.category === selectedCategory;
@@ -183,6 +187,7 @@ export default function InventoryPage() {
 
   return (
     <div className="container mx-auto py-6 space-y-6">
+      {/* Header Banner */}
       <div className="relative h-48 rounded-xl overflow-hidden">
         <img
           src="https://images.unsplash.com/photo-1587293852726-70cdb56c2866"
@@ -280,7 +285,7 @@ export default function InventoryPage() {
                     <FormItem>
                       <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -293,7 +298,7 @@ export default function InventoryPage() {
                     <FormItem>
                       <FormLabel>Description</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -310,7 +315,8 @@ export default function InventoryPage() {
                           <Input
                             type="number"
                             {...field}
-                            onChange={e => field.onChange(Number(e.target.value))}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            value={field.value || 0}
                           />
                         </FormControl>
                         <FormMessage />
@@ -327,7 +333,8 @@ export default function InventoryPage() {
                           <Input
                             type="number"
                             {...field}
-                            onChange={e => field.onChange(Number(e.target.value))}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            value={field.value || 0}
                           />
                         </FormControl>
                         <FormMessage />
@@ -342,7 +349,7 @@ export default function InventoryPage() {
                     <FormItem>
                       <FormLabel>Unit</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -359,7 +366,8 @@ export default function InventoryPage() {
                           type="number"
                           step="0.01"
                           {...field}
-                          onChange={e => field.onChange(Number(e.target.value))}
+                          onChange={(e) => field.onChange(Number(e.target.value))}
+                          value={field.value || 0}
                         />
                       </FormControl>
                       <FormMessage />
@@ -373,7 +381,7 @@ export default function InventoryPage() {
                     <FormItem>
                       <FormLabel>Category</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -386,12 +394,50 @@ export default function InventoryPage() {
                     <FormItem>
                       <FormLabel>Supplier</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="reorder_point"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Reorder Point</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            {...field}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            value={field.value || 0}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="reorder_quantity"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Reorder Quantity</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            {...field}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            value={field.value || 0}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <Button type="submit" className="w-full">Add Item</Button>
               </form>
             </Form>
@@ -449,15 +495,10 @@ export default function InventoryPage() {
                                 <AlertTriangle className="h-4 w-4 mr-1" />
                                 Out of Stock
                               </div>
-                            ) : item.quantity <= item.minimum_quantity ? (
+                            ) : (
                               <div className="flex items-center text-yellow-500">
                                 <AlertTriangle className="h-4 w-4 mr-1" />
                                 Low Stock ({item.quantity} remaining)
-                              </div>
-                            ) : (
-                              <div className="flex items-center text-green-500">
-                                <Package className="h-4 w-4 mr-1" />
-                                In Stock ({item.quantity} available)
                               </div>
                             )}
                           </div>
@@ -535,6 +576,7 @@ export default function InventoryPage() {
                             </div>
                           </DialogContent>
                         </Dialog>
+
                         {/* Record Usage Button */}
                         <Button
                           variant="ghost"
@@ -570,7 +612,7 @@ export default function InventoryPage() {
                                     <FormItem>
                                       <FormLabel>Name</FormLabel>
                                       <FormControl>
-                                        <Input {...field} defaultValue={item.name} />
+                                        <Input {...field} defaultValue={item.name || ''} />
                                       </FormControl>
                                       <FormMessage />
                                     </FormItem>
@@ -588,7 +630,7 @@ export default function InventoryPage() {
                                             type="number"
                                             {...field}
                                             defaultValue={item.quantity}
-                                            onChange={e => field.onChange(Number(e.target.value))}
+                                            onChange={(e) => field.onChange(Number(e.target.value))}
                                           />
                                         </FormControl>
                                         <FormMessage />
@@ -606,7 +648,7 @@ export default function InventoryPage() {
                                             type="number"
                                             {...field}
                                             defaultValue={item.minimum_quantity}
-                                            onChange={e => field.onChange(Number(e.target.value))}
+                                            onChange={(e) => field.onChange(Number(e.target.value))}
                                           />
                                         </FormControl>
                                         <FormMessage />
@@ -622,7 +664,7 @@ export default function InventoryPage() {
                                       <FormItem>
                                         <FormLabel>Unit</FormLabel>
                                         <FormControl>
-                                          <Input {...field} defaultValue={item.unit} />
+                                          <Input {...field} defaultValue={item.unit || ''} />
                                         </FormControl>
                                         <FormMessage />
                                       </FormItem>
@@ -639,8 +681,8 @@ export default function InventoryPage() {
                                             type="number"
                                             step="0.01"
                                             {...field}
-                                            defaultValue={item.cost_per_unit}
-                                            onChange={e => field.onChange(Number(e.target.value))}
+                                            defaultValue={item.cost_per_unit || 0}
+                                            onChange={(e) => field.onChange(Number(e.target.value))}
                                           />
                                         </FormControl>
                                         <FormMessage />
@@ -655,7 +697,7 @@ export default function InventoryPage() {
                                     <FormItem>
                                       <FormLabel>Category</FormLabel>
                                       <FormControl>
-                                        <Input {...field} defaultValue={item.category} />
+                                        <Input {...field} defaultValue={item.category || ''} />
                                       </FormControl>
                                       <FormMessage />
                                     </FormItem>
@@ -692,6 +734,7 @@ export default function InventoryPage() {
                             </Form>
                           </DialogContent>
                         </Dialog>
+
                         {/* Delete Item Button */}
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
