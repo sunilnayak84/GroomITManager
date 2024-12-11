@@ -1,7 +1,24 @@
-import { Plus, Search, Edit, Trash2, History, Package, AlertTriangle, Droplets } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import {
+  Plus,
+  Search,
+  Edit,
+  Trash2,
+  History,
+  Package,
+  AlertTriangle,
+  Droplets,
+  DollarSign
+} from "lucide-react";
+import { ErrorBoundary } from "react-error-boundary";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useInventory, type InventoryItem, inventoryItemSchema, type InsertInventoryItem } from "@/hooks/use-inventory";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ConsumablesUsageModal } from "@/components/ConsumablesUsageModal";
+import { toast } from "@/components/ui/use-toast";
+
 import {
   Table,
   TableBody,
@@ -10,6 +27,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,13 +47,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
 import {
   Form,
   FormControl,
@@ -36,14 +56,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useInventory, type InsertInventoryItem } from "@/hooks/use-inventory";
-import { ConsumablesUsageModal } from "@/components/ConsumablesUsageModal";
-import { ErrorBoundary } from "react-error-boundary";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { inventoryItemSchema } from "@/hooks/use-inventory";
-import { toast } from "@/components/ui/use-toast";
 
+// Error Fallback Component
 function ErrorFallback({ error }: { error: Error }) {
   return (
     <div className="p-4 rounded-md bg-red-50 border border-red-200">
@@ -55,19 +69,46 @@ function ErrorFallback({ error }: { error: Error }) {
   );
 }
 
+interface SelectedItem {
+  id: string;
+  name: string;
+  quantity: number;
+  unit: string;
+}
+
 export default function InventoryPage() {
   const [open, setOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<{
-    id: string;
-    name: string;
-    quantity: number;
-    unit: string;
-  } | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null);
   const [selectedHistoryItem, setSelectedHistoryItem] = useState<string | null>(null);
   const [usageHistory, setUsageHistory] = useState<any[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [stockFilter, setStockFilter] = useState<"all" | "low" | "normal">("all");
+
   const { inventory, isLoading, error, addInventoryItem, updateInventoryItem, deleteInventoryItem, recordUsage, getUsageHistory } = useInventory();
+
+  // Get unique categories from inventory
+  const categories = useMemo(() => {
+    const uniqueCategories = new Set(inventory?.map(item => item.category) || []);
+    return ["all", ...Array.from(uniqueCategories)];
+  }, [inventory]);
+
+  const form = useForm<InsertInventoryItem>({
+    resolver: zodResolver(inventoryItemSchema.omit({ item_id: true, created_at: true, updated_at: true })),
+    defaultValues: {
+      name: "",
+      description: "",
+      quantity: 0,
+      minimum_quantity: 0,
+      unit: "units",
+      cost_per_unit: 0,
+      category: "uncategorized",
+      supplier: "",
+      isActive: true,
+      last_restock_date: undefined,
+    },
+  });
 
   // Fetch usage history when an item is selected
   const handleViewHistory = async (itemId: string) => {
@@ -87,22 +128,6 @@ export default function InventoryPage() {
       setIsLoadingHistory(false);
     }
   };
-
-  const form = useForm<InsertInventoryItem>({
-    resolver: zodResolver(inventoryItemSchema.omit({ item_id: true, created_at: true, updated_at: true })),
-    defaultValues: {
-      name: "",
-      description: "",
-      quantity: 0,
-      minimum_quantity: 0,
-      unit: "units",
-      cost_per_unit: 0,
-      category: "uncategorized",
-      supplier: "",
-      isActive: true,
-      last_restock_date: undefined,
-    },
-  });
 
   async function onSubmit(data: InsertInventoryItem) {
     try {
@@ -124,12 +149,28 @@ export default function InventoryPage() {
     }
   }
 
-  // Filter inventory items based on search query
-  const filteredInventory = inventory?.filter(item =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.supplier?.toLowerCase().includes(searchQuery.toLowerCase())
-  ) || [];
+  // Filter inventory items based on search query, category, and stock level
+  const filteredInventory = useMemo(() => {
+    return inventory?.filter(item => {
+      // Search query filter
+      const matchesSearch = 
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.supplier?.toLowerCase().includes(searchQuery.toLowerCase());
+
+      // Category filter
+      const matchesCategory = selectedCategory === "all" || item.category === selectedCategory;
+
+      // Stock level filter
+      const isLowStock = item.quantity <= item.minimum_quantity;
+      const matchesStockFilter = 
+        stockFilter === "all" || 
+        (stockFilter === "low" && isLowStock) || 
+        (stockFilter === "normal" && !isLowStock);
+
+      return matchesSearch && matchesCategory && matchesStockFilter;
+    }) || [];
+  }, [inventory, searchQuery, selectedCategory, stockFilter]);
 
   if (error) {
     return (
@@ -155,9 +196,39 @@ export default function InventoryPage() {
         </div>
       </div>
 
+      {/* Statistics Dashboard */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+          <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <h3 className="text-sm font-medium">Total Items</h3>
+            <Package className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <div className="text-2xl font-bold">{inventory?.length || 0}</div>
+        </div>
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+          <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <h3 className="text-sm font-medium">Low Stock Items</h3>
+            <AlertTriangle className="h-4 w-4 text-destructive" />
+          </div>
+          <div className="text-2xl font-bold">
+            {inventory?.filter(item => item.quantity <= item.minimum_quantity).length || 0}
+          </div>
+        </div>
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+          <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <h3 className="text-sm font-medium">Total Value</h3>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <div className="text-2xl font-bold">
+            ${inventory?.reduce((total, item) => total + (item.quantity * item.cost_per_unit), 0).toFixed(2) || "0.00"}
+          </div>
+        </div>
+      </div>
+
+      {/* Search and Filters */}
       <div className="flex items-center justify-between gap-4">
-        <div className="flex-1 max-w-md">
-          <div className="relative">
+        <div className="flex-1 flex gap-4">
+          <div className="relative max-w-md flex-1">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search inventory..."
@@ -166,7 +237,29 @@ export default function InventoryPage() {
               className="pl-10 h-12"
             />
           </div>
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="h-12 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+          >
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category === "all" ? "All Categories" : category}
+              </option>
+            ))}
+          </select>
+          <select
+            value={stockFilter}
+            onChange={(e) => setStockFilter(e.target.value as "all" | "low" | "normal")}
+            className="h-12 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+          >
+            <option value="all">All Stock Levels</option>
+            <option value="low">Low Stock</option>
+            <option value="normal">Normal Stock</option>
+          </select>
         </div>
+
+        {/* Add Item Dialog */}
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button size="lg" className="h-12">
@@ -185,6 +278,19 @@ export default function InventoryPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -228,39 +334,37 @@ export default function InventoryPage() {
                     )}
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="unit"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Unit</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="cost_per_unit"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Cost per Unit</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            step="0.01"
-                            {...field}
-                            onChange={e => field.onChange(Number(e.target.value))}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                <FormField
+                  control={form.control}
+                  name="unit"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Unit</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="cost_per_unit"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cost per Unit</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          {...field}
+                          onChange={e => field.onChange(Number(e.target.value))}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="category"
@@ -287,19 +391,6 @@ export default function InventoryPage() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                 <Button type="submit" className="w-full">Add Item</Button>
               </form>
             </Form>
@@ -307,6 +398,7 @@ export default function InventoryPage() {
         </Dialog>
       </div>
 
+      {/* Inventory Table */}
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         <div className="rounded-xl border bg-white shadow-sm">
           <Table>
@@ -350,9 +442,23 @@ export default function InventoryPage() {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         {item.quantity <= item.minimum_quantity ? (
-                          <div className="flex items-center text-red-500">
-                            <AlertTriangle className="h-4 w-4 mr-1" />
-                            Low Stock
+                          <div className="flex items-center">
+                            {item.quantity === 0 ? (
+                              <div className="flex items-center text-destructive">
+                                <AlertTriangle className="h-4 w-4 mr-1" />
+                                Out of Stock
+                              </div>
+                            ) : item.quantity <= item.minimum_quantity ? (
+                              <div className="flex items-center text-yellow-500">
+                                <AlertTriangle className="h-4 w-4 mr-1" />
+                                Low Stock ({item.quantity} remaining)
+                              </div>
+                            ) : (
+                              <div className="flex items-center text-green-500">
+                                <Package className="h-4 w-4 mr-1" />
+                                In Stock ({item.quantity} available)
+                              </div>
+                            )}
                           </div>
                         ) : (
                           <div className="text-green-500">In Stock</div>
@@ -367,6 +473,7 @@ export default function InventoryPage() {
                     <TableCell>{item.supplier || '-'}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
+                        {/* View History Button */}
                         <Dialog open={selectedHistoryItem === item.item_id} onOpenChange={(open) => {
                           if (open) {
                             handleViewHistory(item.item_id);
@@ -427,6 +534,7 @@ export default function InventoryPage() {
                             </div>
                           </DialogContent>
                         </Dialog>
+                        {/* Record Usage Button */}
                         <Button
                           variant="ghost"
                           size="icon"
@@ -440,6 +548,8 @@ export default function InventoryPage() {
                         >
                           <Droplets className="h-4 w-4" />
                         </Button>
+
+                        {/* Edit Item Dialog */}
                         <Dialog>
                           <DialogTrigger asChild>
                             <Button variant="ghost" size="icon" title="Edit Item">
@@ -581,6 +691,7 @@ export default function InventoryPage() {
                             </Form>
                           </DialogContent>
                         </Dialog>
+                        {/* Delete Item Button */}
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button variant="ghost" size="icon" className="text-red-500" title="Delete Item">
