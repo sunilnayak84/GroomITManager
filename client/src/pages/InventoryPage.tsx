@@ -231,6 +231,7 @@ export default function InventoryPage() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleEdit(item)}
+                          title="Edit"
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -248,6 +249,7 @@ export default function InventoryPage() {
                               setShowHistoryDialog(true);
                             }
                           }}
+                          title="View History"
                         >
                           <History className="h-4 w-4" />
                         </Button>
