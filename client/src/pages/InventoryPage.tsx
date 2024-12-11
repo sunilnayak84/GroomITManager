@@ -42,6 +42,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ConsumablesUsageModal } from "@/components/ConsumablesUsageModal";
+import { InventoryUsageHistory } from "@/components/InventoryUsageHistory";
 import { 
   InventoryItem, 
   InsertInventoryItem, 
@@ -144,19 +145,19 @@ export default function InventoryPage() {
       name: item.name,
       quantity: item.quantity,
       unit: item.unit,
-      supplier: item.supplier,
-      description: item.description,
+      supplier: item.supplier || null,
+      description: item.description || null,
       minimum_quantity: item.minimum_quantity,
       cost_per_unit: 0,
       category: item.category || "",
       last_restock_date: null,
-      isActive: item.isActive || true,
-      reorder_point: item.reorder_point || 0,
-      reorder_quantity: item.reorder_quantity || 0,
+      isActive: item.isActive ?? true,
+      reorder_point: item.reorder_point ?? 0,
+      reorder_quantity: item.reorder_quantity ?? 0,
       location: item.location || null,
       barcode: item.barcode || null,
-      quantity_per_use: item.quantity_per_use || 1,
-      service_linked: item.service_linked || false,
+      quantity_per_use: item.quantity_per_use ?? 1,
+      service_linked: item.service_linked ?? false,
     });
     setShowItemDialog(true);
   };

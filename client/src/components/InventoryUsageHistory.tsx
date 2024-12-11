@@ -27,6 +27,7 @@ import {
 
 interface UsageHistoryEntry {
   usage_id: string;
+  item_id: string;
   quantity_used: number;
   used_by: string;
   used_at: Date;
@@ -56,7 +57,7 @@ export function InventoryUsageHistory({
   });
 
   const uniqueServices = Array.from(
-    new Set(usageHistory.map((entry) => entry.service_id).filter(Boolean))
+    new Set(usageHistory.map((entry) => entry.service_id || 'unknown').filter(Boolean))
   );
 
   return (
@@ -95,8 +96,8 @@ export function InventoryUsageHistory({
           <SelectContent>
             <SelectItem value="all">All Services</SelectItem>
             {uniqueServices.map((serviceId) => (
-              <SelectItem key={serviceId || ''} value={serviceId || ''}>
-                Service {serviceId || 'Unknown'}
+              <SelectItem key={serviceId} value={serviceId}>
+                Service {serviceId}
               </SelectItem>
             ))}
           </SelectContent>
