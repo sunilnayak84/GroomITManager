@@ -3,7 +3,7 @@ import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, query } from 'f
 import { db } from "../lib/firebase";
 import { toast } from "@/components/ui/use-toast";
 import type { Service, InsertService, ServiceConsumable, UpdateService } from "@/lib/service-types";
-import { serviceSchema } from "@/lib/service-types";
+import { serviceSchema, ServiceCategory } from "@/lib/service-types";
 
 // Collection reference
 const servicesCollection = collection(db, 'services');
@@ -84,6 +84,7 @@ export function useServices() {
       const firestoreData = {
         name: newService.name,
         description: newService.description,
+        category: newService.category,
         duration: newService.duration,
         price: newService.price,
         consumables: newService.consumables.map(c => ({

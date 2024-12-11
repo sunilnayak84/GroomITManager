@@ -14,6 +14,14 @@ export const ServiceCategory = {
   PACKAGE: 'Package'
 } as const;
 
+export type PackageItem = {
+  service_id: string;
+  name: string;
+  duration: number;
+  price: number;
+  category: typeof ServiceCategory[keyof typeof ServiceCategory];
+};
+
 export const serviceSchema = z.object({
   service_id: z.string(),
   name: z.string().min(2, "Service name must be at least 2 characters"),
@@ -44,7 +52,21 @@ export const insertServiceSchema = serviceSchema.omit({
   consumables: z.array(serviceConsumableSchema).optional().default([]),
   name: z.string().min(2, "Service name must be at least 2 characters"),
   price: z.number().min(0, "Price cannot be negative").default(0),
-  duration: z.number().min(15, "Duration must be at least 15 minutes").default(30)
+  duration: z.number().min(15, "Duration must be at least 15 minutes").default(30),
+  selectedServices: z.array(z.object({
+    service_id: z.string(),
+    name: z.string(),
+    duration: z.number(),
+    price: z.number(),
+    category: z.enum([ServiceCategory.SERVICE, ServiceCategory.ADDON, ServiceCategory.PACKAGE])
+  })).optional(),
+  selectedAddons: z.array(z.object({
+    service_id: z.string(),
+    name: z.string(),
+    duration: z.number(),
+    price: z.number(),
+    category: z.enum([ServiceCategory.SERVICE, ServiceCategory.ADDON, ServiceCategory.PACKAGE])
+  })).optional()
 });
 
 export type InsertService = z.infer<typeof insertServiceSchema>;

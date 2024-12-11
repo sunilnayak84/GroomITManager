@@ -70,17 +70,39 @@ export default function ServicesPage() {
       duration: 30,
       price: 0,
       consumables: [],
+      selectedServices: [],
+      selectedAddons: []
     },
   });
 
   const onSubmit = async (data: InsertService) => {
     try {
-      if (selectedService) {
+      if (data.category === ServiceCategory.PACKAGE) {
+        const selectedItems = [
+          ...(data.selectedServices || []),
+          ...(data.selectedAddons || [])
+        ];
+
+        const totalDuration = selectedItems.reduce((sum, item) => sum + item.duration, 0);
+        const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
+
+        const packageData: InsertService = {
+          ...data,
+          duration: totalDuration,
+          price: totalPrice,
+          category: ServiceCategory.PACKAGE
+        };
+
+        await addService(packageData);
+        setShowPackageDialog(false);
+      } else if (selectedService) {
         await updateService(selectedService.service_id, data);
+        setShowServiceDialog(false);
       } else {
         await addService(data);
+        setShowServiceDialog(false);
       }
-      setShowServiceDialog(false);
+      
       form.reset();
       setSelectedService(null);
     } catch (error) {
@@ -97,6 +119,7 @@ export default function ServicesPage() {
     form.reset({
       name: service.name,
       description: service.description,
+      category: service.category,
       duration: service.duration,
       price: service.price,
       consumables: service.consumables,
@@ -113,6 +136,10 @@ export default function ServicesPage() {
     {
       header: "Name",
       cell: (service: Service) => service.name,
+    },
+    {
+      header: "Category",
+      cell: (service: Service) => service.category,
     },
     {
       header: "Duration",
@@ -170,12 +197,38 @@ export default function ServicesPage() {
 
       <div className="flex justify-between items-center mb-6">
         <div className="flex gap-4">
-          <Button onClick={() => setShowServiceDialog(true)} 
+          <Button onClick={() => {
+            setSelectedService(null);
+            form.reset({
+              name: "",
+              description: "",
+              category: ServiceCategory.SERVICE,
+              duration: 30,
+              price: 0,
+              consumables: [],
+              selectedServices: [],
+              selectedAddons: []
+            });
+            setShowServiceDialog(true);
+          }} 
             className="h-12 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
             <Plus className="mr-2 h-5 w-5" />
             Add New Service
           </Button>
-          <Button onClick={() => setShowPackageDialog(true)}
+          <Button onClick={() => {
+            setSelectedService(null);
+            form.reset({
+              name: "",
+              description: "",
+              category: ServiceCategory.PACKAGE,
+              duration: 30,
+              price: 0,
+              consumables: [],
+              selectedServices: [],
+              selectedAddons: []
+            });
+            setShowPackageDialog(true);
+          }}
             variant="outline"
             className="h-12 px-6">
             <Plus className="mr-2 h-5 w-5" />
@@ -338,6 +391,184 @@ export default function ServicesPage() {
                     {selectedService ? "Update Service" : "Add Service"}
                   </Button>
                 </div>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showPackageDialog} onOpenChange={setShowPackageDialog}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Create Service Package</DialogTitle>
+            <DialogDescription>
+              Combine services and add-ons to create a package
+            </DialogDescription>
+          </DialogHeader>
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Package Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Package name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Package description"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <h3 className="font-semibold mb-2">Available Services</h3>
+                  <div className="border rounded-md p-4 space-y-2 max-h-60 overflow-y-auto">
+                    {services
+                      .filter(s => s.category === ServiceCategory.SERVICE && s.isActive)
+                      .map(service => (
+                        <div key={service.service_id} className="flex items-center justify-between">
+                          <span>{service.name}</span>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              const selectedServices = form.getValues("selectedServices") || [];
+                              form.setValue("selectedServices", [...selectedServices, {
+                                service_id: service.service_id,
+                                name: service.name,
+                                duration: service.duration,
+                                price: service.price,
+                                category: service.category
+                              }]);
+                            }}
+                          >
+                            Add
+                          </Button>
+                        </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold mb-2">Available Add-ons</h3>
+                  <div className="border rounded-md p-4 space-y-2 max-h-60 overflow-y-auto">
+                    {services
+                      .filter(s => s.category === ServiceCategory.ADDON && s.isActive)
+                      .map(addon => (
+                        <div key={addon.service_id} className="flex items-center justify-between">
+                          <span>{addon.name}</span>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              const selectedAddons = form.getValues("selectedAddons") || [];
+                              form.setValue("selectedAddons", [...selectedAddons, {
+                                service_id: addon.service_id,
+                                name: addon.name,
+                                duration: addon.duration,
+                                price: addon.price,
+                                category: addon.category
+                              }]);
+                            }}
+                          >
+                            Add
+                          </Button>
+                        </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-2">Selected Items</h3>
+                <div className="border rounded-md p-4 space-y-2">
+                  {[
+                    ...(form.getValues("selectedServices") || []),
+                    ...(form.getValues("selectedAddons") || [])
+                  ].map((item, index) => (
+                    <div key={index} className="flex items-center justify-between">
+                      <span>{item.name}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-muted-foreground">
+                          {item.duration}min | ₹{item.price}
+                        </span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            if (item.category === ServiceCategory.SERVICE) {
+                              const services = form.getValues("selectedServices") || [];
+                              form.setValue("selectedServices", 
+                                services.filter(s => s.service_id !== item.service_id)
+                              );
+                            } else {
+                              const addons = form.getValues("selectedAddons") || [];
+                              form.setValue("selectedAddons", 
+                                addons.filter(a => a.service_id !== item.service_id)
+                              );
+                            }
+                          }}
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+
+                  <div className="mt-4 pt-4 border-t flex justify-between">
+                    <span className="font-semibold">Total:</span>
+                    <span>
+                      {(() => {
+                        const selected = [
+                          ...(form.getValues("selectedServices") || []),
+                          ...(form.getValues("selectedAddons") || [])
+                        ];
+                        const totalDuration = selected.reduce((sum, item) => sum + item.duration, 0);
+                        const totalPrice = selected.reduce((sum, item) => sum + item.price, 0);
+                        return `${totalDuration}min | ₹${totalPrice}`;
+                      })()}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 mt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setShowPackageDialog(false);
+                    form.reset();
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit">
+                  Create Package
+                </Button>
               </div>
             </form>
           </Form>
