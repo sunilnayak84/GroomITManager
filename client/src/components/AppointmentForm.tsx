@@ -183,8 +183,6 @@ export default function AppointmentForm() {
                         field.onChange('');
                       }
                     }}
-                      }
-                    }}
                   />
                 </FormControl>
               </FormItem>
