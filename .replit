@@ -30,6 +30,10 @@ externalPort = 5173
 localPort = 5174
 externalPort = 3002
 
+[[ports]]
+localPort = 5175
+externalPort = 3003
+
 [workflows]
 runButton = "Project"
 
@@ -52,6 +56,10 @@ args = "cd client && npm run dev -- --port 5173 --host 0.0.0.0"
 task = "workflow.run"
 args = "Server"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
 [[workflows.workflow]]
 name = "Server"
 author = "agent"
@@ -66,3 +74,18 @@ task = "packager.installForAll"
 task = "shell.exec"
 args = "npm run dev"
 waitForPort = 5174
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd client && npm run dev"
+waitForPort = 5173

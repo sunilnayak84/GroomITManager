@@ -74,8 +74,13 @@ export default function InventoryPage() {
   const [showHistoryDialog, setShowHistoryDialog] = useState(false);
   const { toast } = useToast();
   
-  // Fetch usage history only when needed
-  const usageHistoryQuery = getUsageHistory(showHistoryDialog ? selectedItem?.id : undefined);
+  // Only fetch usage history when the history dialog is open
+  // Memo selectedItemId to prevent unnecessary hook rerenders
+  const selectedItemId = React.useMemo(() => 
+    showHistoryDialog ? selectedItem?.id : undefined,
+    [showHistoryDialog, selectedItem?.id]
+  );
+  const usageHistoryQuery = getUsageHistory(selectedItemId);
 
   const form = useForm<InsertInventoryItem>({
     resolver: zodResolver(insertInventoryItemSchema),
@@ -574,24 +579,19 @@ export default function InventoryPage() {
             </DialogContent>
           </Dialog>
 
-          {selectedItem && (
-            <ConsumablesUsageModal
-              isOpen={!!selectedItem}
-              onClose={() => setSelectedItem(null)}
-              itemId={selectedItem.id}
-              itemName={selectedItem.name}
-              currentQuantity={selectedItem.quantity}
-              unit={selectedItem.unit}
-            />
-          )}
+          <ConsumablesUsageModal
+            isOpen={!!selectedItem}
+            onClose={() => setSelectedItem(null)}
+            itemId={selectedItem?.id ?? ''}
+            itemName={selectedItem?.name ?? ''}
+            currentQuantity={selectedItem?.quantity ?? 0}
+            unit={selectedItem?.unit ?? ''}
+          />
 
-          <Dialog open={showHistoryDialog} onOpenChange={(open) => {
-            setShowHistoryDialog(open);
-            if (!open) {
-              // Clear selected item when dialog closes
-              setSelectedItem(null);
-            }
-          }}>
+          <Dialog 
+            open={showHistoryDialog} 
+            onOpenChange={setShowHistoryDialog}
+          >
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Usage History</DialogTitle>
@@ -599,7 +599,7 @@ export default function InventoryPage() {
                   {selectedItem ? `View usage history for ${selectedItem.name}` : 'Loading...'}
                 </DialogDescription>
               </DialogHeader>
-              {selectedItem && (
+              {showHistoryDialog && selectedItem && (
                 <InventoryUsageHistory
                   usageHistory={usageHistoryQuery.data || []}
                   isLoading={usageHistoryQuery.isLoading}
