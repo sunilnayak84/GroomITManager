@@ -25,30 +25,35 @@ export function registerRoutes(app: Express) {
       const now = new Date();
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-      const [appointmentCount] = await db
-        .select({ count: count() })
+      // Use more robust error handling and default to 0 for counts
+      const appointmentResult = await db
+        .select({ value: count() })
         .from(appointments)
-        .where(gte(appointments.date, startOfMonth));
+        .where(gte(appointments.appointmentDate, startOfMonth));
+      const appointmentCount = appointmentResult[0]?.value ?? 0;
 
-      const [customerCount] = await db
-        .select({ count: count() })
+      const customerResult = await db
+        .select({ value: count() })
         .from(customers);
+      const customerCount = customerResult[0]?.value ?? 0;
 
-      const [completedCount] = await db
-        .select({ count: count() })
+      const completedResult = await db
+        .select({ value: count() })
         .from(appointments)
         .where(and(
           eq(appointments.status, "completed"),
-          gte(appointments.date, startOfMonth)
+          gte(appointments.appointmentDate, startOfMonth)
         ));
+      const completedCount = completedResult[0]?.value ?? 0;
 
       res.json({
-        appointments: appointmentCount?.count || 0,
-        customers: customerCount?.count || 0,
-        completed: completedCount?.count || 0,
-        revenue: (completedCount?.count || 0) * 1000 // dummy calculation
+        appointments: appointmentCount,
+        customers: customerCount,
+        completed: completedCount,
+        revenue: completedCount * 1000 // dummy calculation
       });
     } catch (error) {
+      console.error('Stats Error:', error);
       res.status(500).json({ error: "Failed to fetch stats" });
     }
   });
@@ -111,14 +116,16 @@ export function registerRoutes(app: Express) {
       const allAppointments = await db
         .select({
           id: appointments.id,
-          date: appointments.date,
+          date: appointments.appointmentDate,
           status: appointments.status,
           notes: appointments.notes,
+          serviceType: appointments.serviceType,
+          price: appointments.price,
           pet: {
             id: pets.id,
             name: pets.name,
             breed: pets.breed,
-            image: pets.image
+            image: pets.imageUrl
           },
           customer: {
             id: customers.id,
