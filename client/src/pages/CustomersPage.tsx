@@ -724,26 +724,9 @@ export default function CustomersPage() {
       {/* Customer Details Dialog */}
       <Dialog open={showCustomerDetails} onOpenChange={setShowCustomerDetails}>
         <DialogContent className="max-w-3xl">
-          <DialogHeader className="flex justify-between items-center">
+          <DialogHeader>
             <DialogTitle>Customer Details</DialogTitle>
             <DialogDescription className="sr-only">Customer information and details</DialogDescription>
-            <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setIsEditing(true)}
-              >
-                Edit
-              </Button>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button 
-                    variant="destructive" 
-                    size="sm"
-                  >
-                    Delete
-                  </Button>
-                </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>Are you sure?</AlertDialogTitle>
@@ -934,6 +917,50 @@ export default function CustomersPage() {
                       }</p>
                     </div>
                   </div>
+                </div>
+                
+                <div className="flex justify-center gap-2 mt-6">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    Edit
+                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button 
+                        variant="destructive" 
+                        size="sm"
+                      >
+                        Delete
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <p className="text-sm text-muted-foreground">
+                          This action cannot be undone. This will permanently delete the customer and all associated data.
+                        </p>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => {
+                            if (!selectedCustomer) return;
+                            deleteCustomerMutationHook.mutate(selectedCustomer.id, {
+                              onSuccess: () => {
+                                setShowCustomerDetails(false);
+                                setSelectedCustomer(null);
+                              }
+                            });
+                          }}
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               )}
             </div>
