@@ -22,20 +22,22 @@ const formatDate = (date: Date) => {
 // Define schema for inventory items
 export const inventoryItemSchema = z.object({
   item_id: z.string(),
-  name: z.string().min(1, "Name is required"),
-  description: z.string().optional(),
-  quantity: z.number().min(0, "Quantity cannot be negative"),
-  minimum_quantity: z.number().min(0, "Minimum quantity cannot be negative"),
-  unit: z.string(),
-  cost_per_unit: z.number().min(0, "Cost must be non-negative"),
-  category: z.string(),
-  supplier: z.string().optional(),
-  last_restock_date: z.date().optional(),
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  description: z.string().optional().nullable(),
+  quantity: z.number().min(0, "Quantity cannot be negative").default(0),
+  minimum_quantity: z.number().min(0, "Minimum quantity cannot be negative").default(0),
+  unit: z.string().min(1, "Unit is required"),
+  cost_per_unit: z.number().min(0, "Cost must be non-negative").default(0),
+  category: z.string().min(1, "Category is required"),
+  supplier: z.string().nullable(),
+  last_restock_date: z.union([z.date(), z.null()]).nullable(),
   isActive: z.boolean().default(true),
-  quantity_per_use: z.number().min(0, "Quantity per use must be non-negative").default(0),
+  quantity_per_use: z.number().min(0, "Quantity per use must be non-negative").default(1),
   service_linked: z.boolean().default(false),
+  reorder_point: z.number().min(0, "Reorder point cannot be negative").default(0),
+  reorder_quantity: z.number().min(0, "Reorder quantity cannot be negative").default(0),
   created_at: z.date(),
-  updated_at: z.date().optional(),
+  updated_at: z.date().nullable(),
 });
 
 export const inventoryUsageHistorySchema = z.object({
@@ -133,25 +135,61 @@ export function useInventory() {
   // Add inventory item
   const addInventoryItem = async (itemData: InsertInventoryItem) => {
     try {
+      console.log('ADD_INVENTORY: Starting to add item:', itemData);
+      
+      // Validate the data before proceeding
+      const validationResult = inventoryItemSchema.omit({ 
+        item_id: true, 
+        created_at: true, 
+        updated_at: true 
+      }).safeParse({
+        ...itemData,
+        quantity: Number(itemData.quantity),
+        minimum_quantity: Number(itemData.minimum_quantity),
+        cost_per_unit: Number(itemData.cost_per_unit),
+        reorder_point: Number(itemData.reorder_point || 0),
+        reorder_quantity: Number(itemData.reorder_quantity || 0)
+      });
+
+      if (!validationResult.success) {
+        console.error('ADD_INVENTORY: Validation failed:', validationResult.error);
+        throw new Error(validationResult.error.errors[0].message);
+      }
+
       const docRef = doc(inventoryCollection);
       const timestamp = serverTimestamp();
       
       const firestoreData = {
-        name: itemData.name,
-        description: itemData.description,
-        quantity: itemData.quantity,
-        minimum_quantity: itemData.minimum_quantity,
-        unit: itemData.unit,
-        cost_per_unit: itemData.cost_per_unit,
-        category: itemData.category,
-        supplier: itemData.supplier,
-        last_restock_date: itemData.last_restock_date,
-        isActive: itemData.isActive,
+        name: itemData.name.trim(),
+        description: itemData.description?.trim() || null,
+        quantity: Number(itemData.quantity),
+        minimum_quantity: Number(itemData.minimum_quantity),
+        unit: itemData.unit.trim(),
+        cost_per_unit: Number(itemData.cost_per_unit),
+        category: itemData.category.trim(),
+        supplier: itemData.supplier?.trim() || null,
+        last_restock_date: itemData.last_restock_date || null,
+        isActive: itemData.isActive ?? true,
+        quantity_per_use: Number(itemData.quantity_per_use || 1),
+        service_linked: itemData.service_linked ?? false,
+        reorder_point: Number(itemData.reorder_point || 0),
+        reorder_quantity: Number(itemData.reorder_quantity || 0),
         created_at: timestamp,
         updated_at: timestamp
       };
 
+      console.log('ADD_INVENTORY: Saving item to Firestore:', firestoreData);
       await setDoc(docRef, firestoreData);
+      
+      // Check if stock is low after adding
+      if (firestoreData.quantity <= firestoreData.minimum_quantity) {
+        toast({
+          title: "Low Stock Alert",
+          description: `${firestoreData.name} is below minimum quantity`,
+          variant: "destructive"
+        });
+      }
+
       await queryClient.invalidateQueries({ queryKey: ['inventory'] });
       toast({
         title: "Success",
@@ -161,7 +199,7 @@ export function useInventory() {
       
       return {
         item_id: docRef.id,
-        ...itemData,
+        ...firestoreData,
         created_at: new Date(),
         updated_at: new Date()
       };
