@@ -44,6 +44,8 @@ export function useServices() {
             isActive: data.isActive ?? true,
             created_at: data.created_at || new Date(),
             updated_at: data.updated_at || new Date(),
+            selectedServices: data.selectedServices || [],
+            selectedAddons: data.selectedAddons || []
           });
 
           return parsedData;

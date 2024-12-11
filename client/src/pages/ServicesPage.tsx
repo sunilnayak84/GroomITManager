@@ -481,7 +481,7 @@ export default function ServicesPage() {
       <Dialog open={showPackageDialog} onOpenChange={setShowPackageDialog}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle>Create Service Package</DialogTitle>
+            <DialogTitle>{selectedService ? "Edit Service Package" : "Create Service Package"}</DialogTitle>
             <DialogDescription>
               Combine services and add-ons to create a package
             </DialogDescription>
