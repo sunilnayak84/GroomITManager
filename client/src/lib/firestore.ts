@@ -1,6 +1,11 @@
-import { collection, doc, setDoc, getDoc, getDocs, deleteDoc, query, where, DocumentData, CollectionReference, runTransaction } from 'firebase/firestore';
+import { 
+  collection, doc, setDoc, getDoc, getDocs, deleteDoc, query, 
+  where, DocumentData, CollectionReference, runTransaction, 
+  QuerySnapshot, DocumentSnapshot 
+} from 'firebase/firestore';
 import { db } from './firebase';
 import type { User, Customer, Pet, Appointment } from '@db/schema';
+import { FirebaseError } from 'firebase/app';
 
 // Helper to type the collections
 function typedCollection<T = DocumentData>(collectionName: string): CollectionReference<T> {
@@ -9,9 +14,14 @@ function typedCollection<T = DocumentData>(collectionName: string): CollectionRe
 
 // Collection references with proper typing
 export const usersCollection = typedCollection<User>('users');
-export const customersCollection = collection(db, 'customers');
-export const petsCollection = collection(db, 'pets');
-export const appointmentsCollection = collection(db, 'appointments');
+export const customersCollection = typedCollection<Customer>('customers');
+export const petsCollection = typedCollection<Pet>('pets');
+export const appointmentsCollection = typedCollection<Appointment>('appointments');
+
+// Type guard for Firebase errors
+function isFirebaseError(error: unknown): error is FirebaseError {
+  return error instanceof FirebaseError;
+}
 
 // User operations with error handling
 export async function createUserDocument(user: User) {
@@ -135,18 +145,19 @@ export async function createPet(pet: Omit<Pet, 'id'>) {
 
         // Check for duplicate submission
         const duplicateQuery = query(petsCollection, where('submissionId', '==', submissionId));
-        const duplicateSnapshot = await transaction.get(duplicateQuery);
+        const duplicateSnapshot = await getDocs(duplicateQuery);
         
         if (!duplicateSnapshot.empty) {
           console.log('FIRESTORE: Duplicate submission detected', {
             submissionId
           });
           const duplicateDoc = duplicateSnapshot.docs[0];
+          const duplicateData = duplicateDoc.data() as Pet;
           return { 
             isDuplicate: true, 
             existingPet: { 
-              id: duplicateDoc.id, 
-              ...duplicateDoc.data() 
+              ...duplicateData,
+              id: duplicateDoc.id
             } 
           };
         }
@@ -239,12 +250,12 @@ export async function updateCustomer(id: string, data: Partial<Customer>) {
     }
 
     // Create a clean object without undefined values
-    const cleanedData = Object.entries(processedData).reduce((acc, [key, value]) => {
+    const cleanedData = Object.entries(processedData).reduce<Partial<Customer> & { updatedAt: string }>((acc, [key, value]) => {
       if (value !== undefined) {
-        acc[key as keyof typeof processedData] = value;
+        acc[key as keyof (Partial<Customer> & { updatedAt: string })] = value as any;
       }
       return acc;
-    }, {} as Partial<Customer> & { updatedAt: string });
+    }, { updatedAt: new Date().toISOString() });
 
     await setDoc(customerRef, cleanedData, { merge: true });
     return true;
@@ -330,12 +341,12 @@ export async function updatePet(id: string, data: Partial<Pet>) {
     };
 
     // Create a type-safe version of the update data
-    const cleanedData = Object.entries(updateData).reduce((acc, [key, value]) => {
+    const cleanedData = Object.entries(updateData).reduce<Partial<Pet> & { updatedAt: string }>((acc, [key, value]) => {
       if (value !== undefined) {
-        acc[key as keyof typeof updateData] = value;
+        acc[key as keyof (Partial<Pet> & { updatedAt: string })] = value as any;
       }
       return acc;
-    }, {} as Partial<Pet> & { updatedAt: string });
+    }, { updatedAt: new Date().toISOString() });
 
     await setDoc(petRef, cleanedData, { merge: true });
     console.log('FIRESTORE: Pet updated successfully', { id, updateData: cleanedData });

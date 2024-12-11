@@ -221,7 +221,7 @@ export default function InventoryPage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </div>
           <div className="text-2xl font-bold">
-            {formatIndianCurrency(inventory?.reduce((total, item) => total + (item.quantity * item.cost_per_unit), 0) || 0)}
+            {formatIndianCurrency(inventory?.reduce((total, item) => total + (item.quantity * (item.cost_per_unit || 0)), 0) || 0)}
           </div>
         </div>
       </div>
@@ -470,7 +470,7 @@ export default function InventoryPage() {
                       {item.quantity} {item.unit}
                     </TableCell>
                     <TableCell>{item.unit}</TableCell>
-                    <TableCell>{formatIndianCurrency(item.cost_per_unit)}</TableCell>
+                    <TableCell>{formatIndianCurrency(item.cost_per_unit || 0)}</TableCell>
                     <TableCell>{item.supplier || '-'}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
