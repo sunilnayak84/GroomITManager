@@ -417,7 +417,8 @@ export default function PetsPage() {
                     description: "Pet updated successfully",
                   });
                   setShowEditModal(false);
-                  setShowPetModal(true);
+                  setShowPetModal(false);
+                  setSelectedPet(null);
                   return true;
                 }
                 return false;
