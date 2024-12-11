@@ -17,6 +17,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
@@ -29,10 +30,12 @@ import {
 import { useAppointments } from "../hooks/use-appointments";
 import { usePets } from "../hooks/use-pets";
 import { useToast } from "@/hooks/use-toast";
+import { useServices } from '../hooks/use-services'; // Import the hook for services
 
 export default function AppointmentForm() {
   const { addAppointment } = useAppointments();
   const { pets } = usePets();
+  const { services } = useServices(); // Get services data
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -47,7 +50,8 @@ export default function AppointmentForm() {
       branchId: defaultBranchId,
       date: (() => {
         const date = new Date();
-        date.setMinutes(date.getMinutes() + 30); // Set default time to 30 minutes from now
+        date.setMinutes(date.getMinutes() + 15); // Set default time to 15 minutes from now, in 15 min increments
+        date.setMinutes(Math.round(date.getMinutes() / 15) * 15); //Round to nearest 15min
         return date.toISOString();
       })(),
       status: "pending",
@@ -61,37 +65,39 @@ export default function AppointmentForm() {
     
     setIsSubmitting(true);
     try {
-      // Validate required fields
-      if (!values.petId) {
-        throw new Error("Please select a pet");
+      if (!values.petId || !values.serviceId) {
+        throw new Error("Please select both pet and service");
       }
 
-      // Ensure the date is valid before proceeding
       const appointmentDate = new Date(values.date);
       if (isNaN(appointmentDate.getTime())) {
         throw new Error("Invalid appointment date");
       }
 
-      // Validate that the appointment is not in the past
       const now = new Date();
       if (appointmentDate < now) {
         throw new Error("Appointment date must be in the future");
       }
 
-      // Validate and prepare the appointment data
-      const data: z.infer<typeof insertAppointmentSchema> = {
+      // Round minutes to nearest 15
+      appointmentDate.setMinutes(Math.round(appointmentDate.getMinutes() / 15) * 15);
+      appointmentDate.setSeconds(0);
+      appointmentDate.setMilliseconds(0);
+
+      const data = {
         petId: values.petId,
-        serviceId: values.serviceId || '1', // Default service ID if not provided
+        serviceId: values.serviceId,
         groomerId: values.groomerId,
         branchId: values.branchId,
         date: appointmentDate.toISOString(),
         status: 'pending',
-        notes: values.notes || null,
-        productsUsed: null // Initialize as null since it's not used in the form
+        notes: values.notes || '',
+        productsUsed: ''
       };
 
       console.log('Submitting appointment data:', data);
       await addAppointment(data);
+      setOpen(false); // Close modal after successful submission
       
       toast({
         title: "Success",
@@ -159,23 +165,49 @@ export default function AppointmentForm() {
                 <FormLabel>Date & Time</FormLabel>
                 <FormControl>
                   <Input 
-                    type="datetime-local" 
+                    type="datetime-local"
+                    step="900"
+                    min={new Date().toISOString().slice(0, 16)}
                     {...field}
-                    value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ''}
+                    value={field.value || ''}
                     onChange={(e) => {
-                      try {
-                        const date = new Date(e.target.value);
-                        if (!isNaN(date.getTime())) {
-                          field.onChange(date.toISOString());
-                        } else {
-                          console.error('Invalid date input:', e.target.value);
-                        }
-                      } catch (error) {
-                        console.error('Error parsing date:', error);
+                      const date = new Date(e.target.value);
+                      if (!isNaN(date.getTime())) {
+                        field.onChange(e.target.value);
+                      }
+                    }}
+                    onBlur={(e) => {
+                      const date = new Date(e.target.value);
+                      if (isNaN(date.getTime())) {
+                        field.onChange('');
                       }
                     }}
                   />
                 </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="serviceId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Service Type</FormLabel>
+                <Select onValueChange={field.onChange}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a service" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {(services || []).map((service) => (
+                      <SelectItem key={service.service_id} value={service.service_id}>
+                        {service.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
               </FormItem>
             )}
           />

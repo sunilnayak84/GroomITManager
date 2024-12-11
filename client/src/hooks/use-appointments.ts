@@ -40,14 +40,12 @@ const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppoi
   }
   
   return {
-    petId: data.petId.toString(),
-    serviceId: data.serviceId.toString(),
-    groomerId: data.groomerId.toString(), // Ensure groomerId is string
-    branchId: data.branchId.toString(),
+    petId: data.petId,
+    serviceId: data.serviceId,
     date: Timestamp.fromDate(appointmentDate),
-    status: data.status || 'pending',
-    notes: data.notes || null,
-    productsUsed: data.productsUsed || null,
+    status: 'pending',
+    notes: data.notes || '',
+    productsUsed: [],
     createdAt: Timestamp.fromDate(new Date()),
     updatedAt: null
   };
@@ -101,16 +99,13 @@ export function useAppointments() {
               continue;
             }
 
-            // In development mode, be more lenient with data validation
-            if (process.env.NODE_ENV !== 'development') {
-              // Ensure all required fields are present in production
-              const requiredFields = ['petId', 'serviceId', 'groomerId', 'branchId', 'date', 'status'];
-              const missingFields = requiredFields.filter(field => !(field in rawData));
-              if (missingFields.length > 0) {
-                console.error(`FETCH_APPOINTMENTS: Missing required fields in appointment ${appointmentDoc.id}:`, missingFields);
-                errorCount++;
-                continue;
-              }
+            // Basic validation for required fields
+            const requiredFields = ['petId', 'serviceId', 'date', 'status'];
+            const missingFields = requiredFields.filter(field => !(field in rawData));
+            if (missingFields.length > 0) {
+              console.error(`FETCH_APPOINTMENTS: Missing fields in appointment ${appointmentDoc.id}:`, missingFields);
+              errorCount++;
+              continue;
             }
 
             // Cast to our expected type
@@ -133,12 +128,16 @@ export function useAppointments() {
               const petDoc = await getDoc(petDocRef);
 
               // Initialize petData with development fallback
-              let petData = process.env.NODE_ENV === 'development' ? {
-                name: 'Test Pet',
-                breed: 'Unknown',
-                image: null,
-                customerId: 'dev-customer'
-              } : null;
+              let petData = null;
+              if (petDoc.exists()) {
+                const rawPetData = petDoc.data();
+                petData = {
+                  name: rawPetData.name,
+                  breed: rawPetData.breed,
+                  image: rawPetData.image,
+                  customerId: rawPetData.customerId
+                };
+              }
 
               // In production, fetch real pet data
               if (process.env.NODE_ENV !== 'development') {
