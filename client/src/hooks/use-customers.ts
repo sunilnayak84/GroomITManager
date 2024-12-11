@@ -1,11 +1,17 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Customer } from "@db/schema";
-import { getDocs, onSnapshot, query, deleteDoc, doc, where, collection } from "firebase/firestore";
+import { getDocs, onSnapshot, query, deleteDoc, doc, where, collection, Timestamp } from "firebase/firestore";
 import { customersCollection, createCustomer, updateCustomer as updateCustomerDoc, deleteCustomerAndRelated } from "../lib/firestore";
 import { useEffect } from "react";
 import { db } from "../lib/firebase";
 import { toast } from '@/components/ui/use-toast';
-import { type Customer as CustomerType, type InsertCustomer } from '@/lib/types';
+import { 
+  type Customer as CustomerType, 
+  type InsertCustomer, 
+  type FirestoreCustomerData,
+  type CustomerWithTimestamp,
+  type FirestoreTimestamp
+} from '@/lib/types';
 
 
 export function useCustomers() {
@@ -224,6 +230,15 @@ export function useCustomers() {
     const customerUnsubscribe = onSnapshot(customerQuery, async (snapshot) => {
       const customers = snapshot.docs.map(doc => {
         const data = doc.data();
+        const processTimestamp = (timestamp: FirestoreTimestamp | string | null | undefined): string | null => {
+          if (!timestamp) return null;
+          if (typeof timestamp === 'string') return timestamp;
+          if (timestamp instanceof Timestamp) {
+            return timestamp.toDate().toISOString();
+          }
+          return null;
+        };
+
         return {
           id: doc.id,
           firebaseId: doc.id,
@@ -234,10 +249,8 @@ export function useCustomers() {
           address: data.address as string | null,
           gender: (data.gender as "male" | "female" | "other" | null) ?? null,
           petCount: Number(data.petCount || 0),
-          createdAt: new Date(data.createdAt as string).toISOString(),
-          updatedAt: data.updatedAt 
-            ? new Date(data.updatedAt as string).toISOString()
-            : null
+          createdAt: processTimestamp(data.createdAt as FirestoreTimestamp) || new Date().toISOString(),
+          updatedAt: processTimestamp(data.updatedAt as FirestoreTimestamp)
         } as CustomerType;
       });
 
@@ -289,6 +302,15 @@ export function useCustomers() {
         const querySnapshot = await getDocs(customersCollection);
         const customers = querySnapshot.docs.map(doc => {
           const customerData = doc.data();
+          const processTimestamp = (timestamp: FirestoreTimestamp | string | null | undefined): string | null => {
+            if (!timestamp) return null;
+            if (typeof timestamp === 'string') return timestamp;
+            if (timestamp instanceof Timestamp) {
+              return timestamp.toDate().toISOString();
+            }
+            return null;
+          };
+
           const customer: CustomerType = {
             id: doc.id,
             firebaseId: doc.id,
@@ -299,10 +321,8 @@ export function useCustomers() {
             address: customerData.address as string | null,
             gender: (customerData.gender as "male" | "female" | "other" | null) || null,
             petCount: Number(customerData.petCount || 0),
-            createdAt: new Date(customerData.createdAt as string).toISOString(),
-            updatedAt: customerData.updatedAt 
-              ? new Date(customerData.updatedAt as string).toISOString()
-              : null
+            createdAt: processTimestamp(customerData.createdAt as FirestoreTimestamp) || new Date().toISOString(),
+            updatedAt: processTimestamp(customerData.updatedAt as FirestoreTimestamp)
           };
           console.log('FETCH_CUSTOMERS: Processed customer:', {
             id: customer.id,
