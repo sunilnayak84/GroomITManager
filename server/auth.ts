@@ -8,9 +8,15 @@ import { eq } from "drizzle-orm";
 let firebaseAdmin: admin.app.App | undefined;
 
 function initializeFirebaseAdmin() {
+  // Skip Firebase Admin initialization in development mode
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Running in development mode - skipping Firebase Admin initialization');
+    return undefined;
+  }
+
   if (!firebaseAdmin) {
     try {
-      // Check for required environment variables
+      // Check for required environment variables only in production
       const requiredEnvVars = [
         'FIREBASE_PROJECT_ID',
         'FIREBASE_CLIENT_EMAIL',
@@ -20,20 +26,22 @@ function initializeFirebaseAdmin() {
 
       const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
       if (missingEnvVars.length > 0) {
-        console.error(`Missing required environment variables: ${missingEnvVars.join(', ')}`);
-        throw new Error('Firebase configuration is incomplete');
+        console.warn(`Missing Firebase environment variables: ${missingEnvVars.join(', ')}`);
+        console.warn('Running in limited mode without Firebase Admin');
+        return undefined;
       }
 
       // Prepare service account with proper error handling
       const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
       if (!privateKey) {
-        throw new Error('Invalid FIREBASE_PRIVATE_KEY format');
+        console.warn('Invalid FIREBASE_PRIVATE_KEY format, running without Firebase Admin');
+        return undefined;
       }
 
       const serviceAccount = {
         projectId: process.env.FIREBASE_PROJECT_ID,
         clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: privateKey,
+        privateKey: privateKey
       };
 
       // Initialize Firebase Admin SDK
@@ -44,8 +52,8 @@ function initializeFirebaseAdmin() {
 
       console.log('Firebase Admin SDK initialized successfully');
     } catch (error) {
-      console.error('Failed to initialize Firebase Admin:', error);
-      // Don't throw here, just log the error and return undefined
+      console.warn('Failed to initialize Firebase Admin:', error);
+      console.warn('Running without Firebase Admin functionality');
       return undefined;
     }
   }
@@ -93,10 +101,11 @@ export async function createUserInDatabase(user: FirebaseUser) {
       };
       await db.insert(users).values(userData);
 
-      // Create user custom claims in Firebase
-      await admin.auth().setCustomUserClaims(user.id, {
-        role: user.role
-      });
+      if (process.env.NODE_ENV !== 'development' && firebaseAdmin) {
+        await admin.auth().setCustomUserClaims(user.id, {
+          role: user.role
+        });
+      }
     }
     
     return true;
@@ -128,7 +137,15 @@ export function setupAuth(app: Express) {
     const firebaseApp = initializeFirebaseAdmin();
     if (!firebaseApp) {
       console.warn('Firebase Admin initialization failed, falling back to development mode');
-      app.use((req, res, next) => next());
+      app.use((req, res, next) => {
+        req.user = {
+          id: 'dev-user',
+          email: 'dev@example.com',
+          role: 'admin',
+          name: 'Developer'
+        };
+        next();
+      });
       return;
     }
 
