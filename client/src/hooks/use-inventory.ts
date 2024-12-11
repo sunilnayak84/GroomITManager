@@ -87,21 +87,28 @@ export function useInventory() {
         const items = querySnapshot.docs.map((doc) => {
           const data = doc.data();
           try {
-            return inventoryItemSchema.parse({
+            const parsedData = {
               item_id: doc.id,
               name: data.name || '',
               description: data.description,
-              quantity: data.quantity || 0,
-              minimum_quantity: data.minimum_quantity || 0,
+              quantity: Number(data.quantity) || 0,
+              minimum_quantity: Number(data.minimum_quantity) || 0,
               unit: data.unit || 'units',
-              cost_per_unit: data.cost_per_unit || 0,
+              cost_per_unit: Number(data.cost_per_unit) || 0,
               category: data.category || 'uncategorized',
               supplier: data.supplier,
-              last_restock_date: data.last_restock_date?.toDate(),
+              last_restock_date: data.last_restock_date instanceof Timestamp ? 
+                data.last_restock_date.toDate() : 
+                data.last_restock_date ? new Date(data.last_restock_date) : undefined,
               isActive: data.isActive ?? true,
-              created_at: data.created_at?.toDate() || new Date(),
-              updated_at: data.updated_at?.toDate(),
-            });
+              created_at: data.created_at instanceof Timestamp ? 
+                data.created_at.toDate() : 
+                new Date(),
+              updated_at: data.updated_at instanceof Timestamp ? 
+                data.updated_at.toDate() : 
+                data.updated_at ? new Date(data.updated_at) : undefined,
+            };
+            return inventoryItemSchema.parse(parsedData);
           } catch (parseError) {
             console.error('FETCH_INVENTORY: Error parsing item:', { id: doc.id, error: parseError });
             return null;

@@ -87,7 +87,7 @@ export async function createUserInDatabase(user: FirebaseUser) {
         email: user.email,
         name: user.name,
         phone: '', // Required field
-        role: (user.role === 'admin' || user.role === 'staff') ? user.role : 'staff',
+        role: (user.role === 'admin' || user.role === 'staff') ? user.role : 'staff' as const,
         isGroomer: false,
         isActive: true
       };
@@ -169,7 +169,7 @@ export function setupAuth(app: Express) {
           id: decodedToken.uid,
           email: decodedToken.email || '',
           name: decodedToken.name || decodedToken.email || '',
-          role: existingUser?.role || 'staff'
+          role: (existingUser?.role || 'staff') as 'admin' | 'staff'
         };
 
         next();

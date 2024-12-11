@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { Timestamp } from 'firebase/firestore';
+import { FirestoreTimestamp, toISOString } from './types';
 
 // Schema for Customer
 export const customerSchema = z.object({
@@ -11,8 +13,23 @@ export const customerSchema = z.object({
   address: z.string().nullable(),
   gender: z.enum(["male", "female", "other"]).nullable(),
   petCount: z.number().default(0),
-  createdAt: z.string(),
-  updatedAt: z.string().nullable(),
+  createdAt: z.union([
+    z.string(),
+    z.custom<FirestoreTimestamp>((data) => data instanceof Timestamp),
+    z.date()
+  ]).transform(val => {
+    if (val instanceof Date) return val.toISOString();
+    return toISOString(val) || new Date().toISOString();
+  }),
+  updatedAt: z.union([
+    z.string(),
+    z.custom<FirestoreTimestamp>((data) => data instanceof Timestamp),
+    z.date(),
+    z.null()
+  ]).transform(val => {
+    if (val instanceof Date) return val.toISOString();
+    return toISOString(val);
+  }).nullable(),
 });
 
 export const insertCustomerSchema = customerSchema.omit({
@@ -20,11 +37,11 @@ export const insertCustomerSchema = customerSchema.omit({
   firebaseId: true,
   petCount: true,
   createdAt: true,
-  updatedAt: true,
-}).extend({
-  createdAt: z.string().optional(),
-  updatedAt: z.string().optional()
+  updatedAt: true
 });
+
+// Re-export types from types.ts for convenience
+export type { FirestoreTimestamp, FirestoreDate, WithFirestoreTimestamp, FirestoreData } from './types';
 
 // Schema for Pet
 export const petSchema = z.object({
