@@ -168,15 +168,24 @@ function setupGracefulShutdown(server: any) {
     // Setup Vite or static serving based on environment
     try {
       if (app.get("env") === "development") {
-        await setupVite(app, server);
-        log("Vite middleware setup complete", 'info');
+        try {
+          await setupVite(app, server);
+          log("Vite middleware setup complete", 'info');
+        } catch (error) {
+          // Log the error but don't throw it to keep the server running
+          log(`Warning: Vite setup encountered an error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'warn');
+        }
       } else {
-        serveStatic(app);
-        log("Static file serving setup complete", 'info');
+        try {
+          serveStatic(app);
+          log("Static file serving setup complete", 'info');
+        } catch (error) {
+          // Log the error but don't throw it to keep the server running
+          log(`Warning: Static serving setup encountered an error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'warn');
+        }
       }
     } catch (error) {
-      log(`Failed to setup frontend serving: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
-      throw error;
+      log(`Warning: Frontend serving setup encountered an error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'warn');
     }
 
     // Start the server with fixed port

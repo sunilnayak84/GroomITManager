@@ -46,7 +46,7 @@ externalPort = 3003
 runButton = "Project"
 
 [[workflows.workflow]]
-name = "Project"
+name = "Server"
 mode = "parallel"
 author = "agent"
 
@@ -58,14 +58,12 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd client && npm run dev -- --port 5173 --host 0.0.0.0"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Server"
+args = "cd server && NODE_ENV=development tsx watch --clear-screen=false index.ts"
+waitForPort = 3001
 
 [[workflows.workflow]]
 name = "Server"
+mode = "parallel"
 author = "agent"
 
 [workflows.workflow.metadata]
@@ -76,5 +74,5 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd server && tsx watch --clear-screen=false index.ts"
+args = "NODE_ENV=development tsx watch --clear-screen=false server/index.ts"
 waitForPort = 3001
