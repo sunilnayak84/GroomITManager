@@ -11,7 +11,10 @@ export function cn(...inputs: ClassValue[]) {
  * Example: 100000 -> ₹1,00,000.00
  */
 export function formatIndianCurrency(amount: number): string {
-  return `₹${amount.toFixed(2)}`;
+  // Format as Indian currency with commas (e.g., ₹1,00,000.00)
+  const parts = amount.toFixed(2).split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return `₹${parts.join('.')}`;
 }
 
 /**

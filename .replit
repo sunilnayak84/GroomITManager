@@ -48,10 +48,6 @@ args = "Start application"
 task = "workflow.run"
 args = "Client"
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Server"
-
 [[workflows.workflow]]
 name = "Start application"
 author = "agent"
@@ -79,20 +75,5 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd client && npm run dev"
+args = "npx vite --port 5173 --host 0.0.0.0"
 waitForPort = 5173
-
-[[workflows.workflow]]
-name = "Server"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "packager.installForAll"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run dev"
-waitForPort = 3001

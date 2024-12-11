@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getDocs, doc, runTransaction, increment, collection, addDoc, serverTimestamp, query, updateDoc, deleteDoc, getDoc, where } from 'firebase/firestore';
+import { getDocs, doc, runTransaction, increment, collection, addDoc, serverTimestamp, query, updateDoc, deleteDoc, getDoc, where, Timestamp } from 'firebase/firestore';
 import { db } from "../lib/firebase";
 import { petsCollection, customersCollection } from "../lib/firestore";
 import { uploadFile } from "../lib/storage";
@@ -56,6 +56,12 @@ function toNumber(value: string | number | null | undefined): number | null {
   return isNaN(num) ? null : num;
 }
 
+// Helper function to convert Firestore timestamp to ISO string
+function timestampToString(timestamp: Timestamp | null | undefined): string | null {
+  if (!timestamp) return null;
+  return timestamp.toDate().toISOString();
+}
+
 export function usePets() {
   const queryClient = useQueryClient();
   const [refreshKey, setRefreshKey] = useState(0);
@@ -94,7 +100,7 @@ export function usePets() {
       const fetchedPets = querySnapshot.docs.map((doc) => {
         const petData = doc.data();
         const customerId = petData.customerId;
-        const customerDetails = customersMap.get(customerId);
+        const customerDetails = customersMap.get(customerId?.toString());
         
         console.log('FETCH_PETS: Processing pet data:', {
           petId: doc.id,
@@ -105,7 +111,7 @@ export function usePets() {
 
         return {
           id: doc.id,
-          customerId: customerId,
+          customerId: customerId?.toString(),
           name: petData.name,
           type: petData.type || 'dog',
           breed: petData.breed,
@@ -116,8 +122,8 @@ export function usePets() {
           weight: toNumber(petData.weight),
           weightUnit: petData.weightUnit || 'kg',
           notes: petData.notes || null,
-          createdAt: petData.createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
-          updatedAt: petData.updatedAt?.toDate?.()?.toISOString() || null,
+          createdAt: timestampToString(petData.createdAt) || new Date().toISOString(),
+          updatedAt: timestampToString(petData.updatedAt),
           owner: customerDetails || null
         };
       });
@@ -289,7 +295,7 @@ export function usePets() {
       }
 
       const { customerId } = petDoc.data();
-      const customerRef = doc(customersCollection, customerId);
+      const customerRef = doc(customersCollection, customerId?.toString());
 
       await runTransaction(db, async (transaction) => {
         transaction.delete(petRef);
