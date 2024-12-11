@@ -86,7 +86,18 @@ export const insertAppointmentSchema = appointmentSchema.omit({
   updatedAt: true,
 }).extend({
   date: z.string().refine(
-    (date) => new Date(date) > new Date(),
+    (date) => {
+      try {
+        const appointmentDate = new Date(date);
+        const now = new Date();
+        // Reset seconds and milliseconds for more lenient comparison
+        appointmentDate.setSeconds(0, 0);
+        now.setSeconds(0, 0);
+        return appointmentDate >= now;
+      } catch {
+        return false;
+      }
+    },
     "Appointment date must be in the future"
   ),
   petId: z.string().min(1, "Pet must be selected"),

@@ -30,7 +30,7 @@ export async function createUserDocument(user: User) {
     const userRef = doc(usersCollection, user.id);
     const timestamp = new Date().toISOString();
     
-    const userData: FirestoreUser = {
+    const userData: WithFieldValue<User> = {
       id: user.id,
       email: user.email,
       name: user.name,
@@ -268,11 +268,12 @@ export async function updateCustomer(id: string, data: Partial<Customer>) {
     const processedData: Partial<Customer> = {
       ...Object.entries(data).reduce((acc, [key, value]) => {
         if (value !== undefined) {
-          if (value instanceof Date) {
-            acc[key as keyof Customer] = value.toISOString();
-          } else {
-            acc[key as keyof Customer] = value;
-          }
+          const processedValue = value instanceof Date 
+            ? value.toISOString() 
+            : (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(value))
+              ? value
+              : value;
+          acc[key as keyof Customer] = processedValue;
         }
         return acc;
       }, {} as Partial<Customer>),
