@@ -33,6 +33,7 @@ export function useServices() {
             service_id: doc.id,
             name: data.name,
             description: data.description || undefined,
+            category: data.category || ServiceCategory.SERVICE,
             duration: data.duration,
             price: data.price || 0,
             consumables: (data.consumables || []).map((c: ServiceConsumable) => ({
@@ -71,6 +72,7 @@ export function useServices() {
         service_id: docRef.id,
         name: serviceData.name,
         description: serviceData.description,
+        category: serviceData.category || ServiceCategory.SERVICE,
         duration: serviceData.duration,
         price: serviceData.price,
         consumables: serviceData.consumables || [],

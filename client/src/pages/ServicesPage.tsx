@@ -32,7 +32,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertServiceSchema, type InsertService, type Service, type ServiceConsumable } from "@/lib/service-types";
+import { insertServiceSchema, type InsertService, type Service, type ServiceConsumable, ServiceCategory } from "@/lib/service-types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -47,6 +54,7 @@ import {
 export default function ServicesPage() {
   const { services, isLoading, addService, updateService, deleteService } = useServices();
   const [showServiceDialog, setShowServiceDialog] = useState(false);
+  const [showPackageDialog, setShowPackageDialog] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [showConsumablesModal, setShowConsumablesModal] = useState(false);
@@ -58,6 +66,7 @@ export default function ServicesPage() {
     defaultValues: {
       name: "",
       description: "",
+      category: ServiceCategory.SERVICE,
       duration: 30,
       price: 0,
       consumables: [],
@@ -160,11 +169,19 @@ export default function ServicesPage() {
       </div>
 
       <div className="flex justify-between items-center mb-6">
-        <Button onClick={() => setShowServiceDialog(true)} 
-          className="ml-auto h-12 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
-          <Plus className="mr-2 h-5 w-5" />
-          Add New Service
-        </Button>
+        <div className="flex gap-4">
+          <Button onClick={() => setShowServiceDialog(true)} 
+            className="h-12 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+            <Plus className="mr-2 h-5 w-5" />
+            Add New Service
+          </Button>
+          <Button onClick={() => setShowPackageDialog(true)}
+            variant="outline"
+            className="h-12 px-6">
+            <Plus className="mr-2 h-5 w-5" />
+            Create Package
+          </Button>
+        </div>
       </div>
 
       <div className="rounded-md border">
@@ -210,6 +227,31 @@ export default function ServicesPage() {
                     <FormControl>
                       <Input placeholder="Service name" {...field} />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={ServiceCategory.SERVICE}>Service</SelectItem>
+                        <SelectItem value={ServiceCategory.ADDON}>Addon</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
