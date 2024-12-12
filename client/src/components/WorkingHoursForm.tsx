@@ -36,18 +36,34 @@ const DAYS_OF_WEEK = [
 interface WorkingHoursFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  defaultDay?: number | null;
+  existingSchedule?: WorkingDays;
 }
 
-export default function WorkingHoursForm({ open, onOpenChange }: WorkingHoursFormProps) {
+export default function WorkingHoursForm({ 
+  open, 
+  onOpenChange, 
+  defaultDay, 
+  existingSchedule 
+}: WorkingHoursFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { addWorkingHours } = useWorkingHours();
 
   const form = useForm<InsertWorkingDays>({
     resolver: zodResolver(insertWorkingDaysSchema),
-    defaultValues: {
+    defaultValues: existingSchedule ? {
+      branchId: existingSchedule.branchId,
+      dayOfWeek: existingSchedule.dayOfWeek,
+      isOpen: existingSchedule.isOpen,
+      openingTime: existingSchedule.openingTime,
+      closingTime: existingSchedule.closingTime,
+      breakStart: existingSchedule.breakStart || undefined,
+      breakEnd: existingSchedule.breakEnd || undefined,
+      maxDailyAppointments: existingSchedule.maxDailyAppointments
+    } : {
       branchId: 1,
-      dayOfWeek: 1,
+      dayOfWeek: defaultDay || 1,
       isOpen: true,
       openingTime: "09:00",
       closingTime: "17:00",
@@ -56,6 +72,27 @@ export default function WorkingHoursForm({ open, onOpenChange }: WorkingHoursFor
       maxDailyAppointments: 8
     },
   });
+
+  // Reset form when existingSchedule changes
+  useEffect(() => {
+    if (existingSchedule) {
+      form.reset({
+        branchId: existingSchedule.branchId,
+        dayOfWeek: existingSchedule.dayOfWeek,
+        isOpen: existingSchedule.isOpen,
+        openingTime: existingSchedule.openingTime,
+        closingTime: existingSchedule.closingTime,
+        breakStart: existingSchedule.breakStart || undefined,
+        breakEnd: existingSchedule.breakEnd || undefined,
+        maxDailyAppointments: existingSchedule.maxDailyAppointments
+      });
+    } else if (defaultDay !== undefined && defaultDay !== null) {
+      form.reset({
+        ...form.getValues(),
+        dayOfWeek: defaultDay
+      });
+    }
+  }, [existingSchedule, defaultDay, form]);
 
   async function onSubmit(data: InsertWorkingDays) {
     if (isSubmitting) return;
