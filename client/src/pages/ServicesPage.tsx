@@ -69,14 +69,20 @@ export default function ServicesPage() {
       category: ServiceCategory.SERVICE,
       duration: 30,
       price: 0,
-      discount_percentage: 0 as number,
+      discount_percentage: 0,
       consumables: [],
       selectedServices: [],
       selectedAddons: []
     },
   });
 
-  const onSubmit = async (data: InsertService) => {
+  // Helper function to calculate package price
+const calculatePackagePrice = (selectedItems: any[], discountPercentage: number) => {
+  const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
+  return Math.round(totalPrice * (1 - discountPercentage / 100));
+};
+
+const onSubmit = async (data: InsertService) => {
     try {
       if (data.category === ServiceCategory.PACKAGE) {
         const selectedServices = form.getValues("selectedServices") || [];
@@ -92,19 +98,10 @@ export default function ServicesPage() {
           return;
         }
 
-        // Calculate total duration and original price
+        // Calculate total duration and price
         const totalDuration = selectedItems.reduce((sum, item) => sum + item.duration, 0);
-        const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
-        
-        // Validate that a price is provided
-        if (!data.price) {
-          toast({
-            title: "Validation Error",
-            description: "Please enter a price for the package",
-            variant: "destructive",
-          });
-          return;
-        }
+        const discountPercentage = data.discount_percentage || 0;
+        const finalPrice = calculatePackagePrice(selectedItems, discountPercentage);
 
         // Create package data with all required fields
         const packageData: InsertService = {
@@ -113,7 +110,8 @@ export default function ServicesPage() {
             `Package including ${data.selectedServices?.length || 0} services and ${data.selectedAddons?.length || 0} add-ons.`,
           category: ServiceCategory.PACKAGE,
           duration: totalDuration,
-          price: data.price,
+          price: finalPrice,
+          discount_percentage: discountPercentage,
           consumables: [], // Packages don't require consumables
           isActive: true,
           selectedServices: selectedServices.map(service => ({
@@ -204,6 +202,8 @@ export default function ServicesPage() {
       selectedAddons: service.selectedAddons || []
     };
     form.reset(formData);
+    
+    // Package prices are now manually set
     
     if (service.category === ServiceCategory.PACKAGE) {
       setShowPackageDialog(true);
@@ -566,6 +566,7 @@ export default function ServicesPage() {
                                 shouldTouch: true
                               });
                               
+                              updatePackagePrice();
                               form.trigger();
                               
                               toast({
@@ -740,8 +741,9 @@ export default function ServicesPage() {
                         {...field}
                         value={field.value?.toString() ?? "0"}
                         onChange={(e) => {
-                          const value = e.target.value === '' ? 0 : parseInt(e.target.value);
+                          const value = e.target.value === '' ? 0 : Math.min(Math.max(parseInt(e.target.value), 0), 100);
                           field.onChange(value);
+                          updatePackagePrice();
                           form.trigger();
                         }}
                       />
@@ -764,6 +766,8 @@ export default function ServicesPage() {
                         step="1"
                         placeholder="Package price will be calculated automatically"
                         {...field}
+                        className="bg-white"
+                        placeholder="Enter package price manually"
                         
                       />
                     </FormControl>
