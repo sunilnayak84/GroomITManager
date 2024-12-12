@@ -29,7 +29,7 @@ export function useServices() {
 
         const fetchedServices = querySnapshot.docs.map((doc) => {
           const data = doc.data();
-          const parsedData = serviceSchema.parse({
+          let parsedData = serviceSchema.parse({
             service_id: doc.id,
             name: data.name,
             description: data.description || undefined,
@@ -48,6 +48,54 @@ export function useServices() {
             selectedServices: data.selectedServices || [],
             selectedAddons: data.selectedAddons || []
           });
+
+          // If this is a package, recalculate the price based on current service prices
+          if (parsedData.category === ServiceCategory.PACKAGE) {
+            try {
+              const selectedItems = [...(parsedData.selectedServices || []), ...(parsedData.selectedAddons || [])];
+              const totalOriginalPrice = selectedItems.reduce((sum, item) => {
+                // Find the current price of the service/addon
+                const currentService = querySnapshot.docs
+                  .find(doc => doc.id === item.service_id)?.data();
+                return sum + (currentService?.price || item.price);
+              }, 0);
+              
+              // Apply the stored discount percentage (ensure it's stored as decimal)
+              const discountPercentage = typeof data.discount_percentage === 'number' ? data.discount_percentage : 0;
+              const finalPrice = Math.round(totalOriginalPrice * (1 - discountPercentage));
+              
+              parsedData = {
+                ...parsedData,
+                price: finalPrice,
+                discount_percentage: discountPercentage // Ensure we keep the original discount percentage
+              };
+
+              console.log('Package price calculation:', {
+                packageName: parsedData.name,
+                originalPrice: totalOriginalPrice,
+                discountPercentage: discountPercentage,
+                finalPrice: finalPrice,
+                selectedItems: selectedItems.map(item => {
+                  const currentService = querySnapshot.docs
+                    .find(doc => doc.id === item.service_id)?.data();
+                  return {
+                    id: item.service_id,
+                    name: item.name,
+                    originalPrice: item.price,
+                    currentPrice: currentService?.price || item.price,
+                    priceChanged: currentService?.price !== item.price
+                  };
+                })
+              });
+            } catch (error) {
+              console.error('Error calculating package price:', error);
+              // Keep the original price if calculation fails
+              parsedData = {
+                ...parsedData,
+                price: data.price || 0
+              };
+            }
+          }
 
           return parsedData;
         });
