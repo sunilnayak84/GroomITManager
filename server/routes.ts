@@ -1,7 +1,8 @@
 import { type Express } from "express";
 import { setupAuth } from "./auth";
 import { db } from "../db";
-import { appointments, customers, pets, users, workingDays } from "../db/schema";
+import { appointments, customers, pets, users } from "@db/schema";
+// Remove unused import
 import { and, eq, gte, count, sql } from "drizzle-orm";
 
 // Firebase handles user creation and management
@@ -152,57 +153,6 @@ export function registerRoutes(app: Express) {
       res.json(newAppointment);
     } catch (error) {
       res.status(500).json({ error: "Failed to create appointment" });
-    }
-  });
-  // Working Hours routes
-  app.get("/api/working-hours", authenticateFirebase, requireRole(['admin', 'staff']), async (req, res) => {
-    try {
-      const allWorkingHours = await db.select().from(workingDays);
-      
-      // If no working hours exist, create default schedules for all days
-      if (allWorkingHours.length === 0) {
-        const defaultSchedules = Array.from({ length: 7 }, (_, i) => ({
-          branchId: 1,
-          dayOfWeek: i,
-          isOpen: i !== 0, // Closed on Sunday (day 0)
-          openingTime: "09:00",
-          closingTime: "17:00",
-          breakStart: "13:00",
-          breakEnd: "14:00",
-          maxDailyAppointments: 8
-        }));
-
-        await db.insert(workingDays).values(defaultSchedules);
-        const insertedHours = await db.select().from(workingDays);
-        return res.json(insertedHours);
-      }
-
-      res.json(allWorkingHours);
-    } catch (error) {
-      console.error('Error fetching working hours:', error);
-      res.status(500).json({ error: "Failed to fetch working hours" });
-    }
-  });
-
-  app.put("/api/working-hours/:dayOfWeek", authenticateFirebase, requireRole(['admin']), async (req, res) => {
-    try {
-      const dayOfWeek = parseInt(req.params.dayOfWeek);
-      const updateData = req.body;
-
-      const [updated] = await db
-        .update(workingDays)
-        .set(updateData)
-        .where(eq(workingDays.dayOfWeek, dayOfWeek))
-        .returning();
-
-      if (!updated) {
-        return res.status(404).json({ error: "Working hours not found for this day" });
-      }
-
-      res.json(updated);
-    } catch (error) {
-      console.error('Error updating working hours:', error);
-      res.status(500).json({ error: "Failed to update working hours" });
     }
   });
 }
