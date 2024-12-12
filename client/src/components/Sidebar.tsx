@@ -16,6 +16,7 @@ export default function Sidebar() {
     { href: "/staff", icon: Users, label: "Staff" },
     { href: "/pets", icon: PawPrint, label: "Pets" },
     { href: "/inventory", icon: Package, label: "Inventory" },
+    { href: "/settings/schedule", icon: Calendar, label: "Working Hours" },
   ];
 
   return (

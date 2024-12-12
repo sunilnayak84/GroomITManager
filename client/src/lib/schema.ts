@@ -201,6 +201,29 @@ export type User = z.infer<typeof userSchema>;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 
 // Additional types for appointments with relations
+// Schema for Working Hours
+export const workingDaysSchema = z.object({
+  id: z.string(),
+  branchId: z.number(),
+  dayOfWeek: z.number().min(0).max(6),
+  isOpen: z.boolean(),
+  openingTime: z.string(),
+  closingTime: z.string(),
+  breakStart: z.string().nullable(),
+  breakEnd: z.string().nullable(),
+  maxDailyAppointments: z.number().default(8),
+  createdAt: z.string(),
+  updatedAt: z.string().nullable(),
+});
+
+export const insertWorkingDaysSchema = workingDaysSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type WorkingDays = z.infer<typeof workingDaysSchema>;
+export type InsertWorkingDays = z.infer<typeof insertWorkingDaysSchema>;
 export type AppointmentWithRelations = Omit<Appointment, "status"> & {
   status: "pending" | "confirmed" | "completed" | "cancelled";
   pet: {
