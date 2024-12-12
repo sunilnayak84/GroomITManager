@@ -86,35 +86,33 @@ export default function AppointmentsPage() {
   ];
 
   return (
-    <div className="container mx-auto max-w-7xl space-y-6 px-6">
-      <div className="rounded-xl overflow-hidden bg-gradient-to-r from-purple-500/80 to-purple-500/20">
-        <div className="relative">
-          <img
-            src="https://images.unsplash.com/photo-1727681200732-0086492c217d"
-            alt="Pet Grooming"
-            className="w-full h-48 object-cover mix-blend-overlay"
-          />
-          <div className="absolute inset-0 p-6 flex flex-col justify-between">
-            <div className="flex items-center justify-between">
-              <div className="text-white">
-                <h1 className="text-3xl font-bold">Appointments</h1>
-                <p className="text-white/80">Manage your pet grooming appointments</p>
-              </div>
-              <Dialog open={openNewForm} onOpenChange={setOpenNewForm}>
-                <DialogTrigger asChild>
-                  <Button variant="secondary">
-                    <Plus className="mr-2 h-4 w-4" />
-                    New Appointment
-                  </Button>
-                </DialogTrigger>
-                <AppointmentForm setOpen={setOpenNewForm} />
-              </Dialog>
+    <div className="flex-1 p-8">
+      <div className="relative h-48 rounded-xl overflow-hidden bg-gradient-to-r from-purple-500/80 to-purple-500/20 mb-6">
+        <img
+          src="https://images.unsplash.com/photo-1727681200732-0086492c217d"
+          alt="Pet Grooming"
+          className="w-full h-full object-cover mix-blend-overlay"
+        />
+        <div className="absolute inset-0 flex items-center p-8">
+          <div className="flex items-center justify-between w-full">
+            <div className="text-white">
+              <h1 className="text-2xl font-bold">Appointments</h1>
+              <p className="text-white/80">Manage your pet grooming appointments</p>
             </div>
+            <Dialog open={openNewForm} onOpenChange={setOpenNewForm}>
+              <DialogTrigger asChild>
+                <Button variant="secondary">
+                  <Plus className="mr-2 h-4 w-4" />
+                  New Appointment
+                </Button>
+              </DialogTrigger>
+              <AppointmentForm setOpen={setOpenNewForm} />
+            </Dialog>
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border shadow-sm">
+      <div className="bg-white rounded-lg border shadow-sm">
         <DataTable
           columns={columns}
           data={(appointments || []) as AppointmentWithRelations[]}
