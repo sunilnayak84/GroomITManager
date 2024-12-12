@@ -8,7 +8,9 @@ export async function terminateProcessOnPort(port: number): Promise<void> {
   try {
     console.log(`[PORT_CLEANUP] Attempting to clean up port ${port}...`);
     
-    // First try Unix-like systems (Linux/Mac)
+    let success = false;
+    
+    // Try Unix command first (lsof)
     try {
       const { stdout } = await execAsync(`lsof -t -i:${port}`);
       const pids = stdout.trim().split('\n').filter(Boolean);
@@ -28,17 +30,23 @@ export async function terminateProcessOnPort(port: number): Promise<void> {
               process.kill(Number(pid), 0);
               console.log(`[PORT_CLEANUP] Process ${pid} still alive, sending SIGKILL`);
               process.kill(Number(pid), 'SIGKILL');
-            } catch (e) {
+            } catch {
               // Process already terminated
               console.log(`[PORT_CLEANUP] Process ${pid} terminated successfully`);
+              success = true;
             }
           } catch (killError) {
             console.error(`[PORT_CLEANUP] Error terminating process ${pid}:`, killError);
           }
         }
+      } else {
+        console.log(`[PORT_CLEANUP] No processes found using port ${port} (Unix)`);
+        success = true;
       }
     } catch (unixError) {
-      // lsof failed, try Windows commands
+      console.log(`[PORT_CLEANUP] Unix method failed, trying Windows method...`);
+      
+      // Try Windows command (netstat)
       try {
         const { stdout: netstatOutput } = await execAsync(`netstat -ano | findstr :${port}`);
         const pidMatches = netstatOutput.match(/\s+(\d+)\s*$/gm);
@@ -51,14 +59,17 @@ export async function terminateProcessOnPort(port: number): Promise<void> {
             try {
               await execAsync(`taskkill /F /PID ${pid}`);
               console.log(`[PORT_CLEANUP] Terminated Windows process ${pid}`);
+              success = true;
             } catch (killError) {
               console.error(`[PORT_CLEANUP] Failed to terminate Windows process ${pid}:`, killError);
             }
           }
+        } else {
+          console.log(`[PORT_CLEANUP] No processes found using port ${port} (Windows)`);
+          success = true;
         }
       } catch (windowsError) {
-        // Both Unix and Windows methods failed
-        console.log(`[PORT_CLEANUP] No processes found using port ${port}`);
+        console.log(`[PORT_CLEANUP] Windows method failed`);
       }
     }
 
@@ -67,7 +78,8 @@ export async function terminateProcessOnPort(port: number): Promise<void> {
     
     let portIsFree = false;
     try {
-      await execAsync(`lsof -t -i:${port}`);
+      const { stdout } = await execAsync(`lsof -t -i:${port}`);
+      portIsFree = !stdout.trim();
     } catch {
       // lsof returns error when no process is using the port
       portIsFree = true;
@@ -75,7 +87,8 @@ export async function terminateProcessOnPort(port: number): Promise<void> {
 
     if (portIsFree) {
       console.log(`[PORT_CLEANUP] Port ${port} is now available`);
-    } else {
+      success = true;
+    } else if (!success) {
       console.warn(`[PORT_CLEANUP] Warning: Port ${port} might still be in use`);
       // One final attempt with SIGKILL
       try {
@@ -84,7 +97,8 @@ export async function terminateProcessOnPort(port: number): Promise<void> {
         for (const pid of remainingPids) {
           try {
             process.kill(Number(pid), 'SIGKILL');
-          } catch (e) {
+            success = true;
+          } catch {
             // Ignore errors in final cleanup
           }
         }
@@ -92,7 +106,12 @@ export async function terminateProcessOnPort(port: number): Promise<void> {
         // Ignore errors in final cleanup
       }
     }
+
+    if (!success) {
+      throw new Error(`Failed to clean up port ${port}`);
+    }
   } catch (error) {
     console.error(`[PORT_CLEANUP] Error during port cleanup:`, error);
+    throw error; // Re-throw to handle in the caller
   }
 }

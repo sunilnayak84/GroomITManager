@@ -18,9 +18,16 @@ name = "Project"
 mode = "parallel"
 author = "agent"
 
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
 [[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Project"
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "tsx --require dotenv/config server/index.ts"
+waitForPort = 5173
 
 [[workflows.workflow]]
 name = "Project"
@@ -34,7 +41,7 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "PORT=5173 NODE_ENV=development tsx watch --clear-screen=false server/index.ts"
+args = "tsx --require dotenv/config server/index.ts"
 waitForPort = 5173
 
 [[ports]]
