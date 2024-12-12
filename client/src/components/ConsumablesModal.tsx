@@ -67,11 +67,8 @@ export function ConsumablesModal({
 
   const addConsumable = (data: z.infer<typeof baseConsumableSchema>) => {
     try {
-      // Validate required fields
-      if (!data.item_id || !data.item_name || !data.quantity_used) {
-        throw new Error("Please fill in all required fields");
-      }
-
+      console.log('Adding consumable with data:', data);
+      
       // Create new consumable with proper type validation
       const newConsumable: ServiceConsumable = {
         item_id: data.item_id,
@@ -81,8 +78,14 @@ export function ConsumablesModal({
         updated_at: new Date()
       };
 
+      console.log('Created new consumable:', newConsumable);
+
       // Update consumables state
-      setConsumables(prev => [...prev, newConsumable]);
+      setConsumables(prev => {
+        const updated = [...prev, newConsumable];
+        console.log('Updated consumables state:', updated);
+        return updated;
+      });
       
       // Reset form after successful add
       form.reset({
@@ -102,21 +105,31 @@ export function ConsumablesModal({
 
   const handleSave = () => {
     try {
-      // Validate consumables before saving
-      const validConsumables = consumables.filter(c => 
-        c.item_id && c.item_name && c.quantity_used > 0
-      );
+      console.log('Handling save with consumables:', consumables);
       
-      if (validConsumables.length !== consumables.length) {
-        console.error('Some consumables have invalid data');
-        return;
-      }
+      // Validate each consumable
+      const validConsumables = consumables.map(c => {
+        const validated = serviceConsumableSchema.parse({
+          item_id: c.item_id,
+          item_name: c.item_name,
+          quantity_used: Number(c.quantity_used)
+        });
+        console.log('Validated consumable:', validated);
+        return validated;
+      });
+      
+      console.log('All validated consumables:', validConsumables);
       
       // Call parent save function with validated consumables
       onSave(validConsumables);
       onOpenChange(false);
     } catch (error) {
       console.error('Error saving consumables:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : 'Failed to save consumables',
+        variant: "destructive"
+      });
     }
   };
 
