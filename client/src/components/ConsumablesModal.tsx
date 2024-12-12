@@ -65,8 +65,14 @@ export function ConsumablesModal({
     }
   };
 
-  const addConsumable = (data: ServiceConsumable) => {
-    setConsumables((prev) => [...prev, data]);
+  const addConsumable = (data: z.infer<typeof baseConsumableSchema>) => {
+    const newConsumable: ServiceConsumable = {
+      ...data,
+      quantity_used: Number(data.quantity_used),
+      created_at: new Date(),
+      updated_at: new Date()
+    };
+    setConsumables((prev) => [...prev, newConsumable]);
     form.reset();
   };
 
