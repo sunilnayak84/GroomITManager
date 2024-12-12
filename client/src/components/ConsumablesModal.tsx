@@ -48,16 +48,11 @@ export function ConsumablesModal({
   const form = useForm<ServiceConsumable>({
     resolver: zodResolver(serviceConsumableSchema),
     defaultValues: {
-      inventory_item_id: "",
-      name: "",
-      quantity_per_service: 0,
-      unit: "",
-      current_stock: 0,
-      track_inventory: true,
-      auto_deduct: true,
-      minimum_quantity: 0,
-      category: "",
-      notes: "",
+      item_id: "",
+      item_name: "",
+      quantity_used: 0,
+      created_at: new Date(),
+      updated_at: new Date()
     },
   });
 
@@ -65,22 +60,10 @@ export function ConsumablesModal({
   const onInventoryItemSelect = (itemId: string) => {
     const selectedItem = inventory.find(item => item.item_id === itemId);
     if (selectedItem) {
-      form.setValue('inventory_item_id', itemId);
-      form.setValue('name', selectedItem.name);
-      form.setValue('unit', selectedItem.unit);
-      form.setValue('current_stock', selectedItem.quantity);
-      form.setValue('minimum_quantity', selectedItem.minimum_quantity);
-      form.setValue('category', selectedItem.category);
-      form.setValue('cost_per_unit', selectedItem.cost_per_unit);
-      form.setValue('reorder_point', selectedItem.reorder_point);
-      form.setValue('service_linked', true);
-      form.setValue('last_stock_check', new Date());
-      
-      // Set track_inventory based on whether the item has minimum_quantity set
-      form.setValue('track_inventory', selectedItem.minimum_quantity > 0);
-      
-      // Auto-deduct should be enabled by default for tracked items
-      form.setValue('auto_deduct', selectedItem.minimum_quantity > 0);
+      form.setValue('item_id', itemId);
+      form.setValue('item_name', selectedItem.name);
+      form.setValue('created_at', new Date());
+      form.setValue('updated_at', new Date());
     }
   };
 
@@ -113,7 +96,7 @@ export function ConsumablesModal({
             <form onSubmit={form.handleSubmit(addConsumable)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="inventory_item_id"
+                name="item_id"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Select Inventory Item</FormLabel>
@@ -138,16 +121,16 @@ export function ConsumablesModal({
 
               <FormField
                 control={form.control}
-                name="quantity_per_service"
+                name="quantity_used"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Quantity Per Service</FormLabel>
+                    <FormLabel>Quantity Used</FormLabel>
                     <FormControl>
                       <Input 
                         type="number"
                         min="0.01"
                         step="0.01"
-                        placeholder="Enter quantity used per service"
+                        placeholder="Enter quantity used"
                         {...field}
                         onChange={(e) => field.onChange(parseFloat(e.target.value))}
                       />
@@ -156,61 +139,6 @@ export function ConsumablesModal({
                   </FormItem>
                 )}
               />
-
-              <FormField
-                control={form.control}
-                name="minimum_quantity"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Minimum Quantity Alert</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        placeholder="Minimum quantity for alerts"
-                        {...field}
-                        onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex flex-col gap-2">
-                <FormField
-                  control={form.control}
-                  name="track_inventory"
-                  render={({ field }) => (
-                    <FormItem className="flex items-center justify-between space-y-0">
-                      <FormLabel>Track Inventory</FormLabel>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="auto_deduct"
-                  render={({ field }) => (
-                    <FormItem className="flex items-center justify-between space-y-0">
-                      <FormLabel>Auto Deduct from Stock</FormLabel>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
 
               <Button type="submit">Add Consumable</Button>
             </form>
