@@ -376,37 +376,30 @@ export default function CustomersPage() {
 
   return (
     <div className="p-8 space-y-6">
-      <div className="relative h-52 rounded-xl overflow-hidden bg-gradient-to-r from-blue-500 to-purple-600">
-        <img
-          src="https://images.unsplash.com/photo-1573497620053-ea5300f94f21"
-          alt="Professional Customer Service"
-          className="w-full h-full object-cover opacity-50 mix-blend-overlay"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary/40 flex items-center px-10">
-          <div className="text-white">
-            <h2 className="text-3xl font-bold mb-2">Customer Management</h2>
-            <p className="text-lg opacity-90">Keep track of all your valued customers</p>
-          </div>
+      <div className="relative h-32 rounded-xl overflow-hidden bg-gradient-to-r from-blue-200 to-blue-100">
+        <div className="absolute inset-0 bg-white/50"></div>
+        <div className="absolute inset-0 flex flex-col justify-center px-8">
+          <h2 className="text-2xl font-semibold text-gray-800">Customer Management</h2>
+          <p className="text-sm text-gray-600">Keep track of all your valued customers</p>
         </div>
       </div>
 
-      <div className="flex justify-between items-center gap-6">
-        <div className="flex-1 max-w-md">
+      <div className="flex justify-between items-center gap-4 mb-6">
+        <div className="flex-1 max-w-xs">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search customers..."
-              className="pl-10 h-12 text-base bg-white shadow-sm"
+              className="pl-10 h-10 text-sm bg-white"
             />
           </div>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button
-              size="lg"
-              className="h-12 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              className="bg-primary hover:bg-primary/90"
             >
-              <Plus className="mr-2 h-5 w-5" /> Add Customer
+              <Plus className="mr-2 h-4 w-4" /> Add Customer
             </Button>
           </DialogTrigger>
           <DialogContent>
