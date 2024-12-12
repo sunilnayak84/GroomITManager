@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -32,6 +32,7 @@ import { usePets } from "../hooks/use-pets";
 import { useToast } from "@/hooks/use-toast";
 import { useServices } from '../hooks/use-services';
 import { useStaff } from '../hooks/use-staff';
+import { useWorkingHours } from '../hooks/use-working-hours';
 
 interface AppointmentFormProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -51,6 +52,9 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
     return user.isGroomer === true && user.isActive === true;
   });
   
+  const { workingHours } = useWorkingHours();
+  const [selectedService, setSelectedService] = useState<{ duration: number } | null>(null);
+  
   const form = useForm<z.infer<typeof insertAppointmentSchema>>({
     resolver: zodResolver(insertAppointmentSchema),
     defaultValues: {
@@ -69,6 +73,17 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
       productsUsed: null
     },
   });
+  
+  // Update selected service when serviceId changes
+  useEffect(() => {
+    const serviceId = form.watch("serviceId");
+    if (serviceId) {
+      const service = services?.find(s => s.service_id === serviceId);
+      setSelectedService(service || null);
+    } else {
+      setSelectedService(null);
+    }
+  }, [form.watch("serviceId"), services]);
 
   async function onSubmit(values: InsertAppointment) {
     if (isSubmitting) return;
@@ -195,17 +210,71 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                           
                           // Get day of week (0-6, Sunday-Saturday)
                           const dayOfWeek = date.getDay();
-                          const hour = date.getHours();
-                          const validTime = hour >= 9 && hour < 17;
                           const selectedGroomerId = form.getValues("groomerId");
                           
-                          if (!validTime) {
+                          // Check working hours for the selected day
+                          const daySchedule = workingHours?.find(
+                            (schedule) => schedule.dayOfWeek === dayOfWeek
+                          );
+                          
+                          if (!daySchedule || !daySchedule.isOpen) {
                             toast({
-                              title: "Invalid Time",
-                              description: "Please select a time during business hours (9 AM - 5 PM)",
+                              title: "Invalid Day",
+                              description: "The selected day is not a working day",
                               variant: "destructive"
                             });
                             return;
+                          }
+                          
+                          const appointmentHour = date.getHours();
+                          const appointmentMinutes = date.getMinutes();
+                          const appointmentTime = `${appointmentHour.toString().padStart(2, '0')}:${appointmentMinutes.toString().padStart(2, '0')}`;
+                          
+                          const openingTime = daySchedule.openingTime;
+                          const closingTime = daySchedule.closingTime;
+                          
+                          // Check if appointment is within working hours
+                          if (appointmentTime < openingTime || appointmentTime >= closingTime) {
+                            toast({
+                              title: "Invalid Time",
+                              description: `Please select a time between ${openingTime} and ${closingTime}`,
+                              variant: "destructive"
+                            });
+                            return;
+                          }
+                          
+                          // Check if appointment fits before closing time
+                          if (selectedService) {
+                            const appointmentEndTime = new Date(date);
+                            appointmentEndTime.setMinutes(
+                              appointmentEndTime.getMinutes() + selectedService.duration
+                            );
+                            const endHour = appointmentEndTime.getHours();
+                            const endMinutes = appointmentEndTime.getMinutes();
+                            const endTimeStr = `${endHour.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
+                            
+                            if (endTimeStr > closingTime) {
+                              toast({
+                                title: "Invalid Time",
+                                description: "The appointment duration exceeds closing time",
+                                variant: "destructive"
+                              });
+                              return;
+                            }
+                          }
+                          
+                          // Check break time if exists
+                          if (daySchedule.breakStart && daySchedule.breakEnd) {
+                            const isInBreakTime = appointmentTime >= daySchedule.breakStart && 
+                                                appointmentTime < daySchedule.breakEnd;
+                            if (isInBreakTime) {
+                              toast({
+                                title: "Invalid Time",
+                                description: `Break time is between ${daySchedule.breakStart} and ${daySchedule.breakEnd}`,
+                                variant: "destructive"
+                              });
+                              return;
+                            }
                           }
                           
                           if (selectedGroomerId && !isTimeSlotAvailable(date, selectedGroomerId)) {
