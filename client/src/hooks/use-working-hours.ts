@@ -1,6 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { WorkingDays, InsertWorkingDays } from "@/lib/schema";
-import { collection, getDocs, setDoc, doc, Timestamp } from 'firebase/firestore';
+import { collection, getDocs, setDoc, doc, Timestamp, query, where } from 'firebase/firestore';
+const DAYS_OF_WEEK = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 import { db } from "../lib/firebase";
 
 interface FirestoreWorkingDays {
@@ -100,6 +109,20 @@ export function useWorkingHours(branchId?: string) {
     mutationFn: async (data: InsertWorkingDays & { existingId?: string }) => {
       try {
         const workingHoursRef = collection(db, 'workingHours');
+        
+        // Check for existing schedule for the same day
+        if (!data.existingId) {
+          const q = query(
+            workingHoursRef, 
+            where('dayOfWeek', '==', data.dayOfWeek)
+          );
+          const querySnapshot = await getDocs(q);
+          
+          if (!querySnapshot.empty) {
+            throw new Error(`A schedule for ${DAYS_OF_WEEK[data.dayOfWeek]} already exists. Please edit the existing schedule instead.`);
+          }
+        }
+        
         const dayRef = data.existingId 
           ? doc(workingHoursRef, data.existingId)
           : doc(workingHoursRef);
