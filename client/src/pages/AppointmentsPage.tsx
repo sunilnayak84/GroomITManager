@@ -80,36 +80,40 @@ export default function AppointmentsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Appointments</h1>
-          <p className="text-muted-foreground">Manage your appointments</p>
+      <div className="rounded-3xl overflow-hidden bg-gradient-to-r from-purple-500/80 to-purple-500/20">
+        <div className="relative">
+          <img
+            src="https://images.unsplash.com/photo-1727681200732-0086492c217d"
+            alt="Pet Grooming"
+            className="w-full h-48 object-cover mix-blend-overlay"
+          />
+          <div className="absolute inset-0 p-6 flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <div className="text-white">
+                <h1 className="text-3xl font-bold">Appointments</h1>
+                <p className="text-white/80">Manage your pet grooming appointments</p>
+              </div>
+              <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="secondary">
+                    <Plus className="mr-2 h-4 w-4" />
+                    New Appointment
+                  </Button>
+                </DialogTrigger>
+                <AppointmentForm setOpen={setOpen} />
+              </Dialog>
+            </div>
+          </div>
         </div>
-
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              New Appointment
-            </Button>
-          </DialogTrigger>
-          <AppointmentForm setOpen={setOpen} />
-        </Dialog>
       </div>
 
-      <div className="rounded-xl overflow-hidden">
-        <img
-          src="https://images.unsplash.com/photo-1727681200732-0086492c217d"
-          alt="Pet Grooming"
-          className="w-full h-48 object-cover"
+      <div className="bg-white rounded-xl shadow-sm">
+        <DataTable
+          columns={columns}
+          data={(appointments || []) as AppointmentWithRelations[]}
+          isLoading={isLoading}
         />
       </div>
-
-      <DataTable
-        columns={columns}
-        data={(appointments || []) as AppointmentWithRelations[]}
-        isLoading={isLoading}
-      />
     </div>
   );
 }

@@ -42,14 +42,25 @@ export default function HomePage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome to GroomIT management system</p>
+      <div className="rounded-3xl overflow-hidden bg-gradient-to-r from-primary/80 to-primary/20">
+        <div className="relative">
+          <img
+            src="https://images.unsplash.com/photo-1519415387722-a1c3bbef716c"
+            alt="Grooming Salon"
+            className="w-full h-48 object-cover mix-blend-overlay"
+          />
+          <div className="absolute inset-0 p-6 flex flex-col justify-between">
+            <div className="text-white">
+              <h1 className="text-3xl font-bold">Dashboard</h1>
+              <p className="text-white/80">Welcome to GroomIT management system</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {cards.map((card) => (
-          <Card key={card.title}>
+          <Card key={card.title} className="bg-white shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 {card.title}
@@ -64,20 +75,8 @@ export default function HomePage() {
         ))}
       </div>
 
-      <DashboardStats />
-
-      <div className="relative h-[300px] rounded-xl overflow-hidden">
-        <img 
-          src="https://images.unsplash.com/photo-1519415387722-a1c3bbef716c"
-          alt="Grooming Salon"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary/20 flex items-center p-8">
-          <div className="text-white max-w-lg">
-            <h2 className="text-3xl font-bold mb-4">Professional Pet Grooming</h2>
-            <p className="text-lg">Providing the best care for your pets with our experienced groomers.</p>
-          </div>
-        </div>
+      <div className="bg-white rounded-xl shadow-sm p-4">
+        <DashboardStats />
       </div>
     </div>
   );
