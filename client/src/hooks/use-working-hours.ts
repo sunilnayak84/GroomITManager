@@ -27,11 +27,31 @@ export function useWorkingHours(branchId?: string) {
           throw new Error('Firebase not initialized');
         }
 
-        const workingHoursRef = collection(db, 'workingHours');
-        const querySnapshot = await getDocs(workingHoursRef);
+        const workingHoursRef = collection(db, 'working_hours');
+        let query = workingHoursRef;
+        
+        if (branchId) {
+          query = query.where('branchId', '==', branchId);
+        }
+        
+        const querySnapshot = await getDocs(query);
 
         if (querySnapshot.empty) {
-          return [];
+          // Initialize with default schedule for all days
+          const defaultSchedule = Array.from({ length: 7 }, (_, index) => ({
+            id: `default-${index}`,
+            branchId: branchId ? parseInt(branchId) : 1,
+            dayOfWeek: index,
+            isOpen: index !== 0, // Closed on Sundays by default
+            openingTime: "09:00",
+            closingTime: "17:00",
+            breakStart: "13:00",
+            breakEnd: "14:00",
+            maxDailyAppointments: 8,
+            createdAt: new Date().toISOString(),
+            updatedAt: null
+          }));
+          return defaultSchedule;
         }
 
         const hours = querySnapshot.docs
@@ -51,9 +71,30 @@ export function useWorkingHours(branchId?: string) {
               updatedAt: data.updatedAt?.toDate().toISOString() || null
             };
           })
-          .filter(hour => !branchId || hour.branchId.toString() === branchId);
+          .sort((a, b) => a.dayOfWeek - b.dayOfWeek);
 
-        return hours;
+        // Fill in any missing days with default values
+        const daysMap = new Map(hours.map(hour => [hour.dayOfWeek, hour]));
+        const fullSchedule = Array.from({ length: 7 }, (_, index) => {
+          if (daysMap.has(index)) {
+            return daysMap.get(index)!;
+          }
+          return {
+            id: `default-${index}`,
+            branchId: branchId ? parseInt(branchId) : 1,
+            dayOfWeek: index,
+            isOpen: index !== 0, // Closed on Sundays by default
+            openingTime: "09:00",
+            closingTime: "17:00",
+            breakStart: "13:00",
+            breakEnd: "14:00",
+            maxDailyAppointments: 8,
+            createdAt: new Date().toISOString(),
+            updatedAt: null
+          };
+        });
+
+        return fullSchedule;
       } catch (error) {
         console.error('Error fetching working hours:', error);
         throw error;
