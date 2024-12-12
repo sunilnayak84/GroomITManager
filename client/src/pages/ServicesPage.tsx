@@ -553,12 +553,15 @@ export default function ServicesPage() {
                             size="sm"
                             onClick={async () => {
                               const currentServices = form.getValues("selectedServices") || [];
-                              const isAlreadySelected = currentServices.some(s => s.service_id === service.service_id);
+                              const currentAddons = form.getValues("selectedAddons") || [];
+                              const allSelectedItems = [...currentServices, ...currentAddons];
+                              
+                              const isAlreadySelected = allSelectedItems.some(s => s.service_id === service.service_id);
                               
                               if (isAlreadySelected) {
                                 toast({
                                   title: "Already Selected",
-                                  description: "This service is already in the package",
+                                  description: "This item is already in the package",
                                   variant: "destructive"
                                 });
                                 return;
@@ -578,6 +581,14 @@ export default function ServicesPage() {
                                 shouldTouch: true
                               });
                               
+                              // Recalculate totals
+                              const updatedServices = [...currentServices, newService];
+                              const totalDuration = [...updatedServices, ...currentAddons].reduce((sum, item) => sum + item.duration, 0);
+                              const totalPrice = [...updatedServices, ...currentAddons].reduce((sum, item) => sum + item.price, 0);
+                              const discountPercentage = form.getValues("discount_percentage") || 0;
+                              const finalPrice = Math.round(totalPrice * (1 - discountPercentage));
+                              
+                              form.setValue("price", finalPrice);
                               form.trigger();
                               
                               toast({
@@ -607,13 +618,16 @@ export default function ServicesPage() {
                             variant="outline"
                             size="sm"
                             onClick={async () => {
+                              const currentServices = form.getValues("selectedServices") || [];
                               const currentAddons = form.getValues("selectedAddons") || [];
-                              const isAlreadySelected = currentAddons.some(a => a.service_id === addon.service_id);
+                              const allSelectedItems = [...currentServices, ...currentAddons];
+                              
+                              const isAlreadySelected = allSelectedItems.some(s => s.service_id === addon.service_id);
                               
                               if (isAlreadySelected) {
                                 toast({
                                   title: "Already Selected",
-                                  description: "This add-on is already in the package",
+                                  description: "This item is already in the package",
                                   variant: "destructive"
                                 });
                                 return;
@@ -633,6 +647,14 @@ export default function ServicesPage() {
                                 shouldTouch: true
                               });
                               
+                              // Recalculate totals
+                              const updatedAddons = [...currentAddons, newAddon];
+                              const totalDuration = [...currentServices, ...updatedAddons].reduce((sum, item) => sum + item.duration, 0);
+                              const totalPrice = [...currentServices, ...updatedAddons].reduce((sum, item) => sum + item.price, 0);
+                              const discountPercentage = form.getValues("discount_percentage") || 0;
+                              const finalPrice = Math.round(totalPrice * (1 - discountPercentage));
+                              
+                              form.setValue("price", finalPrice);
                               form.trigger();
                               
                               toast({
@@ -679,6 +701,15 @@ export default function ServicesPage() {
                                 addons.filter(a => a.service_id !== item.service_id)
                               );
                             }
+                            // Recalculate totals after removing an item
+                            const updatedServices = form.getValues("selectedServices") || [];
+                            const updatedAddons = form.getValues("selectedAddons") || [];
+                            const totalDuration = [...updatedServices, ...updatedAddons].reduce((sum, item) => sum + item.duration, 0);
+                            const totalPrice = [...updatedServices, ...updatedAddons].reduce((sum, item) => sum + item.price, 0);
+                            const discountPercentage = form.getValues("discount_percentage") || 0;
+                            const finalPrice = Math.round(totalPrice * (1 - discountPercentage));
+                            form.setValue("price", finalPrice);
+                            form.trigger();
                           }}
                         >
                           Remove
