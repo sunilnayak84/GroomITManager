@@ -45,8 +45,8 @@ export function ConsumablesModal({
   const [consumables, setConsumables] = React.useState<ServiceConsumable[]>(initialConsumables);
   const { inventory } = useInventory();
   
-  const form = useForm<Omit<ServiceConsumable, 'created_at' | 'updated_at'>>({
-    resolver: zodResolver(serviceConsumableSchema.omit({ created_at: true, updated_at: true })),
+  const form = useForm<z.infer<typeof baseConsumableSchema>>({
+    resolver: zodResolver(baseConsumableSchema),
     defaultValues: {
       item_id: "",
       item_name: "",

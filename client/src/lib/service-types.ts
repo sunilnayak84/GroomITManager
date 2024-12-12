@@ -1,48 +1,19 @@
 import { z } from "zod";
 
-// Define the consumable schema
-export const serviceConsumableSchema = z.object({
+// Base consumable schema without timestamps
+export const baseConsumableSchema = z.object({
   item_id: z.string().min(1, "Item ID is required"),
   item_name: z.string().min(1, "Item name is required"),
-  quantity_used: z.number().positive("Quantity must be greater than 0"),
-  created_at: z.union([
-    z.string(),
-    z.date(),
-    z.object({
-      seconds: z.number(),
-      nanoseconds: z.number()
-    }),
-    z.null(),
-    z.undefined()
-  ]).transform(val => {
-    if (!val) return new Date();
-    if (val instanceof Date) return val;
-    if (typeof val === 'string') return new Date(val);
-    if (typeof val === 'object' && 'seconds' in val) return new Date(val.seconds * 1000);
-    return new Date();
-  }).default(new Date()),
-  updated_at: z.union([
-    z.string(),
-    z.date(),
-    z.object({
-      seconds: z.number(),
-      nanoseconds: z.number()
-    }),
-    z.null(),
-    z.undefined()
-  ]).transform(val => {
-    if (!val) return new Date();
-    if (val instanceof Date) return val;
-    if (typeof val === 'string') return new Date(val);
-    if (typeof val === 'object' && 'seconds' in val) return new Date(val.seconds * 1000);
-    return new Date();
-  }).default(new Date())
+  quantity_used: z.number().positive("Quantity must be greater than 0")
+});
+
+// Full consumable schema with timestamps
+export const serviceConsumableSchema = baseConsumableSchema.extend({
+  created_at: z.date().default(() => new Date()),
+  updated_at: z.date().default(() => new Date())
 }).transform(data => ({
-  item_id: data.item_id,
-  item_name: data.item_name,
-  quantity_used: Number(data.quantity_used),
-  created_at: data.created_at || new Date(),
-  updated_at: data.updated_at || new Date()
+  ...data,
+  quantity_used: Number(data.quantity_used)
 }));
 
 // Define the service schema
