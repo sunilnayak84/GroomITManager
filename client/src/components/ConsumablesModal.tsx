@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React from "react";
+import * as z from "zod";
 import {
   Dialog,
   DialogContent,
@@ -24,7 +25,6 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ServiceConsumable, baseConsumableSchema } from "@/lib/service-types";
@@ -66,18 +66,34 @@ export function ConsumablesModal({
   };
 
   const addConsumable = (data: z.infer<typeof baseConsumableSchema>) => {
-    if (!data.item_id || !data.item_name || !data.quantity_used) {
+    try {
+      // Validate required fields
+      if (!data.item_id || !data.item_name || !data.quantity_used) {
+        throw new Error("Please fill in all required fields");
+      }
+
+      // Create new consumable with proper type validation
+      const newConsumable: ServiceConsumable = {
+        item_id: data.item_id,
+        item_name: data.item_name,
+        quantity_used: Number(data.quantity_used),
+        created_at: new Date(),
+        updated_at: new Date()
+      };
+
+      // Update consumables state
+      setConsumables(prev => [...prev, newConsumable]);
+      
+      // Reset form after successful add
+      form.reset({
+        item_id: "",
+        item_name: "",
+        quantity_used: 0
+      });
+    } catch (error) {
+      console.error('Error adding consumable:', error);
       return;
     }
-    const newConsumable: ServiceConsumable = {
-      item_id: data.item_id,
-      item_name: data.item_name,
-      quantity_used: Number(data.quantity_used),
-      created_at: new Date(),
-      updated_at: new Date()
-    };
-    setConsumables((prev) => [...prev, newConsumable]);
-    form.reset();
   };
 
   const removeConsumable = (index: number) => {
@@ -85,8 +101,23 @@ export function ConsumablesModal({
   };
 
   const handleSave = () => {
-    onSave(consumables);
-    onOpenChange(false);
+    try {
+      // Validate consumables before saving
+      const validConsumables = consumables.filter(c => 
+        c.item_id && c.item_name && c.quantity_used > 0
+      );
+      
+      if (validConsumables.length !== consumables.length) {
+        console.error('Some consumables have invalid data');
+        return;
+      }
+      
+      // Call parent save function with validated consumables
+      onSave(validConsumables);
+      onOpenChange(false);
+    } catch (error) {
+      console.error('Error saving consumables:', error);
+    }
   };
 
   return (
