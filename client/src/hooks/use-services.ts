@@ -94,16 +94,27 @@ export function useServices() {
       const docRef = doc(servicesCollection);
       const timestamp = new Date();
 
-      // Process consumables with simplified validation
+      // Process consumables with detailed validation and logging
       const processedConsumables = serviceData.consumables?.map(consumable => {
         try {
-          return serviceConsumableSchema.parse(consumable);
+          console.log('Processing consumable:', consumable);
+          const validated = serviceConsumableSchema.parse({
+            item_id: consumable.item_id,
+            item_name: consumable.item_name,
+            quantity_used: Number(consumable.quantity_used)
+          });
+          console.log('Validated consumable:', validated);
+          return validated;
         } catch (error) {
           console.error('Invalid consumable:', consumable, error);
           throw new Error(`Invalid consumable data: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
       }) || [];
+      
+      console.log('Final processed consumables:', processedConsumables);
 
+      console.log('Preparing data for Firestore:', serviceData);
+      
       // Prepare data for Firestore
       const firestoreData = {
         name: serviceData.name,
@@ -112,7 +123,11 @@ export function useServices() {
         duration: serviceData.duration,
         price: serviceData.price,
         discount_percentage: serviceData.discount_percentage || 0,
-        consumables: processedConsumables,
+        consumables: processedConsumables.map(c => ({
+          item_id: c.item_id,
+          item_name: c.item_name,
+          quantity_used: Number(c.quantity_used)
+        })),
         isActive: true,
         created_at: timestamp.toISOString(),
         updated_at: timestamp.toISOString(),
@@ -167,18 +182,23 @@ export function useServices() {
       };
 
       if (updateData.consumables) {
+        console.log('Processing consumables for update:', updateData.consumables);
         updatePayload.consumables = updateData.consumables.map(consumable => {
-          const validated = serviceConsumableSchema.parse({
-            item_id: consumable.item_id,
-            item_name: consumable.item_name,
-            quantity_used: Number(consumable.quantity_used)
-          });
+          try {
+            const validated = serviceConsumableSchema.parse({
+              item_id: consumable.item_id,
+              item_name: consumable.item_name,
+              quantity_used: Number(consumable.quantity_used)
+            });
 
-          return {
-            ...validated,
-            quantity_used: Number(validated.quantity_used)
-          };
+            console.log('Validated update consumable:', validated);
+            return validated;
+          } catch (error) {
+            console.error('Error validating consumable during update:', consumable, error);
+            throw error;
+          }
         });
+        console.log('Final processed update consumables:', updatePayload.consumables);
       }
 
       if (updateData.selectedServices) {
