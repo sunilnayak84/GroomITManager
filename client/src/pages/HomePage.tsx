@@ -41,8 +41,8 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-3xl overflow-hidden bg-gradient-to-r from-primary/80 to-primary/20">
+    <div className="container mx-auto max-w-7xl space-y-6 px-6">
+      <div className="rounded-xl overflow-hidden bg-gradient-to-r from-primary/80 to-primary/20">
         <div className="relative">
           <img
             src="https://images.unsplash.com/photo-1519415387722-a1c3bbef716c"
@@ -60,7 +60,7 @@ export default function HomePage() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {cards.map((card) => (
-          <Card key={card.title} className="bg-white shadow-sm">
+          <Card key={card.title} className="bg-white border shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 {card.title}
@@ -75,7 +75,7 @@ export default function HomePage() {
         ))}
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm p-4">
+      <div className="bg-white rounded-xl border shadow-sm p-4">
         <DashboardStats />
       </div>
     </div>
