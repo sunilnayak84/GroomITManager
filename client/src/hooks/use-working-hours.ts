@@ -97,12 +97,12 @@ export function useWorkingHours(branchId?: string) {
   });
 
   const addWorkingHoursMutation = useMutation({
-    mutationFn: async (data: InsertWorkingDays) => {
+    mutationFn: async (data: InsertWorkingDays & { existingId?: string }) => {
       try {
         const workingHoursRef = collection(db, 'workingHours');
-        // Use the dayOfWeek as the document ID to ensure uniqueness per day
-        const docId = `day_${data.dayOfWeek}`;
-        const dayRef = doc(workingHoursRef, docId);
+        const dayRef = data.existingId 
+          ? doc(workingHoursRef, data.existingId)
+          : doc(workingHoursRef);
         
         const workingHoursData = {
           branchId: data.branchId.toString(),
@@ -113,12 +113,12 @@ export function useWorkingHours(branchId?: string) {
           breakStart: data.breakStart || null,
           breakEnd: data.breakEnd || null,
           maxDailyAppointments: data.maxDailyAppointments || 8,
-          createdAt: Timestamp.fromDate(new Date()),
+          createdAt: data.existingId ? Timestamp.fromDate(new Date()) : Timestamp.fromDate(new Date()),
           updatedAt: Timestamp.fromDate(new Date())
         };
 
         await setDoc(dayRef, workingHoursData, { merge: true });
-        return docId;
+        return dayRef.id;
       } catch (error) {
         console.error('Error adding working hours:', error);
         throw error;

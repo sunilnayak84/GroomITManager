@@ -98,7 +98,14 @@ export default function WorkingHoursForm({
     
     setIsSubmitting(true);
     try {
-      await addWorkingHours(data);
+      // Add existingId if we're editing an existing schedule
+      await addWorkingHours({
+        ...data,
+        existingId: existingSchedule?.id,
+        // Only include break times if both are provided
+        breakStart: data.breakStart || null,
+        breakEnd: data.breakEnd || null,
+      });
       
       toast({
         title: "Success",
