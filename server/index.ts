@@ -192,9 +192,16 @@ function setupGracefulShutdown(server: any) {
     }
 
     // Start the server with port handling
-    const PORT = process.env.PORT || 3000;
+    const PORT = parseInt(process.env.PORT || '3001', 10);
     server.listen(PORT, '0.0.0.0', () => {
       log(`Server listening on http://0.0.0.0:${PORT}`, 'info');
+    }).on('error', (error: any) => {
+      if (error.code === 'EADDRINUSE') {
+        log(`Port ${PORT} is already in use. Please use a different port or close the application using this port.`, 'error');
+      } else {
+        log(`Failed to start server: ${error.message}`, 'error');
+      }
+      process.exit(1);
     });
   } catch (error: any) {
     log(`Failed to start server: ${error.message}`, 'error');
