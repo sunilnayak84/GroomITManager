@@ -81,18 +81,17 @@ export const insertServiceSchema = z.object({
   ...baseServiceSchema,
   description: z.string().optional(),
   discount_percentage: z.number().min(0).max(100).optional(),
-  consumables: z.array(z.object({
-    item_id: z.string().min(1, "Item ID is required"),
-    item_name: z.string().min(1, "Item name is required"),
-    quantity_used: z.number().positive("Quantity must be greater than 0")
-  }))
-  .optional()
-  .default([])
-  .transform(data => data.map(consumable => ({
-    ...consumable,
-    created_at: new Date(),
-    updated_at: new Date()
-  }))),
+  consumables: z.array(baseConsumableSchema)
+    .optional()
+    .default([])
+    .transform(data => 
+      data.map(consumable => ({
+        ...consumable,
+        quantity_used: Number(consumable.quantity_used),
+        created_at: new Date(),
+        updated_at: new Date()
+      }))
+    ),
   isActive: z.boolean().default(true),
   selectedServices: z.array(z.object({
     service_id: z.string(),
