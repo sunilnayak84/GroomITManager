@@ -376,7 +376,7 @@ export default function CustomersPage() {
 
   return (
     <div className="flex-1 p-8">
-      <div className="relative h-52 rounded-xl overflow-hidden bg-gradient-to-r from-blue-500 to-purple-600 mb-8">
+      <div className="relative h-48 rounded-xl overflow-hidden bg-gradient-to-r from-blue-500 to-purple-600 mb-6">
         <img
           src="https://images.unsplash.com/photo-1573497620053-ea5300f94f21"
           alt="Professional Customer Service"
@@ -390,13 +390,13 @@ export default function CustomersPage() {
         </div>
       </div>
 
-      <div className="flex justify-between items-center gap-6 mb-6">
+      <div className="flex justify-between items-center mb-4">
         <div className="flex-1 max-w-md">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search customers..."
-              className="pl-10 h-12 text-base bg-white shadow-sm"
+              className="pl-10 h-10 text-sm bg-white"
             />
           </div>
         </div>
