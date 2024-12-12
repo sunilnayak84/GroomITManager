@@ -375,25 +375,25 @@ export default function CustomersPage() {
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-4">
-      <div className="relative h-48 rounded-xl overflow-hidden">
+    <div className="container mx-auto py-8 space-y-6">
+      <div className="relative h-52 rounded-xl overflow-hidden bg-gradient-to-r from-blue-500 to-purple-600">
         <img
           src="https://images.unsplash.com/photo-1573497620053-ea5300f94f21"
           alt="Professional Customer Service"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover opacity-50 mix-blend-overlay"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-transparent flex items-center p-8">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary/40 flex items-center px-10">
           <div className="text-white">
-            <h2 className="text-2xl font-bold">Customer Management</h2>
-            <p>Keep track of all your valued customers</p>
+            <h2 className="text-3xl font-bold mb-2">Customer Management</h2>
+            <p className="text-lg opacity-90">Keep track of all your valued customers</p>
           </div>
         </div>
       </div>
 
-      <div className="flex justify-between items-center mb-6 gap-4">
+      <div className="flex justify-between items-center gap-6">
         <div className="flex-1 max-w-md">
           <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search customers..."
               className="pl-10 h-12 text-base bg-white shadow-sm"
@@ -541,16 +541,18 @@ export default function CustomersPage() {
         </Dialog>
       </div>
 
-      <div className="rounded-xl border bg-white shadow-sm">
+      <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
         {customersQuery.isLoading ? (
           <div className="flex justify-center items-center h-64">
-            <Loader2 className="h-8 w-8 animate-spin" />
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         ) : (
-          <DataTable 
-            columns={columns} 
-            data={customersData as Customer[]} 
-          />
+          <div className="p-1">
+            <DataTable 
+              columns={columns} 
+              data={customersData as Customer[]}
+            />
+          </div>
         )}
       </div>
 
