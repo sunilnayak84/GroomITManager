@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { z } from "zod";
 import { appointmentSchema, type Appointment, type AppointmentWithRelations } from "@/lib/schema";
+import AppointmentDetails from "../components/AppointmentDetails";
 
 // Get status type from the schema
 type AppointmentStatus = z.infer<typeof appointmentSchema>["status"];
@@ -21,12 +22,11 @@ const statusColors: Record<AppointmentStatus, string> = {
 };
 
 export default function AppointmentsPage() {
-  const [open, setOpen] = useState(false);
+  const [openNewForm, setOpenNewForm] = useState(false);
+  const [openDetails, setOpenDetails] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithRelations | null>(null);
   const { data: appointments, isLoading, error } = useAppointments();
-  console.log('APPOINTMENTS_PAGE: Loading state:', isLoading);
-  console.log('APPOINTMENTS_PAGE: Appointments data:', appointments);
-  console.log('APPOINTMENTS_PAGE: Error state:', error);
-
+  
   const columns = [
     {
       header: "Date",
@@ -71,7 +71,14 @@ export default function AppointmentsPage() {
     {
       header: "Actions",
       cell: (row: AppointmentWithRelations) => (
-        <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => {
+            setSelectedAppointment(row);
+            setOpenDetails(true);
+          }}
+        >
           View
         </Button>
       ),
@@ -93,14 +100,14 @@ export default function AppointmentsPage() {
                 <h1 className="text-3xl font-bold">Appointments</h1>
                 <p className="text-white/80">Manage your pet grooming appointments</p>
               </div>
-              <Dialog open={open} onOpenChange={setOpen}>
+              <Dialog open={openNewForm} onOpenChange={setOpenNewForm}>
                 <DialogTrigger asChild>
                   <Button variant="secondary">
                     <Plus className="mr-2 h-4 w-4" />
                     New Appointment
                   </Button>
                 </DialogTrigger>
-                <AppointmentForm setOpen={setOpen} />
+                <AppointmentForm setOpen={setOpenNewForm} />
               </Dialog>
             </div>
           </div>
@@ -114,6 +121,14 @@ export default function AppointmentsPage() {
           isLoading={isLoading}
         />
       </div>
+
+      {selectedAppointment && (
+        <AppointmentDetails
+          appointment={selectedAppointment}
+          open={openDetails}
+          onOpenChange={setOpenDetails}
+        />
+      )}
     </div>
   );
 }
