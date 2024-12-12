@@ -182,7 +182,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                     step="900"
                     min={new Date().toISOString().slice(0, 16)}
                     {...field}
-                    value={field.value || ''}
+                    value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ''}
                     onChange={(e) => {
                       const date = new Date(e.target.value);
                       if (!isNaN(date.getTime())) {
@@ -195,7 +195,6 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                         const dayOfWeek = date.getDay();
                         const timeStr = date.toTimeString().slice(0, 5); // HH:mm format
                         
-                        // TODO: Check against working hours
                         // For now, restrict to 9 AM - 5 PM
                         const hour = date.getHours();
                         const validTime = hour >= 9 && hour < 17;
