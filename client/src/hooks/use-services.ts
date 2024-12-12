@@ -122,22 +122,32 @@ export function useServices() {
 
   const addService = async (serviceData: InsertService) => {
     try {
+      console.log('Adding service with data:', serviceData);
       const docRef = doc(servicesCollection);
-      const timestamp = new Date().toISOString();
+      const timestamp = new Date();
       
-      // Validate consumables data before processing
-      const validatedConsumables = (serviceData.consumables || []).map(c => {
-        if (!c.item_id || !c.item_name || typeof c.quantity_used === 'undefined') {
-          throw new Error('Missing required consumable fields');
+      // Process consumables with detailed error logging
+      let processedConsumables = [];
+      if (Array.isArray(serviceData.consumables)) {
+        console.log('Processing consumables:', serviceData.consumables);
+        
+        for (const consumable of serviceData.consumables) {
+          if (!consumable.item_id || !consumable.item_name || !consumable.quantity_used) {
+            console.error('Invalid consumable:', consumable);
+            throw new Error(`Invalid consumable data: All fields are required`);
+          }
+
+          processedConsumables.push({
+            item_id: String(consumable.item_id),
+            item_name: String(consumable.item_name),
+            quantity_used: Number(consumable.quantity_used),
+            created_at: timestamp,
+            updated_at: timestamp
+          });
         }
-        return {
-          item_id: c.item_id,
-          item_name: c.item_name,
-          quantity_used: Number(c.quantity_used),
-          created_at: new Date(),
-          updated_at: new Date()
-        };
-      });
+      }
+
+      console.log('Processed consumables:', processedConsumables);
 
       const newService: Service = {
         service_id: docRef.id,
@@ -147,29 +157,30 @@ export function useServices() {
         duration: serviceData.duration,
         price: serviceData.price,
         discount_percentage: typeof serviceData.discount_percentage === 'number' ? serviceData.discount_percentage : 0,
-        consumables: validatedConsumables,
+        consumables: processedConsumables,
         isActive: true,
-        created_at: new Date(timestamp),
-        updated_at: new Date(timestamp)
+        created_at: timestamp,
+        updated_at: timestamp
       };
 
+      // Prepare data for Firestore
       const firestoreData = {
         name: newService.name,
         description: newService.description,
         category: newService.category,
         duration: newService.duration,
         price: newService.price,
-        discount_percentage: typeof newService.discount_percentage === 'number' ? newService.discount_percentage : 0,
-        consumables: validatedConsumables.map(c => ({
+        discount_percentage: newService.discount_percentage,
+        consumables: processedConsumables.map(c => ({
           item_id: c.item_id,
           item_name: c.item_name,
-          quantity_used: Number(c.quantity_used),
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          quantity_used: c.quantity_used,
+          created_at: c.created_at.toISOString(),
+          updated_at: c.updated_at.toISOString()
         })),
         isActive: newService.isActive,
-        created_at: timestamp,
-        updated_at: timestamp,
+        created_at: timestamp.toISOString(),
+        updated_at: timestamp.toISOString(),
         selectedServices: (serviceData.selectedServices || []).map(service => ({
           service_id: service.service_id,
           name: service.name,
