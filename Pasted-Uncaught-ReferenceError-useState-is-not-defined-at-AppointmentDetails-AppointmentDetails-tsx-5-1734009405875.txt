@@ -1,0 +1,83 @@
+Uncaught ReferenceError: useState is not defined
+    at AppointmentDetails (AppointmentDetails.tsx:54:59)
+    at renderWithHooks (chunk-GNC7SI6A.js?v=500aed2e:11548:26)
+    at mountIndeterminateComponent (chunk-GNC7SI6A.js?v=500aed2e:14926:21)
+    at beginWork (chunk-GNC7SI6A.js?v=500aed2e:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-GNC7SI6A.js?v=500aed2e:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-GNC7SI6A.js?v=500aed2e:3699:24)
+    at invokeGuardedCallback (chunk-GNC7SI6A.js?v=500aed2e:3733:39)
+    at beginWork$1 (chunk-GNC7SI6A.js?v=500aed2e:19765:15)
+    at performUnitOfWork (chunk-GNC7SI6A.js?v=500aed2e:19198:20)
+    at workLoopSync (chunk-GNC7SI6A.js?v=500aed2e:19137:13)
+AppointmentDetails @ AppointmentDetails.tsx:54
+renderWithHooks @ chunk-GNC7SI6A.js?v=500aed2e:11548
+mountIndeterminateComponent @ chunk-GNC7SI6A.js?v=500aed2e:14926
+beginWork @ chunk-GNC7SI6A.js?v=500aed2e:15914
+callCallback2 @ chunk-GNC7SI6A.js?v=500aed2e:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=500aed2e:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=500aed2e:3733
+beginWork$1 @ chunk-GNC7SI6A.js?v=500aed2e:19765
+performUnitOfWork @ chunk-GNC7SI6A.js?v=500aed2e:19198
+workLoopSync @ chunk-GNC7SI6A.js?v=500aed2e:19137
+renderRootSync @ chunk-GNC7SI6A.js?v=500aed2e:19116
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=500aed2e:18874
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=500aed2e:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=500aed2e:18627Understand this errorAI
+AppointmentDetails.tsx:54 Uncaught ReferenceError: useState is not defined
+    at AppointmentDetails (AppointmentDetails.tsx:54:59)
+    at renderWithHooks (chunk-GNC7SI6A.js?v=500aed2e:11548:26)
+    at mountIndeterminateComponent (chunk-GNC7SI6A.js?v=500aed2e:14926:21)
+    at beginWork (chunk-GNC7SI6A.js?v=500aed2e:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-GNC7SI6A.js?v=500aed2e:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-GNC7SI6A.js?v=500aed2e:3699:24)
+    at invokeGuardedCallback (chunk-GNC7SI6A.js?v=500aed2e:3733:39)
+    at beginWork$1 (chunk-GNC7SI6A.js?v=500aed2e:19765:15)
+    at performUnitOfWork (chunk-GNC7SI6A.js?v=500aed2e:19198:20)
+    at workLoopSync (chunk-GNC7SI6A.js?v=500aed2e:19137:13)
+AppointmentDetails @ AppointmentDetails.tsx:54
+renderWithHooks @ chunk-GNC7SI6A.js?v=500aed2e:11548
+mountIndeterminateComponent @ chunk-GNC7SI6A.js?v=500aed2e:14926
+beginWork @ chunk-GNC7SI6A.js?v=500aed2e:15914
+callCallback2 @ chunk-GNC7SI6A.js?v=500aed2e:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=500aed2e:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=500aed2e:3733
+beginWork$1 @ chunk-GNC7SI6A.js?v=500aed2e:19765
+performUnitOfWork @ chunk-GNC7SI6A.js?v=500aed2e:19198
+workLoopSync @ chunk-GNC7SI6A.js?v=500aed2e:19137
+renderRootSync @ chunk-GNC7SI6A.js?v=500aed2e:19116
+recoverFromConcurrentError @ chunk-GNC7SI6A.js?v=500aed2e:18736
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=500aed2e:18879
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=500aed2e:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=500aed2e:18627Understand this errorAI
+chunk-GNC7SI6A.js?v=500aed2e:14032 The above error occurred in the <AppointmentDetails> component:
+
+    at AppointmentDetails (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/AppointmentDetails.tsx:53:3)
+    at div
+    at AppointmentsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/AppointmentsPage.tsx:36:41)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=500aed2e:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=500aed2e:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=500aed2e:18:5)
+    at main
+    at div
+    at div
+    at div
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:18:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:84:31)
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=500aed2e:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=500aed2e:18:5)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+logCapturedError @ chunk-GNC7SI6A.js?v=500aed2e:14032
+callback @ chunk-GNC7SI6A.js?v=500aed2e:14078
+callCallback @ chunk-GNC7SI6A.js?v=500aed2e:11248
+commitUpdateQueue @ chunk-GNC7SI6A.js?v=500aed2e:11265
+commitLayoutEffectOnFiber @ chunk-GNC7SI6A.js?v=500aed2e:17075
+commitLayoutMountEffects_complete @ chunk-GNC7SI6A.js?v=500aed2e:17980
+commitLayoutEffects_begin @ chunk-GNC7SI6A.js?v=500aed2e:17969
+commitLayoutEffects @ chunk-GNC7SI6A.js?v=500aed2e:17920
+commitRootImpl @ chunk-GNC7SI6A.js?v=500aed2e:19353
+commitRoot @ chunk-GNC7SI6A.js?v=500aed2e:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=500aed2e:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=500aed2e:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=500aed2e:18627Understand this errorAI
