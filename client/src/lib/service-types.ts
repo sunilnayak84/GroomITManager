@@ -7,12 +7,18 @@ export const ServiceCategory = {
   PACKAGE: 'Package'
 } as const;
 
-// Simple consumable schema with basic validation
-export const serviceConsumableSchema = z.object({
+// Base consumable schema for form validation
+export const baseConsumableSchema = z.object({
   item_id: z.string().min(1, "Item ID is required"),
   item_name: z.string().min(1, "Item name is required"),
-  quantity_used: z.coerce.number().min(0.1, "Quantity must be greater than 0"),
+  quantity_used: z.coerce.number().min(0.1, "Quantity must be greater than 0")
 });
+
+// Service consumable schema with transformation
+export const serviceConsumableSchema = baseConsumableSchema.transform(data => ({
+  ...data,
+  quantity_used: Number(data.quantity_used)
+}));
 
 // Package item type
 export type PackageItem = {
