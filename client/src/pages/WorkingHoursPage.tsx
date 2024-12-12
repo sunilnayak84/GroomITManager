@@ -11,7 +11,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
-export default function WorkingHoursPage() {
+// Move this file to correct path: /settings/working-hours
+export default function WorkingHoursSettingsPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const { data: workingHours, isLoading } = useWorkingHours();
 

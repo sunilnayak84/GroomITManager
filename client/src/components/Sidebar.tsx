@@ -8,7 +8,7 @@ export default function Sidebar() {
   const [location] = useLocation();
   const { user, logout } = useUser();
 
-  const links = [
+  const mainLinks = [
     { href: "/", icon: Home, label: "Dashboard" },
     { href: "/appointments", icon: Calendar, label: "Appointments" },
     { href: "/customers", icon: Users, label: "Customers" },
@@ -16,7 +16,10 @@ export default function Sidebar() {
     { href: "/staff", icon: Users, label: "Staff" },
     { href: "/pets", icon: PawPrint, label: "Pets" },
     { href: "/inventory", icon: Package, label: "Inventory" },
-    { href: "/settings/schedule", icon: Calendar, label: "Working Hours" },
+  ];
+
+  const settingsLinks = [
+    { href: "/settings/working-hours", icon: Calendar, label: "Working Hours" },
   ];
 
   return (
@@ -27,19 +30,40 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1">
-        {links.map((link) => (
-          <Link 
-            key={link.href} 
-            href={link.href}
-            className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-md mb-1 hover:bg-gray-100 transition-colors",
-              location === link.href && "bg-primary/10 text-primary"
-            )}
-          >
-            <link.icon className="h-5 w-5" />
-            {link.label}
-          </Link>
-        ))}
+        <div className="mb-6">
+          {mainLinks.map((link) => (
+            <Link 
+              key={link.href} 
+              href={link.href}
+              className={cn(
+                "flex items-center gap-2 px-4 py-2 rounded-md mb-1 hover:bg-gray-100 transition-colors",
+                location === link.href && "bg-primary/10 text-primary"
+              )}
+            >
+              <link.icon className="h-5 w-5" />
+              {link.label}
+            </Link>
+          ))}
+        </div>
+        
+        <div>
+          <div className="px-4 mb-2">
+            <h2 className="text-sm font-semibold text-gray-500">Settings</h2>
+          </div>
+          {settingsLinks.map((link) => (
+            <Link 
+              key={link.href} 
+              href={link.href}
+              className={cn(
+                "flex items-center gap-2 px-4 py-2 rounded-md mb-1 hover:bg-gray-100 transition-colors",
+                location === link.href && "bg-primary/10 text-primary"
+              )}
+            >
+              <link.icon className="h-5 w-5" />
+              {link.label}
+            </Link>
+          ))}
+        </div>
       </nav>
 
       <div className="border-t pt-4">
