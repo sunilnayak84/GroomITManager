@@ -152,9 +152,9 @@ export function ConsumablesModal({
                 className="flex items-center justify-between p-2 border rounded"
               >
                 <div>
-                  <p className="font-medium">{consumable.name}</p>
+                  <p className="font-medium">{consumable.item_name}</p>
                   <p className="text-sm text-muted-foreground">
-                    {consumable.quantity_per_service} {consumable.unit} per service
+                    Quantity: {consumable.quantity_used}
                   </p>
                 </div>
                 <Button
