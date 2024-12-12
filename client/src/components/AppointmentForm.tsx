@@ -194,7 +194,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
       }
 
       const formDate = form.getValues('date');
-      const formTime = form.getValues('appointmentTime');
+      const formTime = form.getValues('time');
       
       if (!formDate || !formTime) {
         throw new Error("Please select both date and time");

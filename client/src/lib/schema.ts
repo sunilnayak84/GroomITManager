@@ -117,30 +117,14 @@ export const insertAppointmentSchema = z.object({
   serviceId: z.string().min(1, "Service must be selected"),
   groomerId: z.string().min(1, "Groomer must be selected"),
   branchId: z.string().min(1, "Branch must be selected"),
-  date: z.string().refine(
-    (date) => {
-      if (!date) return false;
-      try {
-        const appointmentDate = new Date(date);
-        if (isNaN(appointmentDate.getTime())) return false;
-        
-        const now = new Date();
-        now.setSeconds(0);
-        now.setMilliseconds(0);
-        
-        appointmentDate.setSeconds(0);
-        appointmentDate.setMilliseconds(0);
-        
-        // Round to nearest 15 minutes
-        const minutes = appointmentDate.getMinutes();
-        appointmentDate.setMinutes(Math.round(minutes / 15) * 15);
-        
-        return appointmentDate >= now;
-      } catch {
-        return false;
-      }
+  date: z.string().min(1, "Date must be selected"),
+  time: z.string().refine(
+    (time) => {
+      if (!time) return false;
+      const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+      return timeRegex.test(time);
     },
-    "Please select a valid future date and time (in 15-minute intervals)"
+    "Please select a valid time"
   ),
   status: z.enum(["pending", "confirmed", "completed", "cancelled"]).default("pending"),
   notes: z.string().nullable(),
