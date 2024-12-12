@@ -309,6 +309,15 @@ export default function ServicesPage() {
       };
     });
 
+    // Format consumables to match the expected schema
+    const formattedConsumables = (service.consumables || []).map(consumable => ({
+      item_id: consumable.item_id,
+      item_name: consumable.item_name,
+      quantity_used: Number(consumable.quantity_used)
+    }));
+
+    console.log('Loading service with consumables:', formattedConsumables);
+
     const formData = {
       name: service.name,
       description: service.description,
@@ -316,7 +325,7 @@ export default function ServicesPage() {
       duration: service.duration,
       price: service.price,
       discount_percentage: service.discount_percentage || 0,
-      consumables: service.consumables || [],
+      consumables: formattedConsumables,
       selectedServices: updatedSelectedServices,
       selectedAddons: updatedSelectedAddons
     };
