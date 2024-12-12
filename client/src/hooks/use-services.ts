@@ -37,10 +37,12 @@ export function useServices() {
             duration: data.duration,
             price: data.price || 0,
             discount_percentage: data.discount_percentage || 0,
-            consumables: (data.consumables || []).map((c: ServiceConsumable) => ({
+            consumables: (data.consumables || []).map((c: any) => ({
               item_id: c.item_id,
               item_name: c.item_name,
-              quantity_used: c.quantity_used
+              quantity_used: Number(c.quantity_used),
+              created_at: c.created_at ? new Date(c.created_at) : new Date(),
+              updated_at: c.updated_at ? new Date(c.updated_at) : new Date()
             })),
             isActive: data.isActive ?? true,
             created_at: data.created_at || new Date(),
@@ -140,10 +142,12 @@ export function useServices() {
         duration: newService.duration,
         price: newService.price,
         discount_percentage: typeof newService.discount_percentage === 'number' ? newService.discount_percentage : 0,
-        consumables: newService.consumables.map(c => ({
-          item_id: c.item_id,
-          item_name: c.item_name,
-          quantity_used: c.quantity_used
+        consumables: (newService.consumables || []).map(c => ({
+          item_id: c.item_id || '',
+          item_name: c.item_name || '',
+          quantity_used: Number(c.quantity_used) || 0,
+          created_at: c.created_at || new Date().toISOString(),
+          updated_at: c.updated_at || new Date().toISOString()
         })),
         isActive: newService.isActive,
         created_at: timestamp,
@@ -197,9 +201,11 @@ export function useServices() {
       // If consumables are being updated, ensure they're properly formatted
       if (updateData.consumables) {
         updatePayload.consumables = updateData.consumables.map(consumable => ({
-          item_id: consumable.item_id,
-          item_name: consumable.item_name,
-          quantity_used: consumable.quantity_used
+          item_id: consumable.item_id || '',
+          item_name: consumable.item_name || '',
+          quantity_used: Number(consumable.quantity_used) || 0,
+          created_at: consumable.created_at || new Date().toISOString(),
+          updated_at: new Date().toISOString()
         }));
       }
 

@@ -2,20 +2,35 @@ import { z } from "zod";
 
 // Define the consumable schema
 export const serviceConsumableSchema = z.object({
-  inventory_item_id: z.string().min(1, "Inventory item ID is required"),
-  name: z.string().min(1, "Item name is required"),
-  quantity_per_service: z.number().positive("Quantity must be greater than 0"),
-  unit: z.string().min(1, "Unit is required"),
-  current_stock: z.number().min(0, "Current stock cannot be negative"),
-  track_inventory: z.boolean().default(true),
-  auto_deduct: z.boolean().default(true),
-  minimum_quantity: z.number().min(0, "Minimum quantity cannot be negative").optional(),
-  category: z.string().optional(),
-  notes: z.string().optional(),
-  cost_per_unit: z.number().min(0, "Cost per unit cannot be negative").optional(),
-  last_stock_check: z.date().optional(),
-  reorder_point: z.number().min(0, "Reorder point cannot be negative").optional(),
-  service_linked: z.boolean().default(false),
+  item_id: z.string().min(1, "Item ID is required"),
+  item_name: z.string().min(1, "Item name is required"),
+  quantity_used: z.number().positive("Quantity must be greater than 0"),
+  created_at: z.union([
+    z.string(),
+    z.date(),
+    z.object({
+      seconds: z.number(),
+      nanoseconds: z.number()
+    })
+  ]).transform(val => {
+    if (val instanceof Date) return val;
+    if (typeof val === 'string') return new Date(val);
+    if ('seconds' in val) return new Date(val.seconds * 1000);
+    return new Date();
+  }).optional(),
+  updated_at: z.union([
+    z.string(),
+    z.date(),
+    z.object({
+      seconds: z.number(),
+      nanoseconds: z.number()
+    })
+  ]).transform(val => {
+    if (val instanceof Date) return val;
+    if (typeof val === 'string') return new Date(val);
+    if ('seconds' in val) return new Date(val.seconds * 1000);
+    return new Date();
+  }).optional()
 });
 
 // Define the service schema
