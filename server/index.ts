@@ -192,46 +192,10 @@ function setupGracefulShutdown(server: any) {
     }
 
     // Start the server with port handling
-    const tryPort = async (port: number): Promise<number> => {
-      try {
-        await new Promise((resolve, reject) => {
-          const serverInstance = server.listen(port, '0.0.0.0', () => {
-            serverInstance.close();
-            resolve(port);
-          });
-          serverInstance.on('error', (err: any) => {
-            if (err.code === 'EADDRINUSE') {
-              reject(new Error(`Port ${port} is in use`));
-            } else {
-              reject(err);
-            }
-          });
-        });
-        return port;
-      } catch (error) {
-        if (port < 3010) {
-          return tryPort(port + 1);
-        }
-        throw error;
-      }
-    };
-
-    const startServer = async () => {
-      try {
-        const availablePort = await tryPort(3001);
-        server.listen(availablePort, '0.0.0.0', () => {
-          log(`Server listening on http://0.0.0.0:${availablePort}`, 'info');
-        });
-      } catch (error: any) {
-        log(`Failed to start server: ${error.message}`, 'error');
-        if (process.env.NODE_ENV !== 'development') {
-          process.exit(1);
-        }
-      }
-    };
-
-    // Start the server
-    await startServer();
+    const PORT = process.env.PORT || 3000;
+    server.listen(PORT, '0.0.0.0', () => {
+      log(`Server listening on http://0.0.0.0:${PORT}`, 'info');
+    });
   } catch (error: any) {
     log(`Failed to start server: ${error.message}`, 'error');
     if (process.env.NODE_ENV !== 'development') {
