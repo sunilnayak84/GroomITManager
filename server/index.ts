@@ -1,5 +1,4 @@
 import express, { type Request, type Response, type NextFunction } from "express";
-import express, { type Request, type Response, type NextFunction } from "express";
 import { registerRoutes } from "./routes.js";
 import { setupVite, serveStatic } from "./vite.js";
 import { createServer } from "http";
@@ -7,6 +6,18 @@ import { terminateProcessOnPort } from "./utils/port_cleanup.js";
 import { db } from "../db/index.js";
 import { sql } from "drizzle-orm";
 import admin from "firebase-admin";
+
+function log(message: string, type: 'info' | 'error' | 'warn' = 'info') {
+  const formattedTime = new Date().toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
+
+  const prefix = type === 'error' ? '🔴' : type === 'warn' ? '🟡' : '🟢';
+  console.log(`${formattedTime} [express] ${prefix} ${message}`);
+}
 
 function log(message: string, type: 'info' | 'error' | 'warn' = 'info') {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -146,6 +157,27 @@ function setupGracefulShutdown(server: any) {
   process.on('SIGINT', shutdown);
 }
 
+// Graceful shutdown handling
+function setupGracefulShutdown(server: any) {
+  const shutdown = async () => {
+    log("Received shutdown signal", 'warn');
+    
+    server.close(() => {
+      log("HTTP server closed", 'info');
+      process.exit(0);
+    });
+
+    // Force shutdown after 10s
+    setTimeout(() => {
+      log("Could not close connections in time, forcefully shutting down", 'error');
+      process.exit(1);
+    }, 10000);
+  };
+
+  process.on('SIGTERM', shutdown);
+  process.on('SIGINT', shutdown);
+}
+
 (async () => {
   try {
     // Clean up port before starting
@@ -186,20 +218,8 @@ function setupGracefulShutdown(server: any) {
       process.exit(1);
     });
 
-    // Graceful shutdown
-    process.on('SIGTERM', () => {
-      server.close(() => {
-        log("Server shut down gracefully", 'info');
-        process.exit(0);
-      });
-    });
-
-    process.on('SIGINT', () => {
-      server.close(() => {
-        log("Server shut down gracefully", 'info');
-        process.exit(0);
-      });
-    });
+    // Setup graceful shutdown
+    setupGracefulShutdown(server);
 
   } catch (error: any) {
     log(`Failed to start server: ${error.message}`, 'error');

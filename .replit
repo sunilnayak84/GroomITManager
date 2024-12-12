@@ -8,23 +8,7 @@ channel = "stable-24_05"
 [deployment]
 deploymentTarget = "cloudrun"
 build = ["npm", "run", "build"]
-run = ["sh", "-c", "PORT=5173 NODE_ENV=development tsx watch --clear-screen=false server/index.ts"]
-
-[[ports]]
-localPort = 3000
-externalPort = 3000
-
-[[ports]]
-localPort = 3001
-externalPort = 3001
-
-[[ports]]
-localPort = 5000
-externalPort = 80
-
-[[ports]]
-localPort = 5173
-externalPort = 5173
+run = ["sh", "-c", "npm run dev"]
 
 [workflows]
 runButton = "Project"
@@ -36,10 +20,10 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Server"
+args = "Project"
 
 [[workflows.workflow]]
-name = "Server"
+name = "Project"
 author = "agent"
 
 [workflows.workflow.metadata]
@@ -52,3 +36,7 @@ task = "packager.installForAll"
 task = "shell.exec"
 args = "PORT=5173 NODE_ENV=development tsx watch --clear-screen=false server/index.ts"
 waitForPort = 5173
+
+[[ports]]
+localPort = 5173
+externalPort = 80
