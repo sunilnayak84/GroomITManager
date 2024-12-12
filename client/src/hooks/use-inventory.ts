@@ -1,16 +1,29 @@
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { 
-  collection, getDocs, doc, setDoc, updateDoc, deleteDoc, 
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  collection, doc, getDocs, updateDoc, setDoc, deleteDoc,
   query, where, orderBy, serverTimestamp, getDoc, Timestamp 
 } from 'firebase/firestore';
-import { db } from "../lib/firebase";
 import { toast } from "@/components/ui/use-toast";
 import { z } from "zod";
+import { db } from "../lib/firebase";
 
 // Collection references
 const inventoryCollection = collection(db, 'inventory');
 const usageHistoryCollection = collection(db, 'inventory_usage_history');
 
+// Helper function to get service name from service ID
+async function getServiceName(serviceId: string): Promise<string | undefined> {
+  try {
+    const serviceDoc = await getDoc(doc(db, 'services', serviceId));
+    if (serviceDoc.exists()) {
+      return serviceDoc.data()?.name;
+    }
+    return undefined;
+  } catch (error) {
+    console.error('Error fetching service name:', error);
+    return undefined;
+  }
+}
 // Helper to format date for Firestore
 const formatDate = (date: Date) => {
   return {
@@ -62,6 +75,9 @@ export const inventoryUsageSchema = z.object({
   used_by: z.string(),
   used_at: z.date(),
   notes: z.string().optional(),
+  auto_deducted: z.boolean().default(false),
+  service_linked: z.boolean().default(false),
+  service_name: z.string().optional(),
 });
 
 // Types based on schemas
@@ -291,6 +307,8 @@ export function useInventory() {
   // Track usage of inventory items
   const recordUsage = async (usageData: Omit<InventoryUsage, 'usage_id' | 'used_at'>) => {
     try {
+      console.log('RECORD_USAGE: Starting usage recording:', usageData);
+      
       // First, check if we have enough quantity
       const itemRef = doc(inventoryCollection, usageData.item_id);
       const itemSnap = await getDoc(itemRef);
@@ -308,38 +326,56 @@ export function useInventory() {
       const minimumQuantity = Number(itemData.minimum_quantity) || 0;
       const reorderPoint = Number(itemData.reorder_point) || 0;
       const reorderQuantity = Number(itemData.reorder_quantity) || 0;
-      const isTracked = itemData.is_tracked ?? true;
+      const isTracked = itemData.track_inventory ?? true;
+      const autoDeduct = itemData.auto_deduct ?? true;
       
-      // If item is not tracked, skip quantity checks
-      if (!isTracked) {
-        console.log('RECORD_USAGE: Item is not tracked, skipping quantity checks');
+      console.log('RECORD_USAGE: Item details:', {
+        currentQuantity,
+        minimumQuantity,
+        reorderPoint,
+        isTracked,
+        autoDeduct
+      });
+
+      // If item is not tracked or auto-deduct is disabled, skip quantity checks
+      if (!isTracked || !autoDeduct) {
+        console.log('RECORD_USAGE: Item is not tracked or auto-deduct disabled, skipping quantity checks');
         return null;
       }
 
       if (currentQuantity < usageData.quantity_used) {
-        throw new Error(`Insufficient quantity available. Current stock: ${currentQuantity}`);
+        throw new Error(`Insufficient quantity available. Current stock: ${currentQuantity} ${itemData.unit}`);
       }
 
-      // Record the usage
+      // Record the usage with service information if available
       const usageRef = doc(collection(db, 'inventory_usage'));
       const timestamp = new Date();
       
       const usage: InventoryUsage = {
         usage_id: usageRef.id,
         ...usageData,
-        used_at: timestamp
+        used_at: timestamp,
+        auto_deducted: true,
+        service_linked: !!usageData.service_id,
+        service_name: usageData.service_id ? await getServiceName(usageData.service_id) : undefined
       };
 
+      console.log('RECORD_USAGE: Recording usage:', usage);
       await setDoc(usageRef, usage);
 
       // Calculate new quantity
       const newQuantity = currentQuantity - usageData.quantity_used;
 
       // Update the inventory quantity
-      await updateDoc(itemRef, {
+      const updateData: Record<string, any> = {
         quantity: newQuantity,
-        updated_at: serverTimestamp()
-      });
+        updated_at: serverTimestamp(),
+        last_used: timestamp,
+        service_linked: usage.service_linked || false
+      };
+
+      console.log('RECORD_USAGE: Updating inventory:', updateData);
+      await updateDoc(itemRef, updateData);
 
       // Check stock levels and show appropriate alerts
       if (newQuantity <= minimumQuantity) {
@@ -357,9 +393,9 @@ export function useInventory() {
         });
       }
 
-      // If auto-update is enabled and stock is low, create a reorder suggestion
-      if (itemData.auto_update_stock && newQuantity <= reorderPoint) {
-        // Record reorder suggestion in a separate collection
+      // If auto-reorder is enabled and stock is low, create a reorder suggestion
+      if (itemData.auto_reorder && newQuantity <= reorderPoint) {
+        console.log('RECORD_USAGE: Creating reorder suggestion');
         const reorderRef = doc(collection(db, 'inventory_reorders'));
         await setDoc(reorderRef, {
           item_id: usageData.item_id,
@@ -368,14 +404,16 @@ export function useInventory() {
           suggested_quantity: reorderQuantity || Math.max(minimumQuantity * 2, currentQuantity),
           unit: itemData.unit,
           created_at: serverTimestamp(),
-          status: 'pending'
+          status: 'pending',
+          service_linked: usage.service_linked,
+          service_name: usage.service_name
         });
       }
 
       await queryClient.invalidateQueries({ queryKey: ['inventory'] });
       toast({
         title: "Success",
-        description: `Usage recorded successfully. New stock level: ${newQuantity}`,
+        description: `Usage recorded successfully. New stock level: ${newQuantity} ${itemData.unit}`,
         variant: "default"
       });
       
@@ -392,7 +430,7 @@ export function useInventory() {
         description: error instanceof Error ? error.message : 'Failed to record usage',
         variant: "destructive"
       });
-      return null;
+      throw error;
     }
   };
 

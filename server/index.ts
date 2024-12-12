@@ -19,18 +19,6 @@ function log(message: string, type: 'info' | 'error' | 'warn' = 'info') {
   console.log(`${formattedTime} [express] ${prefix} ${message}`);
 }
 
-function log(message: string, type: 'info' | 'error' | 'warn' = 'info') {
-  const formattedTime = new Date().toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  });
-
-  const prefix = type === 'error' ? '🔴' : type === 'warn' ? '🟡' : '🟢';
-  console.log(`${formattedTime} [express] ${prefix} ${message}`);
-}
-
 // Initialize Firebase Admin if not in development mode
 if (process.env.NODE_ENV !== 'development') {
   try {
@@ -157,32 +145,18 @@ function setupGracefulShutdown(server: any) {
   process.on('SIGINT', shutdown);
 }
 
-// Graceful shutdown handling
-function setupGracefulShutdown(server: any) {
-  const shutdown = async () => {
-    log("Received shutdown signal", 'warn');
-    
-    server.close(() => {
-      log("HTTP server closed", 'info');
-      process.exit(0);
-    });
-
-    // Force shutdown after 10s
-    setTimeout(() => {
-      log("Could not close connections in time, forcefully shutting down", 'error');
-      process.exit(1);
-    }, 10000);
-  };
-
-  process.on('SIGTERM', shutdown);
-  process.on('SIGINT', shutdown);
-}
-
 (async () => {
+  const PORT = parseInt(process.env.PORT || '5173', 10);
+  
   try {
-    // Clean up port before starting
-    const PORT = parseInt(process.env.PORT || '5173', 10);
-    await terminateProcessOnPort(PORT);
+    // First, attempt to clean up the port
+    try {
+      log("Cleaning up port before start...", 'info');
+      await terminateProcessOnPort(PORT);
+    } catch (cleanupError) {
+      log(`Port cleanup failed: ${cleanupError.message}`, 'warn');
+      // Continue anyway as the port might actually be free
+    }
 
     // Check database connection
     const isDatabaseConnected = await checkDatabaseConnection();
@@ -207,19 +181,47 @@ function setupGracefulShutdown(server: any) {
       log("Static file serving setup complete", 'info');
     }
 
-    // Start server
-    server.listen(PORT, '0.0.0.0', () => {
-      log(`Server listening on http://0.0.0.0:${PORT}`, 'info');
-    });
-
-    // Error handling
-    server.on('error', (error: any) => {
-      log(`Server error: ${error.message}`, 'error');
-      process.exit(1);
-    });
+    // Start server with error handling
+    try {
+      await new Promise<void>((resolve, reject) => {
+        server.listen(PORT, '0.0.0.0', () => {
+          log(`Server listening on http://0.0.0.0:${PORT}`, 'info');
+          resolve();
+        }).on('error', (err: Error) => {
+          reject(err);
+        });
+      });
+    } catch (listenError: any) {
+      log(`Failed to start server: ${listenError.message}`, 'error');
+      if (listenError.code === 'EADDRINUSE') {
+        log("Port is already in use. Attempting forceful cleanup...", 'warn');
+        await terminateProcessOnPort(PORT);
+        // Try one more time
+        server.listen(PORT, '0.0.0.0', () => {
+          log(`Server listening on http://0.0.0.0:${PORT} (second attempt)`, 'info');
+        });
+      } else {
+        throw listenError;
+      }
+    }
 
     // Setup graceful shutdown
-    setupGracefulShutdown(server);
+    const shutdown = async () => {
+      log("Received shutdown signal", 'warn');
+      server.close(() => {
+        log("HTTP server closed", 'info');
+        process.exit(0);
+      });
+
+      // Force shutdown after 10s
+      setTimeout(() => {
+        log("Could not close connections in time, forcefully shutting down", 'error');
+        process.exit(1);
+      }, 10000);
+    };
+
+    process.on('SIGTERM', shutdown);
+    process.on('SIGINT', shutdown);
 
   } catch (error: any) {
     log(`Failed to start server: ${error.message}`, 'error');
