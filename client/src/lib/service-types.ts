@@ -5,6 +5,10 @@ export const serviceConsumableSchema = z.object({
   item_id: z.string().min(1, "Item ID is required"),
   item_name: z.string().min(1, "Item name is required"),
   quantity_used: z.number().positive("Quantity must be greater than 0"),
+  unit: z.string().min(1, "Unit is required"),
+  is_tracked: z.boolean().default(true),
+  minimum_quantity: z.number().min(0, "Minimum quantity cannot be negative").optional(),
+  auto_update_stock: z.boolean().default(true),
 });
 
 // Define the service schema

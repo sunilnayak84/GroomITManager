@@ -41,6 +41,10 @@ export function ConsumablesModal({
       item_id: "",
       item_name: "",
       quantity_used: 0,
+      unit: "",
+      is_tracked: true,
+      auto_update_stock: true,
+      minimum_quantity: 0,
     },
   });
 
@@ -117,6 +121,73 @@ export function ConsumablesModal({
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="unit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Unit</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter unit (e.g., ml, g, pieces)" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="minimum_quantity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Minimum Quantity Alert</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number" 
+                        placeholder="Minimum quantity for alerts" 
+                        {...field}
+                        onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex flex-col gap-2">
+                <FormField
+                  control={form.control}
+                  name="is_tracked"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center justify-between space-y-0">
+                      <FormLabel>Track Inventory</FormLabel>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="auto_update_stock"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center justify-between space-y-0">
+                      <FormLabel>Auto Update Stock</FormLabel>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <Button type="submit">Add Consumable</Button>
             </form>
