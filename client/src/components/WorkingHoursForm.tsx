@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertWorkingDaysSchema, type InsertWorkingDays } from "@/lib/schema";
+import { insertWorkingDaysSchema, type InsertWorkingDays, type WorkingDays } from "@/lib/schema";
 import {
   Form,
   FormControl,

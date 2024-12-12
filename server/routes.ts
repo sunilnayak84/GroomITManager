@@ -1,8 +1,7 @@
 import { type Express } from "express";
 import { setupAuth } from "./auth";
 import { db } from "../db";
-import { appointments, customers, pets, users } from "@db/schema";
-// Remove unused import
+import { appointments, customers, pets, users, workingDays } from "../db/schema";
 import { and, eq, gte, count, sql } from "drizzle-orm";
 
 // Firebase handles user creation and management
