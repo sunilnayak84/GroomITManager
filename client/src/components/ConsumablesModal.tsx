@@ -66,8 +66,12 @@ export function ConsumablesModal({
   };
 
   const addConsumable = (data: z.infer<typeof baseConsumableSchema>) => {
+    if (!data.item_id || !data.item_name || !data.quantity_used) {
+      return;
+    }
     const newConsumable: ServiceConsumable = {
-      ...data,
+      item_id: data.item_id,
+      item_name: data.item_name,
       quantity_used: Number(data.quantity_used),
       created_at: new Date(),
       updated_at: new Date()
