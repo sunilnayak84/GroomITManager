@@ -220,17 +220,41 @@ export const insertWorkingDaysSchema = workingDaysSchema.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  breakStart: z.string().optional(),
+  breakEnd: z.string().optional(),
 }).refine(
   (data) => {
-    // If either break time is provided, both must be provided
-    if (data.breakStart || data.breakEnd) {
-      return data.breakStart && data.breakEnd;
+    if ((data.breakStart && !data.breakEnd) || (!data.breakStart && data.breakEnd)) {
+      return false;
     }
     return true;
   },
   {
     message: "Both break start and end times must be provided if one is set",
     path: ["breakTime"],
+  }
+).refine(
+  (data) => {
+    if (!data.breakStart || !data.breakEnd) return true;
+    const breakStart = new Date(`1970-01-01T${data.breakStart}`);
+    const breakEnd = new Date(`1970-01-01T${data.breakEnd}`);
+    return breakEnd > breakStart;
+  },
+  {
+    message: "Break end time must be after break start time",
+    path: ["breakEnd"],
+  }
+).refine(
+  (data) => {
+    if (!data.isOpen) return true;
+    const opening = new Date(`1970-01-01T${data.openingTime}`);
+    const closing = new Date(`1970-01-01T${data.closingTime}`);
+    return closing > opening;
+  },
+  {
+    message: "Closing time must be after opening time",
+    path: ["closingTime"],
   }
 );
 

@@ -49,56 +49,34 @@ export default function WorkingHoursForm({
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { addWorkingHours } = useWorkingHours();
+  const [initialValues] = useState(() => ({
+    branchId: existingSchedule?.branchId ?? 1,
+    dayOfWeek: existingSchedule?.dayOfWeek ?? defaultDay ?? 1,
+    isOpen: existingSchedule?.isOpen ?? true,
+    openingTime: existingSchedule?.openingTime ?? "09:00",
+    closingTime: existingSchedule?.closingTime ?? "17:00",
+    breakStart: existingSchedule?.breakStart ?? undefined,
+    breakEnd: existingSchedule?.breakEnd ?? undefined,
+    maxDailyAppointments: existingSchedule?.maxDailyAppointments ?? 8
+  }));
 
   const form = useForm<InsertWorkingDays>({
     resolver: zodResolver(insertWorkingDaysSchema),
-    defaultValues: {
-      branchId: 1,
-      dayOfWeek: defaultDay || 1,
-      isOpen: true,
-      openingTime: "09:00",
-      closingTime: "17:00",
-      breakStart: "13:00",
-      breakEnd: "14:00",
-      maxDailyAppointments: 8
-    }
+    defaultValues: initialValues
   });
 
-  // Reset form when dialog opens with existing schedule or defaults
+  // Reset form when dialog opens
   useEffect(() => {
     if (open) {
-      if (existingSchedule) {
-        form.reset({
-          branchId: existingSchedule.branchId,
-          dayOfWeek: existingSchedule.dayOfWeek,
-          isOpen: existingSchedule.isOpen,
-          openingTime: existingSchedule.openingTime,
-          closingTime: existingSchedule.closingTime,
-          breakStart: existingSchedule.breakStart || undefined,
-          breakEnd: existingSchedule.breakEnd || undefined,
-          maxDailyAppointments: existingSchedule.maxDailyAppointments
-        });
-      } else {
-        form.reset({
-          branchId: 1,
-          dayOfWeek: defaultDay || 1,
-          isOpen: true,
-          openingTime: "09:00",
-          closingTime: "17:00",
-          breakStart: "13:00",
-          breakEnd: "14:00",
-          maxDailyAppointments: 8
-        });
-      }
+      form.reset(initialValues);
     }
-  }, [open, existingSchedule, defaultDay]);
+  }, [open]);
 
   async function onSubmit(data: InsertWorkingDays) {
     if (isSubmitting) return;
     
     setIsSubmitting(true);
     try {
-      // Add existingId if we're editing an existing schedule
       await addWorkingHours({
         ...data,
         existingId: existingSchedule?.id,
@@ -109,16 +87,29 @@ export default function WorkingHoursForm({
       
       toast({
         title: "Success",
-        description: "Working hours updated successfully",
+        description: existingSchedule 
+          ? "Working hours updated successfully"
+          : "Working hours added successfully",
       });
       
       onOpenChange(false);
     } catch (error) {
       console.error('Failed to update working hours:', error);
+      
+      // Enhanced error handling with more specific messages
+      let errorMessage = "An unexpected error occurred. Please try again.";
+      if (error instanceof Error) {
+        if (error.name === 'DuplicateScheduleError') {
+          errorMessage = error.message;
+        } else {
+          errorMessage = error.message || "Failed to update working hours. Please try again.";
+        }
+      }
+      
       toast({
         variant: "destructive",
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update working hours",
+        description: errorMessage,
       });
     } finally {
       setIsSubmitting(false);
@@ -150,6 +141,7 @@ export default function WorkingHoursForm({
                       {...field}
                       value={field.value}
                       onChange={(e) => field.onChange(parseInt(e.target.value))}
+                      disabled={!!existingSchedule}
                     >
                       {DAYS_OF_WEEK.map((day, index) => (
                         <option key={index} value={index}>
@@ -192,6 +184,7 @@ export default function WorkingHoursForm({
                     <Input 
                       type="time" 
                       {...field} 
+                      disabled={!form.watch("isOpen")}
                       value={field.value || ''} 
                     />
                   </FormControl>
@@ -210,6 +203,7 @@ export default function WorkingHoursForm({
                     <Input 
                       type="time" 
                       {...field} 
+                      disabled={!form.watch("isOpen")}
                       value={field.value || ''} 
                     />
                   </FormControl>
@@ -228,6 +222,7 @@ export default function WorkingHoursForm({
                     <Input 
                       type="time" 
                       {...field} 
+                      disabled={!form.watch("isOpen")}
                       value={field.value || ''} 
                     />
                   </FormControl>
@@ -246,6 +241,7 @@ export default function WorkingHoursForm({
                     <Input 
                       type="time" 
                       {...field} 
+                      disabled={!form.watch("isOpen")}
                       value={field.value || ''} 
                     />
                   </FormControl>
@@ -265,6 +261,7 @@ export default function WorkingHoursForm({
                       type="number" 
                       min={1}
                       max={50}
+                      disabled={!form.watch("isOpen")}
                       {...field}
                       value={field.value || ''}
                       onChange={(e) => field.onChange(parseInt(e.target.value))}
