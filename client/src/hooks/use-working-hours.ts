@@ -108,6 +108,10 @@ export function useWorkingHours(branchId?: string) {
   const addWorkingHoursMutation = useMutation({
     mutationFn: async (data: InsertWorkingDays & { existingId?: string }) => {
       try {
+        if (!db) {
+          throw new Error('Database connection not initialized');
+        }
+
         const workingHoursRef = collection(db, 'workingHours');
         
         // Check for existing schedule for the same day
@@ -119,7 +123,9 @@ export function useWorkingHours(branchId?: string) {
           const querySnapshot = await getDocs(q);
           
           if (!querySnapshot.empty) {
-            throw new Error(`A schedule for ${DAYS_OF_WEEK[data.dayOfWeek]} already exists. Please edit the existing schedule instead.`);
+            const error = new Error(`A schedule for ${DAYS_OF_WEEK[data.dayOfWeek]} already exists. Please edit the existing schedule instead.`);
+            error.name = 'DuplicateScheduleError';
+            throw error;
           }
         }
         
