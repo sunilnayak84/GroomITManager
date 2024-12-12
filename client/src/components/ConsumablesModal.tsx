@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ServiceConsumable, serviceConsumableSchema } from "@/lib/service-types";
@@ -203,7 +204,7 @@ export function ConsumablesModal({
                 <div>
                   <p className="font-medium">{consumable.item_name}</p>
                   <p className="text-sm text-muted-foreground">
-                    Quantity: {consumable.quantity_used}
+                    {consumable.quantity_used} {consumable.unit}
                   </p>
                 </div>
                 <Button
