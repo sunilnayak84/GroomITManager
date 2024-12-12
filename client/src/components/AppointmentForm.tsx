@@ -51,6 +51,63 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
   
   const { data: workingHours } = useWorkingHours();
   const [selectedService, setSelectedService] = useState<{ duration: number } | null>(null);
+  const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
+
+  // Helper function to generate time slots
+  const generateTimeSlots = (
+    openingTime: string,
+    closingTime: string,
+    breakStart: string | null,
+    breakEnd: string | null,
+    serviceDuration: number = 30
+  ) => {
+    const slots: string[] = [];
+    const [openHour, openMinute] = openingTime.split(':').map(Number);
+    const [closeHour, closeMinute] = closingTime.split(':').map(Number);
+    
+    // Start from opening time, rounded to nearest 15 minutes
+    let currentMinutes = openMinute;
+    let currentHour = openHour;
+    
+    // Round up to next 15-minute interval
+    currentMinutes = Math.ceil(currentMinutes / 15) * 15;
+    if (currentMinutes >= 60) {
+      currentHour += Math.floor(currentMinutes / 60);
+      currentMinutes = currentMinutes % 60;
+    }
+    
+    // Convert break times to comparable format (minutes since midnight)
+    const breakStartMinutes = breakStart ? 
+      (parseInt(breakStart.split(':')[0]) * 60 + parseInt(breakStart.split(':')[1])) : null;
+    const breakEndMinutes = breakEnd ?
+      (parseInt(breakEnd.split(':')[0]) * 60 + parseInt(breakEnd.split(':')[1])) : null;
+    
+    while (currentHour < closeHour || (currentHour === closeHour && currentMinutes < closeMinute)) {
+      const currentTimeMinutes = currentHour * 60 + currentMinutes;
+      const slotEndMinutes = currentTimeMinutes + serviceDuration;
+      
+      // Check if slot ends before closing time
+      if (slotEndMinutes <= (closeHour * 60 + closeMinute)) {
+        // Check if slot overlaps with break time
+        const isInBreakTime = breakStartMinutes !== null && breakEndMinutes !== null &&
+          currentTimeMinutes >= breakStartMinutes && currentTimeMinutes < breakEndMinutes;
+        
+        if (!isInBreakTime) {
+          const timeString = `${String(currentHour).padStart(2, '0')}:${String(currentMinutes).padStart(2, '0')}`;
+          slots.push(timeString);
+        }
+      }
+      
+      // Move to next 15-minute slot
+      currentMinutes += 15;
+      if (currentMinutes >= 60) {
+        currentHour += Math.floor(currentMinutes / 60);
+        currentMinutes = currentMinutes % 60;
+      }
+    }
+    
+    return slots;
+  };
   
   const form = useForm<z.infer<typeof insertAppointmentSchema>>({
     resolver: zodResolver(insertAppointmentSchema),
@@ -268,9 +325,20 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                             description: "The selected day is not a working day",
                             variant: "destructive"
                           });
+                          setAvailableTimeSlots([]);
                           return;
                         }
                         
+                        // Generate available time slots based on working hours and service duration
+                        const slots = generateTimeSlots(
+                          daySchedule.openingTime,
+                          daySchedule.closingTime,
+                          daySchedule.breakStart || null,
+                          daySchedule.breakEnd || null,
+                          selectedService?.duration || 30
+                        );
+                        
+                        setAvailableTimeSlots(slots);
                         field.onChange(e.target.value);
                       }}
                     />
@@ -286,60 +354,33 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Time</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="time"
-                      step="900"
-                      {...field}
-                      onChange={(e) => {
-                        const selectedTime = e.target.value;
-                        const selectedDate = form.getValues("appointmentDate");
-                        if (!selectedDate) {
-                          toast({
-                            title: "Error",
-                            description: "Please select a date first",
-                            variant: "destructive"
-                          });
-                          return;
-                        }
-
-                        const dateObj = new Date(selectedDate);
-                        const dayOfWeek = dateObj.getDay();
-                        
-                        // Get working hours for the selected day
-                        const daySchedule = workingHours?.find(
-                          (schedule) => schedule.dayOfWeek === dayOfWeek
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a time" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {availableTimeSlots.map((timeSlot) => {
+                        const [hours, minutes] = timeSlot.split(':').map(Number);
+                        const time = new Date();
+                        time.setHours(hours, minutes, 0, 0);
+                        const formattedTime = time.toLocaleTimeString('en-US', {
+                          hour: 'numeric',
+                          minute: '2-digit',
+                          hour12: true
+                        });
+                        return (
+                          <SelectItem key={timeSlot} value={timeSlot}>
+                            {formattedTime}
+                          </SelectItem>
                         );
-                        
-                        const validation = validateTimeSlot(selectedDate, selectedTime, daySchedule);
-                        if (!validation.isValid) {
-                          toast({
-                            title: "Invalid Time",
-                            description: validation.error,
-                            variant: "destructive"
-                          });
-                          return;
-                        }
-                        
-                        // Check availability
-                        const fullDateTime = new Date(selectedDate);
-                        const [timeHours, timeMinutes] = selectedTime.split(':').map(Number);
-                        fullDateTime.setHours(timeHours, timeMinutes, 0, 0);
-                        
-                        const selectedGroomerId = form.getValues("groomerId");
-                        if (selectedGroomerId && !isTimeSlotAvailable(fullDateTime, selectedGroomerId)) {
-                          toast({
-                            title: "Time Slot Unavailable",
-                            description: "This time slot is already booked. Please select another time.",
-                            variant: "destructive"
-                          });
-                          return;
-                        }
-                        
-                        field.onChange(selectedTime);
-                      }}
-                    />
-                  </FormControl>
+                      })}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
