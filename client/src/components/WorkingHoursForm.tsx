@@ -36,18 +36,25 @@ const DAYS_OF_WEEK = [
 interface WorkingHoursFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  defaultDay?: number | null;
+  existingSchedule?: WorkingDays;
 }
 
-export default function WorkingHoursForm({ open, onOpenChange }: WorkingHoursFormProps) {
+export default function WorkingHoursForm({ 
+  open, 
+  onOpenChange, 
+  defaultDay = null,
+  existingSchedule 
+}: WorkingHoursFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { addWorkingHours } = useWorkingHours();
 
   const form = useForm<InsertWorkingDays>({
     resolver: zodResolver(insertWorkingDaysSchema),
-    defaultValues: {
+    defaultValues: existingSchedule ?? {
       branchId: 1,
-      dayOfWeek: 1,
+      dayOfWeek: defaultDay ?? 1,
       isOpen: true,
       openingTime: "09:00",
       closingTime: "17:00",
