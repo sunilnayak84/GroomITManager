@@ -13,6 +13,7 @@ export default function Sidebar() {
     { href: "/appointments", icon: Calendar, label: "Appointments" },
     { href: "/customers", icon: Users, label: "Customers" },
     { href: "/services", icon: Calendar, label: "Services" },
+    { href: "/staff", icon: Users, label: "Staff" },
     { href: "/pets", icon: PawPrint, label: "Pets" },
     { href: "/inventory", icon: Package, label: "Inventory" },
   ];
