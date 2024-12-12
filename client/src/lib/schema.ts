@@ -85,13 +85,21 @@ export const appointmentSchema = z.object({
   serviceId: z.string().min(1, "Service must be selected"),
   groomerId: z.string().min(1, "Groomer must be selected"),
   branchId: z.string().min(1, "Branch must be selected"),
-  date: z.string().refine(
+  appointmentDate: z.string().refine(
     (date) => {
       if (!date) return false;
       const appointmentDate = new Date(date);
       return !isNaN(appointmentDate.getTime());
     },
-    "Invalid date format"
+    "Please select a valid date"
+  ),
+  appointmentTime: z.string().refine(
+    (time) => {
+      if (!time) return false;
+      const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+      return timeRegex.test(time);
+    },
+    "Please select a valid time"
   ),
   status: z.enum(["pending", "confirmed", "completed", "cancelled"]),
   notes: z.string().nullable(),
