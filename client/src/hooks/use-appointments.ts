@@ -115,14 +115,14 @@ export function useAppointments() {
               name: 'Unknown Groomer'
             };
 
-            if (process.env.NODE_ENV !== 'development') {
-              const groomerDoc = await getDoc(doc(db, 'users', rawData.groomerId));
-              if (groomerDoc.exists()) {
-                const rawGroomerData = groomerDoc.data();
-                groomerData = {
-                  name: rawGroomerData.name || 'Unknown Groomer'
-                };
-              }
+            const groomerDoc = await getDoc(doc(db, 'users', rawData.groomerId));
+            if (groomerDoc.exists()) {
+              const rawGroomerData = groomerDoc.data();
+              groomerData = {
+                name: rawGroomerData.name || 'Unknown Groomer'
+              };
+            } else {
+              console.error('Groomer not found for ID:', rawData.groomerId);
             }
 
             // Get customer data
@@ -131,7 +131,7 @@ export function useAppointments() {
               lastName: 'Customer'
             };
 
-            if (process.env.NODE_ENV !== 'development' && petData.customerId !== 'unknown') {
+            if (petData.customerId !== 'unknown') {
               const customerDoc = await getDoc(doc(db, 'customers', petData.customerId));
               if (customerDoc.exists()) {
                 const rawCustomerData = customerDoc.data();
@@ -139,6 +139,8 @@ export function useAppointments() {
                   firstName: rawCustomerData.firstName || 'Unknown',
                   lastName: rawCustomerData.lastName || 'Customer'
                 };
+              } else {
+                console.error('Customer not found for ID:', petData.customerId);
               }
             }
 
