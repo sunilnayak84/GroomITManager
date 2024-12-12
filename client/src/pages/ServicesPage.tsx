@@ -78,40 +78,68 @@ export default function ServicesPage() {
 
   const onSubmit = async (data: InsertService) => {
     try {
-      // Format the service data with required fields and optional consumables
+      // Validate numeric fields and ensure they are not NaN
+      const duration = Number(data.duration);
+      const price = Number(data.price);
+      const discount_percentage = Number(data.discount_percentage || 0);
+      
+      if (isNaN(duration) || isNaN(price) || isNaN(discount_percentage)) {
+        toast({
+          title: "Validation Error",
+          description: "Please ensure all numeric fields have valid values",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Format consumables data with validated numeric values
       // Format and validate consumables data
-      // Clean and validate consumables data
-      const formattedConsumables = (data.consumables || []).map(consumable => {
-        // Required fields must have valid values
-        if (!consumable.inventory_item_id || !consumable.name || !consumable.quantity_per_service) {
-          throw new Error("Missing required consumable fields");
+      const formattedConsumables = data.consumables?.map(consumable => {
+        // Validate required fields first
+        if (!consumable?.inventory_item_id || !consumable?.name) {
+          console.warn('Skipping consumable with missing required fields:', consumable);
+          return null;
         }
-        
+
+        // Parse numeric values with fallbacks to 0
+        const quantity = parseFloat(consumable.quantity_per_service?.toString() || '0');
+        const currentStock = parseFloat(consumable.current_stock?.toString() || '0');
+        const minQuantity = parseFloat(consumable.minimum_quantity?.toString() || '0');
+        const costPerUnit = parseFloat(consumable.cost_per_unit?.toString() || '0');
+        const reorderPoint = parseFloat(consumable.reorder_point?.toString() || '0');
+
+        // Validate numeric values
+        if (isNaN(quantity) || quantity < 0) {
+          console.warn('Invalid quantity for consumable:', consumable.name);
+          return null;
+        }
+
+        // Return validated consumable object
         return {
           inventory_item_id: consumable.inventory_item_id,
           name: consumable.name,
-          quantity_per_service: Number(consumable.quantity_per_service),
+          quantity_per_service: quantity,
           unit: consumable.unit || 'unit',
-          current_stock: Number(consumable.current_stock || 0),
-          track_inventory: Boolean(consumable.track_inventory ?? true),
-          auto_deduct: Boolean(consumable.auto_deduct ?? true),
-          minimum_quantity: Number(consumable.minimum_quantity || 0),
+          current_stock: Math.max(0, currentStock),
+          track_inventory: Boolean(consumable.track_inventory),
+          auto_deduct: Boolean(consumable.auto_deduct),
+          minimum_quantity: Math.max(0, minQuantity),
           category: consumable.category || 'uncategorized',
           notes: consumable.notes || '',
-          cost_per_unit: Number(consumable.cost_per_unit || 0),
-          last_stock_check: consumable.last_stock_check ? new Date(consumable.last_stock_check) : new Date(),
-          reorder_point: Number(consumable.reorder_point || 0),
+          cost_per_unit: Math.max(0, costPerUnit),
+          last_stock_check: new Date().toISOString(),
+          reorder_point: Math.max(0, reorderPoint),
           service_linked: true
         };
-      });
+      }).filter(Boolean) || [];
 
       const formattedData = {
-        name: data.name,
-        description: data.description || '',
+        name: data.name.trim(),
+        description: data.description?.trim() || '',
         category: data.category,
-        duration: data.duration,
-        price: data.price,
-        discount_percentage: data.discount_percentage || 0,
+        duration: duration,
+        price: price,
+        discount_percentage: discount_percentage,
         consumables: formattedConsumables,
         isActive: true,
         selectedServices: [],
@@ -133,14 +161,14 @@ export default function ServicesPage() {
         }
 
         // Calculate total duration and original price
-        const totalDuration = selectedItems.reduce((sum, item) => sum + item.duration, 0);
-        const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
+        const totalDuration = selectedItems.reduce((sum, item) => sum + (item?.duration || 0), 0);
+        const totalPrice = selectedItems.reduce((sum, item) => sum + (item?.price || 0), 0);
         
         // Validate that a price is provided
-        if (!data.price) {
+        if (!price || price <= 0) {
           toast({
             title: "Validation Error",
-            description: "Please enter a price for the package",
+            description: "Please enter a valid price for the package",
             variant: "destructive",
           });
           return;
@@ -148,72 +176,39 @@ export default function ServicesPage() {
 
         // Create package data with all required fields
         const packageData: InsertService = {
-          name: data.name,
-          description: data.description || 
-            `Package including ${data.selectedServices?.length || 0} services and ${data.selectedAddons?.length || 0} add-ons.`,
-          category: ServiceCategory.PACKAGE,
+          ...formattedData,
           duration: totalDuration,
-          price: data.price,
-          discount_percentage: data.discount_percentage,
-          consumables: [], // Packages don't require consumables
-          isActive: true,
           selectedServices: selectedServices.map(service => ({
             service_id: service.service_id || '',
             name: service.name || '',
             duration: service.duration || 0,
             price: service.price || 0,
             category: service.category || ServiceCategory.SERVICE
-          })) || [],
+          })),
           selectedAddons: selectedAddons.map(addon => ({
             service_id: addon.service_id || '',
             name: addon.name || '',
             duration: addon.duration || 0,
             price: addon.price || 0,
             category: addon.category || ServiceCategory.ADDON
-          })) || []
+          }))
         };
-
-        // Validate package contents
-        if (!data.name.trim()) {
-          toast({
-            title: "Validation Error",
-            description: "Please provide a name for the package",
-            variant: "destructive",
-          });
-          return;
-        }
 
         try {
           if (selectedService) {
-            // Update existing package
             await updateService(selectedService.service_id, packageData);
             toast({
               title: "Success",
               description: `Package "${data.name}" updated successfully`,
-              variant: "default",
             });
           } else {
-            // Create new package
             await addService(packageData);
             toast({
               title: "Success",
               description: `Package "${data.name}" created successfully with ${selectedItems.length} items`,
-              variant: "default",
             });
           }
           setShowPackageDialog(false);
-          
-          // Reset form data
-          form.reset({
-            name: "",
-            description: "",
-            category: ServiceCategory.PACKAGE,
-            duration: 30,
-            price: 0,
-            consumables: [],
-            selectedServices: [],
-            selectedAddons: []
-          });
         } catch (error) {
           console.error('Error saving package:', error);
           toast({
@@ -224,58 +219,18 @@ export default function ServicesPage() {
         }
       } else {
         // For regular services and add-ons
-        // Validate required fields
-        if (!formattedData.name || !formattedData.category || !formattedData.duration || formattedData.price === undefined) {
-          toast({
-            title: "Validation Error",
-            description: "Please fill in all required fields",
-            variant: "destructive",
-          });
-          return;
-        }
-
         try {
-          // Validate consumables data before submission
-          if (formattedData.consumables.length > 0) {
-            const hasInvalidConsumables = formattedData.consumables.some(
-              c => !c.inventory_item_id || !c.name || c.quantity_per_service <= 0
-            );
-            
-            if (hasInvalidConsumables) {
-              toast({
-                title: "Validation Error",
-                description: "Please ensure all consumable items have valid data",
-                variant: "destructive",
-              });
-              return;
-            }
-          }
-
           if (selectedService) {
-            // When updating, only include fields that have valid values
-            const updateData = {
-              ...formattedData,
-              consumables: formattedData.consumables.length > 0 ? formattedData.consumables : [],
-              // Ensure all required fields are present
-              name: formattedData.name,
-              category: formattedData.category,
-              duration: formattedData.duration,
-              price: formattedData.price,
-              description: formattedData.description || '',
-              discount_percentage: formattedData.discount_percentage || 0,
-              isActive: formattedData.isActive
-            };
-            
-            await updateService(selectedService.service_id, updateData);
+            await updateService(selectedService.service_id, formattedData);
             toast({
               title: "Success",
-              description: `Service "${formattedData.name}" updated successfully${formattedData.consumables.length > 0 ? ` with ${formattedData.consumables.length} consumables` : ''}`,
+              description: `Service "${formattedData.name}" updated successfully`,
             });
           } else {
             await addService(formattedData);
             toast({
               title: "Success",
-              description: `Service "${formattedData.name}" added successfully${formattedData.consumables.length > 0 ? ` with ${formattedData.consumables.length} consumables` : ''}`,
+              description: `Service "${formattedData.name}" added successfully`,
             });
           }
         } catch (error) {
@@ -304,23 +259,6 @@ export default function ServicesPage() {
   const handleEdit = (service: Service) => {
     setSelectedService(service);
     
-    // Get current prices for selected services and addons
-    const updatedSelectedServices = (service.selectedServices || []).map(item => {
-      const currentService = services.find(s => s.service_id === item.service_id);
-      return {
-        ...item,
-        price: currentService?.price || item.price
-      };
-    });
-    
-    const updatedSelectedAddons = (service.selectedAddons || []).map(item => {
-      const currentService = services.find(s => s.service_id === item.service_id);
-      return {
-        ...item,
-        price: currentService?.price || item.price
-      };
-    });
-
     const formData = {
       name: service.name,
       description: service.description,
@@ -329,9 +267,10 @@ export default function ServicesPage() {
       price: service.price,
       discount_percentage: service.discount_percentage || 0,
       consumables: service.consumables || [],
-      selectedServices: updatedSelectedServices,
-      selectedAddons: updatedSelectedAddons
+      selectedServices: service.selectedServices || [],
+      selectedAddons: service.selectedAddons || []
     };
+    
     form.reset(formData);
     
     if (service.category === ServiceCategory.PACKAGE) {
@@ -371,7 +310,8 @@ export default function ServicesPage() {
         <Switch
           checked={service.isActive}
           onCheckedChange={async (checked) => {
-            await updateService(service.service_id, { isActive: checked });
+            if (!service.service_id) return;
+            await updateService(service.service_id, { ...service, isActive: checked });
           }}
         />
       ),
@@ -676,17 +616,14 @@ export default function ServicesPage() {
                             type="button"
                             variant="outline"
                             size="sm"
-                            onClick={async () => {
+                            onClick={() => {
                               const currentServices = form.getValues("selectedServices") || [];
                               const currentAddons = form.getValues("selectedAddons") || [];
-                              const allSelectedItems = [...currentServices, ...currentAddons];
                               
-                              const isAlreadySelected = allSelectedItems.some(s => s.service_id === service.service_id);
-                              
-                              if (isAlreadySelected) {
+                              if (currentServices.some(s => s.service_id === service.service_id)) {
                                 toast({
                                   title: "Already Selected",
-                                  description: "This item is already in the package",
+                                  description: "This service is already in the package",
                                   variant: "destructive"
                                 });
                                 return;
@@ -700,33 +637,28 @@ export default function ServicesPage() {
                                 category: service.category
                               };
                               
-                              await form.setValue("selectedServices", [...currentServices, newService], {
-                                shouldValidate: true,
-                                shouldDirty: true,
-                                shouldTouch: true
-                              });
-                              
-                              // Recalculate totals
                               const updatedServices = [...currentServices, newService];
-                              const totalDuration = [...updatedServices, ...currentAddons].reduce((sum, item) => sum + item.duration, 0);
-                              const totalPrice = [...updatedServices, ...currentAddons].reduce((sum, item) => sum + item.price, 0);
-                              const discountPercentage = form.getValues("discount_percentage") || 0;
-                              const finalPrice = Math.round(totalPrice * (1 - discountPercentage));
+                              form.setValue("selectedServices", updatedServices);
                               
-                              form.setValue("price", finalPrice);
-                              form.trigger();
+                              // Update totals
+                              const totalDuration = [...updatedServices, ...currentAddons]
+                                .reduce((sum, item) => sum + (item?.duration || 0), 0);
+                              const totalPrice = [...updatedServices, ...currentAddons]
+                                .reduce((sum, item) => sum + (item?.price || 0), 0);
+                              
+                              form.setValue("duration", totalDuration);
+                              form.setValue("price", totalPrice);
                               
                               toast({
                                 title: "Service Added",
                                 description: `Added ${service.name} to the package`,
-                                variant: "default"
                               });
                             }}
                           >
                             Add
                           </Button>
                         </div>
-                    ))}
+                      ))}
                   </div>
                 </div>
 
@@ -742,17 +674,14 @@ export default function ServicesPage() {
                             type="button"
                             variant="outline"
                             size="sm"
-                            onClick={async () => {
+                            onClick={() => {
                               const currentServices = form.getValues("selectedServices") || [];
                               const currentAddons = form.getValues("selectedAddons") || [];
-                              const allSelectedItems = [...currentServices, ...currentAddons];
                               
-                              const isAlreadySelected = allSelectedItems.some(s => s.service_id === addon.service_id);
-                              
-                              if (isAlreadySelected) {
+                              if (currentAddons.some(a => a.service_id === addon.service_id)) {
                                 toast({
                                   title: "Already Selected",
-                                  description: "This item is already in the package",
+                                  description: "This add-on is already in the package",
                                   variant: "destructive"
                                 });
                                 return;
@@ -766,33 +695,28 @@ export default function ServicesPage() {
                                 category: addon.category
                               };
                               
-                              await form.setValue("selectedAddons", [...currentAddons, newAddon], {
-                                shouldValidate: true,
-                                shouldDirty: true,
-                                shouldTouch: true
-                              });
-                              
-                              // Recalculate totals
                               const updatedAddons = [...currentAddons, newAddon];
-                              const totalDuration = [...currentServices, ...updatedAddons].reduce((sum, item) => sum + item.duration, 0);
-                              const totalPrice = [...currentServices, ...updatedAddons].reduce((sum, item) => sum + item.price, 0);
-                              const discountPercentage = form.getValues("discount_percentage") || 0;
-                              const finalPrice = Math.round(totalPrice * (1 - discountPercentage));
+                              form.setValue("selectedAddons", updatedAddons);
                               
-                              form.setValue("price", finalPrice);
-                              form.trigger();
+                              // Update totals
+                              const totalDuration = [...currentServices, ...updatedAddons]
+                                .reduce((sum, item) => sum + (item?.duration || 0), 0);
+                              const totalPrice = [...currentServices, ...updatedAddons]
+                                .reduce((sum, item) => sum + (item?.price || 0), 0);
+                              
+                              form.setValue("duration", totalDuration);
+                              form.setValue("price", totalPrice);
                               
                               toast({
                                 title: "Add-on Added",
                                 description: `Added ${addon.name} to the package`,
-                                variant: "default"
                               });
                             }}
                           >
                             Add
                           </Button>
                         </div>
-                    ))}
+                      ))}
                   </div>
                 </div>
               </div>
@@ -814,27 +738,35 @@ export default function ServicesPage() {
                           type="button"
                           variant="ghost"
                           size="sm"
+                          className="text-destructive"
                           onClick={() => {
-                            if (item.category === ServiceCategory.SERVICE) {
-                              const services = form.getValues("selectedServices") || [];
-                              form.setValue("selectedServices", 
-                                services.filter(s => s.service_id !== item.service_id)
-                              );
-                            } else {
-                              const addons = form.getValues("selectedAddons") || [];
-                              form.setValue("selectedAddons", 
-                                addons.filter(a => a.service_id !== item.service_id)
-                              );
-                            }
-                            // Recalculate totals after removing an item
-                            const updatedServices = form.getValues("selectedServices") || [];
-                            const updatedAddons = form.getValues("selectedAddons") || [];
-                            const totalDuration = [...updatedServices, ...updatedAddons].reduce((sum, item) => sum + item.duration, 0);
-                            const totalPrice = [...updatedServices, ...updatedAddons].reduce((sum, item) => sum + item.price, 0);
-                            const discountPercentage = form.getValues("discount_percentage") || 0;
-                            const finalPrice = Math.round(totalPrice * (1 - discountPercentage));
-                            form.setValue("price", finalPrice);
-                            form.trigger();
+                            const currentServices = form.getValues("selectedServices") || [];
+                            const currentAddons = form.getValues("selectedAddons") || [];
+                            
+                            const isService = item.category === ServiceCategory.SERVICE;
+                            const updatedServices = isService
+                              ? currentServices.filter(s => s.service_id !== item.service_id)
+                              : currentServices;
+                            const updatedAddons = !isService
+                              ? currentAddons.filter(a => a.service_id !== item.service_id)
+                              : currentAddons;
+                            
+                            form.setValue("selectedServices", updatedServices);
+                            form.setValue("selectedAddons", updatedAddons);
+                            
+                            // Update totals
+                            const totalDuration = [...updatedServices, ...updatedAddons]
+                              .reduce((sum, item) => sum + (item?.duration || 0), 0);
+                            const totalPrice = [...updatedServices, ...updatedAddons]
+                              .reduce((sum, item) => sum + (item?.price || 0), 0);
+                            
+                            form.setValue("duration", totalDuration);
+                            form.setValue("price", totalPrice);
+                            
+                            toast({
+                              title: "Item Removed",
+                              description: `Removed ${item.name} from the package`,
+                            });
                           }}
                         >
                           Remove
@@ -842,53 +774,6 @@ export default function ServicesPage() {
                       </div>
                     </div>
                   ))}
-
-                  <div className="mt-4 pt-4 border-t space-y-2">
-                    <div className="flex justify-between text-sm text-muted-foreground">
-                      <span>Original Total:</span>
-                      <span>
-                        {(() => {
-                          const selected = [
-                            ...(form.getValues("selectedServices") || []),
-                            ...(form.getValues("selectedAddons") || [])
-                          ];
-                          const totalPrice = selected.reduce((sum, item) => sum + item.price, 0);
-                          return `₹${totalPrice}`;
-                        })()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm text-muted-foreground">
-                      <span>Total Duration:</span>
-                      <span>
-                        {(() => {
-                          const selected = [
-                            ...(form.getValues("selectedServices") || []),
-                            ...(form.getValues("selectedAddons") || [])
-                          ];
-                          const totalDuration = selected.reduce((sum, item) => sum + item.duration, 0);
-                          return `${totalDuration} minutes`;
-                        })()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between font-semibold">
-                      <span>Final Price:</span>
-                      <span>
-                        {(() => {
-                          const selected = [
-                            ...(form.getValues("selectedServices") || []),
-                            ...(form.getValues("selectedAddons") || [])
-                          ];
-                          const totalPrice = selected.reduce((sum, item) => sum + item.price, 0);
-                          const packagePrice = form.getValues("price");
-                          if (packagePrice) {
-                            const savings = totalPrice - packagePrice;
-                            return `₹${packagePrice} (Save ₹${savings > 0 ? savings : 0})`;
-                          }
-                          return 'Please set a package price';
-                        })()}
-                      </span>
-                    </div>
-                  </div>
                 </div>
               </div>
 
@@ -897,7 +782,7 @@ export default function ServicesPage() {
                 name="discount_percentage"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Discount Percentage (%)</FormLabel>
+                    <FormLabel>Discount Percentage</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -923,7 +808,6 @@ export default function ServicesPage() {
                           const totalPrice = selectedItems.reduce((sum, item) => sum + (item?.price || 0), 0);
                           const discountedPrice = Math.round(totalPrice * (1 - decimalValue));
                           form.setValue("price", discountedPrice);
-                          form.trigger();
                         }}
                       />
                     </FormControl>
@@ -937,16 +821,17 @@ export default function ServicesPage() {
                 name="price"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Package Price (₹)</FormLabel>
+                    <FormLabel>Final Price (₹)</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         min="0"
-                        step="1"
-                        placeholder="Package price will be calculated automatically"
                         {...field}
-                        readOnly
-                        disabled
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(value === "" ? 0 : Number(value));
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -954,13 +839,14 @@ export default function ServicesPage() {
                 )}
               />
 
-              <div className="flex justify-end gap-2 mt-4">
+              <div className="flex justify-end gap-2">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => {
                     setShowPackageDialog(false);
                     form.reset();
+                    setSelectedService(null);
                   }}
                 >
                   Cancel
@@ -974,23 +860,50 @@ export default function ServicesPage() {
         </DialogContent>
       </Dialog>
 
+      <ConsumablesModal
+        open={showConsumablesModal}
+        onOpenChange={setShowConsumablesModal}
+        onSubmit={(consumables) => {
+          form.setValue("consumables", consumables, {
+            shouldValidate: true,
+            shouldDirty: true,
+            shouldTouch: true,
+          });
+        }}
+        initialConsumables={form.getValues("consumables")}
+      />
+
       <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              service.
+              service{selectedService?.category === ServiceCategory.PACKAGE ? " package" : ""} and remove it from our records.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel onClick={() => setShowDeleteConfirm(false)}>
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={async () => {
-                if (selectedService) {
-                  await deleteService(selectedService.service_id);
+                try {
+                  if (selectedService?.service_id) {
+                    await deleteService(selectedService.service_id);
+                    toast({
+                      title: "Success",
+                      description: "Service deleted successfully",
+                    });
+                  }
                   setShowDeleteConfirm(false);
-                  setSelectedService(null);
+                } catch (error) {
+                  console.error('Error deleting service:', error);
+                  toast({
+                    title: "Error",
+                    description: error instanceof Error ? error.message : "Failed to delete service",
+                    variant: "destructive",
+                  });
                 }
               }}
             >
@@ -999,16 +912,6 @@ export default function ServicesPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-      <ConsumablesModal
-        open={showConsumablesModal}
-        onOpenChange={setShowConsumablesModal}
-        initialConsumables={form.getValues("consumables")}
-        onSave={(consumables) => {
-          form.setValue("consumables", consumables);
-          setShowConsumablesModal(false);
-        }}
-      />
     </div>
   );
 }
