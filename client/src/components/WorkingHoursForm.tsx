@@ -49,16 +49,30 @@ export default function WorkingHoursForm({
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { addWorkingHours } = useWorkingHours();
-  const [initialValues] = useState(() => ({
-    branchId: existingSchedule?.branchId ?? 1,
-    dayOfWeek: existingSchedule?.dayOfWeek ?? defaultDay ?? 1,
-    isOpen: existingSchedule?.isOpen ?? true,
-    openingTime: existingSchedule?.openingTime ?? "09:00",
-    closingTime: existingSchedule?.closingTime ?? "17:00",
-    breakStart: existingSchedule?.breakStart ?? undefined,
-    breakEnd: existingSchedule?.breakEnd ?? undefined,
-    maxDailyAppointments: existingSchedule?.maxDailyAppointments ?? 8
-  }));
+  const [initialValues] = useState(() => {
+    if (existingSchedule) {
+      return {
+        branchId: existingSchedule.branchId,
+        dayOfWeek: existingSchedule.dayOfWeek,
+        isOpen: existingSchedule.isOpen,
+        openingTime: existingSchedule.openingTime,
+        closingTime: existingSchedule.closingTime,
+        breakStart: existingSchedule.breakStart ?? undefined,
+        breakEnd: existingSchedule.breakEnd ?? undefined,
+        maxDailyAppointments: existingSchedule.maxDailyAppointments
+      };
+    }
+    return {
+      branchId: 1,
+      dayOfWeek: defaultDay ?? 0,
+      isOpen: true,
+      openingTime: "09:00",
+      closingTime: "17:00",
+      breakStart: undefined,
+      breakEnd: undefined,
+      maxDailyAppointments: 8
+    };
+  });
 
   const form = useForm<InsertWorkingDays>({
     resolver: zodResolver(insertWorkingDaysSchema),
@@ -67,10 +81,30 @@ export default function WorkingHoursForm({
 
   // Reset form when dialog opens
   useEffect(() => {
-    if (open) {
-      form.reset(initialValues);
-    }
-  }, [open]);
+    if (!open) return;
+    
+    const values = existingSchedule ? {
+      branchId: existingSchedule.branchId,
+      dayOfWeek: existingSchedule.dayOfWeek,
+      isOpen: existingSchedule.isOpen,
+      openingTime: existingSchedule.openingTime,
+      closingTime: existingSchedule.closingTime,
+      breakStart: existingSchedule.breakStart ?? undefined,
+      breakEnd: existingSchedule.breakEnd ?? undefined,
+      maxDailyAppointments: existingSchedule.maxDailyAppointments
+    } : {
+      branchId: 1,
+      dayOfWeek: defaultDay ?? 0,
+      isOpen: true,
+      openingTime: "09:00",
+      closingTime: "17:00",
+      breakStart: undefined,
+      breakEnd: undefined,
+      maxDailyAppointments: 8
+    };
+    
+    form.reset(values);
+  }, [open, existingSchedule, defaultDay]);
 
   async function onSubmit(data: InsertWorkingDays) {
     if (isSubmitting) return;
