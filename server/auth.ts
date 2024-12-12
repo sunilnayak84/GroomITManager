@@ -96,7 +96,7 @@ export async function createUserInDatabase(user: FirebaseUser) {
         name: user.name,
         phone: '', // Required field
         role: (user.role === 'admin' || user.role === 'staff') ? user.role : 'staff' as const,
-        isGroomer: false,
+        isGroomer: user.role === 'groomer',
         isActive: true
       };
       await db.insert(users).values(userData);

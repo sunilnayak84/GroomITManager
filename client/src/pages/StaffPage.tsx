@@ -74,20 +74,31 @@ export default function StaffPage() {
 
   const onSubmit = async (data: InsertUser) => {
     try {
+      // Always ensure isGroomer is set based on role and include all required fields
+      const staffData = {
+        ...data,
+        isGroomer: data.role === 'groomer',
+        isActive: true,
+        specialties: data.specialties || [],
+        petTypePreferences: data.petTypePreferences || [],
+        experienceYears: data.experienceYears || 0,
+        maxDailyAppointments: data.maxDailyAppointments || 8,
+        role: data.role === 'groomer' ? 'groomer' : 'staff'
+      };
+
+      console.log('Submitting staff data:', staffData);
+
       if (selectedStaff) {
         await updateStaffMember({
           id: selectedStaff.id,
-          data: {
-            ...data,
-            isActive: true
-          }
+          data: staffData
         });
         toast({
           title: "Success",
           description: "Staff member updated successfully",
         });
       } else {
-        await addStaffMember(data);
+        await addStaffMember(staffData);
         toast({
           title: "Success",
           description: "Staff member added successfully",
@@ -301,15 +312,22 @@ export default function StaffPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Role</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select 
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        // Update isGroomer when role changes
+                        form.setValue('isGroomer', value === 'groomer');
+                      }} 
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select role" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="staff">Staff</SelectItem>
-                        <SelectItem value="groomer">Groomer</SelectItem>
+                        <SelectItem value="staff">Staff Member</SelectItem>
+                        <SelectItem value="groomer">Pet Groomer</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
