@@ -592,9 +592,12 @@ export default function ServicesPage() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => setShowConsumablesModal(true)}
+                  onClick={() => {
+                    console.log('Opening consumables modal with:', form.getValues("consumables"));
+                    setShowConsumablesModal(true);
+                  }}
                 >
-                  Manage Consumables
+                  Manage Consumables ({form.getValues("consumables")?.length || 0})
                 </Button>
                 <div className="flex gap-2">
                   <Button
@@ -1000,9 +1003,14 @@ export default function ServicesPage() {
       <ConsumablesModal
         open={showConsumablesModal}
         onOpenChange={setShowConsumablesModal}
-        initialConsumables={form.getValues("consumables")}
+        initialConsumables={form.getValues("consumables") || []}
         onSave={(consumables) => {
-          form.setValue("consumables", consumables);
+          console.log('Saving consumables:', consumables);
+          form.setValue("consumables", consumables, {
+            shouldValidate: true,
+            shouldDirty: true,
+            shouldTouch: true
+          });
           setShowConsumablesModal(false);
         }}
       />

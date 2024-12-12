@@ -43,8 +43,14 @@ export function ConsumablesModal({
   onSave,
   initialConsumables = [],
 }: ConsumablesModalProps) {
-  const [consumables, setConsumables] = React.useState<ServiceConsumable[]>(initialConsumables);
+  const [consumables, setConsumables] = React.useState<ServiceConsumable[]>([]);
   const { inventory } = useInventory();
+
+  // Update consumables state when initialConsumables changes or modal opens
+  React.useEffect(() => {
+    console.log('Initial consumables received:', initialConsumables);
+    setConsumables(initialConsumables || []);
+  }, [initialConsumables, open]);
   
   const form = useForm<z.infer<typeof baseConsumableSchema>>({
     resolver: zodResolver(baseConsumableSchema),
@@ -91,6 +97,11 @@ export function ConsumablesModal({
         item_name: "",
         quantity_used: 0
       });
+      
+      // Reset the form fields
+      form.setValue("item_id", "");
+      form.setValue("item_name", "");
+      form.setValue("quantity_used", 0);
     } catch (error) {
       console.error('Error adding consumable:', error);
       return;
