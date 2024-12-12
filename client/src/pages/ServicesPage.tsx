@@ -80,34 +80,24 @@ export default function ServicesPage() {
     try {
       // Format the service data with required fields and optional consumables
       // Format and validate consumables data
-      // Clean and validate consumables data
       const formattedConsumables = (data.consumables || []).map(consumable => {
         // Required fields must have valid values
-        if (!consumable.inventory_item_id || !consumable.name || !consumable.quantity_per_service) {
+        if (!consumable.item_id || !consumable.item_name || !consumable.quantity_used) {
           throw new Error("Missing required consumable fields");
         }
         
         return {
-          inventory_item_id: consumable.inventory_item_id,
-          name: consumable.name,
-          quantity_per_service: Number(consumable.quantity_per_service),
-          unit: consumable.unit || 'unit',
-          current_stock: Number(consumable.current_stock || 0),
-          track_inventory: Boolean(consumable.track_inventory ?? true),
-          auto_deduct: Boolean(consumable.auto_deduct ?? true),
-          minimum_quantity: Number(consumable.minimum_quantity || 0),
-          category: consumable.category || 'uncategorized',
-          notes: consumable.notes || '',
-          cost_per_unit: Number(consumable.cost_per_unit || 0),
-          last_stock_check: consumable.last_stock_check ? new Date(consumable.last_stock_check) : new Date(),
-          reorder_point: Number(consumable.reorder_point || 0),
-          service_linked: true
+          item_id: consumable.item_id,
+          item_name: consumable.item_name,
+          quantity_used: Number(consumable.quantity_used),
+          created_at: new Date(),
+          updated_at: new Date()
         };
       });
 
       const formattedData = {
         name: data.name,
-        description: data.description || '',
+        description: data.description || null,
         category: data.category,
         duration: data.duration,
         price: data.price,
