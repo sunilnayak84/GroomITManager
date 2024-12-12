@@ -307,7 +307,15 @@ export function useInventory() {
       const currentQuantity = Number(itemData.quantity) || 0;
       const minimumQuantity = Number(itemData.minimum_quantity) || 0;
       const reorderPoint = Number(itemData.reorder_point) || 0;
+      const reorderQuantity = Number(itemData.reorder_quantity) || 0;
+      const isTracked = itemData.is_tracked ?? true;
       
+      // If item is not tracked, skip quantity checks
+      if (!isTracked) {
+        console.log('RECORD_USAGE: Item is not tracked, skipping quantity checks');
+        return null;
+      }
+
       if (currentQuantity < usageData.quantity_used) {
         throw new Error(`Insufficient quantity available. Current stock: ${currentQuantity}`);
       }
@@ -337,14 +345,30 @@ export function useInventory() {
       if (newQuantity <= minimumQuantity) {
         toast({
           title: "Critical Stock Alert",
-          description: `${itemData.name} is below minimum quantity (${newQuantity} remaining)`,
+          description: `${itemData.name} is below minimum quantity (${newQuantity} ${itemData.unit} remaining). Suggested reorder: ${reorderQuantity} ${itemData.unit}`,
           variant: "destructive"
         });
       } else if (newQuantity <= reorderPoint) {
+        const suggestedQuantity = reorderQuantity || Math.max(minimumQuantity * 2, currentQuantity);
         toast({
           title: "Low Stock Alert",
-          description: `${itemData.name} has reached reorder point (${newQuantity} remaining)`,
+          description: `${itemData.name} has reached reorder point (${newQuantity} ${itemData.unit} remaining). Suggested reorder: ${suggestedQuantity} ${itemData.unit}`,
           variant: "default"
+        });
+      }
+
+      // If auto-update is enabled and stock is low, create a reorder suggestion
+      if (itemData.auto_update_stock && newQuantity <= reorderPoint) {
+        // Record reorder suggestion in a separate collection
+        const reorderRef = doc(collection(db, 'inventory_reorders'));
+        await setDoc(reorderRef, {
+          item_id: usageData.item_id,
+          item_name: itemData.name,
+          current_quantity: newQuantity,
+          suggested_quantity: reorderQuantity || Math.max(minimumQuantity * 2, currentQuantity),
+          unit: itemData.unit,
+          created_at: serverTimestamp(),
+          status: 'pending'
         });
       }
 
