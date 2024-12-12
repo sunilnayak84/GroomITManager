@@ -68,10 +68,10 @@ export default function WorkingHoursSettingsPage() {
                       Break Time:{" "}
                       {daySchedule.breakStart && daySchedule.breakEnd
                         ? `${daySchedule.breakStart} - ${daySchedule.breakEnd}`
-                        : "--:-- - --:--"}
+                        : "No break time set"}
                     </p>
                     <p className="text-sm text-gray-500">
-                      Max Daily Appointments: {daySchedule.maxDailyAppointments}
+                      Max Daily Appointments: {daySchedule?.maxDailyAppointments || "--"}
                     </p>
                   </div>
                 ) : (
