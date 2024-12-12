@@ -59,8 +59,8 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd client && npm run dev"
-waitForPort = 5174
+args = "cd client && vite --port 5173 --host 0.0.0.0"
+waitForPort = 5173
 
 [[ports]]
 localPort = 5173
