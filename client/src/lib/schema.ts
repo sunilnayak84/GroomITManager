@@ -209,8 +209,8 @@ export const workingDaysSchema = z.object({
   isOpen: z.boolean(),
   openingTime: z.string(),
   closingTime: z.string(),
-  breakStart: z.string().nullable(),
-  breakEnd: z.string().nullable(),
+  breakStart: z.string().nullable().optional(),
+  breakEnd: z.string().nullable().optional(),
   maxDailyAppointments: z.number().default(8),
   createdAt: z.string(),
   updatedAt: z.string().nullable(),
@@ -220,7 +220,19 @@ export const insertWorkingDaysSchema = workingDaysSchema.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
-});
+}).refine(
+  (data) => {
+    // If either break time is provided, both must be provided
+    if (data.breakStart || data.breakEnd) {
+      return data.breakStart && data.breakEnd;
+    }
+    return true;
+  },
+  {
+    message: "Both break start and end times must be provided if one is set",
+    path: ["breakTime"],
+  }
+);
 
 export type WorkingDays = z.infer<typeof workingDaysSchema>;
 export type InsertWorkingDays = z.infer<typeof insertWorkingDaysSchema>;
