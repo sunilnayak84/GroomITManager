@@ -29,7 +29,9 @@ export const serviceSchema = z.object({
   category: z.enum([ServiceCategory.SERVICE, ServiceCategory.ADDON, ServiceCategory.PACKAGE]).default(ServiceCategory.SERVICE),
   duration: z.number().min(15, "Duration must be at least 15 minutes"),
   price: z.number().min(0, "Price cannot be negative"),
-  discount_percentage: z.number().min(0).max(100).optional().default(0),
+  discount_percentage: z.number().min(0).max(1).optional().transform(val => 
+    val === undefined ? 0 : (val > 1 ? val / 100 : val)
+  ),
   consumables: z.array(serviceConsumableSchema).default([]),
   isActive: z.boolean().default(true),
   created_at: z.string().or(z.date()).transform(val => 

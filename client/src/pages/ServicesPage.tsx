@@ -76,13 +76,7 @@ export default function ServicesPage() {
     },
   });
 
-  // Helper function to calculate package price
-const calculatePackagePrice = (selectedItems: any[], discountPercentage: number) => {
-  const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
-  return Math.round(totalPrice * (1 - discountPercentage / 100));
-};
-
-const onSubmit = async (data: InsertService) => {
+  const onSubmit = async (data: InsertService) => {
     try {
       if (data.category === ServiceCategory.PACKAGE) {
         const selectedServices = form.getValues("selectedServices") || [];
@@ -98,10 +92,19 @@ const onSubmit = async (data: InsertService) => {
           return;
         }
 
-        // Calculate total duration and price
+        // Calculate total duration and original price
         const totalDuration = selectedItems.reduce((sum, item) => sum + item.duration, 0);
-        const discountPercentage = data.discount_percentage || 0;
-        const finalPrice = calculatePackagePrice(selectedItems, discountPercentage);
+        const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
+        
+        // Validate that a price is provided
+        if (!data.price) {
+          toast({
+            title: "Validation Error",
+            description: "Please enter a price for the package",
+            variant: "destructive",
+          });
+          return;
+        }
 
         // Create package data with all required fields
         const packageData: InsertService = {
@@ -110,8 +113,7 @@ const onSubmit = async (data: InsertService) => {
             `Package including ${data.selectedServices?.length || 0} services and ${data.selectedAddons?.length || 0} add-ons.`,
           category: ServiceCategory.PACKAGE,
           duration: totalDuration,
-          price: finalPrice,
-          discount_percentage: discountPercentage,
+          price: data.price,
           consumables: [], // Packages don't require consumables
           isActive: true,
           selectedServices: selectedServices.map(service => ({
@@ -202,8 +204,6 @@ const onSubmit = async (data: InsertService) => {
       selectedAddons: service.selectedAddons || []
     };
     form.reset(formData);
-    
-    // Package prices are now manually set
     
     if (service.category === ServiceCategory.PACKAGE) {
       setShowPackageDialog(true);
@@ -566,7 +566,6 @@ const onSubmit = async (data: InsertService) => {
                                 shouldTouch: true
                               });
                               
-                              updatePackagePrice();
                               form.trigger();
                               
                               toast({
@@ -739,11 +738,19 @@ const onSubmit = async (data: InsertService) => {
                         step="1"
                         placeholder="Enter discount percentage"
                         {...field}
-                        value={field.value?.toString() ?? "0"}
+                        value={((field.value ?? 0) * 100).toString()}
                         onChange={(e) => {
-                          const value = e.target.value === '' ? 0 : Math.min(Math.max(parseInt(e.target.value), 0), 100);
+                          const value = e.target.value === '' ? 0 : parseFloat(e.target.value) / 100;
                           field.onChange(value);
-                          updatePackagePrice();
+                          
+                          // Calculate and set package price based on discount
+                          const selectedItems = [
+                            ...(form.getValues("selectedServices") || []),
+                            ...(form.getValues("selectedAddons") || [])
+                          ];
+                          const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
+                          const discountedPrice = Math.round(totalPrice * (1 - value));
+                          form.setValue("price", discountedPrice);
                           form.trigger();
                         }}
                       />
@@ -766,9 +773,8 @@ const onSubmit = async (data: InsertService) => {
                         step="1"
                         placeholder="Package price will be calculated automatically"
                         {...field}
-                        className="bg-white"
-                        placeholder="Enter package price manually"
-                        
+                        readOnly
+                        disabled
                       />
                     </FormControl>
                     <FormMessage />
