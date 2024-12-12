@@ -388,7 +388,6 @@ export function PetForm({
                     <SelectItem value="male">Male</SelectItem>
                     <SelectItem value="female">Female</SelectItem>
                     <SelectItem value="unknown">Unknown</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
               </FormItem>
@@ -410,7 +409,7 @@ export function PetForm({
                       value={field.value ?? ''}
                       onChange={(e) => {
                         const value = e.target.value;
-                        field.onChange(value ? Number(value) : null);
+                        field.onChange(value || null);
                       }}
                     />
                   </FormControl>
