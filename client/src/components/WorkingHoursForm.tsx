@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertWorkingDaysSchema, type InsertWorkingDays } from "@/lib/schema";
+import { insertWorkingDaysSchema, type InsertWorkingDays, type WorkingDays } from "@/lib/schema";
 import {
   Form,
   FormControl,
@@ -50,51 +50,48 @@ export default function WorkingHoursForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { addWorkingHours } = useWorkingHours();
 
-  const defaultFormValues = existingSchedule ? {
-    branchId: existingSchedule.branchId,
-    dayOfWeek: existingSchedule.dayOfWeek,
-    isOpen: existingSchedule.isOpen,
-    openingTime: existingSchedule.openingTime,
-    closingTime: existingSchedule.closingTime,
-    breakStart: existingSchedule.breakStart || undefined,
-    breakEnd: existingSchedule.breakEnd || undefined,
-    maxDailyAppointments: existingSchedule.maxDailyAppointments
-  } : {
-    branchId: 1,
-    dayOfWeek: defaultDay || 1,
-    isOpen: true,
-    openingTime: "09:00",
-    closingTime: "17:00",
-    breakStart: "13:00",
-    breakEnd: "14:00",
-    maxDailyAppointments: 8
-  };
-
   const form = useForm<InsertWorkingDays>({
     resolver: zodResolver(insertWorkingDaysSchema),
-    defaultValues: defaultFormValues,
+    defaultValues: {
+      branchId: 1,
+      dayOfWeek: defaultDay || 1,
+      isOpen: true,
+      openingTime: "09:00",
+      closingTime: "17:00",
+      breakStart: "13:00",
+      breakEnd: "14:00",
+      maxDailyAppointments: 8
+    }
   });
 
-  // Reset form when existingSchedule changes
+  // Reset form when dialog opens with existing schedule or defaults
   useEffect(() => {
-    if (existingSchedule) {
-      form.reset({
-        branchId: existingSchedule.branchId,
-        dayOfWeek: existingSchedule.dayOfWeek,
-        isOpen: existingSchedule.isOpen,
-        openingTime: existingSchedule.openingTime,
-        closingTime: existingSchedule.closingTime,
-        breakStart: existingSchedule.breakStart || undefined,
-        breakEnd: existingSchedule.breakEnd || undefined,
-        maxDailyAppointments: existingSchedule.maxDailyAppointments
-      });
-    } else if (defaultDay !== undefined && defaultDay !== null) {
-      form.reset({
-        ...form.getValues(),
-        dayOfWeek: defaultDay
-      });
+    if (open) {
+      if (existingSchedule) {
+        form.reset({
+          branchId: existingSchedule.branchId,
+          dayOfWeek: existingSchedule.dayOfWeek,
+          isOpen: existingSchedule.isOpen,
+          openingTime: existingSchedule.openingTime,
+          closingTime: existingSchedule.closingTime,
+          breakStart: existingSchedule.breakStart || undefined,
+          breakEnd: existingSchedule.breakEnd || undefined,
+          maxDailyAppointments: existingSchedule.maxDailyAppointments
+        });
+      } else {
+        form.reset({
+          branchId: 1,
+          dayOfWeek: defaultDay || 1,
+          isOpen: true,
+          openingTime: "09:00",
+          closingTime: "17:00",
+          breakStart: "13:00",
+          breakEnd: "14:00",
+          maxDailyAppointments: 8
+        });
+      }
     }
-  }, [existingSchedule, defaultDay, form]);
+  }, [open, existingSchedule, defaultDay]);
 
   async function onSubmit(data: InsertWorkingDays) {
     if (isSubmitting) return;
@@ -109,7 +106,6 @@ export default function WorkingHoursForm({
       });
       
       onOpenChange(false);
-      form.reset();
     } catch (error) {
       console.error('Failed to update working hours:', error);
       toast({
@@ -145,6 +141,7 @@ export default function WorkingHoursForm({
                     <select
                       className="w-full p-2 border rounded"
                       {...field}
+                      value={field.value}
                       onChange={(e) => field.onChange(parseInt(e.target.value))}
                     >
                       {DAYS_OF_WEEK.map((day, index) => (
@@ -185,7 +182,11 @@ export default function WorkingHoursForm({
                 <FormItem>
                   <FormLabel>Opening Time</FormLabel>
                   <FormControl>
-                    <Input type="time" {...field} />
+                    <Input 
+                      type="time" 
+                      {...field} 
+                      value={field.value || ''} 
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -199,7 +200,11 @@ export default function WorkingHoursForm({
                 <FormItem>
                   <FormLabel>Closing Time</FormLabel>
                   <FormControl>
-                    <Input type="time" {...field} />
+                    <Input 
+                      type="time" 
+                      {...field} 
+                      value={field.value || ''} 
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -213,7 +218,11 @@ export default function WorkingHoursForm({
                 <FormItem>
                   <FormLabel>Break Start (Optional)</FormLabel>
                   <FormControl>
-                    <Input type="time" {...field} value={field.value || ''} />
+                    <Input 
+                      type="time" 
+                      {...field} 
+                      value={field.value || ''} 
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -227,7 +236,11 @@ export default function WorkingHoursForm({
                 <FormItem>
                   <FormLabel>Break End (Optional)</FormLabel>
                   <FormControl>
-                    <Input type="time" {...field} value={field.value || ''} />
+                    <Input 
+                      type="time" 
+                      {...field} 
+                      value={field.value || ''} 
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -246,6 +259,7 @@ export default function WorkingHoursForm({
                       min={1}
                       max={50}
                       {...field}
+                      value={field.value || ''}
                       onChange={(e) => field.onChange(parseInt(e.target.value))}
                     />
                   </FormControl>
