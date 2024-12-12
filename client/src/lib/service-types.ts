@@ -33,18 +33,24 @@ export type PackageItem = {
   category: typeof ServiceCategory[keyof typeof ServiceCategory];
 };
 
-export const serviceSchema = z.object({
-  service_id: z.string(),
+// Base service schema for required fields
+const baseServiceSchema = {
   name: z.string().min(2, "Service name must be at least 2 characters"),
-  description: z.string().optional(),
-  category: z.enum([ServiceCategory.SERVICE, ServiceCategory.ADDON, ServiceCategory.PACKAGE]).default(ServiceCategory.SERVICE),
+  category: z.enum([ServiceCategory.SERVICE, ServiceCategory.ADDON, ServiceCategory.PACKAGE]),
   duration: z.number().min(15, "Duration must be at least 15 minutes"),
   price: z.number().min(0, "Price cannot be negative"),
+};
+
+// Full service schema including all fields
+export const serviceSchema = z.object({
+  service_id: z.string(),
+  ...baseServiceSchema,
+  description: z.string().optional(),
   discount_percentage: z.number().min(0).max(100).optional().transform(val => {
     if (val === undefined) return 0;
     return val > 1 ? val / 100 : val;
   }),
-  consumables: z.array(serviceConsumableSchema).default([]),
+  consumables: z.array(serviceConsumableSchema).optional().default([]),
   isActive: z.boolean().default(true),
   created_at: z.string().or(z.date()).transform(val => 
     typeof val === 'string' ? new Date(val) : val
@@ -73,15 +79,12 @@ export type ServiceConsumable = z.infer<typeof serviceConsumableSchema>;
 export type Service = z.infer<typeof serviceSchema>;
 
 // Schema for creating/updating a service
-export const insertServiceSchema = serviceSchema.omit({
-  service_id: true,
-  created_at: true,
-  updated_at: true,
-}).extend({
+export const insertServiceSchema = z.object({
+  ...baseServiceSchema,
+  description: z.string().optional(),
+  discount_percentage: z.number().min(0).max(100).optional(),
   consumables: z.array(serviceConsumableSchema).optional().default([]),
-  name: z.string().min(2, "Service name must be at least 2 characters"),
-  price: z.number().min(0, "Price cannot be negative").default(0),
-  duration: z.number().min(15, "Duration must be at least 15 minutes").default(30),
+  isActive: z.boolean().default(true),
   selectedServices: z.array(z.object({
     service_id: z.string(),
     name: z.string(),

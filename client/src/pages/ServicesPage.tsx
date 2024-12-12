@@ -78,6 +78,20 @@ export default function ServicesPage() {
 
   const onSubmit = async (data: InsertService) => {
     try {
+      // Format the service data with required fields and optional consumables
+      const formattedData = {
+        name: data.name,
+        description: data.description || '',
+        category: data.category,
+        duration: data.duration,
+        price: data.price,
+        discount_percentage: data.discount_percentage || 0,
+        consumables: data.consumables || [],
+        isActive: true,
+        selectedServices: [],
+        selectedAddons: []
+      };
+
       if (data.category === ServiceCategory.PACKAGE) {
         const selectedServices = form.getValues("selectedServices") || [];
         const selectedAddons = form.getValues("selectedAddons") || [];
@@ -182,11 +196,31 @@ export default function ServicesPage() {
             variant: "destructive",
           });
         }
-      } else if (selectedService) {
-        await updateService(selectedService.service_id, data);
-        setShowServiceDialog(false);
       } else {
-        await addService(data);
+        // For regular services and add-ons
+        // Validate required fields
+        if (!formattedData.name || !formattedData.category || !formattedData.duration || formattedData.price === undefined) {
+          toast({
+            title: "Validation Error",
+            description: "Please fill in all required fields",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        if (selectedService) {
+          await updateService(selectedService.service_id, formattedData);
+          toast({
+            title: "Success",
+            description: "Service updated successfully",
+          });
+        } else {
+          await addService(formattedData);
+          toast({
+            title: "Success",
+            description: "Service added successfully",
+          });
+        }
         setShowServiceDialog(false);
       }
       
