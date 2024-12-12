@@ -38,7 +38,7 @@ interface AppointmentFormProps {
 }
 
 export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
-  const { addAppointment } = useAppointments();
+  const { addAppointment, isTimeSlotAvailable } = useAppointments();
   const { pets } = usePets();
   const { services } = useServices();
   const { toast } = useToast();
@@ -199,16 +199,27 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                         // For now, restrict to 9 AM - 5 PM
                         const hour = date.getHours();
                         const validTime = hour >= 9 && hour < 17;
+                        const selectedGroomerId = form.getValues("groomerId");
                         
-                        if (validTime) {
-                          field.onChange(date.toISOString());
-                        } else {
+                        if (!validTime) {
                           toast({
                             title: "Invalid Time",
                             description: "Please select a time during business hours (9 AM - 5 PM)",
                             variant: "destructive"
                           });
+                          return;
                         }
+                        
+                        if (selectedGroomerId && !isTimeSlotAvailable(date, selectedGroomerId)) {
+                          toast({
+                            title: "Time Slot Unavailable",
+                            description: "This time slot is already booked. Please select another time.",
+                            variant: "destructive"
+                          });
+                          return;
+                        }
+                        
+                        field.onChange(date.toISOString());
                       }
                     }}
                     onBlur={(e) => {
