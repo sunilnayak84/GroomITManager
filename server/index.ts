@@ -1,8 +1,10 @@
-import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
-import { setupVite, serveStatic } from "./vite";
+import express, { type Request, type Response, type NextFunction } from "express";
+import express, { type Request, type Response, type NextFunction } from "express";
+import { registerRoutes } from "./routes.js";
+import { setupVite, serveStatic } from "./vite.js";
 import { createServer } from "http";
-import { db } from "../db";
+import { terminateProcessOnPort } from "./utils/port_cleanup.js";
+import { db } from "../db/index.js";
 import { sql } from "drizzle-orm";
 import admin from "firebase-admin";
 
@@ -42,6 +44,7 @@ if (process.env.NODE_ENV !== 'development') {
 } else {
   log('Running in development mode - skipping Firebase initialization', 'info');
 }
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -51,7 +54,7 @@ app.set('trust proxy', 1);
 const isDevelopment = app.get("env") === "development";
 app.use((req, res, next) => {
   const origin = isDevelopment 
-    ? (req.get('origin') || 'http://localhost:5000') 
+    ? (req.get('origin') || 'http://localhost:5173') 
     : req.get('origin');
     
   if (origin) {
@@ -145,68 +148,61 @@ function setupGracefulShutdown(server: any) {
 
 (async () => {
   try {
-    // Check database connection before starting server
+    // Clean up port before starting
+    const PORT = parseInt(process.env.PORT || '5173', 10);
+    await terminateProcessOnPort(PORT);
+
+    // Check database connection
     const isDatabaseConnected = await checkDatabaseConnection();
     if (!isDatabaseConnected) {
-      throw new Error("Cannot start server without database connection");
+      log("Cannot start server without database connection", 'error');
+      process.exit(1);
     }
 
-    // Register routes with error handling
-    try {
-      registerRoutes(app);
-      log("Routes registered successfully", 'info');
-    } catch (error) {
-      log(`Failed to register routes: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
-      throw error;
-    }
-
+    // Create server instance
     const server = createServer(app);
 
-    // Set up graceful shutdown
-    setupGracefulShutdown(server);
+    // Register routes
+    registerRoutes(app);
+    log("Routes registered successfully", 'info');
 
-    // Setup Vite or static serving based on environment
+    // Setup development or production mode
     if (app.get("env") === "development") {
-      try {
-        // Ensure routes are registered before setting up Vite
-        registerRoutes(app);
-        log("Routes registered successfully", 'info');
-
-        await setupVite(app, server);
-        log("Vite middleware setup complete", 'info');
-      } catch (error) {
-        log(`Warning: Development server setup error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'warn');
-      }
+      await setupVite(app, server);
+      log("Vite middleware setup complete", 'info');
     } else {
-      try {
-        // For production, serve static files first
-        serveStatic(app);
-        log("Static file serving setup complete", 'info');
-        
-        // Then register API routes
-        registerRoutes(app);
-        log("Routes registered successfully", 'info');
-      } catch (error) {
-        log(`Warning: Production server setup error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'warn');
-      }
+      serveStatic(app);
+      log("Static file serving setup complete", 'info');
     }
 
-    // Start the server with port handling
-    const PORT = parseInt(process.env.PORT || '3001', 10);
+    // Start server
     server.listen(PORT, '0.0.0.0', () => {
       log(`Server listening on http://0.0.0.0:${PORT}`, 'info');
-    }).on('error', (error: any) => {
-      if (error.code === 'EADDRINUSE') {
-        log(`Port ${PORT} is already in use. Please use a different port or close the application using this port.`, 'error');
-      } else {
-        log(`Failed to start server: ${error.message}`, 'error');
-      }
+    });
+
+    // Error handling
+    server.on('error', (error: any) => {
+      log(`Server error: ${error.message}`, 'error');
       process.exit(1);
     });
+
+    // Graceful shutdown
+    process.on('SIGTERM', () => {
+      server.close(() => {
+        log("Server shut down gracefully", 'info');
+        process.exit(0);
+      });
+    });
+
+    process.on('SIGINT', () => {
+      server.close(() => {
+        log("Server shut down gracefully", 'info');
+        process.exit(0);
+      });
+    });
+
   } catch (error: any) {
     log(`Failed to start server: ${error.message}`, 'error');
-    if (process.env.NODE_ENV !== 'development') {
-      process.exit(1);
-    }
+    process.exit(1);
   }
 })();

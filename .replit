@@ -8,7 +8,7 @@ channel = "stable-24_05"
 [deployment]
 deploymentTarget = "cloudrun"
 build = ["npm", "run", "build"]
-run = ["npm", "run", "start"]
+run = ["sh", "-c", "PORT=5173 NODE_ENV=development tsx watch --clear-screen=false server/index.ts"]
 
 [[ports]]
 localPort = 3000
@@ -50,5 +50,5 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "PORT=3001 NODE_ENV=development tsx watch --clear-screen=false server/index.ts"
-waitForPort = 3001
+args = "PORT=5173 NODE_ENV=development tsx watch --clear-screen=false server/index.ts"
+waitForPort = 5173
