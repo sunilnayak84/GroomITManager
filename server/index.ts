@@ -218,9 +218,9 @@ function setupGracefulShutdown(server: any) {
 
     const startServer = async () => {
       try {
-        const port = parseInt(process.env.PORT || '3001', 10);
-        server.listen(port, '0.0.0.0', () => {
-          log(`Server listening on http://0.0.0.0:${port}`, 'info');
+        const availablePort = await tryPort(3001);
+        server.listen(availablePort, '0.0.0.0', () => {
+          log(`Server listening on http://0.0.0.0:${availablePort}`, 'info');
         });
       } catch (error: any) {
         log(`Failed to start server: ${error.message}`, 'error');

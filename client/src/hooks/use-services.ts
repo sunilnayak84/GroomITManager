@@ -90,8 +90,8 @@ export function useServices() {
         description: newService.description,
         category: newService.category,
         duration: newService.duration,
-        price: serviceData.price,
-        discount_percentage: serviceData.category === ServiceCategory.PACKAGE ? Math.min(Math.max(serviceData.discount_percentage || 0, 0), 100) : 0,
+        price: newService.price,
+        discount_percentage: serviceData.discount_percentage || 0,
         consumables: newService.consumables.map(c => ({
           item_id: c.item_id,
           item_name: c.item_name,
@@ -142,11 +142,7 @@ export function useServices() {
       
       const updatePayload = {
         ...updateData,
-        discount_percentage: updateData.category === ServiceCategory.PACKAGE
-          ? (updateData.discount_percentage !== undefined 
-              ? Math.min(Math.max(updateData.discount_percentage, 0), 100)
-              : 0)
-          : 0,
+        discount_percentage: updateData.discount_percentage || 0,
         updated_at: timestamp
       };
 
