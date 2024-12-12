@@ -7,11 +7,18 @@ export function useWorkingHours() {
   const { data: workingHours, isLoading, error } = useQuery<WorkingDays[]>({
     queryKey: ["workingHours"],
     queryFn: async () => {
-      const response = await fetch('/api/working-hours');
-      if (!response.ok) {
-        throw new Error('Failed to fetch working hours');
+      try {
+        const response = await fetch('/api/working-hours');
+        if (!response.ok) {
+          throw new Error('Failed to fetch working hours');
+        }
+        const data = await response.json();
+        console.log('Fetched working hours:', data);
+        return data;
+      } catch (error) {
+        console.error('Error fetching working hours:', error);
+        throw error;
       }
-      return response.json();
     }
   });
 
