@@ -44,8 +44,12 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { staffMembers } = useStaff();
-  const availableGroomers = staffMembers?.filter((user) => user.isGroomer && user.isActive) || [];
+  const { staffMembers, isLoading: isLoadingStaff } = useStaff();
+  console.log('Staff members:', staffMembers); // Debug log
+  const availableGroomers = staffMembers.filter((user) => {
+    console.log('Checking user:', user); // Debug log
+    return user.isGroomer === true && user.isActive === true;
+  });
   
   const form = useForm<z.infer<typeof insertAppointmentSchema>>({
     resolver: zodResolver(insertAppointmentSchema),
@@ -89,11 +93,15 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
       appointmentDate.setSeconds(0);
       appointmentDate.setMilliseconds(0);
 
+      if (!values.groomerId) {
+        throw new Error("Please select a groomer");
+      }
+
       const appointmentData: InsertAppointment = {
         petId: values.petId,
         serviceId: values.serviceId,
-        groomerId: defaultGroomerId,
-        branchId: defaultBranchId,
+        groomerId: values.groomerId,
+        branchId: "1", // Default branch ID
         date: appointmentDate.toISOString(),
         status: "pending" as const,
         notes: values.notes || null,
