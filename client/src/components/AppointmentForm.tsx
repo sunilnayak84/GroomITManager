@@ -186,7 +186,29 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                     onChange={(e) => {
                       const date = new Date(e.target.value);
                       if (!isNaN(date.getTime())) {
-                        field.onChange(e.target.value);
+                        // Round to nearest 15 minutes
+                        date.setMinutes(Math.round(date.getMinutes() / 15) * 15);
+                        date.setSeconds(0);
+                        date.setMilliseconds(0);
+                        
+                        // Get day of week (0-6, Sunday-Saturday)
+                        const dayOfWeek = date.getDay();
+                        const timeStr = date.toTimeString().slice(0, 5); // HH:mm format
+                        
+                        // TODO: Check against working hours
+                        // For now, restrict to 9 AM - 5 PM
+                        const hour = date.getHours();
+                        const validTime = hour >= 9 && hour < 17;
+                        
+                        if (validTime) {
+                          field.onChange(date.toISOString());
+                        } else {
+                          toast({
+                            title: "Invalid Time",
+                            description: "Please select a time during business hours (9 AM - 5 PM)",
+                            variant: "destructive"
+                          });
+                        }
                       }
                     }}
                     onBlur={(e) => {
