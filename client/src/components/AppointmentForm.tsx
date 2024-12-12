@@ -44,8 +44,8 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { staff } = useStaff();
-  const availableGroomers = staff?.filter(user => user.isGroomer && user.isActive) || [];
+  const { staffMembers } = useStaff();
+  const availableGroomers = staffMembers?.filter((user) => user.isGroomer && user.isActive) || [];
   
   const form = useForm<z.infer<typeof insertAppointmentSchema>>({
     resolver: zodResolver(insertAppointmentSchema),
@@ -237,10 +237,11 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                       <SelectItem 
                         key={groomer.id} 
                         value={groomer.id}
-                        disabled={groomer.maxDailyAppointments === 0}
+                        disabled={!groomer.isActive || (groomer.maxDailyAppointments !== undefined && groomer.maxDailyAppointments <= 0)}
                       >
                         {groomer.name}
-                        {groomer.maxDailyAppointments === 0 ? " (Fully Booked)" : ""}
+                        {!groomer.isActive ? " (Inactive)" : 
+                         (groomer.maxDailyAppointments !== undefined && groomer.maxDailyAppointments <= 0) ? " (Fully Booked)" : ""}
                       </SelectItem>
                     ))}
                   </SelectContent>
