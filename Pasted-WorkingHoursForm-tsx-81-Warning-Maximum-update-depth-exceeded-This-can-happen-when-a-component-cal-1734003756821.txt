@@ -1,0 +1,169 @@
+WorkingHoursForm.tsx:81 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at WorkingHoursForm (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/WorkingHoursForm.tsx?t=1734003615734:52:3)
+    at div
+    at WorkingHoursSettingsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/WorkingHoursPage.tsx?t=1734003615734:32:39)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=b1c465a5:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=b1c465a5:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=4f391ca7:18:5)
+    at main
+    at div
+    at div
+    at div
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:18:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx?t=1734003615734:84:31)
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=cfef0f3b:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=4f391ca7:18:5)
+printWarning @ chunk-7SSXMLWA.js?v=6cdeb41f:521
+error @ chunk-7SSXMLWA.js?v=6cdeb41f:505
+checkForNestedUpdates @ chunk-7SSXMLWA.js?v=6cdeb41f:19665
+scheduleUpdateOnFiber @ chunk-7SSXMLWA.js?v=6cdeb41f:18533
+dispatchSetState @ chunk-7SSXMLWA.js?v=6cdeb41f:12403
+next @ chunk-MERG2UAM.js?v=6cdeb41f:1931
+next @ chunk-MERG2UAM.js?v=6cdeb41f:913
+_reset @ chunk-MERG2UAM.js?v=6cdeb41f:1791
+reset @ chunk-MERG2UAM.js?v=6cdeb41f:1802
+(anonymous) @ WorkingHoursForm.tsx:81
+commitHookEffectListMount @ chunk-7SSXMLWA.js?v=6cdeb41f:16915
+commitPassiveMountOnFiber @ chunk-7SSXMLWA.js?v=6cdeb41f:18156
+commitPassiveMountEffects_complete @ chunk-7SSXMLWA.js?v=6cdeb41f:18129
+commitPassiveMountEffects_begin @ chunk-7SSXMLWA.js?v=6cdeb41f:18119
+commitPassiveMountEffects @ chunk-7SSXMLWA.js?v=6cdeb41f:18109
+flushPassiveEffectsImpl @ chunk-7SSXMLWA.js?v=6cdeb41f:19490
+flushPassiveEffects @ chunk-7SSXMLWA.js?v=6cdeb41f:19447
+(anonymous) @ chunk-7SSXMLWA.js?v=6cdeb41f:19328
+workLoop @ chunk-7SSXMLWA.js?v=6cdeb41f:197
+flushWork @ chunk-7SSXMLWA.js?v=6cdeb41f:176
+performWorkUntilDeadline @ chunk-7SSXMLWA.js?v=6cdeb41f:384Understand this errorAI
+use-toast.ts:64 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+printWarning @ chunk-7SSXMLWA.js?v=6cdeb41f:521
+error @ chunk-7SSXMLWA.js?v=6cdeb41f:505
+checkForNestedUpdates @ chunk-7SSXMLWA.js?v=6cdeb41f:19665
+scheduleUpdateOnFiber @ chunk-7SSXMLWA.js?v=6cdeb41f:18533
+dispatchSetState @ chunk-7SSXMLWA.js?v=6cdeb41f:12403
+(anonymous) @ use-toast.ts:64Understand this errorAI
+779WorkingHoursForm.tsx:81 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at WorkingHoursForm (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/WorkingHoursForm.tsx?t=1734003615734:52:3)
+    at div
+    at WorkingHoursSettingsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/WorkingHoursPage.tsx?t=1734003615734:32:39)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=b1c465a5:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=b1c465a5:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=4f391ca7:18:5)
+    at main
+    at div
+    at div
+    at div
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:18:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx?t=1734003615734:84:31)
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=cfef0f3b:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=4f391ca7:18:5)
+printWarning @ chunk-7SSXMLWA.js?v=6cdeb41f:521
+error @ chunk-7SSXMLWA.js?v=6cdeb41f:505
+checkForNestedUpdates @ chunk-7SSXMLWA.js?v=6cdeb41f:19665
+scheduleUpdateOnFiber @ chunk-7SSXMLWA.js?v=6cdeb41f:18533
+dispatchSetState @ chunk-7SSXMLWA.js?v=6cdeb41f:12403
+next @ chunk-MERG2UAM.js?v=6cdeb41f:1931
+next @ chunk-MERG2UAM.js?v=6cdeb41f:913
+_reset @ chunk-MERG2UAM.js?v=6cdeb41f:1791
+reset @ chunk-MERG2UAM.js?v=6cdeb41f:1802
+(anonymous) @ WorkingHoursForm.tsx:81
+commitHookEffectListMount @ chunk-7SSXMLWA.js?v=6cdeb41f:16915
+commitPassiveMountOnFiber @ chunk-7SSXMLWA.js?v=6cdeb41f:18156
+commitPassiveMountEffects_complete @ chunk-7SSXMLWA.js?v=6cdeb41f:18129
+commitPassiveMountEffects_begin @ chunk-7SSXMLWA.js?v=6cdeb41f:18119
+commitPassiveMountEffects @ chunk-7SSXMLWA.js?v=6cdeb41f:18109
+flushPassiveEffectsImpl @ chunk-7SSXMLWA.js?v=6cdeb41f:19490
+flushPassiveEffects @ chunk-7SSXMLWA.js?v=6cdeb41f:19447
+(anonymous) @ chunk-7SSXMLWA.js?v=6cdeb41f:19328
+workLoop @ chunk-7SSXMLWA.js?v=6cdeb41f:197
+flushWork @ chunk-7SSXMLWA.js?v=6cdeb41f:176
+performWorkUntilDeadline @ chunk-7SSXMLWA.js?v=6cdeb41f:384Understand this errorAI
+use-toast.ts:64 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+printWarning @ chunk-7SSXMLWA.js?v=6cdeb41f:521
+error @ chunk-7SSXMLWA.js?v=6cdeb41f:505
+checkForNestedUpdates @ chunk-7SSXMLWA.js?v=6cdeb41f:19665
+scheduleUpdateOnFiber @ chunk-7SSXMLWA.js?v=6cdeb41f:18533
+dispatchSetState @ chunk-7SSXMLWA.js?v=6cdeb41f:12403
+(anonymous) @ use-toast.ts:64Understand this errorAI
+1314WorkingHoursForm.tsx:81 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at WorkingHoursForm (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/WorkingHoursForm.tsx?t=1734003615734:52:3)
+    at div
+    at WorkingHoursSettingsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/WorkingHoursPage.tsx?t=1734003615734:32:39)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=b1c465a5:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=b1c465a5:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=4f391ca7:18:5)
+    at main
+    at div
+    at div
+    at div
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:18:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx?t=1734003615734:84:31)
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=cfef0f3b:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=4f391ca7:18:5)
+printWarning @ chunk-7SSXMLWA.js?v=6cdeb41f:521
+error @ chunk-7SSXMLWA.js?v=6cdeb41f:505
+checkForNestedUpdates @ chunk-7SSXMLWA.js?v=6cdeb41f:19665
+scheduleUpdateOnFiber @ chunk-7SSXMLWA.js?v=6cdeb41f:18533
+dispatchSetState @ chunk-7SSXMLWA.js?v=6cdeb41f:12403
+next @ chunk-MERG2UAM.js?v=6cdeb41f:1931
+next @ chunk-MERG2UAM.js?v=6cdeb41f:913
+_reset @ chunk-MERG2UAM.js?v=6cdeb41f:1791
+reset @ chunk-MERG2UAM.js?v=6cdeb41f:1802
+(anonymous) @ WorkingHoursForm.tsx:81
+commitHookEffectListMount @ chunk-7SSXMLWA.js?v=6cdeb41f:16915
+commitPassiveMountOnFiber @ chunk-7SSXMLWA.js?v=6cdeb41f:18156
+commitPassiveMountEffects_complete @ chunk-7SSXMLWA.js?v=6cdeb41f:18129
+commitPassiveMountEffects_begin @ chunk-7SSXMLWA.js?v=6cdeb41f:18119
+commitPassiveMountEffects @ chunk-7SSXMLWA.js?v=6cdeb41f:18109
+flushPassiveEffectsImpl @ chunk-7SSXMLWA.js?v=6cdeb41f:19490
+flushPassiveEffects @ chunk-7SSXMLWA.js?v=6cdeb41f:19447
+(anonymous) @ chunk-7SSXMLWA.js?v=6cdeb41f:19328
+workLoop @ chunk-7SSXMLWA.js?v=6cdeb41f:197
+flushWork @ chunk-7SSXMLWA.js?v=6cdeb41f:176
+performWorkUntilDeadline @ chunk-7SSXMLWA.js?v=6cdeb41f:384Understand this errorAI
+use-toast.ts:64 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+printWarning @ chunk-7SSXMLWA.js?v=6cdeb41f:521
+error @ chunk-7SSXMLWA.js?v=6cdeb41f:505
+checkForNestedUpdates @ chunk-7SSXMLWA.js?v=6cdeb41f:19665
+scheduleUpdateOnFiber @ chunk-7SSXMLWA.js?v=6cdeb41f:18533
+dispatchSetState @ chunk-7SSXMLWA.js?v=6cdeb41f:12403
+(anonymous) @ use-toast.ts:64Understand this errorAI
+1214WorkingHoursForm.tsx:81 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at WorkingHoursForm (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/WorkingHoursForm.tsx?t=1734003615734:52:3)
+    at div
+    at WorkingHoursSettingsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/WorkingHoursPage.tsx?t=1734003615734:32:39)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=b1c465a5:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=b1c465a5:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=4f391ca7:18:5)
+    at main
+    at div
+    at div
+    at div
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:18:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx?t=1734003615734:84:31)
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=cfef0f3b:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=4f391ca7:18:5)
+printWarning @ chunk-7SSXMLWA.js?v=6cdeb41f:521
+error @ chunk-7SSXMLWA.js?v=6cdeb41f:505
+checkForNestedUpdates @ chunk-7SSXMLWA.js?v=6cdeb41f:19665
+scheduleUpdateOnFiber @ chunk-7SSXMLWA.js?v=6cdeb41f:18533
+dispatchSetState @ chunk-7SSXMLWA.js?v=6cdeb41f:12403
+next @ chunk-MERG2UAM.js?v=6cdeb41f:1931
+next @ chunk-MERG2UAM.js?v=6cdeb41f:913
+_reset @ chunk-MERG2UAM.js?v=6cdeb41f:1791
+reset @ chunk-MERG2UAM.js?v=6cdeb41f:1802
+(anonymous) @ WorkingHoursForm.tsx:81
+commitHookEffectListMount @ chunk-7SSXMLWA.js?v=6cdeb41f:16915
+commitPassiveMountOnFiber @ chunk-7SSXMLWA.js?v=6cdeb41f:18156
+commitPassiveMountEffects_complete @ chunk-7SSXMLWA.js?v=6cdeb41f:18129
+commitPassiveMountEffects_begin @ chunk-7SSXMLWA.js?v=6cdeb41f:18119
+commitPassiveMountEffects @ chunk-7SSXMLWA.js?v=6cdeb41f:18109
+flushPassiveEffectsImpl @ chunk-7SSXMLWA.js?v=6cdeb41f:19490
+flushPassiveEffects @ chunk-7SSXMLWA.js?v=6cdeb41f:19447
+(anonymous) @ chunk-7SSXMLWA.js?v=6cdeb41f:19328
+workLoop @ chunk-7SSXMLWA.js?v=6cdeb41f:197
+flushWork @ chunk-7SSXMLWA.js?v=6cdeb41f:176
+performWorkUntilDeadline @ chunk-7SSXMLWA.js?v=6cdeb41f:384Understand this errorAI
