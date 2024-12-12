@@ -79,6 +79,32 @@ export default function ServicesPage() {
   const onSubmit = async (data: InsertService) => {
     try {
       // Format the service data with required fields and optional consumables
+      // Format and validate consumables data
+      // Clean and validate consumables data
+      const formattedConsumables = (data.consumables || []).map(consumable => {
+        // Required fields must have valid values
+        if (!consumable.inventory_item_id || !consumable.name || !consumable.quantity_per_service) {
+          throw new Error("Missing required consumable fields");
+        }
+        
+        return {
+          inventory_item_id: consumable.inventory_item_id,
+          name: consumable.name,
+          quantity_per_service: Number(consumable.quantity_per_service),
+          unit: consumable.unit || 'unit',
+          current_stock: Number(consumable.current_stock || 0),
+          track_inventory: Boolean(consumable.track_inventory ?? true),
+          auto_deduct: Boolean(consumable.auto_deduct ?? true),
+          minimum_quantity: Number(consumable.minimum_quantity || 0),
+          category: consumable.category || 'uncategorized',
+          notes: consumable.notes || '',
+          cost_per_unit: Number(consumable.cost_per_unit || 0),
+          last_stock_check: consumable.last_stock_check ? new Date(consumable.last_stock_check) : new Date(),
+          reorder_point: Number(consumable.reorder_point || 0),
+          service_linked: true
+        };
+      });
+
       const formattedData = {
         name: data.name,
         description: data.description || '',
@@ -86,7 +112,7 @@ export default function ServicesPage() {
         duration: data.duration,
         price: data.price,
         discount_percentage: data.discount_percentage || 0,
-        consumables: data.consumables || [],
+        consumables: formattedConsumables,
         isActive: true,
         selectedServices: [],
         selectedAddons: []
@@ -208,17 +234,56 @@ export default function ServicesPage() {
           return;
         }
 
-        if (selectedService) {
-          await updateService(selectedService.service_id, formattedData);
+        try {
+          // Validate consumables data before submission
+          if (formattedData.consumables.length > 0) {
+            const hasInvalidConsumables = formattedData.consumables.some(
+              c => !c.inventory_item_id || !c.name || c.quantity_per_service <= 0
+            );
+            
+            if (hasInvalidConsumables) {
+              toast({
+                title: "Validation Error",
+                description: "Please ensure all consumable items have valid data",
+                variant: "destructive",
+              });
+              return;
+            }
+          }
+
+          if (selectedService) {
+            // When updating, only include fields that have valid values
+            const updateData = {
+              ...formattedData,
+              consumables: formattedData.consumables.length > 0 ? formattedData.consumables : [],
+              // Ensure all required fields are present
+              name: formattedData.name,
+              category: formattedData.category,
+              duration: formattedData.duration,
+              price: formattedData.price,
+              description: formattedData.description || '',
+              discount_percentage: formattedData.discount_percentage || 0,
+              isActive: formattedData.isActive
+            };
+            
+            await updateService(selectedService.service_id, updateData);
+            toast({
+              title: "Success",
+              description: `Service "${formattedData.name}" updated successfully${formattedData.consumables.length > 0 ? ` with ${formattedData.consumables.length} consumables` : ''}`,
+            });
+          } else {
+            await addService(formattedData);
+            toast({
+              title: "Success",
+              description: `Service "${formattedData.name}" added successfully${formattedData.consumables.length > 0 ? ` with ${formattedData.consumables.length} consumables` : ''}`,
+            });
+          }
+        } catch (error) {
+          console.error('Error processing service:', error);
           toast({
-            title: "Success",
-            description: "Service updated successfully",
-          });
-        } else {
-          await addService(formattedData);
-          toast({
-            title: "Success",
-            description: "Service added successfully",
+            title: "Error",
+            description: error instanceof Error ? error.message : "Failed to process service",
+            variant: "destructive",
           });
         }
         setShowServiceDialog(false);
@@ -490,7 +555,11 @@ export default function ServicesPage() {
                         min="15"
                         step="15"
                         {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value))}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(value === "" ? 0 : Number(value));
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -510,7 +579,11 @@ export default function ServicesPage() {
                         min="0"
                         step="1"
                         {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value))}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(value === "" ? 0 : Number(value));
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -833,11 +906,13 @@ export default function ServicesPage() {
                         step="1"
                         placeholder="Enter discount percentage"
                         {...field}
-                        value={((field.value ?? 0) * 100).toString()}
+                        value={field.value ? (field.value * 100).toString() : "0"}
                         onChange={(e) => {
                           const inputValue = e.target.value === '' ? 0 : parseFloat(e.target.value);
+                          if (isNaN(inputValue)) return;
+                          
                           // Store as decimal (e.g., 10% -> 0.10)
-                          const decimalValue = inputValue / 100;
+                          const decimalValue = Math.min(Math.max(inputValue / 100, 0), 1);
                           field.onChange(decimalValue);
                           
                           // Calculate and set package price based on discount
@@ -845,7 +920,7 @@ export default function ServicesPage() {
                             ...(form.getValues("selectedServices") || []),
                             ...(form.getValues("selectedAddons") || [])
                           ];
-                          const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
+                          const totalPrice = selectedItems.reduce((sum, item) => sum + (item?.price || 0), 0);
                           const discountedPrice = Math.round(totalPrice * (1 - decimalValue));
                           form.setValue("price", discountedPrice);
                           form.trigger();
