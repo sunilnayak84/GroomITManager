@@ -27,7 +27,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ServiceConsumable, serviceConsumableSchema } from "@/lib/service-types";
+import { ServiceConsumable, baseConsumableSchema } from "@/lib/service-types";
 
 interface ConsumablesModalProps {
   open: boolean;
