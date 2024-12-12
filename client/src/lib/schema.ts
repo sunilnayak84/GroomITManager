@@ -252,8 +252,9 @@ export const insertWorkingDaysSchema = workingDaysSchema.omit({
 
 export type WorkingDays = z.infer<typeof workingDaysSchema>;
 export type InsertWorkingDays = z.infer<typeof insertWorkingDaysSchema>;
-export type AppointmentWithRelations = Omit<Appointment, "status"> & {
+export type AppointmentWithRelations = Omit<Appointment, "status" | "appointmentDate" | "appointmentTime"> & {
   status: "pending" | "confirmed" | "completed" | "cancelled";
+  date: string;
   pet: {
     name: string;
     breed: string;
