@@ -98,13 +98,11 @@ export function useServices() {
       const processedConsumables = serviceData.consumables?.map(consumable => {
         try {
           console.log('Processing consumable:', consumable);
-          const validated = serviceConsumableSchema.parse({
+          return {
             item_id: consumable.item_id,
             item_name: consumable.item_name,
             quantity_used: Number(consumable.quantity_used)
-          });
-          console.log('Validated consumable:', validated);
-          return validated;
+          };
         } catch (error) {
           console.error('Invalid consumable:', consumable, error);
           throw new Error(`Invalid consumable data: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -113,8 +111,6 @@ export function useServices() {
       
       console.log('Final processed consumables:', processedConsumables);
 
-      console.log('Preparing data for Firestore:', serviceData);
-      
       // Prepare data for Firestore
       const firestoreData = {
         name: serviceData.name,
@@ -123,11 +119,7 @@ export function useServices() {
         duration: serviceData.duration,
         price: serviceData.price,
         discount_percentage: serviceData.discount_percentage || 0,
-        consumables: processedConsumables.map(c => ({
-          item_id: c.item_id,
-          item_name: c.item_name,
-          quantity_used: Number(c.quantity_used)
-        })),
+        consumables: processedConsumables,
         isActive: true,
         created_at: timestamp.toISOString(),
         updated_at: timestamp.toISOString(),
