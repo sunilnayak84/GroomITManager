@@ -190,8 +190,8 @@ export default function StaffPage() {
   ];
 
   return (
-    <div className="container mx-auto py-6 space-y-4">
-      <div className="relative h-48 rounded-xl overflow-hidden">
+    <div className="flex-1 p-8">
+      <div className="relative h-48 rounded-xl overflow-hidden mb-6">
         <img
           src="https://images.unsplash.com/photo-1587560699334-cc4ff634909a"
           alt="Staff Management"
