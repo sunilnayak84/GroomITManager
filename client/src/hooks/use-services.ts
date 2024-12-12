@@ -36,6 +36,7 @@ export function useServices() {
             category: data.category || ServiceCategory.SERVICE,
             duration: data.duration,
             price: data.price || 0,
+            discount_percentage: data.discount_percentage || 0,
             consumables: (data.consumables || []).map((c: ServiceConsumable) => ({
               item_id: c.item_id,
               item_name: c.item_name,
@@ -77,6 +78,7 @@ export function useServices() {
         category: serviceData.category || ServiceCategory.SERVICE,
         duration: serviceData.duration,
         price: serviceData.price,
+        discount_percentage: serviceData.discount_percentage || 0,
         consumables: serviceData.consumables || [],
         isActive: true,
         created_at: new Date(timestamp),
@@ -89,6 +91,7 @@ export function useServices() {
         category: newService.category,
         duration: newService.duration,
         price: newService.price,
+        discount_percentage: serviceData.discount_percentage || 0,
         consumables: newService.consumables.map(c => ({
           item_id: c.item_id,
           item_name: c.item_name,
@@ -139,6 +142,7 @@ export function useServices() {
       
       const updatePayload = {
         ...updateData,
+        discount_percentage: updateData.discount_percentage || 0,
         updated_at: timestamp
       };
 

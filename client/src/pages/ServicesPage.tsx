@@ -198,6 +198,7 @@ export default function ServicesPage() {
       category: service.category,
       duration: service.duration,
       price: service.price,
+      discount_percentage: service.discount_percentage || 0,
       consumables: service.consumables || [],
       selectedServices: service.selectedServices || [],
       selectedAddons: service.selectedAddons || []
@@ -737,9 +738,9 @@ export default function ServicesPage() {
                         step="1"
                         placeholder="Enter discount percentage"
                         {...field}
-                        value={field.value ?? 0}
+                        value={((field.value ?? 0) * 100).toString()}
                         onChange={(e) => {
-                          const value = e.target.value === '' ? 0 : parseInt(e.target.value);
+                          const value = e.target.value === '' ? 0 : parseFloat(e.target.value) / 100;
                           field.onChange(value);
                           
                           // Calculate and set package price based on discount
@@ -748,7 +749,7 @@ export default function ServicesPage() {
                             ...(form.getValues("selectedAddons") || [])
                           ];
                           const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
-                          const discountedPrice = Math.round(totalPrice * (1 - value / 100));
+                          const discountedPrice = Math.round(totalPrice * (1 - value));
                           form.setValue("price", discountedPrice);
                           form.trigger();
                         }}
@@ -770,9 +771,10 @@ export default function ServicesPage() {
                         type="number"
                         min="0"
                         step="1"
-                        placeholder="Calculated package price"
+                        placeholder="Package price will be calculated automatically"
                         {...field}
-                        disabled={true}
+                        readOnly
+                        disabled
                       />
                     </FormControl>
                     <FormMessage />
