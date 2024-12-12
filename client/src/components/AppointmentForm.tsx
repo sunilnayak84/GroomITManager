@@ -62,11 +62,14 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
       serviceId: "",
       groomerId: "",
       branchId: "1",
-      date: (() => {
+      appointmentDate: (() => {
         const date = new Date();
-        date.setMinutes(date.getMinutes() + 15);
+        return date.toISOString().split('T')[0];
+      })(),
+      appointmentTime: (() => {
+        const date = new Date();
         date.setMinutes(Math.round(date.getMinutes() / 15) * 15);
-        return date.toISOString();
+        return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
       })(),
       status: "pending" as const,
       notes: null,
@@ -94,19 +97,19 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
         throw new Error("Please select both pet and service");
       }
 
-      const appointmentDate = new Date(values.date);
-      if (isNaN(appointmentDate.getTime())) {
-        throw new Error("Invalid appointment date");
+      const { appointmentDate, appointmentTime } = values;
+      const [hours, minutes] = appointmentTime.split(':').map(Number);
+      const fullDateTime = new Date(appointmentDate);
+      fullDateTime.setHours(hours, minutes, 0, 0);
+      
+      if (isNaN(fullDateTime.getTime())) {
+        throw new Error("Invalid appointment date and time");
       }
 
       const now = new Date();
-      if (appointmentDate < now) {
-        throw new Error("Appointment date must be in the future");
+      if (fullDateTime < now) {
+        throw new Error("Appointment must be in the future");
       }
-
-      appointmentDate.setMinutes(Math.round(appointmentDate.getMinutes() / 15) * 15);
-      appointmentDate.setSeconds(0);
-      appointmentDate.setMilliseconds(0);
 
       if (!values.groomerId) {
         throw new Error("Please select a groomer");
@@ -117,7 +120,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
         serviceId: values.serviceId,
         groomerId: values.groomerId,
         branchId: "1", // Default branch ID
-        date: appointmentDate.toISOString(),
+        date: fullDateTime.toISOString(),
         status: "pending" as const,
         notes: values.notes || null,
         productsUsed: null
@@ -185,131 +188,136 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="date"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Date & Time</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="datetime-local"
-                    step="900"
-                    min={new Date().toISOString().slice(0, 16)}
-                    {...field}
-                    value={field.value?.slice(0, 16) || ''}
-                    onChange={(e) => {
-                      try {
-                        let date = new Date(e.target.value);
-                        if (!isNaN(date.getTime())) {
-                          // Round to nearest 15 minutes
-                          const minutes = Math.round(date.getMinutes() / 15) * 15;
-                          date.setMinutes(minutes);
-                          date.setSeconds(0);
-                          date.setMilliseconds(0);
-                          
-                          // Get day of week (0-6, Sunday-Saturday)
-                          const dayOfWeek = date.getDay();
-                          const selectedGroomerId = form.getValues("groomerId");
-                          
-                          // Check working hours for the selected day
-                          const daySchedule = workingHours?.find(
-                            (schedule) => schedule.dayOfWeek === dayOfWeek
-                          );
-                          
-                          if (!daySchedule || !daySchedule.isOpen) {
-                            toast({
-                              title: "Invalid Day",
-                              description: "The selected day is not a working day",
-                              variant: "destructive"
-                            });
-                            return;
-                          }
-                          
-                          const appointmentHour = date.getHours();
-                          const appointmentMinutes = date.getMinutes();
-                          const appointmentTime = `${appointmentHour.toString().padStart(2, '0')}:${appointmentMinutes.toString().padStart(2, '0')}`;
-                          
-                          const openingTime = daySchedule.openingTime;
-                          const closingTime = daySchedule.closingTime;
-                          
-                          // Check if appointment is within working hours
-                          if (appointmentTime < openingTime || appointmentTime >= closingTime) {
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="appointmentDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Date</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="date"
+                      min={new Date().toISOString().split('T')[0]}
+                      {...field}
+                      onChange={(e) => {
+                        const selectedDate = new Date(e.target.value);
+                        const dayOfWeek = selectedDate.getDay();
+                        
+                        // Check working hours for the selected day
+                        const daySchedule = workingHours?.find(
+                          (schedule) => schedule.dayOfWeek === dayOfWeek
+                        );
+                        
+                        if (!daySchedule || !daySchedule.isOpen) {
+                          toast({
+                            title: "Invalid Day",
+                            description: "The selected day is not a working day",
+                            variant: "destructive"
+                          });
+                          return;
+                        }
+                        
+                        field.onChange(e.target.value);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="appointmentTime"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Time</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="time"
+                      step="900"
+                      {...field}
+                      onChange={(e) => {
+                        const selectedTime = e.target.value;
+                        const selectedDate = new Date(form.getValues("appointmentDate"));
+                        const dayOfWeek = selectedDate.getDay();
+                        
+                        // Get working hours for the selected day
+                        const daySchedule = workingHours?.find(
+                          (schedule) => schedule.dayOfWeek === dayOfWeek
+                        );
+                        
+                        if (!daySchedule || !daySchedule.isOpen) {
+                          return; // Date field will handle this validation
+                        }
+                        
+                        // Check if time is within working hours
+                        if (selectedTime < daySchedule.openingTime || selectedTime >= daySchedule.closingTime) {
+                          toast({
+                            title: "Invalid Time",
+                            description: `Please select a time between ${daySchedule.openingTime} and ${daySchedule.closingTime}`,
+                            variant: "destructive"
+                          });
+                          return;
+                        }
+                        
+                        // Check break time if exists
+                        if (daySchedule.breakStart && daySchedule.breakEnd) {
+                          const isInBreakTime = selectedTime >= daySchedule.breakStart && 
+                                              selectedTime < daySchedule.breakEnd;
+                          if (isInBreakTime) {
                             toast({
                               title: "Invalid Time",
-                              description: `Please select a time between ${openingTime} and ${closingTime}`,
+                              description: `Break time is between ${daySchedule.breakStart} and ${daySchedule.breakEnd}`,
                               variant: "destructive"
                             });
                             return;
                           }
-                          
-                          // Check if appointment fits before closing time
-                          if (selectedService) {
-                            const appointmentEndTime = new Date(date);
-                            appointmentEndTime.setMinutes(
-                              appointmentEndTime.getMinutes() + selectedService.duration
-                            );
-                            const endHour = appointmentEndTime.getHours();
-                            const endMinutes = appointmentEndTime.getMinutes();
-                            const endTimeStr = `${endHour.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
-                            
-                            if (endTimeStr > closingTime) {
-                              toast({
-                                title: "Invalid Time",
-                                description: "The appointment duration exceeds closing time",
-                                variant: "destructive"
-                              });
-                              return;
-                            }
-                          }
-                          
-                          // Check break time if exists
-                          if (daySchedule.breakStart && daySchedule.breakEnd) {
-                            const isInBreakTime = appointmentTime >= daySchedule.breakStart && 
-                                                appointmentTime < daySchedule.breakEnd;
-                            if (isInBreakTime) {
-                              toast({
-                                title: "Invalid Time",
-                                description: `Break time is between ${daySchedule.breakStart} and ${daySchedule.breakEnd}`,
-                                variant: "destructive"
-                              });
-                              return;
-                            }
-                          }
-                          
-                          if (selectedGroomerId && !isTimeSlotAvailable(date, selectedGroomerId)) {
-                            toast({
-                              title: "Time Slot Unavailable",
-                              description: "This time slot is already booked. Please select another time.",
-                              variant: "destructive"
-                            });
-                            return;
-                          }
-                          
-                          // Format the date string in the required format
-                          const formattedDate = date.toISOString();
-                          field.onChange(formattedDate);
                         }
-                      } catch (error) {
-                        console.error('Error processing date:', error);
-                        toast({
-                          title: "Invalid Date",
-                          description: "Please enter a valid date and time",
-                          variant: "destructive"
-                        });
-                      }
-                    }}
-                    onBlur={(e) => {
-                      if (!e.target.value) {
-                        field.onChange('');
-                      }
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                        
+                        // Check if appointment fits before closing time
+                        if (selectedService) {
+                          const [hours, minutes] = selectedTime.split(':').map(Number);
+                          const appointmentEndTime = new Date(selectedDate);
+                          appointmentEndTime.setHours(hours);
+                          appointmentEndTime.setMinutes(minutes + selectedService.duration);
+                          const endTimeStr = `${String(appointmentEndTime.getHours()).padStart(2, '0')}:${String(appointmentEndTime.getMinutes()).padStart(2, '0')}`;
+                          
+                          if (endTimeStr > daySchedule.closingTime) {
+                            toast({
+                              title: "Invalid Time",
+                              description: "The appointment duration exceeds closing time",
+                              variant: "destructive"
+                            });
+                            return;
+                          }
+                        }
+                        
+                        // Check availability
+                        const fullDateTime = new Date(selectedDate);
+                        const [timeHours, timeMinutes] = selectedTime.split(':').map(Number);
+                        fullDateTime.setHours(timeHours, timeMinutes, 0, 0);
+                        
+                        const selectedGroomerId = form.getValues("groomerId");
+                        if (selectedGroomerId && !isTimeSlotAvailable(fullDateTime, selectedGroomerId)) {
+                          toast({
+                            title: "Time Slot Unavailable",
+                            description: "This time slot is already booked. Please select another time.",
+                            variant: "destructive"
+                          });
+                          return;
+                        }
+                        
+                        field.onChange(selectedTime);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <FormField
             control={form.control}
             name="serviceId"
