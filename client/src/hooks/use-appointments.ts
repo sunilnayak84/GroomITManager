@@ -206,10 +206,33 @@ export function useAppointments() {
     }
   });
 
+  const isTimeSlotAvailable = (date: Date, groomerId: string): boolean => {
+    if (!appointments) return true;
+    
+    // Convert input date to start of 15-min slot
+    const slotStart = new Date(date);
+    slotStart.setMinutes(Math.floor(slotStart.getMinutes() / 15) * 15);
+    slotStart.setSeconds(0);
+    slotStart.setMilliseconds(0);
+    
+    // Each appointment slot is 15 minutes
+    const slotEnd = new Date(slotStart);
+    slotEnd.setMinutes(slotEnd.getMinutes() + 15);
+
+    // Check if there are any overlapping appointments
+    return !appointments.some(appointment => {
+      if (appointment.groomerId !== groomerId) return false;
+      
+      const appointmentDate = new Date(appointment.date);
+      return appointmentDate >= slotStart && appointmentDate < slotEnd;
+    });
+  };
+
   return {
     data: appointments,
     isLoading,
     error,
     addAppointment: addAppointmentMutation.mutateAsync,
+    isTimeSlotAvailable,
   };
 }
