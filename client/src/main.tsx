@@ -62,6 +62,7 @@ function Router() {
             <Route path="/customers" component={CustomersPage} />
             <Route path="/pets" component={PetsPage} />
             <Route path="/services" component={ServicesPage} />
+            <Route path="/staff" component={lazy(() => import('./pages/StaffPage'))} />
             <Route path="/inventory" component={lazy(() => import('./pages/InventoryPage'))} />
             <Route>404 Page Not Found</Route>
           </Switch>
