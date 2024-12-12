@@ -79,8 +79,8 @@ export default function AppointmentsPage() {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-3xl overflow-hidden bg-gradient-to-r from-purple-500/80 to-purple-500/20">
+    <div className="container mx-auto max-w-7xl space-y-6 px-6">
+      <div className="rounded-xl overflow-hidden bg-gradient-to-r from-purple-500/80 to-purple-500/20">
         <div className="relative">
           <img
             src="https://images.unsplash.com/photo-1727681200732-0086492c217d"
@@ -107,7 +107,7 @@ export default function AppointmentsPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm">
+      <div className="bg-white rounded-xl border shadow-sm">
         <DataTable
           columns={columns}
           data={(appointments || []) as AppointmentWithRelations[]}
