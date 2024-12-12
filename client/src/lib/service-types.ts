@@ -13,11 +13,12 @@ export const serviceConsumableSchema = z.object({
       nanoseconds: z.number()
     })
   ]).transform(val => {
+    if (!val) return new Date();
     if (val instanceof Date) return val;
     if (typeof val === 'string') return new Date(val);
     if ('seconds' in val) return new Date(val.seconds * 1000);
     return new Date();
-  }).optional(),
+  }).default(new Date()),
   updated_at: z.union([
     z.string(),
     z.date(),
@@ -26,11 +27,12 @@ export const serviceConsumableSchema = z.object({
       nanoseconds: z.number()
     })
   ]).transform(val => {
+    if (!val) return new Date();
     if (val instanceof Date) return val;
     if (typeof val === 'string') return new Date(val);
     if ('seconds' in val) return new Date(val.seconds * 1000);
     return new Date();
-  }).optional()
+  }).default(new Date())
 });
 
 // Define the service schema
