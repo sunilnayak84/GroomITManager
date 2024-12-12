@@ -37,13 +37,17 @@ export function useServices() {
             duration: data.duration,
             price: data.price || 0,
             discount_percentage: data.discount_percentage || 0,
-            consumables: (data.consumables || []).map((c: any) => ({
-              item_id: c.item_id,
-              item_name: c.item_name,
-              quantity_used: Number(c.quantity_used),
-              created_at: c.created_at ? new Date(c.created_at) : new Date(),
-              updated_at: c.updated_at ? new Date(c.updated_at) : new Date()
-            })),
+            consumables: (data.consumables || []).map((c: any) => {
+              // Ensure required fields have default values
+              const processed = {
+                item_id: c.item_id || `item_${Date.now()}`,
+                item_name: c.item_name || 'Unnamed Item',
+                quantity_used: isNaN(Number(c.quantity_used)) ? 1 : Number(c.quantity_used),
+                created_at: c.created_at ? new Date(c.created_at) : new Date(),
+                updated_at: c.updated_at ? new Date(c.updated_at) : new Date()
+              };
+              return processed;
+            }),
             isActive: data.isActive ?? true,
             created_at: data.created_at || new Date(),
             updated_at: data.updated_at || new Date(),
