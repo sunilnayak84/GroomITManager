@@ -58,10 +58,6 @@ args = "Flask Server"
 task = "workflow.run"
 args = "Server"
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Client"
-
 [[workflows.workflow]]
 name = "Flask Server"
 author = "agent"
@@ -86,18 +82,3 @@ task = "packager.installForAll"
 task = "shell.exec"
 args = "NODE_ENV=development tsx watch --clear-screen=false server/index.ts"
 waitForPort = 3001
-
-[[workflows.workflow]]
-name = "Client"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "packager.installForAll"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd client && vite --port 5173 --host 0.0.0.0"
-waitForPort = 5173

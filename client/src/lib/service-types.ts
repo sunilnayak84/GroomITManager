@@ -83,7 +83,25 @@ export const insertServiceSchema = serviceSchema.omit({
   })).optional()
 });
 
-export type InsertService = z.infer<typeof insertServiceSchema>;
+export type ServiceSelection = {
+  service_id: string;
+  name: string;
+  duration: number;
+  price: number;
+  category: ServiceCategory;
+};
+
+export type InsertService = {
+  name: string;
+  description: string | null;
+  category: ServiceCategory;
+  duration: number;
+  price: number;
+  consumables: ServiceConsumable[];
+  isActive?: boolean;
+  selectedServices?: ServiceSelection[];
+  selectedAddons?: ServiceSelection[];
+};
 
 // Schema for updating a service
 export const updateServiceSchema = insertServiceSchema.partial();

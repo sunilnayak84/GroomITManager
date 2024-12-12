@@ -111,8 +111,20 @@ export default function ServicesPage() {
           price: finalPrice,
           consumables: [], // Packages don't require consumables
           isActive: true,
-          selectedServices: data.selectedServices || [],
-          selectedAddons: data.selectedAddons || []
+          selectedServices: selectedServices.map(service => ({
+            service_id: service.service_id || '',
+            name: service.name || '',
+            duration: service.duration || 0,
+            price: service.price || 0,
+            category: service.category || ServiceCategory.SERVICE
+          })) || [],
+          selectedAddons: selectedAddons.map(addon => ({
+            service_id: addon.service_id || '',
+            name: addon.name || '',
+            duration: addon.duration || 0,
+            price: addon.price || 0,
+            category: addon.category || ServiceCategory.ADDON
+          })) || []
         };
 
         // Validate package contents
@@ -189,8 +201,10 @@ export default function ServicesPage() {
     
     if (service.category === ServiceCategory.PACKAGE) {
       setShowPackageDialog(true);
+      setShowServiceDialog(false);
     } else {
       setShowServiceDialog(true);
+      setShowPackageDialog(false);
     }
   };
 
@@ -467,7 +481,7 @@ export default function ServicesPage() {
       <Dialog open={showPackageDialog} onOpenChange={setShowPackageDialog}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle>Create Service Package</DialogTitle>
+            <DialogTitle>{selectedService ? "Edit Service Package" : "Create Service Package"}</DialogTitle>
             <DialogDescription>
               Combine services and add-ons to create a package
             </DialogDescription>
