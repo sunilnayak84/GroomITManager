@@ -27,14 +27,8 @@ export function useWorkingHours(branchId?: string) {
           throw new Error('Firebase not initialized');
         }
 
-        const workingHoursRef = collection(db, 'working_hours');
-        let query = workingHoursRef;
-        
-        if (branchId) {
-          query = query.where('branchId', '==', branchId);
-        }
-        
-        const querySnapshot = await getDocs(query);
+        const workingHoursRef = collection(db, 'workingHours');
+        const querySnapshot = await getDocs(workingHoursRef);
 
         if (querySnapshot.empty) {
           // Initialize with default schedule for all days
@@ -106,7 +100,9 @@ export function useWorkingHours(branchId?: string) {
     mutationFn: async (data: InsertWorkingDays) => {
       try {
         const workingHoursRef = collection(db, 'workingHours');
-        const newWorkingHoursRef = doc(workingHoursRef);
+        // Use the dayOfWeek as the document ID to ensure uniqueness per day
+        const docId = `day_${data.dayOfWeek}`;
+        const dayRef = doc(workingHoursRef, docId);
         
         const workingHoursData = {
           branchId: data.branchId.toString(),
@@ -114,15 +110,15 @@ export function useWorkingHours(branchId?: string) {
           isOpen: data.isOpen,
           openingTime: data.openingTime,
           closingTime: data.closingTime,
-          breakStart: data.breakStart,
-          breakEnd: data.breakEnd,
-          maxDailyAppointments: data.maxDailyAppointments,
+          breakStart: data.breakStart || null,
+          breakEnd: data.breakEnd || null,
+          maxDailyAppointments: data.maxDailyAppointments || 8,
           createdAt: Timestamp.fromDate(new Date()),
-          updatedAt: null
+          updatedAt: Timestamp.fromDate(new Date())
         };
 
-        await setDoc(newWorkingHoursRef, workingHoursData);
-        return newWorkingHoursRef.id;
+        await setDoc(dayRef, workingHoursData, { merge: true });
+        return docId;
       } catch (error) {
         console.error('Error adding working hours:', error);
         throw error;
