@@ -27,7 +27,10 @@ task = "packager.installForAll"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "tsx --require dotenv/config server/index.ts"
-waitForPort = 5173
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "React Dev Server"
 
 [[workflows.workflow]]
 name = "Project"
@@ -44,6 +47,25 @@ task = "shell.exec"
 args = "tsx --require dotenv/config server/index.ts"
 waitForPort = 5173
 
+[[workflows.workflow]]
+name = "React Dev Server"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd client && vite --port 5173 --host 0.0.0.0"
+waitForPort = 5173
+
 [[ports]]
 localPort = 5173
 externalPort = 80
+
+[[ports]]
+localPort = 5174
+externalPort = 3000
