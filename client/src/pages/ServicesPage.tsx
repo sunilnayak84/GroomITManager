@@ -69,7 +69,7 @@ export default function ServicesPage() {
       category: ServiceCategory.SERVICE,
       duration: 30,
       price: 0,
-      discount_percentage: 0,
+      discount_percentage: 0 as number,
       consumables: [],
       selectedServices: [],
       selectedAddons: []
@@ -738,19 +738,10 @@ export default function ServicesPage() {
                         step="1"
                         placeholder="Enter discount percentage"
                         {...field}
-                        value={((field.value ?? 0) * 100).toString()}
+                        value={field.value?.toString() ?? "0"}
                         onChange={(e) => {
-                          const value = e.target.value === '' ? 0 : parseFloat(e.target.value) / 100;
+                          const value = e.target.value === '' ? 0 : parseInt(e.target.value);
                           field.onChange(value);
-                          
-                          // Calculate and set package price based on discount
-                          const selectedItems = [
-                            ...(form.getValues("selectedServices") || []),
-                            ...(form.getValues("selectedAddons") || [])
-                          ];
-                          const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
-                          const discountedPrice = Math.round(totalPrice * (1 - value));
-                          form.setValue("price", discountedPrice);
                           form.trigger();
                         }}
                       />
@@ -773,8 +764,7 @@ export default function ServicesPage() {
                         step="1"
                         placeholder="Package price will be calculated automatically"
                         {...field}
-                        readOnly
-                        disabled
+                        
                       />
                     </FormControl>
                     <FormMessage />
