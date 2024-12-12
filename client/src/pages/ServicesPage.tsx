@@ -91,24 +91,28 @@ export default function ServicesPage() {
           return;
         }
 
-        // Calculate total duration and price with 10% discount
+        // Calculate total duration and original price
         const totalDuration = selectedItems.reduce((sum, item) => sum + item.duration, 0);
         const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
         
-        // Use manual price if provided, otherwise calculate automatic price with discount
-        const manualPrice = data.price;
-        const automaticPrice = Math.floor(totalPrice * 0.9); // 10% discount
-        const finalPrice = manualPrice || automaticPrice;
-        const savedAmount = totalPrice - finalPrice;
+        // Validate that a price is provided
+        if (!data.price) {
+          toast({
+            title: "Validation Error",
+            description: "Please enter a price for the package",
+            variant: "destructive",
+          });
+          return;
+        }
 
         // Create package data with all required fields
         const packageData: InsertService = {
           name: data.name,
           description: data.description || 
-            `Package including ${data.selectedServices?.length || 0} services and ${data.selectedAddons?.length || 0} add-ons. ${manualPrice ? 'Custom priced package' : `Save ₹${savedAmount} (10% off)`}`,
+            `Package including ${data.selectedServices?.length || 0} services and ${data.selectedAddons?.length || 0} add-ons.`,
           category: ServiceCategory.PACKAGE,
           duration: totalDuration,
-          price: finalPrice,
+          price: data.price,
           consumables: [], // Packages don't require consumables
           isActive: true,
           selectedServices: selectedServices.map(service => ({
@@ -705,14 +709,12 @@ export default function ServicesPage() {
                             ...(form.getValues("selectedAddons") || [])
                           ];
                           const totalPrice = selected.reduce((sum, item) => sum + item.price, 0);
-                          const manualPrice = form.getValues("price");
-                          const automaticPrice = Math.floor(totalPrice * 0.9); // 10% discount
-                          if (manualPrice) {
-                            const savings = totalPrice - manualPrice;
-                            return `₹${manualPrice} (Save ₹${savings > 0 ? savings : 0})`;
+                          const packagePrice = form.getValues("price");
+                          if (packagePrice) {
+                            const savings = totalPrice - packagePrice;
+                            return `₹${packagePrice} (Save ₹${savings > 0 ? savings : 0})`;
                           }
-                          const savings = totalPrice - automaticPrice;
-                          return `₹${automaticPrice} (Save ₹${savings})`;
+                          return 'Please set a package price';
                         })()}
                       </span>
                     </div>
@@ -731,7 +733,7 @@ export default function ServicesPage() {
                         type="number"
                         min="0"
                         step="1"
-                        placeholder="Leave empty for automatic calculation"
+                        placeholder="Enter package price"
                         {...field}
                         onChange={(e) => {
                           const value = e.target.value ? parseInt(e.target.value) : undefined;
