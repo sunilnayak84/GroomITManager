@@ -101,29 +101,7 @@ export default function WorkingHoursForm({
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="dayOfWeek"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Day of Week</FormLabel>
-                  <FormControl>
-                    <select
-                      className="w-full p-2 border rounded"
-                      {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value))}
-                    >
-                      {DAYS_OF_WEEK.map((day, index) => (
-                        <option key={index} value={index}>
-                          {day}
-                        </option>
-                      ))}
-                    </select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {/* Day of week is now handled by the edit button */}
 
             <FormField
               control={form.control}
