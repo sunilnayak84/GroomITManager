@@ -69,6 +69,7 @@ export default function ServicesPage() {
       category: ServiceCategory.SERVICE,
       duration: 30,
       price: 0,
+      discount_percentage: 0,
       consumables: [],
       selectedServices: [],
       selectedAddons: []
@@ -724,6 +725,42 @@ export default function ServicesPage() {
 
               <FormField
                 control={form.control}
+                name="discount_percentage"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Discount Percentage (%)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="1"
+                        placeholder="Enter discount percentage"
+                        {...field}
+                        value={field.value ?? 0}
+                        onChange={(e) => {
+                          const value = e.target.value === '' ? 0 : parseInt(e.target.value);
+                          field.onChange(value);
+                          
+                          // Calculate and set package price based on discount
+                          const selectedItems = [
+                            ...(form.getValues("selectedServices") || []),
+                            ...(form.getValues("selectedAddons") || [])
+                          ];
+                          const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
+                          const discountedPrice = Math.round(totalPrice * (1 - value / 100));
+                          form.setValue("price", discountedPrice);
+                          form.trigger();
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="price"
                 render={({ field }) => (
                   <FormItem>
@@ -733,13 +770,9 @@ export default function ServicesPage() {
                         type="number"
                         min="0"
                         step="1"
-                        placeholder="Enter package price"
+                        placeholder="Calculated package price"
                         {...field}
-                        onChange={(e) => {
-                          const value = e.target.value ? parseInt(e.target.value) : undefined;
-                          field.onChange(value);
-                          form.trigger();
-                        }}
+                        disabled={true}
                       />
                     </FormControl>
                     <FormMessage />

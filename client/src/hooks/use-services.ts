@@ -73,7 +73,7 @@ export function useServices() {
       const newService: Service = {
         service_id: docRef.id,
         name: serviceData.name,
-        description: serviceData.description,
+        description: serviceData.description || undefined,
         category: serviceData.category || ServiceCategory.SERVICE,
         duration: serviceData.duration,
         price: serviceData.price,
