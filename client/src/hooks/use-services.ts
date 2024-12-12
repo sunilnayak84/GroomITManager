@@ -125,15 +125,29 @@ export function useServices() {
       const docRef = doc(servicesCollection);
       const timestamp = new Date().toISOString();
       
+      // Validate consumables data before processing
+      const validatedConsumables = (serviceData.consumables || []).map(c => {
+        if (!c.item_id || !c.item_name || typeof c.quantity_used === 'undefined') {
+          throw new Error('Missing required consumable fields');
+        }
+        return {
+          item_id: c.item_id,
+          item_name: c.item_name,
+          quantity_used: Number(c.quantity_used),
+          created_at: new Date(),
+          updated_at: new Date()
+        };
+      });
+
       const newService: Service = {
         service_id: docRef.id,
         name: serviceData.name,
-        description: serviceData.description || undefined,
+        description: serviceData.description || null,
         category: serviceData.category || ServiceCategory.SERVICE,
         duration: serviceData.duration,
         price: serviceData.price,
         discount_percentage: typeof serviceData.discount_percentage === 'number' ? serviceData.discount_percentage : 0,
-        consumables: serviceData.consumables || [],
+        consumables: validatedConsumables,
         isActive: true,
         created_at: new Date(timestamp),
         updated_at: new Date(timestamp)
@@ -146,12 +160,12 @@ export function useServices() {
         duration: newService.duration,
         price: newService.price,
         discount_percentage: typeof newService.discount_percentage === 'number' ? newService.discount_percentage : 0,
-        consumables: (newService.consumables || []).map(c => ({
-          item_id: c.item_id || '',
-          item_name: c.item_name || '',
-          quantity_used: Number(c.quantity_used) || 0,
-          created_at: c.created_at || new Date().toISOString(),
-          updated_at: c.updated_at || new Date().toISOString()
+        consumables: validatedConsumables.map(c => ({
+          item_id: c.item_id,
+          item_name: c.item_name,
+          quantity_used: Number(c.quantity_used),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         })),
         isActive: newService.isActive,
         created_at: timestamp,
