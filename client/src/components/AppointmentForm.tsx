@@ -116,15 +116,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
       serviceId: "",
       groomerId: "",
       branchId: "1",
-      appointmentDate: (() => {
-        const date = new Date();
-        return date.toISOString().split('T')[0];
-      })(),
-      appointmentTime: (() => {
-        const date = new Date();
-        date.setMinutes(Math.round(date.getMinutes() / 15) * 15);
-        return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-      })(),
+      date: "",
       status: "pending" as const,
       notes: null,
       productsUsed: null
@@ -188,53 +180,54 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
     return { isValid: true };
   };
 
-  async function onSubmit(values: InsertAppointment) {
+  async function onSubmit(data: z.infer<typeof insertAppointmentSchema>) {
     if (isSubmitting) return;
     
     setIsSubmitting(true);
     try {
-      if (!values.petId || !values.serviceId) {
+      if (!data.petId || !data.serviceId) {
         throw new Error("Please select both pet and service");
       }
 
-      const { appointmentDate, appointmentTime } = values;
-      const [hours, minutes] = appointmentTime.split(':').map(Number);
-      const fullDateTime = new Date(appointmentDate);
-      fullDateTime.setHours(hours, minutes, 0, 0);
+      if (!data.groomerId) {
+        throw new Error("Please select a groomer");
+      }
+
+      const formDate = form.getValues('date');
+      const formTime = form.getValues('appointmentTime');
       
-      if (isNaN(fullDateTime.getTime())) {
+      if (!formDate || !formTime) {
+        throw new Error("Please select both date and time");
+      }
+
+      const appointmentDateTime = new Date(formDate);
+      const [timeHours, timeMinutes] = formTime.split(':').map(Number);
+      appointmentDateTime.setHours(timeHours, timeMinutes, 0, 0);
+      
+      if (isNaN(appointmentDateTime.getTime())) {
         throw new Error("Invalid appointment date and time");
       }
 
       const now = new Date();
-      if (fullDateTime < now) {
+      if (appointmentDateTime < now) {
         throw new Error("Appointment must be in the future");
       }
 
-      if (!values.groomerId) {
-        throw new Error("Please select a groomer");
-      }
-
       // Validate against working hours
-      const dayOfWeek = fullDateTime.getDay();
+      const dayOfWeek = appointmentDateTime.getDay();
       const daySchedule = workingHours?.find(
         (schedule) => schedule.dayOfWeek === dayOfWeek
       );
 
-      const validation = validateTimeSlot(appointmentDate, appointmentTime, daySchedule);
+      const validation = validateTimeSlot(formDate, formTime, daySchedule);
       if (!validation.isValid) {
-        throw new Error(validation.error);
+        throw new Error(validation.error || "Invalid time slot");
       }
 
       const appointmentData: InsertAppointment = {
-        petId: values.petId,
-        serviceId: values.serviceId,
-        groomerId: values.groomerId,
-        branchId: "1", // Default branch ID
-        date: fullDateTime.toISOString(),
+        ...data,
+        date: appointmentDateTime.toISOString(),
         status: "pending" as const,
-        notes: values.notes || null,
-        productsUsed: null
       };
 
       await addAppointment(appointmentData);
@@ -301,7 +294,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
           <div className="grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
-              name="appointmentDate"
+              name="date"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Date</FormLabel>
@@ -309,7 +302,8 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                     <Input 
                       type="date"
                       min={new Date().toISOString().split('T')[0]}
-                      {...field}
+                      value={field.value || ''}
+                      onChange={field.onChange}
                       onChange={(e) => {
                         const selectedDate = new Date(e.target.value);
                         const dayOfWeek = selectedDate.getDay();
@@ -350,7 +344,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
             
             <FormField
               control={form.control}
-              name="appointmentTime"
+              name="time"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Time</FormLabel>
