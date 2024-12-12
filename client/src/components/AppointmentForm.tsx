@@ -182,48 +182,56 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                     step="900"
                     min={new Date().toISOString().slice(0, 16)}
                     {...field}
-                    value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ''}
+                    value={field.value?.slice(0, 16) || ''}
                     onChange={(e) => {
-                      const date = new Date(e.target.value);
-                      if (!isNaN(date.getTime())) {
-                        // Round to nearest 15 minutes
-                        date.setMinutes(Math.round(date.getMinutes() / 15) * 15);
-                        date.setSeconds(0);
-                        date.setMilliseconds(0);
-                        
-                        // Get day of week (0-6, Sunday-Saturday)
-                        const dayOfWeek = date.getDay();
-                        const timeStr = date.toTimeString().slice(0, 5); // HH:mm format
-                        
-                        // For now, restrict to 9 AM - 5 PM
-                        const hour = date.getHours();
-                        const validTime = hour >= 9 && hour < 17;
-                        const selectedGroomerId = form.getValues("groomerId");
-                        
-                        if (!validTime) {
-                          toast({
-                            title: "Invalid Time",
-                            description: "Please select a time during business hours (9 AM - 5 PM)",
-                            variant: "destructive"
-                          });
-                          return;
+                      try {
+                        let date = new Date(e.target.value);
+                        if (!isNaN(date.getTime())) {
+                          // Round to nearest 15 minutes
+                          const minutes = Math.round(date.getMinutes() / 15) * 15;
+                          date.setMinutes(minutes);
+                          date.setSeconds(0);
+                          date.setMilliseconds(0);
+                          
+                          // Get day of week (0-6, Sunday-Saturday)
+                          const dayOfWeek = date.getDay();
+                          const hour = date.getHours();
+                          const validTime = hour >= 9 && hour < 17;
+                          const selectedGroomerId = form.getValues("groomerId");
+                          
+                          if (!validTime) {
+                            toast({
+                              title: "Invalid Time",
+                              description: "Please select a time during business hours (9 AM - 5 PM)",
+                              variant: "destructive"
+                            });
+                            return;
+                          }
+                          
+                          if (selectedGroomerId && !isTimeSlotAvailable(date, selectedGroomerId)) {
+                            toast({
+                              title: "Time Slot Unavailable",
+                              description: "This time slot is already booked. Please select another time.",
+                              variant: "destructive"
+                            });
+                            return;
+                          }
+                          
+                          // Format the date string in the required format
+                          const formattedDate = date.toISOString();
+                          field.onChange(formattedDate);
                         }
-                        
-                        if (selectedGroomerId && !isTimeSlotAvailable(date, selectedGroomerId)) {
-                          toast({
-                            title: "Time Slot Unavailable",
-                            description: "This time slot is already booked. Please select another time.",
-                            variant: "destructive"
-                          });
-                          return;
-                        }
-                        
-                        field.onChange(date.toISOString());
+                      } catch (error) {
+                        console.error('Error processing date:', error);
+                        toast({
+                          title: "Invalid Date",
+                          description: "Please enter a valid date and time",
+                          variant: "destructive"
+                        });
                       }
                     }}
                     onBlur={(e) => {
-                      const date = new Date(e.target.value);
-                      if (isNaN(date.getTime())) {
+                      if (!e.target.value) {
                         field.onChange('');
                       }
                     }}
