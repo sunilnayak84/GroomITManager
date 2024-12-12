@@ -1,0 +1,15 @@
+FIREBASE_INIT: Initializing Firebase with config: ObjectapiKey: "***"appId: "1:194114432530:web:b07a6d50e1db9e5372f2cb"authDomain: "replit-5ac6a.firebaseapp.com"experimentalAutoDetectLongPolling: trueexperimentalForceLongPolling: truemessagingSenderId: "194114432530"projectId: "replit-5ac6a"storageBucket: "replit-5ac6a.firebasestorage.app"[[Prototype]]: Object
+firebase.ts:41 FIREBASE_INIT: Firebase initialized successfully
+use-inventory.ts:101 FETCH_INVENTORY: Starting to fetch inventory items
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+use-inventory.ts:112 FETCH_INVENTORY: Processing item data: Object
+use-inventory.ts:148 FETCH_INVENTORY: Successfully parsed item: Objectid: "s13VKR2CrNwuWGbfixUR"item: barcode: nullcategory: "test"cost_per_unit: 10created_at: Thu Dec 12 2024 10:35:02 GMT+0530 (India Standard Time) {}description: nullisActive: trueitem_id: "s13VKR2CrNwuWGbfixUR"last_restock_date: nulllocation: nullminimum_quantity: 5name: "new"quantity: 10quantity_per_use: 1reorder_point: 5reorder_quantity: 10service_linked: falsesupplier: "ABK"unit: "pieces"updated_at: Thu Dec 12 2024 10:35:02 GMT+0530 (India Standard Time) {}[[Prototype]]: Object[[Prototype]]: Object
+use-inventory.ts:156 FETCH_INVENTORY: Successfully fetched inventory Objectcount: 1[[Prototype]]: Object
+use-services.ts:77 FETCH_SERVICES: Completed fetching services Objectcount: 2services: Array(2)0: {service_id: '76Hu7m5oRRwHnhX4Cgmn', name: 'tes', category: 'Service', duration: 30, price: 999, …}1: {service_id: 'ETT6Y0XQbUBtcGYdb0iO', name: 'test', category: 'Service', duration: 30, price: 999, …}length: 2[[Prototype]]: Array(0)[[Prototype]]: Object
+ConsumablesModal.tsx:70 Adding consumable with data: Object
+ConsumablesModal.tsx:79 Created new consumable: Object
+ConsumablesModal.tsx:84 Updated consumables state: Array(1)
+ConsumablesModal.tsx:84 Updated consumables state: Array(1)
+ConsumablesModal.tsx:106 Handling save with consumables: Array(1)
+ConsumablesModal.tsx:115 Validated consumable: Object
+ConsumablesModal.tsx:119 All validated consumables: Array(1)0: item_id: "s13VKR2CrNwuWGbfixUR"item_name: "new"quantity_used: 1[[Prototype]]: Objectlength: 1[[Prototype]]: Array(0)
