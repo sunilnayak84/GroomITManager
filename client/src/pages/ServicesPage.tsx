@@ -204,6 +204,24 @@ export default function ServicesPage() {
 
   const handleEdit = (service: Service) => {
     setSelectedService(service);
+    
+    // Get current prices for selected services and addons
+    const updatedSelectedServices = (service.selectedServices || []).map(item => {
+      const currentService = services.find(s => s.service_id === item.service_id);
+      return {
+        ...item,
+        price: currentService?.price || item.price
+      };
+    });
+    
+    const updatedSelectedAddons = (service.selectedAddons || []).map(item => {
+      const currentService = services.find(s => s.service_id === item.service_id);
+      return {
+        ...item,
+        price: currentService?.price || item.price
+      };
+    });
+
     const formData = {
       name: service.name,
       description: service.description,
@@ -212,8 +230,8 @@ export default function ServicesPage() {
       price: service.price,
       discount_percentage: service.discount_percentage || 0,
       consumables: service.consumables || [],
-      selectedServices: service.selectedServices || [],
-      selectedAddons: service.selectedAddons || []
+      selectedServices: updatedSelectedServices,
+      selectedAddons: updatedSelectedAddons
     };
     form.reset(formData);
     
