@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { toast } from "@/components/ui/use-toast";
 import {
   Select,
   SelectContent,
@@ -27,7 +28,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ServiceConsumable, baseConsumableSchema } from "@/lib/service-types";
+import { ServiceConsumable, baseConsumableSchema, serviceConsumableSchema } from "@/lib/service-types";
 
 interface ConsumablesModalProps {
   open: boolean;
@@ -60,8 +61,7 @@ export function ConsumablesModal({
     if (selectedItem) {
       form.setValue('item_id', itemId);
       form.setValue('item_name', selectedItem.name);
-      form.setValue('created_at', new Date());
-      form.setValue('updated_at', new Date());
+      // Values are set automatically by the form
     }
   };
 
@@ -73,9 +73,7 @@ export function ConsumablesModal({
       const newConsumable: ServiceConsumable = {
         item_id: data.item_id,
         item_name: data.item_name,
-        quantity_used: Number(data.quantity_used),
-        created_at: new Date(),
-        updated_at: new Date()
+        quantity_used: Number(data.quantity_used)
       };
 
       console.log('Created new consumable:', newConsumable);
