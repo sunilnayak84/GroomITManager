@@ -31,6 +31,7 @@ import { useAppointments } from "../hooks/use-appointments";
 import { usePets } from "../hooks/use-pets";
 import { useToast } from "@/hooks/use-toast";
 import { useServices } from '../hooks/use-services';
+import { useStaff } from '../hooks/use-staff';
 
 interface AppointmentFormProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -43,16 +44,16 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const defaultGroomerId = "1";
-  const defaultBranchId = "1";
+  const { staff } = useStaff();
+  const availableGroomers = staff?.filter(user => user.isGroomer && user.isActive) || [];
   
   const form = useForm<z.infer<typeof insertAppointmentSchema>>({
     resolver: zodResolver(insertAppointmentSchema),
     defaultValues: {
       petId: "",
       serviceId: "",
-      groomerId: defaultGroomerId,
-      branchId: defaultBranchId,
+      groomerId: "",
+      branchId: "1",
       date: (() => {
         const date = new Date();
         date.setMinutes(date.getMinutes() + 15);
@@ -219,6 +220,36 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="groomerId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Groomer</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a groomer" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {availableGroomers.map((groomer) => (
+                      <SelectItem 
+                        key={groomer.id} 
+                        value={groomer.id}
+                        disabled={groomer.maxDailyAppointments === 0}
+                      >
+                        {groomer.name}
+                        {groomer.maxDailyAppointments === 0 ? " (Fully Booked)" : ""}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name="notes"
