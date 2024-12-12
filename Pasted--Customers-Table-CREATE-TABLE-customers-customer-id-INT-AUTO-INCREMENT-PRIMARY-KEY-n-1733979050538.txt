@@ -1,0 +1,155 @@
+-- Customers Table
+CREATE TABLE customers (
+    customer_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    phone VARCHAR(15),
+    address TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Pets Table
+CREATE TABLE pets (
+    pet_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    type ENUM('Dog', 'Cat', 'Other'),
+    breed VARCHAR(255),
+    age INT,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON DELETE CASCADE
+);
+
+-- Services Table
+CREATE TABLE services (
+    service_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    type ENUM('Service', 'Addon') NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    description TEXT
+);
+
+-- Consumables Table
+CREATE TABLE consumables (
+    consumable_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    stock_quantity INT NOT NULL,
+    reorder_level INT NOT NULL,
+    unit_cost DECIMAL(10, 2) NOT NULL
+);
+
+-- Service_Consumables Table
+CREATE TABLE service_consumables (
+    service_id INT NOT NULL,
+    consumable_id INT NOT NULL,
+    quantity_used INT NOT NULL,
+    FOREIGN KEY (service_id) REFERENCES services(service_id),
+    FOREIGN KEY (consumable_id) REFERENCES consumables(consumable_id)
+);
+
+-- Packages Table
+CREATE TABLE packages (
+    package_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    total_price DECIMAL(10, 2) NOT NULL,
+    discount DECIMAL(5, 2),
+    description TEXT
+);
+
+-- Package_Services Table
+CREATE TABLE package_services (
+    package_id INT NOT NULL,
+    service_id INT NOT NULL,
+    FOREIGN KEY (package_id) REFERENCES packages(package_id),
+    FOREIGN KEY (service_id) REFERENCES services(service_id)
+);
+
+-- Staff Table
+CREATE TABLE staff (
+    staff_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    role ENUM('Admin', 'Owner', 'Manager', 'Groomer') NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    phone VARCHAR(15),
+    weekly_availability JSON,
+    vacation_days JSON,
+    password_hash VARCHAR(255) NOT NULL
+);
+
+-- Appointments Table
+CREATE TABLE appointments (
+    appointment_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    pet_id INT NOT NULL,
+    staff_id INT,
+    date_time DATETIME NOT NULL,
+    status ENUM('Scheduled', 'Completed', 'Cancelled') DEFAULT 'Scheduled',
+    total_cost DECIMAL(10, 2),
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+    FOREIGN KEY (pet_id) REFERENCES pets(pet_id),
+    FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
+);
+
+-- Payments Table
+CREATE TABLE payments (
+    payment_id INT AUTO_INCREMENT PRIMARY KEY,
+    razorpay_payment_id VARCHAR(255),
+    customer_id INT NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    payment_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    payment_status ENUM('Success', 'Failed', 'Pending') DEFAULT 'Pending',
+    payment_mode ENUM('UPI', 'Card', 'Net Banking', 'Wallet'),
+    invoice_id INT,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+    FOREIGN KEY (invoice_id) REFERENCES invoices(invoice_id)
+);
+
+-- Invoices Table
+CREATE TABLE invoices (
+    invoice_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    total_amount DECIMAL(10, 2) NOT NULL,
+    discount_amount DECIMAL(10, 2),
+    final_amount DECIMAL(10, 2) NOT NULL,
+    subscription_id INT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    due_date DATE,
+    status ENUM('Paid', 'Unpaid', 'Partially Paid') DEFAULT 'Unpaid',
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+    FOREIGN KEY (subscription_id) REFERENCES subscriptions(subscription_id)
+);
+
+-- Subscriptions Table
+CREATE TABLE subscriptions (
+    subscription_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    plan_name VARCHAR(255) NOT NULL,
+    original_price DECIMAL(10, 2) NOT NULL,
+    discount_percentage DECIMAL(5, 2),
+    final_price DECIMAL(10, 2) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    status ENUM('Active', 'Expired', 'Pending') DEFAULT 'Pending',
+    razorpay_subscription_id VARCHAR(255),
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);
+
+-- Discounts Table
+CREATE TABLE discounts (
+    discount_id INT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    description VARCHAR(255),
+    discount_type ENUM('Flat', 'Percentage') NOT NULL,
+    discount_value DECIMAL(10, 2) NOT NULL,
+    valid_from DATE NOT NULL,
+    valid_until DATE NOT NULL,
+    usage_limit INT DEFAULT 1
+);
+
+-- Invoice_Discounts Table
+CREATE TABLE invoice_discounts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    invoice_id INT NOT NULL,
+    discount_id INT NOT NULL,
+    FOREIGN KEY (invoice_id) REFERENCES invoices(invoice_id),
+    FOREIGN KEY (discount_id) REFERENCES discounts(discount_id)
+);
