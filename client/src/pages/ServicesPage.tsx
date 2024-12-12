@@ -78,7 +78,6 @@ export default function ServicesPage() {
 
   const onSubmit = async (data: InsertService) => {
     try {
-      // Format the service data with required fields and optional consumables
       // Format and validate consumables data
       const formattedConsumables = (data.consumables || []).map(consumable => {
         // Required fields must have valid values
@@ -86,12 +85,11 @@ export default function ServicesPage() {
           throw new Error("Missing required consumable fields");
         }
         
+        // Return only the required fields according to the schema
         return {
           item_id: consumable.item_id,
           item_name: consumable.item_name,
-          quantity_used: Number(consumable.quantity_used),
-          created_at: new Date(),
-          updated_at: new Date()
+          quantity_used: Number(consumable.quantity_used)
         };
       });
 
@@ -228,7 +226,7 @@ export default function ServicesPage() {
           // Validate consumables data before submission
           if (formattedData.consumables.length > 0) {
             const hasInvalidConsumables = formattedData.consumables.some(
-              c => !c.inventory_item_id || !c.name || c.quantity_per_service <= 0
+              c => !c.item_id || !c.item_name || !c.quantity_used || c.quantity_used <= 0
             );
             
             if (hasInvalidConsumables) {
