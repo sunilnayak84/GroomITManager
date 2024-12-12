@@ -50,27 +50,29 @@ export default function WorkingHoursForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { addWorkingHours } = useWorkingHours();
 
+  const defaultFormValues = existingSchedule ? {
+    branchId: existingSchedule.branchId,
+    dayOfWeek: existingSchedule.dayOfWeek,
+    isOpen: existingSchedule.isOpen,
+    openingTime: existingSchedule.openingTime,
+    closingTime: existingSchedule.closingTime,
+    breakStart: existingSchedule.breakStart || undefined,
+    breakEnd: existingSchedule.breakEnd || undefined,
+    maxDailyAppointments: existingSchedule.maxDailyAppointments
+  } : {
+    branchId: 1,
+    dayOfWeek: defaultDay || 1,
+    isOpen: true,
+    openingTime: "09:00",
+    closingTime: "17:00",
+    breakStart: "13:00",
+    breakEnd: "14:00",
+    maxDailyAppointments: 8
+  };
+
   const form = useForm<InsertWorkingDays>({
     resolver: zodResolver(insertWorkingDaysSchema),
-    defaultValues: existingSchedule ? {
-      branchId: existingSchedule.branchId,
-      dayOfWeek: existingSchedule.dayOfWeek,
-      isOpen: existingSchedule.isOpen,
-      openingTime: existingSchedule.openingTime,
-      closingTime: existingSchedule.closingTime,
-      breakStart: existingSchedule.breakStart || undefined,
-      breakEnd: existingSchedule.breakEnd || undefined,
-      maxDailyAppointments: existingSchedule.maxDailyAppointments
-    } : {
-      branchId: 1,
-      dayOfWeek: defaultDay || 1,
-      isOpen: true,
-      openingTime: "09:00",
-      closingTime: "17:00",
-      breakStart: "13:00",
-      breakEnd: "14:00",
-      maxDailyAppointments: 8
-    },
+    defaultValues: defaultFormValues,
   });
 
   // Reset form when existingSchedule changes
@@ -124,9 +126,11 @@ export default function WorkingHoursForm({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Working Hours</DialogTitle>
+          <DialogTitle>{existingSchedule ? 'Edit Working Hours' : 'Add Working Hours'}</DialogTitle>
           <DialogDescription>
-            Set the working hours for a specific day of the week.
+            {existingSchedule 
+              ? `Edit working hours for ${DAYS_OF_WEEK[existingSchedule.dayOfWeek]}`
+              : 'Set the working hours for a specific day of the week.'}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -255,7 +259,9 @@ export default function WorkingHoursForm({
               className="w-full"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Adding..." : "Add Working Hours"}
+              {isSubmitting 
+                ? (existingSchedule ? "Saving..." : "Adding...") 
+                : (existingSchedule ? "Save Changes" : "Add Working Hours")}
             </Button>
           </form>
         </Form>
