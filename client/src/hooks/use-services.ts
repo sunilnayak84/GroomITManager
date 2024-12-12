@@ -78,7 +78,7 @@ export function useServices() {
         category: serviceData.category || ServiceCategory.SERVICE,
         duration: serviceData.duration,
         price: serviceData.price,
-        discount_percentage: serviceData.discount_percentage || 0,
+        discount_percentage: typeof serviceData.discount_percentage === 'number' ? serviceData.discount_percentage : 0,
         consumables: serviceData.consumables || [],
         isActive: true,
         created_at: new Date(timestamp),
@@ -91,7 +91,7 @@ export function useServices() {
         category: newService.category,
         duration: newService.duration,
         price: newService.price,
-        discount_percentage: serviceData.discount_percentage || 0,
+        discount_percentage: typeof newService.discount_percentage === 'number' ? newService.discount_percentage : 0,
         consumables: newService.consumables.map(c => ({
           item_id: c.item_id,
           item_name: c.item_name,
@@ -142,7 +142,7 @@ export function useServices() {
       
       const updatePayload = {
         ...updateData,
-        discount_percentage: updateData.discount_percentage || 0,
+        discount_percentage: typeof updateData.discount_percentage === 'number' ? updateData.discount_percentage : 0,
         updated_at: timestamp
       };
 
@@ -152,6 +152,27 @@ export function useServices() {
           item_id: consumable.item_id,
           item_name: consumable.item_name,
           quantity_used: consumable.quantity_used
+        }));
+      }
+
+      // Ensure selected services and addons are properly formatted for packages
+      if (updateData.selectedServices) {
+        updatePayload.selectedServices = updateData.selectedServices.map(service => ({
+          service_id: service.service_id,
+          name: service.name,
+          duration: service.duration,
+          price: service.price,
+          category: service.category
+        }));
+      }
+
+      if (updateData.selectedAddons) {
+        updatePayload.selectedAddons = updateData.selectedAddons.map(addon => ({
+          service_id: addon.service_id,
+          name: addon.name,
+          duration: addon.duration,
+          price: addon.price,
+          category: addon.category
         }));
       }
 

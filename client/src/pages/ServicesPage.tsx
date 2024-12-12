@@ -114,6 +114,7 @@ export default function ServicesPage() {
           category: ServiceCategory.PACKAGE,
           duration: totalDuration,
           price: data.price,
+          discount_percentage: data.discount_percentage,
           consumables: [], // Packages don't require consumables
           isActive: true,
           selectedServices: selectedServices.map(service => ({
@@ -143,12 +144,23 @@ export default function ServicesPage() {
         }
 
         try {
-          await addService(packageData);
-          toast({
-            title: "Success",
-            description: `Package "${data.name}" created successfully with ${selectedItems.length} items`,
-            variant: "default",
-          });
+          if (selectedService) {
+            // Update existing package
+            await updateService(selectedService.service_id, packageData);
+            toast({
+              title: "Success",
+              description: `Package "${data.name}" updated successfully`,
+              variant: "default",
+            });
+          } else {
+            // Create new package
+            await addService(packageData);
+            toast({
+              title: "Success",
+              description: `Package "${data.name}" created successfully with ${selectedItems.length} items`,
+              variant: "default",
+            });
+          }
           setShowPackageDialog(false);
           
           // Reset form data
@@ -163,10 +175,10 @@ export default function ServicesPage() {
             selectedAddons: []
           });
         } catch (error) {
-          console.error('Error creating package:', error);
+          console.error('Error saving package:', error);
           toast({
             title: "Error",
-            description: error instanceof Error ? error.message : "Failed to create package",
+            description: error instanceof Error ? error.message : "Failed to save package",
             variant: "destructive",
           });
         }
@@ -740,8 +752,10 @@ export default function ServicesPage() {
                         {...field}
                         value={((field.value ?? 0) * 100).toString()}
                         onChange={(e) => {
-                          const value = e.target.value === '' ? 0 : parseFloat(e.target.value) / 100;
-                          field.onChange(value);
+                          const inputValue = e.target.value === '' ? 0 : parseFloat(e.target.value);
+                          // Store as decimal (e.g., 10% -> 0.10)
+                          const decimalValue = inputValue / 100;
+                          field.onChange(decimalValue);
                           
                           // Calculate and set package price based on discount
                           const selectedItems = [
@@ -749,7 +763,7 @@ export default function ServicesPage() {
                             ...(form.getValues("selectedAddons") || [])
                           ];
                           const totalPrice = selectedItems.reduce((sum, item) => sum + item.price, 0);
-                          const discountedPrice = Math.round(totalPrice * (1 - value));
+                          const discountedPrice = Math.round(totalPrice * (1 - decimalValue));
                           form.setValue("price", discountedPrice);
                           form.trigger();
                         }}
@@ -794,7 +808,7 @@ export default function ServicesPage() {
                   Cancel
                 </Button>
                 <Button type="submit">
-                  Create Package
+                  {selectedService ? "Update Package" : "Create Package"}
                 </Button>
               </div>
             </form>
