@@ -33,6 +33,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useServices } from '../hooks/use-services';
 import { useStaff } from '../hooks/use-staff';
 import { useWorkingHours } from '../hooks/use-working-hours';
+import type { WorkingDays } from "@/lib/schema";
 
 interface AppointmentFormProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -46,13 +47,9 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { staffMembers, isLoading: isLoadingStaff } = useStaff();
-  console.log('Staff members:', staffMembers); // Debug log
-  const availableGroomers = staffMembers.filter((user) => {
-    console.log('Checking user:', user); // Debug log
-    return user.isGroomer === true && user.isActive === true;
-  });
+  const availableGroomers = staffMembers.filter(user => user.isGroomer && user.isActive);
   
-  const { workingHours } = useWorkingHours();
+  const { data: workingHours } = useWorkingHours();
   const [selectedService, setSelectedService] = useState<{ duration: number } | null>(null);
   
   const form = useForm<z.infer<typeof insertAppointmentSchema>>({
@@ -88,6 +85,52 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
     }
   }, [form.watch("serviceId"), services]);
 
+  const validateTimeSlot = (
+    date: string,
+    time: string,
+    daySchedule: WorkingDays | undefined
+  ): { isValid: boolean; error?: string } => {
+    if (!daySchedule || !daySchedule.isOpen) {
+      return { isValid: false, error: "This day is not available for appointments" };
+    }
+
+    // Check if time is within working hours
+    if (time < daySchedule.openingTime || time >= daySchedule.closingTime) {
+      return {
+        isValid: false,
+        error: `Please select a time between ${daySchedule.openingTime} and ${daySchedule.closingTime}`
+      };
+    }
+
+    // Check break time if exists
+    if (daySchedule.breakStart && daySchedule.breakEnd) {
+      if (time >= daySchedule.breakStart && time < daySchedule.breakEnd) {
+        return {
+          isValid: false,
+          error: `Break time is between ${daySchedule.breakStart} and ${daySchedule.breakEnd}`
+        };
+      }
+    }
+
+    // Check if appointment fits before closing time
+    if (selectedService) {
+      const [hours, minutes] = time.split(':').map(Number);
+      const appointmentEndTime = new Date(date);
+      appointmentEndTime.setHours(hours);
+      appointmentEndTime.setMinutes(minutes + selectedService.duration);
+      const endTimeStr = `${String(appointmentEndTime.getHours()).padStart(2, '0')}:${String(appointmentEndTime.getMinutes()).padStart(2, '0')}`;
+      
+      if (endTimeStr > daySchedule.closingTime) {
+        return {
+          isValid: false,
+          error: "The appointment duration exceeds closing time"
+        };
+      }
+    }
+
+    return { isValid: true };
+  };
+
   async function onSubmit(values: InsertAppointment) {
     if (isSubmitting) return;
     
@@ -115,6 +158,17 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
         throw new Error("Please select a groomer");
       }
 
+      // Validate against working hours
+      const dayOfWeek = fullDateTime.getDay();
+      const daySchedule = workingHours?.find(
+        (schedule) => schedule.dayOfWeek === dayOfWeek
+      );
+
+      const validation = validateTimeSlot(appointmentDate, appointmentTime, daySchedule);
+      if (!validation.isValid) {
+        throw new Error(validation.error);
+      }
+
       const appointmentData: InsertAppointment = {
         petId: values.petId,
         serviceId: values.serviceId,
@@ -126,7 +180,6 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
         productsUsed: null
       };
 
-      console.log('Submitting appointment data:', appointmentData);
       await addAppointment(appointmentData);
       setOpen(false);
       
@@ -240,58 +293,32 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                       {...field}
                       onChange={(e) => {
                         const selectedTime = e.target.value;
-                        const selectedDate = new Date(form.getValues("appointmentDate"));
-                        const dayOfWeek = selectedDate.getDay();
+                        const selectedDate = form.getValues("appointmentDate");
+                        if (!selectedDate) {
+                          toast({
+                            title: "Error",
+                            description: "Please select a date first",
+                            variant: "destructive"
+                          });
+                          return;
+                        }
+
+                        const dateObj = new Date(selectedDate);
+                        const dayOfWeek = dateObj.getDay();
                         
                         // Get working hours for the selected day
                         const daySchedule = workingHours?.find(
                           (schedule) => schedule.dayOfWeek === dayOfWeek
                         );
                         
-                        if (!daySchedule || !daySchedule.isOpen) {
-                          return; // Date field will handle this validation
-                        }
-                        
-                        // Check if time is within working hours
-                        if (selectedTime < daySchedule.openingTime || selectedTime >= daySchedule.closingTime) {
+                        const validation = validateTimeSlot(selectedDate, selectedTime, daySchedule);
+                        if (!validation.isValid) {
                           toast({
                             title: "Invalid Time",
-                            description: `Please select a time between ${daySchedule.openingTime} and ${daySchedule.closingTime}`,
+                            description: validation.error,
                             variant: "destructive"
                           });
                           return;
-                        }
-                        
-                        // Check break time if exists
-                        if (daySchedule.breakStart && daySchedule.breakEnd) {
-                          const isInBreakTime = selectedTime >= daySchedule.breakStart && 
-                                              selectedTime < daySchedule.breakEnd;
-                          if (isInBreakTime) {
-                            toast({
-                              title: "Invalid Time",
-                              description: `Break time is between ${daySchedule.breakStart} and ${daySchedule.breakEnd}`,
-                              variant: "destructive"
-                            });
-                            return;
-                          }
-                        }
-                        
-                        // Check if appointment fits before closing time
-                        if (selectedService) {
-                          const [hours, minutes] = selectedTime.split(':').map(Number);
-                          const appointmentEndTime = new Date(selectedDate);
-                          appointmentEndTime.setHours(hours);
-                          appointmentEndTime.setMinutes(minutes + selectedService.duration);
-                          const endTimeStr = `${String(appointmentEndTime.getHours()).padStart(2, '0')}:${String(appointmentEndTime.getMinutes()).padStart(2, '0')}`;
-                          
-                          if (endTimeStr > daySchedule.closingTime) {
-                            toast({
-                              title: "Invalid Time",
-                              description: "The appointment duration exceeds closing time",
-                              variant: "destructive"
-                            });
-                            return;
-                          }
                         }
                         
                         // Check availability
