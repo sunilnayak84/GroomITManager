@@ -43,7 +43,7 @@ const baseServiceSchema = {
 export const serviceSchema = z.object({
   service_id: z.string(),
   ...baseServiceSchema,
-  description: z.string().optional(),
+  description: z.string().nullable().default(null),
   discount_percentage: z.number().min(0).max(100).optional().transform(val => {
     if (val === undefined) return 0;
     return val > 1 ? val / 100 : val;
@@ -79,8 +79,8 @@ export type Service = z.infer<typeof serviceSchema>;
 // Schema for creating/updating a service
 export const insertServiceSchema = z.object({
   ...baseServiceSchema,
-  description: z.string().optional(),
-  discount_percentage: z.number().min(0).max(100).optional(),
+  description: z.string().nullable().default(null),
+  discount_percentage: z.number().min(0).max(100).optional().transform(val => val ?? 0),
   consumables: z.array(baseConsumableSchema)
     .optional()
     .default([])
