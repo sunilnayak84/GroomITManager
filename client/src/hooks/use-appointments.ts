@@ -241,20 +241,23 @@ export function useAppointments() {
         console.log('Updating appointment:', { id, status, cancellationReason, notes });
         const appointmentRef = doc(db, 'appointments', id);
         
-        const updateData: Record<string, any> = {
+        // Get current appointment data
+        const appointmentSnap = await getDoc(appointmentRef);
+        if (!appointmentSnap.exists()) {
+          throw new Error('Appointment not found');
+        }
+
+        const currentData = appointmentSnap.data();
+        const updateData = {
+          ...currentData,
           status,
-          updatedAt: Timestamp.fromDate(new Date())
+          updatedAt: Timestamp.fromDate(new Date()),
+          notes: notes !== undefined ? notes : currentData.notes,
+          cancellationReason: status === 'cancelled' ? cancellationReason : null
         };
 
-        if (cancellationReason) {
-          updateData.cancellationReason = cancellationReason;
-        }
-        
-        if (notes !== undefined) {
-          updateData.notes = notes;
-        }
-
-        await setDoc(appointmentRef, updateData, { merge: true });
+        await setDoc(appointmentRef, updateData);
+        console.log('Appointment updated successfully');
         return true;
       } catch (error) {
         console.error('Error updating appointment:', error);
