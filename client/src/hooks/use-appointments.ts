@@ -230,11 +230,48 @@ export function useAppointments() {
     });
   };
 
+  const updateAppointmentMutation = useMutation({
+    mutationFn: async ({ id, status, cancellationReason, notes }: { 
+      id: string; 
+      status: "pending" | "confirmed" | "completed" | "cancelled";
+      cancellationReason?: string;
+      notes?: string;
+    }) => {
+      try {
+        console.log('Updating appointment:', { id, status, cancellationReason, notes });
+        const appointmentRef = doc(db, 'appointments', id);
+        
+        const updateData: Record<string, any> = {
+          status,
+          updatedAt: Timestamp.fromDate(new Date())
+        };
+
+        if (cancellationReason) {
+          updateData.cancellationReason = cancellationReason;
+        }
+        
+        if (notes !== undefined) {
+          updateData.notes = notes;
+        }
+
+        await setDoc(appointmentRef, updateData, { merge: true });
+        return true;
+      } catch (error) {
+        console.error('Error updating appointment:', error);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
+    }
+  });
+
   return {
     data: appointments,
     isLoading,
     error,
     addAppointment: addAppointmentMutation.mutateAsync,
+    updateAppointment: updateAppointmentMutation.mutateAsync,
     isTimeSlotAvailable,
   };
 }
