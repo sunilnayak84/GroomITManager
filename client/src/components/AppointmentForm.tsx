@@ -325,7 +325,30 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
         status: "pending" as const,
       };
 
-      await addAppointment(appointmentData);
+      const appointmentId = await addAppointment(appointmentData);
+      
+      // Create reminder notifications
+      const appointmentTime = new Date(appointmentData.date);
+      const formattedTime = format(appointmentTime, 'PPp');
+      
+      // Create notification for the customer
+      await createNotification({
+        userId: data.customerId,
+        appointmentId: appointmentId,
+        type: 'reminder',
+        title: 'Upcoming Appointment Reminder',
+        message: `You have a grooming appointment scheduled for ${formattedTime}. Please arrive 10 minutes before your scheduled time.`
+      });
+      
+      // Create notification for the groomer
+      await createNotification({
+        userId: data.groomerId,
+        appointmentId: appointmentId,
+        type: 'reminder',
+        title: 'New Appointment Scheduled',
+        message: `You have a new grooming appointment scheduled for ${formattedTime}.`
+      });
+
       setOpen(false);
       
       toast({
