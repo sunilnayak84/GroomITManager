@@ -74,6 +74,7 @@ const permissionCategories = {
 };
 
 export function RoleManagement() {
+  const { canView } = useElementVisibility();
   const {
     roles,
     isLoadingRoles,
