@@ -138,7 +138,7 @@ export async function getUserRole(uid: string) {
 }
 
 // Update user role
-export async function updateUserRole(uid: string, roleType: keyof typeof RoleTypes) {
+export async function updateUserRole(uid: string, roleType: keyof typeof RoleTypes, customPermissions?: string[]) {
   const app = await getFirebaseAdmin();
   if (!app) {
     throw new Error('Firebase Admin not initialized');
@@ -149,19 +149,82 @@ export async function updateUserRole(uid: string, roleType: keyof typeof RoleTyp
     const roleRef = db.ref(`roles/${uid}`);
     const timestamp = Date.now();
     
-    await roleRef.set({
-      role: roleType,
-      permissions: DefaultPermissions[roleType],
-      updatedAt: timestamp
-    });
-
-    await app.auth().revokeRefreshTokens(uid);
-    console.log(`Role updated for user ${uid} to ${roleType}`);
+    // Get current role data if it exists
+    const currentRoleSnapshot = await roleRef.once('value');
+    const currentRole = currentRoleSnapshot.val();
     
-    return { role: roleType, permissions: DefaultPermissions[roleType] };
+    // Start with custom permissions if provided, otherwise use defaults
+    let permissions: string[];
+    
+    if (customPermissions && customPermissions.length > 0) {
+      // Get all valid permissions across all roles for validation
+      const allValidPermissions = new Set(
+        Object.values(DefaultPermissions).flat()
+      );
+      
+      // Validate custom permissions
+      const validCustomPermissions = customPermissions.filter(permission => 
+        allValidPermissions.has(permission)
+      );
+      
+      if (validCustomPermissions.length !== customPermissions.length) {
+        console.warn('[ROLE-UPDATE] Some custom permissions were invalid and filtered out');
+      }
+      
+      // Use custom permissions
+      permissions = validCustomPermissions;
+    } else {
+      // Use default permissions if no custom permissions provided
+      permissions = [...DefaultPermissions[roleType]];
+    }
+    
+    // Ensure admin always has 'all' permission
+    if (roleType === 'admin') {
+      permissions = Array.from(new Set([...permissions, 'all']));
+    }
+    
+    console.log(`[ROLE-UPDATE] Final permissions for ${roleType}:`, permissions);
+    
+    // For admin role, always include 'all' permission
+    if (roleType === 'admin') {
+      permissions = [...new Set([...permissions, 'all'])];
+    }
+    
+    console.log(`[ROLE-UPDATE] Updating role for ${uid} to ${roleType} with permissions:`, permissions);
+    
+    // Update in Realtime Database
+    const roleData = {
+      role: roleType,
+      permissions,
+      updatedAt: timestamp,
+      ...(roleType === 'admin' && { isAdmin: true })
+    };
+    
+    // Update in Realtime Database
+    await roleRef.set(roleData);
+    console.log('[ROLE-UPDATE] Database update successful');
+
+    // Update custom claims in Firebase Auth
+    const customClaims = {
+      role: roleType,
+      permissions,
+      updatedAt: timestamp,
+      ...(roleType === 'admin' && { isAdmin: true })
+    };
+    
+    await app.auth().setCustomUserClaims(uid, customClaims);
+    console.log('[ROLE-UPDATE] Custom claims update successful');
+
+    // Force token refresh
+    await app.auth().revokeRefreshTokens(uid);
+    console.log(`[ROLE-UPDATE] Role updated for user ${uid} to ${roleType}`);
+    
+    return { role: roleType, permissions };
   } catch (error) {
-    console.error('Error updating user role:', error);
-    throw error;
+    console.error('[ROLE-UPDATE] Error updating user role:', error);
+    throw error instanceof Error 
+      ? new Error(`Failed to update user role: ${error.message}`)
+      : new Error('Failed to update user role: Unknown error');
   }
 }
 

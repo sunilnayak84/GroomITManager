@@ -63,8 +63,14 @@ export function registerRoutes(app: Express) {
   app.post("/api/users/:userId/role", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
     try {
       const { userId } = req.params;
-      const { role } = req.body as { role: keyof typeof RoleTypes };
+      const { role, permissions } = req.body as { 
+        role: keyof typeof RoleTypes;
+        permissions?: string[];
+      };
 
+      console.log('[ROLE-UPDATE] Received update request:', { userId, role, permissions });
+
+      // Validate role
       if (!role || !Object.values(RoleTypes).includes(role)) {
         return res.status(400).json({ 
           message: "Invalid role specified",
@@ -73,15 +79,34 @@ export function registerRoutes(app: Express) {
         });
       }
 
-      // Update user role in Realtime Database
-      const result = await updateUserRole(userId, role);
+      // Validate permissions if provided
+      if (permissions) {
+        const allValidPermissions = new Set(
+          Object.values(DefaultPermissions).flat()
+        );
+        
+        const invalidPermissions = permissions.filter(p => !allValidPermissions.has(p));
+        if (invalidPermissions.length > 0) {
+          return res.status(400).json({
+            message: "Invalid permissions specified",
+            code: "INVALID_PERMISSIONS",
+            invalidPermissions,
+            validPermissions: Array.from(allValidPermissions)
+          });
+        }
+      }
 
+      // Update user role with permissions
+      const result = await updateUserRole(userId, role, permissions);
+      
+      console.log('[ROLE-UPDATE] Update successful:', result);
+      
       res.json({ 
-        message: "Role updated successfully",
+        message: "Role and permissions updated successfully",
         ...result
       });
     } catch (error) {
-      console.error('Error updating user role:', error);
+      console.error('[ROLE-UPDATE] Error:', error);
       res.status(500).json({ 
         message: "Failed to update user role",
         error: error instanceof Error ? error.message : "Unknown error"
