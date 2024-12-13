@@ -33,30 +33,38 @@ export function registerRoutes(app: Express) {
     try {
       const { pageSize = 100, pageToken } = req.query;
       
+      console.log('[FIREBASE-USERS] Fetching users with pageSize:', pageSize, 'pageToken:', pageToken);
+      
       // List users from Firebase
       const listUsersResult = await admin.auth().listUsers(Number(pageSize), pageToken as string);
+      console.log('[FIREBASE-USERS] Found', listUsersResult.users.length, 'users');
       
       // Get custom claims for role information
       const users = await Promise.all(
         listUsersResult.users.map(async (user) => {
+          console.log('[FIREBASE-USERS] Processing user:', user.email);
           const customClaims = (await admin.auth().getUser(user.uid)).customClaims || {};
           return {
             uid: user.uid,
             email: user.email,
-            displayName: user.displayName,
+            displayName: user.displayName || user.email?.split('@')[0] || 'Unknown User',
             role: customClaims.role || 'staff',
             permissions: customClaims.permissions || []
           };
         })
       );
 
+      console.log('[FIREBASE-USERS] Successfully processed all users');
       res.json({
         users,
         pageToken: listUsersResult.pageToken
       });
     } catch (error) {
-      console.error('Error fetching Firebase users:', error);
-      res.status(500).json({ error: "Failed to fetch users" });
+      console.error('[FIREBASE-USERS] Error fetching users:', error);
+      res.status(500).json({ 
+        error: "Failed to fetch users",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
     }
   });
 
