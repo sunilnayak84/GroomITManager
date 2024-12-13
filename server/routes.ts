@@ -13,8 +13,8 @@ export function registerRoutes(app: Express) {
     res.json({ status: "healthy" });
   });
 
-  // Role Management endpoints - Admin only
-  app.get("/api/roles", authenticateFirebase, requireRole(['admin']), async (req, res) => {
+  // Role Management endpoints - Admin and Staff
+  app.get("/api/roles", authenticateFirebase, requireRole(['admin', 'staff']), async (req, res) => {
     try {
       // Return all roles and their permissions
       const roles = Object.entries(RolePermissions).map(([role, permissions]) => ({
@@ -29,7 +29,7 @@ export function registerRoutes(app: Express) {
   });
 
   // Firebase User Management endpoints - Admin only
-  app.get("/api/firebase-users", authenticateFirebase, requireRole(['admin']), async (req, res) => {
+  app.get("/api/firebase-users", authenticateFirebase, requireRole(['admin', 'staff']), async (req, res) => {
     try {
       const { pageSize = 100, pageToken } = req.query;
       
@@ -60,7 +60,7 @@ export function registerRoutes(app: Express) {
     }
   });
 
-  app.post("/api/firebase-users/:userId/role", authenticateFirebase, requireRole(['admin']), async (req, res) => {
+  app.post("/api/firebase-users/:userId/role", authenticateFirebase, requireRole(['admin', 'staff']), async (req, res) => {
     try {
       const { userId } = req.params;
       const { role } = req.body;
