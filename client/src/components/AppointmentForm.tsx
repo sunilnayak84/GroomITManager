@@ -69,7 +69,8 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
       status: "pending" as const,
       notes: null,
       productsUsed: null,
-      time: ""
+      time: "",
+      customerId: user?.id || ''
     },
   });
 
@@ -577,19 +578,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="customerId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Customer ID</FormLabel>
-                <FormControl>
-                  <Input {...field} type="hidden" value={user?.id || ''} /> {/* Added hidden input for customer ID */}
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {/* Customer ID is now handled in form's defaultValues */}
           <Button 
             type="submit" 
             className="w-full"
