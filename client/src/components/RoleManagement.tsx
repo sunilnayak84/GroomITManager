@@ -409,10 +409,11 @@ export function RoleManagement() {
                         }}
                         disabled={isUpdatingUserRole || user.role === 'admin'}
                       >
-                        <option value="admin">Admin</option>
-                        <option value="manager">Manager</option>
-                        <option value="staff">Staff</option>
-                        <option value="receptionist">Receptionist</option>
+                        {roles?.map(role => (
+                          <option key={role.name} value={role.name}>
+                            {role.name.charAt(0).toUpperCase() + role.name.slice(1)}
+                          </option>
+                        ))}
                       </select>
                       {isUpdatingUserRole && (
                         <div className="text-sm text-blue-600">
