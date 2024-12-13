@@ -1,23 +1,23 @@
 import { Request, Response, NextFunction } from 'express';
-import { getFirebaseAdmin } from '../firebase';
-import { RolePermissions, type RoleType, type Permission } from '../routes';
+import { getFirebaseAdmin, getUserRole, RoleTypes, DefaultPermissions } from '../firebase';
+import admin from 'firebase-admin';
 
-// Extend Express Request type to include user
+// Define the user type for Express
 declare global {
   namespace Express {
     interface Request {
       user?: {
         uid: string;
-        email?: string | null;
-        role: RoleType;
-        permissions: Permission[];
-        displayName?: string | null;
+        email: string | null;
+        role: keyof typeof RoleTypes;
+        permissions: string[];
+        displayName: string | null;
       };
     }
   }
 }
 
-// Manager-specific restricted paths
+// User management restricted paths
 const userManagementPaths = [
   '/api/users',
   '/api/setup-admin',
@@ -47,9 +47,9 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
     }
 
     const idToken = authHeader.split('Bearer ')[1];
-    const firebaseAdmin = getFirebaseAdmin();
+    const firebaseApp = getFirebaseAdmin();
     
-    if (!firebaseAdmin) {
+    if (!firebaseApp) {
       console.error('Firebase Admin not initialized');
       return res.status(500).json({ 
         message: 'Authentication service unavailable',
@@ -57,24 +57,25 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
       });
     }
 
-    const auth = firebaseAdmin.auth();
-    
     try {
-      const decodedToken = await auth.verifyIdToken(idToken);
-      const user = await auth.getUser(decodedToken.uid);
+      const decodedToken = await firebaseApp.auth().verifyIdToken(idToken);
+      const user = await firebaseApp.auth().getUser(decodedToken.uid);
       
-      const role = (user.customClaims?.role as RoleType) || 'staff';
-      const permissions = (user.customClaims?.permissions as Permission[]) || [];
+      // Get role and permissions from Realtime Database
+      const userRole = await getUserRole(user.uid);
+      
+      if (!userRole) {
+        console.warn(`No role found for user ${user.email}, using default staff role`);
+      }
       
       req.user = {
         uid: user.uid,
         email: user.email,
         displayName: user.displayName,
-        role,
-        permissions
+        role: userRole?.role || RoleTypes.staff,
+        permissions: userRole?.permissions || DefaultPermissions[RoleTypes.staff]
       };
       
-      console.log(`🟢 Authenticated user: ${user.email} (${role})`);
       next();
     } catch (verifyError) {
       console.error('Token verification failed:', verifyError);
@@ -93,7 +94,7 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
 }
 
 // Role-based access control middleware
-export function requireRole(allowedRoles: RoleType[]) {
+export function requireRole(allowedRoles: Array<keyof typeof RoleTypes>) {
   return async (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
       return res.status(401).json({ 
@@ -103,12 +104,12 @@ export function requireRole(allowedRoles: RoleType[]) {
     }
 
     // Admin has access to everything
-    if (req.user.role === 'admin') {
+    if (req.user.role === RoleTypes.admin) {
       return next();
     }
 
     // For manager role, check restricted paths
-    if (req.user.role === 'manager' && isRestrictedPath(req.path)) {
+    if (req.user.role === RoleTypes.manager && isRestrictedPath(req.path)) {
       return res.status(403).json({
         message: 'Managers cannot access user management features',
         code: 'MANAGER_RESTRICTED'
@@ -130,7 +131,7 @@ export function requireRole(allowedRoles: RoleType[]) {
 }
 
 // Permission-based access control middleware
-export function requirePermission(permission: Permission) {
+export function requirePermission(permission: string) {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
       return res.status(401).json({ 
@@ -139,12 +140,15 @@ export function requirePermission(permission: Permission) {
       });
     }
 
-    if (req.user.role === 'admin') {
-      return next(); // Admin has all permissions
+    // Admin has all permissions
+    if (req.user.role === RoleTypes.admin) {
+      return next();
     }
 
-    const rolePermissions = RolePermissions[req.user.role];
-    if (!rolePermissions?.includes(permission) && !rolePermissions?.includes('all')) {
+    const hasPermission = req.user.permissions?.includes(permission) || 
+                         req.user.permissions?.includes('all');
+    
+    if (!hasPermission) {
       return res.status(403).json({
         message: `Access denied. Missing required permission: ${permission}`,
         code: 'INSUFFICIENT_PERMISSION',
@@ -167,7 +171,7 @@ export function validateUserManagement(req: Request, res: Response, next: NextFu
   }
 
   // Only admin can manage users
-  if (req.user.role !== 'admin') {
+  if (req.user.role !== RoleTypes.admin) {
     return res.status(403).json({
       message: 'Only administrators can manage users',
       code: 'ADMIN_REQUIRED',
@@ -178,8 +182,10 @@ export function validateUserManagement(req: Request, res: Response, next: NextFu
   next();
 }
 
-// Manager operation validation middleware with enhanced checks
-export function validateManagerOperation(operation: string | string[]) {
+// Manager operation validation middleware
+type Permission = string;
+
+export function validateManagerOperation(operation: Permission | Permission[]) {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
       return res.status(401).json({ 
@@ -189,26 +195,25 @@ export function validateManagerOperation(operation: string | string[]) {
     }
 
     // Admin has full access
-    if (req.user.role === 'admin') {
+    if (req.user.role === RoleTypes.admin) {
       return next();
     }
 
     // Enforce manager role
-    if (req.user.role !== 'manager') {
+    if (req.user.role !== RoleTypes.manager) {
       return res.status(403).json({
         message: 'This operation requires manager privileges',
         code: 'MANAGER_REQUIRED',
-        requiredRole: 'manager',
+        requiredRole: RoleTypes.manager,
         currentRole: req.user.role
       });
     }
 
-    // Handle both single operation and multiple required operations
+    // Check required permissions
     const requiredOperations = Array.isArray(operation) ? operation : [operation];
-    const managerPermissions = RolePermissions.manager;
-    
-    // Check if manager has all required permissions
-    const missingPermissions = requiredOperations.filter(op => !managerPermissions.includes(op));
+    const missingPermissions = requiredOperations.filter(
+      op => !req.user?.permissions.includes(op) && !req.user?.permissions.includes('all')
+    );
     
     if (missingPermissions.length > 0) {
       return res.status(403).json({
@@ -216,17 +221,7 @@ export function validateManagerOperation(operation: string | string[]) {
         code: 'INSUFFICIENT_MANAGER_PERMISSION',
         requiredOperations,
         missingPermissions,
-        userPermissions: managerPermissions
-      });
-    }
-
-    // Check for branch-specific operations if branchId is present
-    if (req.user.branchId && req.params.branchId && req.user.branchId !== parseInt(req.params.branchId)) {
-      return res.status(403).json({
-        message: 'Access restricted to assigned branch only',
-        code: 'BRANCH_ACCESS_DENIED',
-        userBranch: req.user.branchId,
-        requestedBranch: req.params.branchId
+        userPermissions: req.user.permissions
       });
     }
 
