@@ -106,14 +106,8 @@ export const RolePermissions: Record<string, string[]> = {
     'view_revenue_reports',
     'manage_discounts'
   ],
-  staff: ['all'],  // Temporary solution: giving staff full admin permissions
-  receptionist: [
-    'view_appointments',
-    'create_appointments',
-    'view_customers',
-    'create_customers',
-    'view_pets'
-  ]
+  staff: ['all'],  // Initially granting full access to staff
+  receptionist: ['all']  // Initially granting full access to receptionists
 };
 
 // Define restricted endpoints for manager role - anything related to user management
