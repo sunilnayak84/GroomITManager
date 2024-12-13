@@ -1,12 +1,9 @@
 import { type Express } from "express";
-import { setupAuth } from "./auth";
+import { setupAuth, setUserRole } from "./auth";
 import { db } from "../db";
 import { appointments, customers, pets, users } from "@db/schema";
-// Remove unused import
 import { and, eq, gte, count, sql } from "drizzle-orm";
-
-// Firebase handles user creation and management
-
+import admin from "firebase-admin";
 import { authenticateFirebase, requireRole } from './middleware/auth';
 
 export function registerRoutes(app: Express) {
@@ -28,6 +25,70 @@ export function registerRoutes(app: Express) {
   });
 
   // User role management
+  // Admin setup endpoint - works in both development and production
+  app.post("/api/setup-admin", async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email || email !== 'admin@groomery.in') {
+        return res.status(400).json({ 
+          message: "Invalid email",
+          error: "Only admin@groomery.in is allowed for admin setup"
+        });
+      }
+
+      if (process.env.NODE_ENV === 'development') {
+        // In development, create a mock admin user
+        console.log('Setting up admin in development mode');
+        await setUserRole('dev-admin-uid', 'admin');
+        
+        return res.json({ 
+          message: "Admin role set successfully (development mode)",
+          userId: 'dev-admin-uid',
+          email: email,
+          role: 'admin',
+          permissions: ['all']
+        });
+      }
+
+      try {
+        // In production, get or create the user
+        let userRecord;
+        try {
+          userRecord = await admin.auth().getUserByEmail(email);
+        } catch (error) {
+          // If user doesn't exist, create them
+          userRecord = await admin.auth().createUser({
+            email: email,
+            emailVerified: true,
+            displayName: 'Admin User'
+          });
+        }
+
+        // Set admin role
+        await setUserRole(userRecord.uid, 'admin');
+        
+        res.json({ 
+          message: "Admin role set successfully",
+          userId: userRecord.uid,
+          email: userRecord.email,
+          role: 'admin',
+          permissions: ['all']
+        });
+      } catch (firebaseError) {
+        console.error('Firebase operation failed:', firebaseError);
+        throw new Error('Failed to setup admin user in Firebase');
+      }
+    } catch (error) {
+      console.error('Error setting up admin:', error);
+      res.status(500).json({ 
+        message: "Failed to set up admin role",
+        error: error instanceof Error ? error.message : "Unknown error",
+        env: process.env.NODE_ENV
+      });
+    }
+  });
+
   app.post("/api/users/:userId/role", authenticateFirebase, requireRole(['admin']), async (req, res) => {
     try {
       const { userId } = req.params;
