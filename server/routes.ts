@@ -133,12 +133,14 @@ export function registerRoutes(app: Express) {
       }
 
       // Early validation of role name
-      if (!Object.values(RoleTypes).includes(roleName as any)) {
-        return res.status(400).json({
-          message: "Invalid role name",
-          error: `Role ${roleName} is not a valid role type`,
-          validRoles: Object.values(RoleTypes),
-          code: "INVALID_ROLE"
+      const db = admin.database();
+      const roleSnapshot = await db.ref(`role-definitions/${roleName}`).once('value');
+      
+      if (!roleSnapshot.exists()) {
+        return res.status(404).json({
+          message: "Role not found",
+          error: `Role ${roleName} does not exist`,
+          code: "ROLE_NOT_FOUND"
         });
       }
 
@@ -177,11 +179,18 @@ export function registerRoutes(app: Express) {
       }
 
       // Update role definition in Firebase
-      const updatedRole = await updateRoleDefinition(roleName, finalPermissions);
+      const roleRef = db.ref(`role-definitions/${roleName}`);
+      const updatedRole = {
+        name: roleName,
+        permissions: finalPermissions,
+        updatedAt: admin.database.ServerValue.TIMESTAMP
+      };
+
+      await roleRef.update(updatedRole);
+      console.log('[ROLES] Updated role definition:', updatedRole);
 
       // Update all users with this role to have the new permissions
       const auth = admin.auth();
-      const db = admin.database();
       const usersSnapshot = await db.ref('roles').once('value');
       const users = usersSnapshot.val() || {};
 
@@ -206,7 +215,10 @@ export function registerRoutes(app: Express) {
       console.log(`[ROLES] Successfully updated ${roleName} role and user permissions`);
       res.json({ 
         message: `Role ${roleName} updated successfully`,
-        role: updatedRole,
+        role: {
+          ...updatedRole,
+          updatedAt: Date.now()
+        },
         permissions: finalPermissions
       });
     } catch (error) {
