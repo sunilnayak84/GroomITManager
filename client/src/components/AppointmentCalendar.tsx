@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import FullCalendar from '@fullcalendar/react';
+import type { CalendarApi } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -21,7 +22,7 @@ export default function AppointmentCalendar() {
   const [currentView, setCurrentView] = useState<'dayGridMonth' | 'timeGridWeek' | 'timeGridDay'>('timeGridWeek');
   const [openNewForm, setOpenNewForm] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const calendarRef = useRef<any>(null);
+  const calendarRef = useRef<FullCalendar>(null);
   
   const { data: appointments } = useAppointments();
   const { data: workingHours } = useWorkingHours();
@@ -94,7 +95,6 @@ export default function AppointmentCalendar() {
           ref={calendarRef}
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView={currentView}
-          view={currentView}
           headerToolbar={{
             left: 'prev,next today',
             center: 'title',
