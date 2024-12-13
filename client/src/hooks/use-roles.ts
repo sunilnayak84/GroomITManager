@@ -24,47 +24,98 @@ interface FirebaseUsersResponse {
 async function fetchRoles(): Promise<Role[]> {
   const auth = getAuth();
   if (!auth.currentUser) {
-    throw new Error('Not authenticated');
+    console.warn('User not authenticated when fetching roles');
+    return [];
   }
-  const token = await auth.currentUser.getIdToken();
   
-  const response = await fetch('/api/roles', {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+  try {
+    const token = await auth.currentUser.getIdToken(true);
+    console.log('[ROLES] Fetching roles with token:', token.substring(0, 10) + '...');
+    const response = await fetch('http://localhost:3000/api/roles', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache'
+      },
+      credentials: 'include'
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Failed to fetch roles:', errorText);
+      throw new Error(`Failed to fetch roles: ${errorText}`);
     }
-  });
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`Failed to fetch roles: ${error}`);
+    
+    return response.json();
+  } catch (error) {
+    console.error('Error in fetchRoles:', error);
+    throw error;
   }
-  return response.json();
 }
 
 async function fetchFirebaseUsers(params: { pageParam?: string | null }): Promise<FirebaseUsersResponse> {
   const auth = getAuth();
   if (!auth.currentUser) {
-    throw new Error('Not authenticated');
-  }
-  const token = await auth.currentUser.getIdToken();
-  
-  const searchParams = new URLSearchParams();
-  if (params.pageParam) {
-    searchParams.append('pageToken', params.pageParam);
+    console.warn('User not authenticated when fetching Firebase users');
+    return { users: [], pageToken: null };
   }
   
-  const response = await fetch(`/api/firebase-users?${searchParams}`, {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+  try {
+    // Force token refresh to ensure we have a valid token
+    const token = await auth.currentUser.getIdToken(true);
+    
+    const searchParams = new URLSearchParams();
+    if (params.pageParam) {
+      searchParams.append('pageToken', params.pageParam);
     }
-  });
-  if (!response.ok) {
-    const error = await response.text();
-    console.error('Failed to fetch users:', error);
-    throw new Error(`Failed to fetch users: ${error}`);
+    
+    console.log('[FIREBASE-USERS] Starting fetch with params:', params);
+    console.log('[FIREBASE-USERS] Using token:', token.substring(0, 10) + '...');
+    
+    const response = await fetch('http://localhost:3000/api/firebase-users?' + searchParams.toString(), {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache'
+      },
+      credentials: 'include'
+    });
+
+    if (response.status === 401) {
+      console.error('[FIREBASE-USERS] Authentication failed. Refreshing token...');
+      // Try to refresh token and retry
+      const newToken = await auth.currentUser.getIdToken(true);
+      const retryResponse = await fetch(`/api/firebase-users?${searchParams}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${newToken}`,
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache'
+        },
+        credentials: 'include'
+      });
+      
+      if (!retryResponse.ok) {
+        throw new Error(`Failed to fetch users after token refresh: ${await retryResponse.text()}`);
+      }
+      return retryResponse.json();
+    }
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Failed to fetch Firebase users:', errorText);
+      throw new Error(`Failed to fetch users: ${errorText}`);
+    }
+    
+    const data = await response.json();
+    console.log('Successfully fetched Firebase users:', data);
+    return data;
+  } catch (error) {
+    console.error('Error in fetchFirebaseUsers:', error);
+    throw error;
   }
-  return response.json();
 }
 
 async function updateUserRole(userId: string, role: string): Promise<void> {
