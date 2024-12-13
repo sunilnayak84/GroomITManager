@@ -53,13 +53,7 @@ export function requireRole(allowedRoles: string[]) {
       });
     }
 
-    // Initially grant access to all authenticated users
-    // This will be replaced with proper role checks when needed
-    if (req.user.role) {
-      return next();
-    }
-    
-    // Fallback to role check (for future use)
+    // Check if user's role is allowed
     if (!allowedRoles.includes(req.user.role)) {
       return res.status(403).json({
         message: `Access denied. Required roles: ${allowedRoles.join(', ')}`,

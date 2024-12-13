@@ -1,33 +1,21 @@
 import { StrictMode, lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { Switch, Route } from "wouter";
+import "./index.css";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { ErrorBoundary } from "react-error-boundary";
-// UI Components
-import { Loader2 } from "lucide-react";
-
-// Hooks
-import { useUser } from "./hooks/use-user";
-
-import { Toaster } from "@/components/ui/toaster";
 import { queryClient } from "./lib/queryClient";
-
-
-// Component imports
-import Layout from "./components/Layout";
-
-// Page imports
+import { Toaster } from "@/components/ui/toaster";
 import HomePage from "./pages/HomePage";
+import AuthPage from "./pages/AuthPage";
 import AppointmentsPage from "./pages/AppointmentsPage";
 import CustomersPage from "./pages/CustomersPage";
 import PetsPage from "./pages/PetsPage";
 import ServicesPage from "./pages/ServicesPage";
 import InventoryPage from "./pages/InventoryPage";
-import RoleManagementPage from "./pages/RoleManagementPage";
-import AuthPage from "./pages/AuthPage";
-
-// Styles
-import "./index.css";
+import { Loader2 } from "lucide-react";
+import { useUser } from "./hooks/use-user";
+import Layout from "./components/Layout";
+import { ErrorBoundary } from "react-error-boundary";
 
 // Loading component for suspense fallback
 function LoadingSpinner() {
@@ -78,7 +66,6 @@ function Router() {
             <Route path="/staff" component={lazy(() => import('./pages/StaffPage'))} />
             <Route path="/inventory" component={InventoryPage} />
             <Route path="/settings/working-hours" component={lazy(() => import('./pages/WorkingHoursPage'))} />
-            <Route path="/role-management" component={RoleManagementPage} />
             <Route>404 Page Not Found</Route>
           </Switch>
         </Suspense>
