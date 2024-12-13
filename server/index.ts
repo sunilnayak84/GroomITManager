@@ -238,6 +238,9 @@ function setupGracefulShutdown(server: any) {
     // Start server with retries
     const startServer = async (retryCount = 0) => {
       try {
+        // Add more detailed logging
+        log(`Attempting to start server (attempt ${retryCount + 1})`, 'info');
+        
         // Wait for any existing process to release the port
         await new Promise(resolve => setTimeout(resolve, 1000));
         
@@ -248,14 +251,19 @@ function setupGracefulShutdown(server: any) {
           log(`Port cleanup warning: ${cleanupError}`, 'warn');
         }
 
-        await new Promise<void>((resolve, reject) => {
+        // Create a new promise for server startup
+        return new Promise<void>((resolve, reject) => {
+          log(`Binding server to port ${PORT}...`, 'info');
           const serverInstance = server.listen(PORT, '0.0.0.0', () => {
             log(`Server started successfully on port ${PORT}`, 'info');
             log(`Server is accessible at http://0.0.0.0:${PORT}`, 'info');
             resolve();
           });
 
+          // Error handling for server startup
           serverInstance.on('error', async (err: Error & { code?: string }) => {
+            log(`Server startup error: ${err.message}`, 'error');
+            
             if (err.code === 'EADDRINUSE' && retryCount < 3) {
               log(`Port ${PORT} is in use, retrying in 2 seconds...`, 'warn');
               serverInstance.close();
@@ -268,7 +276,7 @@ function setupGracefulShutdown(server: any) {
                 }
               }, 2000);
             } else {
-              reject(err);
+              reject(new Error(`Failed to start server: ${err.message}`));
             }
           });
         });

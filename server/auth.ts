@@ -48,7 +48,18 @@ export const RolePermissions: Record<string, string[]> = {
     'view_all_branches',
     'manage_pets',
     'manage_consumables',
-    'view_staff'
+    'view_staff',
+    'manage_branch_settings',
+    'manage_service_pricing',
+    'view_financial_reports',
+    'manage_marketing_campaigns',
+    'manage_inventory',
+    'manage_services',
+    'manage_appointments',
+    'manage_working_hours',
+    'view_dashboard',
+    'manage_staff_schedule',
+    'manage_branch_operations'
   ],
   staff: [
     'manage_appointments',
@@ -66,12 +77,18 @@ export const RolePermissions: Record<string, string[]> = {
   ]
 };
 
-// Define restricted endpoints for manager role
+// Define restricted endpoints for manager role - anything related to user management
 export const MANAGER_RESTRICTED_ENDPOINTS = [
   '/api/users',
   '/api/setup-admin',
   '/api/roles',
-  '/api/auth/roles'
+  '/api/auth/roles',
+  '/api/users/role',
+  '/api/staff/role',
+  '/api/staff/permissions',
+  '/api/auth/admin',
+  '/api/auth/setup',
+  '/api/auth/permissions'
 ];
 
 // Export the type for use in other files

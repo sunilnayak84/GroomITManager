@@ -27,7 +27,15 @@ export const RolePermissions = {
     'view_all_branches',
     'manage_pets',
     'manage_consumables',
-    'view_staff'
+    'view_staff',
+    'manage_branch_settings',
+    'manage_service_pricing',
+    'view_financial_reports',
+    'manage_marketing_campaigns',
+    'manage_inventory',
+    'manage_services',
+    'manage_appointments',
+    'manage_working_hours'
   ],
   staff: [
     'manage_appointments',

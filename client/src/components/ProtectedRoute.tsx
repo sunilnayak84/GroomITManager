@@ -23,9 +23,22 @@ export default function ProtectedRoute({
       setLocation('/login');
     } else if (!isLoading && user && allowedRoles.length > 0) {
       // Special check for manager and user management pages
-      if (requiresUserManagement && user.role === 'manager') {
-        setLocation('/unauthorized');
-        return;
+      if (user.role === 'manager') {
+        const userManagementPaths = [
+          '/users', 
+          '/roles', 
+          '/permissions', 
+          '/staff-management',
+          '/auth/admin',
+          '/auth/setup',
+          '/user-management',
+          '/role-management'
+        ];
+        const isUserManagementPath = userManagementPaths.some(path => location.startsWith(path));
+        if (isUserManagementPath || requiresUserManagement) {
+          setLocation('/unauthorized');
+          return;
+        }
       }
       
       // Check if user has required role
