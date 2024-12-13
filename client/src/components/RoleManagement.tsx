@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from "react";
 import { useRoles } from '@/hooks/use-roles';
 import type { UserRole } from '@/hooks/use-user';
 import { useForm } from 'react-hook-form';
@@ -100,13 +100,13 @@ export function RoleManagement() {
     });
   }, [roles, isLoadingRoles, users, isLoadingUsers, hasNextPage]);
 
-  const roleEntries = React.useMemo(() => 
+  const roleEntries = useMemo(() => 
     roles ? roles.map(role => [role.name, role.permissions]) : [], 
     [roles]
   );
 
-  const [selectedUser, setSelectedUser] = React.useState<string | null>(null);
-  const [editingRole, setEditingRole] = React.useState<string | null>(null);
+  const [selectedUser, setSelectedUser] = useState<string | null>(null);
+  const [editingRole, setEditingRole] = useState<string | null>(null);
 
   const form = useForm<RoleFormValues>({
     resolver: zodResolver(roleSchema),

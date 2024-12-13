@@ -31,7 +31,7 @@ async function fetchRoles(): Promise<Role[]> {
   try {
     const token = await auth.currentUser.getIdToken(true);
     console.log('[ROLES] Fetching roles with token:', token.substring(0, 10) + '...');
-    const response = await fetch('http://localhost:3000/api/roles', {
+    const response = await fetch('/api/roles', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -73,7 +73,7 @@ async function fetchFirebaseUsers(params: { pageParam?: string | null }): Promis
     console.log('[FIREBASE-USERS] Starting fetch with params:', params);
     console.log('[FIREBASE-USERS] Using token:', token.substring(0, 10) + '...');
     
-    const response = await fetch('http://localhost:3000/api/firebase-users?' + searchParams.toString(), {
+    const response = await fetch('/api/firebase-users?' + searchParams.toString(), {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -87,7 +87,7 @@ async function fetchFirebaseUsers(params: { pageParam?: string | null }): Promis
       console.error('[FIREBASE-USERS] Authentication failed. Refreshing token...');
       // Try to refresh token and retry
       const newToken = await auth.currentUser.getIdToken(true);
-      const retryResponse = await fetch(`/api/firebase-users?${searchParams}`, {
+      const retryResponse = await fetch(`/api/firebase-users?${searchParams.toString()}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${newToken}`,

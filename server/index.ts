@@ -31,14 +31,41 @@ async function initializeFirebase(): Promise<boolean> {
       await Promise.all(admin.apps.map(app => app?.delete()));
     }
 
+    // Format private key
+    let privateKey = process.env.FIREBASE_PRIVATE_KEY || '';
+    if (privateKey) {
+      // Remove extra quotes if present
+      privateKey = privateKey.replace(/\\n/g, '\n').replace(/^['"]|['"]$/g, '');
+      if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
+        privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----`;
+      }
+    }
+
     // Configure Firebase
     const firebaseConfig = {
-      projectId: isDevelopment ? 'dev-project' : process.env.FIREBASE_PROJECT_ID,
-      clientEmail: isDevelopment ? 'dev@example.com' : process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: isDevelopment 
-        ? '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9QFi8Lg3Xy+Vj\nVGQiXhKlLS0xGS4YgW4UF9l4A5H4KlUZ8JfVhqggXmVBITM1Mj1nW7R02eCGXjJ4\nF1HGJ9REh/Qr0kH4NxjWnFxvj4VhZk+zRhSmPEm80u7KnXWW0v0idTzVqeVwnVZF\nX8WAIhN7CfXQZGl1xd/ftUU9EBGgm/ZY7DTqf4TGI3LWxG1dDlh4l2Y=\n-----END PRIVATE KEY-----\n'
-        : process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n')
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: privateKey
     };
+
+    // In development, use default config if environment variables are missing
+    if (isDevelopment && (!firebaseConfig.projectId || !firebaseConfig.clientEmail || !firebaseConfig.privateKey)) {
+      log('Using development credentials', 'warn');
+      firebaseConfig.projectId = 'dev-project';
+      firebaseConfig.clientEmail = 'dev@example.com';
+      firebaseConfig.privateKey = '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9QFi8Lg3Xy+Vj\nVGQiXhKlLS0xGS4YgW4UF9l4A5H4KlUZ8JfVhqggXmVBITM1Mj1nW7R02eCGXjJ4\nF1HGJ9REh/Qr0kH4NxjWnFxvj4VhZk+zRhSmPEm80u7KnXWW0v0idTzVqeVwnVZF\nX8WAIhN7CfXQZGl1xd/ftUU9EBGgm/ZY7DTqf4TGI3LWxG1dDlh4l2Y=\n-----END PRIVATE KEY-----\n';
+    }
+
+    // Validate configuration
+    if (!isDevelopment) {
+      if (!firebaseConfig.projectId || !firebaseConfig.clientEmail || !firebaseConfig.privateKey) {
+        throw new Error('Missing required Firebase credentials');
+      }
+      
+      if (!firebaseConfig.privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
+        throw new Error('Invalid private key format');
+      }
+    }
 
     // Validate credentials in production
     if (!isDevelopment) {
