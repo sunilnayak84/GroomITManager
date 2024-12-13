@@ -391,7 +391,8 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
         </Alert>
       )}
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="petId"
@@ -626,6 +627,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
             {isSubmitting ? "Scheduling..." : "Schedule Appointment"}
           </Button>
         </form>
+        </div>
       </Form>
     </DialogContent>
   );
