@@ -1,5 +1,21 @@
 import { Request, Response, NextFunction } from 'express';
-import { RolePermissions } from '../auth';
+import { getFirebaseAdmin } from '../firebase';
+import { RolePermissions, type RoleType, type Permission } from '../routes';
+
+// Extend Express Request type to include user
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        uid: string;
+        email?: string | null;
+        role: RoleType;
+        permissions: Permission[];
+        displayName?: string | null;
+      };
+    }
+  }
+}
 
 // Manager-specific restricted paths
 const userManagementPaths = [
@@ -20,19 +36,65 @@ const isRestrictedPath = (path: string) =>
   userManagementPaths.some(restrictedPath => path.startsWith(restrictedPath));
 
 // Firebase authentication middleware
-export function authenticateFirebase(req: Request, res: Response, next: NextFunction) {
-  if (!req.user) {
-    return res.status(401).json({ 
-      message: 'Authentication required',
-      code: 'AUTH_REQUIRED'
+export async function authenticateFirebase(req: Request, res: Response, next: NextFunction) {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) {
+      return res.status(401).json({ 
+        message: 'No token provided',
+        code: 'NO_TOKEN'
+      });
+    }
+
+    const idToken = authHeader.split('Bearer ')[1];
+    const firebaseAdmin = getFirebaseAdmin();
+    
+    if (!firebaseAdmin) {
+      console.error('Firebase Admin not initialized');
+      return res.status(500).json({ 
+        message: 'Authentication service unavailable',
+        code: 'AUTH_SERVICE_ERROR'
+      });
+    }
+
+    const auth = firebaseAdmin.auth();
+    
+    try {
+      const decodedToken = await auth.verifyIdToken(idToken);
+      const user = await auth.getUser(decodedToken.uid);
+      
+      const role = (user.customClaims?.role as RoleType) || 'staff';
+      const permissions = (user.customClaims?.permissions as Permission[]) || [];
+      
+      req.user = {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        role,
+        permissions
+      };
+      
+      console.log(`🟢 Authenticated user: ${user.email} (${role})`);
+      next();
+    } catch (verifyError) {
+      console.error('Token verification failed:', verifyError);
+      return res.status(401).json({ 
+        message: 'Invalid token',
+        code: 'INVALID_TOKEN'
+      });
+    }
+  } catch (error) {
+    console.error('Authentication error:', error);
+    return res.status(500).json({ 
+      message: 'Authentication failed',
+      code: 'AUTH_ERROR'
     });
   }
-  next();
 }
 
 // Role-based access control middleware
-export function requireRole(allowedRoles: string[]) {
-  return (req: Request, res: Response, next: NextFunction) => {
+export function requireRole(allowedRoles: RoleType[]) {
+  return async (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
       return res.status(401).json({ 
         message: 'Authentication required',
@@ -58,7 +120,8 @@ export function requireRole(allowedRoles: string[]) {
       return res.status(403).json({
         message: `Access denied. Required roles: ${allowedRoles.join(', ')}`,
         code: 'INSUFFICIENT_ROLE',
-        requiredRoles: allowedRoles
+        requiredRoles: allowedRoles,
+        currentRole: req.user.role
       });
     }
 
@@ -67,7 +130,7 @@ export function requireRole(allowedRoles: string[]) {
 }
 
 // Permission-based access control middleware
-export function requirePermission(permission: string) {
+export function requirePermission(permission: Permission) {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
       return res.status(401).json({ 
@@ -85,12 +148,34 @@ export function requirePermission(permission: string) {
       return res.status(403).json({
         message: `Access denied. Missing required permission: ${permission}`,
         code: 'INSUFFICIENT_PERMISSION',
-        requiredPermission: permission
+        requiredPermission: permission,
+        userPermissions: req.user.permissions
       });
     }
 
     next();
   };
+}
+
+// User management middleware
+export function validateUserManagement(req: Request, res: Response, next: NextFunction) {
+  if (!req.user) {
+    return res.status(401).json({ 
+      message: 'Authentication required',
+      code: 'AUTH_REQUIRED'
+    });
+  }
+
+  // Only admin can manage users
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({
+      message: 'Only administrators can manage users',
+      code: 'ADMIN_REQUIRED',
+      currentRole: req.user.role
+    });
+  }
+
+  next();
 }
 
 // Manager operation validation middleware with enhanced checks
