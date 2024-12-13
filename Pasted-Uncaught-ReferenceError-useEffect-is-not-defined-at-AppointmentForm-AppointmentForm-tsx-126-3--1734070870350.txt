@@ -1,0 +1,36 @@
+Uncaught ReferenceError: useEffect is not defined
+    at AppointmentForm (AppointmentForm.tsx:126:3)
+    at renderWithHooks (chunk-GNC7SI6A.js?v=bb2901ca:11548:26)
+    at mountIndeterminateComponent (chunk-GNC7SI6A.js?v=bb2901ca:14926:21)
+    at beginWork (chunk-GNC7SI6A.js?v=bb2901ca:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-GNC7SI6A.js?v=bb2901ca:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-GNC7SI6A.js?v=bb2901ca:3699:24)
+    at invokeGuardedCallback (chunk-GNC7SI6A.js?v=bb2901ca:3733:39)
+    at beginWork$1 (chunk-GNC7SI6A.js?v=bb2901ca:19765:15)
+    at performUnitOfWork (chunk-GNC7SI6A.js?v=bb2901ca:19198:20)
+    at workLoopSync (chunk-GNC7SI6A.js?v=bb2901ca:19137:13)Understand this errorAI
+chunk-GNC7SI6A.js?v=bb2901ca:14032 The above error occurred in the <AppointmentForm> component:
+
+    at AppointmentForm (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/src/components/AppointmentForm.tsx:55:43)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-BIT4GNDH.js?v=bb2901ca:38:15)
+    at Dialog (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-42GMZ6MK.js?v=bb2901ca:50:5)
+    at div
+    at div
+    at div
+    at div
+    at div
+    at AppointmentsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/src/pages/AppointmentsPage.tsx:37:41)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/wouter.js?v=bb2901ca:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/wouter.js?v=bb2901ca:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/react-error-boundary.js?v=bb2901ca:18:5)
+    at main
+    at div
+    at div
+    at div
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/src/components/Layout.tsx:21:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/src/main.tsx:85:31)
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/@tanstack_react-query.js?v=bb2901ca:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/react-error-boundary.js?v=bb2901ca:18:5)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
