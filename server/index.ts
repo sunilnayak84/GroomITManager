@@ -19,19 +19,20 @@ function log(message: string, type: 'info' | 'error' | 'warn' = 'info') {
   console.log(`${formattedTime} [express] ${prefix} ${message}`);
 }
 
-// Initialize Firebase Admin with development fallback
+// Initialize Firebase Admin
 try {
+  // Clean up any existing Firebase apps
+  admin.apps.forEach(app => app?.delete());
+  
   if (process.env.NODE_ENV === 'development') {
     // Development mode - use mock credentials
-    if (!admin.apps.length) {
-      admin.initializeApp({
-        credential: admin.credential.cert({
-          projectId: 'dev-project',
-          clientEmail: 'dev@example.com',
-          privateKey: 'dummy-key'
-        } as admin.ServiceAccount)
-      });
-    }
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: 'dev-project',
+        clientEmail: 'dev@example.com',
+        privateKey: 'dummy-key'
+      } as admin.ServiceAccount)
+    });
     log('Firebase Admin initialized in development mode', 'info');
   } else {
     // Production mode - use real credentials
@@ -45,17 +46,20 @@ try {
       throw new Error('Missing Firebase credentials');
     }
 
-    if (!admin.apps.length) {
-      admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
-      });
-    }
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
+    });
     log('Firebase Admin initialized successfully', 'info');
   }
 } catch (error) {
-  log(`Firebase initialization error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'warn');
-  if (process.env.NODE_ENV !== 'development') {
-    process.exit(1); // Exit in production if Firebase fails to initialize
+  const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+  log(`Firebase initialization error: ${errorMessage}`, 'warn');
+  
+  if (process.env.NODE_ENV === 'development') {
+    log('Continuing in development mode despite Firebase error', 'warn');
+  } else {
+    log('Exiting due to Firebase initialization failure', 'error');
+    process.exit(1);
   }
 }
 

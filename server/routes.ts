@@ -89,12 +89,13 @@ export function registerRoutes(app: Express) {
     }
   });
 
+  // Only admin can manage user roles
   app.post("/api/users/:userId/role", authenticateFirebase, requireRole(['admin']), async (req, res) => {
     try {
       const { userId } = req.params;
       const { role, email } = req.body;
 
-      if (!userId || !role || !['admin', 'staff', 'receptionist'].includes(role)) {
+      if (!userId || !role || !['admin', 'manager', 'staff', 'receptionist'].includes(role)) {
         return res.status(400).json({ 
           error: "Invalid user ID or role",
           message: "Role must be one of: admin, staff, receptionist"
@@ -138,7 +139,7 @@ export function registerRoutes(app: Express) {
   });
 
   // Dashboard stats - restricted to admin and staff
-  app.get("/api/stats", authenticateFirebase, requireRole(['admin', 'staff']), async (req, res) => {
+  app.get("/api/stats", authenticateFirebase, requireRole(['admin', 'manager', 'staff']), async (req, res) => {
     try {
       const now = new Date();
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);

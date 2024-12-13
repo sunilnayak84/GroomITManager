@@ -1,35 +1,31 @@
 import { ReactNode } from 'react';
 import { useUser } from '@/hooks/use-user';
-import { useLocation, useNavigate } from 'wouter';
+import { useLocation } from 'wouter';
 import { useEffect } from 'react';
 
 interface ProtectedRouteProps {
   children: ReactNode;
-  allowedRoles?: ('admin' | 'staff' | 'receptionist')[];
+  allowedRoles?: ('admin' | 'manager' | 'staff' | 'receptionist')[];
 }
 
 export default function ProtectedRoute({ 
   children, 
-  allowedRoles = ['admin', 'staff', 'receptionist']
+  allowedRoles = ['admin', 'manager', 'staff', 'receptionist']
 }: ProtectedRouteProps) {
   const { user, isLoading } = useUser();
-  const [, navigate] = useNavigate();
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
 
   useEffect(() => {
     if (!isLoading && !user) {
       // Redirect to login if not authenticated
-      navigate('/login', { 
-        replace: true,
-        state: { from: location } 
-      });
+      setLocation('/login');
     } else if (!isLoading && user && allowedRoles.length > 0) {
       // Check if user has required role
       if (!allowedRoles.includes(user.role as any)) {
-        navigate('/unauthorized', { replace: true });
+        setLocation('/unauthorized');
       }
     }
-  }, [user, isLoading, navigate, location, allowedRoles]);
+  }, [user, isLoading, location, allowedRoles]);
 
   // Show nothing while loading
   if (isLoading) {

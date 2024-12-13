@@ -4,76 +4,22 @@ import { users } from "@db/schema";
 import { db } from "../db";
 import { eq } from "drizzle-orm";
 
-// Initialize Firebase Admin
-let firebaseAdmin: admin.app.App | undefined;
-
-function initializeFirebaseAdmin() {
-  if (!firebaseAdmin) {
-    try {
-      // In development mode, use dummy credentials
-      if (process.env.NODE_ENV === 'development') {
-        if (!admin.apps.length) {
-          firebaseAdmin = admin.initializeApp({
-            credential: admin.credential.cert({
-              projectId: 'dev-project',
-              clientEmail: 'dev@example.com',
-              privateKey: 'dummy-key'
-            } as admin.ServiceAccount)
-          });
-        } else {
-          firebaseAdmin = admin.app();
-        }
-        console.log('Firebase Admin initialized in development mode');
-        return firebaseAdmin;
-      }
-
-      // Production mode initialization
-      const requiredEnvVars = [
-        'FIREBASE_PROJECT_ID',
-        'FIREBASE_CLIENT_EMAIL',
-        'FIREBASE_PRIVATE_KEY'
-      ];
-
-      const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
-      if (missingEnvVars.length > 0) {
-        throw new Error(`Missing Firebase environment variables: ${missingEnvVars.join(', ')}`);
-      }
-
-      const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
-      if (!privateKey) {
-        throw new Error('Invalid FIREBASE_PRIVATE_KEY format');
-      }
-
-      const serviceAccount = {
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: privateKey
-      };
-
-      if (!admin.apps.length) {
-        firebaseAdmin = admin.initializeApp({
-          credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
-        });
-      } else {
-        firebaseAdmin = admin.app();
-      }
-
-      console.log('Firebase Admin SDK initialized successfully');
-    } catch (error) {
-      console.error('Firebase Admin initialization error:', error);
-      throw error;
-    }
+// Initialize Firebase Admin - simplified to use the instance from server/index.ts
+function getFirebaseAdmin() {
+  if (!admin.apps.length) {
+    throw new Error('Firebase Admin not initialized. Initialize in server/index.ts first.');
   }
-  return firebaseAdmin;
+  return admin.app();
 }
 
 // Type for our Firebase auth user
 export interface FirebaseUser {
   id: string;
   email: string;
-  role: 'admin' | 'staff';
+  role: 'admin' | 'manager' | 'staff' | 'receptionist';
   name: string;
   branchId?: number;
+  permissions?: string[];
 }
 
 // Extend Express Request type to avoid recursive type reference
@@ -102,7 +48,7 @@ export async function createUserInDatabase(user: FirebaseUser) {
         email: user.email,
         name: user.name,
         phone: '', // Required field
-        role: (user.role === 'admin' || user.role === 'staff') ? user.role : 'staff' as const,
+        role: (user.role === 'admin' || user.role === 'staff' || user.role === 'manager') ? user.role : 'staff' as const,
         isGroomer: user.role === 'groomer',
         isActive: true
       };
@@ -121,47 +67,71 @@ export async function createUserInDatabase(user: FirebaseUser) {
     return false;
   }
 }
-export async function setUserRole(userId: string, role: 'admin' | 'staff' | 'receptionist') {
+export async function setUserRole(userId: string, role: 'admin' | 'staff' | 'receptionist' | 'manager') {
   try {
-    // Initialize Firebase Admin if not already initialized
-    if (!firebaseAdmin && process.env.NODE_ENV !== 'development') {
-      firebaseAdmin = initializeFirebaseAdmin();
-    }
+    console.log(`Setting role ${role} for user ${userId}`);
 
-    // For development mode, log and simulate success
+    // For development mode or testing
     if (process.env.NODE_ENV === 'development') {
-      console.log(`Development mode - Role ${role} would be set for user ${userId}`);
+      console.log(`Development mode - Role ${role} set for user ${userId}`);
       return true;
     }
 
-    if (!firebaseAdmin) {
-      throw new Error('Firebase Admin not initialized');
-    }
-
+    // Get Firebase Admin instance
+    const app = getFirebaseAdmin();
+    
     // Get current user from Firebase
     const userRecord = await admin.auth().getUser(userId);
     if (!userRecord) {
       throw new Error('User not found in Firebase');
     }
 
-    // Set custom claims including role and timestamp
-    // Set admin-specific claims
+    // Define role-specific permissions
+    const permissions = {
+      admin: ['all'],
+      manager: [
+        'manage_appointments',
+        'manage_services',
+        'manage_inventory',
+        'view_reports',
+        'manage_staff_schedules',
+        'manage_customers',
+        'view_analytics',
+        'manage_service_packages',
+        'manage_notifications'
+      ],
+      staff: [
+        'manage_appointments',
+        'view_customers',
+        'view_inventory',
+        'manage_own_schedule'
+      ],
+      receptionist: [
+        'view_appointments',
+        'create_appointments',
+        'view_customers',
+        'create_customers'
+      ]
+    }[role] || ['view_appointments'];
+
+    // Set custom claims including role, permissions and timestamp
     const claims = {
       role,
-      permissions: role === 'admin' ? ['all'] : role === 'staff' ? ['manage_appointments', 'view_customers'] : ['view_appointments'],
+      permissions,
       updatedAt: new Date().toISOString()
     };
 
     await admin.auth().setCustomUserClaims(userId, claims);
 
-    console.log(`Role ${role} set for user ${userId} (${userRecord.email})`);
+    console.log(`Successfully set role ${role} for user ${userId} (${userRecord.email})`);
+    console.log('Assigned permissions:', permissions);
+    
     return true;
   } catch (error) {
     console.error('Error setting user role:', error);
-    if (error instanceof Error) {
-      throw new Error(`Failed to set user role: ${error.message}`);
-    }
-    throw new Error('Failed to set user role: Unknown error');
+    throw error instanceof Error 
+      ? new Error(`Failed to set user role: ${error.message}`)
+      : new Error('Failed to set user role: Unknown error');
   }
 }
 
@@ -235,7 +205,7 @@ export function setupAuth(app: Express) {
           id: decodedToken.uid,
           email: decodedToken.email || '',
           name: decodedToken.name || decodedToken.email || '',
-          role: (existingUser?.role || 'staff') as 'admin' | 'staff'
+          role: (existingUser?.role || 'staff') as 'admin' | 'manager' | 'staff'
         };
 
         next();
