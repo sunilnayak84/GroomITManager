@@ -137,10 +137,20 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
   const validateTimeSlot = (
     date: string,
     time: string,
-    daySchedule: WorkingDays | undefined
+    daySchedule: WorkingDays | undefined,
+    groomerId: string
   ): { isValid: boolean; error?: string } => {
     if (!daySchedule || !daySchedule.isOpen) {
       return { isValid: false, error: "This day is not available for appointments" };
+    }
+
+    const [hours, minutes] = time.split(':').map(Number);
+    const appointmentStartTime = new Date(date);
+    appointmentStartTime.setHours(hours, minutes, 0, 0);
+
+    // Check if appointment is in the past
+    if (appointmentStartTime < new Date()) {
+      return { isValid: false, error: "Cannot schedule appointments in the past" };
     }
 
     // Check if time is within working hours
@@ -151,29 +161,63 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
       };
     }
 
-    // Check break time if exists
-    if (daySchedule.breakStart && daySchedule.breakEnd) {
-      if (time >= daySchedule.breakStart && time < daySchedule.breakEnd) {
-        return {
-          isValid: false,
-          error: `Break time is between ${daySchedule.breakStart} and ${daySchedule.breakEnd}`
-        };
-      }
-    }
-
-    // Check if appointment fits before closing time
+    // Calculate appointment end time based on service duration
     if (selectedService) {
-      const [hours, minutes] = time.split(':').map(Number);
-      const appointmentEndTime = new Date(date);
-      appointmentEndTime.setHours(hours);
-      appointmentEndTime.setMinutes(minutes + selectedService.duration);
+      const appointmentEndTime = new Date(appointmentStartTime);
+      appointmentEndTime.setMinutes(appointmentEndTime.getMinutes() + selectedService.duration);
       const endTimeStr = `${String(appointmentEndTime.getHours()).padStart(2, '0')}:${String(appointmentEndTime.getMinutes()).padStart(2, '0')}`;
       
+      // Check if appointment fits before closing time
       if (endTimeStr > daySchedule.closingTime) {
         return {
           isValid: false,
           error: "The appointment duration exceeds closing time"
         };
+      }
+
+      // Check break time if exists
+      if (daySchedule.breakStart && daySchedule.breakEnd) {
+        const breakStart = new Date(date);
+        const [breakStartHour, breakStartMin] = daySchedule.breakStart.split(':').map(Number);
+        breakStart.setHours(breakStartHour, breakStartMin, 0, 0);
+
+        const breakEnd = new Date(date);
+        const [breakEndHour, breakEndMin] = daySchedule.breakEnd.split(':').map(Number);
+        breakEnd.setHours(breakEndHour, breakEndMin, 0, 0);
+
+        if (
+          (appointmentStartTime < breakEnd && appointmentEndTime > breakStart) ||
+          (appointmentStartTime >= breakStart && appointmentStartTime < breakEnd)
+        ) {
+          return {
+            isValid: false,
+            error: `Break time is between ${daySchedule.breakStart} and ${daySchedule.breakEnd}`
+          };
+        }
+      }
+
+      // Check if groomer is available for the entire duration
+      if (!isTimeSlotAvailable(appointmentStartTime, groomerId)) {
+        return {
+          isValid: false,
+          error: "Selected groomer is not available for this time slot"
+        };
+      }
+
+      // Check groomer's maximum daily appointments
+      const groomer = availableGroomers.find(g => g.id === groomerId);
+      if (groomer?.maxDailyAppointments !== undefined) {
+        const appointmentsOnDay = appointments?.filter(a => 
+          a.groomerId === groomerId && 
+          new Date(a.date).toDateString() === appointmentStartTime.toDateString()
+        ).length || 0;
+
+        if (appointmentsOnDay >= groomer.maxDailyAppointments) {
+          return {
+            isValid: false,
+            error: "Groomer has reached maximum appointments for this day"
+          };
+        }
       }
     }
 
@@ -219,7 +263,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
         (schedule) => schedule.dayOfWeek === dayOfWeek
       );
 
-      const validation = validateTimeSlot(formDate, formTime, daySchedule);
+      const validation = validateTimeSlot(formDate, formTime, daySchedule, data.groomerId);
       if (!validation.isValid) {
         throw new Error(validation.error || "Invalid time slot");
       }
