@@ -6,6 +6,8 @@ import { terminateProcessOnPort } from "./utils/port_cleanup.js";
 import { db } from "../db/index.js";
 import { sql } from "drizzle-orm";
 import { initializeFirebaseAdmin, getFirebaseAdmin } from "./firebase.js";
+import path from "path";
+import fs from "fs";
 
 // Utility function for logging
 function log(message: string, type: 'info' | 'error' | 'warn' = 'info') {
@@ -279,8 +281,17 @@ async function startServer({ port, retryCount = 0 }: ServerStartOptions): Promis
       await setupVite(app, server);
       log('Vite middleware setup complete', 'info');
     } else {
-      serveStatic(app);
-      log('Static file serving setup complete', 'info');
+      const distPath = path.resolve(process.cwd(), "client", "dist");
+      if (!fs.existsSync(distPath)) {
+        log('Build directory not found, falling back to development mode', 'warn');
+        await setupVite(app, server);
+      } else {
+        app.use(express.static(distPath));
+        app.use("*", (_req, res) => {
+          res.sendFile(path.resolve(distPath, "index.html"));
+        });
+        log('Static file serving setup complete', 'info');
+      }
     }
 
     // Enhanced error handling for server startup

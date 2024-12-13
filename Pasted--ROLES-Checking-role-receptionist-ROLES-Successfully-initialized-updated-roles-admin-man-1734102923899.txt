@@ -1,0 +1,129 @@
+[ROLES] Checking role: receptionist
+[ROLES] Successfully initialized/updated roles: [ 'admin', 'manager', 'staff', 'receptionist' ]
+[ROLES] Updated permissions for existing users
+[ROLES] Current roles in Firebase: [ 'admin', 'manager', 'receptionist', 'staff' ]
+03:13:51 PM [express] 🟢 Firebase Admin SDK initialized successfully
+03:13:52 PM [express] 🟢 Database connection successful
+[PORT_CLEANUP] Attempting to clean up port 3000...
+[PORT_CLEANUP] Unix method failed, trying Windows method...
+[PORT_CLEANUP] Windows method failed
+[PORT_CLEANUP] Port 3000 is now available
+03:13:53 PM [express] 🟢 Routes registered successfully
+03:13:53 PM [express] 🟡 Build directory not found, falling back to development mode
+Re-optimizing dependencies because lockfile has changed
+03:13:54 PM [express] 🟢 Server started successfully on port 3000
+Error:   Failed to scan for dependencies from entries:
+  /home/runner/GroomITManager/client/index.html
+
+  ✘ [ERROR] Expected ")" but found "}"
+
+    client/src/components/RoleManagement.tsx:223:10:
+      223 │         ))}
+          │           ^
+          ╵           )
+
+
+    at failureErrorWithLog (/home/runner/GroomITManager/node_modules/vite/node_modules/esbuild/lib/main.js:1472:15)
+    at /home/runner/GroomITManager/node_modules/vite/node_modules/esbuild/lib/main.js:945:25
+    at runOnEndCallbacks (/home/runner/GroomITManager/node_modules/vite/node_modules/esbuild/lib/main.js:1315:45)
+    at buildResponseToResult (/home/runner/GroomITManager/node_modules/vite/node_modules/esbuild/lib/main.js:943:7)
+    at /home/runner/GroomITManager/node_modules/vite/node_modules/esbuild/lib/main.js:955:9
+    at new Promise (<anonymous>)
+    at requestCallbacks.on-end (/home/runner/GroomITManager/node_modules/vite/node_modules/esbuild/lib/main.js:954:54)
+    at handleRequest (/home/runner/GroomITManager/node_modules/vite/node_modules/esbuild/lib/main.js:647:17)
+    at handleIncomingPacket (/home/runner/GroomITManager/node_modules/vite/node_modules/esbuild/lib/main.js:672:7)
+    at Socket.readFromStdout (/home/runner/GroomITManager/node_modules/vite/node_modules/esbuild/lib/main.js:600:7)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Readable.push (node:internal/streams/readable:390:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:191:23)
+
+ ERROR(TypeScript)  ')' expected.
+ FILE  /home/runner/GroomITManager/client/src/components/RoleManagement.tsx:223:11
+
+    221 |             </CardContent>
+    222 |           </Card>
+  > 223 |         ))}
+        |           ^
+    224 |       </div>
+    225 |
+    226 |       {/* Create/Edit Role Form */}
+
+[TypeScript] Found 1 error. Watching for file changes.
+3:14:28 PM [vite] Pre-transform error: /home/runner/GroomITManager/client/src/components/RoleManagement.tsx: Unexpected token (223:10)
+
+  221 |             </CardContent>
+  222 |           </Card>
+> 223 |         ))}
+      |           ^
+  224 |       </div>
+  225 |
+  226 |       {/* Create/Edit Role Form */}
+3:14:29 PM [vite] Internal server error: /home/runner/GroomITManager/client/src/components/RoleManagement.tsx: Unexpected token (223:10)
+
+  221 |             </CardContent>
+  222 |           </Card>
+> 223 |         ))}
+      |           ^
+  224 |       </div>
+  225 |
+  226 |       {/* Create/Edit Role Form */}
+  Plugin: vite:react-babel
+  File: /home/runner/GroomITManager/client/src/components/RoleManagement.tsx:223:10
+  221|              </CardContent>
+  222|            </Card>
+  223|          ))}
+     |            ^
+  224|        </div>
+  225|  
+      at toParseError (/home/runner/GroomITManager/node_modules/@babel/parser/src/parse-error.ts:95:45)
+      at raise (/home/runner/GroomITManager/node_modules/@babel/parser/src/tokenizer/index.ts:1496:19)
+      at unexpected (/home/runner/GroomITManager/node_modules/@babel/parser/src/tokenizer/index.ts:1536:16)
+      at checkExpressionErrors (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/util.ts:258:12)
+      at parseMaybeAssign (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:341:12)
+      at parseMaybeAssign (/home/runner/GroomITManager/node_modules/@babel/parser/src/plugins/typescript/index.ts:3456:22)
+      at parseExpressionBase (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:221:23)
+      at callback (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:212:39)
+      at allowInAnd (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:3116:12)
+      at parseExpression (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:212:17)
+      at jsxParseExpressionContainer (/home/runner/GroomITManager/node_modules/@babel/parser/src/plugins/jsx/index.ts:369:33)
+      at jsxParseElementAt (/home/runner/GroomITManager/node_modules/@babel/parser/src/plugins/jsx/index.ts:493:24)
+      at jsxParseElementAt (/home/runner/GroomITManager/node_modules/@babel/parser/src/plugins/jsx/index.ts:476:34)
+      at jsxParseElement (/home/runner/GroomITManager/node_modules/@babel/parser/src/plugins/jsx/index.ts:552:19)
+      at parseExprAtom (/home/runner/GroomITManager/node_modules/@babel/parser/src/plugins/jsx/index.ts:566:21)
+      at parseExprSubscripts (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:709:23)
+      at parseUpdate (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:688:21)
+      at parseMaybeUnary (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:650:23)
+      at parseMaybeUnary (/home/runner/GroomITManager/node_modules/@babel/parser/src/plugins/typescript/index.ts:3584:20)
+      at parseMaybeUnaryOrPrivate (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:389:14)
+      at parseExprOps (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:401:23)
+      at parseMaybeConditional (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:356:23)
+      at parseMaybeAssign (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:298:21)
+      at fn (/home/runner/GroomITManager/node_modules/@babel/parser/src/plugins/typescript/index.ts:3437:23)
+      at tryParse (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/util.ts:174:20)
+      at parseMaybeAssign (/home/runner/GroomITManager/node_modules/@babel/parser/src/plugins/typescript/index.ts:3436:20)
+      at callback (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:252:12)
+      at allowInAnd (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:3116:12)
+      at parseMaybeAssignAllowIn (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:251:17)
+      at parseParenAndDistinguishExpression (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:1779:16)
+      at parseExprAtom (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:1126:21)
+      at parseExprAtom (/home/runner/GroomITManager/node_modules/@babel/parser/src/plugins/jsx/index.ts:576:22)
+      at parseExprSubscripts (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:709:23)
+      at parseUpdate (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:688:21)
+      at parseMaybeUnary (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:650:23)
+      at parseMaybeUnary (/home/runner/GroomITManager/node_modules/@babel/parser/src/plugins/typescript/index.ts:3584:20)
+      at parseMaybeUnaryOrPrivate (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:389:14)
+      at parseExprOps (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:401:23)
+      at parseMaybeConditional (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:356:23)
+      at parseMaybeAssign (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:298:21)
+      at parseMaybeAssign (/home/runner/GroomITManager/node_modules/@babel/parser/src/plugins/typescript/index.ts:3456:22)
+      at parseExpressionBase (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:221:23)
+      at callback (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:212:39)
+      at allowInAnd (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:3111:16)
+      at parseExpression (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/expression.ts:212:17)
+      at parseReturnStatement (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/statement.ts:1078:28)
+      at parseStatementContent (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/statement.ts:498:21)
+      at parseStatementContent (/home/runner/GroomITManager/node_modules/@babel/parser/src/plugins/typescript/index.ts:2906:20)
+      at parseStatementLike (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/statement.ts:437:17)
+      at parseStatementListItem (/home/runner/GroomITManager/node_modules/@babel/parser/src/parser/statement.ts:386:17)
