@@ -58,13 +58,32 @@ async function initializeFirebase(): Promise<boolean> {
         clientEmail,
         privateKey
       }),
-      databaseURL: `https://${projectId}.firebaseio.com`
-    });
+      databaseURL: 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
+    }, 'default-admin-app');
 
-    // Initialize Realtime Database
+    // Wait for database connection
+    const dbConnectTimeout = setTimeout(() => {
+      throw new Error('Database connection timeout after 10s');
+    }, 10000);
+
     const db = app.database();
-    await db.ref('.info/connected').once('value');
-    log('Firebase Realtime Database connection successful', 'info');
+    await new Promise((resolve, reject) => {
+      db.ref('.info/connected').on('value', (snapshot) => {
+        if (snapshot.val() === true) {
+          clearTimeout(dbConnectTimeout);
+          resolve(true);
+        }
+      }, (error) => {
+        clearTimeout(dbConnectTimeout);
+        reject(error);
+      });
+    }).catch(error => {
+      if (isDevelopment) {
+        console.warn('Database connection failed in development:', error);
+      } else {
+        throw error;
+      }
+    });
 
     if (isDevelopment) {
       await setupDevelopmentAdmin();
