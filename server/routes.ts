@@ -61,26 +61,35 @@ export function registerRoutes(app: Express) {
       
       // Get roles from Firebase
       const roleDefinitions = await getRoleDefinitions();
+      console.log('[ROLES] Retrieved role definitions:', roleDefinitions);
       
       if (!roleDefinitions) {
         console.error('[ROLES] No role definitions found');
-        return res.status(500).json({ 
-          message: "No roles found in the system",
-          code: "NO_ROLES_FOUND"
-        });
+        // Instead of error, return initial configs
+        const initialRoles = Object.entries(InitialRoleConfigs).map(([name, config]) => ({
+          name,
+          permissions: config.permissions,
+          isSystem: true,
+          description: '',
+          createdAt: Date.now(),
+          updatedAt: Date.now()
+        }));
+        console.log('[ROLES] Returning initial roles:', initialRoles);
+        return res.json(initialRoles);
       }
       
-      // Transform role definitions into the expected format and ensure system roles are included
+      // Transform role definitions into the expected format
       const roles = Object.entries(roleDefinitions).map(([name, role]: [string, any]) => ({
         name,
-        permissions: role.permissions || DefaultPermissions[name as keyof typeof DefaultPermissions] || [],
-        isSystem: role.isSystem || false,
+        permissions: Array.isArray(role.permissions) ? role.permissions : 
+          DefaultPermissions[name as keyof typeof DefaultPermissions] || [],
+        isSystem: role.isSystem || name in InitialRoleConfigs,
         description: role.description || '',
         createdAt: role.createdAt || Date.now(),
         updatedAt: role.updatedAt || Date.now()
       }));
       
-      // Add any missing system roles
+      // Ensure all system roles exist
       Object.entries(InitialRoleConfigs).forEach(([name, config]) => {
         if (!roles.find(r => r.name === name)) {
           roles.push({
@@ -110,12 +119,34 @@ export function registerRoutes(app: Express) {
   app.put("/api/roles/:roleName", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
     try {
       const { roleName } = req.params;
-      const { permissions } = req.body as { permissions: string[] };
+      const { permissions } = req.body as { permissions: unknown[] };
+
+      console.log(`[ROLES] Attempting to update role ${roleName} with permissions:`, permissions);
 
       if (!permissions || !Array.isArray(permissions)) {
         return res.status(400).json({
           message: "Invalid permissions format",
-          error: "Permissions must be an array"
+          error: "Permissions must be an array",
+          code: "INVALID_FORMAT"
+        });
+      }
+
+      // Early validation of role name
+      if (!Object.values(RoleTypes).includes(roleName as any)) {
+        return res.status(400).json({
+          message: "Invalid role name",
+          error: `Role ${roleName} is not a valid role type`,
+          validRoles: Object.values(RoleTypes),
+          code: "INVALID_ROLE"
+        });
+      }
+
+      // Prevent updating admin role
+      if (roleName === RoleTypes.admin) {
+        return res.status(403).json({
+          message: "Cannot modify admin role",
+          error: "The admin role permissions cannot be modified",
+          code: "ADMIN_ROLE_PROTECTED"
         });
       }
 
@@ -131,18 +162,17 @@ export function registerRoutes(app: Express) {
           message: "Some permissions were invalid",
           error: `Invalid permissions: ${invalidPerms.join(', ')}`,
           validPermissions: ALL_PERMISSIONS,
-          acceptedPermissions: validatedPermissions
+          acceptedPermissions: validatedPermissions,
+          code: "INVALID_PERMISSIONS"
         });
       }
 
-      // Update role definition in Firebase
-      const updatedRole = await updateRoleDefinition(roleName, validatedPermissions);
-
-      // For system roles, ensure core permissions are maintained
+      // For system roles, merge with default permissions and ensure core permissions are maintained
       let finalPermissions = [...validatedPermissions];
       if (roleName in DefaultPermissions) {
         const defaultPerms = DefaultPermissions[roleName as keyof typeof DefaultPermissions];
         finalPermissions = Array.from(new Set([...defaultPerms, ...validatedPermissions]));
+        console.log(`[ROLE-UPDATE] Merged permissions for ${roleName}:`, finalPermissions);
       }
 
       // Update role definition in Firebase
@@ -254,24 +284,23 @@ export function registerRoutes(app: Express) {
       }
 
       // Validate permissions if provided
+      let validatedPermissions: Permission[] | undefined;
       if (permissions) {
-        const allValidPermissions = new Set(
-          Object.values(DefaultPermissions).flat()
-        );
+        validatedPermissions = validatePermissions(permissions);
         
-        const invalidPermissions = permissions.filter(p => !Array.from(allValidPermissions).includes(p));
-        if (invalidPermissions.length > 0) {
+        if (validatedPermissions.length !== permissions.length) {
+          const invalidPerms = permissions.filter(p => !isValidPermission(p));
           return res.status(400).json({
             message: "Invalid permissions specified",
             code: "INVALID_PERMISSIONS",
-            invalidPermissions,
-            validPermissions: Array.from(allValidPermissions)
+            invalidPermissions: invalidPerms,
+            validPermissions: ALL_PERMISSIONS
           });
         }
       }
 
-      // Update user role with permissions
-      const result = await updateUserRole(userId, role, permissions);
+      // Update user role with validated permissions
+      const result = await updateUserRole(userId, role, validatedPermissions);
       
       console.log('[ROLE-UPDATE] Update successful:', result);
       

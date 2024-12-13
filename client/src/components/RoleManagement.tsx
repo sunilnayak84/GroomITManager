@@ -177,7 +177,9 @@ export function RoleManagement() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {isLoadingRoles ? (
           <div className="col-span-2 text-center py-4">Loading roles...</div>
-        ) : roles && roles.length > 0 ? (
+        ) : !roles ? (
+          <div className="col-span-2 text-center py-4">No roles found. Please check your connection.</div>
+        ) : roles.length > 0 ? (
           roles.map((role) => (
             <Card key={role.name} className="relative">
               <CardHeader>
