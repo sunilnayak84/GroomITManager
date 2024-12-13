@@ -182,8 +182,8 @@ export default function InventoryPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-7xl space-y-6 px-6 py-8">
-      <div className="relative h-48 rounded-xl overflow-hidden mb-6">
+    <div className="container mx-auto max-w-7xl space-y-6 px-6">
+      <div className="relative h-48 rounded-xl overflow-hidden bg-gradient-to-r from-primary/80 to-primary/20 mb-6">
         <img
           src="https://images.unsplash.com/photo-1516734212186-a967f81ad0d7"
           alt="Inventory Management"
@@ -199,14 +199,14 @@ export default function InventoryPage() {
 
       <ErrorBoundary fallback={<div>Error loading inventory</div>}>
         <div className="space-y-4">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mb-4">
             <Button
               onClick={() => {
                 setSelectedItem(null);
                 form.reset();
                 setShowItemDialog(true);
               }}
-              className="ml-auto h-12 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              className="ml-auto h-12 px-6"
             >
               <Plus className="mr-2 h-5 w-5" />
               Add New Item
