@@ -39,10 +39,17 @@ export function initializeFirebaseAdmin() {
     }
 
     // Initialize Firebase Admin SDK
+    // Initialize Firebase Admin SDK
+    // Format and validate private key
+    if (privateKey && !privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
+      privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----\n`;
+    }
+
+    // Configure Firebase Admin credentials
     const credential = admin.credential.cert({
       projectId: projectId || 'development-project',
       clientEmail: clientEmail || 'development@example.com',
-      privateKey: privateKey || '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9QFi8Lg3Xy+Vj\n-----END PRIVATE KEY-----\n'
+      privateKey: privateKey
     });
 
     firebaseAdmin = admin.initializeApp({
