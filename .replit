@@ -82,6 +82,10 @@ args = "PORT=3000 cd server && npm run dev"
 waitForPort = 3000
 
 [[ports]]
+localPort = 3000
+externalPort = 3001
+
+[[ports]]
 localPort = 5173
 externalPort = 80
 

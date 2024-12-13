@@ -19,29 +19,44 @@ function log(message: string, type: 'info' | 'error' | 'warn' = 'info') {
   console.log(`${formattedTime} [express] ${prefix} ${message}`);
 }
 
-// Initialize Firebase Admin if not in development mode
-if (process.env.NODE_ENV !== 'development') {
-  try {
+// Initialize Firebase Admin with development fallback
+try {
+  if (process.env.NODE_ENV === 'development') {
+    // Development mode - use mock credentials
+    if (!admin.apps.length) {
+      admin.initializeApp({
+        credential: admin.credential.cert({
+          projectId: 'dev-project',
+          clientEmail: 'dev@example.com',
+          privateKey: 'dummy-key'
+        } as admin.ServiceAccount)
+      });
+    }
+    log('Firebase Admin initialized in development mode', 'info');
+  } else {
+    // Production mode - use real credentials
     const serviceAccount = {
       projectId: process.env.FIREBASE_PROJECT_ID,
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
       privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n')
     };
 
-    if (serviceAccount.projectId && serviceAccount.clientEmail && serviceAccount.privateKey) {
+    if (!serviceAccount.projectId || !serviceAccount.clientEmail || !serviceAccount.privateKey) {
+      throw new Error('Missing Firebase credentials');
+    }
+
+    if (!admin.apps.length) {
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
       });
-      log('Firebase Admin initialized successfully', 'info');
-    } else {
-      log('Firebase credentials not found, running in development mode', 'warn');
     }
-  } catch (error) {
-    log(`Firebase initialization error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'warn');
-    log('Falling back to development mode', 'warn');
+    log('Firebase Admin initialized successfully', 'info');
   }
-} else {
-  log('Running in development mode - skipping Firebase initialization', 'info');
+} catch (error) {
+  log(`Firebase initialization error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'warn');
+  if (process.env.NODE_ENV !== 'development') {
+    process.exit(1); // Exit in production if Firebase fails to initialize
+  }
 }
 
 const app = express();
@@ -184,67 +199,26 @@ function setupGracefulShutdown(server: any) {
       log("Static file serving setup complete", 'info');
     }
 
-    // Start server with error handling
-    try {
-      await new Promise<void>((resolve, reject) => {
-        const serverInstance = server.listen(PORT, '0.0.0.0', () => {
-          log(`Server started successfully on port ${PORT}`, 'info');
-          log(`Server is accessible at http://0.0.0.0:${PORT}`, 'info');
-          
-          // Set a startup confirmation timeout
-          setTimeout(() => {
-            if (serverInstance.listening) {
-              log("Server confirmed listening", 'info');
-              resolve();
-            } else {
-              const err = new Error("Server failed to start listening within timeout");
-              log(err.message, 'error');
-              reject(err);
-            }
-          }, 1000);
-        });
-
-        serverInstance.on('error', (err: Error) => {
-          log(`Server startup error: ${err.message}`, 'error');
-          reject(err);
-        });
-
-        // Additional error handler
-        serverInstance.on('close', () => {
-          log("Server closed unexpectedly", 'error');
-        });
-      });
-    } catch (listenError: any) {
-      log(`Failed to start server: ${listenError.message}`, 'error');
-      if (listenError.code === 'EADDRINUSE') {
+    // Start server
+    server.listen(PORT, '0.0.0.0', () => {
+      log(`Server started successfully on port ${PORT}`, 'info');
+      log(`Server is accessible at http://0.0.0.0:${PORT}`, 'info');
+    }).on('error', (err: Error) => {
+      log(`Server startup error: ${err.message}`, 'error');
+      if (err.code === 'EADDRINUSE') {
         log("Port is already in use. Attempting forceful cleanup...", 'warn');
-        await terminateProcessOnPort(PORT);
-        // Try one more time
-        server.listen(PORT, '0.0.0.0', () => {
-          log(`Server listening on http://0.0.0.0:${PORT} (second attempt)`, 'info');
+        terminateProcessOnPort(PORT).then(() => {
+          server.listen(PORT, '0.0.0.0', () => {
+            log(`Server listening on http://0.0.0.0:${PORT} (second attempt)`, 'info');
+          });
         });
       } else {
-        throw listenError;
+        throw err;
       }
-    }
+    });
 
     // Setup graceful shutdown
-    const shutdown = async () => {
-      log("Received shutdown signal", 'warn');
-      server.close(() => {
-        log("HTTP server closed", 'info');
-        process.exit(0);
-      });
-
-      // Force shutdown after 10s
-      setTimeout(() => {
-        log("Could not close connections in time, forcefully shutting down", 'error');
-        process.exit(1);
-      }, 10000);
-    };
-
-    process.on('SIGTERM', shutdown);
-    process.on('SIGINT', shutdown);
+    setupGracefulShutdown(server);
 
   } catch (error: any) {
     log(`Failed to start server: ${error.message}`, 'error');

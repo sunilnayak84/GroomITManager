@@ -8,34 +8,40 @@ import { eq } from "drizzle-orm";
 let firebaseAdmin: admin.app.App | undefined;
 
 function initializeFirebaseAdmin() {
-  // Skip Firebase Admin initialization in development mode
-  if (process.env.NODE_ENV === 'development') {
-    console.log('Running in development mode - skipping Firebase Admin initialization');
-    return undefined;
-  }
-
   if (!firebaseAdmin) {
     try {
-      // Check for required environment variables only in production
+      // In development mode, use dummy credentials
+      if (process.env.NODE_ENV === 'development') {
+        if (!admin.apps.length) {
+          firebaseAdmin = admin.initializeApp({
+            credential: admin.credential.cert({
+              projectId: 'dev-project',
+              clientEmail: 'dev@example.com',
+              privateKey: 'dummy-key'
+            } as admin.ServiceAccount)
+          });
+        } else {
+          firebaseAdmin = admin.app();
+        }
+        console.log('Firebase Admin initialized in development mode');
+        return firebaseAdmin;
+      }
+
+      // Production mode initialization
       const requiredEnvVars = [
         'FIREBASE_PROJECT_ID',
         'FIREBASE_CLIENT_EMAIL',
-        'FIREBASE_PRIVATE_KEY',
-        'FIREBASE_STORAGE_BUCKET'
+        'FIREBASE_PRIVATE_KEY'
       ];
 
       const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
       if (missingEnvVars.length > 0) {
-        console.warn(`Missing Firebase environment variables: ${missingEnvVars.join(', ')}`);
-        console.warn('Running in limited mode without Firebase Admin');
-        return undefined;
+        throw new Error(`Missing Firebase environment variables: ${missingEnvVars.join(', ')}`);
       }
 
-      // Prepare service account with proper error handling
       const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
       if (!privateKey) {
-        console.warn('Invalid FIREBASE_PRIVATE_KEY format, running without Firebase Admin');
-        return undefined;
+        throw new Error('Invalid FIREBASE_PRIVATE_KEY format');
       }
 
       const serviceAccount = {
@@ -44,17 +50,18 @@ function initializeFirebaseAdmin() {
         privateKey: privateKey
       };
 
-      // Initialize Firebase Admin SDK
-      firebaseAdmin = admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-        storageBucket: process.env.FIREBASE_STORAGE_BUCKET
-      });
+      if (!admin.apps.length) {
+        firebaseAdmin = admin.initializeApp({
+          credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
+        });
+      } else {
+        firebaseAdmin = admin.app();
+      }
 
       console.log('Firebase Admin SDK initialized successfully');
     } catch (error) {
-      console.warn('Failed to initialize Firebase Admin:', error);
-      console.warn('Running without Firebase Admin functionality');
-      return undefined;
+      console.error('Firebase Admin initialization error:', error);
+      throw error;
     }
   }
   return firebaseAdmin;
@@ -138,11 +145,14 @@ export async function setUserRole(userId: string, role: 'admin' | 'staff' | 'rec
     }
 
     // Set custom claims including role and timestamp
-    await admin.auth().setCustomUserClaims(userId, {
+    // Set admin-specific claims
+    const claims = {
       role,
-      permissions: role === 'admin' ? ['all'] : [],
+      permissions: role === 'admin' ? ['all'] : role === 'staff' ? ['manage_appointments', 'view_customers'] : ['view_appointments'],
       updatedAt: new Date().toISOString()
-    });
+    };
+
+    await admin.auth().setCustomUserClaims(userId, claims);
 
     console.log(`Role ${role} set for user ${userId} (${userRecord.email})`);
     return true;
