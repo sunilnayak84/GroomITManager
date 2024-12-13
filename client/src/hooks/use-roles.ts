@@ -265,8 +265,14 @@ export function useRoles() {
   });
 
   const updateRoleMutation = useMutation({
-    mutationFn: updateRole,
-    onSuccess: () => {
+    mutationFn: async (role: Role) => {
+      console.log('[ROLES] Updating role:', role);
+      const result = await updateRole(role);
+      console.log('[ROLES] Update result:', result);
+      return result;
+    },
+    onSuccess: (data) => {
+      console.log('[ROLES] Role updated successfully:', data);
       queryClient.invalidateQueries({ queryKey: ['roles'] });
       toast({
         title: 'Success',
@@ -274,6 +280,7 @@ export function useRoles() {
       });
     },
     onError: (error: Error) => {
+      console.error('[ROLES] Error updating role:', error);
       toast({
         title: 'Error',
         description: error.message,
