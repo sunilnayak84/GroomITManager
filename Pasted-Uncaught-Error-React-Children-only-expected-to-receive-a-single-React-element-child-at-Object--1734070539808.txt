@@ -1,0 +1,120 @@
+Uncaught Error: React.Children.only expected to receive a single React element child.
+    at Object.onlyChild [as only] (chunk-OHY7G46N.js?v=bb2901ca:760:19)
+    at chunk-7GGLAJHR.js?v=bb2901ca:61:64
+    at renderWithHooks (chunk-GNC7SI6A.js?v=bb2901ca:11548:26)
+    at updateForwardRef (chunk-GNC7SI6A.js?v=bb2901ca:14325:28)
+    at beginWork (chunk-GNC7SI6A.js?v=bb2901ca:15946:22)
+    at HTMLUnknownElement.callCallback2 (chunk-GNC7SI6A.js?v=bb2901ca:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-GNC7SI6A.js?v=bb2901ca:3699:24)
+    at invokeGuardedCallback (chunk-GNC7SI6A.js?v=bb2901ca:3733:39)
+    at beginWork$1 (chunk-GNC7SI6A.js?v=bb2901ca:19765:15)
+    at performUnitOfWork (chunk-GNC7SI6A.js?v=bb2901ca:19198:20)
+onlyChild @ chunk-OHY7G46N.js?v=bb2901ca:760
+(anonymous) @ chunk-7GGLAJHR.js?v=bb2901ca:61
+renderWithHooks @ chunk-GNC7SI6A.js?v=bb2901ca:11548
+updateForwardRef @ chunk-GNC7SI6A.js?v=bb2901ca:14325
+beginWork @ chunk-GNC7SI6A.js?v=bb2901ca:15946
+callCallback2 @ chunk-GNC7SI6A.js?v=bb2901ca:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=bb2901ca:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=bb2901ca:3733
+beginWork$1 @ chunk-GNC7SI6A.js?v=bb2901ca:19765
+performUnitOfWork @ chunk-GNC7SI6A.js?v=bb2901ca:19198
+workLoopSync @ chunk-GNC7SI6A.js?v=bb2901ca:19137
+renderRootSync @ chunk-GNC7SI6A.js?v=bb2901ca:19116
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=bb2901ca:18874
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=bb2901ca:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=bb2901ca:18627Understand this errorAI
+chunk-OHY7G46N.js?v=bb2901ca:760 Uncaught Error: React.Children.only expected to receive a single React element child.
+    at Object.onlyChild [as only] (chunk-OHY7G46N.js?v=bb2901ca:760:19)
+    at chunk-7GGLAJHR.js?v=bb2901ca:61:64
+    at renderWithHooks (chunk-GNC7SI6A.js?v=bb2901ca:11548:26)
+    at updateForwardRef (chunk-GNC7SI6A.js?v=bb2901ca:14325:28)
+    at beginWork (chunk-GNC7SI6A.js?v=bb2901ca:15946:22)
+    at HTMLUnknownElement.callCallback2 (chunk-GNC7SI6A.js?v=bb2901ca:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-GNC7SI6A.js?v=bb2901ca:3699:24)
+    at invokeGuardedCallback (chunk-GNC7SI6A.js?v=bb2901ca:3733:39)
+    at beginWork$1 (chunk-GNC7SI6A.js?v=bb2901ca:19765:15)
+    at performUnitOfWork (chunk-GNC7SI6A.js?v=bb2901ca:19198:20)
+onlyChild @ chunk-OHY7G46N.js?v=bb2901ca:760
+(anonymous) @ chunk-7GGLAJHR.js?v=bb2901ca:61
+renderWithHooks @ chunk-GNC7SI6A.js?v=bb2901ca:11548
+updateForwardRef @ chunk-GNC7SI6A.js?v=bb2901ca:14325
+beginWork @ chunk-GNC7SI6A.js?v=bb2901ca:15946
+callCallback2 @ chunk-GNC7SI6A.js?v=bb2901ca:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=bb2901ca:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=bb2901ca:3733
+beginWork$1 @ chunk-GNC7SI6A.js?v=bb2901ca:19765
+performUnitOfWork @ chunk-GNC7SI6A.js?v=bb2901ca:19198
+workLoopSync @ chunk-GNC7SI6A.js?v=bb2901ca:19137
+renderRootSync @ chunk-GNC7SI6A.js?v=bb2901ca:19116
+recoverFromConcurrentError @ chunk-GNC7SI6A.js?v=bb2901ca:18736
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=bb2901ca:18879
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=bb2901ca:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=bb2901ca:18627Understand this errorAI
+chunk-GNC7SI6A.js?v=bb2901ca:14032 The above error occurred in the <SlotClone> component:
+
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-7GGLAJHR.js?v=bb2901ca:52:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-7GGLAJHR.js?v=bb2901ca:33:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/src/components/ui/form.tsx:127:9
+    at div
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/src/components/ui/form.tsx:71:6
+    at Controller (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-YGGBEVKP.js?v=bb2901ca:323:35)
+    at FormField (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/src/components/ui/form.tsx:32:6)
+    at form
+    at div
+    at FormProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-YGGBEVKP.js?v=bb2901ca:103:11)
+    at div
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-HXY2Y4R7.js?v=bb2901ca:41:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-LS5PQBHG.js?v=bb2901ca:61:7
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-7GGLAJHR.js?v=bb2901ca:52:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-7GGLAJHR.js?v=bb2901ca:33:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-HXY2Y4R7.js?v=bb2901ca:41:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-P4V2RSVK.js?v=bb2901ca:47:5
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-42GMZ6MK.js?v=bb2901ca:232:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-42GMZ6MK.js?v=bb2901ca:155:58
+    at Presence (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-LGU5NK5Z.js?v=bb2901ca:24:11)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-42GMZ6MK.js?v=bb2901ca:146:64
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-7GGLAJHR.js?v=bb2901ca:52:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-7GGLAJHR.js?v=bb2901ca:33:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-HXY2Y4R7.js?v=bb2901ca:41:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-LS5PQBHG.js?v=bb2901ca:260:22
+    at Presence (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-LGU5NK5Z.js?v=bb2901ca:24:11)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-BIT4GNDH.js?v=bb2901ca:38:15)
+    at DialogPortal (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-42GMZ6MK.js?v=bb2901ca:109:11)
+    at _c3 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/src/components/ui/dialog.tsx:49:12)
+    at AppointmentForm (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/src/components/AppointmentForm.tsx:55:43)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-BIT4GNDH.js?v=bb2901ca:38:15)
+    at Dialog (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/chunk-42GMZ6MK.js?v=bb2901ca:50:5)
+    at div
+    at div
+    at div
+    at div
+    at div
+    at AppointmentsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/src/pages/AppointmentsPage.tsx:37:41)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/wouter.js?v=bb2901ca:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/wouter.js?v=bb2901ca:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/react-error-boundary.js?v=bb2901ca:18:5)
+    at main
+    at div
+    at div
+    at div
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/src/components/Layout.tsx:21:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/src/main.tsx:85:31)
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/@tanstack_react-query.js?v=bb2901ca:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/node_modules/.vite/deps/react-error-boundary.js?v=bb2901ca:18:5)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+logCapturedError @ chunk-GNC7SI6A.js?v=bb2901ca:14032
+callback @ chunk-GNC7SI6A.js?v=bb2901ca:14078
+callCallback @ chunk-GNC7SI6A.js?v=bb2901ca:11248
+commitUpdateQueue @ chunk-GNC7SI6A.js?v=bb2901ca:11265
+commitLayoutEffectOnFiber @ chunk-GNC7SI6A.js?v=bb2901ca:17075
+commitLayoutMountEffects_complete @ chunk-GNC7SI6A.js?v=bb2901ca:17980
+commitLayoutEffects_begin @ chunk-GNC7SI6A.js?v=bb2901ca:17969
+commitLayoutEffects @ chunk-GNC7SI6A.js?v=bb2901ca:17920
+commitRootImpl @ chunk-GNC7SI6A.js?v=bb2901ca:19353
+commitRoot @ chunk-GNC7SI6A.js?v=bb2901ca:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=bb2901ca:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=bb2901ca:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=bb2901ca:18627Understand this errorAI
