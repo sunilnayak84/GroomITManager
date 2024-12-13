@@ -375,7 +375,7 @@ export default function CustomersPage() {
   }
 
   return (
-    <div className="flex-1 p-8">
+    <div className="container mx-auto max-w-7xl space-y-6 px-6 py-8">
       <div className="relative h-48 rounded-xl overflow-hidden bg-gradient-to-r from-blue-500 to-purple-600 mb-6">
         <img
           src="https://images.unsplash.com/photo-1573497620053-ea5300f94f21"
