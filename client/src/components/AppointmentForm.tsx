@@ -36,18 +36,24 @@ import { useWorkingHours } from '../hooks/use-working-hours';
 import type { WorkingDays } from "@/lib/schema";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { format } from 'date-fns';
+import { useNotifications } from '@/hooks/use-notifications';
+import { useUser } from '@/hooks/use-user';
 
 interface AppointmentFormProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
+  const { user } = useUser();
+  const { createNotification } = useNotifications(user?.id || '');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
+
   const { data: appointments, addAppointment, isTimeSlotAvailable } = useAppointments();
   const { pets } = usePets();
   const { services } = useServices();
   const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [validationError, setValidationError] = useState<string | null>(null);
+  
 
   const { staffMembers, isLoading: isLoadingStaff } = useStaff();
   const availableGroomers = staffMembers.filter(user => user.isGroomer && user.isActive);
@@ -594,6 +600,19 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                 <FormLabel>Notes</FormLabel>
                 <FormControl>
                   <Input {...field} value={field.value ?? ''} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="customerId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Customer ID</FormLabel>
+                <FormControl>
+                  <Input {...field} type="hidden" value={user?.id || ''} /> {/* Added hidden input for customer ID */}
                 </FormControl>
                 <FormMessage />
               </FormItem>
