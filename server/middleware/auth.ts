@@ -84,17 +84,62 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
   }
 }
 
-export function requireRole(roles: string[]) {
+export function requireRole(roles: ('admin' | 'staff' | 'receptionist')[]) {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
-      return res.status(401).json({ message: 'Authentication required' });
+      return res.status(401).json({ 
+        message: 'Authentication required',
+        code: 'AUTH_REQUIRED'
+      });
     }
 
-    if (!roles.includes(req.user.role)) {
+    if (!roles.includes(req.user.role as any)) {
       return res.status(403).json({ 
         message: 'Access denied. Insufficient permissions.',
+        code: 'INSUFFICIENT_ROLE',
         requiredRoles: roles,
         currentRole: req.user.role
+      });
+    }
+
+    // Allow admin to access everything
+    if (req.user.role === 'admin') {
+      return next();
+    }
+
+    // Staff can access their own branch only
+    if (req.user.role === 'staff' && req.params.branchId) {
+      if (req.user.branchId?.toString() !== req.params.branchId) {
+        return res.status(403).json({
+          message: 'Access denied. You can only access your assigned branch.',
+          code: 'BRANCH_ACCESS_DENIED'
+        });
+      }
+    }
+
+    next();
+  };
+}
+
+// Helper middleware for checking specific permissions
+export function requirePermission(permission: string) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return res.status(401).json({ 
+        message: 'Authentication required',
+        code: 'AUTH_REQUIRED'
+      });
+    }
+
+    if (req.user.role === 'admin') {
+      return next(); // Admin has all permissions
+    }
+
+    if (!req.user.permissions?.includes(permission)) {
+      return res.status(403).json({
+        message: `Access denied. Missing required permission: ${permission}`,
+        code: 'INSUFFICIENT_PERMISSION',
+        requiredPermission: permission
       });
     }
 

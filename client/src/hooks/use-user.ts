@@ -8,11 +8,15 @@ import {
   type User as FirebaseUser
 } from 'firebase/auth';
 
+type UserRole = 'admin' | 'staff' | 'receptionist';
+
 type AuthUser = {
   id: string;
   email: string;
-  role: string;
+  role: UserRole;
   name: string;
+  permissions?: string[];
+  branchId?: number;
 }
 
 async function loginWithFirebase(credentials: { email: string; password: string }): Promise<AuthUser> {
@@ -23,11 +27,18 @@ async function loginWithFirebase(credentials: { email: string; password: string 
       credentials.password
     );
     
+    // Get custom claims from Firebase user
+    const tokenResult = await user.getIdTokenResult();
+    const role = (tokenResult.claims.role as UserRole) || 'staff';
+    const permissions = tokenResult.claims.permissions as string[] || [];
+
     return {
       id: user.uid,
       email: user.email!,
       name: user.displayName || user.email!,
-      role: 'staff' // You might want to store this in Firebase custom claims
+      role,
+      permissions,
+      branchId: tokenResult.claims.branchId as number
     };
   } catch (error: any) {
     throw new Error(error.message);
@@ -42,12 +53,19 @@ function useFirebaseUser() {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
           unsubscribe();
           if (user) {
-            resolve({
-              id: user.uid,
-              email: user.email!,
-              name: user.displayName || user.email!,
-              role: 'staff'
-            });
+            // Get custom claims from Firebase user
+            user.getIdTokenResult().then(tokenResult => {
+              const role = (tokenResult.claims.role as UserRole) || 'staff';
+              const permissions = tokenResult.claims.permissions as string[] || [];
+              resolve({
+                id: user.uid,
+                email: user.email!,
+                name: user.displayName || user.email!,
+                role,
+                permissions,
+                branchId: tokenResult.claims.branchId as number
+              });
+            })
           } else {
             resolve(null);
           }
