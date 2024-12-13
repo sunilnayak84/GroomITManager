@@ -60,8 +60,16 @@ export default function ProtectedRoute({
   }
 
   // Show children only if authenticated and authorized
-  if (!user || (allowedRoles.length > 0 && !allowedRoles.includes(user.role as any))) {
+  if (!user) {
     return null;
+  }
+
+  // Additional check for role-based access
+  if (allowedRoles.length > 0) {
+    const userRole = user.role as 'admin' | 'manager' | 'staff' | 'receptionist';
+    if (!allowedRoles.includes(userRole)) {
+      return null;
+    }
   }
 
   return <>{children}</>;

@@ -37,7 +37,7 @@ async function initializeFirebase(): Promise<boolean> {
       clientEmail: isDevelopment ? 'dev@example.com' : process.env.FIREBASE_CLIENT_EMAIL,
       privateKey: isDevelopment 
         ? '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9QFi8Lg3Xy+Vj\nVGQiXhKlLS0xGS4YgW4UF9l4A5H4KlUZ8JfVhqggXmVBITM1Mj1nW7R02eCGXjJ4\nF1HGJ9REh/Qr0kH4NxjWnFxvj4VhZk+zRhSmPEm80u7KnXWW0v0idTzVqeVwnVZF\nX8WAIhN7CfXQZGl1xd/ftUU9EBGgm/ZY7DTqf4TGI3LWxG1dDlh4l2Y=\n-----END PRIVATE KEY-----\n'
-        : process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n')
+        : process.env.FIREBASE_PRIVATE_KEY ? JSON.parse(process.env.FIREBASE_PRIVATE_KEY) : undefined
     };
 
     // Validate credentials in production
