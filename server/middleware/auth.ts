@@ -8,11 +8,12 @@ declare global {
     interface Request {
       user?: {
         uid: string;
-        email: string;
+        email: string | null;
         role: keyof typeof RoleTypes;
         permissions: string[];
         displayName: string;
-      } | null;
+      };
+      firebaseUser?: admin.auth.UserRecord;
     }
   }
 }
@@ -58,14 +59,15 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
     if (!firebaseApp) {
       console.error('[AUTH] Firebase Admin not initialized');
       if (process.env.NODE_ENV === 'development') {
-        console.log('[AUTH] Using development mock user');
+        // In development, allow access with admin role
         req.user = {
-          uid: 'mock-uid',
+          uid: 'dev-admin',
           email: 'admin@groomery.in',
           displayName: 'Admin User',
-          role: RoleTypes.admin,
-          permissions: DefaultPermissions[RoleTypes.admin]
+          role: 'admin',
+          permissions: DefaultPermissions.admin
         };
+        console.log('[AUTH] Using development admin account');
         return next();
       }
       return res.status(500).json({ 
@@ -89,12 +91,15 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
         console.warn(`[AUTH] No role found for user ${user.email}, using default staff role`);
       }
       
+      const role = (userRole?.role || 'staff') as keyof typeof RoleTypes;
+      const permissions = userRole?.permissions || DefaultPermissions[role];
+      
       req.user = {
         uid: user.uid,
         email: user.email || null,
         displayName: user.displayName || user.email?.split('@')[0] || 'Unknown User',
-        role: (userRole?.role as keyof typeof RoleTypes) || RoleTypes.staff,
-        permissions: userRole?.permissions || DefaultPermissions[RoleTypes.staff]
+        role,
+        permissions
       };
       
       console.log(`[AUTH] User authenticated with role: ${req.user.role}`);
@@ -126,29 +131,44 @@ export function requireRole(allowedRoles: Array<keyof typeof RoleTypes>) {
     }
 
     // Admin has access to everything
-    if (req.user.role === RoleTypes.admin) {
+    if (req.user.role === 'admin') {
       return next();
     }
 
-    // For manager role, check restricted paths
-    if (req.user.role === RoleTypes.manager && isRestrictedPath(req.path)) {
+    // Check if the path is restricted to admin only
+    if (isRestrictedPath(req.path) && req.user.role !== 'admin') {
       return res.status(403).json({
-        message: 'Managers cannot access user management features',
-        code: 'MANAGER_RESTRICTED'
-      });
-    }
-
-    // Check if user's role is allowed
-    if (!allowedRoles.includes(req.user.role)) {
-      return res.status(403).json({
-        message: `Access denied. Required roles: ${allowedRoles.join(', ')}`,
-        code: 'INSUFFICIENT_ROLE',
-        requiredRoles: allowedRoles,
+        message: 'This feature is restricted to administrators only',
+        code: 'ADMIN_ONLY',
         currentRole: req.user.role
       });
     }
 
-    next();
+    // Check if user's role is explicitly allowed
+    if (allowedRoles.includes(req.user.role)) {
+      return next();
+    }
+
+    // For manager role, check specific permissions
+    if (req.user.role === 'manager' && !isRestrictedPath(req.path)) {
+      return next();
+    }
+
+    // For staff role, check specific permissions
+    if (req.user.role === 'staff') {
+      const staffAllowedPaths = ['/api/stats', '/api/appointments', '/api/customers'];
+      if (staffAllowedPaths.some(path => req.path.startsWith(path))) {
+        return next();
+      }
+    }
+
+    // Deny access if none of the above conditions are met
+    return res.status(403).json({
+      message: `Access denied. Required roles: ${allowedRoles.join(', ')}`,
+      code: 'INSUFFICIENT_ROLE',
+      requiredRoles: allowedRoles,
+      currentRole: req.user.role
+    });
   };
 }
 
@@ -163,7 +183,7 @@ export function requirePermission(permission: string) {
     }
 
     // Admin has all permissions
-    if (req.user.role === RoleTypes.admin) {
+    if (req.user.role === 'admin') {
       return next();
     }
 
@@ -193,7 +213,7 @@ export function validateUserManagement(req: Request, res: Response, next: NextFu
   }
 
   // Only admin can manage users
-  if (req.user.role !== RoleTypes.admin) {
+  if (req.user.role !== 'admin') {
     return res.status(403).json({
       message: 'Only administrators can manage users',
       code: 'ADMIN_REQUIRED',
@@ -217,12 +237,12 @@ export function validateManagerOperation(operation: Permission | Permission[]) {
     }
 
     // Admin has full access
-    if (req.user.role === RoleTypes.admin) {
+    if (req.user.role === 'admin') {
       return next();
     }
 
     // Enforce manager role
-    if (req.user.role !== RoleTypes.manager) {
+    if (req.user.role !== 'manager') {
       return res.status(403).json({
         message: 'This operation requires manager privileges',
         code: 'MANAGER_REQUIRED',

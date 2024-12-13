@@ -48,16 +48,21 @@ async function initializeFirebase(): Promise<boolean> {
 
 async function setupDevelopmentAdmin(): Promise<void> {
   try {
+    const firebaseApp = await getFirebaseAdmin();
+    if (!firebaseApp) {
+      throw new Error('Firebase Admin not initialized');
+    }
+
     const adminEmail = 'admin@groomery.in';
     let adminUser;
     
     // Try to get existing admin
     try {
-      adminUser = await admin.auth().getUserByEmail(adminEmail);
+      adminUser = await firebaseApp.auth().getUserByEmail(adminEmail);
       log('Existing admin user found', 'info');
     } catch (error) {
       // Create new admin user if doesn't exist
-      adminUser = await admin.auth().createUser({
+      adminUser = await firebaseApp.auth().createUser({
         email: adminEmail,
         emailVerified: true,
         displayName: 'Admin User',
@@ -67,7 +72,7 @@ async function setupDevelopmentAdmin(): Promise<void> {
     }
 
     // Get database reference
-    const db = admin.database();
+    const db = firebaseApp.database();
     const userRolesRef = db.ref(`roles/${adminUser.uid}`);
 
     // Set admin role in Realtime Database
@@ -99,7 +104,7 @@ async function setupDevelopmentAdmin(): Promise<void> {
         'all'
       ],
       isAdmin: true,
-      updatedAt: admin.database.ServerValue.TIMESTAMP
+      updatedAt: new Date().getTime()
     });
 
     log('Admin role set in database successfully', 'info');
@@ -109,7 +114,7 @@ async function setupDevelopmentAdmin(): Promise<void> {
     log('Admin role data:', roleSnapshot.val());
 
     // Force token refresh
-    await admin.auth().revokeRefreshTokens(adminUser.uid);
+    await firebaseApp.auth().revokeRefreshTokens(adminUser.uid);
     log('Refresh tokens revoked to force token update', 'info');
 
   } catch (error) {
@@ -248,7 +253,14 @@ async function startServer({ port, retryCount = 0 }: ServerStartOptions): Promis
       await terminateProcessOnPort(port);
     } catch (error) {
       log(`Port cleanup warning: ${error instanceof Error ? error.message : 'Unknown error'}`, 'warn');
+      // Continue even if port cleanup fails in development
+      if (process.env.NODE_ENV !== 'development') {
+        throw error;
+      }
     }
+
+    // Add a small delay after port cleanup
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Create HTTP server
     const server = createServer(app);
