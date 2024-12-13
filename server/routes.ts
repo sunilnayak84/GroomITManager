@@ -8,7 +8,11 @@ import {
   listAllUsers,
   getRoleDefinitions,
   updateRoleDefinition,
-  InitialRoleConfigs 
+  InitialRoleConfigs,
+  Permission,
+  validatePermissions,
+  isValidPermission,
+  ALL_PERMISSIONS
 } from "./firebase";
 import admin from "firebase-admin";
 
@@ -106,15 +110,39 @@ export function registerRoutes(app: Express) {
   app.put("/api/roles/:roleName", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
     try {
       const { roleName } = req.params;
-      const { permissions, description } = req.body;
+      const { permissions } = req.body as { permissions: string[] };
 
-      console.log(`[ROLES] Updating role ${roleName} with:`, { permissions, description });
+      if (!permissions || !Array.isArray(permissions)) {
+        return res.status(400).json({
+          message: "Invalid permissions format",
+          error: "Permissions must be an array"
+        });
+      }
+
+      console.log(`[ROLES] Updating role ${roleName} with permissions:`, permissions);
+
+      // Validate and ensure type safety of permissions
+      const validatedPermissions = validatePermissions(permissions);
+      
+      if (validatedPermissions.length !== permissions.length) {
+        const invalidPerms = permissions.filter(p => !isValidPermission(p));
+        console.warn('[ROLES] Invalid permissions detected:', invalidPerms);
+        return res.status(400).json({
+          message: "Some permissions were invalid",
+          error: `Invalid permissions: ${invalidPerms.join(', ')}`,
+          validPermissions: ALL_PERMISSIONS,
+          acceptedPermissions: validatedPermissions
+        });
+      }
+
+      // Update role definition in Firebase
+      const updatedRole = await updateRoleDefinition(roleName, validatedPermissions);
 
       // For system roles, ensure core permissions are maintained
-      let finalPermissions = [...permissions];
+      let finalPermissions = [...validatedPermissions];
       if (roleName in DefaultPermissions) {
         const defaultPerms = DefaultPermissions[roleName as keyof typeof DefaultPermissions];
-        finalPermissions = Array.from(new Set([...defaultPerms, ...permissions]));
+        finalPermissions = Array.from(new Set([...defaultPerms, ...validatedPermissions]));
       }
 
       // Update role definition in Firebase
@@ -147,7 +175,7 @@ export function registerRoutes(app: Express) {
       console.log(`[ROLES] Successfully updated ${roleName} role and user permissions`);
       res.json({ 
         message: `Role ${roleName} updated successfully`,
-        ...updatedRole,
+        role: updatedRole,
         permissions: finalPermissions
       });
     } catch (error) {
