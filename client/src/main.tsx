@@ -1,12 +1,18 @@
 import { StrictMode, lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { Switch, Route } from "wouter";
-import "./index.css";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "./lib/queryClient";
+import { ErrorBoundary } from "react-error-boundary";
+import { Loader2 } from "lucide-react";
 import { Toaster } from "@/components/ui/toaster";
+import { queryClient } from "./lib/queryClient";
+import { useUser } from "./hooks/use-user";
+
+// Component imports
+import Layout from "./components/Layout";
+
+// Page imports
 import HomePage from "./pages/HomePage";
-import AuthPage from "./pages/AuthPage";
 import AppointmentsPage from "./pages/AppointmentsPage";
 import CustomersPage from "./pages/CustomersPage";
 import PetsPage from "./pages/PetsPage";
@@ -16,8 +22,9 @@ import RoleManagementPage from "./pages/RoleManagementPage";
 import AuthPage from "./pages/AuthPage";
 import { Loader2 } from "lucide-react";
 import { useUser } from "./hooks/use-user";
-import Layout from "./components/Layout";
-import { ErrorBoundary } from "react-error-boundary";
+
+// Styles
+import "./index.css";
 
 // Loading component for suspense fallback
 function LoadingSpinner() {
