@@ -182,7 +182,7 @@ export default function InventoryPage() {
   };
 
   return (
-    <div className="flex-1 p-8">
+    <div className="container mx-auto max-w-7xl space-y-6 px-6 py-8">
       <div className="relative h-48 rounded-xl overflow-hidden mb-6">
         <img
           src="https://images.unsplash.com/photo-1516734212186-a967f81ad0d7"
