@@ -39,10 +39,12 @@ export const DefaultPermissions = {
   ]
 };
 
+let firebaseApp: admin.app.App | null = null;
+
 // Initialize Firebase Admin
-export function initializeFirebaseAdmin() {
-  if (admin.apps.length) {
-    return admin.apps[0];
+export async function initializeFirebaseAdmin() {
+  if (firebaseApp) {
+    return firebaseApp;
   }
 
   const isDevelopment = process.env.NODE_ENV === 'development';
@@ -65,17 +67,17 @@ export function initializeFirebaseAdmin() {
     }
 
     // Initialize Firebase Admin SDK
-    const app = admin.initializeApp({
+    firebaseApp = admin.initializeApp({
       credential: admin.credential.cert({
         projectId: projectId || 'development-project',
         clientEmail: clientEmail || 'development@example.com',
         privateKey: privateKey || '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9QFi8Lg3Xy+Vj\n-----END PRIVATE KEY-----\n'
       }),
-      databaseURL: 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
+      databaseURL: 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app/'
     });
 
     // Test Realtime Database connection
-    const db = getDatabase(app);
+    const db = getDatabase(firebaseApp);
     await new Promise((resolve, reject) => {
       const connectRef = db.ref('.info/connected');
       const timeout = setTimeout(() => {
@@ -96,40 +98,33 @@ export function initializeFirebaseAdmin() {
       });
     });
 
-    // Test database connection
-    const db = getDatabase(app);
-    db.ref('.info/connected').on('value', (snapshot) => {
-      if (snapshot.val() === true) {
-        console.log('🟢 Connected to Firebase Realtime Database');
-      } else {
-        console.log('🔴 Disconnected from Firebase Realtime Database');
-      }
-    });
-
     console.log('🟢 Firebase Admin SDK initialized successfully');
 
     if (isDevelopment) {
-      setupDevelopmentAdmin(app).catch(error => {
+      await setupDevelopmentAdmin(firebaseApp).catch(error => {
         console.warn('⚠️ Failed to setup development admin:', error);
       });
     }
 
-    return app;
+    return firebaseApp;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('🔴 Error initializing Firebase Admin:', errorMessage);
     
     if (isDevelopment) {
       console.warn('⚠️ Continuing in development mode despite Firebase error');
-      return undefined;
+      return null;
     }
     throw error;
   }
 }
 
-// Get Firebase Admin instance
-export function getFirebaseAdmin() {
-  return initializeFirebaseAdmin();
+// Get or initialize Firebase Admin instance
+export async function getFirebaseAdmin(): Promise<admin.app.App | null> {
+  if (!firebaseApp) {
+    firebaseApp = await initializeFirebaseAdmin();
+  }
+  return firebaseApp;
 }
 
 // Get user role and permissions from Realtime Database
