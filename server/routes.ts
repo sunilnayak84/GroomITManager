@@ -1,20 +1,100 @@
 import { type Express } from "express";
-import { setupAuth, setUserRole } from "./auth";
 import { db } from "../db";
 import { appointments, customers, pets, users } from "@db/schema";
-import { and, eq, gte, count, sql } from "drizzle-orm";
+import { and, count, eq, gte } from "drizzle-orm";
 import admin from "firebase-admin";
-import { authenticateFirebase, requireRole, validateManagerOperation } from './middleware/auth';
+import { sql } from "drizzle-orm";
+import { authenticateFirebase, requireRole, validateManagerOperation } from "./middleware/auth";
+import { RolePermissions } from './auth';
 
 export function registerRoutes(app: Express) {
+  // Health check endpoint
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "healthy" });
+  });
+
+  // Role Management endpoints - Admin only
+  app.get("/api/roles", authenticateFirebase, requireRole(['admin']), async (req, res) => {
+    try {
+      // Return all roles and their permissions
+      const roles = Object.entries(RolePermissions).map(([role, permissions]) => ({
+        name: role,
+        permissions: permissions
+      }));
+      res.json(roles);
+    } catch (error) {
+      console.error('Error fetching roles:', error);
+      res.status(500).json({ error: "Failed to fetch roles" });
+    }
+  });
+
+  // Firebase User Management endpoints - Admin only
+  app.get("/api/firebase-users", authenticateFirebase, requireRole(['admin']), async (req, res) => {
+    try {
+      const { pageSize = 100, pageToken } = req.query;
+      
+      // List users from Firebase
+      const listUsersResult = await admin.auth().listUsers(Number(pageSize), pageToken as string);
+      
+      // Get custom claims for role information
+      const users = await Promise.all(
+        listUsersResult.users.map(async (user) => {
+          const customClaims = (await admin.auth().getUser(user.uid)).customClaims || {};
+          return {
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            role: customClaims.role || 'staff',
+            permissions: customClaims.permissions || []
+          };
+        })
+      );
+
+      res.json({
+        users,
+        pageToken: listUsersResult.pageToken
+      });
+    } catch (error) {
+      console.error('Error fetching Firebase users:', error);
+      res.status(500).json({ error: "Failed to fetch users" });
+    }
+  });
+
+  app.post("/api/firebase-users/:userId/role", authenticateFirebase, requireRole(['admin']), async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const { role } = req.body;
+
+      if (!role || !['admin', 'manager', 'staff', 'receptionist'].includes(role)) {
+        return res.status(400).json({ error: "Invalid role specified" });
+      }
+
+      // Get permissions for the role from our auth configuration
+      const permissions = RolePermissions[role] || [];
+
+      // Set custom claims in Firebase
+      await admin.auth().setCustomUserClaims(userId, {
+        role,
+        permissions,
+        updatedAt: new Date().toISOString()
+      });
+
+      res.json({ 
+        message: "Role updated successfully",
+        role,
+        permissions
+      });
+    } catch (error) {
+      console.error('Error updating user role:', error);
+      res.status(500).json({ error: "Failed to update user role" });
+    }
+  });
+
   // Setup protected routes with Firebase authentication
   const protectedRoutes = ['/api/appointments', '/api/customers', '/api/pets', '/api/stats'];
   app.use(protectedRoutes, authenticateFirebase);
 
   // Public routes
-  app.get("/api/health", (req, res) => {
-    res.json({ status: "ok" });
-  });
 
   // Get current user profile
   app.get("/api/me", authenticateFirebase, (req, res) => {
@@ -136,68 +216,8 @@ export function registerRoutes(app: Express) {
         message: error instanceof Error ? error.message : "Unknown error occurred"
       });
     }
-  // Firebase User Management endpoints - Admin only
-  app.get("/api/firebase-users", authenticateFirebase, requireRole(['admin']), async (req, res) => {
-    try {
-      const { pageSize = 100, pageToken } = req.query;
-      
-      // List users from Firebase
-      const listUsersResult = await admin.auth().listUsers(Number(pageSize), pageToken as string);
-      
-      // Get custom claims for role information
-      const users = await Promise.all(
-        listUsersResult.users.map(async (user) => {
-          const customClaims = (await admin.auth().getUser(user.uid)).customClaims || {};
-          return {
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName,
-            role: customClaims.role || 'staff',
-            permissions: customClaims.permissions || []
-          };
-        })
-      );
-
-      res.json({
-        users,
-        pageToken: listUsersResult.pageToken
-      });
-    } catch (error) {
-      console.error('Error fetching Firebase users:', error);
-      res.status(500).json({ error: "Failed to fetch users" });
-    }
   });
 
-  app.post("/api/firebase-users/:userId/role", authenticateFirebase, requireRole(['admin']), async (req, res) => {
-    try {
-      const { userId } = req.params;
-      const { role } = req.body;
-
-      if (!role || !['admin', 'manager', 'staff', 'receptionist'].includes(role)) {
-        return res.status(400).json({ error: "Invalid role specified" });
-      }
-
-      // Import RolePermissions from auth.ts
-      const { RolePermissions } = require('./auth');
-      const permissions = RolePermissions[role] || [];
-
-      // Set custom claims in Firebase
-      await admin.auth().setCustomUserClaims(userId, {
-        role,
-        permissions,
-        updatedAt: new Date().toISOString()
-      });
-
-      res.json({ 
-        message: "Role updated successfully",
-        role,
-        permissions
-      });
-    } catch (error) {
-      console.error('Error updating user role:', error);
-      res.status(500).json({ error: "Failed to update user role" });
-    }
-  });
   // Role management endpoints - Admin only
   app.get("/api/roles", authenticateFirebase, requireRole(['admin']), async (req, res) => {
     try {
@@ -264,50 +284,48 @@ export function registerRoutes(app: Express) {
       res.status(500).json({ error: "Failed to update role" });
     }
   });
-  });
 
-  // Dashboard stats - restricted to admin and staff
-// Manager-specific test endpoint
-app.get("/api/manager/branch-stats", 
-  authenticateFirebase, 
-  validateManagerOperation(['view_analytics', 'view_branch_performance']), 
-  async (req, res) => {
-    try {
-      // Example branch statistics
-      const branchStats = {
-        appointments: {
-          total: 150,
-          completed: 120,
-          cancelled: 10,
-          pending: 20
-        },
-        revenue: {
-          daily: 2500,
-          weekly: 15000,
-          monthly: 60000
-        },
-        services: {
-          popular: ['Basic Grooming', 'Nail Trimming', 'Bath & Brush'],
-          totalProvided: 450
-        },
-        inventory: {
-          lowStock: 5,
-          totalItems: 200
-        }
-      };
-      
-      res.json({
-        success: true,
-        data: branchStats
-      });
-    } catch (error) {
-      console.error('Error fetching branch stats:', error);
-      res.status(500).json({ 
-        error: "Failed to fetch branch statistics",
-        message: error instanceof Error ? error.message : "Unknown error"
-      });
-    }
-});
+  // Manager-specific test endpoint
+  app.get("/api/manager/branch-stats", 
+    authenticateFirebase, 
+    validateManagerOperation(['view_analytics', 'view_branch_performance']), 
+    async (req, res) => {
+      try {
+        // Example branch statistics
+        const branchStats = {
+          appointments: {
+            total: 150,
+            completed: 120,
+            cancelled: 10,
+            pending: 20
+          },
+          revenue: {
+            daily: 2500,
+            weekly: 15000,
+            monthly: 60000
+          },
+          services: {
+            popular: ['Basic Grooming', 'Nail Trimming', 'Bath & Brush'],
+            totalProvided: 450
+          },
+          inventory: {
+            lowStock: 5,
+            totalItems: 200
+          }
+        };
+        
+        res.json({
+          success: true,
+          data: branchStats
+        });
+      } catch (error) {
+        console.error('Error fetching branch stats:', error);
+        res.status(500).json({ 
+          error: "Failed to fetch branch statistics",
+          message: error instanceof Error ? error.message : "Unknown error"
+        });
+      }
+  });
   app.get("/api/stats", authenticateFirebase, requireRole(['admin', 'manager', 'staff']), validateManagerOperation('view_analytics'), async (req, res) => {
     try {
       const now = new Date();
@@ -443,3 +461,5 @@ app.get("/api/manager/branch-stats",
     }
   });
 }
+
+import { setUserRole } from "./auth";
