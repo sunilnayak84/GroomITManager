@@ -193,6 +193,8 @@ export function useRoles() {
   const { data: roles, isLoading: isLoadingRoles } = useQuery({
     queryKey: ['roles'],
     queryFn: fetchRoles,
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    refetchOnWindowFocus: true,
   });
 
   const { data: usersData, isLoading: isLoadingUsers, fetchNextPage, hasNextPage } = useInfiniteQuery({

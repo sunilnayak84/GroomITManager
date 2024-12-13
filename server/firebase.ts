@@ -20,19 +20,31 @@ export const ALL_PERMISSIONS = [
 ] as const;
 
 // Create a union type of all permissions
-export type Permission = (typeof ALL_PERMISSIONS)[number];
+export type Permission = typeof ALL_PERMISSIONS[number];
 
 // Create a Set of valid permissions for faster lookups
-const VALID_PERMISSIONS = new Set<Permission>(ALL_PERMISSIONS);
+const VALID_PERMISSIONS = new Set(ALL_PERMISSIONS);
 
 // Helper function to validate if a string is a valid permission
-export function isValidPermission(permission: string): permission is Permission {
-  return VALID_PERMISSIONS.has(permission as Permission);
+export function isValidPermission(permission: unknown): permission is Permission {
+  return typeof permission === 'string' && VALID_PERMISSIONS.has(permission as Permission);
 }
 
 // Helper function to validate an array of permissions
-export function validatePermissions(permissions: string[]): Permission[] {
-  const validPermissions = permissions.filter((p): p is Permission => isValidPermission(p));
+export function validatePermissions(permissions: unknown[]): Permission[] {
+  if (!Array.isArray(permissions)) {
+    console.warn('[PERMISSIONS] Invalid permissions format:', permissions);
+    return [];
+  }
+  
+  const validPermissions = permissions.filter((p): p is Permission => {
+    const isValid = isValidPermission(p);
+    if (!isValid) {
+      console.warn('[PERMISSIONS] Invalid permission:', p);
+    }
+    return isValid;
+  });
+  
   console.log('[PERMISSIONS] Validated permissions:', validPermissions);
   return validPermissions;
 }
@@ -40,11 +52,10 @@ export function validatePermissions(permissions: string[]): Permission[] {
 // Helper function to ensure type safety when getting permissions
 export function ensureValidPermissions(permissions: unknown): Permission[] {
   if (!Array.isArray(permissions)) {
+    console.warn('[PERMISSIONS] Invalid permissions input:', permissions);
     return [];
   }
-  return permissions.filter((p): p is Permission => 
-    typeof p === 'string' && isValidPermission(p)
-  );
+  return validatePermissions(permissions);
 }
 
 // Helper to ensure type safety when accessing DefaultPermissions
@@ -150,7 +161,6 @@ export const InitialRoleConfigs: Record<keyof typeof RoleTypes, Role> = {
 async function initializeRoles(app: admin.app.App) {
   const db = getDatabase(app);
   const rolesRef = db.ref('role-definitions');
-  const customRolesRef = db.ref('custom-roles');
   
   console.log('[ROLES] Starting role initialization...');
   
@@ -158,19 +168,26 @@ async function initializeRoles(app: admin.app.App) {
     // Check if roles are already initialized
     const snapshot = await rolesRef.once('value');
     const currentRoles = snapshot.val() || {};
-    const updates: Record<string, any> = {};
+    const updates: Record<string, Role> = {};
+
+    console.log('[ROLES] Current roles in database:', Object.keys(currentRoles));
     
     // Always ensure default roles exist with proper permissions
     Object.entries(InitialRoleConfigs).forEach(([roleName, roleConfig]) => {
+      const validatedPermissions = validatePermissions(roleConfig.permissions);
+      if (validatedPermissions.length !== roleConfig.permissions.length) {
+        console.error(`[ROLES] Invalid permissions in initial config for ${roleName}`);
+        return;
+      }
+      
       // Always update system roles to ensure they have the latest permissions
       console.log(`[ROLES] Checking role: ${roleName}`);
       updates[roleName] = {
-        ...roleConfig,
         name: roleName,
-        permissions: [...roleConfig.permissions], // Ensure we have a new array
+        permissions: validatedPermissions,
         isSystem: true,
-        createdAt: currentRoles[roleName]?.createdAt || admin.database.ServerValue.TIMESTAMP,
-        updatedAt: admin.database.ServerValue.TIMESTAMP
+        createdAt: currentRoles[roleName]?.createdAt || Date.now(),
+        updatedAt: Date.now()
       };
     });
     
@@ -246,13 +263,19 @@ export async function getRoleDefinitions(): Promise<Record<string, Role>> {
     
     // Transform roles to ensure consistent format and type safety
     const transformedRoles = Object.entries(roles).reduce<Record<string, Role>>((acc, [name, role]: [string, any]) => {
-      // Filter and validate permissions
-      const validPermissions = (Array.isArray(role.permissions) ? role.permissions : [])
-        .filter(isValidPermission);
+      // Validate permissions and ensure they are of type Permission[]
+      const validPermissions = validatePermissions(Array.isArray(role.permissions) ? role.permissions : []);
+      
+      // For system roles, merge with default permissions
+      let finalPermissions = validPermissions;
+      if (role.isSystem && name in DefaultPermissions) {
+        const defaultPerms = DefaultPermissions[name as keyof typeof RoleTypes];
+        finalPermissions = Array.from(new Set([...defaultPerms, ...validPermissions]));
+      }
       
       acc[name] = {
         name,
-        permissions: validPermissions,
+        permissions: finalPermissions,
         isSystem: role.isSystem || false,
         description: role.description || '',
         createdAt: role.createdAt || Date.now(),
@@ -290,11 +313,19 @@ export async function updateRoleDefinition(roleName: string, permissions: Permis
       throw new Error(`Role ${roleName} not found`);
     }
     
+    // Validate incoming permissions
+    const validatedPermissions = validatePermissions(permissions);
+    if (validatedPermissions.length !== permissions.length) {
+      console.warn('[ROLE-UPDATE] Some permissions were invalid:', 
+        permissions.filter(p => !isValidPermission(p)));
+      throw new Error('Invalid permissions provided');
+    }
+    
     // For system roles, ensure core permissions are maintained
-    let finalPermissions = [...permissions];
+    let finalPermissions: Permission[] = [...validatedPermissions];
     if (currentRole.isSystem && roleName in DefaultPermissions) {
       const defaultPerms = DefaultPermissions[roleName as keyof typeof DefaultPermissions];
-      const combinedPermissions = new Set([...defaultPerms, ...permissions]);
+      const combinedPermissions = new Set([...defaultPerms, ...validatedPermissions]);
       finalPermissions = Array.from(combinedPermissions) as Permission[];
       console.log('[ROLE-UPDATE] Merged with default permissions:', finalPermissions);
     }
@@ -477,24 +508,26 @@ export async function updateUserRole(uid: string, roleType: keyof typeof RoleTyp
       if (permissions.length !== customPermissions.length) {
         console.warn('[ROLE-UPDATE] Some custom permissions were invalid and filtered out');
         console.warn('Invalid permissions:', 
-          customPermissions.filter(p => !permissions.includes(p))
+          customPermissions.filter(p => !VALID_PERMISSIONS.has(p as Permission))
         );
       }
     } else {
       // Use default permissions if no custom permissions provided
-      permissions = getDefaultPermissions(roleType);
+      permissions = [...DefaultPermissions[roleType]];
     }
     
     // Ensure admin always has 'all' permission
     if (roleType === 'admin') {
-      permissions = Array.from(new Set([...permissions, 'all']));
+      permissions = Array.from(new Set([...permissions, 'all' as Permission]));
     }
     
     console.log(`[ROLE-UPDATE] Final permissions for ${roleType}:`, permissions);
     
     // For admin role, always include 'all' permission
     if (roleType === 'admin') {
-      permissions = [...new Set([...permissions, 'all'])];
+      // Ensure we're only adding valid Permission types
+      const adminPermissions: Permission[] = Array.from(new Set([...permissions, 'all' as Permission]));
+      permissions = adminPermissions;
     }
     
     console.log(`[ROLE-UPDATE] Updating role for ${uid} to ${roleType} with permissions:`, permissions);
@@ -561,12 +594,24 @@ async function setupDevelopmentAdmin(app: admin.app.App) {
     const roleRef = db.ref(`roles/${adminUser.uid}`);
     const timestamp = Date.now();
     
+    // Ensure admin permissions are properly validated
+    const adminPermissions = validatePermissions(DefaultPermissions[RoleTypes.admin]);
+    if (adminPermissions.length === 0) {
+      throw new Error('Invalid admin permissions configuration');
+    }
+    
     const adminData = {
       role: RoleTypes.admin,
-      permissions: DefaultPermissions[RoleTypes.admin],
+      permissions: adminPermissions,
       isAdmin: true,
       updatedAt: timestamp
     };
+    
+    // Validate admin permissions
+    if (!Array.isArray(adminPermissions) || adminPermissions.length === 0) {
+      console.error('[ROLES] Invalid admin permissions:', adminPermissions);
+      throw new Error('Invalid admin permissions configuration');
+    }
     
     await roleRef.set(adminData);
     console.log('🟢 Admin role data set:', adminData);
@@ -626,7 +671,7 @@ export async function listAllUsers(pageSize = 1000, pageToken?: string) {
         email: user.email,
         displayName: user.displayName || user.email?.split('@')[0] || 'Unknown User',
         role,
-        permissions: roleData?.permissions || DefaultPermissions[role],
+        permissions: roleData?.permissions || DefaultPermissions[role as keyof typeof RoleTypes] || [],
         disabled: user.disabled,
         lastSignInTime: user.metadata.lastSignInTime,
         creationTime: user.metadata.creationTime
