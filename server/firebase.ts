@@ -393,8 +393,12 @@ export async function initializeFirebaseAdmin() {
   console.log('🟢 Initializing Firebase in', isDevelopment ? 'development' : 'production', 'mode');
 
   try {
-    // In development mode, use default credentials if environment variables are missing
+    // Get Firebase credentials from environment variables
     let privateKey = process.env.FIREBASE_PRIVATE_KEY || '';
+    const projectId = process.env.FIREBASE_PROJECT_ID;
+    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+
+    // Proper private key formatting
     if (privateKey) {
       privateKey = privateKey.replace(/\\n/g, '\n').replace(/^['"]|['"]$/g, '');
       if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
@@ -402,39 +406,80 @@ export async function initializeFirebaseAdmin() {
       }
     }
 
-    const projectId = process.env.FIREBASE_PROJECT_ID;
-    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-
-    if (!isDevelopment && (!projectId || !clientEmail || !privateKey)) {
-      throw new Error('Missing required Firebase environment variables');
-    }
-
-    // Initialize Firebase Admin SDK with correct database URL
-    firebaseApp = admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: projectId || 'development-project',
-        clientEmail: clientEmail || 'development@example.com',
-        privateKey: privateKey || '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9QFi8Lg3Xy+Vj\n-----END PRIVATE KEY-----\n'
-      }),
-      databaseURL: 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app/'
+    console.log('🟢 Firebase credentials check:', {
+      projectId: projectId ? '✓' : '✗',
+      clientEmail: clientEmail ? '✓' : '✗',
+      privateKey: privateKey ? '✓' : '✗'
     });
 
-    // Test database connection
-    const db = getDatabase(firebaseApp);
-    await db.ref('.info/connected').once('value');
-
-    console.log('🟢 Firebase Admin SDK initialized successfully');
-
-    // Initialize roles in Firebase
-    await initializeRoles(firebaseApp);
-    
+    // In development mode, use default credentials if not provided
     if (isDevelopment) {
-      await setupDevelopmentAdmin(firebaseApp);
+      if (!projectId || !clientEmail || !privateKey) {
+        console.log('🟡 Using development credentials');
+        return admin.initializeApp({
+          credential: admin.credential.applicationDefault(),
+          databaseURL: 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app/'
+        });
+      }
+    } else {
+      // Validate credentials in production
+      if (!projectId || !clientEmail || !privateKey) {
+        throw new Error('Missing required Firebase environment variables in production mode');
+      }
     }
 
-    return firebaseApp;
+    // Initialize Firebase Admin SDK with proper error handling
+    try {
+      firebaseApp = admin.initializeApp({
+        credential: admin.credential.cert({
+          projectId: projectId || 'development-project',
+          clientEmail: clientEmail || 'development@example.com',
+          privateKey: privateKey || '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9QFi8Lg3Xy+Vj\n-----END PRIVATE KEY-----\n'
+        }),
+        databaseURL: 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app/'
+      });
+
+      console.log('🟢 Firebase Admin SDK initialized');
+
+      // Test database connection with timeout
+      const db = getDatabase(firebaseApp);
+      const connectionTimeout = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Database connection timeout')), 5000)
+      );
+      
+      await Promise.race([
+        db.ref('.info/connected').once('value'),
+        connectionTimeout
+      ]);
+
+      console.log('🟢 Firebase Realtime Database connected');
+
+      // Initialize roles with retries
+      let retries = 3;
+      while (retries > 0) {
+        try {
+          await initializeRoles(firebaseApp);
+          console.log('🟢 Roles initialized successfully');
+          break;
+        } catch (error) {
+          console.error(`⚠️ Role initialization attempt ${4 - retries} failed:`, error);
+          retries--;
+          if (retries === 0) throw error;
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
+
+      if (isDevelopment) {
+        await setupDevelopmentAdmin(firebaseApp);
+      }
+
+      return firebaseApp;
+    } catch (initError) {
+      console.error('🔴 Firebase initialization error:', initError);
+      throw initError;
+    }
   } catch (error) {
-    console.error('🔴 Error initializing Firebase Admin:', error);
+    console.error('🔴 Fatal Firebase Admin error:', error);
     if (isDevelopment) {
       console.warn('⚠️ Continuing in development mode despite Firebase error');
       return null;

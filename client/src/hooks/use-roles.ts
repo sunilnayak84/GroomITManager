@@ -220,8 +220,9 @@ export function useRoles() {
   const { data: roles, isLoading: isLoadingRoles } = useQuery({
     queryKey: ['roles'],
     queryFn: fetchRoles,
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    staleTime: 1000 * 60, // Cache for 1 minute
     refetchOnWindowFocus: true,
+    retry: 3,
   });
 
   const { data: usersData, isLoading: isLoadingUsers, fetchNextPage, hasNextPage } = useInfiniteQuery({
@@ -229,10 +230,12 @@ export function useRoles() {
     queryFn: ({ pageParam }) => fetchFirebaseUsers({ pageParam }),
     getNextPageParam: (lastPage: FirebaseUsersResponse) => lastPage.pageToken,
     initialPageParam: null as string | null,
+    retry: 3,
   });
 
   const updateUserRoleMutation = useMutation({
     mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
+      console.log('[ROLES] Updating user role:', { userId, role });
       await updateUserRole(userId, role);
       // Force token refresh after role update
       const auth = getAuth();
@@ -240,32 +243,17 @@ export function useRoles() {
         await auth.currentUser.getIdToken(true);
       }
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
+      console.log('[ROLES] User role update successful:', variables);
       queryClient.invalidateQueries({ queryKey: ['firebase-users'] });
+      queryClient.invalidateQueries({ queryKey: ['roles'] });
       toast({
         title: 'Success',
         description: 'User role updated successfully. Please log out and log back in to see the changes.',
       });
     },
     onError: (error: Error) => {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      });
-    },
-  });
-
-  const createRoleMutation = useMutation({
-    mutationFn: createRole,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['roles'] });
-      toast({
-        title: 'Success',
-        description: 'Role created successfully',
-      });
-    },
-    onError: (error: Error) => {
+      console.error('[ROLES] User role update error:', error);
       toast({
         title: 'Error',
         description: error.message,
@@ -276,23 +264,29 @@ export function useRoles() {
 
   const updateRoleMutation = useMutation({
     mutationFn: async (role: Role) => {
-      console.log('[ROLES] Updating role:', role);
+      console.log('[ROLES] Starting role update:', role);
       const result = await updateRole(role);
-      console.log('[ROLES] Update result:', result);
+      console.log('[ROLES] Role update result:', result);
       return result;
     },
     onSuccess: (data) => {
       console.log('[ROLES] Role updated successfully:', data);
-      // Invalidate both roles and firebase-users queries
-      queryClient.invalidateQueries({ queryKey: ['roles'] });
-      queryClient.invalidateQueries({ queryKey: ['firebase-users'] });
+      // Invalidate queries and refetch immediately
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['roles'] }),
+        queryClient.invalidateQueries({ queryKey: ['firebase-users'] })
+      ]).then(() => {
+        queryClient.refetchQueries({ queryKey: ['roles'] });
+        queryClient.refetchQueries({ queryKey: ['firebase-users'] });
+      });
+      
       toast({
         title: 'Success',
         description: 'Role updated successfully',
       });
     },
     onError: (error: Error) => {
-      console.error('[ROLES] Error updating role:', error);
+      console.error('[ROLES] Role update error:', error);
       toast({
         title: 'Error',
         description: error.message,
@@ -301,18 +295,31 @@ export function useRoles() {
     },
   });
 
-  // Update the createRoleMutation to also invalidate firebase-users
   const createRoleMutation = useMutation({
-    mutationFn: createRole,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['roles'] });
-      queryClient.invalidateQueries({ queryKey: ['firebase-users'] });
+    mutationFn: async (role: Role) => {
+      console.log('[ROLES] Creating new role:', role);
+      const result = await createRole(role);
+      console.log('[ROLES] Role creation result:', result);
+      return result;
+    },
+    onSuccess: (data) => {
+      console.log('[ROLES] Role created successfully:', data);
+      // Invalidate queries and refetch immediately
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['roles'] }),
+        queryClient.invalidateQueries({ queryKey: ['firebase-users'] })
+      ]).then(() => {
+        queryClient.refetchQueries({ queryKey: ['roles'] });
+        queryClient.refetchQueries({ queryKey: ['firebase-users'] });
+      });
+      
       toast({
         title: 'Success',
         description: 'Role created successfully',
       });
     },
     onError: (error: Error) => {
+      console.error('[ROLES] Role creation error:', error);
       toast({
         title: 'Error',
         description: error.message,

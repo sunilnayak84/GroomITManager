@@ -153,8 +153,6 @@ export function registerRoutes(app: Express) {
         });
       }
 
-      console.log(`[ROLES] Updating role ${roleName} with permissions:`, permissions);
-
       // Validate and ensure type safety of permissions
       const validatedPermissions = validatePermissions(permissions);
       
@@ -170,62 +168,81 @@ export function registerRoutes(app: Express) {
         });
       }
 
-      // For system roles, merge with default permissions and ensure core permissions are maintained
+      const currentRole = roleSnapshot.val();
+      
+      // For system roles, merge with default permissions
       let finalPermissions = [...validatedPermissions];
-      if (roleName in DefaultPermissions) {
+      if (currentRole.isSystem && roleName in DefaultPermissions) {
         const defaultPerms = DefaultPermissions[roleName as keyof typeof DefaultPermissions];
         finalPermissions = Array.from(new Set([...defaultPerms, ...validatedPermissions]));
-        console.log(`[ROLE-UPDATE] Merged permissions for ${roleName}:`, finalPermissions);
+        console.log(`[ROLE-UPDATE] Merged permissions for system role ${roleName}:`, finalPermissions);
       }
 
       // Update role definition in Firebase
-      const roleRef = db.ref(`role-definitions/${roleName}`);
+      const timestamp = Date.now();
       const updatedRole = {
+        ...currentRole,
         name: roleName,
         permissions: finalPermissions,
-        updatedAt: admin.database.ServerValue.TIMESTAMP
+        updatedAt: timestamp
       };
 
-      await roleRef.update(updatedRole);
+      // Store update in role history
+      const historyRef = db.ref(`role-history/${roleName}`);
+      await historyRef.push({
+        previousPermissions: currentRole.permissions,
+        newPermissions: finalPermissions,
+        timestamp,
+        updatedBy: req.user?.uid || 'unknown'
+      });
+
+      // Update role definition
+      await db.ref(`role-definitions/${roleName}`).update(updatedRole);
       console.log('[ROLES] Updated role definition:', updatedRole);
 
-      // Update all users with this role to have the new permissions
-      const auth = admin.auth();
-      const usersSnapshot = await db.ref('roles').once('value');
+      // Update all users with this role
+      const usersRef = db.ref('roles');
+      const usersSnapshot = await usersRef.once('value');
       const users = usersSnapshot.val() || {};
 
+      const auth = admin.auth();
       const updatePromises = Object.entries(users)
         .filter(([_, userData]: [string, any]) => userData.role === roleName)
         .map(async ([uid, _]) => {
-          const claims = {
-            role: roleName,
-            permissions: finalPermissions,
-            updatedAt: Date.now()
-          };
-          
-          await auth.setCustomUserClaims(uid, claims);
-          return db.ref(`roles/${uid}`).update({
-            permissions: finalPermissions,
-            updatedAt: Date.now()
-          });
+          try {
+            const claims = {
+              role: roleName,
+              permissions: finalPermissions,
+              updatedAt: timestamp
+            };
+            
+            await auth.setCustomUserClaims(uid, claims);
+            await usersRef.child(uid).update({
+              permissions: finalPermissions,
+              updatedAt: timestamp
+            });
+            
+            console.log(`[ROLES] Updated permissions for user ${uid}`);
+          } catch (error) {
+            console.error(`[ROLES] Failed to update user ${uid}:`, error);
+            // Continue with other updates even if one fails
+          }
         });
 
-      await Promise.all(updatePromises);
+      await Promise.allSettled(updatePromises);
 
-      console.log(`[ROLES] Successfully updated ${roleName} role and user permissions`);
+      console.log(`[ROLES] Successfully updated ${roleName} role and associated user permissions`);
       res.json({ 
         message: `Role ${roleName} updated successfully`,
-        role: {
-          ...updatedRole,
-          updatedAt: Date.now()
-        },
+        role: updatedRole,
         permissions: finalPermissions
       });
     } catch (error) {
       console.error('[ROLES] Error updating role:', error);
       res.status(500).json({
         message: "Failed to update role",
-        error: error instanceof Error ? error.message : "Unknown error"
+        error: error instanceof Error ? error.message : "Unknown error",
+        code: "ROLE_UPDATE_ERROR"
       });
     }
   });
@@ -233,8 +250,8 @@ export function registerRoutes(app: Express) {
   // Create new role
   app.post("/api/roles", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
     try {
-      const { name, permissions } = req.body;
-      console.log('[ROLES] Attempting to create role:', { name, permissions });
+      const { name, permissions, description } = req.body;
+      console.log('[ROLES] Attempting to create role:', { name, permissions, description });
 
       if (!name || !permissions) {
         return res.status(400).json({
@@ -283,25 +300,48 @@ export function registerRoutes(app: Express) {
         });
       }
 
+      const timestamp = Date.now();
       const newRole = {
         name,
         permissions: validatedPermissions,
+        description: description || '',
         isSystem: false,
-        createdAt: admin.database.ServerValue.TIMESTAMP,
-        updatedAt: admin.database.ServerValue.TIMESTAMP
+        createdAt: timestamp,
+        updatedAt: timestamp
       };
 
       // Create new role
       await roleRef.set(newRole);
 
+      // Create initial history entry
+      await db.ref(`role-history/${name}`).push({
+        action: 'created',
+        permissions: validatedPermissions,
+        timestamp,
+        createdBy: req.user?.uid || 'unknown'
+      });
+
       console.log(`[ROLES] Successfully created new role:`, newRole);
+      
+      // Fetch all roles to ensure consistency
+      const rolesSnapshot = await db.ref('role-definitions').once('value');
+      const roles = rolesSnapshot.val() || {};
+      
+      // Transform roles for response
+      const allRoles = Object.entries(roles).map(([roleName, role]: [string, any]) => ({
+        name: roleName,
+        permissions: role.permissions || [],
+        description: role.description || '',
+        isSystem: role.isSystem || false,
+        createdAt: role.createdAt || timestamp,
+        updatedAt: role.updatedAt || timestamp
+      }));
+
       res.json({
         message: `Role ${name} created successfully`,
-        role: {
-          ...newRole,
-          createdAt: Date.now(),
-          updatedAt: Date.now()
-        }
+        role: newRole,
+        // Return all roles to ensure UI is in sync
+        allRoles
       });
     } catch (error) {
       console.error('[ROLES] Error creating role:', error);
