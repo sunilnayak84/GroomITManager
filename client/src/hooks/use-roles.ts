@@ -182,26 +182,36 @@ async function updateRole(role: Role): Promise<Role> {
     throw new Error('User not authenticated');
   }
 
-  const token = await auth.currentUser.getIdToken(true);
-  console.log('[ROLES] Updating role:', role);
+  try {
+    const token = await auth.currentUser.getIdToken(true);
+    console.log('[ROLES] Updating role:', role);
 
-  const response = await fetch(`/api/roles/${role.name}`, {
-    method: 'PUT',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      permissions: role.permissions
-    }),
-  });
+    const response = await fetch(`/api/roles/${encodeURIComponent(role.name)}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: role.name,
+        permissions: role.permissions,
+        description: role.description
+      }),
+    });
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to update role');
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('[ROLES] Error updating role:', error);
+      throw new Error(error.message || 'Failed to update role');
+    }
+
+    const updatedRole = await response.json();
+    console.log('[ROLES] Role updated successfully:', updatedRole);
+    return updatedRole;
+  } catch (error) {
+    console.error('[ROLES] Error in updateRole:', error);
+    throw error;
   }
-
-  return response.json();
 }
 
 export function useRoles() {
@@ -273,7 +283,9 @@ export function useRoles() {
     },
     onSuccess: (data) => {
       console.log('[ROLES] Role updated successfully:', data);
+      // Invalidate both roles and firebase-users queries
       queryClient.invalidateQueries({ queryKey: ['roles'] });
+      queryClient.invalidateQueries({ queryKey: ['firebase-users'] });
       toast({
         title: 'Success',
         description: 'Role updated successfully',
@@ -281,6 +293,26 @@ export function useRoles() {
     },
     onError: (error: Error) => {
       console.error('[ROLES] Error updating role:', error);
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
+
+  // Update the createRoleMutation to also invalidate firebase-users
+  const createRoleMutation = useMutation({
+    mutationFn: createRole,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['roles'] });
+      queryClient.invalidateQueries({ queryKey: ['firebase-users'] });
+      toast({
+        title: 'Success',
+        description: 'Role created successfully',
+      });
+    },
+    onError: (error: Error) => {
       toast({
         title: 'Error',
         description: error.message,
