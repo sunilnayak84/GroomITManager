@@ -100,31 +100,75 @@ async function initializeFirebase(): Promise<boolean> {
 async function setupDevelopmentAdmin(): Promise<void> {
   try {
     const adminEmail = 'admin@groomery.in';
-    // Delete existing admin if exists
-    const existingUser = await admin.auth().getUserByEmail(adminEmail).catch(() => null);
-    if (existingUser) {
-      await admin.auth().deleteUser(existingUser.uid);
+    let adminUser;
+    
+    // Try to get existing admin
+    try {
+      adminUser = await admin.auth().getUserByEmail(adminEmail);
+      log('Existing admin user found', 'info');
+    } catch (error) {
+      // Create new admin user if doesn't exist
+      adminUser = await admin.auth().createUser({
+        email: adminEmail,
+        emailVerified: true,
+        displayName: 'Admin User',
+        password: 'admin123'
+      });
+      log('New admin user created', 'info');
     }
 
-    // Create new admin user
-    const adminUser = await admin.auth().createUser({
-      email: adminEmail,
-      emailVerified: true,
-      displayName: 'Admin User',
-      password: 'admin123'
-    });
-
-    // Set admin role
-    await admin.auth().setCustomUserClaims(adminUser.uid, {
+    // Set admin claims with full permissions
+    const adminClaims = {
       role: 'admin',
-      permissions: ['all'],
+      permissions: [
+        'manage_appointments',
+        'view_appointments',
+        'create_appointments',
+        'cancel_appointments',
+        'manage_customers',
+        'view_customers',
+        'create_customers',
+        'edit_customer_info',
+        'manage_services',
+        'view_services',
+        'create_services',
+        'edit_services',
+        'manage_inventory',
+        'view_inventory',
+        'update_stock',
+        'manage_consumables',
+        'manage_staff_schedule',
+        'view_staff_schedule',
+        'manage_own_schedule',
+        'view_analytics',
+        'view_reports',
+        'view_financial_reports',
+        'all'
+      ],
+      isAdmin: true,
       updatedAt: new Date().toISOString()
-    });
+    };
+
+    // Set or update admin role
+    await admin.auth().setCustomUserClaims(adminUser.uid, adminClaims);
+    log('Admin role and permissions set successfully', 'info');
     
-    log('Development admin user setup completed', 'info');
+    // Verify the claims were set
+    const userRecord = await admin.auth().getUser(adminUser.uid);
+    log(`Admin user claims set: ${JSON.stringify(userRecord.customClaims)}`, 'info');
+    
+    // Force token refresh
+    try {
+      await admin.auth().revokeRefreshTokens(adminUser.uid);
+      log('Refresh tokens revoked to force token update', 'info');
+    } catch (error) {
+      log('Warning: Could not revoke refresh tokens', 'warn');
+    }
+    
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     log(`Warning: Failed to setup admin user: ${errorMessage}`, 'warn');
+    throw error;
   }
 }
 
