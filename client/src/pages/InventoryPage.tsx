@@ -183,7 +183,7 @@ export default function InventoryPage() {
 
   return (
     <div className="container mx-auto max-w-7xl space-y-6 px-6">
-      <div className="relative h-48 rounded-xl overflow-hidden bg-gradient-to-r from-primary/80 to-primary/20 mb-6">
+      <div className="relative h-48 rounded-xl overflow-hidden bg-gradient-to-r from-primary/80 to-primary/20">
         <img
           src="https://images.unsplash.com/photo-1516734212186-a967f81ad0d7"
           alt="Inventory Management"
