@@ -289,10 +289,3 @@ startServer({ port: PORT }).catch(error => {
   log(`Fatal error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
   process.exit(1);
 });
-
-// Start the server
-const PORT = parseInt(process.env.PORT || '3000', 10);
-startServer(PORT).catch(error => {
-  log(`Fatal error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
-  process.exit(1);
-});
