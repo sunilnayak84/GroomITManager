@@ -86,7 +86,7 @@ export default function AppointmentsPage() {
   ];
 
   return (
-    <div className="flex-1 p-8">
+    <div className="container mx-auto max-w-7xl space-y-6 px-6">
       <div className="relative h-48 rounded-xl overflow-hidden bg-gradient-to-r from-purple-500/80 to-purple-500/20 mb-6">
         <img
           src="https://images.unsplash.com/photo-1727681200732-0086492c217d"
