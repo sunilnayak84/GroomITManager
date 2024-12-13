@@ -1,33 +1,42 @@
 import { Request, Response, NextFunction } from 'express';
 import admin from 'firebase-admin';
 
-import { FirebaseUser } from '../auth';
+import { FirebaseUser, RolePermissions } from '../auth';
 
 // We don't need to redeclare the namespace as it's already declared in auth.ts
 
 export async function authenticateFirebase(req: Request, res: Response, next: NextFunction) {
   try {
-    // Skip authentication for development mode or health check
-    if (process.env.NODE_ENV === 'development' || req.path === '/api/health') {
-      req.user = {
-        id: 'dev-user',
-        email: 'dev@example.com',
-        name: 'Developer',
-        role: 'admin',
-        branchId: 1
-      };
+    // Skip authentication for health check
+    if (req.path === '/api/health') {
       return next();
     }
 
-    // Also skip auth for development environment with auth header
-    if (process.env.NODE_ENV === 'development' && req.headers.authorization) {
+    // Development mode handling
+    if (process.env.NODE_ENV === 'development') {
+      // Use development admin user by default
       req.user = {
-        id: 'dev-user',
-        email: 'dev@example.com',
-        name: 'Developer',
+        id: 'dev-admin-uid',
+        email: 'admin@groomery.in',
+        name: 'Development Admin',
         role: 'admin',
-        branchId: 1
+        permissions: ['all']
       };
+
+      // Check for role override in headers for testing different roles
+      const roleHeader = req.headers['x-test-role'];
+      if (roleHeader && ['admin', 'manager', 'staff', 'receptionist'].includes(roleHeader as string)) {
+        const role = roleHeader as 'admin' | 'manager' | 'staff' | 'receptionist';
+        const permissions = RolePermissions[role] || [];
+        req.user = {
+          id: `dev-${role}-uid`,
+          email: `${role}@groomery.in`,
+          name: `Development ${role.charAt(0).toUpperCase() + role.slice(1)}`,
+          role,
+          permissions
+        };
+      }
+
       return next();
     }
 
@@ -86,44 +95,77 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
 
 export function requireRole(roles: ('admin' | 'staff' | 'receptionist' | 'manager')[]) {
   return (req: Request, res: Response, next: NextFunction) => {
-    if (!req.user) {
-      return res.status(401).json({ 
-        message: 'Authentication required',
-        code: 'AUTH_REQUIRED'
-      });
-    }
+    try {
+      if (!req.user) {
+        return res.status(401).json({ 
+          message: 'Authentication required',
+          code: 'AUTH_REQUIRED'
+        });
+      }
 
-    // Special handling for user management endpoints
-    if (req.path.includes('/api/users') && req.user.role !== 'admin') {
-      return res.status(403).json({
-        message: 'Access denied. Only administrators can manage users.',
-        code: 'USER_MANAGEMENT_RESTRICTED'
-      });
-    }
-
-    if (!roles.includes(req.user.role as any)) {
-      return res.status(403).json({ 
-        message: 'Access denied. Insufficient permissions.',
-        code: 'INSUFFICIENT_ROLE',
-        requiredRoles: roles,
-        currentRole: req.user.role
-      });
-    }
-
-    // Allow admin to access everything
-    if (req.user.role === 'admin') {
-      return next();
-    }
-
-    // Manager can access everything except user management
-    if (req.user.role === 'manager') {
-      if (!req.path.includes('/api/users')) {
+      // Allow admin to access everything
+      if (req.user.role === 'admin') {
         return next();
       }
-      return res.status(403).json({
-        message: 'Access denied. Managers cannot manage user roles.',
-        code: 'MANAGER_RESTRICTED'
-      });
+
+      // Special handling for user management endpoints
+      const userManagementPaths = ['/api/users', '/api/setup-admin', '/api/roles', '/api/auth/roles'];
+      const isUserManagementEndpoint = userManagementPaths.some(path => req.path.startsWith(path));
+
+      // Block managers from user management endpoints
+      if (isUserManagementEndpoint && req.user.role === 'manager') {
+        return res.status(403).json({
+          message: 'Access denied. Managers cannot access user management features.',
+          code: 'MANAGER_RESTRICTED'
+        });
+      }
+
+      if (!roles.includes(req.user.role)) {
+        return res.status(403).json({ 
+          message: 'Access denied. Insufficient permissions.',
+          code: 'INSUFFICIENT_ROLE',
+          requiredRoles: roles,
+          currentRole: req.user.role
+        });
+      }
+
+      // Additional manager role restrictions
+      if (req.user.role === 'manager') {
+      
+      try {
+        // Check if the request path starts with any restricted path
+        const isUserManagementEndpoint = MANAGER_RESTRICTED_PATHS.some(
+          path => req.path.startsWith(path)
+        );
+
+        // Additional checks for role modification operations
+        const isRestrictedOperation = 
+          (req.path === '/api/me' && req.method === 'PUT' && req.body?.role) ||
+          (req.path.includes('/api/staff/role') && ['POST', 'PUT', 'PATCH'].includes(req.method));
+
+        if (isUserManagementEndpoint || isRestrictedOperation) {
+          console.log(`[AUTH] Manager access denied to ${req.path} (${req.method})`);
+          return res.status(403).json({
+            status: 'error',
+            code: 'MANAGER_RESTRICTED',
+            message: 'Access denied. Managers cannot manage user roles.',
+            details: 'Managers have access to all features except user role management'
+          });
+        }
+
+        // Grant access to all other endpoints
+        console.log(`[AUTH] Manager access granted to ${req.path} (${req.method})`);
+        return next();
+      } catch (error) {
+        console.error('[AUTH] Error in manager role check:', error);
+        return res.status(500).json({
+          status: 'error',
+          code: 'AUTH_ERROR',
+          message: process.env.NODE_ENV === 'development' 
+            ? `Authorization error: ${error instanceof Error ? error.message : 'Unknown error'}`
+            : 'Internal server error during authorization check'
+        });
+      }
     }
 
     // Staff can access their own branch only

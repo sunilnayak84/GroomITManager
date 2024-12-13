@@ -31,6 +31,49 @@ declare global {
   }
 }
 
+// Define role permissions
+export const RolePermissions: Record<string, string[]> = {
+  admin: ['all'],
+  manager: [
+    'manage_appointments',
+    'manage_services',
+    'manage_inventory',
+    'view_reports',
+    'manage_staff_schedules',
+    'manage_customers',
+    'view_analytics',
+    'manage_service_packages',
+    'manage_notifications',
+    'manage_working_hours',
+    'view_all_branches',
+    'manage_pets',
+    'manage_consumables',
+    'view_staff'
+  ],
+  staff: [
+    'manage_appointments',
+    'view_customers',
+    'view_inventory',
+    'manage_own_schedule',
+    'view_pets'
+  ],
+  receptionist: [
+    'view_appointments',
+    'create_appointments',
+    'view_customers',
+    'create_customers',
+    'view_pets'
+  ]
+};
+
+// Define restricted endpoints for manager role
+export const MANAGER_RESTRICTED_ENDPOINTS = [
+  '/api/users',
+  '/api/setup-admin',
+  '/api/roles',
+  '/api/auth/roles'
+];
+
 // Export the type for use in other files
 export type AuthUser = FirebaseUser;
 
@@ -48,15 +91,18 @@ export async function createUserInDatabase(user: FirebaseUser) {
         email: user.email,
         name: user.name,
         phone: '', // Required field
-        role: (user.role === 'admin' || user.role === 'staff' || user.role === 'manager') ? user.role : 'staff' as const,
-        isGroomer: user.role === 'groomer',
+        role: (user.role === 'admin' || user.role === 'manager' || user.role === 'staff' || user.role === 'receptionist') 
+        ? user.role 
+        : 'staff' as const,
         isActive: true
       };
       await db.insert(users).values(userData);
 
-      if (process.env.NODE_ENV !== 'development' && firebaseAdmin) {
+      if (process.env.NODE_ENV !== 'development') {
+        const app = getFirebaseAdmin();
         await admin.auth().setCustomUserClaims(user.id, {
-          role: user.role
+          role: user.role,
+          permissions: RolePermissions[user.role] || []
         });
       }
     }
@@ -69,11 +115,11 @@ export async function createUserInDatabase(user: FirebaseUser) {
 }
 export async function setUserRole(userId: string, role: 'admin' | 'staff' | 'receptionist' | 'manager') {
   try {
-    console.log(`Setting role ${role} for user ${userId}`);
+    console.log(`[AUTH] Setting role ${role} for user ${userId}`);
 
     // For development mode or testing
     if (process.env.NODE_ENV === 'development') {
-      console.log(`Development mode - Role ${role} set for user ${userId}`);
+      console.log(`[AUTH] Development mode - Role ${role} set for user ${userId}`);
       return true;
     }
 
@@ -86,33 +132,35 @@ export async function setUserRole(userId: string, role: 'admin' | 'staff' | 'rec
       throw new Error('User not found in Firebase');
     }
 
-    // Define role-specific permissions
-    const permissions = {
-      admin: ['all'],
-      manager: [
-        'manage_appointments',
-        'manage_services',
-        'manage_inventory',
-        'view_reports',
-        'manage_staff_schedules',
-        'manage_customers',
-        'view_analytics',
-        'manage_service_packages',
-        'manage_notifications'
-      ],
-      staff: [
-        'manage_appointments',
-        'view_customers',
-        'view_inventory',
-        'manage_own_schedule'
-      ],
-      receptionist: [
-        'view_appointments',
-        'create_appointments',
-        'view_customers',
-        'create_customers'
-      ]
-    }[role] || ['view_appointments'];
+    // Get current claims
+    const currentClaims = (await admin.auth().getUser(userId)).customClaims || {};
+
+    // Role transition validation
+    if (currentClaims.role === 'admin') {
+      if (role !== 'admin') {
+        throw new Error('Cannot downgrade admin user');
+      }
+    }
+
+    // Special validation for manager role
+    if (role === 'manager') {
+      // Validate email domain or any other business rules
+      const email = userRecord.email?.toLowerCase() || '';
+      if (!email.endsWith('@groomery.in') && process.env.NODE_ENV !== 'development') {
+        throw new Error('Manager role requires a company email address');
+      }
+      
+      // Ensure manager can't modify admin users
+      if (currentClaims.role === 'admin') {
+        throw new Error('Cannot modify admin user roles');
+      }
+    }
+
+    // Get permissions from RolePermissions constant
+    const permissions = RolePermissions[role];
+    if (!permissions) {
+      throw new Error(`Invalid role: ${role}`);
+    }
 
     // Set custom claims including role, permissions and timestamp
     const claims = {
@@ -123,8 +171,13 @@ export async function setUserRole(userId: string, role: 'admin' | 'staff' | 'rec
 
     await admin.auth().setCustomUserClaims(userId, claims);
 
-    console.log(`Successfully set role ${role} for user ${userId} (${userRecord.email})`);
-    console.log('Assigned permissions:', permissions);
+    console.log(`[AUTH] Successfully set role ${role} for user ${userId} (${userRecord.email})`);
+    console.log('[AUTH] Assigned permissions:', permissions);
+    
+    // Update user in database if needed
+    await db.update(users)
+      .set({ role })
+      .where(eq(users.id, userId));
     
     return true;
   } catch (error) {
@@ -152,21 +205,6 @@ export function setupAuth(app: Express) {
       }
     }
 
-    // Initialize Firebase Admin
-    const firebaseApp = initializeFirebaseAdmin();
-    if (!firebaseApp) {
-      console.warn('Firebase Admin initialization failed, falling back to development mode');
-      app.use((req, res, next) => {
-        req.user = {
-          id: 'dev-user',
-          email: 'dev@example.com',
-          role: 'admin',
-          name: 'Developer'
-        };
-        next();
-      });
-      return;
-    }
 
     // Add authentication middleware
     app.use(async (req, res, next) => {
@@ -205,7 +243,7 @@ export function setupAuth(app: Express) {
           id: decodedToken.uid,
           email: decodedToken.email || '',
           name: decodedToken.name || decodedToken.email || '',
-          role: (existingUser?.role || 'staff') as 'admin' | 'manager' | 'staff'
+          role: (existingUser?.role || 'staff') as 'admin' | 'manager' | 'staff' | 'receptionist'
         };
 
         next();

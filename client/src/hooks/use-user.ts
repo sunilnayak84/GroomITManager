@@ -10,6 +10,41 @@ import {
 
 export type UserRole = 'admin' | 'manager' | 'staff' | 'receptionist';
 
+// Define permissions for each role
+export const RolePermissions = {
+  admin: ['all'],
+  manager: [
+    'manage_appointments',
+    'manage_services',
+    'manage_inventory',
+    'view_reports',
+    'manage_staff_schedules',
+    'manage_customers',
+    'view_analytics',
+    'manage_service_packages',
+    'manage_notifications',
+    'manage_working_hours',
+    'view_all_branches',
+    'manage_pets',
+    'manage_consumables',
+    'view_staff'
+  ],
+  staff: [
+    'manage_appointments',
+    'view_customers',
+    'view_inventory',
+    'manage_own_schedule',
+    'view_pets'
+  ],
+  receptionist: [
+    'view_appointments',
+    'create_appointments',
+    'view_customers',
+    'create_customers',
+    'view_pets'
+  ]
+} as const;
+
 type AuthUser = {
   id: string;
   email: string;

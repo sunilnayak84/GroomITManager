@@ -6,11 +6,13 @@ import { useEffect } from 'react';
 interface ProtectedRouteProps {
   children: ReactNode;
   allowedRoles?: ('admin' | 'manager' | 'staff' | 'receptionist')[];
+  requiresUserManagement?: boolean;
 }
 
 export default function ProtectedRoute({ 
   children, 
-  allowedRoles = ['admin', 'manager', 'staff', 'receptionist']
+  allowedRoles = ['admin', 'manager', 'staff', 'receptionist'],
+  requiresUserManagement = false
 }: ProtectedRouteProps) {
   const { user, isLoading } = useUser();
   const [location, setLocation] = useLocation();
@@ -20,15 +22,26 @@ export default function ProtectedRoute({
       // Redirect to login if not authenticated
       setLocation('/login');
     } else if (!isLoading && user && allowedRoles.length > 0) {
+      // Special check for manager and user management pages
+      if (requiresUserManagement && user.role === 'manager') {
+        setLocation('/unauthorized');
+        return;
+      }
+      
       // Check if user has required role
       if (!allowedRoles.includes(user.role as any)) {
         setLocation('/unauthorized');
       }
     }
-  }, [user, isLoading, location, allowedRoles]);
+  }, [user, isLoading, location, allowedRoles, requiresUserManagement]);
 
   // Show nothing while loading
   if (isLoading) {
+    return null;
+  }
+
+  // Special check for user management pages
+  if (requiresUserManagement && user?.role === 'manager') {
     return null;
   }
 
