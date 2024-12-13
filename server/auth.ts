@@ -4,12 +4,77 @@ import { users } from "@db/schema";
 import { db } from "../db";
 import { eq } from "drizzle-orm";
 
-// Initialize Firebase Admin - simplified to use the instance from server/index.ts
+// Initialize Firebase Admin
+export async function initializeFirebase() {
+  if (admin.apps.length) {
+    console.log('Firebase Admin already initialized');
+    return admin;
+  }
+  
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  console.log(`Initializing Firebase in ${isDevelopment ? 'development' : 'production'} mode`);
+  
+  try {
+    const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+    if (!process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL || !privateKey) {
+      throw new Error('Missing required Firebase credentials');
+    }
+
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: privateKey
+      } as admin.ServiceAccount)
+    });
+
+    console.log('Firebase Admin SDK initialized successfully');
+
+    if (isDevelopment) {
+      await setupDevelopmentAdmin();
+    }
+
+    return admin;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`Firebase initialization error: ${errorMessage}`);
+    throw error;
+  }
+}
+
+async function setupDevelopmentAdmin() {
+  const adminEmail = 'admin@groomery.in';
+  try {
+    let adminUser = await admin.auth().getUserByEmail(adminEmail)
+      .catch(() => null);
+
+    if (!adminUser) {
+      adminUser = await admin.auth().createUser({
+        email: adminEmail,
+        emailVerified: true,
+        displayName: 'Admin User',
+        password: 'admin123'
+      });
+      console.log('Created development admin user');
+    }
+
+    await admin.auth().setCustomUserClaims(adminUser.uid, {
+      role: 'admin',
+      permissions: ['all'],
+      updatedAt: new Date().toISOString()
+    });
+    console.log('Updated admin user claims');
+  } catch (error) {
+    console.warn(`Development admin setup warning: ${error}`);
+  }
+}
+
+// Get Firebase Admin instance
 function getFirebaseAdmin() {
   if (!admin.apps.length) {
-    throw new Error('Firebase Admin not initialized. Initialize in server/index.ts first.');
+    throw new Error('Firebase Admin not initialized');
   }
-  return admin.app();
+  return admin;
 }
 
 // Type for our Firebase auth user
@@ -255,22 +320,17 @@ export async function setUserRole(userId: string, role: 'admin' | 'staff' | 'rec
 
 export function setupAuth(app: Express) {
   try {
-    // Initialize Firebase if not already initialized
-    if (!admin.apps.length) {
-      console.log('Initializing Firebase Admin');
-      const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
-      if (!process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL || !privateKey) {
-        throw new Error('Missing required Firebase credentials');
+    // Firebase initialization is now handled in server/index.ts
+    try {
+      if (!admin.apps.length) {
+        await initializeFirebase();
       }
-      admin.initializeApp({
-        credential: admin.credential.cert({
-          projectId: process.env.FIREBASE_PROJECT_ID,
-          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-          privateKey: privateKey
-        } as admin.ServiceAccount)
-      });
-      console.log('Firebase Admin initialized successfully');
+    } catch (error) {
+      console.error("Failed to initialize Firebase:", error);
+      throw new Error("Firebase initialization failed");
     }
+    
+    console.log('Setting up authentication middleware...');
 
 
     // Add authentication middleware

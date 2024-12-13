@@ -3,10 +3,15 @@ import { createRoot } from "react-dom/client";
 import { Switch, Route } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ErrorBoundary } from "react-error-boundary";
+// UI Components
 import { Loader2 } from "lucide-react";
+
+// Hooks
+import { useUser } from "./hooks/use-user";
+
 import { Toaster } from "@/components/ui/toaster";
 import { queryClient } from "./lib/queryClient";
-import { useUser } from "./hooks/use-user";
+
 
 // Component imports
 import Layout from "./components/Layout";
@@ -20,8 +25,6 @@ import ServicesPage from "./pages/ServicesPage";
 import InventoryPage from "./pages/InventoryPage";
 import RoleManagementPage from "./pages/RoleManagementPage";
 import AuthPage from "./pages/AuthPage";
-import { Loader2 } from "lucide-react";
-import { useUser } from "./hooks/use-user";
 
 // Styles
 import "./index.css";
