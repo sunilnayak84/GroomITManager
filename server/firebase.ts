@@ -165,70 +165,159 @@ async function initializeRoles(app: admin.app.App) {
   console.log('[ROLES] Starting role initialization...');
   
   try {
-    // Check if roles are already initialized
-    const snapshot = await rolesRef.once('value');
-    const currentRoles = snapshot.val() || {};
+    // Check if roles are already initialized with retry logic
+    let snapshot;
+    let retries = 3;
+    while (retries > 0) {
+      try {
+        snapshot = await rolesRef.once('value');
+        break;
+      } catch (error) {
+        console.warn(`[ROLES] Failed to fetch roles (attempt ${4 - retries}/3):`, error);
+        retries--;
+        if (retries === 0) throw error;
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
+
+    const currentRoles = (snapshot?.val() || {}) as Record<string, Role>;
     const updates: Record<string, Role> = {};
+    const timestamp = Date.now();
 
     console.log('[ROLES] Current roles in database:', Object.keys(currentRoles));
     
-    // Always ensure default roles exist with proper permissions
-    Object.entries(InitialRoleConfigs).forEach(([roleName, roleConfig]) => {
-      const validatedPermissions = validatePermissions(roleConfig.permissions);
-      if (validatedPermissions.length !== roleConfig.permissions.length) {
-        console.error(`[ROLES] Invalid permissions in initial config for ${roleName}`);
-        return;
-      }
-      
-      // Always update system roles to ensure they have the latest permissions
-      console.log(`[ROLES] Checking role: ${roleName}`);
-      updates[roleName] = {
-        name: roleName,
-        permissions: validatedPermissions,
-        isSystem: true,
-        createdAt: currentRoles[roleName]?.createdAt || Date.now(),
-        updatedAt: Date.now()
-      };
-    });
-    
-    if (Object.keys(updates).length > 0) {
-      await rolesRef.update(updates);
-      console.log('[ROLES] Successfully initialized/updated roles:', Object.keys(updates));
-      
-      // Update all users with system roles to have the latest permissions
-      const usersRef = db.ref('roles');
-      const usersSnapshot = await usersRef.once('value');
-      const users = usersSnapshot.val() || {};
-      
-      const userUpdates: Record<string, any> = {};
-      Object.entries(users).forEach(([uid, userData]: [string, any]) => {
-        const roleType = userData.role as keyof typeof InitialRoleConfigs;
-        if (InitialRoleConfigs[roleType]) {
-          userUpdates[`roles/${uid}/permissions`] = InitialRoleConfigs[roleType].permissions;
-          userUpdates[`roles/${uid}/updatedAt`] = admin.database.ServerValue.TIMESTAMP;
+    // First, ensure all system roles exist with proper permissions
+    for (const [roleName, roleConfig] of Object.entries(InitialRoleConfigs)) {
+      try {
+        const validatedPermissions = validatePermissions(roleConfig.permissions);
+        if (validatedPermissions.length !== roleConfig.permissions.length) {
+          console.error(`[ROLES] Invalid permissions in initial config for ${roleName}, using default permissions`);
+          continue;
         }
-      });
-      
-      if (Object.keys(userUpdates).length > 0) {
-        await db.ref().update(userUpdates);
-        console.log('[ROLES] Updated permissions for existing users');
+        
+        console.log(`[ROLES] Processing system role: ${roleName}`);
+        updates[roleName] = {
+          name: roleName,
+          permissions: validatedPermissions,
+          isSystem: true,
+          createdAt: currentRoles[roleName]?.createdAt || timestamp,
+          updatedAt: timestamp,
+          description: currentRoles[roleName]?.description || ''
+        };
+      } catch (error) {
+        console.error(`[ROLES] Error processing system role ${roleName}:`, error);
+        // Continue with other roles even if one fails
+        continue;
+      }
+    }
+
+    // Then, preserve any existing custom roles
+    for (const [roleName, roleData] of Object.entries(currentRoles)) {
+      try {
+        if (!InitialRoleConfigs[roleName as keyof typeof InitialRoleConfigs]) {
+          console.log(`[ROLES] Processing custom role: ${roleName}`);
+          const validatedPermissions = validatePermissions(roleData.permissions);
+          updates[roleName] = {
+            name: roleName,
+            permissions: validatedPermissions,
+            isSystem: false,
+            description: roleData.description || '',
+            createdAt: roleData.createdAt || timestamp,
+            updatedAt: timestamp
+          };
+        }
+      } catch (error) {
+        console.error(`[ROLES] Error processing custom role ${roleName}:`, error);
+        // Continue with other roles even if one fails
+        continue;
+      }
+    }
+    
+    // Prepare the updates in a transaction-safe way
+    if (Object.keys(updates).length > 0) {
+      try {
+        console.log('[ROLES] Applying updates for roles:', Object.keys(updates));
+        
+        // Use a transaction to ensure atomic updates
+        await db.ref().transaction(async (current) => {
+          if (!current) return updates;
+          
+          // Merge current roles with updates
+          const merged = { ...current['role-definitions'], ...updates };
+          return { 'role-definitions': merged };
+        });
+        
+        console.log('[ROLES] Successfully initialized/updated roles');
+        
+        // Update all users with system roles to have the latest permissions
+        let usersSnapshot;
+        try {
+          usersSnapshot = await db.ref('roles').once('value');
+        } catch (error) {
+          console.error('[ROLES] Error fetching users:', error);
+          throw error;
+        }
+        
+        const users = usersSnapshot.val() || {};
+        const userUpdates: Record<string, any> = {};
+        const timestamp = Date.now();
+        
+        // Process user updates
+        for (const [uid, userData] of Object.entries(users)) {
+          try {
+            const roleType = (userData as any).role as keyof typeof InitialRoleConfigs;
+            if (InitialRoleConfigs[roleType]) {
+              userUpdates[`roles/${uid}/permissions`] = InitialRoleConfigs[roleType].permissions;
+              userUpdates[`roles/${uid}/updatedAt`] = timestamp;
+            }
+          } catch (error) {
+            console.error(`[ROLES] Error processing user ${uid}:`, error);
+            continue;
+          }
+        }
+        
+        if (Object.keys(userUpdates).length > 0) {
+          try {
+            await db.ref().update(userUpdates);
+            console.log('[ROLES] Updated permissions for existing users:', Object.keys(userUpdates).length);
+          } catch (error) {
+            console.error('[ROLES] Error updating user permissions:', error);
+            // Continue despite user update errors
+          }
+        }
+      } catch (error) {
+        console.error('[ROLES] Error applying role updates:', error);
+        throw error;
       }
     } else {
-      console.log('[ROLES] All default roles already exist');
+      console.log('[ROLES] No role updates needed');
     }
     
-    // Verify roles were properly initialized
-    const verifySnapshot = await rolesRef.once('value');
-    const roles = verifySnapshot.val();
-    
-    if (!roles) {
-      throw new Error('Failed to initialize roles in Firebase');
+    // Verify roles were properly initialized with retries
+    let verifySnapshot;
+    let verifyRetries = 3;
+    while (verifyRetries > 0) {
+      try {
+        verifySnapshot = await rolesRef.once('value');
+        const roles = verifySnapshot.val();
+        
+        if (!roles) {
+          throw new Error('No roles found after initialization');
+        }
+        
+        console.log('[ROLES] Verification successful. Current roles:', Object.keys(roles));
+        return roles;
+      } catch (error) {
+        console.error(`[ROLES] Verification attempt ${4 - verifyRetries}/3 failed:`, error);
+        verifyRetries--;
+        if (verifyRetries === 0) throw error;
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
     }
     
-    console.log('[ROLES] Current roles in Firebase:', Object.keys(roles));
-    return roles;
+    throw new Error('Failed to verify roles after initialization');
   } catch (error) {
-    console.error('[ROLES] Error initializing roles:', error);
+    console.error('[ROLES] Fatal error initializing roles:', error);
     throw error;
   }
 }
@@ -293,9 +382,10 @@ export async function getRoleDefinitions(): Promise<Record<string, Role>> {
   }
 }
 
-// Function to update role definition in Firebase
+// Function to update role definition in Firebase with improved validation and atomic updates
 export async function updateRoleDefinition(roleName: string, permissions: Permission[]) {
   console.log('[ROLE-UPDATE] Starting role update for:', roleName);
+  
   const app = await getFirebaseAdmin();
   if (!app) {
     throw new Error('Firebase Admin not initialized');
@@ -306,6 +396,7 @@ export async function updateRoleDefinition(roleName: string, permissions: Permis
   const roleHistoryRef = db.ref(`role-history/${roleName}`);
   
   try {
+    // Get current role in a transaction to ensure atomicity
     const snapshot = await roleRef.once('value');
     const currentRole = snapshot.val();
     
@@ -313,71 +404,92 @@ export async function updateRoleDefinition(roleName: string, permissions: Permis
       throw new Error(`Role ${roleName} not found`);
     }
     
-    // Validate incoming permissions
-    const validatedPermissions = validatePermissions(permissions);
-    if (validatedPermissions.length !== permissions.length) {
-      console.warn('[ROLE-UPDATE] Some permissions were invalid:', 
-        permissions.filter(p => !isValidPermission(p)));
-      throw new Error('Invalid permissions provided');
+    // Prevent updates to system roles except by adding permissions
+    if (currentRole.isSystem && roleName in RoleTypes) {
+      const defaultPerms = DefaultPermissions[roleName as keyof typeof RoleTypes];
+      const missingRequired = defaultPerms.filter(p => !permissions.includes(p));
+      
+      if (missingRequired.length > 0) {
+        throw new Error(
+          `Cannot remove required permissions from system role: ${missingRequired.join(', ')}`
+        );
+      }
     }
     
-    // For system roles, ensure core permissions are maintained
+    // Validate all permissions
+    const validatedPermissions = validatePermissions(permissions);
+    if (validatedPermissions.length !== permissions.length) {
+      const invalidPerms = permissions.filter(p => !isValidPermission(p));
+      throw new Error(`Invalid permissions provided: ${invalidPerms.join(', ')}`);
+    }
+    
+    // For system roles, merge with default permissions
     let finalPermissions: Permission[] = [...validatedPermissions];
     if (currentRole.isSystem && roleName in DefaultPermissions) {
-      const defaultPerms = DefaultPermissions[roleName as keyof typeof DefaultPermissions];
-      const combinedPermissions = new Set([...defaultPerms, ...validatedPermissions]);
-      finalPermissions = Array.from(combinedPermissions) as Permission[];
-      console.log('[ROLE-UPDATE] Merged with default permissions:', finalPermissions);
+      const defaultPerms = DefaultPermissions[roleName as keyof typeof RoleTypes];
+      finalPermissions = Array.from(new Set([...defaultPerms, ...validatedPermissions]));
     }
     
     const timestamp = Date.now();
     
-    // Store previous state in history
-    await roleHistoryRef.push({
-      permissions: currentRole.permissions,
-      updatedAt: currentRole.updatedAt,
-      timestamp
-    });
-    
-    // Update role in Firebase
-    const updateData = {
+    // Prepare role update
+    const updatedRole = {
       name: roleName,
       permissions: finalPermissions,
       isSystem: currentRole.isSystem || false,
+      description: currentRole.description || '',
       updatedAt: timestamp
     };
     
-    console.log('[ROLE-UPDATE] Saving role data:', updateData);
-    await roleRef.update(updateData);
-    console.log(`[ROLE-UPDATE] Updated role ${roleName} with permissions:`, finalPermissions);
+    // Start a multi-path update transaction
+    const updates: Record<string, any> = {
+      [`role-definitions/${roleName}`]: updatedRole,
+      [`role-history/${roleName}/${timestamp}`]: {
+        previousPermissions: currentRole.permissions,
+        newPermissions: finalPermissions,
+        timestamp,
+        type: 'update'
+      }
+    };
     
-    // Update all users with this role
-    const usersRef = db.ref('roles');
-    const usersSnapshot = await usersRef.once('value');
+    // Get all users with this role
+    const usersSnapshot = await db.ref('roles').orderByChild('role').equalTo(roleName).once('value');
     const users = usersSnapshot.val() || {};
     
-    const userUpdates: Record<string, any> = {};
-    Object.entries(users).forEach(([uid, userData]: [string, any]) => {
-      if (userData.role === roleName) {
-        userUpdates[`roles/${uid}/permissions`] = finalPermissions;
-        userUpdates[`roles/${uid}/updatedAt`] = admin.database.ServerValue.TIMESTAMP;
-      }
+    // Add user updates to the transaction
+    Object.entries(users).forEach(([uid, _]) => {
+      updates[`roles/${uid}/permissions`] = finalPermissions;
+      updates[`roles/${uid}/updatedAt`] = timestamp;
     });
     
-    if (Object.keys(userUpdates).length > 0) {
-      await db.ref().update(userUpdates);
-      console.log(`[ROLE-UPDATE] Updated permissions for ${Object.keys(userUpdates).length} users`);
-    }
+    // Execute all updates in a single transaction
+    await db.ref().update(updates);
     
-    return { 
-      name: roleName, 
+    // Update custom claims for affected users
+    const updatePromises = Object.keys(users).map(uid =>
+      app.auth().setCustomUserClaims(uid, {
+        role: roleName,
+        permissions: finalPermissions,
+        updatedAt: timestamp
+      })
+    );
+    
+    await Promise.all(updatePromises);
+    
+    console.log(`[ROLE-UPDATE] Successfully updated role ${roleName} and ${Object.keys(users).length} users`);
+    
+    return {
+      name: roleName,
       permissions: finalPermissions,
       isSystem: currentRole.isSystem,
-      updatedAt: timestamp
+      updatedAt: timestamp,
+      affectedUsers: Object.keys(users).length
     };
   } catch (error) {
     console.error(`[ROLE-UPDATE] Error updating role ${roleName}:`, error);
-    throw error;
+    throw error instanceof Error
+      ? new Error(`Role update failed: ${error.message}`)
+      : new Error('Role update failed: Unknown error');
   }
 }
 
@@ -500,35 +612,106 @@ export async function getFirebaseAdmin() {
 export async function getUserRole(uid: string) {
   const app = await getFirebaseAdmin();
   if (!app) {
-    console.warn('Firebase Admin not initialized');
+    console.warn('[USER-ROLE] Firebase Admin not initialized');
     return null;
   }
 
   try {
     const db = getDatabase(app);
-    const snapshot = await db.ref(`roles/${uid}`).once('value');
-    const data = snapshot.val();
+    console.log('[USER-ROLE] Fetching roles for user:', uid);
+    
+    // Get all role definitions first
+    const roleDefsSnapshot = await db.ref('role-definitions').once('value');
+    const roleDefs = roleDefsSnapshot.val() || {};
+    
+    // Get user's role
+    const userRoleSnapshot = await db.ref(`roles/${uid}`).once('value');
+    const userData = userRoleSnapshot.val();
 
-    if (!data) {
-      console.warn(`No role found for user ${uid}`);
+    // Transform role definitions into a list of available roles
+    const availableRoles = Object.entries(roleDefs).map(([name, roleData]: [string, any]) => {
+      const isSystemRole = name in InitialRoleConfigs;
+      let permissions: Permission[] = [];
+
+      // For system roles, use default permissions as base
+      if (isSystemRole) {
+        permissions = [...DefaultPermissions[name as keyof typeof RoleTypes]];
+      }
+
+      // Add any additional permissions from role definition
+      if (Array.isArray(roleData.permissions)) {
+        permissions = Array.from(new Set([...permissions, ...validatePermissions(roleData.permissions)]));
+      }
+
+      return {
+        name,
+        isSystem: roleData.isSystem || isSystemRole,
+        permissions,
+        description: roleData.description || ''
+      };
+    });
+
+    console.log('[USER-ROLE] Available roles:', availableRoles.map(r => r.name));
+
+    if (!userData) {
+      console.warn(`[USER-ROLE] No role found for user ${uid}, using default staff role`);
       return {
         role: RoleTypes.staff,
-        permissions: DefaultPermissions[RoleTypes.staff]
+        permissions: DefaultPermissions[RoleTypes.staff],
+        availableRoles
       };
     }
 
+    // Get the user's assigned role
+    const assignedRole = roleDefs[userData.role];
+    if (!assignedRole) {
+      console.warn(`[USER-ROLE] Invalid role ${userData.role} assigned to user ${uid}, using default staff role`);
+      return {
+        role: RoleTypes.staff,
+        permissions: DefaultPermissions[RoleTypes.staff],
+        availableRoles
+      };
+    }
+
+    // Determine final permissions for the user
+    const isSystemRole = userData.role in InitialRoleConfigs;
+    let finalPermissions: Permission[] = [];
+
+    // For system roles, start with default permissions
+    if (isSystemRole) {
+      finalPermissions = [...DefaultPermissions[userData.role as keyof typeof RoleTypes]];
+    }
+
+    // Add any custom permissions from the role definition
+    if (Array.isArray(assignedRole.permissions)) {
+      finalPermissions = Array.from(new Set([...finalPermissions, ...validatePermissions(assignedRole.permissions)]));
+    }
+
+    // Add any user-specific permissions
+    if (Array.isArray(userData.permissions)) {
+      finalPermissions = Array.from(new Set([...finalPermissions, ...validatePermissions(userData.permissions)]));
+    }
+
+    console.log('[USER-ROLE] Resolved role data:', {
+      role: userData.role,
+      permissionCount: finalPermissions.length
+    });
+
     return {
-      role: data.role as keyof typeof RoleTypes,
-      permissions: data.permissions || DefaultPermissions[data.role as keyof typeof RoleTypes]
+      role: userData.role,
+      permissions: finalPermissions,
+      availableRoles
     };
   } catch (error) {
-    console.error('Error fetching user role:', error);
+    console.error('[USER-ROLE] Error fetching user role:', error);
     return null;
   }
 }
 
-// Update user role
+// Update user role with better error handling and validation
 export async function updateUserRole(uid: string, roleType: keyof typeof RoleTypes, customPermissions?: Permission[]) {
+  console.log('[ROLE-UPDATE] Starting role update for user:', { uid, roleType, customPermissions });
+  
   const app = await getFirebaseAdmin();
   if (!app) {
     throw new Error('Firebase Admin not initialized');
@@ -536,80 +719,82 @@ export async function updateUserRole(uid: string, roleType: keyof typeof RoleTyp
 
   try {
     const db = getDatabase(app);
+    const auth = app.auth();
     const roleRef = db.ref(`roles/${uid}`);
     const timestamp = Date.now();
+
+    // Validate role type
+    if (!Object.values(RoleTypes).includes(roleType)) {
+      throw new Error(`Invalid role type: ${roleType}`);
+    }
+
+    // Get role definition to ensure it exists
+    const roleDefsRef = db.ref('role-definitions');
+    const roleDefsSnapshot = await roleDefsRef.once('value');
+    const roleDefs = roleDefsSnapshot.val() || {};
     
-    // Get current role data if it exists
-    const currentRoleSnapshot = await roleRef.once('value');
-    const currentRole = currentRoleSnapshot.val();
-    
-    // Start with custom permissions if provided, otherwise use defaults
+    if (!roleDefs[roleType]) {
+      throw new Error(`Role type ${roleType} not found in definitions`);
+    }
+
+    // Determine permissions
     let permissions: Permission[];
-    
     if (customPermissions && customPermissions.length > 0) {
-      // Validate custom permissions
       permissions = validatePermissions(customPermissions);
-      
       if (permissions.length !== customPermissions.length) {
-        console.warn('[ROLE-UPDATE] Some custom permissions were invalid and filtered out');
-        console.warn('Invalid permissions:', 
-          customPermissions.filter(p => !VALID_PERMISSIONS.has(p as Permission))
-        );
+        const invalidPerms = customPermissions.filter(p => !isValidPermission(p));
+        console.warn('[ROLE-UPDATE] Invalid permissions filtered:', invalidPerms);
       }
     } else {
-      // Use default permissions if no custom permissions provided
       permissions = [...DefaultPermissions[roleType]];
     }
-    
-    // Ensure admin always has 'all' permission
-    if (roleType === 'admin') {
+
+    // Special handling for admin role
+    if (roleType === RoleTypes.admin) {
       permissions = Array.from(new Set([...permissions, 'all' as Permission]));
     }
-    
-    console.log(`[ROLE-UPDATE] Final permissions for ${roleType}:`, permissions);
-    
-    // For admin role, always include 'all' permission
-    if (roleType === 'admin') {
-      // Ensure we're only adding valid Permission types
-      const adminPermissions: Permission[] = Array.from(new Set([...permissions, 'all' as Permission]));
-      permissions = adminPermissions;
-    }
-    
-    console.log(`[ROLE-UPDATE] Updating role for ${uid} to ${roleType} with permissions:`, permissions);
-    
-    // Update in Realtime Database
+
+    // Prepare update data
     const roleData = {
       role: roleType,
       permissions,
       updatedAt: timestamp,
-      ...(roleType === 'admin' && { isAdmin: true })
+      ...(roleType === RoleTypes.admin && { isAdmin: true })
     };
-    
-    // Update in Realtime Database
-    await roleRef.set(roleData);
-    console.log('[ROLE-UPDATE] Database update successful');
 
-    // Update custom claims in Firebase Auth
-    const customClaims = {
+    // Transaction to ensure atomic updates
+    await db.ref().update({
+      [`roles/${uid}`]: roleData
+    });
+
+    // Update auth claims
+    await auth.setCustomUserClaims(uid, {
       role: roleType,
       permissions,
       updatedAt: timestamp,
-      ...(roleType === 'admin' && { isAdmin: true })
-    };
-    
-    await app.auth().setCustomUserClaims(uid, customClaims);
-    console.log('[ROLE-UPDATE] Custom claims update successful');
+      ...(roleType === RoleTypes.admin && { isAdmin: true })
+    });
 
     // Force token refresh
-    await app.auth().revokeRefreshTokens(uid);
-    console.log(`[ROLE-UPDATE] Role updated for user ${uid} to ${roleType}`);
-    
-    return { role: roleType, permissions };
+    await auth.revokeRefreshTokens(uid);
+
+    console.log('[ROLE-UPDATE] Successfully updated role for user:', {
+      uid,
+      role: roleType,
+      permissionCount: permissions.length
+    });
+
+    return {
+      role: roleType,
+      permissions,
+      timestamp,
+      success: true
+    };
   } catch (error) {
-    console.error('[ROLE-UPDATE] Error updating user role:', error);
+    console.error('[ROLE-UPDATE] Error:', error);
     throw error instanceof Error 
-      ? new Error(`Failed to update user role: ${error.message}`)
-      : new Error('Failed to update user role: Unknown error');
+      ? new Error(`Role update failed: ${error.message}`)
+      : new Error('Role update failed: Unknown error');
   }
 }
 

@@ -290,67 +290,96 @@ interface ServerStartOptions {
 
 async function startServer({ port, retryCount = 0 }: ServerStartOptions): Promise<void> {
   const isDevelopment = process.env.NODE_ENV === 'development';
+  const maxRetries = 3;
   
   try {
-    // Clean up port before starting
-    try {
-      await terminateProcessOnPort(port);
-      log(`Port ${port} cleaned up successfully`, 'info');
-    } catch (error) {
-      log(`Port cleanup warning: ${error instanceof Error ? error.message : 'Unknown error'}`, 'warn');
-      // Continue anyway, as the port might already be free
-    }
-
-    log(`Starting server (attempt ${retryCount + 1})...`, 'info');
+    log(`Starting server (attempt ${retryCount + 1}/${maxRetries})...`, 'info');
     log(`Environment: ${isDevelopment ? 'development' : 'production'}`, 'info');
     log(`Port: ${port}`, 'info');
 
-    // Initialize Firebase with enhanced error handling
+    // Step 1: Clean up port
     try {
-      const firebaseInitialized = await initializeFirebase();
-      if (!firebaseInitialized && !isDevelopment) {
-        throw new Error('Firebase initialization failed');
-      }
-      log('Firebase initialization completed', firebaseInitialized ? 'info' : 'warn');
+      await terminateProcessOnPort(port);
+      log('Port cleanup successful', 'info');
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      log(`Firebase initialization error: ${errorMessage}`, 'error');
-      if (!isDevelopment) {
-        throw error;
-      }
-      log('Continuing without Firebase in development mode', 'warn');
+      log(`Port cleanup warning: ${errorMessage}`, 'warn');
     }
 
-    // Check database connection with more detailed logging
-    try {
-      const isDatabaseConnected = await checkDatabaseConnection(3);
-      if (!isDatabaseConnected && !isDevelopment) {
-        throw new Error('Database connection failed after retries');
+    // Step 2: Initialize Firebase with retries
+    let firebaseInitialized = false;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        log(`Initializing Firebase (attempt ${attempt}/${maxRetries})`, 'info');
+        firebaseInitialized = await initializeFirebase();
+        
+        if (firebaseInitialized) {
+          log('Firebase initialized successfully', 'info');
+          break;
+        }
+        
+        if (attempt < maxRetries) {
+          log('Firebase initialization incomplete, retrying...', 'warn');
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        } else if (isDevelopment) {
+          log('Continuing without Firebase in development mode', 'warn');
+          break;
+        } else {
+          throw new Error('Firebase initialization failed after all retries');
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        log(`Firebase initialization error: ${errorMessage}`, 'error');
+        
+        if (attempt === maxRetries) {
+          if (isDevelopment) {
+            log('Continuing without Firebase in development mode', 'warn');
+            break;
+          }
+          throw error;
+        }
+        await new Promise(resolve => setTimeout(resolve, 2000));
       }
-      log('Database connection check completed', isDatabaseConnected ? 'info' : 'warn');
+    }
+
+    // Step 3: Check database connection
+    try {
+      log('Checking database connection...', 'info');
+      const isDatabaseConnected = await checkDatabaseConnection(3);
+      
+      if (!isDatabaseConnected) {
+        if (isDevelopment) {
+          log('Database connection failed, continuing in development mode', 'warn');
+        } else {
+          throw new Error('Database connection failed after retries');
+        }
+      } else {
+        log('Database connection successful', 'info');
+      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       log(`Database connection error: ${errorMessage}`, 'error');
+      
       if (!isDevelopment) {
         throw error;
       }
       log('Continuing without database in development mode', 'warn');
     }
 
-    // Clean up port
-    await terminateProcessOnPort(port).catch(error => {
-      log(`Port cleanup warning: ${error.message}`, 'warn');
-      if (!isDevelopment) {
-        throw error;
-      }
-    });
-
-    // Create HTTP server
+    // Step 4: Create and configure HTTP server
+    log('Creating HTTP server...', 'info');
     const server = createServer(app);
 
-    // Register routes before setting up Vite/static serving
-    registerRoutes(app);
-    log('Routes registered successfully', 'info');
+    // Step 5: Register routes
+    try {
+      log('Registering routes...', 'info');
+      registerRoutes(app);
+      log('Routes registered successfully', 'info');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      log(`Failed to register routes: ${errorMessage}`, 'error');
+      throw error;
+    }
 
     // Setup development or production serving
     if (isDevelopment) {
@@ -399,41 +428,64 @@ async function startServer({ port, retryCount = 0 }: ServerStartOptions): Promis
         });
     });
 
-    // Start the server
-    await new Promise<void>((resolve, reject) => {
-      const handleError = (error: Error & { code?: string }) => {
-        if (error.code === 'EADDRINUSE' && retryCount < 3) {
-          log(`Port ${port} is in use, retrying in 2 seconds...`, 'warn');
-          setTimeout(() => {
-            startServer({ port, retryCount: retryCount + 1 })
-              .then(resolve)
-              .catch(reject);
-          }, 2000);
-        } else {
-          reject(error);
-        }
-      };
+    // Step 6: Start the server with improved error handling
+    try {
+      log(`Attempting to start server on port ${port}...`, 'info');
+      
+      await new Promise<void>((resolve, reject) => {
+        // Set a timeout for server startup
+        const startupTimeout = setTimeout(() => {
+          reject(new Error(`Server failed to start within 10 seconds on port ${port}`));
+        }, 10000);
 
-      server
-        .listen(port, '0.0.0.0')
-        .once('listening', () => {
-          log(`Server started successfully on port ${port}`, 'info');
-          setupGracefulShutdown(server);
-          resolve();
-        })
-        .once('error', handleError);
-    });
+        const handleError = (error: Error & { code?: string }) => {
+          clearTimeout(startupTimeout);
+          
+          if (error.code === 'EADDRINUSE' && retryCount < maxRetries) {
+            log(`Port ${port} is in use, will retry in 2 seconds...`, 'warn');
+            setTimeout(() => {
+              startServer({ port, retryCount: retryCount + 1 })
+                .then(resolve)
+                .catch(reject);
+            }, 2000);
+          } else {
+            log(`Server startup error: ${error.message}`, 'error');
+            reject(error);
+          }
+        };
+
+        server
+          .listen(port, '0.0.0.0')
+          .once('error', handleError)
+          .once('listening', () => {
+            clearTimeout(startupTimeout);
+            log(`Server started successfully on port ${port}`, 'info');
+            setupGracefulShutdown(server);
+            resolve();
+          });
+      });
+      
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      log(`Server startup failed: ${errorMessage}`, 'error');
+
+      if (retryCount >= maxRetries) {
+        throw new Error(`Failed to start server after ${maxRetries} attempts: ${errorMessage}`);
+      }
+
+      log(`Waiting 2 seconds before retry ${retryCount + 1}/${maxRetries}...`, 'warn');
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      return startServer({ port, retryCount: retryCount + 1 });
+    }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    log(`Server startup failed: ${errorMessage}`, 'error');
-
-    if (retryCount >= 3) {
-      throw new Error(`Failed to start server after ${retryCount + 1} attempts: ${errorMessage}`);
+    log(`Fatal server error: ${errorMessage}`, 'error');
+    
+    if (isDevelopment) {
+      log('Server failed to start in development mode', 'error');
+      return;
     }
-
-    // Wait before retrying
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    return startServer({ port, retryCount: retryCount + 1 });
+    throw error;
   }
 }
 
