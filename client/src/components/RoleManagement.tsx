@@ -89,6 +89,17 @@ export function RoleManagement() {
     isUpdatingUserRole
   } = useRoles();
 
+  useEffect(() => {
+    // Log state for debugging
+    console.log('Role Management State:', {
+      roles,
+      isLoadingRoles,
+      users,
+      isLoadingUsers,
+      hasNextPage
+    });
+  }, [roles, isLoadingRoles, users, isLoadingUsers, hasNextPage]);
+
   const roleEntries = React.useMemo(() => 
     roles ? roles.map(role => [role.name, role.permissions]) : [], 
     [roles]
