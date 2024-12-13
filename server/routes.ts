@@ -4,7 +4,7 @@ import { db } from "../db";
 import { appointments, customers, pets, users } from "@db/schema";
 import { and, eq, gte, count, sql } from "drizzle-orm";
 import admin from "firebase-admin";
-import { authenticateFirebase, requireRole } from './middleware/auth';
+import { authenticateFirebase, requireRole, validateManagerOperation } from './middleware/auth';
 
 export function registerRoutes(app: Express) {
   // Setup protected routes with Firebase authentication
@@ -136,10 +136,179 @@ export function registerRoutes(app: Express) {
         message: error instanceof Error ? error.message : "Unknown error occurred"
       });
     }
+  // Firebase User Management endpoints - Admin only
+  app.get("/api/firebase-users", authenticateFirebase, requireRole(['admin']), async (req, res) => {
+    try {
+      const { pageSize = 100, pageToken } = req.query;
+      
+      // List users from Firebase
+      const listUsersResult = await admin.auth().listUsers(Number(pageSize), pageToken as string);
+      
+      // Get custom claims for role information
+      const users = await Promise.all(
+        listUsersResult.users.map(async (user) => {
+          const customClaims = (await admin.auth().getUser(user.uid)).customClaims || {};
+          return {
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            role: customClaims.role || 'staff',
+            permissions: customClaims.permissions || []
+          };
+        })
+      );
+
+      res.json({
+        users,
+        pageToken: listUsersResult.pageToken
+      });
+    } catch (error) {
+      console.error('Error fetching Firebase users:', error);
+      res.status(500).json({ error: "Failed to fetch users" });
+    }
+  });
+
+  app.post("/api/firebase-users/:userId/role", authenticateFirebase, requireRole(['admin']), async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const { role } = req.body;
+
+      if (!role || !['admin', 'manager', 'staff', 'receptionist'].includes(role)) {
+        return res.status(400).json({ error: "Invalid role specified" });
+      }
+
+      // Import RolePermissions from auth.ts
+      const { RolePermissions } = require('./auth');
+      const permissions = RolePermissions[role] || [];
+
+      // Set custom claims in Firebase
+      await admin.auth().setCustomUserClaims(userId, {
+        role,
+        permissions,
+        updatedAt: new Date().toISOString()
+      });
+
+      res.json({ 
+        message: "Role updated successfully",
+        role,
+        permissions
+      });
+    } catch (error) {
+      console.error('Error updating user role:', error);
+      res.status(500).json({ error: "Failed to update user role" });
+    }
+  });
+  // Role management endpoints - Admin only
+  app.get("/api/roles", authenticateFirebase, requireRole(['admin']), async (req, res) => {
+    try {
+      // Return all roles and their permissions
+      const roles = Object.entries(RolePermissions).map(([role, permissions]) => ({
+        name: role,
+        permissions: permissions
+      }));
+      res.json(roles);
+    } catch (error) {
+      console.error('Error fetching roles:', error);
+      res.status(500).json({ error: "Failed to fetch roles" });
+    }
+  });
+
+  app.post("/api/roles", authenticateFirebase, requireRole(['admin']), async (req, res) => {
+    try {
+      const { name, permissions } = req.body;
+      
+      if (!name || !permissions) {
+        return res.status(400).json({ error: "Name and permissions are required" });
+      }
+
+      // Prevent modification of admin role
+      if (name.toLowerCase() === 'admin') {
+        return res.status(403).json({ error: "Cannot modify admin role" });
+      }
+
+      // Update RolePermissions
+      RolePermissions[name] = permissions;
+      
+      res.json({ 
+        message: "Role created successfully",
+        role: { name, permissions }
+      });
+    } catch (error) {
+      console.error('Error creating role:', error);
+      res.status(500).json({ error: "Failed to create role" });
+    }
+  });
+
+  app.put("/api/roles/:roleName", authenticateFirebase, requireRole(['admin']), async (req, res) => {
+    try {
+      const { roleName } = req.params;
+      const { permissions } = req.body;
+      
+      if (roleName.toLowerCase() === 'admin') {
+        return res.status(403).json({ error: "Cannot modify admin role" });
+      }
+
+      if (!RolePermissions[roleName]) {
+        return res.status(404).json({ error: "Role not found" });
+      }
+
+      // Update permissions
+      RolePermissions[roleName] = permissions;
+      
+      res.json({ 
+        message: "Role updated successfully",
+        role: { name: roleName, permissions }
+      });
+    } catch (error) {
+      console.error('Error updating role:', error);
+      res.status(500).json({ error: "Failed to update role" });
+    }
+  });
   });
 
   // Dashboard stats - restricted to admin and staff
-  app.get("/api/stats", authenticateFirebase, requireRole(['admin', 'manager', 'staff']), async (req, res) => {
+// Manager-specific test endpoint
+app.get("/api/manager/branch-stats", 
+  authenticateFirebase, 
+  validateManagerOperation(['view_analytics', 'view_branch_performance']), 
+  async (req, res) => {
+    try {
+      // Example branch statistics
+      const branchStats = {
+        appointments: {
+          total: 150,
+          completed: 120,
+          cancelled: 10,
+          pending: 20
+        },
+        revenue: {
+          daily: 2500,
+          weekly: 15000,
+          monthly: 60000
+        },
+        services: {
+          popular: ['Basic Grooming', 'Nail Trimming', 'Bath & Brush'],
+          totalProvided: 450
+        },
+        inventory: {
+          lowStock: 5,
+          totalItems: 200
+        }
+      };
+      
+      res.json({
+        success: true,
+        data: branchStats
+      });
+    } catch (error) {
+      console.error('Error fetching branch stats:', error);
+      res.status(500).json({ 
+        error: "Failed to fetch branch statistics",
+        message: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+});
+  app.get("/api/stats", authenticateFirebase, requireRole(['admin', 'manager', 'staff']), validateManagerOperation('view_analytics'), async (req, res) => {
     try {
       const now = new Date();
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);

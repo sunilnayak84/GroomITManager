@@ -35,31 +35,76 @@ declare global {
 export const RolePermissions: Record<string, string[]> = {
   admin: ['all'],
   manager: [
+    // Appointment Management
     'manage_appointments',
+    'view_all_appointments',
+    'reschedule_appointments',
+    'cancel_appointments',
+    'create_appointments',
+    
+    // Service Management
     'manage_services',
-    'manage_inventory',
-    'view_reports',
-    'manage_staff_schedules',
-    'manage_customers',
-    'view_analytics',
-    'manage_service_packages',
-    'manage_notifications',
-    'manage_working_hours',
-    'view_all_branches',
-    'manage_pets',
-    'manage_consumables',
-    'view_staff',
-    'manage_branch_settings',
-    'manage_service_pricing',
-    'view_financial_reports',
-    'manage_marketing_campaigns',
-    'manage_inventory',
-    'manage_services',
-    'manage_appointments',
-    'manage_working_hours',
-    'view_dashboard',
+    'create_services',
+    'edit_services',
+    'view_services',
+    'set_service_pricing',
+    
+    // Staff Schedule Management (excluding user/role management)
+    'view_staff_schedule',
     'manage_staff_schedule',
-    'manage_branch_operations'
+    'assign_staff_tasks',
+    'manage_working_hours',
+    
+    // Customer and Pet Management
+    'manage_customers',
+    'view_customers',
+    'edit_customer_info',
+    'manage_pets',
+    'view_all_pets',
+    'edit_pet_info',
+    
+    // Inventory and Stock Management
+    'manage_inventory',
+    'view_inventory',
+    'update_stock',
+    'manage_consumables',
+    'view_stock_alerts',
+    'create_purchase_orders',
+    
+    // Business Operations
+    'view_analytics',
+    'view_reports',
+    'manage_branch_settings',
+    'view_financial_reports',
+    'export_reports',
+    
+    // Service Package Management
+    'manage_service_packages',
+    'create_packages',
+    'edit_packages',
+    'set_package_pricing',
+    
+    // Branch Operations
+    'view_branch_details',
+    'manage_branch_operations',
+    'view_branch_performance',
+    
+    // Customer Communication
+    'manage_notifications',
+    'send_customer_notifications',
+    'manage_customer_feedback',
+    
+    // Marketing and Promotions
+    'manage_marketing_campaigns',
+    'create_promotions',
+    'edit_promotions',
+    'view_campaign_analytics',
+    
+    // Financial Operations
+    'manage_service_pricing',
+    'set_special_rates',
+    'view_revenue_reports',
+    'manage_discounts'
   ],
   staff: [
     'manage_appointments',
