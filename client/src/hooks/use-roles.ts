@@ -121,15 +121,24 @@ async function fetchFirebaseUsers(params: { pageParam?: string | null }): Promis
 }
 
 async function updateUserRole(userId: string, role: string): Promise<void> {
-  const response = await fetch(`/api/firebase-users/${userId}/role`, {
+  const auth = getAuth();
+  if (!auth.currentUser) {
+    throw new Error('User not authenticated');
+  }
+
+  const token = await auth.currentUser.getIdToken(true);
+  const response = await fetch(`/api/users/${userId}/role`, {
     method: 'POST',
     headers: {
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ role }),
   });
+
   if (!response.ok) {
-    throw new Error('Failed to update user role');
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to update user role');
   }
 }
 
