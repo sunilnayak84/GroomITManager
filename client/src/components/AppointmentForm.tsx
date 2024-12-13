@@ -336,22 +336,34 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
       const formattedTime = format(appointmentTime, 'PPp');
       
       // Create notification for the customer
-      await createNotification({
-        userId: data.customerId,
-        appointmentId: appointmentId,
-        type: 'reminder',
-        title: 'Upcoming Appointment Reminder',
-        message: `You have a grooming appointment scheduled for ${formattedTime}. Please arrive 10 minutes before your scheduled time.`
-      });
+      if (user?.id) {
+        try {
+          await createNotification({
+            userId: user.id,
+            appointmentId,
+            type: 'reminder',
+            title: 'Upcoming Appointment Reminder',
+            message: `You have a grooming appointment scheduled for ${formattedTime}. Please arrive 10 minutes before your scheduled time.`
+          });
+        } catch (error) {
+          console.error('Error creating customer notification:', error);
+        }
+      }
       
       // Create notification for the groomer
-      await createNotification({
-        userId: data.groomerId,
-        appointmentId: appointmentId,
-        type: 'reminder',
-        title: 'New Appointment Scheduled',
-        message: `You have a new grooming appointment scheduled for ${formattedTime}.`
-      });
+      if (data.groomerId) {
+        try {
+          await createNotification({
+            userId: data.groomerId,
+            appointmentId,
+            type: 'reminder',
+            title: 'New Appointment Scheduled',
+            message: `You have a new grooming appointment scheduled for ${formattedTime}.`
+          });
+        } catch (error) {
+          console.error('Error creating groomer notification:', error);
+        }
+      }
 
       setOpen(false);
       

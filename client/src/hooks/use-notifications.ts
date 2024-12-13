@@ -7,7 +7,7 @@ import { useEffect } from "react";
 interface Notification {
   id: string;
   userId: string;
-  appointmentId: number | null;
+  appointmentId: string | null;
   type: 'reminder' | 'status_change' | 'cancellation' | 'reschedule';
   title: string;
   message: string;
@@ -18,7 +18,7 @@ interface Notification {
 
 interface CreateNotificationData {
   userId: string;
-  appointmentId?: number;
+  appointmentId?: string;
   type: 'reminder' | 'status_change' | 'cancellation' | 'reschedule';
   title: string;
   message: string;
