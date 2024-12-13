@@ -2,26 +2,6 @@ import { pgTable, integer, varchar, text, timestamp, boolean, decimal } from "dr
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// Role and Permission Types
-export type RoleType = 'admin' | 'manager' | 'staff' | 'receptionist';
-
-export type Permission = 
-  | 'manage_appointments' | 'view_appointments' | 'create_appointments' | 'cancel_appointments'
-  | 'manage_customers' | 'view_customers' | 'create_customers' | 'edit_customer_info'
-  | 'manage_services' | 'view_services' | 'create_services' | 'edit_services'
-  | 'manage_inventory' | 'view_inventory' | 'update_stock' | 'manage_consumables'
-  | 'manage_staff_schedule' | 'view_staff_schedule' | 'manage_own_schedule'
-  | 'view_analytics' | 'view_reports' | 'view_financial_reports' | 'all';
-
-// Roles table definition
-export const roles = pgTable("roles", {
-  id: varchar("id", { length: 50 }).primaryKey(),
-  name: varchar("name", { length: 100 }).notNull(),
-  description: text("description"),
-  permissions: text("permissions").array().notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at")
-});
 // States for Indian addresses
 export const INDIAN_STATES = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
@@ -79,7 +59,7 @@ export const users = pgTable("users", {
   email: varchar("email", { length: 255 }).unique().notNull(),
   name: varchar("name", { length: 255 }).notNull(),
   phone: varchar("phone", { length: 15 }).notNull(),
-  roleId: varchar("role_id", { length: 50 }).references(() => roles.id).notNull(),
+  role: varchar("role", { length: 50 }).notNull().default("staff"),
   branchId: integer("branch_id").references(() => branches.id),
   isGroomer: boolean("is_groomer").notNull().default(false),
   specialties: text("specialties").array(), // Array of service IDs they specialize in
