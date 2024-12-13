@@ -119,25 +119,48 @@ export function RoleManagement() {
 
   const onSubmit = async (data: RoleFormValues) => {
     try {
+      console.log('Submitting role data:', data);
+      
       if (editingRole) {
+        console.log('Updating existing role:', editingRole);
+        // Remove description from the update payload since it's not supported in the backend
         await updateRole({
-          name: data.name,
+          name: editingRole,
           permissions: data.permissions
         });
+        toast({
+          title: 'Success',
+          description: `Role "${editingRole}" updated successfully`,
+        });
       } else {
+        console.log('Creating new role');
+        if (!data.name) {
+          toast({
+            title: 'Validation Error',
+            description: 'Role name is required',
+            variant: 'destructive',
+          });
+          return;
+        }
+        // Remove description from the create payload since it's not supported in the backend
         await createRole({
           name: data.name,
           permissions: data.permissions
         });
+        toast({
+          title: 'Success',
+          description: `Role "${data.name}" created successfully`,
+        });
       }
       
-      toast({
-        title: 'Success',
-        description: `Role ${editingRole ? 'updated' : 'created'} successfully`,
-      });
       setEditingRole(null);
-      form.reset();
+      form.reset({
+        name: '',
+        permissions: [],
+        description: '',
+      });
     } catch (error) {
+      console.error('Error saving role:', error);
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to save role',
@@ -153,7 +176,7 @@ export function RoleManagement() {
       {/* Existing Roles */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {roles?.map((role) => (
-          <Card key={role.name}>
+          <Card key={role.name} className="relative">
             <CardHeader>
               <CardTitle className="capitalize">{role.name}</CardTitle>
               <CardDescription>
@@ -173,15 +196,22 @@ export function RoleManagement() {
                   variant="outline"
                   className="mt-4"
                   onClick={() => {
+                    console.log('Editing role:', role);
                     setEditingRole(role.name);
                     form.reset({
                       name: role.name,
                       permissions: Array.isArray(role.permissions) ? role.permissions : [],
+                      description: role.description || '',
                     });
                   }}
                 >
                   Edit Role
                 </Button>
+              )}
+              {isUpdating && editingRole === role.name && (
+                <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
+                  <div className="text-sm text-muted-foreground">Updating role...</div>
+                </div>
               )}
             </CardContent>
           </Card>
@@ -206,7 +236,28 @@ export function RoleManagement() {
                   <FormItem>
                     <FormLabel>Role Name</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter role name" />
+                      <Input 
+                        {...field} 
+                        placeholder="Enter role name" 
+                        disabled={!!editingRole}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Input 
+                        {...field} 
+                        placeholder="Role description" 
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
