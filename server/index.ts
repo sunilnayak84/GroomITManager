@@ -7,6 +7,7 @@ import { db } from "../db/index.js";
 import { sql } from "drizzle-orm";
 import admin from "firebase-admin";
 
+// Utility function for logging
 function log(message: string, type: 'info' | 'error' | 'warn' = 'info') {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
     hour: "2-digit",
@@ -14,147 +15,116 @@ function log(message: string, type: 'info' | 'error' | 'warn' = 'info') {
     second: "2-digit",
     hour12: true,
   });
-
   const prefix = type === 'error' ? '🔴' : type === 'warn' ? '🟡' : '🟢';
   console.log(`${formattedTime} [express] ${prefix} ${message}`);
 }
 
 // Initialize Firebase Admin
-async function initializeFirebase() {
+async function initializeFirebase(): Promise<boolean> {
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  log(`Initializing Firebase in ${isDevelopment ? 'development' : 'production'} mode`, 'info');
+
   try {
     // Clean up any existing Firebase apps
-    await Promise.all(admin.apps.map(app => app?.delete()));
-    
-    const isDevelopment = process.env.NODE_ENV === 'development';
-    log(`Initializing Firebase in ${isDevelopment ? 'development' : 'production'} mode`, 'info');
-    
-    // Development mode setup
-    if (isDevelopment) {
-      log('Setting up development Firebase instance', 'info');
-      
-      // Initialize Firebase with development credentials
-      admin.initializeApp({
-        credential: admin.credential.cert({
-          projectId: 'dev-project',
-          clientEmail: 'dev@example.com',
-          privateKey: '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9QFi8Lg3Xy+Vj\n-----END PRIVATE KEY-----\n'
-        } as admin.ServiceAccount)
-      });
+    if (admin.apps.length) {
+      log('Cleaning up existing Firebase apps', 'info');
+      await Promise.all(admin.apps.map(app => app?.delete()));
+    }
 
-      // Setup admin user in development
-      const adminEmail = 'admin@groomery.in';
-      try {
-        // Delete existing user if exists to ensure clean state
-        try {
-          const existingUser = await admin.auth().getUserByEmail(adminEmail);
-          await admin.auth().deleteUser(existingUser.uid);
-          log(`Deleted existing admin user: ${adminEmail}`, 'info');
-        } catch (error) {
-          // User doesn't exist, which is fine
-        }
+    // Configure Firebase
+    const firebaseConfig = {
+      projectId: isDevelopment ? 'dev-project' : process.env.FIREBASE_PROJECT_ID,
+      clientEmail: isDevelopment ? 'dev@example.com' : process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: isDevelopment 
+        ? '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9QFi8Lg3Xy+Vj\nVGQiXhKlLS0xGS4YgW4UF9l4A5H4KlUZ8JfVhqggXmVBITM1Mj1nW7R02eCGXjJ4\nF1HGJ9REh/Qr0kH4NxjWnFxvj4VhZk+zRhSmPEm80u7KnXWW0v0idTzVqeVwnVZF\nX8WAIhN7CfXQZGl1xd/ftUU9EBGgm/ZY7DTqf4TGI3LWxG1dDlh4l2Y=\n-----END PRIVATE KEY-----\n'
+        : process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n')
+    };
 
-        // Create new admin user
-        const adminUser = await admin.auth().createUser({
-          email: adminEmail,
-          emailVerified: true,
-          displayName: 'Admin User',
-          password: 'admin123' // Development password
-        });
-        log(`Created admin user: ${adminEmail} with ID: ${adminUser.uid}`, 'info');
-
-        // Set admin role with all permissions
-        const customClaims = {
-          role: 'admin',
-          permissions: ['all'],
-          updatedAt: new Date().toISOString()
-        };
-        
-        await admin.auth().setCustomUserClaims(adminUser.uid, customClaims);
-        log(`Set custom claims for admin user: ${JSON.stringify(customClaims)}`, 'info');
-
-        // Verify custom claims were set
-        const updatedUser = await admin.auth().getUser(adminUser.uid);
-        log(`Verified admin user claims: ${JSON.stringify(updatedUser.customClaims)}`, 'info');
-
-        // Force token refresh
-        await admin.auth().revokeRefreshTokens(adminUser.uid);
-        log(`Admin user setup completed successfully`, 'info');
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        log(`Failed to setup admin user: ${errorMessage}`, 'error');
-        throw error;
-      }
-
-        // Create or update admin user in development
-        try {
-          const adminEmail = 'admin@groomery.in';
-          let userRecord;
-          try {
-            userRecord = await admin.auth().getUserByEmail(adminEmail);
-          } catch (error) {
-            userRecord = await admin.auth().createUser({
-              email: adminEmail,
-              emailVerified: true,
-              displayName: 'Admin User'
-            });
-          }
-          
-          // Set admin role with all permissions
-          await admin.auth().setCustomUserClaims(userRecord.uid, {
-            role: 'admin',
-            permissions: ['all'],
-            updatedAt: new Date().toISOString()
-          });
-          
-          log('Development admin user initialized with proper permissions', 'info');
-        } catch (error) {
-          log('Failed to setup development admin user', 'warn');
-        }
-        
-        return true;
+    // Validate credentials in production
+    if (!isDevelopment) {
+      if (!firebaseConfig.projectId || !firebaseConfig.clientEmail || !firebaseConfig.privateKey) {
+        throw new Error('Missing required Firebase credentials in production mode');
       }
     }
 
-    // Production mode or development with real credentials
-    if (!process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL || !process.env.FIREBASE_PRIVATE_KEY) {
-      throw new Error('Missing required Firebase credentials');
-    }
-
-    // Initialize with real credentials
-    const privateKey = process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n');
+    // Initialize Firebase Admin SDK
     admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: privateKey
-      } as admin.ServiceAccount)
+      credential: admin.credential.cert(firebaseConfig as admin.ServiceAccount)
     });
 
-    log('Firebase Admin SDK initialized successfully with provided credentials', 'info');
+    if (isDevelopment) {
+      await setupDevelopmentAdmin();
+    }
+
+    log('Firebase Admin SDK initialized successfully', 'info');
+    return true;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     log(`Firebase initialization error: ${errorMessage}`, 'error');
     
     if (isDevelopment) {
-      log('Attempting to continue in development mode despite Firebase error', 'warn');
-    } else {
-      log('Exiting due to Firebase initialization failure', 'error');
-      process.exit(1);
+      log('Continuing in development mode despite Firebase error', 'warn');
+      return true; // Continue in development mode even if initialization fails
     }
+    throw error;
   }
 }
 
-// Initialize Firebase
-initializeFirebase();
+async function setupDevelopmentAdmin(): Promise<void> {
+  try {
+    const adminEmail = 'admin@groomery.in';
+    // Delete existing admin if exists
+    const existingUser = await admin.auth().getUserByEmail(adminEmail).catch(() => null);
+    if (existingUser) {
+      await admin.auth().deleteUser(existingUser.uid);
+    }
 
+    // Create new admin user
+    const adminUser = await admin.auth().createUser({
+      email: adminEmail,
+      emailVerified: true,
+      displayName: 'Admin User',
+      password: 'admin123'
+    });
+
+    // Set admin role
+    await admin.auth().setCustomUserClaims(adminUser.uid, {
+      role: 'admin',
+      permissions: ['all'],
+      updatedAt: new Date().toISOString()
+    });
+    
+    log('Development admin user setup completed', 'info');
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    log(`Warning: Failed to setup admin user: ${errorMessage}`, 'warn');
+  }
+}
+
+// Database connection check
+async function checkDatabaseConnection() {
+  try {
+    const result = await db.execute(sql`SELECT 1`);
+    if (result) {
+      log("Database connection successful", 'info');
+      return true;
+    }
+  } catch (error) {
+    log(`Database connection failed: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+    return false;
+  }
+  return false;
+}
+
+// Configure Express app
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set('trust proxy', 1);
 
 // CORS configuration
-const isDevelopment = app.get("env") === "development";
 app.use((req, res, next) => {
+  const isDevelopment = app.get("env") === "development";
   const origin = isDevelopment 
     ? (req.get('origin') || 'http://localhost:5173') 
     : req.get('origin');
@@ -177,7 +147,7 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
+  let capturedJsonResponse: Record<string, any> | undefined;
 
   const originalResJson = res.json;
   res.json = function (bodyJson, ...args) {
@@ -192,16 +162,13 @@ app.use((req, res, next) => {
       if (capturedJsonResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
       }
-
       if (logLine.length > 80) {
         logLine = logLine.slice(0, 79) + "…";
       }
-
       const logType = res.statusCode >= 500 ? 'error' : res.statusCode >= 400 ? 'warn' : 'info';
       log(logLine, logType);
     }
   });
-
   next();
 });
 
@@ -213,31 +180,15 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   res.status(status).json({ message });
 });
 
-async function checkDatabaseConnection() {
-  try {
-    const result = await db.execute(sql`SELECT 1`);
-    if (result) {
-      log("Database connection successful", 'info');
-      return true;
-    }
-  } catch (error: any) {
-    log(`Database connection failed: ${error.message}`, 'error');
-    return false;
-  }
-  return false;
-}
-
-// Graceful shutdown handling
+// Graceful shutdown setup
 function setupGracefulShutdown(server: any) {
-  const shutdown = async () => {
+  const shutdown = () => {
     log("Received shutdown signal", 'warn');
-    
     server.close(() => {
       log("HTTP server closed", 'info');
       process.exit(0);
     });
 
-    // Force shutdown after 10s
     setTimeout(() => {
       log("Could not close connections in time, forcefully shutting down", 'error');
       process.exit(1);
@@ -248,105 +199,100 @@ function setupGracefulShutdown(server: any) {
   process.on('SIGINT', shutdown);
 }
 
-(async () => {
-  const PORT = parseInt(process.env.PORT || '3000', 10);
-  
+// Main server startup function
+interface ServerStartOptions {
+  port: number;
+  retryCount?: number;
+}
+
+async function startServer({ port, retryCount = 0 }: ServerStartOptions): Promise<void> {
   try {
-    log("Starting server initialization...", 'info');
-    
-    // First, attempt to clean up the port
-    try {
-      log(`Cleaning up port ${PORT} before start...`, 'info');
-      await terminateProcessOnPort(PORT);
-      log("Port cleanup completed", 'info');
-    } catch (cleanupError: any) {
-      log(`Port cleanup warning: ${cleanupError.message}`, 'warn');
-      // Continue anyway as the port might actually be free
+    log(`Starting server (attempt ${retryCount + 1})...`, 'info');
+
+    // Initialize Firebase (continue even if it fails in development)
+    const firebaseInitialized = await initializeFirebase();
+    if (!firebaseInitialized && process.env.NODE_ENV !== 'development') {
+      throw new Error('Firebase initialization failed');
     }
 
     // Check database connection
     const isDatabaseConnected = await checkDatabaseConnection();
     if (!isDatabaseConnected) {
-      log("Cannot start server without database connection", 'error');
-      process.exit(1);
+      throw new Error('Database connection failed');
     }
 
-    // Create server instance
+    // Clean up port
+    try {
+      await terminateProcessOnPort(port);
+    } catch (error) {
+      log(`Port cleanup warning: ${error instanceof Error ? error.message : 'Unknown error'}`, 'warn');
+    }
+
+    // Create HTTP server
     const server = createServer(app);
 
     // Register routes
     registerRoutes(app);
-    log("Routes registered successfully", 'info');
+    log('Routes registered successfully', 'info');
 
-    // Setup development or production mode
-    if (app.get("env") === "development") {
+    // Setup development or production serving
+    const isDevelopment = app.get("env") === "development";
+    if (isDevelopment) {
       await setupVite(app, server);
-      log("Vite middleware setup complete", 'info');
+      log('Vite middleware setup complete', 'info');
     } else {
       serveStatic(app);
-      log("Static file serving setup complete", 'info');
+      log('Static file serving setup complete', 'info');
     }
 
-    // Start server with retries
-    const startServer = async (retryCount = 0) => {
-      try {
-        // Add more detailed logging
-        log(`Attempting to start server (attempt ${retryCount + 1})`, 'info');
-        
-        // Wait for any existing process to release the port
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Try to terminate any process using the port
-        try {
-          await terminateProcessOnPort(PORT);
-        } catch (cleanupError) {
-          log(`Port cleanup warning: ${cleanupError}`, 'warn');
+    // Start the server
+    await new Promise<void>((resolve, reject) => {
+      const handleError = (error: Error & { code?: string }) => {
+        if (error.code === 'EADDRINUSE' && retryCount < 3) {
+          log(`Port ${port} is in use, retrying in 2 seconds...`, 'warn');
+          setTimeout(() => {
+            startServer({ port, retryCount: retryCount + 1 })
+              .then(resolve)
+              .catch(reject);
+          }, 2000);
+        } else {
+          reject(error);
         }
+      };
 
-        // Create a new promise for server startup
-        return new Promise<void>((resolve, reject) => {
-          log(`Binding server to port ${PORT}...`, 'info');
-          const serverInstance = server.listen(PORT, '0.0.0.0', () => {
-            log(`Server started successfully on port ${PORT}`, 'info');
-            log(`Server is accessible at http://0.0.0.0:${PORT}`, 'info');
-            resolve();
-          });
+      server
+        .listen(port, '0.0.0.0')
+        .once('listening', () => {
+          log(`Server started successfully on port ${port}`, 'info');
+          setupGracefulShutdown(server);
+          resolve();
+        })
+        .once('error', handleError);
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    log(`Server startup failed: ${errorMessage}`, 'error');
 
-          // Error handling for server startup
-          serverInstance.on('error', async (err: Error & { code?: string }) => {
-            log(`Server startup error: ${err.message}`, 'error');
-            
-            if (err.code === 'EADDRINUSE' && retryCount < 3) {
-              log(`Port ${PORT} is in use, retrying in 2 seconds...`, 'warn');
-              serverInstance.close();
-              setTimeout(async () => {
-                try {
-                  await startServer(retryCount + 1);
-                  resolve();
-                } catch (retryError) {
-                  reject(retryError);
-                }
-              }, 2000);
-            } else {
-              reject(new Error(`Failed to start server: ${err.message}`));
-            }
-          });
-        });
-      } catch (error) {
-        log(`Failed to start server after ${retryCount} retries: ${error}`, 'error');
-        if (retryCount >= 3) {
-          throw error;
-        }
-      }
-    };
+    if (retryCount >= 3) {
+      throw new Error(`Failed to start server after ${retryCount + 1} attempts: ${errorMessage}`);
+    }
 
-    await startServer();
-
-    // Setup graceful shutdown
-    setupGracefulShutdown(server);
-
-  } catch (error: any) {
-    log(`Failed to start server: ${error.message}`, 'error');
-    process.exit(1);
+    // Wait before retrying
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    return startServer({ port, retryCount: retryCount + 1 });
   }
-})();
+}
+
+// Start the server
+const PORT = parseInt(process.env.PORT || '3000', 10);
+startServer({ port: PORT }).catch(error => {
+  log(`Fatal error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+  process.exit(1);
+});
+
+// Start the server
+const PORT = parseInt(process.env.PORT || '3000', 10);
+startServer(PORT).catch(error => {
+  log(`Fatal error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+  process.exit(1);
+});
