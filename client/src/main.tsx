@@ -12,6 +12,8 @@ import CustomersPage from "./pages/CustomersPage";
 import PetsPage from "./pages/PetsPage";
 import ServicesPage from "./pages/ServicesPage";
 import InventoryPage from "./pages/InventoryPage";
+import RoleManagementPage from "./pages/RoleManagementPage";
+import AuthPage from "./pages/AuthPage";
 import { Loader2 } from "lucide-react";
 import { useUser } from "./hooks/use-user";
 import Layout from "./components/Layout";
@@ -66,6 +68,7 @@ function Router() {
             <Route path="/staff" component={lazy(() => import('./pages/StaffPage'))} />
             <Route path="/inventory" component={InventoryPage} />
             <Route path="/settings/working-hours" component={lazy(() => import('./pages/WorkingHoursPage'))} />
+            <Route path="/role-management" component={RoleManagementPage} />
             <Route>404 Page Not Found</Route>
           </Switch>
         </Suspense>

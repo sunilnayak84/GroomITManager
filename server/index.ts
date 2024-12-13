@@ -29,39 +29,41 @@ async function initializeFirebase() {
     
     log(`Initializing Firebase in ${isDevelopment ? 'development' : 'production'} mode`, 'info');
     
-    // Development mode setup
+    // Initialize Firebase with credentials (same for both development and production)
+    const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+    if (!process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL || !privateKey) {
+      throw new Error('Missing required Firebase credentials');
+    }
+
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: privateKey
+      } as admin.ServiceAccount)
+    });
+
+    // In development mode, setup initial admin user
     if (isDevelopment) {
-      log('Setting up development Firebase instance', 'info');
-      
-      // Initialize Firebase with development credentials
-      admin.initializeApp({
-        credential: admin.credential.cert({
-          projectId: 'dev-project',
-          clientEmail: 'dev@example.com',
-          privateKey: '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9QFi6lFYB3YPc\nViRUStYYEhYZyHQrxVuWKt5gUbUn7wI0LFzCLUviHR4GcIcJ3uvL0XUCp04vRYZk\nVRk0qeUDfHrJaP4hPHryidQtcw+LHvf7TNfFGDAVbhNx0AP2tWcFmwdxEutYSUyf\nFgY4VhE3SQ6CIhQDmCwYmxY4TjgcC4jD8mAJszKDqSRi75vZQZaRJGIUezhLc2m0\nXxhS2K9US1c5mBBEVXdFcEgxfxBmVxWpinHVV1nYKqmHwmkgV0j7HvNCxQLtDLsJ\nQEJlJeDy3CqRJ14qVJHGuS1SQHwxFyk0QE/yD0Jq4D8QKDH9EMrRGGiIXCkPnB9y\nBRUXVxe9AgMBAAECggEBAIpPVQTgGsWD4iZp7JfWBt7mdkI4tqaFWQTY9c0YgQYP\nZUGYNtEhFrV/3hE9ZvR0wGm8/l1ZURYDYNOPBvDJBTL/s4vk5HoZrI6IXyEzwGkl\nkLAAm8PvPHMuLwFMGYAzwp7WOAyLfwMpyP6t9YAw0dxQF8vBHZz5WMgGQHVhE9O7\nS+iaw1Y3UKRtx7G5IVgpZ4KpS+7KQQpHft+cQRhxjJIzVFbEh0phkLNRph19edGw\nhXY1CZhc6xBAswmcmv8H4fXj0kS5pVA+T3HtYQADXv2SV7pDXWe9U5TGE8qw/hV7\nU/pnFHUH2IhRHehGgxmSz06RGRJtEIu7mexPGjmrjAECgYEA3q3yIB9WH4H3AKWF\n7CkGVMVIeZJ1JlpPHGYLXVYJY6OhXFKRiZR9yRJYMqYkuvzg1f70bnG90jRQdC5n\nBHpUHv2ZmH6IDyTWqUvvX9FqY1oQp5Ki3fKxzBY8ZHs0mG9/zqOLyeHEUxAz4CY0\nZZPjwu0JxvJ0F+x+C9y0uXuY4UcCgYEA2T7jLXP0RYCjk1RfpZd5iEW6QGCEoDwS\nfvFtUVKzJxHnJJ+Ruv5sY0LzKGm5o1g3w0p3R5VQY+3/dO5eFXbk1qyI2jdQUmRi\nL2QRRWQTtJ6z2CpGMKEKE9ImC+zTUhMs57/VKkTCpHRjX7SXqH9FQ4XMB5yC1QC7\nX1UMjGLN1EsCgYEAuB4VLQZ6z/lpM0U2LLKQfyh+Cj1lnMKl6lx6iDYPfVsI1Kyc\nXh3LSjnv9G5iWpD9LnT3j9aIQFt2XSAjF+AZpFBnLm9jA/uDlOGZxwNaKI7uCmqZ\nKtd+2vBJkFIBltcU1jDWxA8h9AHPEwGBz8/YDnZuY8eNJMHV4XRI7ocCgYEAyHqK\nhbL5qPRhzTrLp5DcPDILPEXyOBVYMrtV0k5lYiCVj7vnM0n4o+LrfMd9qgqcq0Tz\nTEkj3yKBhU0REe1V5jOPEnN+1HxXyUmgIJ1Nsu6/bjndCl3kJdxXmtbzWFB93QCe\nS9TcYQ5uHhOLWf6n9TI3L/W4EIKz+2w0GVXyjncCgYEApxprKg4X5Kn0FXgIQFM5\nIoC3U85g4LvTdJ2g9SZK1X9RP1qjMv7iOJwxMK1XxwZEZXCxe1cY3JkFCZHwPwFW\nzQhEE4Q1Ru6QyX5OY9GG9jqUgHtOWmR71VGUF3qJIQBj3vALQUXp7r8d4PnXhqRD\nJDNDI1Fz8A8HaVZxRbGVDNQ=\n-----END PRIVATE KEY-----\n'
-        } as admin.ServiceAccount)
-      });
-
-      // Setup admin user in development
+      log('Setting up development admin user', 'info');
       const adminEmail = 'admin@groomery.in';
-      try {
-        // Delete existing user if exists to ensure clean state
-        try {
-          const existingUser = await admin.auth().getUserByEmail(adminEmail);
-          await admin.auth().deleteUser(existingUser.uid);
-          log(`Deleted existing admin user: ${adminEmail}`, 'info');
-        } catch (error) {
-          // User doesn't exist, which is fine
-        }
 
-        // Create new admin user
-        const adminUser = await admin.auth().createUser({
-          email: adminEmail,
-          emailVerified: true,
-          displayName: 'Admin User',
-          password: 'admin123' // Development password
-        });
-        log(`Created admin user: ${adminEmail} with ID: ${adminUser.uid}`, 'info');
+      try {
+        // Try to get existing admin user
+        let adminUser;
+        try {
+          adminUser = await admin.auth().getUserByEmail(adminEmail);
+          log('Found existing admin user', 'info');
+        } catch (error) {
+          // Create new admin user if doesn't exist
+          adminUser = await admin.auth().createUser({
+            email: adminEmail,
+            emailVerified: true,
+            displayName: 'Admin User',
+            password: 'admin123' // Development password
+          });
+          log(`Created new admin user: ${adminEmail}`, 'info');
+        }
 
         // Set admin role with all permissions
         const customClaims = {
@@ -71,22 +73,13 @@ async function initializeFirebase() {
         };
         
         await admin.auth().setCustomUserClaims(adminUser.uid, customClaims);
-        log(`Set custom claims for admin user: ${JSON.stringify(customClaims)}`, 'info');
+        log('Updated admin user claims', 'info');
 
-        // Verify custom claims were set
-        const updatedUser = await admin.auth().getUser(adminUser.uid);
-        log(`Verified admin user claims: ${JSON.stringify(updatedUser.customClaims)}`, 'info');
-
-        // Force token refresh
-        await admin.auth().revokeRefreshTokens(adminUser.uid);
-        log(`Admin user setup completed successfully`, 'info');
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        log(`Failed to setup admin user: ${errorMessage}`, 'error');
-        throw error;
+        log(`Warning: Admin user setup: ${errorMessage}`, 'warn');
+        // Don't throw error, allow server to continue starting
       }
-      
-      return;
     }
 
     // Production mode setup
@@ -94,15 +87,7 @@ async function initializeFirebase() {
       throw new Error('Missing required Firebase credentials');
     }
 
-    // Initialize with real credentials
-    const privateKey = process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n');
-    admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: privateKey
-      } as admin.ServiceAccount)
-    });
+    // Production mode setup is already handled above
 
     log('Firebase Admin SDK initialized successfully with provided credentials', 'info');
   } catch (error) {
