@@ -146,17 +146,34 @@ async function updateUserRole(userId: string, role: string): Promise<void> {
 }
 
 async function createRole(role: Role): Promise<Role> {
-  const response = await fetch('/api/roles', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(role),
-  });
-  if (!response.ok) {
-    throw new Error('Failed to create role');
+  const auth = getAuth();
+  if (!auth.currentUser) {
+    throw new Error('User not authenticated');
   }
-  return response.json();
+
+  try {
+    const token = await auth.currentUser.getIdToken(true);
+    console.log('[ROLES] Creating new role:', role);
+    
+    const response = await fetch('/api/roles', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(role),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to create role');
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error('[ROLES] Error creating role:', error);
+    throw error;
+  }
 }
 
 async function updateRole(role: Role): Promise<Role> {

@@ -222,10 +222,32 @@ export function registerRoutes(app: Express) {
   app.post("/api/roles", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
     try {
       const { name, permissions } = req.body;
+      console.log('[ROLES] Attempting to create role:', { name, permissions });
 
       if (!name || !permissions) {
         return res.status(400).json({
-          message: "Name and permissions are required"
+          message: "Name and permissions are required",
+          code: "MISSING_FIELDS"
+        });
+      }
+
+      // Validate role name format
+      if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
+        return res.status(400).json({
+          message: "Role name can only contain letters, numbers, underscores, and hyphens",
+          code: "INVALID_NAME_FORMAT"
+        });
+      }
+
+      // Validate permissions
+      const validatedPermissions = validatePermissions(permissions);
+      if (validatedPermissions.length !== permissions.length) {
+        const invalidPerms = permissions.filter(p => !isValidPermission(p));
+        return res.status(400).json({
+          message: "Some permissions were invalid",
+          code: "INVALID_PERMISSIONS",
+          invalidPermissions: invalidPerms,
+          validPermissions: ALL_PERMISSIONS
         });
       }
 
@@ -236,30 +258,45 @@ export function registerRoutes(app: Express) {
       const snapshot = await roleRef.once('value');
       if (snapshot.exists()) {
         return res.status(400).json({
-          message: `Role ${name} already exists`
+          message: `Role ${name} already exists`,
+          code: "ROLE_EXISTS"
         });
       }
 
-      // Create new role
-      await roleRef.set({
+      // Prevent creating system roles
+      if (name in InitialRoleConfigs) {
+        return res.status(403).json({
+          message: "Cannot create system roles",
+          code: "SYSTEM_ROLE_PROTECTED"
+        });
+      }
+
+      const newRole = {
         name,
-        permissions,
+        permissions: validatedPermissions,
         isSystem: false,
         createdAt: admin.database.ServerValue.TIMESTAMP,
         updatedAt: admin.database.ServerValue.TIMESTAMP
-      });
+      };
 
-      console.log(`[ROLES] Successfully created new role: ${name}`);
+      // Create new role
+      await roleRef.set(newRole);
+
+      console.log(`[ROLES] Successfully created new role:`, newRole);
       res.json({
         message: `Role ${name} created successfully`,
-        name,
-        permissions
+        role: {
+          ...newRole,
+          createdAt: Date.now(),
+          updatedAt: Date.now()
+        }
       });
     } catch (error) {
       console.error('[ROLES] Error creating role:', error);
       res.status(500).json({
         message: "Failed to create role",
-        error: error instanceof Error ? error.message : "Unknown error"
+        error: error instanceof Error ? error.message : "Unknown error",
+        code: "ROLE_CREATION_ERROR"
       });
     }
   });
