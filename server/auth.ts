@@ -228,17 +228,26 @@ export async function setUserRole(userId: string, role: 'admin' | 'staff' | 'rec
     }
 
     // Set custom claims including role, permissions and timestamp
-    await admin.auth().setCustomUserClaims(userId, {
+    const customClaims = {
       role,
       permissions,
       updatedAt: new Date().toISOString()
-    });
+    };
+    
+    await admin.auth().setCustomUserClaims(userId, customClaims);
 
-    // Force a token refresh by revoking all refresh tokens
+    // Force a token refresh
     await admin.auth().revokeRefreshTokens(userId);
+
+    // Double check the claims were set
+    const updatedUser = await admin.auth().getUser(userId);
+    if (!updatedUser.customClaims || updatedUser.customClaims.role !== role) {
+      throw new Error('Failed to verify role update');
+    }
 
     console.log(`[AUTH] Successfully set role ${role} for user ${userId} (${userRecord.email})`);
     console.log('[AUTH] Assigned permissions:', permissions);
+    console.log('[AUTH] Custom claims set:', customClaims);
     console.log('[AUTH] Tokens revoked, user will need to re-authenticate');
     
     // Update user in database if needed
