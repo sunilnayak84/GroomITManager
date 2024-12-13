@@ -91,59 +91,56 @@ async function initializeRoles(app: admin.app.App) {
   const rolesRef = db.ref('role-definitions');
   
   try {
+    console.log('[ROLES] Starting role initialization...');
+    
     // Check if roles are already initialized
     const snapshot = await rolesRef.once('value');
-    if (!snapshot.exists()) {
-      console.log('Initializing default roles in Firebase...');
-      
-      // Create initial role configurations with timestamps
-      const timestamp = admin.database.ServerValue.TIMESTAMP;
-      const roleConfigs = Object.entries(DefaultPermissions).reduce((acc, [role, permissions]) => ({
-        ...acc,
-        [role]: {
-          name: role,
-          permissions,
-          isSystem: true,
-          createdAt: timestamp,
-          updatedAt: timestamp
-        }
-      }), {});
-
-      await rolesRef.set(roleConfigs);
-      console.log('Default roles initialized successfully');
-    } else {
-      // Update existing roles with any new default permissions
-      const currentRoles = snapshot.val();
-      const updates = {};
-      
-      Object.entries(DefaultPermissions).forEach(([role, defaultPerms]) => {
-        if (!currentRoles[role]) {
-          updates[role] = {
-            name: role,
-            permissions: defaultPerms,
-            isSystem: true,
-            createdAt: admin.database.ServerValue.TIMESTAMP,
-            updatedAt: admin.database.ServerValue.TIMESTAMP
-          };
-        }
-      });
-      
-      if (Object.keys(updates).length > 0) {
-        await rolesRef.update(updates);
-        console.log('Updated roles with new defaults');
+    const currentRoles = snapshot.val() || {};
+    const updates: Record<string, any> = {};
+    
+    // Always ensure default roles exist with proper permissions
+    Object.entries(InitialRoleConfigs).forEach(([roleName, roleConfig]) => {
+      if (!currentRoles[roleName] || !currentRoles[roleName].permissions) {
+        console.log(`[ROLES] Initializing/updating role: ${roleName}`);
+        updates[roleName] = {
+          ...roleConfig,
+          createdAt: currentRoles[roleName]?.createdAt || admin.database.ServerValue.TIMESTAMP,
+          updatedAt: admin.database.ServerValue.TIMESTAMP
+        };
       }
+    });
+    
+    if (Object.keys(updates).length > 0) {
+      await rolesRef.update(updates);
+      console.log('[ROLES] Successfully initialized/updated roles:', Object.keys(updates));
+    } else {
+      console.log('[ROLES] All default roles already exist');
     }
+    
+    // Verify roles were properly initialized
+    const verifySnapshot = await rolesRef.once('value');
+    const roles = verifySnapshot.val();
+    
+    if (!roles) {
+      throw new Error('Failed to initialize roles in Firebase');
+    }
+    
+    console.log('[ROLES] Current roles in Firebase:', Object.keys(roles));
+    return roles;
   } catch (error) {
-    console.error('Error initializing roles:', error);
+    console.error('[ROLES] Error initializing roles:', error);
     throw error;
   }
 }
 
 // Function to get all role definitions from Firebase
 export async function getRoleDefinitions() {
+  console.log('[ROLES] Fetching role definitions...');
+  
   const app = await getFirebaseAdmin();
   if (!app) {
-    throw new Error('Firebase Admin not initialized');
+    console.warn('[ROLES] Firebase Admin not initialized, using initial configs');
+    return InitialRoleConfigs;
   }
   
   const db = getDatabase(app);
@@ -151,9 +148,28 @@ export async function getRoleDefinitions() {
   
   try {
     const snapshot = await rolesRef.once('value');
-    return snapshot.val() || InitialRoleConfigs;
+    const roles = snapshot.val();
+    
+    if (!roles) {
+      console.log('[ROLES] No roles found in Firebase, initializing default roles...');
+      await initializeRoles(app);
+      const updatedSnapshot = await rolesRef.once('value');
+      const initializedRoles = updatedSnapshot.val();
+      
+      if (!initializedRoles) {
+        console.error('[ROLES] Failed to initialize roles, using initial configs');
+        return InitialRoleConfigs;
+      }
+      
+      console.log('[ROLES] Successfully initialized roles:', Object.keys(initializedRoles));
+      return initializedRoles;
+    }
+    
+    console.log('[ROLES] Successfully fetched roles:', Object.keys(roles));
+    return roles;
   } catch (error) {
-    console.error('Error fetching role definitions:', error);
+    console.error('[ROLES] Error fetching role definitions:', error);
+    console.warn('[ROLES] Using initial configs as fallback');
     return InitialRoleConfigs;
   }
 }

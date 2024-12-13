@@ -44,19 +44,36 @@ export function registerRoutes(app: Express) {
   // Role management endpoints
   app.get("/api/roles", authenticateFirebase, requireRole([RoleTypes.admin]), async (_req, res) => {
     try {
-      console.log('[ROLES] Fetching roles from Firebase');
+      console.log('[ROLES] Starting role fetch request');
+      
+      // Get roles from Firebase
       const roleDefinitions = await getRoleDefinitions();
+      
+      if (!roleDefinitions) {
+        console.error('[ROLES] No role definitions found');
+        return res.status(500).json({ 
+          message: "No roles found in the system",
+          code: "NO_ROLES_FOUND"
+        });
+      }
+      
+      // Transform role definitions into the expected format
       const roles = Object.entries(roleDefinitions).map(([name, role]: [string, any]) => ({
         name,
-        permissions: role.permissions,
-        isSystem: role.isSystem
+        permissions: role.permissions || [],
+        isSystem: role.isSystem || false,
+        createdAt: role.createdAt,
+        updatedAt: role.updatedAt
       }));
+      
+      console.log('[ROLES] Successfully fetched roles:', roles.map(r => r.name));
       res.json(roles);
     } catch (error) {
       console.error('[ROLES] Error fetching roles:', error);
       res.status(500).json({ 
         message: "Failed to fetch roles",
-        error: error instanceof Error ? error.message : "Unknown error"
+        error: error instanceof Error ? error.message : "Unknown error",
+        code: "ROLE_FETCH_ERROR"
       });
     }
   });
