@@ -21,11 +21,12 @@ function log(message: string, type: 'info' | 'error' | 'warn' = 'info') {
 
 // Initialize Firebase Admin
 async function initializeFirebase() {
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  
   try {
     // Clean up any existing Firebase apps
     await Promise.all(admin.apps.map(app => app?.delete()));
     
-    const isDevelopment = process.env.NODE_ENV === 'development';
     log(`Initializing Firebase in ${isDevelopment ? 'development' : 'production'} mode`, 'info');
     
     // Development mode setup
@@ -84,38 +85,11 @@ async function initializeFirebase() {
         log(`Failed to setup admin user: ${errorMessage}`, 'error');
         throw error;
       }
-
-        // Create or update admin user in development
-        try {
-          const adminEmail = 'admin@groomery.in';
-          let userRecord;
-          try {
-            userRecord = await admin.auth().getUserByEmail(adminEmail);
-          } catch (error) {
-            userRecord = await admin.auth().createUser({
-              email: adminEmail,
-              emailVerified: true,
-              displayName: 'Admin User'
-            });
-          }
-          
-          // Set admin role with all permissions
-          await admin.auth().setCustomUserClaims(userRecord.uid, {
-            role: 'admin',
-            permissions: ['all'],
-            updatedAt: new Date().toISOString()
-          });
-          
-          log('Development admin user initialized with proper permissions', 'info');
-        } catch (error) {
-          log('Failed to setup development admin user', 'warn');
-        }
-        
-        return true;
-      }
+      
+      return;
     }
 
-    // Production mode or development with real credentials
+    // Production mode setup
     if (!process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL || !process.env.FIREBASE_PRIVATE_KEY) {
       throw new Error('Missing required Firebase credentials');
     }
