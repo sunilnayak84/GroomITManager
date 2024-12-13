@@ -1,27 +1,21 @@
 import { Request, Response, NextFunction } from 'express';
-import { getFirebaseAdmin } from '../firebase';
-import { type RoleType, type Permission, users, roles } from '../../db/schema';
-import { RolePermissions } from '../routes';
-import { db } from "../../db";
-import { eq } from "drizzle-orm";
+import { firebaseAdmin, getRoleFromFirebase, type RoleType, type Permission } from '../firebase-admin';
+import * as admin from 'firebase-admin';
+import { getFirestore } from 'firebase-admin/firestore';
 
 // Extend Express Request type to include user
 declare global {
   namespace Express {
     interface Request {
-      user?: FirebaseUser & {
+      user?: {
+        uid: string;
+        email?: string | null;
+        displayName?: string | null;
         role: RoleType;
         permissions: Permission[];
-        roleId: string;
       };
     }
   }
-}
-
-interface FirebaseUser {
-  uid: string;
-  email?: string | null;
-  displayName?: string | null;
 }
 
 // Manager-specific restricted paths
@@ -54,17 +48,8 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
     }
 
     const idToken = authHeader.split('Bearer ')[1];
-    const firebaseAdmin = getFirebaseAdmin();
-    
-    if (!firebaseAdmin) {
-      console.error('Firebase Admin not initialized');
-      return res.status(500).json({ 
-        message: 'Authentication service unavailable',
-        code: 'AUTH_SERVICE_ERROR'
-      });
-    }
-
-    const auth = firebaseAdmin.auth();
+    const auth = admin.auth();
+    const db = getFirestore();
     
     try {
       console.log('🔍 Verifying Firebase token...');
@@ -73,75 +58,33 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
       
       console.log(`🔍 Fetching user data for ${firebaseUser.email}...`);
       
-      // Fetch user from database with role information
-      const result = await db
-        .select({
-          user: {
-            id: users.id,
-            email: users.email,
-            name: users.name,
-            roleId: users.roleId,
-            isActive: users.isActive
-          },
-          role: {
-            id: roles.id,
-            name: roles.name,
-            permissions: roles.permissions
-          }
-        })
-        .from(users)
-        .leftJoin(roles, eq(users.roleId, roles.id))
-        .where(eq(users.id, firebaseUser.uid));
-
-      let dbUser = result[0];
-
-      if (!dbUser) {
-        console.log(`📝 Creating new user record for ${firebaseUser.email}...`);
-        // Create user in database if not exists with default staff role
-        const [newUser] = await db.insert(users)
-          .values({
-            id: firebaseUser.uid,
-            email: firebaseUser.email || '',
-            name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Unknown User',
-            roleId: 'staff', // Default role
-            phone: '',
-            isActive: true
-          })
-          .returning();
-
-        // Fetch the newly created user with role information
-        const [userWithRole] = await db
-          .select({
-            user: {
-              id: users.id,
-              email: users.email,
-              name: users.name,
-              roleId: users.roleId,
-              isActive: users.isActive
-            },
-            role: {
-              id: roles.id,
-              name: roles.name,
-              permissions: roles.permissions
-            }
-          })
-          .from(users)
-          .leftJoin(roles, eq(users.roleId, roles.id))
-          .where(eq(users.id, newUser.id));
-          
-        dbUser = userWithRole;
-      }
-
-      if (!dbUser?.role) {
-        console.error(`❌ No role found for user ${firebaseUser.email}`);
-        return res.status(500).json({
-          message: 'User role not found',
-          code: 'ROLE_NOT_FOUND'
+      // Get user's custom claims from Firebase
+      const { customClaims } = firebaseUser;
+      const userRole = (customClaims?.role as RoleType) || 'staff';
+      
+      // Fetch role data from Firebase
+      const roleData = await getRoleFromFirebase(userRole);
+      
+      // Get user document from Firestore
+      const userDoc = await db.collection('users').doc(firebaseUser.uid).get();
+      
+      if (!userDoc.exists) {
+        // Create new user document in Firestore if it doesn't exist
+        await db.collection('users').doc(firebaseUser.uid).set({
+          email: firebaseUser.email,
+          displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Unknown User',
+          role: userRole,
+          permissions: roleData.permissions,
+          isActive: true,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          updatedAt: admin.firestore.FieldValue.serverTimestamp()
         });
       }
 
-      // Check if user is active
-      if (!dbUser.user.isActive) {
+      const userData = userDoc.exists ? userDoc.data() : null;
+      
+      // Check if user is active in Firestore
+      if (userData && userData.isActive === false) {
         console.error(`❌ User ${firebaseUser.email} is inactive`);
         return res.status(403).json({
           message: 'User account is inactive',
@@ -150,13 +93,14 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
       }
 
       req.user = {
-        ...firebaseUser,
-        role: dbUser.role.name as RoleType,
-        permissions: dbUser.role.permissions as Permission[],
-        roleId: dbUser.user.roleId
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        displayName: firebaseUser.displayName,
+        role: roleData.name,
+        permissions: roleData.permissions
       };
       
-      console.log(`🟢 Authenticated user: ${firebaseUser.email} (${dbUser.role.name})`);
+      console.log(`🟢 Authenticated user: ${firebaseUser.email} (${roleData.name})`);
       next();
     } catch (verifyError) {
       console.error('Token verification failed:', verifyError);
@@ -223,7 +167,7 @@ export function requireRole(allowedRoles: RoleType[]) {
 
 // Permission-based access control middleware
 export function requirePermission(permission: Permission) {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
       return res.status(401).json({ 
         message: 'Authentication required',
@@ -235,7 +179,8 @@ export function requirePermission(permission: Permission) {
       return next(); // Admin has all permissions
     }
 
-    const rolePermissions = RolePermissions[req.user.role];
+    const roleData = await getRoleFromFirebase(req.user.role);
+    const rolePermissions = roleData.permissions;
     if (!rolePermissions?.includes(permission) && !rolePermissions?.includes('all')) {
       return res.status(403).json({
         message: `Access denied. Missing required permission: ${permission}`,
