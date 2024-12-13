@@ -89,7 +89,7 @@ export function registerRoutes(app: Express) {
     }
   });
 
-  // Only admin can manage user roles
+  // Only admin can manage user roles - managers are explicitly blocked from this endpoint
   app.post("/api/users/:userId/role", authenticateFirebase, requireRole(['admin']), async (req, res) => {
     try {
       const { userId } = req.params;
@@ -274,4 +274,3 @@ export function registerRoutes(app: Express) {
     }
   });
 }
-

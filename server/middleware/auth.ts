@@ -113,11 +113,33 @@ export function requireRole(roles: ('admin' | 'staff' | 'receptionist' | 'manage
       const isUserManagementEndpoint = userManagementPaths.some(path => req.path.startsWith(path));
 
       // Block managers from user management endpoints
-      if (isUserManagementEndpoint && req.user.role === 'manager') {
-        return res.status(403).json({
-          message: 'Access denied. Managers cannot access user management features.',
-          code: 'MANAGER_RESTRICTED'
-        });
+      if (req.user.role === 'manager') {
+        const userManagementPaths = [
+          '/api/users',
+          '/api/setup-admin',
+          '/api/roles',
+          '/api/auth/roles',
+          '/api/users/role',
+          '/api/staff/role',
+          '/api/staff/permissions',
+          '/api/auth/admin',
+          '/api/auth/setup',
+          '/api/auth/permissions'
+        ];
+
+        // Check if current path matches any restricted paths
+        const isRestrictedPath = userManagementPaths.some(path => 
+          req.path.toLowerCase().startsWith(path.toLowerCase())
+        );
+
+        if (isRestrictedPath) {
+          console.log(`[AUTH] Manager access denied to ${req.path}`);
+          return res.status(403).json({
+            message: 'Access denied. Managers cannot access user management features.',
+            code: 'MANAGER_RESTRICTED',
+            path: req.path
+          });
+        }
       }
 
       if (!roles.includes(req.user.role)) {
@@ -131,19 +153,36 @@ export function requireRole(roles: ('admin' | 'staff' | 'receptionist' | 'manage
 
       // Additional manager role restrictions
       if (req.user.role === 'manager') {
-      
-      try {
+        // Import restricted paths from auth.ts
+        const MANAGER_RESTRICTED_PATHS = [
+          '/api/users',
+          '/api/setup-admin',
+          '/api/roles',
+          '/api/auth/roles',
+          '/api/users/role',
+          '/api/staff/role',
+          '/api/staff/permissions',
+          '/api/auth/admin',
+          '/api/auth/setup',
+          '/api/auth/permissions'
+        ];
+        
         // Check if the request path starts with any restricted path
         const isUserManagementEndpoint = MANAGER_RESTRICTED_PATHS.some(
           path => req.path.startsWith(path)
         );
+        
+        // Additional check for any endpoints containing 'user' or 'role' in their path
+        const isUserRelatedEndpoint = req.path.toLowerCase().includes('/user') || 
+                                    req.path.toLowerCase().includes('/role') ||
+                                    req.path.toLowerCase().includes('/auth/admin');
 
         // Additional checks for role modification operations
         const isRestrictedOperation = 
           (req.path === '/api/me' && req.method === 'PUT' && req.body?.role) ||
           (req.path.includes('/api/staff/role') && ['POST', 'PUT', 'PATCH'].includes(req.method));
 
-        if (isUserManagementEndpoint || isRestrictedOperation) {
+        if (isUserManagementEndpoint || isRestrictedOperation || isUserRelatedEndpoint) {
           console.log(`[AUTH] Manager access denied to ${req.path} (${req.method})`);
           return res.status(403).json({
             status: 'error',
@@ -152,33 +191,26 @@ export function requireRole(roles: ('admin' | 'staff' | 'receptionist' | 'manage
             details: 'Managers have access to all features except user role management'
           });
         }
-
-        // Grant access to all other endpoints
-        console.log(`[AUTH] Manager access granted to ${req.path} (${req.method})`);
-        return next();
-      } catch (error) {
-        console.error('[AUTH] Error in manager role check:', error);
-        return res.status(500).json({
-          status: 'error',
-          code: 'AUTH_ERROR',
-          message: process.env.NODE_ENV === 'development' 
-            ? `Authorization error: ${error instanceof Error ? error.message : 'Unknown error'}`
-            : 'Internal server error during authorization check'
-        });
       }
-    }
 
-    // Staff can access their own branch only
-    if (req.user.role === 'staff' && req.params.branchId) {
-      if (req.user.branchId?.toString() !== req.params.branchId) {
-        return res.status(403).json({
-          message: 'Access denied. You can only access your assigned branch.',
-          code: 'BRANCH_ACCESS_DENIED'
-        });
+      // Staff can access their own branch only
+      if (req.user.role === 'staff' && req.params.branchId) {
+        if (req.user.branchId?.toString() !== req.params.branchId) {
+          return res.status(403).json({
+            message: 'Access denied. You can only access your assigned branch.',
+            code: 'BRANCH_ACCESS_DENIED'
+          });
+        }
       }
-    }
 
-    next();
+      next();
+    } catch (error) {
+      console.error('Role verification error:', error);
+      return res.status(500).json({
+        message: 'Internal server error during role verification',
+        code: 'ROLE_VERIFICATION_ERROR'
+      });
+    }
   };
 }
 
