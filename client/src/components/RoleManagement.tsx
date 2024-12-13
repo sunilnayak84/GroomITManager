@@ -175,14 +175,17 @@ export function RoleManagement() {
       
       {/* Existing Roles */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        {roles?.map((role) => (
-          <Card key={role.name} className="relative">
-            <CardHeader>
-              <CardTitle className="capitalize">{role.name}</CardTitle>
-              <CardDescription>
-                {Array.isArray(role.permissions) ? `${role.permissions.length} permissions granted` : 'All permissions'}
-              </CardDescription>
-            </CardHeader>
+        {isLoadingRoles ? (
+          <div className="col-span-2 text-center py-4">Loading roles...</div>
+        ) : roles && roles.length > 0 ? (
+          roles.map((role) => (
+            <Card key={role.name} className="relative">
+              <CardHeader>
+                <CardTitle className="capitalize">{role.name}</CardTitle>
+                <CardDescription>
+                  {Array.isArray(role.permissions) ? `${role.permissions.length} permissions granted` : 'All permissions'}
+                </CardDescription>
+              </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 {Array.isArray(role.permissions) && role.permissions.map(permission => (
