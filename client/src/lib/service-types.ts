@@ -17,9 +17,6 @@ export const baseConsumableSchema = z.object({
 // Service consumable schema - using the base schema directly since we handle number conversion in the form
 export const serviceConsumableSchema = baseConsumableSchema;
 
-// Type for service consumable based on the schema
-export type ServiceConsumable = z.infer<typeof serviceConsumableSchema>;
-
 // Package item type
 export type PackageItem = {
   service_id: string;

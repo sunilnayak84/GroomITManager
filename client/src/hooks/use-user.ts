@@ -8,7 +8,7 @@ import {
   type User as FirebaseUser
 } from 'firebase/auth';
 
-type UserRole = 'admin' | 'staff' | 'receptionist';
+export type UserRole = 'admin' | 'manager' | 'staff' | 'receptionist';
 
 type AuthUser = {
   id: string;

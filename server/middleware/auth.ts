@@ -84,12 +84,20 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
   }
 }
 
-export function requireRole(roles: ('admin' | 'staff' | 'receptionist')[]) {
+export function requireRole(roles: ('admin' | 'staff' | 'receptionist' | 'manager')[]) {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
       return res.status(401).json({ 
         message: 'Authentication required',
         code: 'AUTH_REQUIRED'
+      });
+    }
+
+    // Special handling for user management endpoints
+    if (req.path.includes('/api/users') && req.user.role !== 'admin') {
+      return res.status(403).json({
+        message: 'Access denied. Only administrators can manage users.',
+        code: 'USER_MANAGEMENT_RESTRICTED'
       });
     }
 
@@ -105,6 +113,17 @@ export function requireRole(roles: ('admin' | 'staff' | 'receptionist')[]) {
     // Allow admin to access everything
     if (req.user.role === 'admin') {
       return next();
+    }
+
+    // Manager can access everything except user management
+    if (req.user.role === 'manager') {
+      if (!req.path.includes('/api/users')) {
+        return next();
+      }
+      return res.status(403).json({
+        message: 'Access denied. Managers cannot manage user roles.',
+        code: 'MANAGER_RESTRICTED'
+      });
     }
 
     // Staff can access their own branch only
