@@ -284,3 +284,26 @@ export type InsertAppointment = typeof appointments.$inferInsert;
 
 export type ServiceProduct = typeof serviceProducts.$inferSelect;
 export type InsertServiceProduct = typeof serviceProducts.$inferInsert;
+
+
+// Notifications table
+export const notifications = pgTable("notifications", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  userId: varchar("user_id", { length: 255 }).notNull().references(() => users.id),
+  appointmentId: integer("appointment_id").references(() => appointments.id),
+  type: varchar("type", { length: 50 }).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  message: text("message").notNull(),
+  isRead: boolean("is_read").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at"),
+});
+
+export type Notification = typeof notifications.$inferSelect;
+export type InsertNotification = typeof notifications.$inferInsert;
+
+export const insertNotificationSchema = createInsertSchema(notifications, {
+  title: z.string().min(1, "Title is required"),
+  message: z.string().min(1, "Message is required"),
+  type: z.enum(["reminder", "status_change", "cancellation", "reschedule"]),
+});
