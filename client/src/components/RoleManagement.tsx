@@ -192,29 +192,39 @@ export function RoleManagement() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  {Array.isArray(role.permissions) && role.permissions.map(permission => (
-                    <div key={permission} className="text-sm text-muted-foreground">
-                      • {permission.replace(/_/g, ' ')}
-                    </div>
-                  ))}
-                </div>
+                <ProtectedElement 
+                  requiredPermissions={['view_roles', 'manage_roles']} 
+                  fallback={<div className="text-sm text-muted-foreground">Permission details hidden</div>}
+                >
+                  <div className="space-y-2">
+                    {Array.isArray(role.permissions) && role.permissions.map(permission => (
+                      <div key={permission} className="text-sm text-muted-foreground">
+                        • {permission.replace(/_/g, ' ')}
+                      </div>
+                    ))}
+                  </div>
+                </ProtectedElement>
                 {role.name !== 'admin' && (
-                  <Button
-                    variant="outline"
-                    className="mt-4"
-                    onClick={() => {
-                      console.log('Editing role:', role);
-                      setEditingRole(role.name);
-                      form.reset({
-                        name: role.name,
-                        permissions: Array.isArray(role.permissions) ? role.permissions : [],
-                        description: '',
-                      });
-                    }}
+                  <ProtectedElement 
+                    requiredPermissions={['manage_roles']} 
+                    fallback={null}
                   >
-                    Edit Role
-                  </Button>
+                    <Button
+                      variant="outline"
+                      className="mt-4"
+                      onClick={() => {
+                        console.log('Editing role:', role);
+                        setEditingRole(role.name);
+                        form.reset({
+                          name: role.name,
+                          permissions: Array.isArray(role.permissions) ? role.permissions : [],
+                          description: '',
+                        });
+                      }}
+                    >
+                      Edit Role
+                    </Button>
+                  </ProtectedElement>
                 )}
                 {isUpdating && editingRole === role.name && (
                   <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
