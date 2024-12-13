@@ -35,6 +35,7 @@ import { useStaff } from '../hooks/use-staff';
 import { useWorkingHours } from '../hooks/use-working-hours';
 import type { WorkingDays } from "@/lib/schema";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { format } from 'date-fns';
 
 interface AppointmentFormProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -145,11 +146,24 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
     const appointmentStartTime = new Date(date);
     appointmentStartTime.setHours(hours, minutes, 0, 0);
 
+    // Calculate end time based on selected service duration
+    const appointmentEndTime = new Date(appointmentStartTime);
+    appointmentEndTime.setMinutes(appointmentEndTime.getMinutes() + (selectedService?.duration || 60));
+
     if (appointmentStartTime < new Date()) {
       return { isValid: false, error: "Cannot schedule appointments in the past" };
     }
 
-    if (time < daySchedule.openingTime || time >= daySchedule.closingTime) {
+    // Convert opening and closing times to Date objects for comparison
+    const openingTime = new Date(date);
+    const [openHours, openMinutes] = daySchedule.openingTime.split(':').map(Number);
+    openingTime.setHours(openHours, openMinutes, 0, 0);
+
+    const closingTime = new Date(date);
+    const [closeHours, closeMinutes] = daySchedule.closingTime.split(':').map(Number);
+    closingTime.setHours(closeHours, closeMinutes, 0, 0);
+
+    if (appointmentStartTime < openingTime || appointmentEndTime > closingTime) {
       return {
         isValid: false,
         error: `Please select a time between ${daySchedule.openingTime} and ${daySchedule.closingTime}`
@@ -160,7 +174,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
       const appointmentEndTime = new Date(appointmentStartTime);
       appointmentEndTime.setMinutes(appointmentEndTime.getMinutes() + selectedService.duration);
       const endTimeStr = `${String(appointmentEndTime.getHours()).padStart(2, '0')}:${String(appointmentEndTime.getMinutes()).padStart(2, '0')}`;
-      
+        
       if (endTimeStr > daySchedule.closingTime) {
         return {
           isValid: false,
@@ -187,11 +201,11 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
           const breakEndTime = daySchedule.breakEnd.split(':')
             .map(n => parseInt(n))
             .reduce((acc, n, i) => i === 0 ? n : acc + (n/60), 0);
-          
+            
           const breakDuration = breakEndTime - breakStartTime;
           const breakEndHour = Math.floor(breakEndTime);
           const breakEndMinute = Math.round((breakEndTime - breakEndHour) * 60);
-          
+            
           return {
             isValid: false,
             error: `This time conflicts with our ${breakDuration === 1 ? '1 hour' : `${breakDuration} hours`} break period (until ${breakEndHour}:${String(breakEndMinute).padStart(2, '0')})`
@@ -199,33 +213,38 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
         }
       }
 
-      if (!isTimeSlotAvailable(appointmentStartTime, groomerId)) {
-        const conflictingAppointment = appointments?.find(a => 
-          a.groomerId === groomerId && 
-          new Date(a.date).toTimeString() === appointmentStartTime.toTimeString()
-        );
-        
+      // Check for overlapping appointments
+      if (!isTimeSlotAvailable(appointmentStartTime, groomerId, selectedService.duration)) {
+        // Find the conflicting appointment for a more specific error message
+        const conflictingAppointment = appointments?.find(a => {
+          if (a.groomerId !== groomerId) return false;
+          const existingStart = new Date(a.date);
+          const existingEnd = new Date(existingStart);
+          const existingDuration = a.service?.duration || 60;
+          existingEnd.setMinutes(existingEnd.getMinutes() + existingDuration);
+            
+          return (
+            // New appointment starts during existing appointment
+            (appointmentStartTime >= existingStart && appointmentStartTime < existingEnd) ||
+            // New appointment ends during existing appointment
+            (appointmentEndTime > existingStart && appointmentEndTime <= existingEnd) ||
+            // New appointment completely contains existing appointment
+            (appointmentStartTime <= existingStart && appointmentEndTime >= existingEnd) ||
+            // Existing appointment completely contains new appointment
+            (existingStart <= appointmentStartTime && existingEnd >= appointmentEndTime)
+          );
+        });
+          
         return {
           isValid: false,
           error: conflictingAppointment 
-            ? "This time slot is already booked. Please select a different time."
+            ? `This time slot conflicts with an existing appointment from ${format(new Date(conflictingAppointment.date), 'h:mm a')} to ${format((() => {
+                const end = new Date(conflictingAppointment.date);
+                end.setMinutes(end.getMinutes() + (conflictingAppointment.service?.duration || 60));
+                return end;
+              })(), 'h:mm a')}`
             : "The selected groomer is not available during this time. Please choose another time slot."
         };
-      }
-
-      const groomer = availableGroomers.find(g => g.id === groomerId);
-      if (groomer?.maxDailyAppointments !== undefined) {
-        const appointmentsOnDay = appointments?.filter(a => 
-          a.groomerId === groomerId && 
-          new Date(a.date).toDateString() === appointmentStartTime.toDateString()
-        ).length || 0;
-
-        if (appointmentsOnDay >= groomer.maxDailyAppointments) {
-          return {
-            isValid: false,
-            error: "Groomer has reached maximum appointments for this day"
-          };
-        }
       }
     }
 
