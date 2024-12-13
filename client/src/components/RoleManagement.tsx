@@ -4,8 +4,8 @@ import type { UserRole } from '@/hooks/use-user';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useElementVisibility } from '@/hooks/use-element-visibility';
-import { ProtectedElement } from '@/components/ProtectedElement';
+import { useElementVisibility } from '../hooks/use-element-visibility';
+import { ProtectedElement } from './ProtectedElement';
 import {
   Card,
   CardContent,
@@ -93,7 +93,7 @@ export function RoleManagement() {
   } = useRoles();
 
   useEffect(() => {
-    // Log state for debugging
+    // Enhanced debugging logs
     console.log('Role Management State:', {
       roles,
       isLoadingRoles,
@@ -101,6 +101,14 @@ export function RoleManagement() {
       isLoadingUsers,
       hasNextPage
     });
+
+    if (roles) {
+      console.log('Available roles:', roles.map(role => ({
+        name: role.name,
+        permissionCount: role.permissions?.length || 0,
+        permissions: role.permissions
+      })));
+    }
   }, [roles, isLoadingRoles, users, isLoadingUsers, hasNextPage]);
 
   const roleEntries = useMemo(() => 
