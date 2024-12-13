@@ -1,0 +1,562 @@
+Role Management State: {roles: undefined, isLoadingRoles: true, users: Array(0), isLoadingUsers: true, hasNextPage: false}
+RoleManagement.tsx:94 Role Management State: {roles: undefined, isLoadingRoles: true, users: Array(0), isLoadingUsers: true, hasNextPage: false}
+use-roles.ts:34 [ROLES] Fetching roles...
+use-roles.ts:36 
+        
+        
+       GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3001/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:36
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=1bb661f2:839
+run @ @tanstack_react-query.js?v=1bb661f2:493
+start @ @tanstack_react-query.js?v=1bb661f2:535
+fetch @ @tanstack_react-query.js?v=1bb661f2:925
+executeFetch_fn @ @tanstack_react-query.js?v=1bb661f2:2211
+onSubscribe @ @tanstack_react-query.js?v=1bb661f2:1898
+subscribe @ @tanstack_react-query.js?v=1bb661f2:24
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:3013
+subscribeToStore @ chunk-7SSXMLWA.js?v=3e849263:11984
+commitHookEffectListMount @ chunk-7SSXMLWA.js?v=3e849263:16915
+commitPassiveMountOnFiber @ chunk-7SSXMLWA.js?v=3e849263:18156
+commitPassiveMountEffects_complete @ chunk-7SSXMLWA.js?v=3e849263:18129
+commitPassiveMountEffects_begin @ chunk-7SSXMLWA.js?v=3e849263:18119
+commitPassiveMountEffects @ chunk-7SSXMLWA.js?v=3e849263:18109
+flushPassiveEffectsImpl @ chunk-7SSXMLWA.js?v=3e849263:19490
+flushPassiveEffects @ chunk-7SSXMLWA.js?v=3e849263:19447
+performSyncWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18868
+flushSyncCallbacks @ chunk-7SSXMLWA.js?v=3e849263:9119
+commitRootImpl @ chunk-7SSXMLWA.js?v=3e849263:19432
+commitRoot @ chunk-7SSXMLWA.js?v=3e849263:19277
+finishConcurrentRender @ chunk-7SSXMLWA.js?v=3e849263:18805
+performConcurrentWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18718
+workLoop @ chunk-7SSXMLWA.js?v=3e849263:197
+flushWork @ chunk-7SSXMLWA.js?v=3e849263:176
+performWorkUntilDeadline @ chunk-7SSXMLWA.js?v=3e849263:384Understand this errorAI
+use-roles.ts:47 
+        
+        
+       GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3001/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:47
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=1bb661f2:839
+run @ @tanstack_react-query.js?v=1bb661f2:493
+start @ @tanstack_react-query.js?v=1bb661f2:535
+fetch @ @tanstack_react-query.js?v=1bb661f2:925
+executeFetch_fn @ @tanstack_react-query.js?v=1bb661f2:2211
+onSubscribe @ @tanstack_react-query.js?v=1bb661f2:1898
+subscribe @ @tanstack_react-query.js?v=1bb661f2:24
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:3013
+subscribeToStore @ chunk-7SSXMLWA.js?v=3e849263:11984
+commitHookEffectListMount @ chunk-7SSXMLWA.js?v=3e849263:16915
+commitPassiveMountOnFiber @ chunk-7SSXMLWA.js?v=3e849263:18156
+commitPassiveMountEffects_complete @ chunk-7SSXMLWA.js?v=3e849263:18129
+commitPassiveMountEffects_begin @ chunk-7SSXMLWA.js?v=3e849263:18119
+commitPassiveMountEffects @ chunk-7SSXMLWA.js?v=3e849263:18109
+flushPassiveEffectsImpl @ chunk-7SSXMLWA.js?v=3e849263:19490
+flushPassiveEffects @ chunk-7SSXMLWA.js?v=3e849263:19447
+performSyncWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18868
+flushSyncCallbacks @ chunk-7SSXMLWA.js?v=3e849263:9119
+commitRootImpl @ chunk-7SSXMLWA.js?v=3e849263:19432
+commitRoot @ chunk-7SSXMLWA.js?v=3e849263:19277
+finishConcurrentRender @ chunk-7SSXMLWA.js?v=3e849263:18805
+performConcurrentWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18718
+workLoop @ chunk-7SSXMLWA.js?v=3e849263:197
+flushWork @ chunk-7SSXMLWA.js?v=3e849263:176
+performWorkUntilDeadline @ chunk-7SSXMLWA.js?v=3e849263:384Understand this errorAI
+use-roles.ts:69 [ROLES] Error in fetchRoles: Error: Failed to fetch roles after token refresh: {"message":"Authentication required","code":"AUTH_REQUIRED"}
+    at fetchRoles (use-roles.ts:56:15)
+fetchRoles @ use-roles.ts:69
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=1bb661f2:839
+run @ @tanstack_react-query.js?v=1bb661f2:493
+start @ @tanstack_react-query.js?v=1bb661f2:535
+fetch @ @tanstack_react-query.js?v=1bb661f2:925
+executeFetch_fn @ @tanstack_react-query.js?v=1bb661f2:2211
+onSubscribe @ @tanstack_react-query.js?v=1bb661f2:1898
+subscribe @ @tanstack_react-query.js?v=1bb661f2:24
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:3013
+subscribeToStore @ chunk-7SSXMLWA.js?v=3e849263:11984
+commitHookEffectListMount @ chunk-7SSXMLWA.js?v=3e849263:16915
+commitPassiveMountOnFiber @ chunk-7SSXMLWA.js?v=3e849263:18156
+commitPassiveMountEffects_complete @ chunk-7SSXMLWA.js?v=3e849263:18129
+commitPassiveMountEffects_begin @ chunk-7SSXMLWA.js?v=3e849263:18119
+commitPassiveMountEffects @ chunk-7SSXMLWA.js?v=3e849263:18109
+flushPassiveEffectsImpl @ chunk-7SSXMLWA.js?v=3e849263:19490
+flushPassiveEffects @ chunk-7SSXMLWA.js?v=3e849263:19447
+performSyncWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18868
+flushSyncCallbacks @ chunk-7SSXMLWA.js?v=3e849263:9119
+commitRootImpl @ chunk-7SSXMLWA.js?v=3e849263:19432
+commitRoot @ chunk-7SSXMLWA.js?v=3e849263:19277
+finishConcurrentRender @ chunk-7SSXMLWA.js?v=3e849263:18805
+performConcurrentWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18718
+workLoop @ chunk-7SSXMLWA.js?v=3e849263:197
+flushWork @ chunk-7SSXMLWA.js?v=3e849263:176
+performWorkUntilDeadline @ chunk-7SSXMLWA.js?v=3e849263:384Understand this errorAI
+use-roles.ts:89 [FIREBASE-USERS] Fetching users...
+use-roles.ts:92 
+        
+        
+       GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3001/api/firebase-users? 401 (Unauthorized)
+makeRequest @ use-roles.ts:92
+fetchFirebaseUsers @ use-roles.ts:108
+await in fetchFirebaseUsers
+queryFn @ use-roles.ts:174
+fetchPage @ @tanstack_react-query.js?v=1bb661f2:1498
+fetchFn @ @tanstack_react-query.js?v=1bb661f2:1524
+run @ @tanstack_react-query.js?v=1bb661f2:493
+start @ @tanstack_react-query.js?v=1bb661f2:535
+fetch @ @tanstack_react-query.js?v=1bb661f2:925
+executeFetch_fn @ @tanstack_react-query.js?v=1bb661f2:2211
+onSubscribe @ @tanstack_react-query.js?v=1bb661f2:1898
+subscribe @ @tanstack_react-query.js?v=1bb661f2:24
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:3013
+subscribeToStore @ chunk-7SSXMLWA.js?v=3e849263:11984
+commitHookEffectListMount @ chunk-7SSXMLWA.js?v=3e849263:16915
+commitPassiveMountOnFiber @ chunk-7SSXMLWA.js?v=3e849263:18156
+commitPassiveMountEffects_complete @ chunk-7SSXMLWA.js?v=3e849263:18129
+commitPassiveMountEffects_begin @ chunk-7SSXMLWA.js?v=3e849263:18119
+commitPassiveMountEffects @ chunk-7SSXMLWA.js?v=3e849263:18109
+flushPassiveEffectsImpl @ chunk-7SSXMLWA.js?v=3e849263:19490
+flushPassiveEffects @ chunk-7SSXMLWA.js?v=3e849263:19447
+performSyncWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18868
+flushSyncCallbacks @ chunk-7SSXMLWA.js?v=3e849263:9119
+commitRootImpl @ chunk-7SSXMLWA.js?v=3e849263:19432
+commitRoot @ chunk-7SSXMLWA.js?v=3e849263:19277
+finishConcurrentRender @ chunk-7SSXMLWA.js?v=3e849263:18805
+performConcurrentWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18718
+workLoop @ chunk-7SSXMLWA.js?v=3e849263:197
+flushWork @ chunk-7SSXMLWA.js?v=3e849263:176
+performWorkUntilDeadline @ chunk-7SSXMLWA.js?v=3e849263:384Understand this errorAI
+use-roles.ts:118 [FIREBASE-USERS] Error: Error: Failed to fetch users: {"message":"Authentication required","code":"AUTH_REQUIRED"}
+    at makeRequest (use-roles.ts:101:15)
+    at async fetchFirebaseUsers (use-roles.ts:108:14)
+    at async fetchPage (@tanstack_react-query.js?v=1bb661f2:1498:24)
+    at async Object.fetchFn [as fn] (@tanstack_react-query.js?v=1bb661f2:1524:22)
+fetchFirebaseUsers @ use-roles.ts:118
+await in fetchFirebaseUsers
+queryFn @ use-roles.ts:174
+fetchPage @ @tanstack_react-query.js?v=1bb661f2:1498
+fetchFn @ @tanstack_react-query.js?v=1bb661f2:1524
+run @ @tanstack_react-query.js?v=1bb661f2:493
+start @ @tanstack_react-query.js?v=1bb661f2:535
+fetch @ @tanstack_react-query.js?v=1bb661f2:925
+executeFetch_fn @ @tanstack_react-query.js?v=1bb661f2:2211
+onSubscribe @ @tanstack_react-query.js?v=1bb661f2:1898
+subscribe @ @tanstack_react-query.js?v=1bb661f2:24
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:3013
+subscribeToStore @ chunk-7SSXMLWA.js?v=3e849263:11984
+commitHookEffectListMount @ chunk-7SSXMLWA.js?v=3e849263:16915
+commitPassiveMountOnFiber @ chunk-7SSXMLWA.js?v=3e849263:18156
+commitPassiveMountEffects_complete @ chunk-7SSXMLWA.js?v=3e849263:18129
+commitPassiveMountEffects_begin @ chunk-7SSXMLWA.js?v=3e849263:18119
+commitPassiveMountEffects @ chunk-7SSXMLWA.js?v=3e849263:18109
+flushPassiveEffectsImpl @ chunk-7SSXMLWA.js?v=3e849263:19490
+flushPassiveEffects @ chunk-7SSXMLWA.js?v=3e849263:19447
+performSyncWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18868
+flushSyncCallbacks @ chunk-7SSXMLWA.js?v=3e849263:9119
+commitRootImpl @ chunk-7SSXMLWA.js?v=3e849263:19432
+commitRoot @ chunk-7SSXMLWA.js?v=3e849263:19277
+finishConcurrentRender @ chunk-7SSXMLWA.js?v=3e849263:18805
+performConcurrentWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18718
+workLoop @ chunk-7SSXMLWA.js?v=3e849263:197
+flushWork @ chunk-7SSXMLWA.js?v=3e849263:176
+performWorkUntilDeadline @ chunk-7SSXMLWA.js?v=3e849263:384Understand this errorAI
+use-roles.ts:34 [ROLES] Fetching roles...
+use-roles.ts:36 
+        
+        
+       GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3001/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:36
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=1bb661f2:839
+run @ @tanstack_react-query.js?v=1bb661f2:493
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:514
+Promise.catch
+run @ @tanstack_react-query.js?v=1bb661f2:497
+start @ @tanstack_react-query.js?v=1bb661f2:535
+fetch @ @tanstack_react-query.js?v=1bb661f2:925
+executeFetch_fn @ @tanstack_react-query.js?v=1bb661f2:2211
+onSubscribe @ @tanstack_react-query.js?v=1bb661f2:1898
+subscribe @ @tanstack_react-query.js?v=1bb661f2:24
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:3013
+subscribeToStore @ chunk-7SSXMLWA.js?v=3e849263:11984
+commitHookEffectListMount @ chunk-7SSXMLWA.js?v=3e849263:16915
+commitPassiveMountOnFiber @ chunk-7SSXMLWA.js?v=3e849263:18156
+commitPassiveMountEffects_complete @ chunk-7SSXMLWA.js?v=3e849263:18129
+commitPassiveMountEffects_begin @ chunk-7SSXMLWA.js?v=3e849263:18119
+commitPassiveMountEffects @ chunk-7SSXMLWA.js?v=3e849263:18109
+flushPassiveEffectsImpl @ chunk-7SSXMLWA.js?v=3e849263:19490
+flushPassiveEffects @ chunk-7SSXMLWA.js?v=3e849263:19447
+performSyncWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18868
+flushSyncCallbacks @ chunk-7SSXMLWA.js?v=3e849263:9119
+commitRootImpl @ chunk-7SSXMLWA.js?v=3e849263:19432
+commitRoot @ chunk-7SSXMLWA.js?v=3e849263:19277
+finishConcurrentRender @ chunk-7SSXMLWA.js?v=3e849263:18805
+performConcurrentWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18718
+workLoop @ chunk-7SSXMLWA.js?v=3e849263:197
+flushWork @ chunk-7SSXMLWA.js?v=3e849263:176
+performWorkUntilDeadline @ chunk-7SSXMLWA.js?v=3e849263:384Understand this errorAI
+use-roles.ts:47 
+        
+        
+       GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3001/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:47
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=1bb661f2:839
+run @ @tanstack_react-query.js?v=1bb661f2:493
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:514
+Promise.catch
+run @ @tanstack_react-query.js?v=1bb661f2:497
+start @ @tanstack_react-query.js?v=1bb661f2:535
+fetch @ @tanstack_react-query.js?v=1bb661f2:925
+executeFetch_fn @ @tanstack_react-query.js?v=1bb661f2:2211
+onSubscribe @ @tanstack_react-query.js?v=1bb661f2:1898
+subscribe @ @tanstack_react-query.js?v=1bb661f2:24
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:3013
+subscribeToStore @ chunk-7SSXMLWA.js?v=3e849263:11984
+commitHookEffectListMount @ chunk-7SSXMLWA.js?v=3e849263:16915
+commitPassiveMountOnFiber @ chunk-7SSXMLWA.js?v=3e849263:18156
+commitPassiveMountEffects_complete @ chunk-7SSXMLWA.js?v=3e849263:18129
+commitPassiveMountEffects_begin @ chunk-7SSXMLWA.js?v=3e849263:18119
+commitPassiveMountEffects @ chunk-7SSXMLWA.js?v=3e849263:18109
+flushPassiveEffectsImpl @ chunk-7SSXMLWA.js?v=3e849263:19490
+flushPassiveEffects @ chunk-7SSXMLWA.js?v=3e849263:19447
+performSyncWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18868
+flushSyncCallbacks @ chunk-7SSXMLWA.js?v=3e849263:9119
+commitRootImpl @ chunk-7SSXMLWA.js?v=3e849263:19432
+commitRoot @ chunk-7SSXMLWA.js?v=3e849263:19277
+finishConcurrentRender @ chunk-7SSXMLWA.js?v=3e849263:18805
+performConcurrentWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18718
+workLoop @ chunk-7SSXMLWA.js?v=3e849263:197
+flushWork @ chunk-7SSXMLWA.js?v=3e849263:176
+performWorkUntilDeadline @ chunk-7SSXMLWA.js?v=3e849263:384Understand this errorAI
+use-roles.ts:69 [ROLES] Error in fetchRoles: Error: Failed to fetch roles after token refresh: {"message":"Authentication required","code":"AUTH_REQUIRED"}
+    at fetchRoles (use-roles.ts:56:15)
+fetchRoles @ use-roles.ts:69
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=1bb661f2:839
+run @ @tanstack_react-query.js?v=1bb661f2:493
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:514
+Promise.catch
+run @ @tanstack_react-query.js?v=1bb661f2:497
+start @ @tanstack_react-query.js?v=1bb661f2:535
+fetch @ @tanstack_react-query.js?v=1bb661f2:925
+executeFetch_fn @ @tanstack_react-query.js?v=1bb661f2:2211
+onSubscribe @ @tanstack_react-query.js?v=1bb661f2:1898
+subscribe @ @tanstack_react-query.js?v=1bb661f2:24
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:3013
+subscribeToStore @ chunk-7SSXMLWA.js?v=3e849263:11984
+commitHookEffectListMount @ chunk-7SSXMLWA.js?v=3e849263:16915
+commitPassiveMountOnFiber @ chunk-7SSXMLWA.js?v=3e849263:18156
+commitPassiveMountEffects_complete @ chunk-7SSXMLWA.js?v=3e849263:18129
+commitPassiveMountEffects_begin @ chunk-7SSXMLWA.js?v=3e849263:18119
+commitPassiveMountEffects @ chunk-7SSXMLWA.js?v=3e849263:18109
+flushPassiveEffectsImpl @ chunk-7SSXMLWA.js?v=3e849263:19490
+flushPassiveEffects @ chunk-7SSXMLWA.js?v=3e849263:19447
+performSyncWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18868
+flushSyncCallbacks @ chunk-7SSXMLWA.js?v=3e849263:9119
+commitRootImpl @ chunk-7SSXMLWA.js?v=3e849263:19432
+commitRoot @ chunk-7SSXMLWA.js?v=3e849263:19277
+finishConcurrentRender @ chunk-7SSXMLWA.js?v=3e849263:18805
+performConcurrentWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18718
+workLoop @ chunk-7SSXMLWA.js?v=3e849263:197
+flushWork @ chunk-7SSXMLWA.js?v=3e849263:176
+performWorkUntilDeadline @ chunk-7SSXMLWA.js?v=3e849263:384Understand this errorAI
+use-roles.ts:89 [FIREBASE-USERS] Fetching users...
+use-roles.ts:92 
+        
+        
+       GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3001/api/firebase-users? 401 (Unauthorized)
+makeRequest @ use-roles.ts:92
+fetchFirebaseUsers @ use-roles.ts:108
+await in fetchFirebaseUsers
+queryFn @ use-roles.ts:174
+fetchPage @ @tanstack_react-query.js?v=1bb661f2:1498
+fetchFn @ @tanstack_react-query.js?v=1bb661f2:1524
+run @ @tanstack_react-query.js?v=1bb661f2:493
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:514
+Promise.catch
+run @ @tanstack_react-query.js?v=1bb661f2:497
+start @ @tanstack_react-query.js?v=1bb661f2:535
+fetch @ @tanstack_react-query.js?v=1bb661f2:925
+executeFetch_fn @ @tanstack_react-query.js?v=1bb661f2:2211
+onSubscribe @ @tanstack_react-query.js?v=1bb661f2:1898
+subscribe @ @tanstack_react-query.js?v=1bb661f2:24
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:3013
+subscribeToStore @ chunk-7SSXMLWA.js?v=3e849263:11984
+commitHookEffectListMount @ chunk-7SSXMLWA.js?v=3e849263:16915
+commitPassiveMountOnFiber @ chunk-7SSXMLWA.js?v=3e849263:18156
+commitPassiveMountEffects_complete @ chunk-7SSXMLWA.js?v=3e849263:18129
+commitPassiveMountEffects_begin @ chunk-7SSXMLWA.js?v=3e849263:18119
+commitPassiveMountEffects @ chunk-7SSXMLWA.js?v=3e849263:18109
+flushPassiveEffectsImpl @ chunk-7SSXMLWA.js?v=3e849263:19490
+flushPassiveEffects @ chunk-7SSXMLWA.js?v=3e849263:19447
+performSyncWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18868
+flushSyncCallbacks @ chunk-7SSXMLWA.js?v=3e849263:9119
+commitRootImpl @ chunk-7SSXMLWA.js?v=3e849263:19432
+commitRoot @ chunk-7SSXMLWA.js?v=3e849263:19277
+finishConcurrentRender @ chunk-7SSXMLWA.js?v=3e849263:18805
+performConcurrentWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18718
+workLoop @ chunk-7SSXMLWA.js?v=3e849263:197
+flushWork @ chunk-7SSXMLWA.js?v=3e849263:176
+performWorkUntilDeadline @ chunk-7SSXMLWA.js?v=3e849263:384Understand this errorAI
+use-roles.ts:118 [FIREBASE-USERS] Error: Error: Failed to fetch users: {"message":"Authentication required","code":"AUTH_REQUIRED"}
+    at makeRequest (use-roles.ts:101:15)
+    at async fetchFirebaseUsers (use-roles.ts:108:14)
+    at async fetchPage (@tanstack_react-query.js?v=1bb661f2:1498:24)
+    at async Object.fetchFn [as fn] (@tanstack_react-query.js?v=1bb661f2:1524:22)
+fetchFirebaseUsers @ use-roles.ts:118
+await in fetchFirebaseUsers
+queryFn @ use-roles.ts:174
+fetchPage @ @tanstack_react-query.js?v=1bb661f2:1498
+fetchFn @ @tanstack_react-query.js?v=1bb661f2:1524
+run @ @tanstack_react-query.js?v=1bb661f2:493
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:514
+Promise.catch
+run @ @tanstack_react-query.js?v=1bb661f2:497
+start @ @tanstack_react-query.js?v=1bb661f2:535
+fetch @ @tanstack_react-query.js?v=1bb661f2:925
+executeFetch_fn @ @tanstack_react-query.js?v=1bb661f2:2211
+onSubscribe @ @tanstack_react-query.js?v=1bb661f2:1898
+subscribe @ @tanstack_react-query.js?v=1bb661f2:24
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:3013
+subscribeToStore @ chunk-7SSXMLWA.js?v=3e849263:11984
+commitHookEffectListMount @ chunk-7SSXMLWA.js?v=3e849263:16915
+commitPassiveMountOnFiber @ chunk-7SSXMLWA.js?v=3e849263:18156
+commitPassiveMountEffects_complete @ chunk-7SSXMLWA.js?v=3e849263:18129
+commitPassiveMountEffects_begin @ chunk-7SSXMLWA.js?v=3e849263:18119
+commitPassiveMountEffects @ chunk-7SSXMLWA.js?v=3e849263:18109
+flushPassiveEffectsImpl @ chunk-7SSXMLWA.js?v=3e849263:19490
+flushPassiveEffects @ chunk-7SSXMLWA.js?v=3e849263:19447
+performSyncWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18868
+flushSyncCallbacks @ chunk-7SSXMLWA.js?v=3e849263:9119
+commitRootImpl @ chunk-7SSXMLWA.js?v=3e849263:19432
+commitRoot @ chunk-7SSXMLWA.js?v=3e849263:19277
+finishConcurrentRender @ chunk-7SSXMLWA.js?v=3e849263:18805
+performConcurrentWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18718
+workLoop @ chunk-7SSXMLWA.js?v=3e849263:197
+flushWork @ chunk-7SSXMLWA.js?v=3e849263:176
+performWorkUntilDeadline @ chunk-7SSXMLWA.js?v=3e849263:384Understand this errorAI
+use-roles.ts:34 [ROLES] Fetching roles...
+use-roles.ts:36 
+        
+        
+       GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3001/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:36
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=1bb661f2:839
+run @ @tanstack_react-query.js?v=1bb661f2:493
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:514
+Promise.catch
+run @ @tanstack_react-query.js?v=1bb661f2:497
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:514
+Promise.catch
+run @ @tanstack_react-query.js?v=1bb661f2:497
+start @ @tanstack_react-query.js?v=1bb661f2:535
+fetch @ @tanstack_react-query.js?v=1bb661f2:925
+executeFetch_fn @ @tanstack_react-query.js?v=1bb661f2:2211
+onSubscribe @ @tanstack_react-query.js?v=1bb661f2:1898
+subscribe @ @tanstack_react-query.js?v=1bb661f2:24
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:3013
+subscribeToStore @ chunk-7SSXMLWA.js?v=3e849263:11984
+commitHookEffectListMount @ chunk-7SSXMLWA.js?v=3e849263:16915
+commitPassiveMountOnFiber @ chunk-7SSXMLWA.js?v=3e849263:18156
+commitPassiveMountEffects_complete @ chunk-7SSXMLWA.js?v=3e849263:18129
+commitPassiveMountEffects_begin @ chunk-7SSXMLWA.js?v=3e849263:18119
+commitPassiveMountEffects @ chunk-7SSXMLWA.js?v=3e849263:18109
+flushPassiveEffectsImpl @ chunk-7SSXMLWA.js?v=3e849263:19490
+flushPassiveEffects @ chunk-7SSXMLWA.js?v=3e849263:19447
+performSyncWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18868
+flushSyncCallbacks @ chunk-7SSXMLWA.js?v=3e849263:9119
+commitRootImpl @ chunk-7SSXMLWA.js?v=3e849263:19432
+commitRoot @ chunk-7SSXMLWA.js?v=3e849263:19277
+finishConcurrentRender @ chunk-7SSXMLWA.js?v=3e849263:18805
+performConcurrentWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18718
+workLoop @ chunk-7SSXMLWA.js?v=3e849263:197
+flushWork @ chunk-7SSXMLWA.js?v=3e849263:176
+performWorkUntilDeadline @ chunk-7SSXMLWA.js?v=3e849263:384Understand this errorAI
+use-roles.ts:89 [FIREBASE-USERS] Fetching users...
+use-roles.ts:92 
+        
+        
+       GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3001/api/firebase-users? 401 (Unauthorized)
+makeRequest @ use-roles.ts:92
+fetchFirebaseUsers @ use-roles.ts:108
+await in fetchFirebaseUsers
+queryFn @ use-roles.ts:174
+fetchPage @ @tanstack_react-query.js?v=1bb661f2:1498
+fetchFn @ @tanstack_react-query.js?v=1bb661f2:1524
+run @ @tanstack_react-query.js?v=1bb661f2:493
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:514
+Promise.catch
+run @ @tanstack_react-query.js?v=1bb661f2:497
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:514
+Promise.catch
+run @ @tanstack_react-query.js?v=1bb661f2:497
+start @ @tanstack_react-query.js?v=1bb661f2:535
+fetch @ @tanstack_react-query.js?v=1bb661f2:925
+executeFetch_fn @ @tanstack_react-query.js?v=1bb661f2:2211
+onSubscribe @ @tanstack_react-query.js?v=1bb661f2:1898
+subscribe @ @tanstack_react-query.js?v=1bb661f2:24
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:3013
+subscribeToStore @ chunk-7SSXMLWA.js?v=3e849263:11984
+commitHookEffectListMount @ chunk-7SSXMLWA.js?v=3e849263:16915
+commitPassiveMountOnFiber @ chunk-7SSXMLWA.js?v=3e849263:18156
+commitPassiveMountEffects_complete @ chunk-7SSXMLWA.js?v=3e849263:18129
+commitPassiveMountEffects_begin @ chunk-7SSXMLWA.js?v=3e849263:18119
+commitPassiveMountEffects @ chunk-7SSXMLWA.js?v=3e849263:18109
+flushPassiveEffectsImpl @ chunk-7SSXMLWA.js?v=3e849263:19490
+flushPassiveEffects @ chunk-7SSXMLWA.js?v=3e849263:19447
+performSyncWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18868
+flushSyncCallbacks @ chunk-7SSXMLWA.js?v=3e849263:9119
+commitRootImpl @ chunk-7SSXMLWA.js?v=3e849263:19432
+commitRoot @ chunk-7SSXMLWA.js?v=3e849263:19277
+finishConcurrentRender @ chunk-7SSXMLWA.js?v=3e849263:18805
+performConcurrentWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18718
+workLoop @ chunk-7SSXMLWA.js?v=3e849263:197
+flushWork @ chunk-7SSXMLWA.js?v=3e849263:176
+performWorkUntilDeadline @ chunk-7SSXMLWA.js?v=3e849263:384Understand this errorAI
+use-roles.ts:118 [FIREBASE-USERS] Error: Error: Failed to fetch users: {"message":"Authentication required","code":"AUTH_REQUIRED"}
+    at makeRequest (use-roles.ts:101:15)
+    at async fetchFirebaseUsers (use-roles.ts:108:14)
+    at async fetchPage (@tanstack_react-query.js?v=1bb661f2:1498:24)
+    at async Object.fetchFn [as fn] (@tanstack_react-query.js?v=1bb661f2:1524:22)
+fetchFirebaseUsers @ use-roles.ts:118
+await in fetchFirebaseUsers
+queryFn @ use-roles.ts:174
+fetchPage @ @tanstack_react-query.js?v=1bb661f2:1498
+fetchFn @ @tanstack_react-query.js?v=1bb661f2:1524
+run @ @tanstack_react-query.js?v=1bb661f2:493
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:514
+Promise.catch
+run @ @tanstack_react-query.js?v=1bb661f2:497
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:514
+Promise.catch
+run @ @tanstack_react-query.js?v=1bb661f2:497
+start @ @tanstack_react-query.js?v=1bb661f2:535
+fetch @ @tanstack_react-query.js?v=1bb661f2:925
+executeFetch_fn @ @tanstack_react-query.js?v=1bb661f2:2211
+onSubscribe @ @tanstack_react-query.js?v=1bb661f2:1898
+subscribe @ @tanstack_react-query.js?v=1bb661f2:24
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:3013
+subscribeToStore @ chunk-7SSXMLWA.js?v=3e849263:11984
+commitHookEffectListMount @ chunk-7SSXMLWA.js?v=3e849263:16915
+commitPassiveMountOnFiber @ chunk-7SSXMLWA.js?v=3e849263:18156
+commitPassiveMountEffects_complete @ chunk-7SSXMLWA.js?v=3e849263:18129
+commitPassiveMountEffects_begin @ chunk-7SSXMLWA.js?v=3e849263:18119
+commitPassiveMountEffects @ chunk-7SSXMLWA.js?v=3e849263:18109
+flushPassiveEffectsImpl @ chunk-7SSXMLWA.js?v=3e849263:19490
+flushPassiveEffects @ chunk-7SSXMLWA.js?v=3e849263:19447
+performSyncWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18868
+flushSyncCallbacks @ chunk-7SSXMLWA.js?v=3e849263:9119
+commitRootImpl @ chunk-7SSXMLWA.js?v=3e849263:19432
+commitRoot @ chunk-7SSXMLWA.js?v=3e849263:19277
+finishConcurrentRender @ chunk-7SSXMLWA.js?v=3e849263:18805
+performConcurrentWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18718
+workLoop @ chunk-7SSXMLWA.js?v=3e849263:197
+flushWork @ chunk-7SSXMLWA.js?v=3e849263:176
+performWorkUntilDeadline @ chunk-7SSXMLWA.js?v=3e849263:384Understand this errorAI
+RoleManagement.tsx:94 Role Management State: {roles: undefined, isLoadingRoles: true, users: Array(0), isLoadingUsers: false, hasNextPage: false}
+use-roles.ts:47 
+        
+        
+       GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3001/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:47
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=1bb661f2:839
+run @ @tanstack_react-query.js?v=1bb661f2:493
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:514
+Promise.catch
+run @ @tanstack_react-query.js?v=1bb661f2:497
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:514
+Promise.catch
+run @ @tanstack_react-query.js?v=1bb661f2:497
+start @ @tanstack_react-query.js?v=1bb661f2:535
+fetch @ @tanstack_react-query.js?v=1bb661f2:925
+executeFetch_fn @ @tanstack_react-query.js?v=1bb661f2:2211
+onSubscribe @ @tanstack_react-query.js?v=1bb661f2:1898
+subscribe @ @tanstack_react-query.js?v=1bb661f2:24
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:3013
+subscribeToStore @ chunk-7SSXMLWA.js?v=3e849263:11984
+commitHookEffectListMount @ chunk-7SSXMLWA.js?v=3e849263:16915
+commitPassiveMountOnFiber @ chunk-7SSXMLWA.js?v=3e849263:18156
+commitPassiveMountEffects_complete @ chunk-7SSXMLWA.js?v=3e849263:18129
+commitPassiveMountEffects_begin @ chunk-7SSXMLWA.js?v=3e849263:18119
+commitPassiveMountEffects @ chunk-7SSXMLWA.js?v=3e849263:18109
+flushPassiveEffectsImpl @ chunk-7SSXMLWA.js?v=3e849263:19490
+flushPassiveEffects @ chunk-7SSXMLWA.js?v=3e849263:19447
+performSyncWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18868
+flushSyncCallbacks @ chunk-7SSXMLWA.js?v=3e849263:9119
+commitRootImpl @ chunk-7SSXMLWA.js?v=3e849263:19432
+commitRoot @ chunk-7SSXMLWA.js?v=3e849263:19277
+finishConcurrentRender @ chunk-7SSXMLWA.js?v=3e849263:18805
+performConcurrentWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18718
+workLoop @ chunk-7SSXMLWA.js?v=3e849263:197
+flushWork @ chunk-7SSXMLWA.js?v=3e849263:176
+performWorkUntilDeadline @ chunk-7SSXMLWA.js?v=3e849263:384Understand this errorAI
+use-roles.ts:69 [ROLES] Error in fetchRoles: Error: Failed to fetch roles after token refresh: {"message":"Authentication required","code":"AUTH_REQUIRED"}
+    at fetchRoles (use-roles.ts:56:15)
+fetchRoles @ use-roles.ts:69
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=1bb661f2:839
+run @ @tanstack_react-query.js?v=1bb661f2:493
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:514
+Promise.catch
+run @ @tanstack_react-query.js?v=1bb661f2:497
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:514
+Promise.catch
+run @ @tanstack_react-query.js?v=1bb661f2:497
+start @ @tanstack_react-query.js?v=1bb661f2:535
+fetch @ @tanstack_react-query.js?v=1bb661f2:925
+executeFetch_fn @ @tanstack_react-query.js?v=1bb661f2:2211
+onSubscribe @ @tanstack_react-query.js?v=1bb661f2:1898
+subscribe @ @tanstack_react-query.js?v=1bb661f2:24
+(anonymous) @ @tanstack_react-query.js?v=1bb661f2:3013
+subscribeToStore @ chunk-7SSXMLWA.js?v=3e849263:11984
+commitHookEffectListMount @ chunk-7SSXMLWA.js?v=3e849263:16915
+commitPassiveMountOnFiber @ chunk-7SSXMLWA.js?v=3e849263:18156
+commitPassiveMountEffects_complete @ chunk-7SSXMLWA.js?v=3e849263:18129
+commitPassiveMountEffects_begin @ chunk-7SSXMLWA.js?v=3e849263:18119
+commitPassiveMountEffects @ chunk-7SSXMLWA.js?v=3e849263:18109
+flushPassiveEffectsImpl @ chunk-7SSXMLWA.js?v=3e849263:19490
+flushPassiveEffects @ chunk-7SSXMLWA.js?v=3e849263:19447
+performSyncWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18868
+flushSyncCallbacks @ chunk-7SSXMLWA.js?v=3e849263:9119
+commitRootImpl @ chunk-7SSXMLWA.js?v=3e849263:19432
+commitRoot @ chunk-7SSXMLWA.js?v=3e849263:19277
+finishConcurrentRender @ chunk-7SSXMLWA.js?v=3e849263:18805
+performConcurrentWorkOnRoot @ chunk-7SSXMLWA.js?v=3e849263:18718
+workLoop @ chunk-7SSXMLWA.js?v=3e849263:197
+flushWork @ chunk-7SSXMLWA.js?v=3e849263:176
+performWorkUntilDeadline @ chunk-7SSXMLWA.js?v=3e849263:384Understand this errorAI
+RoleManagement.tsx:94 Role Management State: {roles: undefined, isLoadingRoles: false, users: Array(0), isLoadingUsers: false, hasNextPage: false}
