@@ -36,38 +36,35 @@ async function fetchRoles(): Promise<Role[]> {
     const token = await auth.currentUser.getIdToken(true);
     console.log('[ROLES] Fetching roles...');
     
-    const response = await fetch('/api/roles', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-    
-    if (response.status === 401) {
-      // Try one more time with a fresh token
-      const newToken = await auth.currentUser.getIdToken(true);
-      const retryResponse = await fetch('/api/roles', {
+    const makeRequest = async (authToken: string) => {
+      const response = await fetch('/api/roles', {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${newToken}`,
+          'Authorization': `Bearer ${authToken}`,
           'Content-Type': 'application/json',
         },
       });
       
-      if (!retryResponse.ok) {
-        throw new Error(`Failed to fetch roles after token refresh: ${await retryResponse.text()}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to fetch roles: ${errorText}`);
       }
-      return retryResponse.json();
-    }
+      
+      const data = await response.json();
+      console.log('[ROLES] Successfully fetched roles:', data);
+      return Array.isArray(data) ? data : Object.values(data);
+    };
     
-    if (!response.ok) {
-      throw new Error(`Failed to fetch roles: ${await response.text()}`);
+    try {
+      return await makeRequest(token);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('401')) {
+        console.log('[ROLES] Token expired, refreshing...');
+        const newToken = await auth.currentUser.getIdToken(true);
+        return await makeRequest(newToken);
+      }
+      throw error;
     }
-    
-    const data = await response.json();
-    console.log('[ROLES] Successfully fetched roles:', data);
-    return data;
   } catch (error) {
     console.error('[ROLES] Error in fetchRoles:', error);
     throw error;
@@ -304,7 +301,13 @@ export function useRoles() {
     },
     onSuccess: (data) => {
       console.log('[ROLES] Role created successfully:', data);
-      // Invalidate queries and refetch immediately
+      // Immediately update the cache with the new role
+      queryClient.setQueryData(['roles'], (oldData: Role[] | undefined) => {
+        if (!oldData) return [data];
+        return [...oldData, data];
+      });
+      
+      // Then invalidate and refetch to ensure consistency
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ['roles'] }),
         queryClient.invalidateQueries({ queryKey: ['firebase-users'] })
