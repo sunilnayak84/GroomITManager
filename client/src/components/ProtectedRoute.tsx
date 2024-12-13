@@ -32,7 +32,8 @@ export default function ProtectedRoute({
           '/auth/admin',
           '/auth/setup',
           '/user-management',
-          '/role-management'
+          '/role-management',
+          '/settings/role-management'
         ];
         const isUserManagementPath = userManagementPaths.some(path => location.startsWith(path));
         if (isUserManagementPath || requiresUserManagement) {
