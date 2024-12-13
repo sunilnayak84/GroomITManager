@@ -34,17 +34,19 @@ import { useServices } from '../hooks/use-services';
 import { useStaff } from '../hooks/use-staff';
 import { useWorkingHours } from '../hooks/use-working-hours';
 import type { WorkingDays } from "@/lib/schema";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface AppointmentFormProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
-  const { addAppointment, isTimeSlotAvailable } = useAppointments();
+  const { data: appointments, addAppointment, isTimeSlotAvailable } = useAppointments();
   const { pets } = usePets();
   const { services } = useServices();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const { staffMembers, isLoading: isLoadingStaff } = useStaff();
   const availableGroomers = staffMembers.filter(user => user.isGroomer && user.isActive);
@@ -65,18 +67,15 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
     const [openHour, openMinute] = openingTime.split(':').map(Number);
     const [closeHour, closeMinute] = closingTime.split(':').map(Number);
     
-    // Start from opening time, rounded to nearest 15 minutes
     let currentMinutes = openMinute;
     let currentHour = openHour;
     
-    // Round up to next 15-minute interval
     currentMinutes = Math.ceil(currentMinutes / 15) * 15;
     if (currentMinutes >= 60) {
       currentHour += Math.floor(currentMinutes / 60);
       currentMinutes = currentMinutes % 60;
     }
     
-    // Convert break times to comparable format (minutes since midnight)
     const breakStartMinutes = breakStart ? 
       (parseInt(breakStart.split(':')[0]) * 60 + parseInt(breakStart.split(':')[1])) : null;
     const breakEndMinutes = breakEnd ?
@@ -86,9 +85,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
       const currentTimeMinutes = currentHour * 60 + currentMinutes;
       const slotEndMinutes = currentTimeMinutes + serviceDuration;
       
-      // Check if slot ends before closing time
       if (slotEndMinutes <= (closeHour * 60 + closeMinute)) {
-        // Check if slot overlaps with break time
         const isInBreakTime = breakStartMinutes !== null && breakEndMinutes !== null &&
           currentTimeMinutes >= breakStartMinutes && currentTimeMinutes < breakEndMinutes;
         
@@ -98,7 +95,6 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
         }
       }
       
-      // Move to next 15-minute slot
       currentMinutes += 15;
       if (currentMinutes >= 60) {
         currentHour += Math.floor(currentMinutes / 60);
@@ -108,7 +104,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
     
     return slots;
   };
-  
+
   const form = useForm<z.infer<typeof insertAppointmentSchema>>({
     resolver: zodResolver(insertAppointmentSchema),
     defaultValues: {
@@ -122,8 +118,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
       productsUsed: null
     },
   });
-  
-  // Update selected service when serviceId changes
+
   useEffect(() => {
     const serviceId = form.watch("serviceId");
     if (serviceId) {
@@ -140,6 +135,8 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
     daySchedule: WorkingDays | undefined,
     groomerId: string
   ): { isValid: boolean; error?: string } => {
+    setValidationError(null); // Clear previous errors
+
     if (!daySchedule || !daySchedule.isOpen) {
       return { isValid: false, error: "This day is not available for appointments" };
     }
@@ -148,12 +145,10 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
     const appointmentStartTime = new Date(date);
     appointmentStartTime.setHours(hours, minutes, 0, 0);
 
-    // Check if appointment is in the past
     if (appointmentStartTime < new Date()) {
       return { isValid: false, error: "Cannot schedule appointments in the past" };
     }
 
-    // Check if time is within working hours
     if (time < daySchedule.openingTime || time >= daySchedule.closingTime) {
       return {
         isValid: false,
@@ -161,13 +156,11 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
       };
     }
 
-    // Calculate appointment end time based on service duration
     if (selectedService) {
       const appointmentEndTime = new Date(appointmentStartTime);
       appointmentEndTime.setMinutes(appointmentEndTime.getMinutes() + selectedService.duration);
       const endTimeStr = `${String(appointmentEndTime.getHours()).padStart(2, '0')}:${String(appointmentEndTime.getMinutes()).padStart(2, '0')}`;
       
-      // Check if appointment fits before closing time
       if (endTimeStr > daySchedule.closingTime) {
         return {
           isValid: false,
@@ -175,7 +168,6 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
         };
       }
 
-      // Check break time if exists
       if (daySchedule.breakStart && daySchedule.breakEnd) {
         const breakStart = new Date(date);
         const [breakStartHour, breakStartMin] = daySchedule.breakStart.split(':').map(Number);
@@ -189,22 +181,38 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
           (appointmentStartTime < breakEnd && appointmentEndTime > breakStart) ||
           (appointmentStartTime >= breakStart && appointmentStartTime < breakEnd)
         ) {
+          const breakStartTime = daySchedule.breakStart.split(':')
+            .map(n => parseInt(n))
+            .reduce((acc, n, i) => i === 0 ? n : acc + (n/60), 0);
+          const breakEndTime = daySchedule.breakEnd.split(':')
+            .map(n => parseInt(n))
+            .reduce((acc, n, i) => i === 0 ? n : acc + (n/60), 0);
+          
+          const breakDuration = breakEndTime - breakStartTime;
+          const breakEndHour = Math.floor(breakEndTime);
+          const breakEndMinute = Math.round((breakEndTime - breakEndHour) * 60);
+          
           return {
             isValid: false,
-            error: `Break time is between ${daySchedule.breakStart} and ${daySchedule.breakEnd}`
+            error: `This time conflicts with our ${breakDuration === 1 ? '1 hour' : `${breakDuration} hours`} break period (until ${breakEndHour}:${String(breakEndMinute).padStart(2, '0')})`
           };
         }
       }
 
-      // Check if groomer is available for the entire duration
       if (!isTimeSlotAvailable(appointmentStartTime, groomerId)) {
+        const conflictingAppointment = appointments?.find(a => 
+          a.groomerId === groomerId && 
+          new Date(a.date).toTimeString() === appointmentStartTime.toTimeString()
+        );
+        
         return {
           isValid: false,
-          error: "Selected groomer is not available for this time slot"
+          error: conflictingAppointment 
+            ? "This time slot is already booked. Please select a different time."
+            : "The selected groomer is not available during this time. Please choose another time slot."
         };
       }
 
-      // Check groomer's maximum daily appointments
       const groomer = availableGroomers.find(g => g.id === groomerId);
       if (groomer?.maxDailyAppointments !== undefined) {
         const appointmentsOnDay = appointments?.filter(a => 
@@ -228,6 +236,8 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
     if (isSubmitting) return;
     
     setIsSubmitting(true);
+    setValidationError(null);
+    
     try {
       if (!data.petId || !data.serviceId) {
         throw new Error("Please select both pet and service");
@@ -265,7 +275,29 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
 
       const validation = validateTimeSlot(formDate, formTime, daySchedule, data.groomerId);
       if (!validation.isValid) {
-        throw new Error(validation.error || "Invalid time slot");
+        const errorMessage = validation.error || "This time slot is not available";
+        
+        setValidationError(errorMessage);
+        
+        form.setError('time', {
+          type: 'manual',
+          message: errorMessage
+        });
+        
+        form.setError('groomerId', {
+          type: 'manual',
+          message: "Groomer is not available at this time"
+        });
+        
+        toast({
+          variant: "destructive",
+          title: "Scheduling Error",
+          description: errorMessage,
+          duration: 5000,
+        });
+        
+        setIsSubmitting(false);
+        return;
       }
 
       const appointmentData: InsertAppointment = {
@@ -285,10 +317,12 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
       form.reset();
     } catch (error) {
       console.error('Failed to schedule appointment:', error);
+      const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
+      setValidationError(errorMessage);
       toast({
         variant: "destructive",
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to schedule appointment",
+        description: errorMessage,
       });
     } finally {
       setIsSubmitting(false);
@@ -303,6 +337,11 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
           Book a new appointment for pet grooming services.
         </DialogDescription>
       </DialogHeader>
+      {validationError && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertDescription>{validationError}</AlertDescription>
+        </Alert>
+      )}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
@@ -347,27 +386,39 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                       type="date"
                       min={new Date().toISOString().split('T')[0]}
                       value={field.value || ''}
-                      onChange={field.onChange}
                       onChange={(e) => {
+                        field.onChange(e);
                         const selectedDate = new Date(e.target.value);
                         const dayOfWeek = selectedDate.getDay();
                         
-                        // Check working hours for the selected day
                         const daySchedule = workingHours?.find(
                           (schedule) => schedule.dayOfWeek === dayOfWeek
                         );
                         
-                        if (!daySchedule || !daySchedule.isOpen) {
+                        if (!daySchedule) {
                           toast({
-                            title: "Invalid Day",
-                            description: "The selected day is not a working day",
+                            title: "Invalid Day Selected",
+                            description: "Working hours haven't been configured for this day. Please select another date.",
                             variant: "destructive"
                           });
                           setAvailableTimeSlots([]);
+                          field.onChange('');
+                          form.setValue('time', '');
                           return;
                         }
                         
-                        // Generate available time slots based on working hours and service duration
+                        if (!daySchedule.isOpen) {
+                          toast({
+                            title: "Business Closed",
+                            description: `Sorry, we're closed on ${selectedDate.toLocaleDateString('en-US', { weekday: 'long' })}s. Please select another date.`,
+                            variant: "destructive"
+                          });
+                          setAvailableTimeSlots([]);
+                          field.onChange('');
+                          form.setValue('time', '');
+                          return;
+                        }
+                        
                         const slots = generateTimeSlots(
                           daySchedule.openingTime,
                           daySchedule.closingTime,
@@ -393,11 +444,15 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                 <FormItem>
                   <FormLabel>Time</FormLabel>
                   <Select
-                    onValueChange={field.onChange}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      form.clearErrors(['time', 'groomerId']);
+                      setValidationError(null);
+                    }}
                     value={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className={form.formState.errors.time ? "border-red-500" : ""}>
                         <SelectValue placeholder="Select a time" />
                       </SelectTrigger>
                     </FormControl>
@@ -419,7 +474,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                       })}
                     </SelectContent>
                   </Select>
-                  <FormMessage />
+                  <FormMessage className="text-red-500" />
                 </FormItem>
               )}
             />
@@ -457,9 +512,16 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Groomer</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select 
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    form.clearErrors(['time', 'groomerId']);
+                    setValidationError(null);
+                  }} 
+                  value={field.value}
+                >
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className={form.formState.errors.groomerId ? "border-red-500" : ""}>
                       <SelectValue placeholder="Select a groomer" />
                     </SelectTrigger>
                   </FormControl>
@@ -477,7 +539,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                     ))}
                   </SelectContent>
                 </Select>
-                <FormMessage />
+                <FormMessage className="text-red-500" />
               </FormItem>
             )}
           />
