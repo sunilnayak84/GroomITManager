@@ -114,23 +114,62 @@ export async function createUserInDatabase(user: FirebaseUser) {
     return false;
   }
 }
+export async function setUserRole(userId: string, role: 'admin' | 'staff' | 'receptionist') {
+  try {
+    // Initialize Firebase Admin if not already initialized
+    if (!firebaseAdmin && process.env.NODE_ENV !== 'development') {
+      firebaseAdmin = initializeFirebaseAdmin();
+    }
+
+    // For development mode, log and simulate success
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Development mode - Role ${role} would be set for user ${userId}`);
+      return true;
+    }
+
+    if (!firebaseAdmin) {
+      throw new Error('Firebase Admin not initialized');
+    }
+
+    // Get current user from Firebase
+    const userRecord = await admin.auth().getUser(userId);
+    if (!userRecord) {
+      throw new Error('User not found in Firebase');
+    }
+
+    // Set custom claims including role and timestamp
+    await admin.auth().setCustomUserClaims(userId, {
+      role,
+      permissions: role === 'admin' ? ['all'] : [],
+      updatedAt: new Date().toISOString()
+    });
+
+    console.log(`Role ${role} set for user ${userId} (${userRecord.email})`);
+    return true;
+  } catch (error) {
+    console.error('Error setting user role:', error);
+    if (error instanceof Error) {
+      throw new Error(`Failed to set user role: ${error.message}`);
+    }
+    throw new Error('Failed to set user role: Unknown error');
+  }
+}
+
 
 export function setupAuth(app: Express) {
   try {
-    // Skip Firebase setup in development mode
+    // Always initialize Firebase in development mode for testing
     if (process.env.NODE_ENV === 'development') {
-      console.log('Running in development mode - skipping authentication');
-      app.use((req, res, next) => {
-        // Set a default development user
-        req.user = {
-          id: 'dev-user',
-          email: 'dev@example.com',
-          role: 'admin',
-          name: 'Developer'
-        };
-        next();
-      });
-      return;
+      console.log('Running in development mode - initializing Firebase for testing');
+      if (!admin.apps.length) {
+        admin.initializeApp({
+          credential: admin.credential.cert({
+            projectId: process.env.FIREBASE_PROJECT_ID || 'test',
+            clientEmail: process.env.FIREBASE_CLIENT_EMAIL || 'test@example.com',
+            privateKey: (process.env.FIREBASE_PRIVATE_KEY || 'test-key').replace(/\\n/g, '\n')
+          } as admin.ServiceAccount)
+        });
+      }
     }
 
     // Initialize Firebase Admin
