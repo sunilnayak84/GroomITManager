@@ -108,8 +108,18 @@ export function RoleManagement() {
 
   const onSubmit = async (data: RoleFormValues) => {
     try {
-      // Here we'll implement the API call to create/update role
-      console.log('Submitting role:', data);
+      if (editingRole) {
+        await updateRole({
+          name: data.name,
+          permissions: data.permissions
+        });
+      } else {
+        await createRole({
+          name: data.name,
+          permissions: data.permissions
+        });
+      }
+      
       toast({
         title: 'Success',
         description: `Role ${editingRole ? 'updated' : 'created'} successfully`,
@@ -119,7 +129,7 @@ export function RoleManagement() {
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to save role',
+        description: error instanceof Error ? error.message : 'Failed to save role',
         variant: 'destructive',
       });
     }
@@ -131,31 +141,31 @@ export function RoleManagement() {
       
       {/* Existing Roles */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        {roles.map(([roleName, permissions]) => (
-          <Card key={roleName}>
+        {roles?.map((role) => (
+          <Card key={role.name}>
             <CardHeader>
-              <CardTitle className="capitalize">{roleName}</CardTitle>
+              <CardTitle className="capitalize">{role.name}</CardTitle>
               <CardDescription>
-                {Array.isArray(permissions) ? `${permissions.length} permissions granted` : 'All permissions'}
+                {Array.isArray(role.permissions) ? `${role.permissions.length} permissions granted` : 'All permissions'}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {Array.isArray(permissions) && permissions.map(permission => (
+                {Array.isArray(role.permissions) && role.permissions.map(permission => (
                   <div key={permission} className="text-sm text-muted-foreground">
                     • {permission.replace(/_/g, ' ')}
                   </div>
                 ))}
               </div>
-              {roleName !== 'admin' && (
+              {role.name !== 'admin' && (
                 <Button
                   variant="outline"
                   className="mt-4"
                   onClick={() => {
-                    setEditingRole(roleName);
+                    setEditingRole(role.name);
                     form.reset({
-                      name: roleName,
-                      permissions: Array.isArray(permissions) ? permissions : [],
+                      name: role.name,
+                      permissions: Array.isArray(role.permissions) ? role.permissions : [],
                     });
                   }}
                 >
@@ -266,27 +276,54 @@ export function RoleManagement() {
                 {users.map(user => (
                   <div
                     key={user.uid}
-                    className="flex items-center justify-between p-4 border rounded-lg"
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
                   >
                     <div>
                       <p className="font-medium">{user.email}</p>
                       <p className="text-sm text-muted-foreground">
-                        Current Role: {user.role}
+                        Current Role: <span className="font-semibold capitalize">{user.role}</span>
                       </p>
                     </div>
-                    <select
-                      className="border rounded p-2"
-                      value={user.role}
-                      onChange={(e) => {
-                        updateUserRole({ userId: user.uid, role: e.target.value });
-                      }}
-                      disabled={isUpdatingUserRole}
-                    >
-                      <option value="admin">Admin</option>
-                      <option value="manager">Manager</option>
-                      <option value="staff">Staff</option>
-                      <option value="receptionist">Receptionist</option>
-                    </select>
+                    <div className="flex items-center gap-4">
+                      <select
+                        className="border rounded p-2 bg-white"
+                        value={user.role}
+                        onChange={(e) => {
+                          const newRole = e.target.value as UserRole;
+                          // Additional validation for role changes
+                          if (newRole === 'admin') {
+                            if (!window.confirm('Are you sure you want to grant admin privileges to this user? This action cannot be undone.')) {
+                              return;
+                            }
+                            // Additional check for admin email
+                            if (!user.email?.endsWith('@groomery.in') && process.env.NODE_ENV !== 'development') {
+                              toast({
+                                title: "Invalid Email Domain",
+                                description: "Admin users must have a @groomery.in email address.",
+                                variant: "destructive"
+                              });
+                              return;
+                            }
+                          }
+                          
+                          updateUserRole({ 
+                            userId: user.uid, 
+                            role: newRole 
+                          });
+                        }}
+                        disabled={isUpdatingUserRole || user.role === 'admin'}
+                      >
+                        <option value="admin">Admin</option>
+                        <option value="manager">Manager</option>
+                        <option value="staff">Staff</option>
+                        <option value="receptionist">Receptionist</option>
+                      </select>
+                      {isUpdatingUserRole && (
+                        <div className="text-sm text-blue-600">
+                          Updating...
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>

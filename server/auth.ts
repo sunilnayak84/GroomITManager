@@ -179,12 +179,6 @@ export async function setUserRole(userId: string, role: 'admin' | 'staff' | 'rec
   try {
     console.log(`[AUTH] Setting role ${role} for user ${userId}`);
 
-    // For development mode or testing
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`[AUTH] Development mode - Role ${role} set for user ${userId}`);
-      return true;
-    }
-
     // Get Firebase Admin instance
     const app = getFirebaseAdmin();
     
@@ -230,6 +224,15 @@ export async function setUserRole(userId: string, role: 'admin' | 'staff' | 'rec
       permissions,
       updatedAt: new Date().toISOString()
     };
+
+    // In development mode, log the claims being set
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[AUTH] Development mode - Setting custom claims:', {
+        userId,
+        role,
+        permissionsCount: permissions.length
+      });
+    }
 
     await admin.auth().setCustomUserClaims(userId, claims);
 

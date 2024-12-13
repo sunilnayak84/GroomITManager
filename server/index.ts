@@ -20,80 +20,87 @@ function log(message: string, type: 'info' | 'error' | 'warn' = 'info') {
 }
 
 // Initialize Firebase Admin
-try {
-  // Clean up any existing Firebase apps
-  admin.apps.forEach(app => app?.delete());
-  
-  // Initialize Firebase Admin
-  if (process.env.NODE_ENV === 'development') {
-    // Development mode - use mock credentials
-    try {
-      admin.initializeApp({
-        credential: admin.credential.cert({
+async function initializeFirebase() {
+  try {
+    // Clean up any existing Firebase apps
+    await Promise.all(admin.apps.map(app => app?.delete()));
+    
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    log(`Initializing Firebase in ${isDevelopment ? 'development' : 'production'} mode`, 'info');
+    
+    if (isDevelopment) {
+      // Check for development credentials
+      const hasDevCredentials = process.env.FIREBASE_PROJECT_ID && 
+                              process.env.FIREBASE_CLIENT_EMAIL && 
+                              process.env.FIREBASE_PRIVATE_KEY;
+
+      if (!hasDevCredentials) {
+        // Use mock credentials for development
+        log('Using mock credentials for development', 'info');
+        const mockCredentials = {
           projectId: 'dev-project',
           clientEmail: 'dev@example.com',
-          privateKey: 'dummy-key'
-        } as admin.ServiceAccount),
-        projectId: 'dev-project'
-      });
-      log('Firebase Admin initialized in development mode', 'info');
-      
-      // Set up initial admin user in development
-      const devAdminUid = 'dev-admin-uid';
-      admin.auth().createCustomToken(devAdminUid)
-        .then(() => {
-          return admin.auth().setCustomUserClaims(devAdminUid, {
+          privateKey: '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9QFi8Lg3Xy+Vj\n-----END PRIVATE KEY-----\n'
+        };
+
+        admin.initializeApp({
+          credential: admin.credential.cert(mockCredentials as admin.ServiceAccount),
+          projectId: mockCredentials.projectId
+        });
+
+        // Create development admin user
+        try {
+          const devAdminUid = 'dev-admin-uid';
+          await admin.auth().createUser({
+            uid: devAdminUid,
+            email: 'admin@example.com',
+            password: 'admin123'
+          }).catch(() => {/* User might already exist */});
+          
+          await admin.auth().setCustomUserClaims(devAdminUid, {
             role: 'admin',
             permissions: ['all']
           });
-        })
-        .then(() => {
           log('Development admin user initialized', 'info');
-        })
-        .catch(err => {
-          log(`Development admin setup warning: ${err.message}`, 'warn');
-        });
-    } catch (error) {
-      log('Development Firebase initialization warning: ' + error.message, 'warn');
-      // Continue in development mode despite Firebase errors
+        } catch (error) {
+          log('Failed to create development admin user, but continuing', 'warn');
+        }
+        
+        return true;
+      }
     }
-  } else {
-    // Production mode - use real credentials
-    const serviceAccount = {
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n')
-    };
 
-    if (!serviceAccount.projectId || !serviceAccount.clientEmail || !serviceAccount.privateKey) {
-      log('Missing Firebase credentials, but continuing in development-like mode', 'warn');
-      // Set up a development-like environment
-      admin.initializeApp({
-        credential: admin.credential.cert({
-          projectId: 'dev-project',
-          clientEmail: 'dev@example.com',
-          privateKey: 'dummy-key'
-        } as admin.ServiceAccount),
-        projectId: 'dev-project'
-      });
-    } else {
-      admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
-      });
-      log('Firebase Admin initialized successfully', 'info');
+    // Production mode or development with real credentials
+    if (!process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL || !process.env.FIREBASE_PRIVATE_KEY) {
+      throw new Error('Missing required Firebase credentials');
     }
-  }
-} catch (error) {
-  const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-  log(`Firebase initialization error: ${errorMessage}`, 'warn');
-  
-  if (process.env.NODE_ENV === 'development') {
-    log('Continuing in development mode despite Firebase error', 'warn');
-  } else {
-    log('Exiting due to Firebase initialization failure', 'error');
-    process.exit(1);
+
+    // Initialize with real credentials
+    const privateKey = process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n');
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: privateKey
+      } as admin.ServiceAccount)
+    });
+
+    log('Firebase Admin SDK initialized successfully with provided credentials', 'info');
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    log(`Firebase initialization error: ${errorMessage}`, 'error');
+    
+    if (isDevelopment) {
+      log('Attempting to continue in development mode despite Firebase error', 'warn');
+    } else {
+      log('Exiting due to Firebase initialization failure', 'error');
+      process.exit(1);
+    }
   }
 }
+
+// Initialize Firebase
+initializeFirebase();
 
 const app = express();
 app.use(express.json());

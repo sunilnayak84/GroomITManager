@@ -17,7 +17,7 @@ interface FirebaseUser {
 
 interface FirebaseUsersResponse {
   users: FirebaseUser[];
-  pageToken?: string;
+  pageToken?: string | null;
 }
 
 async function fetchRoles(): Promise<Role[]> {
@@ -28,12 +28,12 @@ async function fetchRoles(): Promise<Role[]> {
   return response.json();
 }
 
-async function fetchFirebaseUsers({ pageParam }: { pageParam?: string }): Promise<FirebaseUsersResponse> {
-  const params = new URLSearchParams();
-  if (pageParam) {
-    params.append('pageToken', pageParam);
+async function fetchFirebaseUsers(params: { pageParam?: string | null }): Promise<FirebaseUsersResponse> {
+  const searchParams = new URLSearchParams();
+  if (params.pageParam) {
+    searchParams.append('pageToken', params.pageParam);
   }
-  const response = await fetch(`/api/firebase-users?${params}`);
+  const response = await fetch(`/api/firebase-users?${searchParams}`);
   if (!response.ok) {
     throw new Error('Failed to fetch users');
   }
@@ -91,8 +91,9 @@ export function useRoles() {
 
   const { data: usersData, isLoading: isLoadingUsers, fetchNextPage, hasNextPage } = useInfiniteQuery({
     queryKey: ['firebase-users'],
-    queryFn: ({ pageParam }) => fetchFirebaseUsers(pageParam),
-    getNextPageParam: (lastPage) => lastPage.pageToken,
+    queryFn: ({ pageParam }) => fetchFirebaseUsers({ pageParam }),
+    getNextPageParam: (lastPage: FirebaseUsersResponse) => lastPage.pageToken,
+    initialPageParam: null as string | null,
   });
 
   const updateUserRoleMutation = useMutation({
