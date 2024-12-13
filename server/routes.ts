@@ -59,6 +59,62 @@ export function registerRoutes(app: Express) {
     }
   });
 
+  // Update role permissions
+  app.put("/api/roles/:roleName", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
+    try {
+      const { roleName } = req.params;
+      const { permissions } = req.body;
+
+      console.log(`[ROLES] Updating role ${roleName} with permissions:`, permissions);
+
+      // Validate role exists
+      if (!Object.keys(DefaultPermissions).includes(roleName)) {
+        return res.status(400).json({
+          message: `Invalid role: ${roleName}`,
+          validRoles: Object.keys(DefaultPermissions)
+        });
+      }
+
+      // Update DefaultPermissions
+      DefaultPermissions[roleName as keyof typeof DefaultPermissions] = permissions;
+
+      // Update all users with this role to have the new permissions
+      const auth = admin.auth();
+      const db = admin.database();
+      const usersSnapshot = await db.ref('roles').once('value');
+      const users = usersSnapshot.val() || {};
+
+      const updatePromises = Object.entries(users)
+        .filter(([_, userData]: [string, any]) => userData.role === roleName)
+        .map(async ([uid, _]) => {
+          await auth.setCustomUserClaims(uid, {
+            role: roleName,
+            permissions,
+            updatedAt: Date.now()
+          });
+          return db.ref(`roles/${uid}`).update({
+            permissions,
+            updatedAt: Date.now()
+          });
+        });
+
+      await Promise.all(updatePromises);
+
+      console.log(`[ROLES] Successfully updated ${roleName} permissions`);
+      res.json({ 
+        message: `Role ${roleName} updated successfully`,
+        role: roleName,
+        permissions
+      });
+    } catch (error) {
+      console.error('[ROLES] Error updating role:', error);
+      res.status(500).json({
+        message: "Failed to update role",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
   // Update user role
   app.post("/api/users/:userId/role", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
     try {

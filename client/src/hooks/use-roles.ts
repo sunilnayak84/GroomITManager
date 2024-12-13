@@ -157,16 +157,30 @@ async function createRole(role: Role): Promise<Role> {
 }
 
 async function updateRole(role: Role): Promise<Role> {
+  const auth = getAuth();
+  if (!auth.currentUser) {
+    throw new Error('User not authenticated');
+  }
+
+  const token = await auth.currentUser.getIdToken(true);
+  console.log('[ROLES] Updating role:', role);
+
   const response = await fetch(`/api/roles/${role.name}`, {
     method: 'PUT',
     headers: {
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(role),
+    body: JSON.stringify({
+      permissions: role.permissions
+    }),
   });
+
   if (!response.ok) {
-    throw new Error('Failed to update role');
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to update role');
   }
+
   return response.json();
 }
 
