@@ -71,7 +71,29 @@ export function initializeFirebaseAdmin() {
         clientEmail: clientEmail || 'development@example.com',
         privateKey: privateKey || '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9QFi8Lg3Xy+Vj\n-----END PRIVATE KEY-----\n'
       }),
-      databaseURL: `https://${projectId || 'development-project'}-default-rtdb.firebaseio.com`
+      databaseURL: 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
+    });
+
+    // Test Realtime Database connection
+    const db = getDatabase(app);
+    await new Promise((resolve, reject) => {
+      const connectRef = db.ref('.info/connected');
+      const timeout = setTimeout(() => {
+        connectRef.off();
+        reject(new Error('Database connection timeout'));
+      }, 5000);
+
+      connectRef.on('value', (snap) => {
+        if (snap.val() === true) {
+          clearTimeout(timeout);
+          connectRef.off();
+          resolve(true);
+        }
+      }, (error) => {
+        clearTimeout(timeout);
+        connectRef.off();
+        reject(error);
+      });
     });
 
     // Test database connection
@@ -120,7 +142,7 @@ export async function getUserRole(uid: string): Promise<{ role: keyof typeof Rol
 
   try {
     const db = getDatabase(app);
-    const snapshot = await db.ref(`users/${uid}/role`).once('value');
+    const snapshot = await db.ref(`roles/${uid}`).once('value');
     const data = snapshot.val();
 
     if (!data) {
@@ -133,8 +155,8 @@ export async function getUserRole(uid: string): Promise<{ role: keyof typeof Rol
     }
 
     return {
-      role: data.type as keyof typeof RoleTypes,
-      permissions: data.permissions || DefaultPermissions[data.type as keyof typeof RoleTypes]
+      role: data.role as keyof typeof RoleTypes,
+      permissions: data.permissions || DefaultPermissions[data.role as keyof typeof RoleTypes]
     };
   } catch (error) {
     console.error('Error fetching user role:', error);
@@ -157,10 +179,10 @@ export async function updateUserRole(uid: string, roleType: keyof typeof RoleTyp
 
   try {
     const db = getDatabase(app);
-    const userRoleRef = db.ref(`users/${uid}/role`);
+    const userRoleRef = db.ref(`roles/${uid}`);
     
     const roleData = {
-      type: roleType,
+      role: roleType,
       permissions: DefaultPermissions[roleType],
       updatedAt: admin.database.ServerValue.TIMESTAMP
     };
@@ -207,8 +229,15 @@ async function setupDevelopmentAdmin(app: admin.app.App) {
     await roleRef.set({
       role: RoleTypes.admin,
       permissions: DefaultPermissions[RoleTypes.admin],
+      isAdmin: true,
       updatedAt: admin.database.ServerValue.TIMESTAMP
     });
+    
+    // Verify the role was set
+    const snapshot = await roleRef.once('value');
+    if (!snapshot.exists()) {
+      throw new Error('Failed to set admin role in database');
+    }
 
     console.log('🟢 Admin role and permissions set in database');
     
@@ -218,6 +247,76 @@ async function setupDevelopmentAdmin(app: admin.app.App) {
     console.log('🟢 Development admin setup complete');
   } catch (error) {
     console.error('🔴 Error setting up development admin:', error);
+    throw error;
+  }
+}
+export async function listAllUsers(pageSize = 1000, pageToken?: string) {
+  const app = getFirebaseAdmin();
+  if (!app) {
+    throw new Error('Firebase Admin not initialized');
+  }
+
+  try {
+    const auth = app.auth();
+    const db = app.database();
+    
+    console.log('[FIREBASE-USERS] Starting user fetch...');
+    const listUsersResult = await auth.listUsers(pageSize, pageToken);
+    
+    if (!listUsersResult.users.length) {
+      console.log('[FIREBASE-USERS] No users found');
+      return { users: [], pageToken: null };
+    }
+    
+    console.log(`[FIREBASE-USERS] Found ${listUsersResult.users.length} users in Auth`);
+    
+    // Create a single transaction to get all roles at once
+    const rolesRef = db.ref('roles');
+    const rolesSnapshot = await rolesRef.once('value');
+    const rolesData = rolesSnapshot.val() || {};
+    
+    // Process users with their roles
+    const userRoles = await Promise.all(
+      listUsersResult.users.map(async (user) => {
+        const roleData = rolesData[user.uid];
+        const role = roleData?.role || RoleTypes.staff;
+        
+        // Set default role if none exists
+        if (!roleData) {
+          console.log(`[FIREBASE-USERS] Setting default role for user ${user.uid}`);
+          const defaultRole = {
+            role: RoleTypes.staff,
+            permissions: DefaultPermissions[RoleTypes.staff],
+            updatedAt: admin.database.ServerValue.TIMESTAMP
+          };
+          
+          try {
+            await db.ref(`roles/${user.uid}`).set(defaultRole);
+          } catch (error) {
+            console.error(`[FIREBASE-USERS] Error setting default role for ${user.uid}:`, error);
+          }
+        }
+        
+        return {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName || user.email?.split('@')[0] || 'Unknown User',
+          role: role,
+          permissions: roleData?.permissions || DefaultPermissions[role],
+          disabled: user.disabled,
+          lastSignInTime: user.metadata.lastSignInTime,
+          creationTime: user.metadata.creationTime
+        };
+      })
+    );
+
+    console.log(`[FIREBASE-USERS] Successfully processed ${userRoles.length} users with roles`);
+    return {
+      users: userRoles,
+      pageToken: listUsersResult.pageToken
+    };
+  } catch (error) {
+    console.error('[FIREBASE-USERS] Error listing users:', error);
     throw error;
   }
 }

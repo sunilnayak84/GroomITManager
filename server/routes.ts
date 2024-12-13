@@ -1,6 +1,6 @@
 import { type Express } from "express";
 import { authenticateFirebase, requireRole } from "./middleware/auth";
-import { RoleTypes, DefaultPermissions, getUserRole, updateUserRole } from "./firebase";
+import { RoleTypes, DefaultPermissions, getUserRole, updateUserRole, listAllUsers } from "./firebase";
 import admin from "firebase-admin";
 
 export function registerRoutes(app: Express) {
@@ -22,32 +22,15 @@ export function registerRoutes(app: Express) {
 
       const firebaseApp = admin.app();
       
-      // List users from Firebase Admin SDK
-      const listUsersResult = await firebaseApp.auth().listUsers(pageSize, pageToken);
+      // Use the new listAllUsers function
+      const { users, pageToken: nextPageToken } = await listAllUsers(pageSize, pageToken);
       
-      // Process users with their roles from Realtime Database
-      const users = await Promise.all(
-        listUsersResult.users.map(async (user) => {
-          const userRole = await getUserRole(user.uid);
-          return {
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName || user.email?.split('@')[0] || 'Unknown User',
-            role: userRole?.role || RoleTypes.staff,
-            permissions: userRole?.permissions || [],
-            disabled: user.disabled,
-            lastSignInTime: user.metadata.lastSignInTime,
-            creationTime: user.metadata.creationTime
-          };
-        })
-      );
-
       console.log('[FIREBASE-USERS] Successfully fetched users:', users.length);
       
       res.json({
         users,
-        pageToken: listUsersResult.pageToken,
-        hasNextPage: !!listUsersResult.pageToken
+        pageToken: nextPageToken,
+        hasNextPage: !!nextPageToken
       });
     } catch (error) {
       console.error('[FIREBASE-USERS] Error fetching users:', error);

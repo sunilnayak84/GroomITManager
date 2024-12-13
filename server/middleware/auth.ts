@@ -50,7 +50,18 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
     const firebaseApp = getFirebaseAdmin();
     
     if (!firebaseApp) {
-      console.error('Firebase Admin not initialized');
+      console.error('[AUTH] Firebase Admin not initialized');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[AUTH] Using development mock user');
+        req.user = {
+          uid: 'mock-uid',
+          email: 'admin@groomery.in',
+          displayName: 'Admin User',
+          role: RoleTypes.admin,
+          permissions: DefaultPermissions[RoleTypes.admin]
+        };
+        return next();
+      }
       return res.status(500).json({ 
         message: 'Authentication service unavailable',
         code: 'AUTH_SERVICE_ERROR'
@@ -58,34 +69,38 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
     }
 
     try {
+      console.log('[AUTH] Verifying token...');
       const decodedToken = await firebaseApp.auth().verifyIdToken(idToken);
       const user = await firebaseApp.auth().getUser(decodedToken.uid);
+      
+      console.log(`[AUTH] Token verified for user ${user.email}`);
       
       // Get role and permissions from Realtime Database
       const userRole = await getUserRole(user.uid);
       
       if (!userRole) {
-        console.warn(`No role found for user ${user.email}, using default staff role`);
+        console.warn(`[AUTH] No role found for user ${user.email}, using default staff role`);
       }
       
       req.user = {
         uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        role: userRole?.role || RoleTypes.staff,
+        email: user.email || null,
+        displayName: user.displayName || user.email?.split('@')[0] || 'Unknown User',
+        role: (userRole?.role as keyof typeof RoleTypes) || RoleTypes.staff,
         permissions: userRole?.permissions || DefaultPermissions[RoleTypes.staff]
       };
       
+      console.log(`[AUTH] User authenticated with role: ${req.user.role}`);
       next();
     } catch (verifyError) {
-      console.error('Token verification failed:', verifyError);
+      console.error('[AUTH] Token verification failed:', verifyError);
       return res.status(401).json({ 
         message: 'Invalid token',
         code: 'INVALID_TOKEN'
       });
     }
   } catch (error) {
-    console.error('Authentication error:', error);
+    console.error('[AUTH] Authentication error:', error);
     return res.status(500).json({ 
       message: 'Authentication failed',
       code: 'AUTH_ERROR'
