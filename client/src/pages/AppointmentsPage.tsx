@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Calendar, List } from "lucide-react";
 import { useAppointments } from "../hooks/use-appointments";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import AppointmentForm from "../components/AppointmentForm";
@@ -10,6 +10,7 @@ import { format } from "date-fns";
 import { z } from "zod";
 import { appointmentSchema, type Appointment, type AppointmentWithRelations } from "@/lib/schema";
 import AppointmentDetails from "../components/AppointmentDetails";
+import AppointmentCalendar from "../components/AppointmentCalendar";
 
 // Get status type from the schema
 type AppointmentStatus = z.infer<typeof appointmentSchema>["status"];
@@ -25,6 +26,7 @@ export default function AppointmentsPage() {
   const [openNewForm, setOpenNewForm] = useState(false);
   const [openDetails, setOpenDetails] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithRelations | null>(null);
+  const [view, setView] = useState<'list' | 'calendar'>('list');
   const { data: appointments, isLoading, error } = useAppointments();
   
   const columns = [
@@ -99,26 +101,52 @@ export default function AppointmentsPage() {
               <h1 className="text-2xl font-bold">Appointments</h1>
               <p className="text-white/80">Manage your pet grooming appointments</p>
             </div>
-            <Dialog open={openNewForm} onOpenChange={setOpenNewForm}>
-              <DialogTrigger asChild>
-                <Button variant="secondary">
-                  <Plus className="mr-2 h-4 w-4" />
-                  New Appointment
+            <div className="flex items-center gap-4">
+              <div className="flex rounded-lg bg-white/10 p-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={`${view === 'list' ? 'bg-white text-purple-950' : 'text-white hover:bg-white/20'}`}
+                  onClick={() => setView('list')}
+                >
+                  <List className="mr-2 h-4 w-4" />
+                  List
                 </Button>
-              </DialogTrigger>
-              <AppointmentForm setOpen={setOpenNewForm} />
-            </Dialog>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={`${view === 'calendar' ? 'bg-white text-purple-950' : 'text-white hover:bg-white/20'}`}
+                  onClick={() => setView('calendar')}
+                >
+                  <Calendar className="mr-2 h-4 w-4" />
+                  Calendar
+                </Button>
+              </div>
+              <Dialog open={openNewForm} onOpenChange={setOpenNewForm}>
+                <DialogTrigger asChild>
+                  <Button variant="secondary">
+                    <Plus className="mr-2 h-4 w-4" />
+                    New Appointment
+                  </Button>
+                </DialogTrigger>
+                <AppointmentForm setOpen={setOpenNewForm} />
+              </Dialog>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-lg border shadow-sm">
-        <DataTable
-          columns={columns}
-          data={(appointments || []) as AppointmentWithRelations[]}
-          isLoading={isLoading}
-        />
-      </div>
+      {view === 'list' ? (
+        <div className="bg-white rounded-lg border shadow-sm">
+          <DataTable
+            columns={columns}
+            data={(appointments || []) as AppointmentWithRelations[]}
+            isLoading={isLoading}
+          />
+        </div>
+      ) : (
+        <AppointmentCalendar />
+      )}
 
       {selectedAppointment && (
         <AppointmentDetails
