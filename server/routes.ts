@@ -1,5 +1,7 @@
 import { type Express } from "express";
-import { type RoleType, type Permission, DefaultRoles } from "./firebase-admin";
+import { db } from "../db";
+import { appointments, customers, pets, users, roles, type RoleType, type Permission } from "../db/schema";
+import { and, count, eq, gte } from "drizzle-orm";
 import admin from "firebase-admin";
 import { sql } from "drizzle-orm";
 import { authenticateFirebase, requireRole } from "./middleware/auth";
@@ -129,13 +131,13 @@ export function registerRoutes(app: Express) {
     }
   });
 
-  // Role management endpoints using Firebase
+  // Role management endpoints
   app.get("/api/roles", authenticateFirebase, requireRole(['admin']), async (req, res) => {
     try {
-      console.log('[ROLES] Fetching roles from Firebase');
-      const roles = Object.entries(DefaultRoles).map(([role, data]) => ({
+      console.log('[ROLES] Fetching roles');
+      const roles = Object.entries(RolePermissions).map(([role, permissions]) => ({
         name: role,
-        ...data
+        permissions
       }));
       res.json(roles);
     } catch (error) {
