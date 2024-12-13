@@ -29,10 +29,17 @@ async function initializeFirebase() {
     
     log(`Initializing Firebase in ${isDevelopment ? 'development' : 'production'} mode`, 'info');
     
-    // Initialize Firebase with credentials (same for both development and production)
-    const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
-    if (!process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL || !privateKey) {
-      throw new Error('Missing required Firebase credentials');
+    // Initialize Firebase Admin with credentials
+    let privateKey;
+    try {
+      privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+      if (!process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL || !privateKey) {
+        throw new Error('Missing required Firebase credentials');
+      }
+      log('Firebase credentials found', 'info');
+    } catch (error) {
+      log(`Firebase credential error: ${error}`, 'error');
+      throw error;
     }
 
     admin.initializeApp({
@@ -115,7 +122,7 @@ app.set('trust proxy', 1);
 const isDevelopment = app.get("env") === "development";
 app.use((req, res, next) => {
   const origin = isDevelopment 
-    ? (req.get('origin') || 'http://localhost:5173') 
+    ? (req.get('origin') || 'http://localhost:5174') 
     : req.get('origin');
     
   if (origin) {
@@ -208,10 +215,15 @@ function setupGracefulShutdown(server: any) {
 }
 
 (async () => {
-  const PORT = parseInt(process.env.PORT || '3000', 10);
+  const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+  console.log(`Starting server on port ${PORT}`);
   
   try {
     log("Starting server initialization...", 'info');
+    
+    // Initialize Firebase Admin first
+    await initializeFirebase();
+    log("Firebase Admin initialized", 'info');
     
     // First, attempt to clean up the port
     try {

@@ -13,18 +13,67 @@ export function registerRoutes(app: Express) {
     res.json({ status: "healthy" });
   });
 
-  // Role Management endpoints - Admin and Staff
-  app.get("/api/roles", authenticateFirebase, requireRole(['admin', 'staff']), async (req, res) => {
+  // Role Management endpoints
+  app.get("/api/roles", authenticateFirebase, requireRole(['admin']), async (req, res) => {
     try {
       // Return all roles and their permissions
       const roles = Object.entries(RolePermissions).map(([role, permissions]) => ({
         name: role,
-        permissions: permissions
+        permissions: permissions,
+        isSystem: ['admin', 'manager', 'staff', 'receptionist'].includes(role)
       }));
       res.json(roles);
     } catch (error) {
       console.error('Error fetching roles:', error);
       res.status(500).json({ error: "Failed to fetch roles" });
+    }
+  });
+
+  app.post("/api/roles", authenticateFirebase, requireRole(['admin']), async (req, res) => {
+    try {
+      const { name, permissions } = req.body;
+      
+      // Validation
+      if (!name || !permissions || !Array.isArray(permissions)) {
+        return res.status(400).json({ 
+          error: "Invalid request",
+          message: "Name and permissions array are required"
+        });
+      }
+
+      // Prevent modification of system roles
+      if (['admin', 'manager', 'staff', 'receptionist'].includes(name.toLowerCase())) {
+        return res.status(403).json({ 
+          error: "Forbidden",
+          message: "Cannot create system-defined roles"
+        });
+      }
+
+      // Check if role already exists
+      if (RolePermissions[name]) {
+        return res.status(409).json({
+          error: "Conflict",
+          message: "Role already exists"
+        });
+      }
+
+      // Update RolePermissions
+      RolePermissions[name] = permissions;
+      
+      res.status(201).json({ 
+        message: "Role created successfully",
+        role: { 
+          name, 
+          permissions,
+          isSystem: false
+        }
+      });
+    } catch (error) {
+      console.error('Error creating role:', error);
+      res.status(500).json({ 
+        error: "Internal Server Error",
+        message: "Failed to create role"
+      });
     }
   });
 
@@ -233,58 +282,32 @@ export function registerRoutes(app: Express) {
     }
   });
 
-  // Role management endpoints - Admin only
-  app.get("/api/roles", authenticateFirebase, requireRole(['admin']), async (req, res) => {
-    try {
-      // Return all roles and their permissions
-      const roles = Object.entries(RolePermissions).map(([role, permissions]) => ({
-        name: role,
-        permissions: permissions
-      }));
-      res.json(roles);
-    } catch (error) {
-      console.error('Error fetching roles:', error);
-      res.status(500).json({ error: "Failed to fetch roles" });
-    }
-  });
-
-  app.post("/api/roles", authenticateFirebase, requireRole(['admin']), async (req, res) => {
-    try {
-      const { name, permissions } = req.body;
-      
-      if (!name || !permissions) {
-        return res.status(400).json({ error: "Name and permissions are required" });
-      }
-
-      // Prevent modification of admin role
-      if (name.toLowerCase() === 'admin') {
-        return res.status(403).json({ error: "Cannot modify admin role" });
-      }
-
-      // Update RolePermissions
-      RolePermissions[name] = permissions;
-      
-      res.json({ 
-        message: "Role created successfully",
-        role: { name, permissions }
-      });
-    } catch (error) {
-      console.error('Error creating role:', error);
-      res.status(500).json({ error: "Failed to create role" });
-    }
-  });
-
   app.put("/api/roles/:roleName", authenticateFirebase, requireRole(['admin']), async (req, res) => {
     try {
       const { roleName } = req.params;
       const { permissions } = req.body;
       
-      if (roleName.toLowerCase() === 'admin') {
-        return res.status(403).json({ error: "Cannot modify admin role" });
+      // Validation
+      if (!permissions || !Array.isArray(permissions)) {
+        return res.status(400).json({ 
+          error: "Invalid request",
+          message: "Permissions array is required"
+        });
+      }
+
+      // Prevent modification of system roles
+      if (['admin', 'manager', 'staff', 'receptionist'].includes(roleName.toLowerCase())) {
+        return res.status(403).json({ 
+          error: "Forbidden",
+          message: "Cannot modify system-defined roles"
+        });
       }
 
       if (!RolePermissions[roleName]) {
-        return res.status(404).json({ error: "Role not found" });
+        return res.status(404).json({ 
+          error: "Not Found",
+          message: "Role not found"
+        });
       }
 
       // Update permissions
@@ -292,11 +315,54 @@ export function registerRoutes(app: Express) {
       
       res.json({ 
         message: "Role updated successfully",
-        role: { name: roleName, permissions }
+        role: { 
+          name: roleName, 
+          permissions,
+          isSystem: false
+        }
       });
     } catch (error) {
       console.error('Error updating role:', error);
-      res.status(500).json({ error: "Failed to update role" });
+      res.status(500).json({ 
+        error: "Internal Server Error",
+        message: "Failed to update role"
+      });
+    }
+  });
+
+  // Add DELETE endpoint for custom roles
+  app.delete("/api/roles/:roleName", authenticateFirebase, requireRole(['admin']), async (req, res) => {
+    try {
+      const { roleName } = req.params;
+
+      // Prevent deletion of system roles
+      if (['admin', 'manager', 'staff', 'receptionist'].includes(roleName.toLowerCase())) {
+        return res.status(403).json({ 
+          error: "Forbidden",
+          message: "Cannot delete system-defined roles"
+        });
+      }
+
+      if (!RolePermissions[roleName]) {
+        return res.status(404).json({ 
+          error: "Not Found",
+          message: "Role not found"
+        });
+      }
+
+      // Delete the role
+      delete RolePermissions[roleName];
+      
+      res.json({ 
+        message: "Role deleted successfully",
+        name: roleName
+      });
+    } catch (error) {
+      console.error('Error deleting role:', error);
+      res.status(500).json({ 
+        error: "Internal Server Error",
+        message: "Failed to delete role"
+      });
     }
   });
 

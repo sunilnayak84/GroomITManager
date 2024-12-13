@@ -255,18 +255,21 @@ export async function setUserRole(userId: string, role: 'admin' | 'staff' | 'rec
 
 export function setupAuth(app: Express) {
   try {
-    // Always initialize Firebase in development mode for testing
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Running in development mode - initializing Firebase for testing');
-      if (!admin.apps.length) {
-        admin.initializeApp({
-          credential: admin.credential.cert({
-            projectId: process.env.FIREBASE_PROJECT_ID || 'test',
-            clientEmail: process.env.FIREBASE_CLIENT_EMAIL || 'test@example.com',
-            privateKey: (process.env.FIREBASE_PRIVATE_KEY || 'test-key').replace(/\\n/g, '\n')
-          } as admin.ServiceAccount)
-        });
+    // Initialize Firebase if not already initialized
+    if (!admin.apps.length) {
+      console.log('Initializing Firebase Admin');
+      const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+      if (!process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL || !privateKey) {
+        throw new Error('Missing required Firebase credentials');
       }
+      admin.initializeApp({
+        credential: admin.credential.cert({
+          projectId: process.env.FIREBASE_PROJECT_ID,
+          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+          privateKey: privateKey
+        } as admin.ServiceAccount)
+      });
+      console.log('Firebase Admin initialized successfully');
     }
 
 
