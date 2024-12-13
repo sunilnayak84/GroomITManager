@@ -1,30 +1,57 @@
 import admin from 'firebase-admin';
+import { getDatabase } from 'firebase-admin/database';
 
-let firebaseAdmin: admin.app.App | undefined;
+// Define role types (lowercase to match database)
+export const RoleTypes = {
+  admin: 'admin',
+  manager: 'manager',
+  staff: 'staff',
+  receptionist: 'receptionist'
+} as const;
 
+// Define default permissions for each role
+export const DefaultPermissions = {
+  [RoleTypes.admin]: [
+    'manage_appointments', 'view_appointments', 'create_appointments', 'cancel_appointments',
+    'manage_customers', 'view_customers', 'create_customers', 'edit_customer_info',
+    'manage_services', 'view_services', 'create_services', 'edit_services',
+    'manage_inventory', 'view_inventory', 'update_stock', 'manage_consumables',
+    'manage_staff_schedule', 'view_staff_schedule', 'manage_own_schedule',
+    'view_analytics', 'view_reports', 'view_financial_reports', 'all'
+  ],
+  [RoleTypes.manager]: [
+    'view_appointments', 'create_appointments', 'cancel_appointments',
+    'view_customers', 'create_customers', 'edit_customer_info',
+    'view_services', 'view_inventory', 'update_stock',
+    'manage_staff_schedule', 'view_staff_schedule', 'manage_own_schedule',
+    'view_analytics'
+  ],
+  [RoleTypes.staff]: [
+    'view_appointments', 'create_appointments',
+    'view_customers', 'create_customers',
+    'view_services', 'view_inventory',
+    'manage_own_schedule'
+  ],
+  [RoleTypes.receptionist]: [
+    'view_appointments', 'create_appointments',
+    'view_customers', 'create_customers',
+    'view_services'
+  ]
+};
+
+// Initialize Firebase Admin
 export function initializeFirebaseAdmin() {
-  if (firebaseAdmin) {
-    return firebaseAdmin;
+  if (admin.apps.length) {
+    return admin.apps[0];
   }
 
   const isDevelopment = process.env.NODE_ENV === 'development';
   console.log('🟢 Initializing Firebase in', isDevelopment ? 'development' : 'production', 'mode');
-  
-  try {
-    // Clean up any existing Firebase apps
-    if (admin.apps.length) {
-      console.log('🟢 Cleaning up existing Firebase apps');
-      admin.apps.forEach(app => app?.delete());
-    }
 
+  try {
     let privateKey = process.env.FIREBASE_PRIVATE_KEY || '';
-    
-    // Clean up and format private key
     if (privateKey) {
-      // Remove extra quotes and replace escaped newlines
       privateKey = privateKey.replace(/\\n/g, '\n').replace(/^['"]|['"]$/g, '');
-      
-      // Add PEM format if missing
       if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
         privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----\n`;
       }
@@ -33,32 +60,39 @@ export function initializeFirebaseAdmin() {
     const projectId = process.env.FIREBASE_PROJECT_ID;
     const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
 
-    // Validate credentials
     if (!isDevelopment && (!projectId || !clientEmail || !privateKey)) {
-      throw new Error('Required Firebase environment variables are missing');
+      throw new Error('Missing required Firebase environment variables');
     }
 
     // Initialize Firebase Admin SDK
-    const credential = admin.credential.cert({
-      projectId: projectId || 'development-project',
-      clientEmail: clientEmail || 'development@example.com',
-      privateKey: privateKey || '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9QFi8Lg3Xy+Vj\n-----END PRIVATE KEY-----\n'
+    const app = admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: projectId || 'development-project',
+        clientEmail: clientEmail || 'development@example.com',
+        privateKey: privateKey || '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9QFi8Lg3Xy+Vj\n-----END PRIVATE KEY-----\n'
+      }),
+      databaseURL: `https://${projectId || 'development-project'}-default-rtdb.firebaseio.com`
     });
 
-    firebaseAdmin = admin.initializeApp({
-      credential
+    // Test database connection
+    const db = getDatabase(app);
+    db.ref('.info/connected').on('value', (snapshot) => {
+      if (snapshot.val() === true) {
+        console.log('🟢 Connected to Firebase Realtime Database');
+      } else {
+        console.log('🔴 Disconnected from Firebase Realtime Database');
+      }
     });
 
     console.log('🟢 Firebase Admin SDK initialized successfully');
 
-    // Set up development admin user if in development mode
     if (isDevelopment) {
-      setupDevelopmentAdmin().catch(error => {
+      setupDevelopmentAdmin(app).catch(error => {
         console.warn('⚠️ Failed to setup development admin:', error);
       });
     }
 
-    return firebaseAdmin;
+    return app;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('🔴 Error initializing Firebase Admin:', errorMessage);
@@ -71,19 +105,94 @@ export function initializeFirebaseAdmin() {
   }
 }
 
-async function setupDevelopmentAdmin() {
-  const auth = admin.auth();
+// Get Firebase Admin instance
+export function getFirebaseAdmin() {
+  return initializeFirebaseAdmin();
+}
+
+// Get user role and permissions from Realtime Database
+export async function getUserRole(uid: string): Promise<{ role: keyof typeof RoleTypes; permissions: string[] } | null> {
+  const app = getFirebaseAdmin();
+  if (!app) {
+    console.warn('Firebase Admin not initialized');
+    return null;
+  }
+
+  try {
+    const db = getDatabase(app);
+    const snapshot = await db.ref(`users/${uid}/role`).once('value');
+    const data = snapshot.val();
+
+    if (!data) {
+      console.warn(`No role found for user ${uid}, using default staff role`);
+      await updateUserRole(uid, RoleTypes.staff);
+      return {
+        role: RoleTypes.staff,
+        permissions: DefaultPermissions[RoleTypes.staff]
+      };
+    }
+
+    return {
+      role: data.type as keyof typeof RoleTypes,
+      permissions: data.permissions || DefaultPermissions[data.type as keyof typeof RoleTypes]
+    };
+  } catch (error) {
+    console.error('Error fetching user role:', error);
+    if (process.env.NODE_ENV === 'development') {
+      return {
+        role: RoleTypes.staff,
+        permissions: DefaultPermissions[RoleTypes.staff]
+      };
+    }
+    return null;
+  }
+}
+
+// Update user role in Realtime Database
+export async function updateUserRole(uid: string, roleType: keyof typeof RoleTypes) {
+  const app = getFirebaseAdmin();
+  if (!app) {
+    throw new Error('Firebase Admin not initialized');
+  }
+
+  try {
+    const db = getDatabase(app);
+    const userRoleRef = db.ref(`users/${uid}/role`);
+    
+    const roleData = {
+      type: roleType,
+      permissions: DefaultPermissions[roleType],
+      updatedAt: admin.database.ServerValue.TIMESTAMP
+    };
+
+    await userRoleRef.set(roleData);
+    console.log(`🟢 Role updated for user ${uid} to ${roleType}`);
+
+    // Force token refresh to ensure the user gets the new role
+    await admin.auth().revokeRefreshTokens(uid);
+    console.log(`🟢 Tokens revoked for user ${uid}`);
+    
+    return { role: roleType, permissions: DefaultPermissions[roleType] };
+  } catch (error) {
+    console.error('🔴 Error updating user role:', error);
+    throw error;
+  }
+}
+
+// Setup development admin user
+async function setupDevelopmentAdmin(app: admin.app.App) {
+  const auth = app.auth();
+  const db = app.database();
+
   const adminEmail = 'admin@groomery.in';
   
   try {
     let adminUser;
     
-    // Try to get existing admin
     try {
       adminUser = await auth.getUserByEmail(adminEmail);
       console.log('🟢 Existing admin user found');
     } catch {
-      // Create new admin user if doesn't exist
       adminUser = await auth.createUser({
         email: adminEmail,
         password: 'admin123',
@@ -93,55 +202,22 @@ async function setupDevelopmentAdmin() {
       console.log('🟢 New admin user created');
     }
 
-    // Set admin claims
-    await auth.setCustomUserClaims(adminUser.uid, {
-      role: 'admin',
-      permissions: [
-        'manage_appointments',
-        'view_appointments',
-        'create_appointments',
-        'cancel_appointments',
-        'manage_customers',
-        'view_customers',
-        'create_customers',
-        'edit_customer_info',
-        'manage_services',
-        'view_services',
-        'create_services',
-        'edit_services',
-        'manage_inventory',
-        'view_inventory',
-        'update_stock',
-        'manage_consumables',
-        'manage_staff_schedule',
-        'view_staff_schedule',
-        'manage_own_schedule',
-        'view_analytics',
-        'view_reports',
-        'view_financial_reports',
-        'all'
-      ],
-      isAdmin: true,
-      updatedAt: new Date().toISOString()
+    // Set up role in Realtime Database
+    const roleRef = db.ref(`roles/${adminUser.uid}`);
+    await roleRef.set({
+      role: RoleTypes.admin,
+      permissions: DefaultPermissions[RoleTypes.admin],
+      updatedAt: admin.database.ServerValue.TIMESTAMP
     });
 
-    console.log('🟢 Admin role and permissions set successfully');
-    
-    // Verify the claims were set
-    const updatedUser = await auth.getUser(adminUser.uid);
-    console.log('🟢 Admin user claims set:', updatedUser.customClaims);
+    console.log('🟢 Admin role and permissions set in database');
     
     // Force token refresh
     await auth.revokeRefreshTokens(adminUser.uid);
+    
+    console.log('🟢 Development admin setup complete');
   } catch (error) {
     console.error('🔴 Error setting up development admin:', error);
     throw error;
   }
-}
-
-export function getFirebaseAdmin() {
-  if (!firebaseAdmin) {
-    return initializeFirebaseAdmin();
-  }
-  return firebaseAdmin;
 }

@@ -31,53 +31,40 @@ async function initializeFirebase(): Promise<boolean> {
       await Promise.all(admin.apps.map(app => app?.delete()));
     }
 
-    // Format private key
+    // Get Firebase configuration
+    const projectId = process.env.FIREBASE_PROJECT_ID || (isDevelopment ? 'dev-project' : '');
+    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL || (isDevelopment ? 'dev@example.com' : '');
     let privateKey = process.env.FIREBASE_PRIVATE_KEY || '';
+
+    // Format private key if needed
     if (privateKey) {
-      // Remove extra quotes if present
       privateKey = privateKey.replace(/\\n/g, '\n').replace(/^['"]|['"]$/g, '');
       if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
-        privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----`;
+        privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----\n`;
       }
-    }
-
-    // Configure Firebase
-    const firebaseConfig = {
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: privateKey
-    };
-
-    // In development, use default config if environment variables are missing
-    if (isDevelopment && (!firebaseConfig.projectId || !firebaseConfig.clientEmail || !firebaseConfig.privateKey)) {
-      log('Using development credentials', 'warn');
-      firebaseConfig.projectId = 'dev-project';
-      firebaseConfig.clientEmail = 'dev@example.com';
-      firebaseConfig.privateKey = '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9QFi8Lg3Xy+Vj\nVGQiXhKlLS0xGS4YgW4UF9l4A5H4KlUZ8JfVhqggXmVBITM1Mj1nW7R02eCGXjJ4\nF1HGJ9REh/Qr0kH4NxjWnFxvj4VhZk+zRhSmPEm80u7KnXWW0v0idTzVqeVwnVZF\nX8WAIhN7CfXQZGl1xd/ftUU9EBGgm/ZY7DTqf4TGI3LWxG1dDlh4l2Y=\n-----END PRIVATE KEY-----\n';
-    }
-
-    // Validate configuration
-    if (!isDevelopment) {
-      if (!firebaseConfig.projectId || !firebaseConfig.clientEmail || !firebaseConfig.privateKey) {
-        throw new Error('Missing required Firebase credentials');
-      }
-      
-      if (!firebaseConfig.privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
-        throw new Error('Invalid private key format');
-      }
+    } else if (isDevelopment) {
+      privateKey = '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9QFi8Lg3Xy+Vj\nVGQiXhKlLS0xGS4YgW4UF9l4A5H4KlUZ8JfVhqggXmVBITM1Mj1nW7R02eCGXjJ4\nF1HGJ9REh/Qr0kH4NxjWnFxvj4VhZk+zRhSmPEm80u7KnXWW0v0idTzVqeVwnVZF\nX8WAIhN7CfXQZGl1xd/ftUU9EBGgm/ZY7DTqf4TGI3LWxG1dDlh4l2Y=\n-----END PRIVATE KEY-----\n';
     }
 
     // Validate credentials in production
-    if (!isDevelopment) {
-      if (!firebaseConfig.projectId || !firebaseConfig.clientEmail || !firebaseConfig.privateKey) {
-        throw new Error('Missing required Firebase credentials in production mode');
-      }
+    if (!isDevelopment && (!projectId || !clientEmail || !privateKey)) {
+      throw new Error('Missing required Firebase credentials in production mode');
     }
 
-    // Initialize Firebase Admin SDK
-    admin.initializeApp({
-      credential: admin.credential.cert(firebaseConfig as admin.ServiceAccount)
+    // Initialize Firebase Admin SDK with Realtime Database
+    const app = admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId,
+        clientEmail,
+        privateKey
+      }),
+      databaseURL: `https://${projectId}.firebaseio.com`
     });
+
+    // Initialize Realtime Database
+    const db = app.database();
+    await db.ref('.info/connected').once('value');
+    log('Firebase Realtime Database connection successful', 'info');
 
     if (isDevelopment) {
       await setupDevelopmentAdmin();
@@ -91,7 +78,7 @@ async function initializeFirebase(): Promise<boolean> {
     
     if (isDevelopment) {
       log('Continuing in development mode despite Firebase error', 'warn');
-      return true; // Continue in development mode even if initialization fails
+      return true;
     }
     throw error;
   }
@@ -117,8 +104,12 @@ async function setupDevelopmentAdmin(): Promise<void> {
       log('New admin user created', 'info');
     }
 
-    // Set admin claims with full permissions
-    const adminClaims = {
+    // Get database reference
+    const db = admin.database();
+    const userRolesRef = db.ref(`roles/${adminUser.uid}`);
+
+    // Set admin role in Realtime Database
+    await userRolesRef.set({
       role: 'admin',
       permissions: [
         'manage_appointments',
@@ -146,28 +137,26 @@ async function setupDevelopmentAdmin(): Promise<void> {
         'all'
       ],
       isAdmin: true,
-      updatedAt: new Date().toISOString()
-    };
+      updatedAt: admin.database.ServerValue.TIMESTAMP
+    });
 
-    // Set or update admin role
-    await admin.auth().setCustomUserClaims(adminUser.uid, adminClaims);
-    log('Admin role and permissions set successfully', 'info');
-    
-    // Verify the claims were set
-    const userRecord = await admin.auth().getUser(adminUser.uid);
-    log(`Admin user claims set: ${JSON.stringify(userRecord.customClaims)}`, 'info');
-    
+    log('Admin role set in database successfully', 'info');
+
+    // Verify the role was set
+    const roleSnapshot = await userRolesRef.once('value');
+    log('Admin role data:', roleSnapshot.val());
+
     // Force token refresh
-    try {
-      await admin.auth().revokeRefreshTokens(adminUser.uid);
-      log('Refresh tokens revoked to force token update', 'info');
-    } catch (error) {
-      log('Warning: Could not revoke refresh tokens', 'warn');
-    }
-    
+    await admin.auth().revokeRefreshTokens(adminUser.uid);
+    log('Refresh tokens revoked to force token update', 'info');
+
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     log(`Warning: Failed to setup admin user: ${errorMessage}`, 'warn');
+    if (process.env.NODE_ENV === 'development') {
+      log('Continuing despite error in development mode', 'warn');
+      return;
+    }
     throw error;
   }
 }
