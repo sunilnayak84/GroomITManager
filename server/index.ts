@@ -28,42 +28,87 @@ async function initializeFirebase() {
     const isDevelopment = process.env.NODE_ENV === 'development';
     log(`Initializing Firebase in ${isDevelopment ? 'development' : 'production'} mode`, 'info');
     
+    // Development mode setup
     if (isDevelopment) {
-      // Check for development credentials
-      const hasDevCredentials = process.env.FIREBASE_PROJECT_ID && 
-                              process.env.FIREBASE_CLIENT_EMAIL && 
-                              process.env.FIREBASE_PRIVATE_KEY;
-
-      if (!hasDevCredentials) {
-        // Use mock credentials for development
-        log('Using mock credentials for development', 'info');
-        const mockCredentials = {
+      log('Setting up development Firebase instance', 'info');
+      
+      // Initialize Firebase with development credentials
+      admin.initializeApp({
+        credential: admin.credential.cert({
           projectId: 'dev-project',
           clientEmail: 'dev@example.com',
           privateKey: '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9QFi8Lg3Xy+Vj\n-----END PRIVATE KEY-----\n'
-        };
+        } as admin.ServiceAccount)
+      });
 
-        admin.initializeApp({
-          credential: admin.credential.cert(mockCredentials as admin.ServiceAccount),
-          projectId: mockCredentials.projectId
-        });
-
-        // Create development admin user
+      // Setup admin user in development
+      const adminEmail = 'admin@groomery.in';
+      try {
+        // Delete existing user if exists to ensure clean state
         try {
-          const devAdminUid = 'dev-admin-uid';
-          await admin.auth().createUser({
-            uid: devAdminUid,
-            email: 'admin@example.com',
-            password: 'admin123'
-          }).catch(() => {/* User might already exist */});
-          
-          await admin.auth().setCustomUserClaims(devAdminUid, {
-            role: 'admin',
-            permissions: ['all']
-          });
-          log('Development admin user initialized', 'info');
+          const existingUser = await admin.auth().getUserByEmail(adminEmail);
+          await admin.auth().deleteUser(existingUser.uid);
+          log(`Deleted existing admin user: ${adminEmail}`, 'info');
         } catch (error) {
-          log('Failed to create development admin user, but continuing', 'warn');
+          // User doesn't exist, which is fine
+        }
+
+        // Create new admin user
+        const adminUser = await admin.auth().createUser({
+          email: adminEmail,
+          emailVerified: true,
+          displayName: 'Admin User',
+          password: 'admin123' // Development password
+        });
+        log(`Created admin user: ${adminEmail} with ID: ${adminUser.uid}`, 'info');
+
+        // Set admin role with all permissions
+        const customClaims = {
+          role: 'admin',
+          permissions: ['all'],
+          updatedAt: new Date().toISOString()
+        };
+        
+        await admin.auth().setCustomUserClaims(adminUser.uid, customClaims);
+        log(`Set custom claims for admin user: ${JSON.stringify(customClaims)}`, 'info');
+
+        // Verify custom claims were set
+        const updatedUser = await admin.auth().getUser(adminUser.uid);
+        log(`Verified admin user claims: ${JSON.stringify(updatedUser.customClaims)}`, 'info');
+
+        // Force token refresh
+        await admin.auth().revokeRefreshTokens(adminUser.uid);
+        log(`Admin user setup completed successfully`, 'info');
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        log(`Failed to setup admin user: ${errorMessage}`, 'error');
+        throw error;
+      }
+
+        // Create or update admin user in development
+        try {
+          const adminEmail = 'admin@groomery.in';
+          let userRecord;
+          try {
+            userRecord = await admin.auth().getUserByEmail(adminEmail);
+          } catch (error) {
+            userRecord = await admin.auth().createUser({
+              email: adminEmail,
+              emailVerified: true,
+              displayName: 'Admin User'
+            });
+          }
+          
+          // Set admin role with all permissions
+          await admin.auth().setCustomUserClaims(userRecord.uid, {
+            role: 'admin',
+            permissions: ['all'],
+            updatedAt: new Date().toISOString()
+          });
+          
+          log('Development admin user initialized with proper permissions', 'info');
+        } catch (error) {
+          log('Failed to setup development admin user', 'warn');
         }
         
         return true;
