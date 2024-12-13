@@ -1,22 +1,25 @@
 import { type Express } from "express";
 import { db } from "../db";
-import { appointments, customers, pets, users } from "@db/schema";
+import { appointments, customers, pets, users, roles, type RoleType, type Permission } from "../db/schema";
 import { and, count, eq, gte } from "drizzle-orm";
 import admin from "firebase-admin";
 import { sql } from "drizzle-orm";
 import { authenticateFirebase, requireRole } from "./middleware/auth";
 
-// Define role types
-type RoleType = 'admin' | 'manager' | 'staff' | 'receptionist';
 
-// Define permission types
-type Permission = 
-  | 'manage_appointments' | 'view_appointments' | 'create_appointments' | 'cancel_appointments'
-  | 'manage_customers' | 'view_customers' | 'create_customers' | 'edit_customer_info'
-  | 'manage_services' | 'view_services' | 'create_services' | 'edit_services'
-  | 'manage_inventory' | 'view_inventory' | 'update_stock' | 'manage_consumables'
-  | 'manage_staff_schedule' | 'view_staff_schedule' | 'manage_own_schedule'
-  | 'view_analytics' | 'view_reports' | 'view_financial_reports' | 'all';
+
+// Role descriptions for better UI display
+const RoleDescriptions: Record<RoleType, string> = {
+  admin: 'Full system access with user management capabilities',
+  manager: 'Branch management with staff oversight and reporting access',
+  staff: 'Basic service provider access with appointment management',
+  receptionist: 'Front desk operations with customer and appointment handling'
+};
+
+// Helper function to get role description
+function getRoleDescription(role: RoleType): string {
+  return RoleDescriptions[role] || 'No description available';
+}
 
 // Define roles and their permissions
 export const RolePermissions: Record<RoleType, Permission[]> = {
@@ -59,44 +62,71 @@ export function registerRoutes(app: Express) {
     try {
       console.log('[FIREBASE-USERS] Starting user fetch request');
       
-      // Parse pagination parameters with defaults
       const pageSize = Math.min(Number(req.query.pageSize) || 100, 1000);
       const pageToken = req.query.pageToken as string | undefined;
       
       console.log('[FIREBASE-USERS] Fetching users with params:', { pageSize, pageToken });
 
-      // List users from Firebase Admin SDK
-      const listUsersResult = await admin.auth().listUsers(pageSize, pageToken);
+      const auth = admin.auth();
+      if (!auth) {
+        throw new Error('Firebase Auth not initialized');
+      }
       
-      // Process users with their custom claims
-      const users = await Promise.all(
-        listUsersResult.users.map(async (user) => {
-          const customClaims = (await admin.auth().getUser(user.uid)).customClaims || {};
-          return {
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName || user.email?.split('@')[0] || 'Unknown User',
-            role: customClaims.role || 'user',
-            permissions: customClaims.permissions || [],
-            disabled: user.disabled,
-            lastSignInTime: user.metadata.lastSignInTime,
-            creationTime: user.metadata.creationTime
-          };
+      // List users with pagination
+      const result = await auth.listUsers(pageSize, pageToken);
+      console.log(`[FIREBASE-USERS] Found ${result.users.length} users`);
+      
+      // Process users in batches to avoid memory issues
+      const processedUsers = await Promise.all(
+        result.users.map(async (userRecord) => {
+          try {
+            const customClaims = userRecord.customClaims || {};
+            return {
+              uid: userRecord.uid,
+              email: userRecord.email,
+              displayName: userRecord.displayName || userRecord.email?.split('@')[0] || 'Unknown User',
+              role: (customClaims.role as RoleType) || 'staff',
+              permissions: (customClaims.permissions as Permission[]) || [],
+              metadata: {
+                lastSignInTime: userRecord.metadata.lastSignInTime,
+                creationTime: userRecord.metadata.creationTime
+              },
+              disabled: userRecord.disabled,
+              emailVerified: userRecord.emailVerified
+            };
+          } catch (err) {
+            console.error(`Error processing user ${userRecord.uid}:`, err);
+            return null;
+          }
         })
       );
 
-      console.log('[FIREBASE-USERS] Successfully fetched users:', users.length);
+      // Filter out any failed user processing
+      const users = processedUsers.filter((user): user is NonNullable<typeof user> => user !== null);
+      
+      console.log(`[FIREBASE-USERS] Successfully processed ${users.length} users`);
       
       res.json({
         users,
-        pageToken: listUsersResult.pageToken,
-        hasNextPage: !!listUsersResult.pageToken
+        pageToken: result.pageToken,
+        hasNextPage: !!result.pageToken
       });
     } catch (error) {
-      console.error('[FIREBASE-USERS] Error fetching users:', error);
+      console.error('[FIREBASE-USERS] Error:', error);
+      
+      if (error instanceof Error) {
+        if (error.message.includes('auth/insufficient-permission')) {
+          return res.status(403).json({
+            message: "Insufficient permissions to list users",
+            code: "INSUFFICIENT_PERMISSION"
+          });
+        }
+      }
+      
       res.status(500).json({ 
         message: "Failed to fetch users",
-        error: error instanceof Error ? error.message : "Unknown error"
+        error: error instanceof Error ? error.message : "Unknown error",
+        code: "FETCH_USERS_ERROR"
       });
     }
   });
@@ -119,40 +149,101 @@ export function registerRoutes(app: Express) {
     }
   });
 
+  // Update user role endpoint
   app.post("/api/users/:userId/role", authenticateFirebase, requireRole(['admin']), async (req, res) => {
     try {
       const { userId } = req.params;
       const { role } = req.body as { role: RoleType };
 
+      // Validate role
       if (!role || !Object.keys(RolePermissions).includes(role)) {
         return res.status(400).json({ 
           message: "Invalid role specified",
-          code: "INVALID_ROLE"
+          code: "INVALID_ROLE",
+          validRoles: Object.keys(RolePermissions)
+        });
+      }
+
+      const auth = admin.auth();
+      
+      // Verify user exists
+      try {
+        await auth.getUser(userId);
+      } catch (error) {
+        return res.status(404).json({
+          message: "User not found",
+          code: "USER_NOT_FOUND"
         });
       }
 
       // Get permissions for the role
       const permissions = RolePermissions[role];
+      const timestamp = new Date().toISOString();
 
-      // Update user claims
-      await admin.auth().setCustomUserClaims(userId, {
+      // Update user claims atomically
+      await auth.setCustomUserClaims(userId, {
         role,
         permissions,
-        updatedAt: new Date().toISOString()
+        updatedAt: timestamp,
+        updatedBy: req.user?.uid // Track who made the change
       });
 
       // Force token refresh
-      await admin.auth().revokeRefreshTokens(userId);
+      await auth.revokeRefreshTokens(userId);
+
+      // Get updated user to verify changes
+      const updatedUser = await auth.getUser(userId);
 
       res.json({ 
         message: "Role updated successfully",
-        role,
-        permissions
+        user: {
+          uid: userId,
+          role,
+          permissions,
+          updatedAt: timestamp,
+          claims: updatedUser.customClaims
+        }
       });
     } catch (error) {
-      console.error('Error updating user role:', error);
+      console.error('[ROLE-UPDATE] Error updating user role:', error);
+      
+      if (error instanceof Error) {
+        if (error.message.includes('auth/insufficient-permission')) {
+          return res.status(403).json({
+            message: "Insufficient permissions to update user role",
+            code: "INSUFFICIENT_PERMISSION"
+          });
+        }
+        
+        if (error.message.includes('auth/invalid-uid')) {
+          return res.status(400).json({
+            message: "Invalid user ID format",
+            code: "INVALID_USER_ID"
+          });
+        }
+      }
+      
       res.status(500).json({ 
         message: "Failed to update user role",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // Get available roles endpoint
+  app.get("/api/roles/available", authenticateFirebase, requireRole(['admin']), async (req, res) => {
+    try {
+      const roles = Object.entries(RolePermissions).map(([role, permissions]) => ({
+        name: role,
+        permissions,
+        description: getRoleDescription(role as RoleType)
+      }));
+      
+      res.json(roles);
+    } catch (error) {
+      console.error('[ROLES] Error fetching available roles:', error);
+      res.status(500).json({ 
+        message: "Failed to fetch roles",
         error: error instanceof Error ? error.message : "Unknown error"
       });
     }
