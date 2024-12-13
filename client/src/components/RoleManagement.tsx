@@ -227,14 +227,18 @@ export function RoleManagement() {
       </div>
 
       {/* Create/Edit Role Form */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{editingRole ? 'Edit Role' : 'Create New Role'}</CardTitle>
-          <CardDescription>
-            Define role permissions to control access to different features
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+      <ProtectedElement 
+        requiredPermissions={['manage_roles']} 
+        fallback={<div className="text-muted-foreground text-center py-4">You don't have permission to manage roles.</div>}
+      >
+        <Card>
+          <CardHeader>
+            <CardTitle>{editingRole ? 'Edit Role' : 'Create New Role'}</CardTitle>
+            <CardDescription>
+              Define role permissions to control access to different features
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
@@ -327,10 +331,15 @@ export function RoleManagement() {
             </form>
           </Form>
         </CardContent>
-      </Card>
+        </Card>
+      </ProtectedElement>
 
       {/* User Role Management */}
-      <Card className="mt-8">
+      <ProtectedElement 
+        requiredPermissions={['manage_roles']} 
+        fallback={<div className="text-muted-foreground text-center py-4">You don't have permission to manage user roles.</div>}
+      >
+        <Card className="mt-8">
         <CardHeader>
           <CardTitle>User Role Management</CardTitle>
           <CardDescription>
@@ -408,6 +417,7 @@ export function RoleManagement() {
           </div>
         </CardContent>
       </Card>
+      </ProtectedElement>
     </div>
   );
 }
