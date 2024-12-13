@@ -123,7 +123,6 @@ export function RoleManagement() {
       
       if (editingRole) {
         console.log('Updating existing role:', editingRole);
-        // Remove description from the update payload since it's not supported in the backend
         await updateRole({
           name: editingRole,
           permissions: data.permissions
@@ -142,7 +141,6 @@ export function RoleManagement() {
           });
           return;
         }
-        // Remove description from the create payload since it's not supported in the backend
         await createRole({
           name: data.name,
           permissions: data.permissions
@@ -179,7 +177,9 @@ export function RoleManagement() {
           <div className="col-span-2 text-center py-4">Loading roles...</div>
         ) : !roles ? (
           <div className="col-span-2 text-center py-4">No roles found. Please check your connection.</div>
-        ) : roles.length > 0 ? (
+        ) : roles.length === 0 ? (
+          <div className="col-span-2 text-center py-4">No roles available.</div>
+        ) : (
           roles.map((role) => (
             <Card key={role.name} className="relative">
               <CardHeader>
@@ -188,39 +188,40 @@ export function RoleManagement() {
                   {Array.isArray(role.permissions) ? `${role.permissions.length} permissions granted` : 'All permissions'}
                 </CardDescription>
               </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {Array.isArray(role.permissions) && role.permissions.map(permission => (
-                  <div key={permission} className="text-sm text-muted-foreground">
-                    • {permission.replace(/_/g, ' ')}
-                  </div>
-                ))}
-              </div>
-              {role.name !== 'admin' && (
-                <Button
-                  variant="outline"
-                  className="mt-4"
-                  onClick={() => {
-                    console.log('Editing role:', role);
-                    setEditingRole(role.name);
-                    form.reset({
-                      name: role.name,
-                      permissions: Array.isArray(role.permissions) ? role.permissions : [],
-                      description: role.description || '',
-                    });
-                  }}
-                >
-                  Edit Role
-                </Button>
-              )}
-              {isUpdating && editingRole === role.name && (
-                <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
-                  <div className="text-sm text-muted-foreground">Updating role...</div>
+              <CardContent>
+                <div className="space-y-2">
+                  {Array.isArray(role.permissions) && role.permissions.map(permission => (
+                    <div key={permission} className="text-sm text-muted-foreground">
+                      • {permission.replace(/_/g, ' ')}
+                    </div>
+                  ))}
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+                {role.name !== 'admin' && (
+                  <Button
+                    variant="outline"
+                    className="mt-4"
+                    onClick={() => {
+                      console.log('Editing role:', role);
+                      setEditingRole(role.name);
+                      form.reset({
+                        name: role.name,
+                        permissions: Array.isArray(role.permissions) ? role.permissions : [],
+                        description: '',
+                      });
+                    }}
+                  >
+                    Edit Role
+                  </Button>
+                )}
+                {isUpdating && editingRole === role.name && (
+                  <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
+                    <div className="text-sm text-muted-foreground">Updating role...</div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ))
+        )}
       </div>
 
       {/* Create/Edit Role Form */}
@@ -357,12 +358,10 @@ export function RoleManagement() {
                         value={user.role}
                         onChange={(e) => {
                           const newRole = e.target.value as UserRole;
-                          // Additional validation for role changes
                           if (newRole === 'admin') {
                             if (!window.confirm('Are you sure you want to grant admin privileges to this user? This action cannot be undone.')) {
                               return;
                             }
-                            // Additional check for admin email
                             if (!user.email?.endsWith('@groomery.in') && process.env.NODE_ENV !== 'development') {
                               toast({
                                 title: "Invalid Email Domain",
