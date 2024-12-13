@@ -1,6 +1,15 @@
 import { type Express } from "express";
 import { authenticateFirebase, requireRole } from "./middleware/auth";
-import { RoleTypes, DefaultPermissions, getUserRole, updateUserRole, listAllUsers } from "./firebase";
+import { 
+  RoleTypes, 
+  DefaultPermissions, 
+  getUserRole, 
+  updateUserRole, 
+  listAllUsers,
+  getRoleDefinitions,
+  updateRoleDefinition,
+  InitialRoleConfigs 
+} from "./firebase";
 import admin from "firebase-admin";
 
 export function registerRoutes(app: Express) {
@@ -57,14 +66,29 @@ export function registerRoutes(app: Express) {
         });
       }
       
-      // Transform role definitions into the expected format
+      // Transform role definitions into the expected format and ensure system roles are included
       const roles = Object.entries(roleDefinitions).map(([name, role]: [string, any]) => ({
         name,
-        permissions: role.permissions || [],
+        permissions: role.permissions || DefaultPermissions[name as keyof typeof DefaultPermissions] || [],
         isSystem: role.isSystem || false,
-        createdAt: role.createdAt,
-        updatedAt: role.updatedAt
+        description: role.description || '',
+        createdAt: role.createdAt || Date.now(),
+        updatedAt: role.updatedAt || Date.now()
       }));
+      
+      // Add any missing system roles
+      Object.entries(InitialRoleConfigs).forEach(([name, config]) => {
+        if (!roles.find(r => r.name === name)) {
+          roles.push({
+            name,
+            permissions: config.permissions,
+            isSystem: true,
+            description: '',
+            createdAt: Date.now(),
+            updatedAt: Date.now()
+          });
+        }
+      });
       
       console.log('[ROLES] Successfully fetched roles:', roles.map(r => r.name));
       res.json(roles);
@@ -82,12 +106,19 @@ export function registerRoutes(app: Express) {
   app.put("/api/roles/:roleName", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
     try {
       const { roleName } = req.params;
-      const { permissions } = req.body;
+      const { permissions, description } = req.body;
 
-      console.log(`[ROLES] Updating role ${roleName} with permissions:`, permissions);
+      console.log(`[ROLES] Updating role ${roleName} with:`, { permissions, description });
+
+      // For system roles, ensure core permissions are maintained
+      let finalPermissions = [...permissions];
+      if (roleName in DefaultPermissions) {
+        const defaultPerms = DefaultPermissions[roleName as keyof typeof DefaultPermissions];
+        finalPermissions = Array.from(new Set([...defaultPerms, ...permissions]));
+      }
 
       // Update role definition in Firebase
-      const updatedRole = await updateRoleDefinition(roleName, permissions);
+      const updatedRole = await updateRoleDefinition(roleName, finalPermissions);
 
       // Update all users with this role to have the new permissions
       const auth = admin.auth();
@@ -98,13 +129,15 @@ export function registerRoutes(app: Express) {
       const updatePromises = Object.entries(users)
         .filter(([_, userData]: [string, any]) => userData.role === roleName)
         .map(async ([uid, _]) => {
-          await auth.setCustomUserClaims(uid, {
+          const claims = {
             role: roleName,
-            permissions: updatedRole.permissions,
+            permissions: finalPermissions,
             updatedAt: Date.now()
-          });
+          };
+          
+          await auth.setCustomUserClaims(uid, claims);
           return db.ref(`roles/${uid}`).update({
-            permissions: updatedRole.permissions,
+            permissions: finalPermissions,
             updatedAt: Date.now()
           });
         });
@@ -114,7 +147,8 @@ export function registerRoutes(app: Express) {
       console.log(`[ROLES] Successfully updated ${roleName} role and user permissions`);
       res.json({ 
         message: `Role ${roleName} updated successfully`,
-        ...updatedRole
+        ...updatedRole,
+        permissions: finalPermissions
       });
     } catch (error) {
       console.error('[ROLES] Error updating role:', error);
@@ -197,7 +231,7 @@ export function registerRoutes(app: Express) {
           Object.values(DefaultPermissions).flat()
         );
         
-        const invalidPermissions = permissions.filter(p => !allValidPermissions.has(p));
+        const invalidPermissions = permissions.filter(p => !Array.from(allValidPermissions).includes(p));
         if (invalidPermissions.length > 0) {
           return res.status(400).json({
             message: "Invalid permissions specified",

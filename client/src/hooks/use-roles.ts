@@ -6,6 +6,9 @@ import type { UserRole } from './use-user';
 interface Role {
   name: string;
   permissions: string[];
+  isSystem?: boolean;
+  createdAt?: number;
+  updatedAt?: number;
 }
 
 interface FirebaseUser {
