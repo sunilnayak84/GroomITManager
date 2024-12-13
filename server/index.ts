@@ -150,24 +150,24 @@ app.use(express.urlencoded({ extended: true }));
 app.set('trust proxy', 1);
 
 // CORS configuration
-app.use((req, res, next) => {
-  const isDevelopment = app.get("env") === "development";
-  const origin = isDevelopment 
-    ? (req.get('origin') || 'http://localhost:5173') 
-    : req.get('origin');
-    
-  if (origin) {
-    res.header("Access-Control-Allow-Origin", origin);
-    res.header("Access-Control-Allow-Credentials", "true");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    res.header("Access-Control-Expose-Headers", "Set-Cookie");
-  }
+import cors from 'cors';
+app.use(cors({
+  origin: process.env.NODE_ENV === 'development' 
+    ? ['http://localhost:5174', 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev', 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:5174']
+    : process.env.CORS_ORIGIN || 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
+  optionsSuccessStatus: 200
+}));
 
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
+// Error handling for module imports
+app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
+  if (err instanceof SyntaxError && 'status' in err) {
+    log(`Syntax Error: ${err.message}`, 'error');
+    return res.status(400).send({ status: false, message: err.message });
   }
-  next();
+  next(err);
 });
 
 // Request logging middleware
@@ -235,42 +235,46 @@ interface ServerStartOptions {
 async function startServer({ port, retryCount = 0 }: ServerStartOptions): Promise<void> {
   try {
     log(`Starting server (attempt ${retryCount + 1})...`, 'info');
+    log(`Environment: ${process.env.NODE_ENV}`, 'info');
+    log(`Port: ${port}`, 'info');
 
     // Initialize Firebase (continue even if it fails in development)
-    const firebaseInitialized = await initializeFirebase();
+    const firebaseInitialized = await initializeFirebase().catch(error => {
+      log(`Firebase initialization error: ${error.message}`, 'error');
+      return process.env.NODE_ENV === 'development';
+    });
+
     if (!firebaseInitialized && process.env.NODE_ENV !== 'development') {
-      throw new Error('Firebase initialization failed');
+      throw new Error('Firebase initialization failed in production mode');
     }
 
     // Check database connection
-    const isDatabaseConnected = await checkDatabaseConnection();
-    if (!isDatabaseConnected) {
+    const isDatabaseConnected = await checkDatabaseConnection().catch(error => {
+      log(`Database connection error: ${error.message}`, 'error');
+      return false;
+    });
+
+    if (!isDatabaseConnected && process.env.NODE_ENV !== 'development') {
       throw new Error('Database connection failed');
     }
 
     // Clean up port
-    try {
-      await terminateProcessOnPort(port);
-    } catch (error) {
-      log(`Port cleanup warning: ${error instanceof Error ? error.message : 'Unknown error'}`, 'warn');
-      // Continue even if port cleanup fails in development
+    await terminateProcessOnPort(port).catch(error => {
+      log(`Port cleanup warning: ${error.message}`, 'warn');
       if (process.env.NODE_ENV !== 'development') {
         throw error;
       }
-    }
-
-    // Add a small delay after port cleanup
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    });
 
     // Create HTTP server
     const server = createServer(app);
 
-    // Register routes
+    // Register routes before setting up Vite/static serving
     registerRoutes(app);
     log('Routes registered successfully', 'info');
 
     // Setup development or production serving
-    const isDevelopment = app.get("env") === "development";
+    const isDevelopment = process.env.NODE_ENV === "development";
     if (isDevelopment) {
       await setupVite(app, server);
       log('Vite middleware setup complete', 'info');
@@ -278,6 +282,35 @@ async function startServer({ port, retryCount = 0 }: ServerStartOptions): Promis
       serveStatic(app);
       log('Static file serving setup complete', 'info');
     }
+
+    // Enhanced error handling for server startup
+    return new Promise<void>((resolve, reject) => {
+      const startupTimeout = setTimeout(() => {
+        reject(new Error(`Server failed to start within 10 seconds on port ${port}`));
+      }, 10000);
+
+      server
+        .listen(port, '0.0.0.0')
+        .once('error', (error: Error & { code?: string }) => {
+          clearTimeout(startupTimeout);
+          if (error.code === 'EADDRINUSE' && retryCount < 3) {
+            log(`Port ${port} is in use, retrying in 2 seconds...`, 'warn');
+            setTimeout(() => {
+              startServer({ port, retryCount: retryCount + 1 })
+                .then(resolve)
+                .catch(reject);
+            }, 2000);
+          } else {
+            reject(error);
+          }
+        })
+        .once('listening', () => {
+          clearTimeout(startupTimeout);
+          log(`Server started successfully on port ${port}`, 'info');
+          setupGracefulShutdown(server);
+          resolve();
+        });
+    });
 
     // Start the server
     await new Promise<void>((resolve, reject) => {

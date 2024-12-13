@@ -1,5 +1,6 @@
 import { type Express } from "express";
 import { authenticateFirebase, requireRole } from "./middleware/auth";
+import path from "path";
 import { 
   RoleTypes, 
   DefaultPermissions, 
