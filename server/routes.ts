@@ -14,13 +14,21 @@ export function registerRoutes(app: Express) {
   const protectedRoutes = ['/api/appointments', '/api/customers', '/api/pets', '/api/stats'];
   app.use(protectedRoutes, authenticateFirebase);
 
-  // Create routes without auth middleware
+  // Public routes
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });
   });
 
-  // Dashboard stats
-  app.get("/api/stats", async (req, res) => {
+  // Get current user profile
+  app.get("/api/me", authenticateFirebase, (req, res) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    res.json(req.user);
+  });
+
+  // Dashboard stats - restricted to admin and staff
+  app.get("/api/stats", authenticateFirebase, requireRole(['admin', 'staff']), async (req, res) => {
     try {
       const now = new Date();
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -71,7 +79,7 @@ export function registerRoutes(app: Express) {
   });
 
   // Pets routes
-  app.get("/api/pets", async (req, res) => {
+  app.get("/api/pets", authenticateFirebase, requireRole(['admin', 'staff', 'receptionist']), async (req, res) => {
     try {
       const allPets = await db.select().from(pets);
       res.json(allPets);
@@ -80,7 +88,7 @@ export function registerRoutes(app: Express) {
     }
   });
 
-  app.post("/api/pets", async (req, res) => {
+  app.post("/api/pets", authenticateFirebase, requireRole(['admin', 'staff']), async (req, res) => {
     try {
       const [newPet] = await db.insert(pets).values(req.body).returning();
       res.json(newPet);
@@ -147,7 +155,7 @@ export function registerRoutes(app: Express) {
     }
   });
 
-  app.post("/api/appointments", async (req, res) => {
+  app.post("/api/appointments", authenticateFirebase, requireRole(['admin', 'staff', 'receptionist']), async (req, res) => {
     try {
       const [newAppointment] = await db.insert(appointments).values(req.body).returning();
       res.json(newAppointment);
