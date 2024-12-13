@@ -22,7 +22,14 @@ interface FirebaseUsersResponse {
 }
 
 async function fetchRoles(): Promise<Role[]> {
-  const response = await fetch('/api/roles');
+  const auth = getAuth();
+  const token = await auth.currentUser?.getIdToken();
+  
+  const response = await fetch('/api/roles', {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
   if (!response.ok) {
     throw new Error('Failed to fetch roles');
   }
@@ -30,11 +37,19 @@ async function fetchRoles(): Promise<Role[]> {
 }
 
 async function fetchFirebaseUsers(params: { pageParam?: string | null }): Promise<FirebaseUsersResponse> {
+  const auth = getAuth();
+  const token = await auth.currentUser?.getIdToken();
+  
   const searchParams = new URLSearchParams();
   if (params.pageParam) {
     searchParams.append('pageToken', params.pageParam);
   }
-  const response = await fetch(`/api/firebase-users?${searchParams}`);
+  
+  const response = await fetch(`/api/firebase-users?${searchParams}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
   if (!response.ok) {
     throw new Error('Failed to fetch users');
   }
