@@ -11,7 +11,7 @@ export const RoleTypes = {
 
 // Define default permissions for each role
 export const DefaultPermissions = {
-  [RoleTypes.admin]: [
+  admin: [
     'manage_appointments', 'view_appointments', 'create_appointments', 'cancel_appointments',
     'manage_customers', 'view_customers', 'create_customers', 'edit_customer_info',
     'manage_services', 'view_services', 'create_services', 'edit_services',
@@ -19,25 +19,211 @@ export const DefaultPermissions = {
     'manage_staff_schedule', 'view_staff_schedule', 'manage_own_schedule',
     'view_analytics', 'view_reports', 'view_financial_reports', 'all'
   ],
-  [RoleTypes.manager]: [
+  manager: [
     'view_appointments', 'create_appointments', 'cancel_appointments',
     'view_customers', 'create_customers', 'edit_customer_info',
     'view_services', 'view_inventory', 'update_stock',
     'manage_staff_schedule', 'view_staff_schedule', 'manage_own_schedule',
     'view_analytics'
   ],
-  [RoleTypes.staff]: [
+  staff: [
     'view_appointments', 'create_appointments',
     'view_customers', 'create_customers',
     'view_services', 'view_inventory',
     'manage_own_schedule'
   ],
-  [RoleTypes.receptionist]: [
+  receptionist: [
     'view_appointments', 'create_appointments',
     'view_customers', 'create_customers',
     'view_services'
   ]
+} as const;
+
+// Define initial role configurations
+const InitialRoleConfigs = {
+  [RoleTypes.admin]: {
+    name: 'admin',
+    permissions: [
+      'manage_appointments', 'view_appointments', 'create_appointments', 'cancel_appointments',
+      'manage_customers', 'view_customers', 'create_customers', 'edit_customer_info',
+      'manage_services', 'view_services', 'create_services', 'edit_services',
+      'manage_inventory', 'view_inventory', 'update_stock', 'manage_consumables',
+      'manage_staff_schedule', 'view_staff_schedule', 'manage_own_schedule',
+      'view_analytics', 'view_reports', 'view_financial_reports', 'all'
+    ],
+    isSystem: true
+  },
+  [RoleTypes.manager]: {
+    name: 'manager',
+    permissions: [
+      'view_appointments', 'create_appointments', 'cancel_appointments',
+      'view_customers', 'create_customers', 'edit_customer_info',
+      'view_services', 'view_inventory', 'update_stock',
+      'manage_staff_schedule', 'view_staff_schedule', 'manage_own_schedule',
+      'view_analytics'
+    ],
+    isSystem: true
+  },
+  [RoleTypes.staff]: {
+    name: 'staff',
+    permissions: [
+      'view_appointments', 'create_appointments',
+      'view_customers', 'create_customers',
+      'view_services', 'view_inventory',
+      'manage_own_schedule'
+    ],
+    isSystem: true
+  },
+  [RoleTypes.receptionist]: {
+    name: 'receptionist',
+    permissions: [
+      'view_appointments', 'create_appointments',
+      'view_customers', 'create_customers',
+      'view_services'
+    ],
+    isSystem: true
+  }
 };
+
+// Function to initialize roles in Firebase
+async function initializeRoles(app: admin.app.App) {
+  const db = getDatabase(app);
+  const rolesRef = db.ref('role-definitions');
+  
+  try {
+    // Check if roles are already initialized
+    const snapshot = await rolesRef.once('value');
+    if (!snapshot.exists()) {
+      console.log('Initializing default roles in Firebase...');
+      
+      // Create initial role configurations with timestamps
+      const timestamp = admin.database.ServerValue.TIMESTAMP;
+      const roleConfigs = Object.entries(DefaultPermissions).reduce((acc, [role, permissions]) => ({
+        ...acc,
+        [role]: {
+          name: role,
+          permissions,
+          isSystem: true,
+          createdAt: timestamp,
+          updatedAt: timestamp
+        }
+      }), {});
+
+      await rolesRef.set(roleConfigs);
+      console.log('Default roles initialized successfully');
+    } else {
+      // Update existing roles with any new default permissions
+      const currentRoles = snapshot.val();
+      const updates = {};
+      
+      Object.entries(DefaultPermissions).forEach(([role, defaultPerms]) => {
+        if (!currentRoles[role]) {
+          updates[role] = {
+            name: role,
+            permissions: defaultPerms,
+            isSystem: true,
+            createdAt: admin.database.ServerValue.TIMESTAMP,
+            updatedAt: admin.database.ServerValue.TIMESTAMP
+          };
+        }
+      });
+      
+      if (Object.keys(updates).length > 0) {
+        await rolesRef.update(updates);
+        console.log('Updated roles with new defaults');
+      }
+    }
+  } catch (error) {
+    console.error('Error initializing roles:', error);
+    throw error;
+  }
+}
+
+// Function to get all role definitions from Firebase
+export async function getRoleDefinitions() {
+  const app = await getFirebaseAdmin();
+  if (!app) {
+    throw new Error('Firebase Admin not initialized');
+  }
+  
+  const db = getDatabase(app);
+  const rolesRef = db.ref('role-definitions');
+  
+  try {
+    const snapshot = await rolesRef.once('value');
+    return snapshot.val() || InitialRoleConfigs;
+  } catch (error) {
+    console.error('Error fetching role definitions:', error);
+    return InitialRoleConfigs;
+  }
+}
+
+// Function to update role definition in Firebase
+export async function updateRoleDefinition(roleName: string, permissions: string[]) {
+  const app = await getFirebaseAdmin();
+  if (!app) {
+    throw new Error('Firebase Admin not initialized');
+  }
+  
+  const db = getDatabase(app);
+  const roleRef = db.ref(`role-definitions/${roleName}`);
+  
+  try {
+    const snapshot = await roleRef.once('value');
+    const currentRole = snapshot.val();
+    
+    if (!currentRole) {
+      throw new Error(`Role ${roleName} not found`);
+    }
+    
+    // For system roles, ensure core permissions are maintained
+    if (currentRole.isSystem) {
+      const defaultPerms = DefaultPermissions[roleName as keyof typeof DefaultPermissions];
+      if (defaultPerms) {
+        // Merge new permissions with default ones
+        permissions = Array.from(new Set([...defaultPerms, ...permissions]));
+      }
+    }
+    
+    // Update role in Firebase
+    const updateData = {
+      permissions,
+      updatedAt: admin.database.ServerValue.TIMESTAMP
+    };
+    
+    await roleRef.update(updateData);
+    console.log(`[ROLE-UPDATE] Updated role ${roleName} with permissions:`, permissions);
+    
+    // Update all users with this role
+    const usersRef = db.ref('roles');
+    const usersSnapshot = await usersRef.once('value');
+    const users = usersSnapshot.val() || {};
+    
+    // Batch update for all users with this role
+    const updates = {};
+    Object.entries(users).forEach(([uid, userData]: [string, any]) => {
+      if (userData.role === roleName) {
+        updates[`roles/${uid}/permissions`] = permissions;
+        updates[`roles/${uid}/updatedAt`] = admin.database.ServerValue.TIMESTAMP;
+      }
+    });
+    
+    if (Object.keys(updates).length > 0) {
+      await db.ref().update(updates);
+      console.log(`[ROLE-UPDATE] Updated permissions for ${Object.keys(updates).length} users`);
+    }
+    
+    return { 
+      name: roleName, 
+      permissions,
+      isSystem: currentRole.isSystem,
+      updatedAt: Date.now()
+    };
+  } catch (error) {
+    console.error(`Error updating role ${roleName}:`, error);
+    throw error;
+  }
+}
 
 let firebaseApp: admin.app.App | null = null;
 
@@ -83,6 +269,9 @@ export async function initializeFirebaseAdmin() {
 
     console.log('🟢 Firebase Admin SDK initialized successfully');
 
+    // Initialize roles in Firebase
+    await initializeRoles(firebaseApp);
+    
     if (isDevelopment) {
       await setupDevelopmentAdmin(firebaseApp);
     }

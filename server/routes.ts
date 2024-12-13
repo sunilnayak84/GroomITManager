@@ -44,10 +44,12 @@ export function registerRoutes(app: Express) {
   // Role management endpoints
   app.get("/api/roles", authenticateFirebase, requireRole([RoleTypes.admin]), async (_req, res) => {
     try {
-      console.log('[ROLES] Fetching roles');
-      const roles = Object.entries(DefaultPermissions).map(([role, permissions]) => ({
-        name: role,
-        permissions
+      console.log('[ROLES] Fetching roles from Firebase');
+      const roleDefinitions = await getRoleDefinitions();
+      const roles = Object.entries(roleDefinitions).map(([name, role]: [string, any]) => ({
+        name,
+        permissions: role.permissions,
+        isSystem: role.isSystem
       }));
       res.json(roles);
     } catch (error) {
@@ -67,16 +69,8 @@ export function registerRoutes(app: Express) {
 
       console.log(`[ROLES] Updating role ${roleName} with permissions:`, permissions);
 
-      // Validate role exists
-      if (!Object.keys(DefaultPermissions).includes(roleName)) {
-        return res.status(400).json({
-          message: `Invalid role: ${roleName}`,
-          validRoles: Object.keys(DefaultPermissions)
-        });
-      }
-
-      // Update DefaultPermissions
-      DefaultPermissions[roleName as keyof typeof DefaultPermissions] = permissions;
+      // Update role definition in Firebase
+      const updatedRole = await updateRoleDefinition(roleName, permissions);
 
       // Update all users with this role to have the new permissions
       const auth = admin.auth();
@@ -89,27 +83,72 @@ export function registerRoutes(app: Express) {
         .map(async ([uid, _]) => {
           await auth.setCustomUserClaims(uid, {
             role: roleName,
-            permissions,
+            permissions: updatedRole.permissions,
             updatedAt: Date.now()
           });
           return db.ref(`roles/${uid}`).update({
-            permissions,
+            permissions: updatedRole.permissions,
             updatedAt: Date.now()
           });
         });
 
       await Promise.all(updatePromises);
 
-      console.log(`[ROLES] Successfully updated ${roleName} permissions`);
+      console.log(`[ROLES] Successfully updated ${roleName} role and user permissions`);
       res.json({ 
         message: `Role ${roleName} updated successfully`,
-        role: roleName,
-        permissions
+        ...updatedRole
       });
     } catch (error) {
       console.error('[ROLES] Error updating role:', error);
       res.status(500).json({
         message: "Failed to update role",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // Create new role
+  app.post("/api/roles", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
+    try {
+      const { name, permissions } = req.body;
+
+      if (!name || !permissions) {
+        return res.status(400).json({
+          message: "Name and permissions are required"
+        });
+      }
+
+      const db = admin.database();
+      const roleRef = db.ref(`role-definitions/${name}`);
+      
+      // Check if role already exists
+      const snapshot = await roleRef.once('value');
+      if (snapshot.exists()) {
+        return res.status(400).json({
+          message: `Role ${name} already exists`
+        });
+      }
+
+      // Create new role
+      await roleRef.set({
+        name,
+        permissions,
+        isSystem: false,
+        createdAt: admin.database.ServerValue.TIMESTAMP,
+        updatedAt: admin.database.ServerValue.TIMESTAMP
+      });
+
+      console.log(`[ROLES] Successfully created new role: ${name}`);
+      res.json({
+        message: `Role ${name} created successfully`,
+        name,
+        permissions
+      });
+    } catch (error) {
+      console.error('[ROLES] Error creating role:', error);
+      res.status(500).json({
+        message: "Failed to create role",
         error: error instanceof Error ? error.message : "Unknown error"
       });
     }
