@@ -146,15 +146,18 @@ function setupGracefulShutdown(server: any) {
 }
 
 (async () => {
-  const PORT = parseInt(process.env.PORT || '5173', 10);
+  const PORT = parseInt(process.env.PORT || '3000', 10);
   
   try {
+    log("Starting server initialization...", 'info');
+    
     // First, attempt to clean up the port
     try {
-      log("Cleaning up port before start...", 'info');
+      log(`Cleaning up port ${PORT} before start...`, 'info');
       await terminateProcessOnPort(PORT);
-    } catch (cleanupError) {
-      log(`Port cleanup failed: ${cleanupError.message}`, 'warn');
+      log("Port cleanup completed", 'info');
+    } catch (cleanupError: any) {
+      log(`Port cleanup warning: ${cleanupError.message}`, 'warn');
       // Continue anyway as the port might actually be free
     }
 
@@ -184,11 +187,31 @@ function setupGracefulShutdown(server: any) {
     // Start server with error handling
     try {
       await new Promise<void>((resolve, reject) => {
-        server.listen(PORT, '0.0.0.0', () => {
-          log(`Server listening on http://0.0.0.0:${PORT}`, 'info');
-          resolve();
-        }).on('error', (err: Error) => {
+        const serverInstance = server.listen(PORT, '0.0.0.0', () => {
+          log(`Server started successfully on port ${PORT}`, 'info');
+          log(`Server is accessible at http://0.0.0.0:${PORT}`, 'info');
+          
+          // Set a startup confirmation timeout
+          setTimeout(() => {
+            if (serverInstance.listening) {
+              log("Server confirmed listening", 'info');
+              resolve();
+            } else {
+              const err = new Error("Server failed to start listening within timeout");
+              log(err.message, 'error');
+              reject(err);
+            }
+          }, 1000);
+        });
+
+        serverInstance.on('error', (err: Error) => {
+          log(`Server startup error: ${err.message}`, 'error');
           reject(err);
+        });
+
+        // Additional error handler
+        serverInstance.on('close', () => {
+          log("Server closed unexpectedly", 'error');
         });
       });
     } catch (listenError: any) {

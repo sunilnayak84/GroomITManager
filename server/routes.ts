@@ -27,13 +27,61 @@ export function registerRoutes(app: Express) {
     res.json(req.user);
   });
 
+  // User role management
+  app.post("/api/users/:userId/role", authenticateFirebase, requireRole(['admin']), async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const { role, email } = req.body;
+
+      if (!userId || !role || !['admin', 'staff', 'receptionist'].includes(role)) {
+        return res.status(400).json({ 
+          error: "Invalid user ID or role",
+          message: "Role must be one of: admin, staff, receptionist"
+        });
+      }
+
+      // Additional validation for admin role changes
+      if (role === 'admin') {
+        // Only allow specific admin emails or in development
+        const allowedAdminEmails = ['admin@groomery.in'];
+        if (!email || (!allowedAdminEmails.includes(email) && process.env.NODE_ENV !== 'development')) {
+          return res.status(403).json({
+            error: "Unauthorized admin assignment",
+            message: "This email is not authorized for admin role"
+          });
+        }
+      }
+
+      try {
+        await setUserRole(userId, role);
+        console.log(`Role successfully updated - User ID: ${userId}, New Role: ${role}, Email: ${email}`);
+        
+        res.json({ 
+          success: true,
+          message: `User role updated to ${role}`,
+          userId,
+          role,
+          email 
+        });
+      } catch (error) {
+        console.error('Failed to set user role:', error);
+        throw error;
+      }
+    } catch (error) {
+      console.error('Error updating user role:', error);
+      res.status(500).json({ 
+        error: "Failed to update user role",
+        message: error instanceof Error ? error.message : "Unknown error occurred"
+      });
+    }
+  });
+
   // Dashboard stats - restricted to admin and staff
   app.get("/api/stats", authenticateFirebase, requireRole(['admin', 'staff']), async (req, res) => {
     try {
       const now = new Date();
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-      // Use more robust error handling and default to 0 for counts
       const appointmentResult = await db
         .select({ value: count() })
         .from(appointments)
@@ -67,7 +115,7 @@ export function registerRoutes(app: Express) {
   });
 
   // Appointments stats for chart
-  app.get("/api/appointments/stats", async (req, res) => {
+  app.get("/api/appointments/stats", authenticateFirebase, async (req, res) => {
     try {
       const now = new Date();
       const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -119,7 +167,7 @@ export function registerRoutes(app: Express) {
   });
 
   // Appointments routes
-  app.get("/api/appointments", async (req, res) => {
+  app.get("/api/appointments", authenticateFirebase, async (req, res) => {
     try {
       const allAppointments = await db
         .select({
@@ -164,3 +212,4 @@ export function registerRoutes(app: Express) {
     }
   });
 }
+

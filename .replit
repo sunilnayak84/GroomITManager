@@ -32,6 +32,10 @@ args = "tsx --require dotenv/config server/index.ts"
 task = "workflow.run"
 args = "React Dev Server"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Express Server"
+
 [[workflows.workflow]]
 name = "Project"
 author = "agent"
@@ -61,6 +65,21 @@ task = "packager.installForAll"
 task = "shell.exec"
 args = "cd client && npm run dev -- --port 5174"
 waitForPort = 5174
+
+[[workflows.workflow]]
+name = "Express Server"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "PORT=3000 cd server && npm run dev"
+waitForPort = 3000
 
 [[ports]]
 localPort = 5173
