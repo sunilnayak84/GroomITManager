@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -48,19 +48,30 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
   const { createNotification } = useNotifications(user?.id || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
-
   const { data: appointments, addAppointment, isTimeSlotAvailable } = useAppointments();
   const { pets } = usePets();
   const { services } = useServices();
   const { toast } = useToast();
-  
-
-  const { staffMembers, isLoading: isLoadingStaff } = useStaff();
+  const { staffMembers } = useStaff();
   const availableGroomers = staffMembers.filter(user => user.isGroomer && user.isActive);
-  
   const { data: workingHours } = useWorkingHours();
   const [selectedService, setSelectedService] = useState<{ duration: number } | null>(null);
   const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
+
+  const form = useForm<z.infer<typeof insertAppointmentSchema>>({
+    resolver: zodResolver(insertAppointmentSchema),
+    defaultValues: {
+      petId: "",
+      serviceId: "",
+      groomerId: "",
+      branchId: "1",
+      date: "",
+      status: "pending" as const,
+      notes: null,
+      productsUsed: null,
+      time: ""
+    },
+  });
 
   // Helper function to generate time slots
   const generateTimeSlots = (
@@ -111,20 +122,6 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
     
     return slots;
   };
-
-  const form = useForm<z.infer<typeof insertAppointmentSchema>>({
-    resolver: zodResolver(insertAppointmentSchema),
-    defaultValues: {
-      petId: "",
-      serviceId: "",
-      groomerId: "",
-      branchId: "1",
-      date: "",
-      status: "pending" as const,
-      notes: null,
-      productsUsed: null
-    },
-  });
 
   useEffect(() => {
     const serviceId = form.watch("serviceId");
@@ -386,23 +383,19 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
         </DialogDescription>
       </DialogHeader>
       {validationError && (
-        <Alert variant="destructive" className="mb-4">
+        <Alert variant="destructive">
           <AlertDescription>{validationError}</AlertDescription>
         </Alert>
       )}
       <Form {...form}>
-        <div>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="petId"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Pet</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a pet" />
@@ -423,6 +416,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
               </FormItem>
             )}
           />
+          
           <div className="grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
@@ -433,10 +427,10 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                   <FormControl>
                     <Input 
                       type="date"
+                      {...field}
                       min={new Date().toISOString().split('T')[0]}
-                      value={field.value || ''}
                       onChange={(e) => {
-                        field.onChange(e);
+                        field.onChange(e.target.value);
                         const selectedDate = new Date(e.target.value);
                         const dayOfWeek = selectedDate.getDay();
                         
@@ -477,7 +471,6 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                         );
                         
                         setAvailableTimeSlots(slots);
-                        field.onChange(e.target.value);
                       }}
                     />
                   </FormControl>
@@ -493,48 +486,35 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                 <FormItem>
                   <FormLabel>Time</FormLabel>
                   <Select
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                      form.clearErrors(['time', 'groomerId']);
-                      setValidationError(null);
-                    }}
+                    onValueChange={field.onChange}
                     value={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger className={form.formState.errors.time ? "border-red-500" : ""}>
+                      <SelectTrigger>
                         <SelectValue placeholder="Select a time" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {availableTimeSlots.map((timeSlot) => {
-                        const [hours, minutes] = timeSlot.split(':').map(Number);
-                        const time = new Date();
-                        time.setHours(hours, minutes, 0, 0);
-                        const formattedTime = time.toLocaleTimeString('en-US', {
-                          hour: 'numeric',
-                          minute: '2-digit',
-                          hour12: true
-                        });
-                        return (
-                          <SelectItem key={timeSlot} value={timeSlot}>
-                            {formattedTime}
-                          </SelectItem>
-                        );
-                      })}
+                      {availableTimeSlots.map((timeSlot) => (
+                        <SelectItem key={timeSlot} value={timeSlot}>
+                          {timeSlot}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
-                  <FormMessage className="text-red-500" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
           </div>
+
           <FormField
             control={form.control}
             name="serviceId"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Service Type</FormLabel>
-                <Select onValueChange={field.onChange}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a service" />
@@ -555,22 +535,16 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="groomerId"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Groomer</FormLabel>
-                <Select 
-                  onValueChange={(value) => {
-                    field.onChange(value);
-                    form.clearErrors(['time', 'groomerId']);
-                    setValidationError(null);
-                  }} 
-                  value={field.value}
-                >
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <SelectTrigger className={form.formState.errors.groomerId ? "border-red-500" : ""}>
+                    <SelectTrigger>
                       <SelectValue placeholder="Select a groomer" />
                     </SelectTrigger>
                   </FormControl>
@@ -579,16 +553,13 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                       <SelectItem 
                         key={groomer.id} 
                         value={groomer.id}
-                        disabled={!groomer.isActive || (groomer.maxDailyAppointments !== undefined && groomer.maxDailyAppointments <= 0)}
                       >
                         {groomer.name}
-                        {!groomer.isActive ? " (Inactive)" : 
-                         (groomer.maxDailyAppointments !== undefined && groomer.maxDailyAppointments <= 0) ? " (Fully Booked)" : ""}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                <FormMessage className="text-red-500" />
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -627,7 +598,6 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
             {isSubmitting ? "Scheduling..." : "Schedule Appointment"}
           </Button>
         </form>
-        </div>
       </Form>
     </DialogContent>
   );
