@@ -1,4 +1,4 @@
-import { Home, Calendar, Users, PawPrint, LogOut, Package } from "lucide-react";
+import { Home, Calendar, Users, PawPrint, LogOut, Package, Shield } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useUser } from "../hooks/use-user";
 import { Button } from "./ui/button";
@@ -16,10 +16,13 @@ export default function Sidebar() {
     { href: "/staff", icon: Users, label: "Staff" },
     { href: "/pets", icon: PawPrint, label: "Pets" },
     { href: "/inventory", icon: Package, label: "Inventory" },
+    ...(user?.role === 'admin' ? [
+      { href: "/role-management", icon: Shield, label: "Role Management" }
+    ] : []),
   ];
 
   const settingsLinks = [
-    { href: "/settings/working-hours", icon: Calendar, label: "Working Hours" },
+    { href: "/settings/working-hours", icon: Calendar, label: "Working Hours" }
   ];
 
   return (

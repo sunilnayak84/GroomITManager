@@ -117,19 +117,33 @@ export function registerRoutes(app: Express) {
         });
       }
 
-      if (process.env.NODE_ENV === 'development') {
-        // In development, create a mock admin user
-        console.log('Setting up admin in development mode');
-        await setUserRole('dev-admin-uid', 'admin');
-        
-        return res.json({ 
-          message: "Admin role set successfully (development mode)",
-          userId: 'dev-admin-uid',
-          email: email,
-          role: 'admin',
-          permissions: ['all']
+      // Get user by email first
+      let userRecord;
+      try {
+        userRecord = await admin.auth().getUserByEmail(email);
+      } catch (error) {
+        console.error('Error getting user by email:', error);
+        return res.status(404).json({
+          message: "User not found",
+          error: "Please ensure you have signed up first"
         });
       }
+
+      // Set admin role
+      await setUserRole(userRecord.uid, 'admin');
+      
+      // Force token refresh
+      await admin.auth().revokeRefreshTokens(userRecord.uid);
+      
+      console.log(`[ADMIN-SETUP] Admin role set for ${email} (${userRecord.uid})`);
+      
+      return res.json({ 
+        message: "Admin role set successfully. You must sign out and sign back in for changes to take effect.",
+        userId: userRecord.uid,
+        email: email,
+        role: 'admin',
+        requiresRelogin: true
+      });
 
       try {
         // In production, get or create the user
@@ -149,11 +163,12 @@ export function registerRoutes(app: Express) {
         await setUserRole(userRecord.uid, 'admin');
         
         res.json({ 
-          message: "Admin role set successfully",
+          message: "Admin role set successfully. Please log out and log back in to access admin features.",
           userId: userRecord.uid,
           email: userRecord.email,
           role: 'admin',
-          permissions: ['all']
+          permissions: ['all'],
+          requiresRelogin: true
         });
       } catch (firebaseError) {
         console.error('Firebase operation failed:', firebaseError);

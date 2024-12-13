@@ -212,6 +212,15 @@ export async function setUserRole(userId: string, role: 'admin' | 'staff' | 'rec
       }
     }
 
+    // Special handling for admin role
+    if (role === 'admin') {
+      const email = userRecord.email?.toLowerCase() || '';
+      // In development mode, allow any email for admin
+      if (process.env.NODE_ENV !== 'development' && !email.endsWith('@groomery.in')) {
+        throw new Error('Admin role requires a company email address');
+      }
+    }
+
     // Get permissions from RolePermissions constant
     const permissions = RolePermissions[role];
     if (!permissions) {
@@ -219,25 +228,18 @@ export async function setUserRole(userId: string, role: 'admin' | 'staff' | 'rec
     }
 
     // Set custom claims including role, permissions and timestamp
-    const claims = {
+    await admin.auth().setCustomUserClaims(userId, {
       role,
       permissions,
       updatedAt: new Date().toISOString()
-    };
+    });
 
-    // In development mode, log the claims being set
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[AUTH] Development mode - Setting custom claims:', {
-        userId,
-        role,
-        permissionsCount: permissions.length
-      });
-    }
-
-    await admin.auth().setCustomUserClaims(userId, claims);
+    // Force a token refresh by revoking all refresh tokens
+    await admin.auth().revokeRefreshTokens(userId);
 
     console.log(`[AUTH] Successfully set role ${role} for user ${userId} (${userRecord.email})`);
     console.log('[AUTH] Assigned permissions:', permissions);
+    console.log('[AUTH] Tokens revoked, user will need to re-authenticate');
     
     // Update user in database if needed
     await db.update(users)

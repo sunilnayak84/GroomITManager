@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
+import { getAuth } from 'firebase/auth';
 import { toast } from '@/components/ui/use-toast';
 import type { UserRole } from './use-user';
 
@@ -97,13 +98,19 @@ export function useRoles() {
   });
 
   const updateUserRoleMutation = useMutation({
-    mutationFn: ({ userId, role }: { userId: string; role: string }) =>
-      updateUserRole(userId, role),
+    mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
+      await updateUserRole(userId, role);
+      // Force token refresh after role update
+      const auth = getAuth();
+      if (auth.currentUser && auth.currentUser.uid === userId) {
+        await auth.currentUser.getIdToken(true);
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['firebase-users'] });
       toast({
         title: 'Success',
-        description: 'User role updated successfully',
+        description: 'User role updated successfully. Please log out and log back in to see the changes.',
       });
     },
     onError: (error: Error) => {
