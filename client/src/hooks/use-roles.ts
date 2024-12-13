@@ -23,22 +23,30 @@ interface FirebaseUsersResponse {
 
 async function fetchRoles(): Promise<Role[]> {
   const auth = getAuth();
-  const token = await auth.currentUser?.getIdToken();
+  if (!auth.currentUser) {
+    throw new Error('Not authenticated');
+  }
+  const token = await auth.currentUser.getIdToken();
   
   const response = await fetch('/api/roles', {
     headers: {
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     }
   });
   if (!response.ok) {
-    throw new Error('Failed to fetch roles');
+    const error = await response.text();
+    throw new Error(`Failed to fetch roles: ${error}`);
   }
   return response.json();
 }
 
 async function fetchFirebaseUsers(params: { pageParam?: string | null }): Promise<FirebaseUsersResponse> {
   const auth = getAuth();
-  const token = await auth.currentUser?.getIdToken();
+  if (!auth.currentUser) {
+    throw new Error('Not authenticated');
+  }
+  const token = await auth.currentUser.getIdToken();
   
   const searchParams = new URLSearchParams();
   if (params.pageParam) {
@@ -47,11 +55,14 @@ async function fetchFirebaseUsers(params: { pageParam?: string | null }): Promis
   
   const response = await fetch(`/api/firebase-users?${searchParams}`, {
     headers: {
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     }
   });
   if (!response.ok) {
-    throw new Error('Failed to fetch users');
+    const error = await response.text();
+    console.error('Failed to fetch users:', error);
+    throw new Error(`Failed to fetch users: ${error}`);
   }
   return response.json();
 }
