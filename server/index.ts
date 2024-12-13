@@ -5,7 +5,7 @@ import { createServer } from "http";
 import { terminateProcessOnPort } from "./utils/port_cleanup.js";
 import { db } from "../db/index.js";
 import { sql } from "drizzle-orm";
-import admin from "firebase-admin";
+import { initializeFirebaseAdmin, getFirebaseAdmin } from "./firebase.js";
 
 // Utility function for logging
 function log(message: string, type: 'info' | 'error' | 'warn' = 'info') {
@@ -25,68 +25,11 @@ async function initializeFirebase(): Promise<boolean> {
   log(`Initializing Firebase in ${isDevelopment ? 'development' : 'production'} mode`, 'info');
 
   try {
-    // Clean up any existing Firebase apps
-    if (admin.apps.length) {
-      log('Cleaning up existing Firebase apps', 'info');
-      await Promise.all(admin.apps.map(app => app?.delete()));
-    }
-
-    // Get Firebase configuration
-    const projectId = process.env.FIREBASE_PROJECT_ID || (isDevelopment ? 'dev-project' : '');
-    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL || (isDevelopment ? 'dev@example.com' : '');
-    let privateKey = process.env.FIREBASE_PRIVATE_KEY || '';
-
-    // Format private key if needed
-    if (privateKey) {
-      privateKey = privateKey.replace(/\\n/g, '\n').replace(/^['"]|['"]$/g, '');
-      if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
-        privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----\n`;
-      }
-    } else if (isDevelopment) {
-      privateKey = '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9QFi8Lg3Xy+Vj\nVGQiXhKlLS0xGS4YgW4UF9l4A5H4KlUZ8JfVhqggXmVBITM1Mj1nW7R02eCGXjJ4\nF1HGJ9REh/Qr0kH4NxjWnFxvj4VhZk+zRhSmPEm80u7KnXWW0v0idTzVqeVwnVZF\nX8WAIhN7CfXQZGl1xd/ftUU9EBGgm/ZY7DTqf4TGI3LWxG1dDlh4l2Y=\n-----END PRIVATE KEY-----\n';
-    }
-
-    // Validate credentials in production
-    if (!isDevelopment && (!projectId || !clientEmail || !privateKey)) {
-      throw new Error('Missing required Firebase credentials in production mode');
-    }
-
-    // Initialize Firebase Admin SDK with Realtime Database
-    const app = admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId,
-        clientEmail,
-        privateKey
-      }),
-      databaseURL: 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
-    }, 'default-admin-app');
-
-    // Wait for database connection
-    const dbConnectTimeout = setTimeout(() => {
-      throw new Error('Database connection timeout after 10s');
-    }, 10000);
-
-    const db = app.database();
-    await new Promise((resolve, reject) => {
-      db.ref('.info/connected').on('value', (snapshot) => {
-        if (snapshot.val() === true) {
-          clearTimeout(dbConnectTimeout);
-          resolve(true);
-        }
-      }, (error) => {
-        clearTimeout(dbConnectTimeout);
-        reject(error);
-      });
-    }).catch(error => {
-      if (isDevelopment) {
-        console.warn('Database connection failed in development:', error);
-      } else {
-        throw error;
-      }
-    });
-
-    if (isDevelopment) {
-      await setupDevelopmentAdmin();
+    // Initialize Firebase using the centralized function
+    const app = await getFirebaseAdmin();
+    
+    if (!app && !isDevelopment) {
+      throw new Error('Failed to initialize Firebase Admin SDK');
     }
 
     log('Firebase Admin SDK initialized successfully', 'info');

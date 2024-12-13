@@ -8,13 +8,19 @@ declare global {
     interface Request {
       user?: {
         uid: string;
-        email: string | null;
+        email: string;
         role: keyof typeof RoleTypes;
         permissions: string[];
-        displayName: string | null;
-      };
+        displayName: string;
+      } | null;
     }
   }
+}
+
+// Extend FirebaseUser type
+interface ExtendedFirebaseUser extends admin.auth.UserRecord {
+  role?: keyof typeof RoleTypes;
+  permissions?: string[];
 }
 
 // User management restricted paths
@@ -47,7 +53,7 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
     }
 
     const idToken = authHeader.split('Bearer ')[1];
-    const firebaseApp = getFirebaseAdmin();
+    const firebaseApp = await getFirebaseAdmin();
     
     if (!firebaseApp) {
       console.error('[AUTH] Firebase Admin not initialized');
@@ -70,8 +76,9 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
 
     try {
       console.log('[AUTH] Verifying token...');
-      const decodedToken = await firebaseApp.auth().verifyIdToken(idToken);
-      const user = await firebaseApp.auth().getUser(decodedToken.uid);
+      const auth = firebaseApp.auth();
+      const decodedToken = await auth.verifyIdToken(idToken);
+      const user = await auth.getUser(decodedToken.uid);
       
       console.log(`[AUTH] Token verified for user ${user.email}`);
       
