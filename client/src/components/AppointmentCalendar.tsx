@@ -21,6 +21,7 @@ export default function AppointmentCalendar() {
   const [currentView, setCurrentView] = useState<'dayGridMonth' | 'timeGridWeek' | 'timeGridDay'>('timeGridWeek');
   const [openNewForm, setOpenNewForm] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const calendarRef = useRef<any>(null);
   
   const { data: appointments } = useAppointments();
   const { data: workingHours } = useWorkingHours();
@@ -68,7 +69,13 @@ export default function AppointmentCalendar() {
             <Button
               key={option.value}
               variant={currentView === option.value ? "default" : "outline"}
-              onClick={() => setCurrentView(option.value as typeof currentView)}
+              onClick={() => {
+                setCurrentView(option.value as typeof currentView);
+                if (calendarRef.current) {
+                  const calendar = calendarRef.current.getApi();
+                  calendar.changeView(option.value);
+                }
+              }}
             >
               {option.label}
             </Button>
@@ -84,9 +91,15 @@ export default function AppointmentCalendar() {
       
       <div className="bg-white rounded-lg shadow-sm border p-4">
         <FullCalendar
+          ref={calendarRef}
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView={currentView}
-          headerToolbar={false}
+          view={currentView}
+          headerToolbar={{
+            left: 'prev,next today',
+            center: 'title',
+            right: ''
+          }}
           events={events}
           businessHours={businessHours}
           selectMirror={true}
