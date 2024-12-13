@@ -21,21 +21,61 @@ function log(message: string, type: 'info' | 'error' | 'warn' = 'info') {
   console.log(`${formattedTime} [express] ${prefix} ${message}`);
 }
 
-// Initialize Firebase Admin
+// Global development mode flag
+const isDevelopment = process.env.NODE_ENV === 'development';
+
+// Initialize Firebase Admin with enhanced error handling
 async function initializeFirebase(): Promise<boolean> {
-  const isDevelopment = process.env.NODE_ENV === 'development';
   log(`Initializing Firebase in ${isDevelopment ? 'development' : 'production'} mode`, 'info');
 
   try {
-    // Initialize Firebase using the centralized function
-    const app = await getFirebaseAdmin();
-    
-    if (!app && !isDevelopment) {
-      throw new Error('Failed to initialize Firebase Admin SDK');
+    // Verify required environment variables
+    const projectId = process.env.FIREBASE_PROJECT_ID;
+    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+    const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+
+    if (!isDevelopment && (!projectId || !clientEmail || !privateKey)) {
+      const missing = [];
+      if (!projectId) missing.push('FIREBASE_PROJECT_ID');
+      if (!clientEmail) missing.push('FIREBASE_CLIENT_EMAIL');
+      if (!privateKey) missing.push('FIREBASE_PRIVATE_KEY');
+      throw new Error(`Missing required Firebase environment variables: ${missing.join(', ')}`);
     }
 
-    log('Firebase Admin SDK initialized successfully', 'info');
-    return true;
+    // Initialize Firebase with retry logic
+    let retries = 3;
+    let lastError = null;
+
+    while (retries > 0) {
+      try {
+        const app = await getFirebaseAdmin();
+        if (!app && !isDevelopment) {
+          throw new Error('Failed to initialize Firebase Admin SDK');
+        }
+        log('Firebase Admin SDK initialized successfully', 'info');
+        return true;
+      } catch (error) {
+        lastError = error;
+        retries--;
+        if (retries > 0) {
+          log(`Firebase initialization attempt failed, retrying... (${retries} attempts left)`, 'warn');
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+      }
+    }
+
+    if (lastError) {
+      const errorMessage = lastError instanceof Error ? lastError.message : 'Unknown error';
+      log(`Firebase initialization error after all retries: ${errorMessage}`, 'error');
+      
+      if (isDevelopment) {
+        log('Continuing in development mode despite Firebase error', 'warn');
+        return true;
+      }
+      throw lastError;
+    }
+
+    return false;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     log(`Firebase initialization error: ${errorMessage}`, 'error');
@@ -130,17 +170,31 @@ async function setupDevelopmentAdmin(): Promise<void> {
   }
 }
 
-// Database connection check
-async function checkDatabaseConnection() {
-  try {
-    const result = await db.execute(sql`SELECT 1`);
-    if (result) {
-      log("Database connection successful", 'info');
-      return true;
+// Database connection check with retries
+async function checkDatabaseConnection(retries = 3): Promise<boolean> {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      log(`Attempting database connection (attempt ${attempt}/${retries})`, 'info');
+      const result = await db.execute(sql`SELECT 1`);
+      if (result) {
+        log("Database connection successful", 'info');
+        return true;
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      log(`Database connection failed (attempt ${attempt}/${retries}): ${errorMessage}`, 'warn');
+      if (attempt < retries) {
+        // Wait for 2 seconds before retrying
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      } else {
+        log("All database connection attempts failed", 'error');
+        if (process.env.NODE_ENV === 'development') {
+          log("Continuing in development mode without database", 'warn');
+          return true;
+        }
+        return false;
+      }
     }
-  } catch (error) {
-    log(`Database connection failed: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
-    return false;
   }
   return false;
 }
@@ -235,35 +289,58 @@ interface ServerStartOptions {
 }
 
 async function startServer({ port, retryCount = 0 }: ServerStartOptions): Promise<void> {
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  
   try {
-    log(`Starting server (attempt ${retryCount + 1})...`, 'info');
-    log(`Environment: ${process.env.NODE_ENV}`, 'info');
-    log(`Port: ${port}`, 'info');
-
-    // Initialize Firebase (continue even if it fails in development)
-    const firebaseInitialized = await initializeFirebase().catch(error => {
-      log(`Firebase initialization error: ${error.message}`, 'error');
-      return process.env.NODE_ENV === 'development';
-    });
-
-    if (!firebaseInitialized && process.env.NODE_ENV !== 'development') {
-      throw new Error('Firebase initialization failed in production mode');
+    // Clean up port before starting
+    try {
+      await terminateProcessOnPort(port);
+      log(`Port ${port} cleaned up successfully`, 'info');
+    } catch (error) {
+      log(`Port cleanup warning: ${error instanceof Error ? error.message : 'Unknown error'}`, 'warn');
+      // Continue anyway, as the port might already be free
     }
 
-    // Check database connection
-    const isDatabaseConnected = await checkDatabaseConnection().catch(error => {
-      log(`Database connection error: ${error.message}`, 'error');
-      return false;
-    });
+    log(`Starting server (attempt ${retryCount + 1})...`, 'info');
+    log(`Environment: ${isDevelopment ? 'development' : 'production'}`, 'info');
+    log(`Port: ${port}`, 'info');
 
-    if (!isDatabaseConnected && process.env.NODE_ENV !== 'development') {
-      throw new Error('Database connection failed');
+    // Initialize Firebase with enhanced error handling
+    try {
+      const firebaseInitialized = await initializeFirebase();
+      if (!firebaseInitialized && !isDevelopment) {
+        throw new Error('Firebase initialization failed');
+      }
+      log('Firebase initialization completed', firebaseInitialized ? 'info' : 'warn');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      log(`Firebase initialization error: ${errorMessage}`, 'error');
+      if (!isDevelopment) {
+        throw error;
+      }
+      log('Continuing without Firebase in development mode', 'warn');
+    }
+
+    // Check database connection with more detailed logging
+    try {
+      const isDatabaseConnected = await checkDatabaseConnection(3);
+      if (!isDatabaseConnected && !isDevelopment) {
+        throw new Error('Database connection failed after retries');
+      }
+      log('Database connection check completed', isDatabaseConnected ? 'info' : 'warn');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      log(`Database connection error: ${errorMessage}`, 'error');
+      if (!isDevelopment) {
+        throw error;
+      }
+      log('Continuing without database in development mode', 'warn');
     }
 
     // Clean up port
     await terminateProcessOnPort(port).catch(error => {
       log(`Port cleanup warning: ${error.message}`, 'warn');
-      if (process.env.NODE_ENV !== 'development') {
+      if (!isDevelopment) {
         throw error;
       }
     });
@@ -276,7 +353,6 @@ async function startServer({ port, retryCount = 0 }: ServerStartOptions): Promis
     log('Routes registered successfully', 'info');
 
     // Setup development or production serving
-    const isDevelopment = process.env.NODE_ENV === "development";
     if (isDevelopment) {
       await setupVite(app, server);
       log('Vite middleware setup complete', 'info');
@@ -362,8 +438,23 @@ async function startServer({ port, retryCount = 0 }: ServerStartOptions): Promis
 }
 
 // Start the server
-const PORT = parseInt(process.env.PORT || '3000', 10);
+const PORT = parseInt(process.env.PORT || '3001', 10);
+
+// Ensure clean shutdown of previous instance
+process.on('SIGTERM', () => {
+  log('Received SIGTERM signal', 'warn');
+  process.exit(0);
+});
+
+process.on('SIGINT', () => {
+  log('Received SIGINT signal', 'warn');
+  process.exit(0);
+});
+
 startServer({ port: PORT }).catch(error => {
   log(`Fatal error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
-  process.exit(1);
+  // Don't exit in development mode
+  if (process.env.NODE_ENV !== 'development') {
+    process.exit(1);
+  }
 });
