@@ -20,7 +20,7 @@ export default function Sidebar() {
 
   const settingsLinks = [
     { href: "/settings/working-hours", icon: Calendar, label: "Working Hours" },
-    ...(user?.role === 'admin' ? [
+    ...(user?.role === 'admin' || user?.role === 'manager' ? [
       { href: "/settings/roles", icon: Shield, label: "Role Management" }
     ] : []),
   ];
