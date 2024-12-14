@@ -28,29 +28,50 @@ export function registerRoutes(app: Express) {
     try {
       console.log('[FIREBASE-USERS] Starting user fetch request');
       
+      const auth = admin.auth();
+      const db = admin.database();
+      
       // Parse pagination parameters with defaults
       const pageSize = Math.min(Number(req.query.pageSize) || 100, 1000);
       const pageToken = req.query.pageToken as string | undefined;
       
       console.log('[FIREBASE-USERS] Fetching users with params:', { pageSize, pageToken });
 
-      const firebaseApp = admin.app();
+      // List users from Firebase Auth
+      const listUsersResult = await auth.listUsers(pageSize, pageToken);
       
-      // Use the new listAllUsers function
-      const { users, pageToken: nextPageToken } = await listAllUsers(pageSize, pageToken);
+      // Get roles for all users
+      const rolesSnapshot = await db.ref('roles').once('value');
+      const roles = rolesSnapshot.val() || {};
+      
+      // Combine user data with roles
+      const users = await Promise.all(listUsersResult.users.map(async user => {
+        const userRole = roles[user.uid] || { role: 'staff', permissions: [] };
+        return {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          role: userRole.role,
+          permissions: userRole.permissions,
+          disabled: user.disabled,
+          lastSignInTime: user.metadata.lastSignInTime,
+          creationTime: user.metadata.creationTime
+        };
+      }));
       
       console.log('[FIREBASE-USERS] Successfully fetched users:', users.length);
       
       res.json({
         users,
-        pageToken: nextPageToken,
-        hasNextPage: !!nextPageToken
+        pageToken: listUsersResult.pageToken,
+        hasNextPage: !!listUsersResult.pageToken
       });
     } catch (error) {
       console.error('[FIREBASE-USERS] Error fetching users:', error);
       res.status(500).json({ 
         message: "Failed to fetch users",
-        error: error instanceof Error ? error.message : "Unknown error"
+        error: error instanceof Error ? error.message : "Unknown error",
+        code: "USER_FETCH_ERROR"
       });
     }
   });
@@ -60,20 +81,21 @@ export function registerRoutes(app: Express) {
     try {
       console.log('[ROLES] Starting role fetch request');
       
-      // Get roles from Firebase
-      const roleDefinitions = await getRoleDefinitions();
+      const db = admin.database();
+      const roleDefinitionsSnapshot = await db.ref('role-definitions').once('value');
+      const roleDefinitions = roleDefinitionsSnapshot.val() || {};
+      
       console.log('[ROLES] Retrieved role definitions:', roleDefinitions);
       
       // Transform role definitions into the expected format
       const roles = Object.entries(roleDefinitions).map(([name, role]: [string, any]) => ({
         name,
-        permissions: Array.isArray(role.permissions) ? role.permissions : 
-          DefaultPermissions[name as keyof typeof DefaultPermissions] || [],
-        isSystem: role.isSystem || name in InitialRoleConfigs,
+        permissions: Array.isArray(role.permissions) ? role.permissions : [],
+        isSystem: role.isSystem || ['admin', 'manager', 'staff', 'receptionist'].includes(name),
         description: role.description || '',
         createdAt: role.createdAt || Date.now(),
         updatedAt: role.updatedAt || Date.now(),
-        canEdit: !(role.isSystem || name in InitialRoleConfigs) // Only custom roles can be edited
+        canEdit: !(['admin', 'manager', 'staff', 'receptionist'].includes(name)) // Only custom roles can be edited
       }));
       
       console.log('[ROLES] Successfully fetched roles:', roles.map(r => r.name));
