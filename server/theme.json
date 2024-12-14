@@ -14,27 +14,60 @@
     "secondary-foreground": "240 5.9% 10%",
     "muted": "240 4.8% 95.9%",
     "muted-foreground": "240 3.8% 46.1%",
-    "accent": "240 4.8% 95.9%",
-    "accent-foreground": "240 5.9% 10%",
+    "accent": "262.1 83.3% 65%",
+    "accent-foreground": "0 0% 100%",
     "destructive": "0 84.2% 60.2%",
     "destructive-foreground": "0 0% 98%",
+    "success": "142.1 76.2% 36.3%",
+    "success-foreground": "0 0% 100%",
+    "warning": "38 92% 50%",
+    "warning-foreground": "0 0% 100%",
     "border": "240 5.9% 90%",
     "input": "240 5.9% 90%",
     "ring": "262.1 83.3% 57.8%",
     "dialog": {
-      "overlay": "0 0% 0% / 80%",
+      "overlay": "0 0% 0% / 75%",
       "background": "0 0% 100%"
     },
     "background-solid": "0 0% 100%"
   },
   "borderRadius": {
-    "lg": "12px",
-    "md": "8px",
-    "sm": "6px",
-    "xl": "16px",
-    "2xl": "20px"
+    "sm": "4px",
+    "md": "6px",
+    "lg": "8px",
+    "xl": "12px",
+    "2xl": "16px",
+    "full": "9999px"
+  },
+  "spacing": {
+    "tight": "0.5rem",
+    "base": "1rem",
+    "relaxed": "1.5rem",
+    "loose": "2rem"
+  },
+  "shadows": {
+    "sm": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+    "md": "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+    "lg": "0 10px 15px -3px rgb(0 0 0 / 0.1)",
+    "xl": "0 20px 25px -5px rgb(0 0 0 / 0.1)"
+  },
+  "typography": {
+    "body": {
+      "fontSize": "0.875rem",
+      "lineHeight": "1.5"
+    },
+    "heading": {
+      "fontWeight": "600",
+      "letterSpacing": "-0.025em"
+    }
   },
   "font": {
-    "sans": "Inter"
+    "sans": "Inter",
+    "weights": {
+      "normal": "400",
+      "medium": "500",
+      "semibold": "600",
+      "bold": "700"
+    }
   }
 }
