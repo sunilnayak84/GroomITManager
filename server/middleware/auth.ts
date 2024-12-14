@@ -60,13 +60,16 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
       console.error('[AUTH] Firebase Admin not initialized');
       if (process.env.NODE_ENV === 'development') {
         console.log('[AUTH] Development mode: Setting up admin privileges');
-        // In development, set admin privileges
+        // In development, set admin privileges with all required fields
         req.user = {
+          id: 'dev-admin',
           uid: 'dev-admin',
           email: 'admin@groomery.in',
+          name: 'Admin User',
           displayName: 'Admin User',
-          role: RoleTypes.admin,
-          permissions: DefaultPermissions.admin
+          role: 'admin',
+          permissions: DefaultPermissions.admin,
+          branchId: undefined
         };
         console.log('[AUTH] Development admin account configured:', req.user);
         return next();
@@ -150,13 +153,21 @@ export function requireRole(allowedRoles: Array<keyof typeof RoleTypes>) {
       });
     }
 
+    console.log('[AUTH] Checking role access:', {
+      userRole: req.user.role,
+      allowedRoles,
+      path: req.path
+    });
+
     // Admin has access to everything
-    if (req.user.role === 'admin') {
+    if (req.user.role === RoleTypes.admin) {
+      console.log('[AUTH] Admin access granted');
       return next();
     }
 
     // Check if the path is restricted to admin only
-    if (isRestrictedPath(req.path) && req.user.role !== 'admin') {
+    if (isRestrictedPath(req.path)) {
+      console.log('[AUTH] Restricted path access denied for non-admin');
       return res.status(403).json({
         message: 'This feature is restricted to administrators only',
         code: 'ADMIN_ONLY',
@@ -165,7 +176,8 @@ export function requireRole(allowedRoles: Array<keyof typeof RoleTypes>) {
     }
 
     // Check if user's role is explicitly allowed
-    if (allowedRoles.includes(req.user.role)) {
+    if (allowedRoles.includes(req.user.role as keyof typeof RoleTypes)) {
+      console.log('[AUTH] Role explicitly allowed');
       return next();
     }
 
