@@ -1,7 +1,8 @@
-import admin from 'firebase-admin';
+import * as admin from 'firebase-admin';
 import { getDatabase } from 'firebase-admin/database';
+import { getAuth } from 'firebase-admin/auth';
 
-// Define role types (lowercase to match database)
+// Role types and permissions
 export const RoleTypes = {
   admin: 'admin',
   manager: 'manager',
@@ -9,535 +10,228 @@ export const RoleTypes = {
   receptionist: 'receptionist'
 } as const;
 
-// Define all possible permissions as const array first
-export const ALL_PERMISSIONS = [
-  'manage_appointments', 'view_appointments', 'create_appointments', 'cancel_appointments',
-  'manage_customers', 'view_customers', 'create_customers', 'edit_customer_info',
-  'manage_services', 'view_services', 'create_services', 'edit_services',
-  'manage_inventory', 'view_inventory', 'update_stock', 'manage_consumables',
-  'manage_staff_schedule', 'view_staff_schedule', 'manage_own_schedule',
-  'view_analytics', 'view_reports', 'view_financial_reports', 'all'
-] as const;
+export type RoleType = keyof typeof RoleTypes;
 
-// Create a union type of all permissions
-export type Permission = typeof ALL_PERMISSIONS[number];
+// Define permissions as a union type for type safety
+export type Permission =
+  | 'manage_appointments'
+  | 'view_appointments'
+  | 'create_appointments'
+  | 'cancel_appointments'
+  | 'manage_customers'
+  | 'view_customers'
+  | 'create_customers'
+  | 'edit_customer_info'
+  | 'manage_services'
+  | 'view_services'
+  | 'create_services'
+  | 'edit_services'
+  | 'manage_inventory'
+  | 'view_inventory'
+  | 'update_stock'
+  | 'manage_consumables'
+  | 'manage_staff_schedule'
+  | 'view_staff_schedule'
+  | 'manage_own_schedule'
+  | 'view_analytics'
+  | 'view_reports'
+  | 'view_financial_reports'
+  | 'all';
 
-// Create a Set of valid permissions for faster lookups
-const VALID_PERMISSIONS = new Set(ALL_PERMISSIONS);
-
-// Helper function to validate if a string is a valid permission
-export function isValidPermission(permission: unknown): permission is Permission {
-  return typeof permission === 'string' && VALID_PERMISSIONS.has(permission as Permission);
-}
-
-// Helper function to validate an array of permissions
-export function validatePermissions(permissions: unknown[]): Permission[] {
-  if (!Array.isArray(permissions)) {
-    console.warn('[PERMISSIONS] Invalid permissions format:', permissions);
-    return [];
-  }
-  
-  const validPermissions = permissions.filter((p): p is Permission => {
-    const isValid = isValidPermission(p);
-    if (!isValid) {
-      console.warn('[PERMISSIONS] Invalid permission:', p);
-    }
-    return isValid;
-  });
-  
-  console.log('[PERMISSIONS] Validated permissions:', validPermissions);
-  return validPermissions;
-}
-
-// Helper function to ensure type safety when getting permissions
-export function ensureValidPermissions(permissions: unknown): Permission[] {
-  if (!Array.isArray(permissions)) {
-    console.warn('[PERMISSIONS] Invalid permissions input:', permissions);
-    return [];
-  }
-  return validatePermissions(permissions);
-}
-
-// Helper to ensure type safety when accessing DefaultPermissions
-export function getDefaultPermissions(role: keyof typeof RoleTypes): Permission[] {
-  return DefaultPermissions[role];
-}
-
-// Define role structure
+// Role interface
 export interface Role {
   name: string;
   permissions: Permission[];
-  isSystem?: boolean;
-  description?: string;
-  createdAt?: number;
-  updatedAt?: number;
+  description: string;
+  isSystem: boolean;
+  createdAt: number;
+  updatedAt: number;
 }
 
-// Define default permissions for each role
-export const DefaultPermissions: Record<keyof typeof RoleTypes, Permission[]> = {
-  admin: [
-    'manage_appointments', 'view_appointments', 'create_appointments', 'cancel_appointments',
-    'manage_customers', 'view_customers', 'create_customers', 'edit_customer_info',
-    'manage_services', 'view_services', 'create_services', 'edit_services',
-    'manage_inventory', 'view_inventory', 'update_stock', 'manage_consumables',
-    'manage_staff_schedule', 'view_staff_schedule', 'manage_own_schedule',
-    'view_analytics', 'view_reports', 'view_financial_reports', 'all'
-  ],
+// Default permissions for system roles
+export const DefaultPermissions: Record<RoleType, Permission[]> = {
+  admin: ['all'],
   manager: [
-    'view_appointments', 'create_appointments', 'cancel_appointments',
-    'view_customers', 'create_customers', 'edit_customer_info',
-    'view_services', 'view_inventory', 'update_stock',
-    'manage_staff_schedule', 'view_staff_schedule', 'manage_own_schedule',
-    'view_analytics'
+    'manage_appointments',
+    'view_appointments',
+    'create_appointments',
+    'manage_customers',
+    'view_customers',
+    'manage_services',
+    'view_services',
+    'manage_inventory',
+    'view_inventory',
+    'view_analytics',
+    'view_reports'
   ],
   staff: [
-    'view_appointments', 'create_appointments',
-    'view_customers', 'create_customers',
-    'view_services', 'view_inventory',
+    'view_appointments',
+    'view_customers',
+    'view_services',
     'manage_own_schedule'
   ],
   receptionist: [
-    'view_appointments', 'create_appointments',
-    'view_customers', 'create_customers',
+    'view_appointments',
+    'create_appointments',
+    'view_customers',
+    'create_customers',
     'view_services'
   ]
-} as const;
+};
 
-// Define initial role configurations
-export const InitialRoleConfigs: Record<keyof typeof RoleTypes, Role> = {
-  [RoleTypes.admin]: {
+// Initial role configurations
+export const InitialRoleConfigs: Record<string, Role> = {
+  admin: {
     name: 'admin',
     permissions: DefaultPermissions.admin,
+    description: 'Full system access',
     isSystem: true,
     createdAt: Date.now(),
     updatedAt: Date.now()
   },
-  [RoleTypes.manager]: {
+  manager: {
     name: 'manager',
     permissions: DefaultPermissions.manager,
+    description: 'Branch management access',
     isSystem: true,
     createdAt: Date.now(),
     updatedAt: Date.now()
   },
-  [RoleTypes.staff]: {
+  staff: {
     name: 'staff',
     permissions: DefaultPermissions.staff,
+    description: 'Basic staff access',
     isSystem: true,
     createdAt: Date.now(),
     updatedAt: Date.now()
   },
-  [RoleTypes.receptionist]: {
+  receptionist: {
     name: 'receptionist',
     permissions: DefaultPermissions.receptionist,
+    description: 'Front desk operations',
     isSystem: true,
     createdAt: Date.now(),
     updatedAt: Date.now()
   }
 };
 
-let firebaseApp: admin.app.App | null = null;
-
 // Initialize Firebase Admin
 export async function initializeFirebaseAdmin() {
-  console.log('[FIREBASE-ADMIN] Starting initialization...');
-  
-  if (firebaseApp) {
-    console.log('[FIREBASE-ADMIN] Already initialized');
-    return firebaseApp;
-  }
-
-  const isDevelopment = process.env.NODE_ENV === 'development';
-  console.log('🟢 Initializing Firebase in', isDevelopment ? 'development' : 'production', 'mode');
-
   try {
-    // Get Firebase credentials from environment variables
-    const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n') || '';
+    // Check if already initialized
+    if (admin.apps && admin.apps.length > 0 && admin.apps[0]) {
+      console.log('[FIREBASE] Already initialized');
+      return admin.apps[0];
+    }
+
+    console.log('[FIREBASE] Starting initialization...');
+
+    // Get environment variables
     const projectId = process.env.FIREBASE_PROJECT_ID;
     const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+    let privateKey = process.env.FIREBASE_PRIVATE_KEY;
 
-    // Development mode handling
-    if (isDevelopment) {
-      try {
-        console.log('🟡 Attempting to initialize Firebase in development mode');
-        firebaseApp = admin.initializeApp({
-          credential: admin.credential.applicationDefault(),
-          databaseURL: 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app/'
-        });
-        console.log('🟢 Firebase initialized successfully in development mode');
-        return firebaseApp;
-      } catch (devError) {
-        console.warn('⚠️ Failed to initialize with application default credentials:', devError);
-        if (!projectId || !clientEmail || !privateKey) {
-          console.log('🟡 Continuing with mock Firebase in development');
-          return null;
-        }
-      }
-    } else {
-      // Validate credentials in production
-      if (!projectId || !clientEmail || !privateKey) {
-        throw new Error('Missing required Firebase environment variables in production mode');
-      }
+    // Enhanced environment variable validation
+    const missingVars = [];
+    if (!projectId) missingVars.push('FIREBASE_PROJECT_ID');
+    if (!clientEmail) missingVars.push('FIREBASE_CLIENT_EMAIL');
+    if (!privateKey) missingVars.push('FIREBASE_PRIVATE_KEY');
+
+    if (missingVars.length > 0) {
+      throw new Error(`Missing required Firebase configuration: ${missingVars.join(', ')}`);
     }
 
-    // Initialize Firebase Admin SDK
-    console.log('🟢 Attempting to initialize Firebase Admin SDK');
-    firebaseApp = admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId,
-        clientEmail,
-        privateKey
-      }),
-      databaseURL: 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app/'
+    // Format private key
+    privateKey = privateKey.replace(/\\n/g, '\n');
+    privateKey = privateKey.replace(/^["']|["']$/g, '');
+    
+    if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
+      privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----\n`;
+    }
+
+    // Initialize with typed configuration
+    const adminConfig: admin.ServiceAccount = {
+      projectId,
+      clientEmail,
+      privateKey
+    };
+
+    // Initialize Firebase Admin with proper error handling
+    const app = admin.initializeApp({
+      credential: admin.credential.cert(adminConfig),
+      databaseURL: `https://${projectId}-default-rtdb.firebaseio.com`
     });
 
-    // Test database connection
-    const db = getDatabase(firebaseApp);
-    await db.ref('.info/connected').once('value');
-    console.log('🟢 Firebase Realtime Database connected successfully');
-
-    // Initialize roles
-    await initializeRoles(firebaseApp);
-    console.log('🟢 Roles initialized successfully');
-
-    if (isDevelopment) {
-      await setupDevelopmentAdmin(firebaseApp);
+    console.log('[FIREBASE] Successfully initialized with project:', projectId);
+    
+    // Verify initialization
+    if (!app) {
+      throw new Error('Firebase Admin initialization failed - app instance is null');
     }
 
-    return firebaseApp;
+    return app;
   } catch (error) {
-    console.error('🔴 Firebase initialization error:', error);
-    if (isDevelopment) {
-      console.warn('⚠️ Continuing in development mode despite Firebase error');
-      return null;
+    console.error('[FIREBASE] Initialization failed:', error);
+    if (error instanceof Error) {
+      throw error; // Preserve the original error stack
     }
-    throw error;
+    throw new Error('Failed to initialize Firebase Admin: Unknown error');
   }
 }
+
+// Utility function to validate permissions
+export function validatePermissions(permissions: unknown[]): Permission[] {
+  return permissions.filter(isValidPermission);
+}
+
+// Type guard for permissions
+export function isValidPermission(permission: unknown): permission is Permission {
+  return typeof permission === 'string' && 
+    (Object.values(DefaultPermissions).flat().includes(permission as Permission) || 
+     permission === 'all');
+}
+
+export const ALL_PERMISSIONS = Array.from(
+  new Set(Object.values(DefaultPermissions).flat())
+);
 
 // Get Firebase Admin instance
 export async function getFirebaseAdmin() {
-  if (!firebaseApp) {
-    firebaseApp = await initializeFirebaseAdmin();
-  }
-  return firebaseApp;
+  return await initializeFirebaseAdmin();
 }
+
+export async function getFirebaseAuth() {
+  const app = await getFirebaseAdmin();
+  return getAuth(app);
+}
+
+export async function getFirebaseDatabase() {
+  const app = await getFirebaseAdmin();
+  return getDatabase(app);
+}
+
+// System roles array for validation
+export const SYSTEM_ROLES = Object.keys(RoleTypes);
+
+
+// Define role types (lowercase to match database)
+
+let firebaseApp: admin.app.App | null = null;
+
+// Initialize Firebase Admin
+
+// Get Firebase Admin instance
 
 // Initialize roles in Firebase
-async function initializeRoles(app: admin.app.App) {
-  const db = getDatabase(app);
-  const rolesRef = db.ref('role-definitions');
-  const roleHistoryRef = db.ref('role-history');
-  
-  try {
-    console.log('[ROLES] Starting role initialization...');
-    
-    // Check if roles exist
-    const snapshot = await rolesRef.once('value');
-    const currentRoles = snapshot.val() || {};
-    const updates: Record<string, Role> = {};
-    const timestamp = Date.now();
-    const historyUpdates: Record<string, any> = {};
-
-    // Initialize system roles
-    for (const [roleName, roleConfig] of Object.entries(InitialRoleConfigs)) {
-      const isNewRole = !currentRoles[roleName];
-      updates[roleName] = {
-        ...roleConfig,
-        isSystem: true,
-        updatedAt: timestamp,
-        createdAt: isNewRole ? timestamp : (currentRoles[roleName]?.createdAt || timestamp)
-      };
-
-      // Log system role initialization
-      if (isNewRole) {
-        historyUpdates[`${roleName}/${timestamp}`] = {
-          action: 'initialized',
-          roleType: 'system',
-          permissions: roleConfig.permissions,
-          timestamp,
-          performedBy: 'system'
-        };
-      }
-    }
-
-    // Preserve custom roles
-    for (const [roleName, roleData] of Object.entries(currentRoles)) {
-      if (!InitialRoleConfigs[roleName as keyof typeof InitialRoleConfigs]) {
-        updates[roleName] = {
-          ...(roleData as Role),
-          isSystem: false,
-          updatedAt: timestamp
-        };
-      }
-    }
-
-    // Apply updates atomically
-    const allUpdates = {
-      'role-definitions': updates,
-      'role-history': historyUpdates
-    };
-
-    await db.ref().update(allUpdates);
-    console.log('[ROLES] Successfully initialized/updated roles with history');
-    
-    // Return both roles and history updates
-    return {
-      roles: updates,
-      history: historyUpdates
-    };
-  } catch (error) {
-    console.error('[ROLES] Error initializing roles:', error);
-    throw error;
-  }
-}
 
 // Setup development admin
-async function setupDevelopmentAdmin(app: admin.app.App) {
-  try {
-    const adminEmail = 'admin@groomery.in';
-    const adminUid = 'MjQnuZnthzUIh2huoDpqCSMMvxe2'; // Hardcode the known admin UID
-    const auth = app.auth();
-    const db = getDatabase(app);
-    
-    console.log('🟢 Setting up development admin user...');
-    
-    // Get admin user
-    let adminUser;
-    try {
-      adminUser = await auth.getUser(adminUid);
-      console.log('🟢 Found existing admin user:', adminUser.uid);
-    } catch {
-      console.error('🔴 Admin user not found with UID:', adminUid);
-      throw new Error('Admin user not found');
-    }
 
-    const timestamp = Date.now();
-
-    // First, ensure role-definitions are properly set up
-    console.log('🟢 Setting up role definitions...');
-    const roleDefRef = db.ref('role-definitions');
-    const roleDefData = {
-      [RoleTypes.admin]: {
-        name: RoleTypes.admin,
-        permissions: DefaultPermissions.admin,
-        isSystem: true,
-        createdAt: timestamp,
-        updatedAt: timestamp,
-        description: 'Administrator role with full system access'
-      }
-    };
-    await roleDefRef.set(roleDefData);
-    console.log('🟢 Role definitions updated');
-
-    // Set up user role in roles collection
-    console.log('🟢 Setting up user role in roles collection...');
-    const userRoleRef = db.ref(`roles/${adminUid}`);
-    const rolesRef = db.ref('roles');
-    const roleAssignmentsRef = db.ref('role-assignments');
-    
-    const adminRoleData = {
-      uid: adminUid,
-      email: adminEmail,
-      role: RoleTypes.admin,
-      permissions: DefaultPermissions.admin,
-      isSystem: true,
-      isAdmin: true,
-      createdAt: timestamp,
-      updatedAt: timestamp,
-      displayName: 'Admin User'
-    };
-    
-    // Set up admin role assignments with more detailed tracking
-    const roleAssignmentData = {
-      uid: adminUid,
-      email: adminEmail,
-      role: RoleTypes.admin,
-      assignedBy: 'system',
-      assignedAt: timestamp,
-      lastUpdated: timestamp,
-      isAdmin: true,
-      permissions: DefaultPermissions.admin,
-      displayName: 'Admin User',
-      status: 'active'
-    };
-
-    // Set up role assignments with error handling
-    try {
-      // First ensure admin role definition exists
-      const adminRoleSnapshot = await db.ref('role-definitions/admin').once('value');
-      if (!adminRoleSnapshot.exists()) {
-        console.log('🟡 Admin role definition missing, creating it...');
-        await db.ref('role-definitions').child('admin').set({
-          name: 'admin',
-          permissions: DefaultPermissions.admin,
-          isSystem: true,
-          createdAt: timestamp,
-          updatedAt: timestamp
-        });
-      }
-
-      // Prepare updates for roles and role-assignments
-      const updates = {
-        [`roles/${adminUid}`]: {
-          uid: adminUid,
-          email: adminEmail,
-          role: RoleTypes.admin,
-          permissions: DefaultPermissions.admin,
-          isAdmin: true,
-          displayName: 'Admin User',
-          updatedAt: timestamp
-        },
-        [`role-assignments/${adminUid}`]: {
-          uid: adminUid,
-          email: adminEmail,
-          role: RoleTypes.admin,
-          assignedBy: 'system',
-          assignedAt: timestamp,
-          lastUpdated: timestamp,
-          isAdmin: true,
-          permissions: DefaultPermissions.admin,
-          status: 'active'
-        }
-      };
-
-      // Log the data being written
-      console.log('🟢 Writing role data:', {
-        roleData: adminRoleData,
-        assignmentData: roleAssignmentData
-      });
-    
-    // Force set the role data with detailed logging
-    console.log('🟢 Setting admin role data in database:', {
-      uid: adminUid,
-      email: adminEmail,
-      roleUpdates: Object.keys(updates)
-    });
-    
-    try {
-      // Attempt to set role data
-      // Execute updates
-      await db.ref().update(updates);
-      console.log('🟢 Writing role assignments to database for:', adminEmail);
-      
-      // Verify the data was written correctly
-      const [roleVerify, assignmentVerify] = await Promise.all([
-        db.ref(`roles/${adminUid}`).once('value'),
-        db.ref(`role-assignments/${adminUid}`).once('value')
-      ]);
-      
-      // Get the written data
-      const roleData = roleVerify.val();
-      const assignmentData = assignmentVerify.val();
-      
-      // Validate roles data
-      if (!roleData || roleData.role !== RoleTypes.admin || !roleData.permissions) {
-        console.error('🔴 Failed to verify role data:', roleData);
-        throw new Error('Role data verification failed');
-      }
-      
-      // Validate role assignments data
-      if (!assignmentData || assignmentData.role !== RoleTypes.admin) {
-        console.error('🔴 Failed to verify role assignment data:', assignmentData);
-        throw new Error('Role assignment data verification failed');
-      }
-      
-      console.log('✅ Successfully verified role assignments for admin:', {
-        email: adminEmail,
-        uid: adminUid,
-        roleDataPath: `roles/${adminUid}`,
-        assignmentPath: `role-assignments/${adminUid}`
-      });
-    } catch (error) {
-      console.error('🔴 Error setting admin role data:', error);
-      throw new Error(`Failed to set admin role data: ${error.message}`);
-    }
-    console.log('🟢 User role set in database');
-
-    // Force revoke all existing tokens to ensure clean state
-    console.log('🟢 Revoking existing tokens...');
-    await auth.revokeRefreshTokens(adminUser.uid);
-
-    // Set custom claims with admin privileges
-    console.log('🟢 Setting custom claims...');
-    const customClaims = {
-      role: RoleTypes.admin,
-      permissions: DefaultPermissions.admin,
-      isAdmin: true,
-      updatedAt: timestamp
-    };
-    await auth.setCustomUserClaims(adminUser.uid, customClaims);
-    console.log('🟢 Custom claims set:', customClaims);
-
-    // Verify everything is set up correctly
-    console.log('🟢 Verifying setup...');
-    
-    // 1. Verify custom claims
-    const updatedUser = await auth.getUser(adminUser.uid);
-    if (!updatedUser.customClaims?.isAdmin) {
-      throw new Error('Failed to verify admin custom claims');
-    }
-    console.log('🟢 Custom claims verified');
-
-    // 2. Verify role definitions
-    const roleDefSnapshot = await roleDefRef.child(RoleTypes.admin).once('value');
-    const roleDefVerify = roleDefSnapshot.val();
-    if (!roleDefVerify || !roleDefVerify.isSystem) {
-      throw new Error('Failed to verify admin role definition');
-    }
-    console.log('🟢 Role definitions verified');
-
-    // 3. Verify user role in database
-    const roleSnapshot = await userRoleRef.once('value');
-    const roleData = roleSnapshot.val();
-    if (!roleData || roleData.role !== RoleTypes.admin || !roleData.isAdmin) {
-      throw new Error('Failed to verify admin role in database');
-    }
-    console.log('🟢 User role in database verified');
-
-    console.log('✅ Development admin setup complete and verified:', {
-      uid: adminUser.uid,
-      email: adminUser.email,
-      customClaims: updatedUser.customClaims,
-      roleData
-    });
-    
-    return adminUser;
-  } catch (error) {
-    console.error('🔴 Development admin setup failed:', error);
-    throw error;
-  }
-}
-
-// Get user role from Realtime Database
-export async function getUserRole(uid: string) {
-  const app = await getFirebaseAdmin();
-  if (!app) {
-    console.warn('[USER-ROLE] Firebase Admin not initialized');
-    return null;
-  }
-
-  try {
-    const db = getDatabase(app);
-    const userRoleSnapshot = await db.ref(`roles/${uid}`).once('value');
-    const userData = userRoleSnapshot.val();
-
-    if (!userData) {
-      console.warn(`[USER-ROLE] No role found for user ${uid}`);
-      return null;
-    }
-
-    return {
-      role: userData.role,
-      permissions: validatePermissions(userData.permissions)
-    };
-  } catch (error) {
-    console.error('[USER-ROLE] Error fetching user role:', error);
-    return null;
-  }
-}
+// This section was removed to fix duplicate declaration
 
 // Update user role
-export async function updateUserRole(uid: string, roleType: string, updatedBy: string) {
+export async function updateUserRole(uid: string, role: string) {
+  console.log(`[ROLE-UPDATE] Starting role update for user ${uid} to ${role}`);
+  
   const app = await getFirebaseAdmin();
   if (!app) {
     throw new Error('Firebase Admin not initialized');
@@ -553,15 +247,15 @@ export async function updateUserRole(uid: string, roleType: string, updatedBy: s
     const email = userRecord.email || '';
 
     // Get role definition
-    const roleSnapshot = await db.ref(`role-definitions/${roleType}`).once('value');
+    const roleSnapshot = await db.ref(`role-definitions/${role}`).once('value');
     const roleDefinition = roleSnapshot.val();
 
     if (!roleDefinition) {
-      throw new Error(`Role ${roleType} not found`);
+      throw new Error(`Role ${role} not found`);
     }
 
     // Prevent non-admins from being assigned admin role
-    if (roleType === RoleTypes.admin && !email.endsWith('@groomery.in')) {
+    if (role === RoleTypes.admin && !email.endsWith('@groomery.in')) {
       throw new Error('Admin role can only be assigned to company email addresses');
     }
 
@@ -572,12 +266,11 @@ export async function updateUserRole(uid: string, roleType: string, updatedBy: s
     const roleData = {
       uid,
       email,
-      role: roleType,
+      role,
       permissions: roleDefinition.permissions,
       updatedAt: timestamp,
-      updatedBy,
       displayName: userRecord.displayName || email.split('@')[0],
-      ...(roleType === RoleTypes.admin && { isAdmin: true })
+      ...(role === RoleTypes.admin && { isAdmin: true })
     };
 
     // Create history entry
@@ -585,23 +278,197 @@ export async function updateUserRole(uid: string, roleType: string, updatedBy: s
       uid,
       email,
       previousRole: currentRole?.role || 'none',
-      newRole: roleType,
+      newRole: role,
       previousPermissions: currentRole?.permissions || [],
       newPermissions: roleDefinition.permissions,
       timestamp,
-      performedBy: updatedBy
+      type: 'role_update'
     };
 
     // Prepare atomic updates
     const updates: Record<string, any> = {
       [`roles/${uid}`]: roleData,
-      [`role-assignments/${uid}`]: {
-        ...roleData,
-        assignedAt: currentRole?.assignedAt || timestamp,
-        lastUpdated: timestamp
-      },
       [`role-history/${uid}/${timestamp}`]: historyEntry
     };
+
+    // Apply updates atomically
+    await db.ref().update(updates);
+
+    // Update Firebase Auth custom claims
+    await auth.setCustomUserClaims(uid, {
+      role,
+      permissions: roleDefinition.permissions,
+      updatedAt: timestamp
+    });
+
+    // Force token refresh
+    await auth.revokeRefreshTokens(uid);
+
+    console.log(`[ROLE-UPDATE] Successfully updated role for user ${email} to ${role}`);
+
+    return {
+      uid,
+      email,
+      role,
+      permissions: roleDefinition.permissions,
+      timestamp,
+      success: true
+    };
+  } catch (error) {
+    console.error('[ROLE-UPDATE] Error:', error);
+    throw error instanceof Error 
+      ? error 
+      : new Error('Failed to update user role');
+  }
+}
+
+// Function to assign role to a user and log the change
+export async function assignUserRole(
+  uid: string,
+  role: string,
+  assignedBy: string
+): Promise<void> {
+  console.log(`[ROLE-ASSIGN] Assigning role ${role} to user ${uid}`);
+  
+  const app = await getFirebaseAdmin();
+  if (!app) {
+    throw new Error('Firebase Admin not initialized');
+  }
+  
+  const db = getDatabase(app);
+  const timestamp = Date.now();
+  
+  try {
+    // Get user details from Firebase Auth
+    const userRecord = await app.auth().getUser(uid);
+    if (!userRecord) {
+      throw new Error('User not found');
+    }
+    
+    // Get role definition
+    const roleSnapshot = await db.ref(`role-definitions/${role}`).once('value');
+    const roleDefinition = roleSnapshot.val();
+    
+    if (!roleDefinition) {
+      throw new Error(`Role ${role} not found`);
+    }
+    
+    // Prepare role assignment data
+    const roleData = {
+      uid,
+      email: userRecord.email,
+      role,
+      permissions: roleDefinition.permissions,
+      updatedAt: timestamp,
+      updatedBy: assignedBy
+    };
+    
+    // Create atomic updates
+    const updates: Record<string, any> = {
+      [`roles/${uid}`]: roleData,
+      [`role-history/${uid}/${timestamp}`]: {
+        ...roleData,
+        action: 'role_assigned',
+        assignedBy
+      }
+    };
+    
+    // Apply updates atomically
+    await db.ref().update(updates);
+    
+    // Update Firebase Auth custom claims
+    await app.auth().setCustomUserClaims(uid, {
+      role,
+      permissions: roleDefinition.permissions,
+      updatedAt: timestamp
+    });
+    
+    console.log(`[ROLE-ASSIGN] Successfully assigned role ${role} to user ${uid}`);
+  } catch (error) {
+    console.error('[ROLE-ASSIGN] Error:', error);
+    throw error instanceof Error 
+      ? error 
+      : new Error('Failed to assign user role');
+  }
+}
+
+// Function to get user's current role
+export async function getUserRole(uid: string): Promise<{ role: RoleType; permissions: Permission[] } | null> {
+  console.log(`[ROLE-GET] Getting role for user ${uid}`);
+  
+  const app = await getFirebaseAdmin();
+  if (!app) {
+    throw new Error('Firebase Admin not initialized');
+  }
+  
+  try {
+    const db = getDatabase(app);
+    const snapshot = await db.ref(`roles/${uid}`).once('value');
+    
+    if (!snapshot.exists()) {
+      // Set default role to staff if no role is found
+      const defaultRole = {
+        role: RoleTypes.staff as RoleType,
+        permissions: DefaultPermissions.staff
+      };
+      
+      // Save default role
+      await db.ref(`roles/${uid}`).set({
+        ...defaultRole,
+        updatedAt: Date.now(),
+        createdAt: Date.now()
+      });
+      
+      return defaultRole;
+    }
+    
+    const roleData = snapshot.val();
+    return {
+      role: roleData.role as RoleType,
+      permissions: validatePermissions(roleData.permissions)
+    };
+  } catch (error) {
+    console.error('[ROLE-GET] Error:', error);
+    throw error instanceof Error 
+      ? error 
+      : new Error('Failed to get user role');
+  }
+}
+
+// Function to initialize admin user if not exists
+export async function initializeAdminUser(adminEmail: string, adminUid: string): Promise<void> {
+  console.log(`[ADMIN-INIT] Initializing admin user ${adminEmail}`);
+  
+  const app = await getFirebaseAdmin();
+  if (!app) {
+    throw new Error('Firebase Admin not initialized');
+  }
+  
+  const db = getDatabase(app);
+  
+  try {
+    // Check if admin role exists
+    const roleSnapshot = await db.ref('role-definitions/admin').once('value');
+    if (!roleSnapshot.exists()) {
+      throw new Error('Admin role not found in role definitions');
+    }
+    
+    // Check if user already has admin role
+    const userRoleSnapshot = await db.ref(`roles/${adminUid}`).once('value');
+    if (!userRoleSnapshot.exists()) {
+      // Assign admin role
+      await assignUserRole(adminUid, 'admin', 'system');
+      console.log(`[ADMIN-INIT] Successfully initialized admin user ${adminEmail}`);
+    } else {
+      console.log(`[ADMIN-INIT] Admin user ${adminEmail} already initialized`);
+    }
+  } catch (error) {
+    console.error('[ADMIN-INIT] Error:', error);
+    throw error instanceof Error 
+      ? error 
+      : new Error('Failed to initialize admin user');
+  }
+}
 // Create custom role
 export async function createCustomRole(
   name: string,
@@ -680,36 +547,6 @@ export async function createCustomRole(
   }
 }
 
-    // Apply updates atomically
-    await db.ref().update(updates);
-
-    // Update Firebase Auth custom claims
-    await auth.setCustomUserClaims(uid, {
-      role: roleType,
-      permissions: roleDefinition.permissions,
-      updatedAt: timestamp
-    });
-
-    // Force token refresh
-    await auth.revokeRefreshTokens(uid);
-
-    console.log(`[ROLE-UPDATE] Successfully updated role for user ${email} to ${roleType}`);
-
-    return {
-      uid,
-      email,
-      role: roleType,
-      permissions: roleDefinition.permissions,
-      timestamp,
-      success: true
-    };
-  } catch (error) {
-    console.error('[ROLE-UPDATE] Error:', error);
-    throw error instanceof Error 
-      ? error 
-      : new Error('Failed to update user role');
-  }
-}
 
 // Function to get all role definitions from Firebase
 export async function getRoleDefinitions(): Promise<Record<string, Role>> {
@@ -725,26 +562,20 @@ export async function getRoleDefinitions(): Promise<Record<string, Role>> {
   const rolesRef = db.ref('role-definitions');
   
   try {
-    // Initialize roles first to ensure we have the latest definitions
-    await initializeRoles(app);
-    console.log('[ROLES] Roles initialized, fetching current definitions');
-    
     const snapshot = await rolesRef.once('value');
     const roles = snapshot.val();
     
     if (!roles) {
-      console.log('[ROLES] No roles found in database, using initial configs');
-      // Save initial configs to database
+      console.log('[ROLES] No roles found in database, initializing with system roles');
       await rolesRef.set(InitialRoleConfigs);
       return InitialRoleConfigs;
     }
     
     // Transform roles to ensure consistent format and type safety
     const transformedRoles = Object.entries(roles).reduce<Record<string, Role>>((acc, [name, role]: [string, any]) => {
-      // Validate permissions and ensure they are of type Permission[]
       const validPermissions = validatePermissions(Array.isArray(role.permissions) ? role.permissions : []);
       
-      // For system roles, merge with default permissions
+      // For system roles, ensure they have their required permissions
       let finalPermissions = validPermissions;
       if (role.isSystem && name in DefaultPermissions) {
         const defaultPerms = DefaultPermissions[name as keyof typeof RoleTypes];
@@ -754,8 +585,8 @@ export async function getRoleDefinitions(): Promise<Record<string, Role>> {
       acc[name] = {
         name,
         permissions: finalPermissions,
-        isSystem: role.isSystem || false,
         description: role.description || '',
+        isSystem: role.isSystem || Object.keys(RoleTypes).includes(name),
         createdAt: role.createdAt || Date.now(),
         updatedAt: role.updatedAt || Date.now()
       };
@@ -768,6 +599,56 @@ export async function getRoleDefinitions(): Promise<Record<string, Role>> {
     console.error('[ROLES] Error fetching role definitions:', error);
     console.warn('[ROLES] Using initial configs as fallback');
     return InitialRoleConfigs;
+  }
+}
+
+// List all users with their roles
+export async function listAllUsers(pageSize = 1000, pageToken?: string) {
+  const app = await getFirebaseAdmin();
+  if (!app) {
+    throw new Error('Firebase Admin not initialized');
+  }
+
+  try {
+    const auth = app.auth();
+    const db = getDatabase(app);
+    
+    console.log('[FIREBASE-USERS] Starting user fetch...');
+    const listUsersResult = await auth.listUsers(pageSize, pageToken);
+    
+    if (!listUsersResult.users.length) {
+      return { users: [], pageToken: null };
+    }
+    
+    // Get all roles at once
+    const rolesRef = db.ref('roles');
+    const rolesSnapshot = await rolesRef.once('value');
+    const rolesData = rolesSnapshot.val() || {};
+
+    // Process users with roles
+    const users = await Promise.all(listUsersResult.users.map(async (user) => {
+      const roleData = rolesData[user.uid];
+      const role = roleData?.role || RoleTypes.staff;
+      
+      return {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || user.email?.split('@')[0] || 'Unknown User',
+        role,
+        permissions: roleData?.permissions || DefaultPermissions[role as keyof typeof RoleTypes] || [],
+        disabled: user.disabled,
+        lastSignInTime: user.metadata.lastSignInTime,
+        creationTime: user.metadata.creationTime
+      };
+    }));
+
+    return {
+      users,
+      pageToken: listUsersResult.pageToken
+    };
+  } catch (error) {
+    console.error('[FIREBASE-USERS] Error listing users:', error);
+    throw error;
   }
 }
 
@@ -879,56 +760,5 @@ export async function updateRoleDefinition(roleName: string, permissions: Permis
     throw error instanceof Error
       ? new Error(`Role update failed: ${error.message}`)
       : new Error('Role update failed: Unknown error');
-  }
-}
-
-
-// List all users with their roles
-export async function listAllUsers(pageSize = 1000, pageToken?: string) {
-  const app = await getFirebaseAdmin();
-  if (!app) {
-    throw new Error('Firebase Admin not initialized');
-  }
-
-  try {
-    const auth = app.auth();
-    const db = getDatabase(app);
-    
-    console.log('[FIREBASE-USERS] Starting user fetch...');
-    const listUsersResult = await auth.listUsers(pageSize, pageToken);
-    
-    if (!listUsersResult.users.length) {
-      return { users: [], pageToken: null };
-    }
-    
-    // Get all roles at once
-    const rolesRef = db.ref('roles');
-    const rolesSnapshot = await rolesRef.once('value');
-    const rolesData = rolesSnapshot.val() || {};
-
-    // Process users with roles
-    const users = await Promise.all(listUsersResult.users.map(async (user) => {
-      const roleData = rolesData[user.uid];
-      const role = roleData?.role || RoleTypes.staff;
-      
-      return {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName || user.email?.split('@')[0] || 'Unknown User',
-        role,
-        permissions: roleData?.permissions || DefaultPermissions[role as keyof typeof RoleTypes] || [],
-        disabled: user.disabled,
-        lastSignInTime: user.metadata.lastSignInTime,
-        creationTime: user.metadata.creationTime
-      };
-    }));
-
-    return {
-      users,
-      pageToken: listUsersResult.pageToken
-    };
-  } catch (error) {
-    console.error('[FIREBASE-USERS] Error listing users:', error);
-    throw error;
   }
 }
