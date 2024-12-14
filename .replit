@@ -34,10 +34,6 @@ args = "Express Server"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "cleanup"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
 args = "React Dev Server"
 
 [[workflows.workflow]]
@@ -69,20 +65,6 @@ task = "packager.installForAll"
 task = "shell.exec"
 args = "cd server && NODE_ENV=production PORT=3000 tsx watch --clear-screen=false index.ts"
 waitForPort = 3000
-
-[[workflows.workflow]]
-name = "cleanup"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "packager.installForAll"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "rm -f theme.json client/theme.json server/theme.json"
 
 [[workflows.workflow]]
 name = "React Dev Server"
