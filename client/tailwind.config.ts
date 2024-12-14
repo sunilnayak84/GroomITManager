@@ -43,7 +43,6 @@ export default {
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
-          background: "hsl(var(--popover))",
         },
         card: {
           DEFAULT: "hsl(var(--card))",
@@ -52,9 +51,8 @@ export default {
         dialog: {
           DEFAULT: "hsl(var(--dialog))",
           foreground: "hsl(var(--dialog-foreground))",
-          background: "hsl(var(--dialog))",
-          overlay: "hsla(var(--dialog-overlay))",
-        },
+          overlay: "hsl(var(--dialog-overlay))",
+        }
       },
       borderRadius: {
         lg: "var(--radius-lg)",
