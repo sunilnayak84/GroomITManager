@@ -139,7 +139,10 @@ let firebaseApp: admin.app.App | null = null;
 
 // Initialize Firebase Admin
 export async function initializeFirebaseAdmin() {
+  console.log('[FIREBASE-ADMIN] Starting initialization...');
+  
   if (firebaseApp) {
+    console.log('[FIREBASE-ADMIN] Already initialized');
     return firebaseApp;
   }
 
