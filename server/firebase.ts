@@ -118,67 +118,120 @@ export const InitialRoleConfigs = {
   }
 };
 
-let firebaseAdmin: admin.app.App | undefined;
+let firebaseApp: admin.app.App | null = null;
 
 export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
-  if (firebaseAdmin) {
-    console.log('[FIREBASE] Using existing Firebase Admin instance');
-    return firebaseAdmin;
-  }
-
-  console.log('[FIREBASE] Starting Firebase Admin initialization');
-
   try {
+    console.log('[FIREBASE] Starting Firebase Admin initialization');
+    
+    // Check for existing Firebase Admin instance
+    if (admin.apps.length > 0) {
+      const existingApp = admin.apps[0];
+      if (existingApp) {
+        console.log('[FIREBASE] Using existing Firebase Admin instance');
+        return existingApp;
+      }
+    }
+
+    // Get and validate required environment variables
     const projectId = process.env.FIREBASE_PROJECT_ID;
     const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
     let privateKey = process.env.FIREBASE_PRIVATE_KEY;
 
     if (!projectId || !clientEmail || !privateKey) {
-      console.error('[FIREBASE] Missing required credentials:', {
-        hasProjectId: !!projectId,
-        hasClientEmail: !!clientEmail,
-        hasPrivateKey: !!privateKey
-      });
-      throw new Error('[FIREBASE] Missing required Firebase Admin credentials');
+      const missingVars = [];
+      if (!projectId) missingVars.push('FIREBASE_PROJECT_ID');
+      if (!clientEmail) missingVars.push('FIREBASE_CLIENT_EMAIL');
+      if (!privateKey) missingVars.push('FIREBASE_PRIVATE_KEY');
+      
+      console.error('[FIREBASE] Missing required credentials:', missingVars.join(', '));
+      throw new Error(`Missing required Firebase Admin credentials: ${missingVars.join(', ')}`);
     }
+
+    console.log('[FIREBASE] All required credentials found, formatting private key');
 
     // Format private key
-    privateKey = privateKey.replace(/\\n/g, '\n').replace(/^['"]|['"]$/g, '');
-    if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
-      privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----`;
+    try {
+      // Remove quotes and escape characters
+      privateKey = privateKey.replace(/\\n/g, '\n');
+      
+      // Remove any surrounding quotes
+      if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
+        privateKey = privateKey.slice(1, -1);
+      }
+      
+      // Ensure proper PEM format
+      if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
+        privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----`;
+      }
+      
+      console.log('[FIREBASE] Private key formatted successfully');
+    } catch (formatError) {
+      console.error('[FIREBASE] Error formatting private key:', formatError);
+      throw new Error(`Failed to format Firebase private key: ${formatError.message}`);
     }
+    
+    console.log('[FIREBASE] Private key formatted successfully');
+    console.log('[FIREBASE] Private key formatted, length:', privateKey.length);
 
-    // Check if Firebase Admin is already initialized
-    if (admin.apps.length === 0) {
-      console.log('[FIREBASE] Creating new Firebase Admin instance');
-      firebaseAdmin = admin.initializeApp({
-        credential: admin.credential.cert({
-          projectId,
-          clientEmail,
-          privateKey
-        }),
-        databaseURL: `https://${projectId}.firebaseio.com`
+    try {
+      // Create service account credential
+      const serviceAccount = {
+        projectId,
+        clientEmail,
+        privateKey
+      };
+      
+      console.log('[FIREBASE] Creating Firebase Admin credential');
+      const credential = admin.credential.cert(serviceAccount);
+      
+      console.log('[FIREBASE] Initializing Firebase Admin app');
+      firebaseApp = admin.initializeApp({
+        credential,
+        databaseURL: `https://${projectId}-default-rtdb.firebaseio.com`
       });
-    } else {
-      console.log('[FIREBASE] Using existing Firebase Admin app');
-      firebaseAdmin = admin.apps[0]!;
+
+      console.log('[FIREBASE] Firebase Admin app initialized successfully');
+
+      // Verify database connection
+      const db = admin.database(firebaseApp);
+      await db.ref('.info/connected').once('value');
+      console.log('[FIREBASE] Database connection verified');
+
+      // Initialize or verify role definitions
+      const rolesRef = db.ref('role-definitions');
+      const rolesSnapshot = await rolesRef.once('value');
+      
+      if (!rolesSnapshot.exists()) {
+        console.log('[FIREBASE] Initializing default role definitions');
+        await rolesRef.set(InitialRoleConfigs);
+        console.log('[FIREBASE] Default roles initialized');
+      } else {
+        console.log('[FIREBASE] Existing role definitions found');
+      }
+
+      // Verify admin user setup
+      const adminUid = 'MjQnuZnthzUIh2huoDpqCSMMvxe2';
+      const adminRef = db.ref(`roles/${adminUid}`);
+      const adminSnapshot = await adminRef.once('value');
+      
+      if (!adminSnapshot.exists()) {
+        console.log('[FIREBASE] Setting up admin user role');
+        await adminRef.set({
+          role: RoleTypes.admin,
+          permissions: DefaultPermissions[RoleTypes.admin],
+          isAdmin: true,
+          updatedAt: Date.now()
+        });
+        console.log('[FIREBASE] Admin user role configured');
+      }
+
+      console.log('[FIREBASE] Firebase Admin SDK initialized successfully');
+      return firebaseApp;
+    } catch (initError) {
+      console.error('[FIREBASE] Error during app initialization:', initError);
+      throw new Error(`Failed to initialize Firebase Admin: ${initError.message}`);
     }
-
-    // Verify database connection
-    const db = admin.database(firebaseAdmin);
-    await db.ref('.info/connected').once('value');
-    console.log('[FIREBASE] Database connection verified');
-
-    // Initialize default roles if needed
-    const rolesSnapshot = await db.ref('role-definitions').once('value');
-    if (!rolesSnapshot.exists()) {
-      console.log('[FIREBASE] Initializing default role definitions');
-      await db.ref('role-definitions').set(InitialRoleConfigs);
-      console.log('[FIREBASE] Default roles initialized');
-    }
-
-    console.log('[FIREBASE] Firebase Admin SDK initialized successfully');
-    return firebaseAdmin;
   } catch (error) {
     console.error('[FIREBASE] Error during Firebase Admin initialization:', error);
     throw error;
@@ -186,19 +239,34 @@ export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
 }
 
 export async function getFirebaseAdmin(): Promise<admin.app.App> {
-  return await initializeFirebaseAdmin();
+  try {
+    return await initializeFirebaseAdmin();
+  } catch (error) {
+    console.error('[FIREBASE] Failed to get Firebase Admin instance:', error);
+    throw new Error('Failed to initialize Firebase Admin');
+  }
 }
 
 // Helper function to safely get database instance
 export async function getFirebaseDatabase() {
-  const app = await getFirebaseAdmin();
-  return admin.database(app);
+  try {
+    const app = await getFirebaseAdmin();
+    return admin.database(app);
+  } catch (error) {
+    console.error('[FIREBASE] Failed to get Firebase Database instance:', error);
+    throw new Error('Failed to get Firebase Database instance');
+  }
 }
 
 // Helper function to safely get auth instance
 export async function getFirebaseAuth() {
-  const app = await getFirebaseAdmin();
-  return admin.auth(app);
+  try {
+    const app = await getFirebaseAdmin();
+    return admin.auth(app);
+  } catch (error) {
+    console.error('[FIREBASE] Failed to get Firebase Auth instance:', error);
+    throw new Error('Failed to get Firebase Auth instance');
+  }
 }
 
 export async function getUserRole(userId: string): Promise<{ role: RoleTypes; permissions: Permission[] }> {
