@@ -111,37 +111,26 @@ async function cleanupFirebaseInstances(): Promise<void> {
   console.log('[FIREBASE] Starting Firebase instance cleanup...');
   
   try {
-    // Clean up tracked instances first
-    for (const instance of firebaseInstances) {
-      try {
-        if (instance) {
-          await instance.delete();
-          console.log(`[FIREBASE] Successfully deleted tracked Firebase instance ${instance.name}`);
+    // Clean up admin.apps first
+    if (admin.apps && admin.apps.length > 0) {
+      console.log(`[FIREBASE] Found ${admin.apps.length} Firebase instances to clean up`);
+      
+      await Promise.all(admin.apps.map(async (app) => {
+        if (app) {
+          try {
+            await app.delete();
+            console.log('[FIREBASE] Successfully deleted Firebase instance');
+          } catch (error) {
+            if (error instanceof Error && !error.message.includes('already been deleted')) {
+              console.warn('[FIREBASE] Error deleting instance:', error);
+            }
+          }
         }
-      } catch (error) {
-        console.warn('[FIREBASE] Error deleting tracked instance:', error);
-      }
+      }));
     }
     
     // Clear the tracked instances array
     firebaseInstances.length = 0;
-    
-    // Additional cleanup for any remaining app instances
-    if (admin.apps && admin.apps.length > 0) {
-      console.log(`[FIREBASE] Found ${admin.apps.length} additional instances to clean up`);
-      
-      for (const app of admin.apps) {
-        try {
-          if (app) {
-            await app.delete();
-            console.log('[FIREBASE] Successfully deleted additional Firebase instance');
-          }
-        } catch (error) {
-          console.warn('[FIREBASE] Error deleting additional instance:', error);
-        }
-      }
-    }
-    
     console.log('[FIREBASE] Firebase instance cleanup completed');
   } catch (error) {
     console.warn('[FIREBASE] Non-fatal error during cleanup:', error);
@@ -210,7 +199,6 @@ export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
   
   const MAX_RETRIES = 3;
   const RETRY_DELAY = 2000; // 2 seconds
-  const STARTUP_TIMEOUT = 10000; // 10 seconds
 
   async function validateCredentials() {
     const projectId = process.env.FIREBASE_PROJECT_ID?.trim();
@@ -218,10 +206,7 @@ export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
     const privateKey = process.env.FIREBASE_PRIVATE_KEY;
 
     console.log('[FIREBASE] Validating credentials...');
-    console.log('[FIREBASE] Project ID:', projectId ? 'Valid' : 'Missing');
-    console.log('[FIREBASE] Client Email:', clientEmail ? 'Valid' : 'Missing');
-    console.log('[FIREBASE] Private Key:', privateKey ? 'Present' : 'Missing');
-
+    
     if (!projectId || !clientEmail || !privateKey) {
       const missing = [];
       if (!projectId) missing.push('FIREBASE_PROJECT_ID');
@@ -233,19 +218,8 @@ export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
     return { projectId, clientEmail, privateKey };
   }
 
-  // Try to use existing instance if available
-  if (firebaseInstances.length > 0) {
-    const existingApp = firebaseInstances[0];
-    try {
-      // Simple verification
-      await getAuth(existingApp).app.options;
-      console.log('[FIREBASE] Using existing Firebase Admin instance');
-      return existingApp;
-    } catch (error) {
-      console.warn('[FIREBASE] Existing instance invalid, will create new');
-      await cleanupFirebaseInstances();
-    }
-  }
+  // Always clean up existing instances first
+  await cleanupFirebaseInstances();
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {

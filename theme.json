@@ -1,22 +1,48 @@
 {
-  "name": "groomery",
+  "name": "groomit-purple",
   "type": "light",
   "colors": {
-    "primary": "hsl(262 83% 58%)",
-    "primary-foreground": "hsl(0 0% 100%)",
-    "secondary": "hsl(246 47% 50%)",
-    "secondary-foreground": "hsl(0 0% 100%)",
-    "background": "hsl(0 0% 100%)",
-    "foreground": "hsl(224 71% 4%)",
-    "muted": "hsl(220 14% 96%)",
-    "muted-foreground": "hsl(220 9% 46%)",
-    "accent": "hsl(220 14% 96%)",
-    "accent-foreground": "hsl(222 47% 11%)",
-    "destructive": "hsl(0 84% 60%)",
-    "destructive-foreground": "hsl(0 0% 100%)",
-    "border": "hsl(220 13% 91%)",
-    "input": "hsl(220 13% 91%)",
-    "ring": "hsl(262 83% 58%)"
+    "primary": {
+      "DEFAULT": "268 70% 50%",
+      "foreground": "0 0% 100%"
+    },
+    "secondary": {
+      "DEFAULT": "268 55% 40%",
+      "foreground": "0 0% 100%"
+    },
+    "accent": {
+      "DEFAULT": "268 59% 94%",
+      "foreground": "268 70% 50%"
+    },
+    "background": {
+      "DEFAULT": "0 0% 100%",
+      "foreground": "224 71.4% 4.1%"
+    },
+    "muted": {
+      "DEFAULT": "220 14.3% 95.9%",
+      "foreground": "220 8.9% 46.1%"
+    },
+    "card": {
+      "DEFAULT": "0 0% 100%",
+      "foreground": "224 71.4% 4.1%"
+    },
+    "popover": {
+      "DEFAULT": "0 0% 100%",
+      "foreground": "224 71.4% 4.1%"
+    },
+    "border": {
+      "DEFAULT": "220 13% 91%"
+    },
+    "input": {
+      "DEFAULT": "220 13% 91%"
+    },
+    "ring": {
+      "DEFAULT": "268 70% 50%"
+    },
+    "destructive": {
+      "DEFAULT": "0 84.2% 60.2%",
+      "foreground": "0 0% 98%"
+    }
   },
   "borderRadius": {
     "lg": "0.5rem",
