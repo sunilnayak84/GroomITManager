@@ -59,15 +59,16 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
     if (!firebaseApp) {
       console.error('[AUTH] Firebase Admin not initialized');
       if (process.env.NODE_ENV === 'development') {
-        // In development, allow access with admin role
+        console.log('[AUTH] Development mode: Setting up admin privileges');
+        // In development, set admin privileges
         req.user = {
           uid: 'dev-admin',
           email: 'admin@groomery.in',
           displayName: 'Admin User',
-          role: 'admin',
+          role: RoleTypes.admin,
           permissions: DefaultPermissions.admin
         };
-        console.log('[AUTH] Using development admin account');
+        console.log('[AUTH] Development admin account configured:', req.user);
         return next();
       }
       return res.status(500).json({ 
@@ -84,25 +85,44 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
       
       console.log(`[AUTH] Token verified for user ${user.email}`);
       
-      // Get role and permissions from Realtime Database
+      // Get role and permissions
       const userRole = await getUserRole(user.uid);
+      console.log('[AUTH] User role data:', userRole);
       
-      if (!userRole) {
+      // Check custom claims first
+      const customClaims = user.customClaims || {};
+      console.log('[AUTH] Custom claims:', customClaims);
+      
+      let role: keyof typeof RoleTypes;
+      let permissions: string[];
+      
+      // Determine role and permissions with proper fallback
+      if (customClaims.isAdmin || customClaims.role === RoleTypes.admin) {
+        role = RoleTypes.admin;
+        permissions = DefaultPermissions.admin;
+      } else if (userRole) {
+        role = userRole.role;
+        permissions = userRole.permissions;
+      } else {
         console.warn(`[AUTH] No role found for user ${user.email}, using default staff role`);
+        role = RoleTypes.staff;
+        permissions = DefaultPermissions.staff;
       }
-      
-      const role = (userRole?.role || 'staff') as keyof typeof RoleTypes;
-      const permissions = userRole?.permissions || DefaultPermissions[role];
       
       req.user = {
         uid: user.uid,
-        email: user.email || null,
+        email: user.email || '',
         displayName: user.displayName || user.email?.split('@')[0] || 'Unknown User',
         role,
         permissions
       };
       
-      console.log(`[AUTH] User authenticated with role: ${req.user.role}`);
+      console.log(`[AUTH] User authenticated:`, {
+        email: req.user.email,
+        role: req.user.role,
+        permissions: req.user.permissions.length
+      });
+      
       next();
     } catch (verifyError) {
       console.error('[AUTH] Token verification failed:', verifyError);
