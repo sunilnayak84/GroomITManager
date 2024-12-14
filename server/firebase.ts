@@ -278,6 +278,17 @@ async function setupDevelopmentAdmin(app: admin.app.App) {
     try {
       adminUser = await auth.getUserByEmail(adminEmail);
       console.log('🟢 Found existing admin user:', adminUser.uid);
+      
+      // Force update custom claims for existing admin
+      const customClaims = {
+        role: 'admin',
+        permissions: DefaultPermissions.admin,
+        isAdmin: true,
+        updatedAt: Date.now()
+      };
+      await auth.setCustomUserClaims(adminUser.uid, customClaims);
+      console.log('🟢 Updated admin custom claims:', customClaims);
+      
     } catch {
       console.log('🟢 Creating new admin user...');
       adminUser = await auth.createUser({
