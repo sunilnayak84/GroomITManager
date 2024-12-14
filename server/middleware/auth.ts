@@ -99,27 +99,42 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
       let role: keyof typeof RoleTypes;
       let permissions: string[];
 
-      // Determine role and permissions
-      if (customClaims.isAdmin === true || customClaims.role === 'admin') {
-        console.log('[AUTH] User has admin claims:', customClaims);
-        role = 'admin';
-        permissions = DefaultPermissions.admin;
-      } else if (userRole?.role === 'admin') {
-        console.log('[AUTH] User has admin role in database');
-        role = 'admin';
-        permissions = DefaultPermissions.admin;
-      } else if (process.env.NODE_ENV === 'development' && user.email === 'admin@groomery.in') {
+      // Special handling for development admin
+      const isDevAdmin = process.env.NODE_ENV === 'development' && user.email === 'admin@groomery.in';
+      if (isDevAdmin) {
         console.log('[AUTH] Development admin user detected');
         role = 'admin';
         permissions = DefaultPermissions.admin;
-      } else if (userRole) {
+      }
+      // Check custom claims
+      else if (customClaims.isAdmin === true || customClaims.role === 'admin') {
+        console.log('[AUTH] User has admin claims:', customClaims);
+        role = 'admin';
+        permissions = DefaultPermissions.admin;
+      }
+      // Check database role
+      else if (userRole?.role === 'admin') {
+        console.log('[AUTH] User has admin role in database');
+        role = 'admin';
+        permissions = DefaultPermissions.admin;
+      }
+      // Use database role if available
+      else if (userRole) {
         console.log('[AUTH] User has role from database:', userRole);
         role = userRole.role;
         permissions = userRole.permissions;
-      } else {
+      }
+      // Default to staff role
+      else {
         console.warn(`[AUTH] No role found for user ${user.email}, using default staff role`);
         role = 'staff';
         permissions = DefaultPermissions.staff;
+      }
+
+      // For admin users, ensure they have all admin permissions
+      if (role === 'admin') {
+        permissions = [...new Set([...permissions, ...DefaultPermissions.admin])];
+        console.log('[AUTH] Ensured admin has all admin permissions');
       }
 
       // Additional admin verification for development

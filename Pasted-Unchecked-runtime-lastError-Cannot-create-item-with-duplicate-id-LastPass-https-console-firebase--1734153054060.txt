@@ -1,0 +1,113 @@
+Unchecked runtime.lastError: Cannot create item with duplicate id LastPass https://console.firebase.google.com/project/replit-5ac6a/firestore/databases/-default-/data/~2Fappointments~2F8JBf6Gt0HJcpNCggdz2jUnderstand this errorAI
+Unchecked runtime.lastError: Cannot create item with duplicate id separator https://console.firebase.google.com/project/replit-5ac6a/firestore/databases/-default-/data/~2Fappointments~2F8JBf6Gt0HJcpNCggdz2jUnderstand this errorAI
+Unchecked runtime.lastError: Cannot create item with duplicate id Add Item https://console.firebase.google.com/project/replit-5ac6a/firestore/databases/-default-/data/~2Fappointments~2F8JBf6Gt0HJcpNCggdz2jUnderstand this errorAI
+Unchecked runtime.lastError: Cannot create item with duplicate id Add Password https://console.firebase.google.com/project/replit-5ac6a/firestore/databases/-default-/data/~2Fappointments~2F8JBf6Gt0HJcpNCggdz2jUnderstand this errorAI
+Unchecked runtime.lastError: Cannot create item with duplicate id Add Address https://console.firebase.google.com/project/replit-5ac6a/firestore/databases/-default-/data/~2Fappointments~2F8JBf6Gt0HJcpNCggdz2jUnderstand this errorAI
+Unchecked runtime.lastError: Cannot create item with duplicate id Add Payment Card https://console.firebase.google.com/project/replit-5ac6a/firestore/databases/-default-/data/~2Fappointments~2F8JBf6Gt0HJcpNCggdz2jUnderstand this errorAI
+Unchecked runtime.lastError: Cannot create item with duplicate id Add other item https://console.firebase.google.com/project/replit-5ac6a/firestore/databases/-default-/data/~2Fappointments~2F8JBf6Gt0HJcpNCggdz2jUnderstand this errorAI
+Unchecked runtime.lastError: Cannot create item with duplicate id Save all entered data https://console.firebase.google.com/project/replit-5ac6a/firestore/databases/-default-/data/~2Fappointments~2F8JBf6Gt0HJcpNCggdz2jUnderstand this errorAI
+Unchecked runtime.lastError: Cannot create item with duplicate id Generate Secure Password https://console.firebase.google.com/project/replit-5ac6a/firestore/databases/-default-/data/~2Fappointments~2F8JBf6Gt0HJcpNCggdz2jUnderstand this errorAI
+:3000/api/stats:1 
+        
+        
+       Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this errorAI
+:3000/api/stats:1 
+        
+        
+       Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this errorAI
+:3000/api/roles:1 
+        
+        
+       Failed to load resource: the server responded with a status of 403 (Forbidden)Understand this errorAI
+use-roles.ts:69 [ROLES] Error in fetchRoles: Error: Failed to fetch roles: {"message":"This feature is restricted to administrators only","code":"ADMIN_ONLY","currentRole":"staff"}
+    at makeRequest (use-roles.ts:50:15)
+    at async fetchRoles (use-roles.ts:59:14)
+fetchRoles @ use-roles.ts:69Understand this errorAI
+:3000/api/firebase-users?:1 
+        
+        
+       Failed to load resource: the server responded with a status of 403 (Forbidden)Understand this errorAI
+use-roles.ts:118 [FIREBASE-USERS] Error: Error: Failed to fetch users: {"message":"Access denied. Required roles: admin","code":"INSUFFICIENT_ROLE","requiredRoles":["admin"],"currentRole":"staff"}
+    at makeRequest (use-roles.ts:101:15)
+    at async fetchFirebaseUsers (use-roles.ts:108:14)
+    at async fetchPage (@tanstack_react-query.js?v=c0340ee9:1498:24)
+    at async Object.fetchFn [as fn] (@tanstack_react-query.js?v=c0340ee9:1524:22)
+fetchFirebaseUsers @ use-roles.ts:118Understand this errorAI
+:3000/api/roles:1 
+        
+        
+       Failed to load resource: the server responded with a status of 403 (Forbidden)Understand this errorAI
+:3000/api/firebase-users?:1 
+        
+        
+       Failed to load resource: the server responded with a status of 403 (Forbidden)Understand this errorAI
+use-roles.ts:69 [ROLES] Error in fetchRoles: Error: Failed to fetch roles: {"message":"This feature is restricted to administrators only","code":"ADMIN_ONLY","currentRole":"staff"}
+    at makeRequest (use-roles.ts:50:15)
+    at async fetchRoles (use-roles.ts:59:14)
+fetchRoles @ use-roles.ts:69Understand this errorAI
+use-roles.ts:118 [FIREBASE-USERS] Error: Error: Failed to fetch users: {"message":"Access denied. Required roles: admin","code":"INSUFFICIENT_ROLE","requiredRoles":["admin"],"currentRole":"staff"}
+    at makeRequest (use-roles.ts:101:15)
+    at async fetchFirebaseUsers (use-roles.ts:108:14)
+    at async fetchPage (@tanstack_react-query.js?v=c0340ee9:1498:24)
+    at async Object.fetchFn [as fn] (@tanstack_react-query.js?v=c0340ee9:1524:22)
+fetchFirebaseUsers @ use-roles.ts:118Understand this errorAI
+:3000/api/roles:1 
+        
+        
+       Failed to load resource: the server responded with a status of 403 (Forbidden)Understand this errorAI
+:3000/api/firebase-users?:1 
+        
+        
+       Failed to load resource: the server responded with a status of 403 (Forbidden)Understand this errorAI
+use-roles.ts:69 [ROLES] Error in fetchRoles: Error: Failed to fetch roles: {"message":"This feature is restricted to administrators only","code":"ADMIN_ONLY","currentRole":"staff"}
+    at makeRequest (use-roles.ts:50:15)
+    at async fetchRoles (use-roles.ts:59:14)
+fetchRoles @ use-roles.ts:69Understand this errorAI
+use-roles.ts:118 [FIREBASE-USERS] Error: Error: Failed to fetch users: {"message":"Access denied. Required roles: admin","code":"INSUFFICIENT_ROLE","requiredRoles":["admin"],"currentRole":"staff"}
+    at makeRequest (use-roles.ts:101:15)
+    at async fetchFirebaseUsers (use-roles.ts:108:14)
+    at async fetchPage (@tanstack_react-query.js?v=c0340ee9:1498:24)
+    at async Object.fetchFn [as fn] (@tanstack_react-query.js?v=c0340ee9:1524:22)
+fetchFirebaseUsers @ use-roles.ts:118Understand this errorAI
+use-roles.ts:92 
+        
+        
+       GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/firebase-users? 403 (Forbidden)
+makeRequest @ use-roles.ts:92
+fetchFirebaseUsers @ use-roles.ts:108
+await in fetchFirebaseUsers
+queryFn @ use-roles.ts:227
+fetchPage @ @tanstack_react-query.js?v=c0340ee9:1498
+fetchFn @ @tanstack_react-query.js?v=c0340ee9:1524
+run @ @tanstack_react-query.js?v=c0340ee9:493
+(anonymous) @ @tanstack_react-query.js?v=c0340ee9:518Understand this errorAI
+use-roles.ts:40 
+        
+        
+       GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/roles 403 (Forbidden)
+makeRequest @ use-roles.ts:40
+fetchRoles @ use-roles.ts:59
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=c0340ee9:839
+run @ @tanstack_react-query.js?v=c0340ee9:493
+(anonymous) @ @tanstack_react-query.js?v=c0340ee9:518Understand this errorAI
+use-roles.ts:69 [ROLES] Error in fetchRoles: Error: Failed to fetch roles: {"message":"This feature is restricted to administrators only","code":"ADMIN_ONLY","currentRole":"staff"}
+    at makeRequest (use-roles.ts:50:15)
+    at async fetchRoles (use-roles.ts:59:14)
+fetchRoles @ use-roles.ts:69
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=c0340ee9:839
+run @ @tanstack_react-query.js?v=c0340ee9:493
+(anonymous) @ @tanstack_react-query.js?v=c0340ee9:518Understand this errorAI
+use-roles.ts:118 [FIREBASE-USERS] Error: Error: Failed to fetch users: {"message":"Access denied. Required roles: admin","code":"INSUFFICIENT_ROLE","requiredRoles":["admin"],"currentRole":"staff"}
+    at makeRequest (use-roles.ts:101:15)
+    at async fetchFirebaseUsers (use-roles.ts:108:14)
+    at async fetchPage (@tanstack_react-query.js?v=c0340ee9:1498:24)
+    at async Object.fetchFn [as fn] (@tanstack_react-query.js?v=c0340ee9:1524:22)
+fetchFirebaseUsers @ use-roles.ts:118
+await in fetchFirebaseUsers
+queryFn @ use-roles.ts:227
+fetchPage @ @tanstack_react-query.js?v=c0340ee9:1498
+fetchFn @ @tanstack_react-query.js?v=c0340ee9:1524
+run @ @tanstack_react-query.js?v=c0340ee9:493
+(anonymous) @ @tanstack_react-query.js?v=c0340ee9:518Understand this errorAI
