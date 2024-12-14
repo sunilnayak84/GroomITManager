@@ -174,7 +174,7 @@ export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
   
   async function cleanupExistingInstances() {
     console.log('[FIREBASE] Cleaning up existing Firebase instances...');
-    const existingApps = admin.apps.filter((app): app is admin.app.App => app !== null);
+    const existingApps = admin.apps?.filter((app): app is admin.app.App => app !== null) || [];
     if (existingApps.length > 0) {
       console.log(`[FIREBASE] Found ${existingApps.length} existing Firebase instances to clean up`);
       try {
