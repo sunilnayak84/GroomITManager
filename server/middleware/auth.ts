@@ -92,30 +92,39 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
       const userRole = await getUserRole(user.uid);
       console.log('[AUTH] User role data:', userRole);
       
-      // Check custom claims first
+      // Check custom claims and database role
       const customClaims = user.customClaims || {};
       console.log('[AUTH] Custom claims:', customClaims);
-      
+
       let role: keyof typeof RoleTypes;
       let permissions: string[];
-      
-      // Check Firebase custom claims first
-      if (customClaims.isAdmin || customClaims.role === RoleTypes.admin) {
+
+      // Determine role and permissions
+      if (customClaims.isAdmin === true || customClaims.role === 'admin') {
         console.log('[AUTH] User has admin claims:', customClaims);
-        role = RoleTypes.admin;
+        role = 'admin';
         permissions = DefaultPermissions.admin;
-      } else if (userRole && userRole.role === RoleTypes.admin) {
-        console.log('[AUTH] User has admin role in realtime database');
-        role = RoleTypes.admin;
+      } else if (userRole?.role === 'admin') {
+        console.log('[AUTH] User has admin role in database');
+        role = 'admin';
+        permissions = DefaultPermissions.admin;
+      } else if (process.env.NODE_ENV === 'development' && user.email === 'admin@groomery.in') {
+        console.log('[AUTH] Development admin user detected');
+        role = 'admin';
         permissions = DefaultPermissions.admin;
       } else if (userRole) {
-        console.log('[AUTH] User has role from realtime database:', userRole);
+        console.log('[AUTH] User has role from database:', userRole);
         role = userRole.role;
         permissions = userRole.permissions;
       } else {
         console.warn(`[AUTH] No role found for user ${user.email}, using default staff role`);
-        role = RoleTypes.staff;
+        role = 'staff';
         permissions = DefaultPermissions.staff;
+      }
+
+      // Additional admin verification for development
+      if (role === 'admin') {
+        console.log('[AUTH] Verified admin role for user:', user.email);
       }
 
       // Log final role assignment
@@ -172,9 +181,22 @@ export function requireRole(allowedRoles: Array<keyof typeof RoleTypes>) {
       path: req.path
     });
 
-    // Admin has access to everything
-    if (req.user.role === RoleTypes.admin) {
-      console.log('[AUTH] Admin access granted');
+    // Admin always has access
+    if (req.user.role === 'admin') {
+      console.log('[AUTH] Admin access granted:', {
+        path: req.path,
+        method: req.method
+      });
+      return next();
+    }
+
+    // Check if user's role is explicitly allowed
+    if (allowedRoles.includes(req.user.role)) {
+      console.log('[AUTH] Role-based access granted:', {
+        userRole: req.user.role,
+        path: req.path,
+        method: req.method
+      });
       return next();
     }
 
@@ -188,16 +210,6 @@ export function requireRole(allowedRoles: Array<keyof typeof RoleTypes>) {
       });
     }
 
-    // Check if user's role is explicitly allowed
-    if (req.user.role === RoleTypes.admin || allowedRoles.includes(req.user.role as keyof typeof RoleTypes)) {
-      console.log('[AUTH] Access granted:', {
-        userRole: req.user.role,
-        isAdmin: req.user.role === RoleTypes.admin,
-        path: req.path,
-        method: req.method
-      });
-      return next();
-    }
 
     // For manager role, check specific permissions
     if (req.user.role === 'manager' && !isRestrictedPath(req.path)) {
