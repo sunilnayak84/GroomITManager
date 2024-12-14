@@ -49,8 +49,9 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
         dialog: {
+          DEFAULT: "hsl(var(--dialog-background))",
+          foreground: "hsl(var(--foreground))",
           overlay: "hsl(var(--dialog-overlay))",
-          background: "hsl(var(--background-solid))",
         },
         sidebar: {
           DEFAULT: "hsl(262.1 83.3% 57.8%)",
@@ -71,11 +72,14 @@ export default {
         }
       },
       borderRadius: {
-        lg: "12px",
-        md: "8px",
-        sm: "6px",
-        xl: "16px",
-        "2xl": "20px",
+        lg: "var(--radius-lg)",
+        md: "var(--radius-md)",
+        sm: "var(--radius-sm)",
+        xl: "var(--radius-xl)",
+        "2xl": "var(--radius-2xl)",
+      },
+      border: {
+        DEFAULT: "hsl(var(--border))",
       },
       fontFamily: {
         sans: ["Inter", ...fontFamily.sans],

@@ -21,14 +21,19 @@
     "border": "240 5.9% 90%",
     "input": "240 5.9% 90%",
     "ring": "262.1 83.3% 57.8%",
-    "dialog-overlay": "0 0% 0% / 50%",
+    "dialog": {
+      "overlay": "0 0% 0% / 50%",
+      "background": "0 0% 100%"
+    },
+    "dialog-foreground": "240 10% 3.9%",
     "background-solid": "0 0% 100%"
   },
-  "radius": {
-    "lg": "0.75rem",
-    "md": "0.5rem",
-    "sm": "0.25rem",
-    "xl": "1rem"
+  "borderRadius": {
+    "lg": "12px",
+    "md": "8px",
+    "sm": "6px",
+    "xl": "16px",
+    "2xl": "20px"
   },
   "font": {
     "sans": "Inter"
