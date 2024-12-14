@@ -278,17 +278,6 @@ async function setupDevelopmentAdmin(app: admin.app.App) {
     try {
       adminUser = await auth.getUserByEmail(adminEmail);
       console.log('🟢 Found existing admin user:', adminUser.uid);
-      
-      // Force update custom claims for existing admin
-      const customClaims = {
-        role: 'admin',
-        permissions: DefaultPermissions.admin,
-        isAdmin: true,
-        updatedAt: Date.now()
-      };
-      await auth.setCustomUserClaims(adminUser.uid, customClaims);
-      console.log('🟢 Updated admin custom claims:', customClaims);
-      
     } catch {
       console.log('🟢 Creating new admin user...');
       adminUser = await auth.createUser({
@@ -313,7 +302,7 @@ async function setupDevelopmentAdmin(app: admin.app.App) {
     });
     console.log('🟢 Ensured admin role exists in role-definitions');
 
-    // Set admin role for the user
+    // Set admin role for the user in roles collection
     const userRoleRef = db.ref(`roles/${adminUser.uid}`);
     const adminRoleData = {
       role: RoleTypes.admin,
@@ -325,6 +314,10 @@ async function setupDevelopmentAdmin(app: admin.app.App) {
     await userRoleRef.set(adminRoleData);
     console.log('🟢 Set admin role in roles collection');
 
+    // Force revoke existing tokens
+    await auth.revokeRefreshTokens(adminUser.uid);
+    console.log('🟢 Revoked existing tokens');
+
     // Set custom claims with full admin privileges
     const customClaims = {
       role: RoleTypes.admin,
@@ -335,13 +328,26 @@ async function setupDevelopmentAdmin(app: admin.app.App) {
     await auth.setCustomUserClaims(adminUser.uid, customClaims);
     console.log('🟢 Set admin custom claims:', customClaims);
 
-    // Verify the setup
+    // Double verify the setup
     const updatedUser = await auth.getUser(adminUser.uid);
     if (!updatedUser.customClaims?.isAdmin) {
       throw new Error('Failed to verify admin privileges');
     }
 
-    console.log('🟢 Development admin setup complete and verified');
+    // Verify role in realtime database
+    const roleSnapshot = await userRoleRef.once('value');
+    const roleData = roleSnapshot.val();
+    if (!roleData || roleData.role !== RoleTypes.admin) {
+      throw new Error('Failed to verify admin role in database');
+    }
+
+    console.log('🟢 Development admin setup complete and verified:', {
+      uid: adminUser.uid,
+      email: adminUser.email,
+      customClaims: updatedUser.customClaims,
+      roleData
+    });
+    
     return adminUser;
   } catch (error) {
     console.error('🔴 Development admin setup failed:', error);
