@@ -226,6 +226,7 @@ export async function getFirebaseAdmin() {
 async function initializeRoles(app: admin.app.App) {
   const db = getDatabase(app);
   const rolesRef = db.ref('role-definitions');
+  const roleHistoryRef = db.ref('role-history');
   
   try {
     console.log('[ROLES] Starting role initialization...');
@@ -235,13 +236,28 @@ async function initializeRoles(app: admin.app.App) {
     const currentRoles = snapshot.val() || {};
     const updates: Record<string, Role> = {};
     const timestamp = Date.now();
+    const historyUpdates: Record<string, any> = {};
 
     // Initialize system roles
     for (const [roleName, roleConfig] of Object.entries(InitialRoleConfigs)) {
+      const isNewRole = !currentRoles[roleName];
       updates[roleName] = {
         ...roleConfig,
-        updatedAt: timestamp
+        isSystem: true,
+        updatedAt: timestamp,
+        createdAt: isNewRole ? timestamp : (currentRoles[roleName]?.createdAt || timestamp)
       };
+
+      // Log system role initialization
+      if (isNewRole) {
+        historyUpdates[`${roleName}/${timestamp}`] = {
+          action: 'initialized',
+          roleType: 'system',
+          permissions: roleConfig.permissions,
+          timestamp,
+          performedBy: 'system'
+        };
+      }
     }
 
     // Preserve custom roles
@@ -249,15 +265,26 @@ async function initializeRoles(app: admin.app.App) {
       if (!InitialRoleConfigs[roleName as keyof typeof InitialRoleConfigs]) {
         updates[roleName] = {
           ...(roleData as Role),
+          isSystem: false,
           updatedAt: timestamp
         };
       }
     }
 
-    // Apply updates
-    await rolesRef.set(updates);
-    console.log('[ROLES] Successfully initialized/updated roles');
-    return updates;
+    // Apply updates atomically
+    const allUpdates = {
+      'role-definitions': updates,
+      'role-history': historyUpdates
+    };
+
+    await db.ref().update(allUpdates);
+    console.log('[ROLES] Successfully initialized/updated roles with history');
+    
+    // Return both roles and history updates
+    return {
+      roles: updates,
+      history: historyUpdates
+    };
   } catch (error) {
     console.error('[ROLES] Error initializing roles:', error);
     throw error;
@@ -510,7 +537,7 @@ export async function getUserRole(uid: string) {
 }
 
 // Update user role
-export async function updateUserRole(uid: string, roleType: keyof typeof RoleTypes) {
+export async function updateUserRole(uid: string, roleType: string, updatedBy: string) {
   const app = await getFirebaseAdmin();
   if (!app) {
     throw new Error('Firebase Admin not initialized');
@@ -521,25 +548,166 @@ export async function updateUserRole(uid: string, roleType: keyof typeof RoleTyp
     const auth = app.auth();
     const timestamp = Date.now();
 
+    // Get user details
+    const userRecord = await auth.getUser(uid);
+    const email = userRecord.email || '';
+
+    // Get role definition
+    const roleSnapshot = await db.ref(`role-definitions/${roleType}`).once('value');
+    const roleDefinition = roleSnapshot.val();
+
+    if (!roleDefinition) {
+      throw new Error(`Role ${roleType} not found`);
+    }
+
+    // Prevent non-admins from being assigned admin role
+    if (roleType === RoleTypes.admin && !email.endsWith('@groomery.in')) {
+      throw new Error('Admin role can only be assigned to company email addresses');
+    }
+
+    // Get current role for history
+    const currentRoleSnapshot = await db.ref(`roles/${uid}`).once('value');
+    const currentRole = currentRoleSnapshot.val();
+
     const roleData = {
+      uid,
+      email,
       role: roleType,
-      permissions: DefaultPermissions[roleType],
+      permissions: roleDefinition.permissions,
       updatedAt: timestamp,
+      updatedBy,
+      displayName: userRecord.displayName || email.split('@')[0],
       ...(roleType === RoleTypes.admin && { isAdmin: true })
     };
 
-    await db.ref(`roles/${uid}`).set(roleData);
-    await auth.setCustomUserClaims(uid, roleData);
+    // Create history entry
+    const historyEntry = {
+      uid,
+      email,
+      previousRole: currentRole?.role || 'none',
+      newRole: roleType,
+      previousPermissions: currentRole?.permissions || [],
+      newPermissions: roleDefinition.permissions,
+      timestamp,
+      performedBy: updatedBy
+    };
+
+    // Prepare atomic updates
+    const updates: Record<string, any> = {
+      [`roles/${uid}`]: roleData,
+      [`role-assignments/${uid}`]: {
+        ...roleData,
+        assignedAt: currentRole?.assignedAt || timestamp,
+        lastUpdated: timestamp
+      },
+      [`role-history/${uid}/${timestamp}`]: historyEntry
+    };
+// Create custom role
+export async function createCustomRole(
+  name: string,
+  permissions: Permission[],
+  description: string,
+  createdBy: string
+) {
+  console.log('[ROLE-CREATE] Starting custom role creation:', { name, permissions });
+  
+  const app = await getFirebaseAdmin();
+  if (!app) {
+    throw new Error('Firebase Admin not initialized');
+  }
+
+  try {
+    const db = getDatabase(app);
+    const timestamp = Date.now();
+
+    // Validate role name format
+    if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
+      throw new Error('Role name can only contain letters, numbers, underscores, and hyphens');
+    }
+
+    // Check if role already exists
+    const roleRef = db.ref(`role-definitions/${name}`);
+    const snapshot = await roleRef.once('value');
+    
+    if (snapshot.exists()) {
+      throw new Error(`Role ${name} already exists`);
+    }
+
+    // Prevent creating system roles
+    if (name in RoleTypes) {
+      throw new Error('Cannot create system roles');
+    }
+
+    // Validate permissions
+    const validatedPermissions = validatePermissions(permissions);
+    if (validatedPermissions.length !== permissions.length) {
+      const invalidPerms = permissions.filter(p => !isValidPermission(p));
+      throw new Error(`Invalid permissions: ${invalidPerms.join(', ')}`);
+    }
+
+    const roleData: Role = {
+      name,
+      permissions: validatedPermissions,
+      description,
+      isSystem: false,
+      createdAt: timestamp,
+      updatedAt: timestamp
+    };
+
+    // Create atomic updates
+    const updates = {
+      [`role-definitions/${name}`]: roleData,
+      [`role-history/${name}/${timestamp}`]: {
+        action: 'created',
+        roleType: 'custom',
+        permissions: validatedPermissions,
+        description,
+        timestamp,
+        createdBy
+      }
+    };
+
+    // Apply updates atomically
+    await db.ref().update(updates);
+
+    console.log(`[ROLE-CREATE] Successfully created custom role: ${name}`);
+    return roleData;
+  } catch (error) {
+    console.error('[ROLE-CREATE] Error:', error);
+    throw error instanceof Error 
+      ? error 
+      : new Error('Failed to create custom role');
+  }
+}
+
+    // Apply updates atomically
+    await db.ref().update(updates);
+
+    // Update Firebase Auth custom claims
+    await auth.setCustomUserClaims(uid, {
+      role: roleType,
+      permissions: roleDefinition.permissions,
+      updatedAt: timestamp
+    });
+
+    // Force token refresh
+    await auth.revokeRefreshTokens(uid);
+
+    console.log(`[ROLE-UPDATE] Successfully updated role for user ${email} to ${roleType}`);
 
     return {
+      uid,
+      email,
       role: roleType,
-      permissions: DefaultPermissions[roleType],
+      permissions: roleDefinition.permissions,
       timestamp,
       success: true
     };
   } catch (error) {
     console.error('[ROLE-UPDATE] Error:', error);
-    throw error;
+    throw error instanceof Error 
+      ? error 
+      : new Error('Failed to update user role');
   }
 }
 

@@ -64,21 +64,6 @@ export function registerRoutes(app: Express) {
       const roleDefinitions = await getRoleDefinitions();
       console.log('[ROLES] Retrieved role definitions:', roleDefinitions);
       
-      if (!roleDefinitions) {
-        console.error('[ROLES] No role definitions found');
-        // Instead of error, return initial configs
-        const initialRoles = Object.entries(InitialRoleConfigs).map(([name, config]) => ({
-          name,
-          permissions: config.permissions,
-          isSystem: true,
-          description: '',
-          createdAt: Date.now(),
-          updatedAt: Date.now()
-        }));
-        console.log('[ROLES] Returning initial roles:', initialRoles);
-        return res.json(initialRoles);
-      }
-      
       // Transform role definitions into the expected format
       const roles = Object.entries(roleDefinitions).map(([name, role]: [string, any]) => ({
         name,
@@ -87,22 +72,9 @@ export function registerRoutes(app: Express) {
         isSystem: role.isSystem || name in InitialRoleConfigs,
         description: role.description || '',
         createdAt: role.createdAt || Date.now(),
-        updatedAt: role.updatedAt || Date.now()
+        updatedAt: role.updatedAt || Date.now(),
+        canEdit: !(role.isSystem || name in InitialRoleConfigs) // Only custom roles can be edited
       }));
-      
-      // Ensure all system roles exist
-      Object.entries(InitialRoleConfigs).forEach(([name, config]) => {
-        if (!roles.find(r => r.name === name)) {
-          roles.push({
-            name,
-            permissions: config.permissions,
-            isSystem: true,
-            description: '',
-            createdAt: Date.now(),
-            updatedAt: Date.now()
-          });
-        }
-      });
       
       console.log('[ROLES] Successfully fetched roles:', roles.map(r => r.name));
       res.json(roles);

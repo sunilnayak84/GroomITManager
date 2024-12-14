@@ -5,51 +5,155 @@ import * as dotenv from 'dotenv';
 // Load environment variables
 dotenv.config();
 
-const adminUid = 'MjQnuZnthzUIh2huoDpqCSMMvxe2';
-const adminEmail = 'admin@groomery.in';
+// Get admin credentials from environment variables
+const adminUid = process.env.ADMIN_UID || 'MjQnuZnthzUIh2huoDpqCSMMvxe2';
+const adminEmail = process.env.ADMIN_EMAIL || 'admin@groomery.in';
+
+// Function to get Firebase configuration
+function getFirebaseConfig() {
+  console.log('Fetching Firebase configuration...');
+  
+  const projectId = process.env.FIREBASE_PROJECT_ID;
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+  let privateKey = process.env.FIREBASE_PRIVATE_KEY;
+
+  if (!projectId || !clientEmail || !privateKey) {
+    console.error('Missing Firebase configuration:', {
+      hasProjectId: !!projectId,
+      hasClientEmail: !!clientEmail,
+      hasPrivateKey: !!privateKey
+    });
+    throw new Error('Missing required Firebase configuration. Required: FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY');
+  }
+
+  // Format private key
+  try {
+    // Remove quotes and replace escaped newlines
+    privateKey = privateKey.replace(/\\n/g, '\n');
+    privateKey = privateKey.replace(/^["']|["']$/g, '');
+    
+    if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
+      privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----`;
+    }
+    
+    console.log('Private key formatted successfully');
+  } catch (error) {
+    console.error('Error formatting private key:', error);
+    throw new Error(`Failed to format private key: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+
+  const config = {
+    credential: admin.credential.cert({
+      projectId,
+      clientEmail,
+      privateKey
+    }),
+    databaseURL: `https://${projectId}-default-rtdb.firebaseio.com`
+  };
+
+  console.log('Firebase configuration prepared successfully');
+  return config;
+}
+
+// System roles that cannot be modified
+const SYSTEM_ROLES = ['admin', 'manager', 'staff', 'receptionist'];
 
 async function setupAdminRole() {
   console.log('Starting admin role setup...');
+  let app: admin.app.App | null = null;
   
   try {
-    // Get required environment variables
-    const projectId = process.env.FIREBASE_PROJECT_ID;
-    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-    const privateKey = process.env.FIREBASE_PRIVATE_KEY;
-    
-    if (!projectId || !clientEmail || !privateKey) {
-      throw new Error('Missing required Firebase environment variables');
+    // Check if Firebase Admin is already initialized
+    if (admin.apps.length) {
+      console.log('Firebase Admin already initialized, getting existing app');
+      app = admin.app();
+      return app;
     }
 
     console.log('Initializing Firebase Admin...');
+    const config = getFirebaseConfig();
     
     // Initialize Firebase Admin with credentials
-    const app = admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId,
-        clientEmail,
-        privateKey: privateKey.replace(/\\n/g, '\n')
-      }),
-      databaseURL: 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app/'
-    });
+    app = admin.initializeApp(config);
+
+    console.log('Firebase Admin initialized successfully');
+    
+    // Verify Firebase Admin initialization
+    try {
+      await app.auth().listUsers(1);
+      console.log('Firebase Admin authentication verified');
+    } catch (error) {
+      console.error('Failed to verify Firebase Admin initialization:', error);
+      throw new Error('Firebase Admin initialization verification failed');
+    }
 
     console.log('Firebase Admin initialized successfully');
     const db = getDatabase(app);
     const timestamp = Date.now();
   
-    // Data for role assignment
+    // Data for role definition (system roles)
+    const systemRoles = {
+      admin: {
+        name: 'admin',
+        permissions: [
+          'manage_appointments', 'view_appointments', 'create_appointments', 'cancel_appointments',
+          'manage_customers', 'view_customers', 'create_customers', 'edit_customer_info',
+          'manage_services', 'view_services', 'create_services', 'edit_services',
+          'manage_inventory', 'view_inventory', 'update_stock', 'manage_consumables',
+          'manage_staff_schedule', 'view_staff_schedule', 'manage_own_schedule',
+          'view_analytics', 'view_reports', 'view_financial_reports',
+          'manage_roles', 'assign_roles', 'create_roles', 'all'
+        ],
+        description: 'Full system access',
+        isSystem: true,
+        createdAt: timestamp,
+        updatedAt: timestamp
+      },
+      manager: {
+        name: 'manager',
+        permissions: [
+          'manage_appointments', 'view_appointments', 'create_appointments',
+          'manage_customers', 'view_customers', 'create_customers',
+          'manage_services', 'view_services',
+          'manage_inventory', 'view_inventory',
+          'view_analytics', 'view_reports'
+        ],
+        description: 'Branch management access',
+        isSystem: true,
+        createdAt: timestamp,
+        updatedAt: timestamp
+      },
+      staff: {
+        name: 'staff',
+        permissions: [
+          'view_appointments', 'view_customers',
+          'view_services', 'manage_own_schedule'
+        ],
+        description: 'Basic staff access',
+        isSystem: true,
+        createdAt: timestamp,
+        updatedAt: timestamp
+      },
+      receptionist: {
+        name: 'receptionist',
+        permissions: [
+          'view_appointments', 'create_appointments',
+          'view_customers', 'create_customers',
+          'view_services'
+        ],
+        description: 'Front desk operations',
+        isSystem: true,
+        createdAt: timestamp,
+        updatedAt: timestamp
+      }
+    };
+
+    // Data for admin user role assignment
     const roleData = {
       uid: adminUid,
       email: adminEmail,
       role: 'admin',
-      permissions: [
-        'manage_appointments', 'view_appointments', 'create_appointments', 'cancel_appointments',
-        'manage_customers', 'view_customers', 'create_customers', 'edit_customer_info',
-        'manage_services', 'view_services', 'create_services', 'edit_services',
-        'manage_inventory', 'view_inventory', 'update_stock', 'manage_consumables',
-        'manage_staff_schedule', 'view_staff_schedule', 'manage_own_schedule',
-        'view_analytics', 'view_reports', 'view_financial_reports', 'all'
-      ],
+      permissions: systemRoles.admin.permissions,
       isSystem: true,
       isAdmin: true,
       createdAt: timestamp,
@@ -75,9 +179,26 @@ async function setupAdminRole() {
       // Write role data with transaction to ensure atomicity
       const updates: { [key: string]: any } = {};
       
-      // Add role data
+      // Add system role definitions
+      updates['role-definitions'] = systemRoles;
+      
+      // Add admin user role assignment
       updates[`roles/${adminUid}`] = roleData;
       updates[`role-assignments/${adminUid}`] = assignmentData;
+      
+      // Add role change history
+      updates[`role-history/${adminUid}/${timestamp}`] = {
+        type: 'system_init',
+        role: 'admin',
+        timestamp,
+        changedBy: 'system',
+        previousRole: null,
+        newRole: 'admin',
+        metadata: {
+          isSystemInit: true,
+          adminEmail
+        }
+      };
       
       // Execute updates atomically
       await db.ref().update(updates);
