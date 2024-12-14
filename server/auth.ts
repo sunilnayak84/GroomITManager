@@ -1,9 +1,15 @@
 import { type Express } from "express";
-import admin from "firebase-admin";
+import { type Express } from "express";
+import * as admin from "firebase-admin";
 import { users } from "@db/schema";
 import { db } from "../db";
 import { eq } from "drizzle-orm";
-import { getFirebaseAdmin, getFirebaseAuth, getFirebaseDatabase } from "./firebase";
+import { 
+  initializeFirebaseAdmin,
+  RoleTypes,
+  DefaultPermissions,
+  Permission
+} from "./firebase";
 
 // Type for our Firebase auth user
 export interface FirebaseUser {
