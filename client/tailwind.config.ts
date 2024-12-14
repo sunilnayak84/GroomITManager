@@ -11,8 +11,16 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: {
+        DEFAULT: "1rem",
+        sm: "1.5rem",
+        lg: "2rem"
+      },
       screens: {
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1280px",
         "2xl": "1400px",
       },
     },
@@ -34,6 +42,14 @@ export default {
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
+        },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
@@ -57,35 +73,54 @@ export default {
           overlay: "hsl(var(--dialog-overlay))",
         },
         sidebar: {
-          DEFAULT: "hsl(262.1 83.3% 57.8%)",
-          foreground: "hsl(0 0% 100%)",
-          muted: "hsl(262.1 83.3% 45%)",
-          "muted-foreground": "hsl(0 0% 90%)",
-          accent: "hsl(262.1 83.3% 65%)",
-          "accent-foreground": "hsl(0 0% 100%)",
-          border: "hsl(262.1 83.3% 52%)",
-          ring: "hsl(0 0% 100%)",
-        },
-        chart: {
-          "1": "hsl(var(--chart-1))",
-          "2": "hsl(var(--chart-2))",
-          "3": "hsl(var(--chart-3))",
-          "4": "hsl(var(--chart-4))",
-          "5": "hsl(var(--chart-5))",
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+          muted: "hsl(var(--primary))",
+          "muted-foreground": "hsl(var(--primary-foreground))",
+          accent: "hsl(var(--accent))",
+          "accent-foreground": "hsl(var(--accent-foreground))",
+          border: "hsl(var(--primary))",
+          ring: "hsl(var(--primary-foreground))",
         }
       },
       borderRadius: {
-        lg: "var(--radius-lg)",
-        md: "var(--radius-md)",
         sm: "var(--radius-sm)",
+        md: "var(--radius-md)",
+        lg: "var(--radius-lg)",
         xl: "var(--radius-xl)",
         "2xl": "var(--radius-2xl)",
+        full: "9999px",
       },
-      border: {
-        DEFAULT: "hsl(var(--border))",
+      spacing: {
+        tight: "var(--spacing-tight)",
+        base: "var(--spacing-base)",
+        relaxed: "var(--spacing-relaxed)",
+        loose: "var(--spacing-loose)",
+      },
+      fontSize: {
+        xs: ["0.75rem", { lineHeight: "1rem" }],
+        sm: ["0.875rem", { lineHeight: "1.25rem" }],
+        base: ["1rem", { lineHeight: "1.5rem" }],
+        lg: ["1.125rem", { lineHeight: "1.75rem" }],
+        xl: ["1.25rem", { lineHeight: "1.75rem" }],
+        "2xl": ["1.5rem", { lineHeight: "2rem" }],
+        "3xl": ["1.875rem", { lineHeight: "2.25rem" }],
+        "4xl": ["2.25rem", { lineHeight: "2.5rem" }],
       },
       fontFamily: {
         sans: ["Inter", ...fontFamily.sans],
+      },
+      fontWeight: {
+        normal: "var(--font-weight-normal)",
+        medium: "var(--font-weight-medium)",
+        semibold: "var(--font-weight-semibold)",
+        bold: "var(--font-weight-bold)",
+      },
+      boxShadow: {
+        sm: "var(--shadow-sm)",
+        md: "var(--shadow-md)",
+        lg: "var(--shadow-lg)",
+        xl: "var(--shadow-xl)",
       },
       keyframes: {
         "accordion-down": {
@@ -106,6 +141,8 @@ export default {
   plugins: [
     tailwindcssAnimate,
     require("@tailwindcss/typography"),
-    require("@tailwindcss/forms"),
+    require("@tailwindcss/forms")({
+      strategy: 'class',
+    }),
   ],
 } satisfies Config;
