@@ -16,34 +16,44 @@ export default {
     },
     extend: {
       colors: {
+        border: "var(--color-border)",
+        input: "var(--color-input)",
+        ring: "var(--color-ring)",
         background: "var(--color-background)",
-        foreground: "var(--color-text)",
+        foreground: "var(--color-foreground)",
         primary: {
           DEFAULT: "var(--color-primary)",
-          foreground: "white",
+          foreground: "var(--color-primary-foreground)",
         },
         secondary: {
           DEFAULT: "var(--color-secondary)",
-          foreground: "var(--color-text)",
+          foreground: "var(--color-secondary-foreground)",
+        },
+        destructive: {
+          DEFAULT: "var(--color-destructive)",
+          foreground: "var(--color-destructive-foreground)",
+        },
+        muted: {
+          DEFAULT: "var(--color-muted)",
+          foreground: "var(--color-muted-foreground)",
         },
         accent: {
           DEFAULT: "var(--color-accent)",
-          foreground: "var(--color-text)",
+          foreground: "var(--color-accent-foreground)",
         },
-        muted: {
-          DEFAULT: "var(--color-border)",
-          foreground: "var(--color-text)",
+        popover: {
+          DEFAULT: "var(--color-popover)",
+          foreground: "var(--color-popover-foreground)",
         },
-        destructive: {
-          DEFAULT: "hsl(0 84.2% 60.2%)",
-          foreground: "white",
+        card: {
+          DEFAULT: "var(--color-card)",
+          foreground: "var(--color-card-foreground)",
         },
-        border: "var(--color-border)",
       },
       borderRadius: {
-        lg: "0.5rem",
-        md: "0.375rem",
-        sm: "0.25rem"
+        lg: "var(--radius-lg)",
+        md: "var(--radius-md)",
+        sm: "var(--radius-sm)",
       },
       keyframes: {
         "accordion-down": {
