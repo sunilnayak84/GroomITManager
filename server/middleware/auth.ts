@@ -99,11 +99,17 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
       let role: keyof typeof RoleTypes;
       let permissions: string[];
       
-      // Determine role and permissions with proper fallback
+      // Check Firebase custom claims first
       if (customClaims.isAdmin || customClaims.role === RoleTypes.admin) {
+        console.log('[AUTH] User has admin claims:', customClaims);
+        role = RoleTypes.admin;
+        permissions = DefaultPermissions.admin;
+      } else if (userRole && userRole.role === RoleTypes.admin) {
+        console.log('[AUTH] User has admin role in realtime database');
         role = RoleTypes.admin;
         permissions = DefaultPermissions.admin;
       } else if (userRole) {
+        console.log('[AUTH] User has role from realtime database:', userRole);
         role = userRole.role;
         permissions = userRole.permissions;
       } else {
@@ -111,6 +117,13 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
         role = RoleTypes.staff;
         permissions = DefaultPermissions.staff;
       }
+
+      // Log final role assignment
+      console.log('[AUTH] Final role assignment:', {
+        role,
+        permissionsCount: permissions.length,
+        isAdmin: role === RoleTypes.admin
+      });
       
       req.user = {
         uid: user.uid,
@@ -176,8 +189,13 @@ export function requireRole(allowedRoles: Array<keyof typeof RoleTypes>) {
     }
 
     // Check if user's role is explicitly allowed
-    if (allowedRoles.includes(req.user.role as keyof typeof RoleTypes)) {
-      console.log('[AUTH] Role explicitly allowed');
+    if (req.user.role === RoleTypes.admin || allowedRoles.includes(req.user.role as keyof typeof RoleTypes)) {
+      console.log('[AUTH] Access granted:', {
+        userRole: req.user.role,
+        isAdmin: req.user.role === RoleTypes.admin,
+        path: req.path,
+        method: req.method
+      });
       return next();
     }
 
