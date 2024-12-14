@@ -37,7 +37,6 @@ export const ALL_PERMISSIONS = [
   'view_financial_reports'
 ] as const;
 
-// Permission type derived from the const array
 export type Permission = typeof ALL_PERMISSIONS[number];
 
 // Default permissions for each role
@@ -66,17 +65,7 @@ export const DefaultPermissions: Record<RoleTypes, Permission[]> = {
   ]
 };
 
-// Role configuration interface
-export interface RoleConfig {
-  permissions: Permission[];
-  description: string;
-  isSystem: boolean;
-  createdAt: number;
-  updatedAt: number;
-}
-
-// Initial role configurations
-export const InitialRoleConfigs: Record<RoleTypes, RoleConfig> = {
+export const InitialRoleConfigs = {
   [RoleTypes.admin]: {
     permissions: ['all'],
     description: 'Full system access with all permissions',
@@ -107,7 +96,6 @@ export const InitialRoleConfigs: Record<RoleTypes, RoleConfig> = {
   }
 };
 
-// Firebase Admin initialization
 let firebaseApp: admin.app.App | null = null;
 
 export function getFirebaseAdmin(): admin.app.App {
@@ -117,183 +105,94 @@ export function getFirebaseAdmin(): admin.app.App {
   return firebaseApp;
 }
 
-export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
-  if (firebaseApp) {
-    console.log('[FIREBASE] Using existing Firebase Admin instance');
-    return firebaseApp;
+function formatPrivateKey(key: string): string {
+  // Remove any wrapping quotes
+  let formattedKey = key.replace(/['"]/g, '');
+  
+  // Replace literal \n with actual newlines if they exist
+  formattedKey = formattedKey.replace(/\\n/g, '\n');
+  
+  // Ensure proper PEM format
+  if (!formattedKey.includes('-----BEGIN PRIVATE KEY-----')) {
+    formattedKey = `-----BEGIN PRIVATE KEY-----\n${formattedKey}\n-----END PRIVATE KEY-----`;
   }
+  
+  return formattedKey;
+}
 
+export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
+  console.log('[FIREBASE] Starting Firebase Admin initialization...');
+  
   try {
-    console.log('[FIREBASE] Starting Firebase Admin initialization...');
+    // Return existing instance if available
+    if (firebaseApp) {
+      console.log('[FIREBASE] Using existing Firebase Admin instance');
+      return firebaseApp;
+    }
+
+    // Clean up any existing apps
+    const existingApps = admin.apps.filter((app): app is admin.app.App => app !== null);
+    await Promise.all(existingApps.map(app => app.delete()));
     
-    // Get environment variables with detailed logging
-    const projectId = process.env.FIREBASE_PROJECT_ID;
-    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-    let privateKey = process.env.FIREBASE_PRIVATE_KEY;
+    // Validate environment variables
+    const projectId = process.env.FIREBASE_PROJECT_ID?.trim();
+    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL?.trim();
+    const privateKey = process.env.FIREBASE_PRIVATE_KEY;
 
     console.log('[FIREBASE] Checking credentials...');
+    console.log('[FIREBASE] Project ID exists:', !!projectId);
+    console.log('[FIREBASE] Client Email exists:', !!clientEmail);
+    console.log('[FIREBASE] Private Key exists:', !!privateKey);
+
+    if (!projectId || !clientEmail || !privateKey) {
+      throw new Error('Missing required Firebase credentials. Check environment variables.');
+    }
+
+    // Format private key
+    const formattedKey = formatPrivateKey(privateKey);
     
-    // Enhanced credential validation
-    if (!projectId?.trim()) {
-      throw new Error('[FIREBASE] FIREBASE_PROJECT_ID is missing or empty');
-    }
-    if (!clientEmail?.trim()) {
-      throw new Error('[FIREBASE] FIREBASE_CLIENT_EMAIL is missing or empty');
-    }
-    if (!privateKey?.trim()) {
-      throw new Error('[FIREBASE] FIREBASE_PRIVATE_KEY is missing or empty');
-    }
-
-    console.log('[FIREBASE] Credentials validation passed');
-    console.log('[FIREBASE] Project ID:', projectId);
-    console.log('[FIREBASE] Client Email:', clientEmail);
-
-    // Format private key with improved error handling
-    try {
-      // Handle different private key formats
-      privateKey = privateKey.trim();
-      
-      // Remove enclosing quotes if present
-      if ((privateKey.startsWith('"') && privateKey.endsWith('"')) || 
-          (privateKey.startsWith("'") && privateKey.endsWith("'"))) {
-        privateKey = privateKey.slice(1, -1);
-      }
-      
-      // Replace escaped newlines with actual newlines
-      privateKey = privateKey.replace(/\\n/g, '\n');
-      
-      // Add key markers if missing
-      if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
-        privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----`;
-      }
-      
-      // Final validation of key format
-      if (!privateKey.includes('-----BEGIN PRIVATE KEY-----') || 
-          !privateKey.includes('-----END PRIVATE KEY-----')) {
-        throw new Error('[FIREBASE] Private key format validation failed');
-      }
-      
-      console.log('[FIREBASE] Private key formatted successfully');
-    } catch (error) {
-      console.error('[FIREBASE] Private key formatting error:', error instanceof Error ? error.message : 'Unknown error');
-      throw new Error('[FIREBASE] Failed to process private key - check the key format');
-    }
-
-    // Delete existing app instances with error handling
-    if (admin.apps.length) {
-      console.log('[FIREBASE] Found existing Firebase Admin apps, cleaning up...');
-      await Promise.all(admin.apps.map(app => app?.delete().catch(err => {
-        console.warn('[FIREBASE] Error deleting app:', err);
-      })));
-      console.log('[FIREBASE] Cleanup completed');
-    }
-
-    // Delete any existing Firebase Admin instances
-    if (admin.apps.length) {
-      console.log('[FIREBASE] Cleaning up existing Firebase Admin instances...');
-      await Promise.all(
-        admin.apps.map(app => 
-          app?.delete().catch(err => 
-            console.warn('[FIREBASE] Error during cleanup:', err instanceof Error ? err.message : 'Unknown error')
-          )
-        )
-      );
-    }
-
-    // Initialize Firebase Admin with enhanced configuration
-    console.log('[FIREBASE] Creating new Firebase Admin instance...');
-    
-    // Configure database URL based on region
-    const region = process.env.FIREBASE_REGION || 'asia-southeast1';
+    // Initialize app with credentials
+    console.log('[FIREBASE] Initializing Firebase Admin with project:', projectId);
+    const region = 'asia-southeast1';
     const databaseURL = `https://${projectId}-default-rtdb.${region}.firebasedatabase.app`;
-    console.log('[FIREBASE] Using database URL:', databaseURL);
 
-    // Initialize with retries
-    const MAX_RETRIES = 3;
-    let lastError: Error | null = null;
-    
-    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-      try {
-        console.log(`[FIREBASE] Initialization attempt ${attempt}/${MAX_RETRIES}`);
-        
-        // Create app instance
-        const app = admin.initializeApp({
-          credential: admin.credential.cert({
-            projectId,
-            clientEmail,
-            privateKey,
-          }),
-          databaseURL
-        }, `app-${Date.now()}`); // Unique name for each attempt
-        
-        // Verify services sequentially
-        console.log('[FIREBASE] Verifying Firebase Admin services...');
-        
-        // 1. Verify Auth Service
-        const auth = getAuth(app);
-        await auth.listUsers(1)
-          .then(() => console.log('[FIREBASE] Auth service verified'))
-          .catch(error => {
-            console.error('[FIREBASE] Auth verification failed:', error);
-            throw new Error('Auth service verification failed');
-          });
-        
-        // 2. Verify Database Service
-        const db = getDatabase(app);
-        await db.ref('.info/connected').once('value')
-          .then(() => console.log('[FIREBASE] Database service verified'))
-          .catch(error => {
-            console.error('[FIREBASE] Database verification failed:', error);
-            throw new Error('Database service verification failed');
-          });
-        
-        console.log('[FIREBASE] All Firebase Admin services initialized successfully');
-        firebaseApp = app;
-        return app;
-    } catch (error) {
-        lastError = error instanceof Error ? error : new Error('Unknown error during initialization');
-        console.error(`[FIREBASE] Attempt ${attempt} failed:`, lastError.message);
-        
-        // Cleanup failed attempt
-        try {
-          const apps = admin.apps.filter(app => app !== null);
-          await Promise.all(apps.map(app => app!.delete()));
-          console.log('[FIREBASE] Cleaned up failed initialization attempt');
-        } catch (cleanupError) {
-          console.warn('[FIREBASE] Cleanup warning:', cleanupError);
-        }
-        
-        if (attempt === MAX_RETRIES) {
-          console.error('[FIREBASE] All initialization attempts failed');
-          throw lastError;
-        }
-        
-        // Wait before retrying
-        const delay = attempt * 1000; // Incremental delay
-        console.log(`[FIREBASE] Waiting ${delay}ms before retry...`);
-        await new Promise(resolve => setTimeout(resolve, delay));
-      }
-    }
-    
-    throw new Error('[FIREBASE] Failed to initialize after all retry attempts');
-  } catch (error) {
-    console.error('[FIREBASE] Critical initialization error:', {
-      message: error instanceof Error ? error.message : 'Unknown error',
-      name: error instanceof Error ? error.name : 'UnknownError',
-      stack: error instanceof Error ? error.stack : undefined
+    firebaseApp = admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId,
+        clientEmail,
+        privateKey: formattedKey,
+      }),
+      databaseURL
     });
+
+    // Verify services
+    console.log('[FIREBASE] Verifying Firebase services...');
     
-    // Final cleanup
-    try {
-      const apps = admin.apps.filter(app => app !== null);
-      await Promise.all(apps.map(app => app!.delete()));
+    // Test Auth service
+    const auth = getAuth(firebaseApp);
+    await auth.listUsers(1);
+    console.log('[FIREBASE] Auth service verified');
+
+    // Test Database service
+    const db = getDatabase(firebaseApp);
+    await db.ref('.info/connected').once('value');
+    console.log('[FIREBASE] Database connection verified');
+
+    console.log('[FIREBASE] Firebase Admin initialized successfully');
+    return firebaseApp;
+
+  } catch (error) {
+    console.error('[FIREBASE] Initialization error:', error);
+    
+    // Clean up failed instance
+    if (firebaseApp) {
+      await firebaseApp.delete();
       firebaseApp = null;
-      console.log('[FIREBASE] Final cleanup completed');
-    } catch (cleanupError) {
-      console.error('[FIREBASE] Final cleanup failed:', cleanupError);
     }
     
-    throw error;
+    throw new Error(
+      `Firebase initialization failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
   }
 }
 
@@ -309,7 +208,7 @@ export function validatePermissions(permissions: unknown[]): Permission[] {
 
 // Role management functions
 export async function getUserRole(userId: string): Promise<{ role: RoleTypes; permissions: Permission[] }> {
-  const db = await getDatabase(await initializeFirebaseAdmin());
+  const db = getDatabase(getFirebaseAdmin());
   const snapshot = await db.ref(`roles/${userId}`).once('value');
   const roleData = snapshot.val();
   
@@ -331,26 +230,22 @@ export async function updateUserRole(
   role: RoleTypes,
   customPermissions?: Permission[]
 ): Promise<{ success: boolean; role: RoleTypes; permissions: Permission[] }> {
-  const app = await initializeFirebaseAdmin();
+  const app = getFirebaseAdmin();
   const db = getDatabase(app);
   const auth = getAuth(app);
   const timestamp = Date.now();
   
   try {
-    // Get user record to verify existence
     await auth.getUser(userId);
     
-    // Determine final permissions
     const permissions = customPermissions || DefaultPermissions[role];
     
-    // Update role in Firebase Realtime Database
     await db.ref(`roles/${userId}`).set({
       role,
       permissions,
       updatedAt: timestamp
     });
     
-    // Log the role change
     await db.ref(`role-history/${userId}`).push({
       role,
       permissions,
@@ -358,7 +253,6 @@ export async function updateUserRole(
       type: 'role_update'
     });
     
-    // Set custom claims
     await auth.setCustomUserClaims(userId, {
       role,
       permissions,
@@ -378,7 +272,7 @@ export async function updateUserRole(
 
 // User listing function
 export async function listAllUsers(pageToken?: string) {
-  const auth = getAuth(await initializeFirebaseAdmin());
+  const auth = getAuth(getFirebaseAdmin());
   const result = await auth.listUsers(100, pageToken);
   
   const users = await Promise.all(
@@ -402,7 +296,7 @@ export async function listAllUsers(pageToken?: string) {
 
 // Role definitions management
 export async function getRoleDefinitions() {
-  const db = getDatabase(await initializeFirebaseAdmin());
+  const db = getDatabase(getFirebaseAdmin());
   const snapshot = await db.ref('role-definitions').once('value');
   return snapshot.val() || InitialRoleConfigs;
 }
@@ -412,7 +306,7 @@ export async function updateRoleDefinition(
   permissions: Permission[],
   description?: string
 ) {
-  const db = getDatabase(await initializeFirebaseAdmin());
+  const db = getDatabase(getFirebaseAdmin());
   const timestamp = Date.now();
   
   const roleRef = db.ref(`role-definitions/${roleName}`);
@@ -437,8 +331,7 @@ export async function updateRoleDefinition(
   
   await roleRef.update(updatedRole);
   
-  // Log the update
-  await db.ref(`role-definitions/${roleName}/history`).push({
+  await roleRef.child('history').push({
     permissions,
     timestamp,
     type: 'definition_update'
