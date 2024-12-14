@@ -11,8 +11,11 @@
   "colors": {
     "background": "hsl(0 0% 100%)",
     "foreground": "hsl(222.2 47.4% 11.2%)",
-    "muted": "hsl(210 40% 96.1%)",
+    "muted": "hsl(210 40% 98%)",
     "mutedForeground": "hsl(215.4 16.3% 46.9%)",
+    "dialog": "hsl(0 0% 100%)",
+    "dialogForeground": "hsl(222.2 47.4% 11.2%)",
+    "dialogOverlay": "hsla(0 0% 0% / 0.8)",
     "border": "hsl(214.3 31.8% 91.4%)",
     "input": "hsl(214.3 31.8% 91.4%)",
     "primary": "hsl(262.1 83.3% 57.8%)",
