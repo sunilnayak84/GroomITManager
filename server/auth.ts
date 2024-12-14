@@ -20,6 +20,7 @@ export interface FirebaseUser {
   name: string;
   branchId?: number;
   permissions?: string[];
+  uid?: string; // Add uid for Firebase Auth compatibility
 }
 
 // Extend Express Request type to avoid recursive type reference

@@ -10,26 +10,61 @@ export const RoleTypes = {
 } as const;
 
 // Define role hierarchy (higher roles inherit permissions from lower roles)
-export const RoleHierarchy = {
+export const RoleHierarchy: Record<keyof typeof RoleTypes, Array<keyof typeof RoleTypes>> = {
   admin: ['manager', 'staff', 'receptionist'],
   manager: ['staff', 'receptionist'],
   staff: ['receptionist'],
   receptionist: []
-} as const;
+};
 
-// Helper function to get inherited roles
+// Define hierarchy levels for proper inheritance
+export const RoleHierarchyLevels: Record<keyof typeof RoleTypes, number> = {
+  admin: 3,
+  manager: 2,
+  staff: 1,
+  receptionist: 0
+};
+
+// Helper function to get inherited roles with proper type checking and hierarchy level validation
 export function getInheritedRoles(role: keyof typeof RoleTypes): Array<keyof typeof RoleTypes> {
-  const inheritedRoles = RoleHierarchy[role] || [];
-  const allInherited = [...inheritedRoles];
+  const currentLevel = RoleHierarchyLevels[role];
+  const allInherited = new Set<keyof typeof RoleTypes>();
   
-  // Recursively get inherited roles
-  inheritedRoles.forEach(inheritedRole => {
-    const deeperInherited = getInheritedRoles(inheritedRole as keyof typeof RoleTypes);
-    allInherited.push(...deeperInherited);
-  });
+  // Helper function for recursive role inheritance with level checking
+  function addInheritedRoles(currentRole: keyof typeof RoleTypes) {
+    const directInherited = RoleHierarchy[currentRole];
+    
+    directInherited.forEach(inheritedRole => {
+      if (inheritedRole in RoleTypes) {
+        const safeRole = inheritedRole as keyof typeof RoleTypes;
+        const inheritedLevel = RoleHierarchyLevels[safeRole];
+        
+        // Only inherit if the level is lower (prevents circular inheritance)
+        if (inheritedLevel < RoleHierarchyLevels[currentRole] && !allInherited.has(safeRole)) {
+          allInherited.add(safeRole);
+          // Recursively add inherited roles
+          addInheritedRoles(safeRole);
+        }
+      }
+    });
+  }
   
-  // Remove duplicates
-  return Array.from(new Set(allInherited));
+  // Start the recursion with the initial role
+  addInheritedRoles(role);
+  
+  // Sort inherited roles by hierarchy level (highest to lowest)
+  return Array.from(allInherited).sort((a, b) => RoleHierarchyLevels[b] - RoleHierarchyLevels[a]);
+}
+
+// Helper function to validate role hierarchy
+export function validateRoleHierarchy(role: keyof typeof RoleTypes): boolean {
+  const inheritedRoles = getInheritedRoles(role);
+  const currentLevel = RoleHierarchyLevels[role];
+  
+  // Ensure all inherited roles have lower levels
+  return inheritedRoles.every(inheritedRole => 
+    RoleHierarchyLevels[inheritedRole] < currentLevel
+  );
 }
 
 // Define all possible permissions
@@ -109,7 +144,7 @@ export const DefaultPermissions: Record<keyof typeof RoleTypes, Permission[]> = 
   ]
 };
 
-// Define role structure
+// Define role structure with hierarchy support
 export interface Role {
   name: string;
   permissions: Permission[];
@@ -117,7 +152,18 @@ export interface Role {
   description?: string;
   createdAt?: number;
   updatedAt?: number;
+  inheritsFrom?: Array<keyof typeof RoleTypes>;
+  level?: number; // Used for hierarchy level determination
+  customClaims?: Record<string, unknown>; // Additional Firebase custom claims
 }
+
+// Helper type for role validation
+export type ValidRole = {
+  name: keyof typeof RoleTypes;
+  permissions: Permission[];
+  inheritsFrom: Array<keyof typeof RoleTypes>;
+  level: number;
+};
 
 // Initialize Firebase Admin
 let firebaseApp: admin.app.App | null = null;
@@ -187,7 +233,7 @@ export async function getFirebaseAdmin() {
   return firebaseApp;
 }
 
-// Update user role with better error handling and validation
+// Update user role with hierarchy support and strict validation
 export async function updateUserRole(uid: string, roleType: keyof typeof RoleTypes): Promise<void> {
   console.log('[ROLE-UPDATE] Starting role update for user:', { uid, roleType });
   
@@ -205,13 +251,25 @@ export async function updateUserRole(uid: string, roleType: keyof typeof RoleTyp
       throw new Error(`Invalid role type: ${roleType}`);
     }
 
-    // Get default permissions for the role
-    const permissions = DefaultPermissions[roleType];
+    // Validate role hierarchy
+    if (!validateRoleHierarchy(roleType)) {
+      throw new Error(`Invalid role hierarchy for role: ${roleType}`);
+    }
+
+    // Get inherited roles
+    const inheritedRoles = getInheritedRoles(roleType);
+    
+    // Combine permissions from all inherited roles
+    const basePermissions = DefaultPermissions[roleType];
+    const inheritedPermissions = inheritedRoles.flatMap(role => DefaultPermissions[role]);
+    const allPermissions = Array.from(new Set([...basePermissions, ...inheritedPermissions]));
 
     // Special handling for admin role
     const roleData = {
       role: roleType,
-      permissions,
+      permissions: allPermissions,
+      inheritedRoles,
+      hierarchyLevel: RoleHierarchyLevels[roleType],
       updatedAt: timestamp,
       ...(roleType === RoleTypes.admin && { isAdmin: true })
     };
@@ -219,17 +277,25 @@ export async function updateUserRole(uid: string, roleType: keyof typeof RoleTyp
     // Update user's role and permissions
     await db.ref(`roles/${uid}`).update(roleData);
     
-    // Update custom claims
+    // Update custom claims with hierarchy information
     await app.auth().setCustomUserClaims(uid, {
       role: roleType,
-      permissions,
+      permissions: allPermissions,
+      inheritedRoles,
+      hierarchyLevel: RoleHierarchyLevels[roleType],
       updatedAt: timestamp
     });
 
-    console.log('[ROLE-UPDATE] Successfully updated role for user:', uid);
+    console.log('[ROLE-UPDATE] Successfully updated role for user:', uid, {
+      role: roleType,
+      inheritedRoles,
+      permissionCount: allPermissions.length
+    });
   } catch (error) {
     console.error('[ROLE-UPDATE] Error updating user role:', error);
-    throw error;
+    throw error instanceof Error 
+      ? new Error(`Failed to update user role: ${error.message}`)
+      : new Error('Failed to update user role: Unknown error');
   }
 }
 
@@ -720,20 +786,66 @@ export function getDefaultPermissions(role: keyof typeof RoleTypes): Permission[
   return DefaultPermissions[role];
 }
 
-// Get all permissions for a role including inherited ones
-export const getRolePermissions = (role: Role, roleDefs: Record<string, Role>): Permission[] => {
-  const directPermissions = role.permissions || [];
-  const inheritedRoles = role.inheritsFrom || [];
+// Get all permissions for a role including inherited ones with proper type safety
+export const getRolePermissions = (
+  role: Role,
+  roleDefs: Record<string, Role>
+): Permission[] => {
+  // Start with direct permissions
+  const permissions = new Set<Permission>(role.permissions);
   
-  // Get permissions from inherited roles
-  const inheritedPermissions = inheritedRoles.flatMap(inheritedRole => {
-    const inheritedRoleDef = roleDefs[inheritedRole];
-    return inheritedRoleDef ? inheritedRoleDef.permissions : [];
-  });
+  // If role has inherited roles, process them
+  if (role.inheritsFrom && Array.isArray(role.inheritsFrom)) {
+    role.inheritsFrom.forEach(inheritedRoleName => {
+      // Type guard to ensure inheritedRoleName is a valid role type
+      if (inheritedRoleName in RoleTypes) {
+        const inheritedRole = roleDefs[inheritedRoleName];
+        if (inheritedRole) {
+          // Recursively get permissions from inherited role
+          const inheritedPermissions = getRolePermissions(inheritedRole, roleDefs);
+          // Add each inherited permission to the set
+          inheritedPermissions.forEach(permission => {
+            if (isValidPermission(permission)) {
+              permissions.add(permission);
+            }
+          });
+        }
+      }
+    });
+  }
   
-  // Combine and deduplicate permissions
-  return Array.from(new Set([...directPermissions, ...inheritedPermissions]));
+  // Convert Set back to array and validate each permission
+  return Array.from(permissions).filter(isValidPermission);
 };
+
+// Helper function to calculate role level in hierarchy
+export function calculateRoleLevel(
+  roleName: keyof typeof RoleTypes,
+  visited = new Set<string>()
+): number {
+  // Prevent infinite recursion
+  if (visited.has(roleName)) {
+    return 0;
+  }
+  visited.add(roleName);
+  
+  const inheritedRoles = RoleHierarchy[roleName] || [];
+  if (inheritedRoles.length === 0) {
+    return 0;
+  }
+  
+  // Calculate max level of inherited roles
+  const maxInheritedLevel = Math.max(
+    ...inheritedRoles.map(inherited => {
+      if (inherited in RoleTypes) {
+        return calculateRoleLevel(inherited as keyof typeof RoleTypes, visited);
+      }
+      return 0;
+    })
+  );
+  
+  return maxInheritedLevel + 1;
+}
 
 // Setup development admin
 async function setupDevelopmentAdmin(app: admin.app.App) {
