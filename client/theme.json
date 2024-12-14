@@ -2,26 +2,51 @@
   "name": "groomit-modern",
   "type": "light",
   "colors": {
-    "background": "0 0% 100%",
-    "foreground": "224 71.4% 4.1%",
-    "primary": "267 75% 40%",
-    "primary-foreground": "0 0% 98%",
-    "secondary": "267 60% 35%",
-    "secondary-foreground": "0 0% 98%",
-    "muted": "267 10% 96%",
-    "muted-foreground": "267 30% 46%",
-    "accent": "267 59% 94%",
-    "accent-foreground": "267 75% 40%",
-    "destructive": "0 84.2% 60.2%",
-    "destructive-foreground": "0 0% 98%",
-    "success": "142.1 76.2% 36.3%",
-    "success-foreground": "0 0% 98%",
-    "warning": "38 92% 50%",
-    "warning-foreground": "0 0% 98%",
-    "card": "0 0% 100%",
-    "card-foreground": "224 71.4% 4.1%",
-    "popover": "0 0% 100%",
-    "popover-foreground": "224 71.4% 4.1%",
+    "background": {
+      "DEFAULT": "0 0% 100%",
+      "foreground": "224 71.4% 4.1%"
+    },
+    "primary": {
+      "DEFAULT": "267 75% 40%",
+      "foreground": "0 0% 98%"
+    },
+    "secondary": {
+      "DEFAULT": "267 60% 35%",
+      "foreground": "0 0% 98%"
+    },
+    "muted": {
+      "DEFAULT": "267 10% 96%",
+      "foreground": "267 30% 46%"
+    },
+    "accent": {
+      "DEFAULT": "267 59% 94%",
+      "foreground": "267 75% 40%"
+    },
+    "destructive": {
+      "DEFAULT": "0 84.2% 60.2%",
+      "foreground": "0 0% 98%"
+    },
+    "success": {
+      "DEFAULT": "142.1 76.2% 36.3%",
+      "foreground": "0 0% 98%"
+    },
+    "warning": {
+      "DEFAULT": "38 92% 50%",
+      "foreground": "0 0% 98%"
+    },
+    "card": {
+      "DEFAULT": "0 0% 100%",
+      "foreground": "224 71.4% 4.1%"
+    },
+    "popover": {
+      "DEFAULT": "0 0% 100%",
+      "foreground": "224 71.4% 4.1%"
+    },
+    "dialog": {
+      "DEFAULT": "0 0% 100%",
+      "foreground": "224 71.4% 4.1%",
+      "overlay": "0 0% 0% / 50%"
+    },
     "border": "220 13% 91%",
     "input": "220 13% 91%",
     "ring": "267 75% 40%"
