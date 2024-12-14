@@ -10,10 +10,6 @@
       "DEFAULT": "267 60% 35%",
       "foreground": "0 0% 100%"
     },
-    "accent": {
-      "DEFAULT": "267 59% 94%",
-      "foreground": "267 75% 40%"
-    },
     "background": {
       "DEFAULT": "0 0% 100%",
       "foreground": "240 10% 3.9%"
@@ -22,11 +18,15 @@
       "DEFAULT": "267 10% 96%",
       "foreground": "267 30% 46%"
     },
-    "card": {
+    "accent": {
+      "DEFAULT": "267 59% 94%",
+      "foreground": "267 75% 40%"
+    },
+    "popover": {
       "DEFAULT": "0 0% 100%",
       "foreground": "240 10% 3.9%"
     },
-    "popover": {
+    "card": {
       "DEFAULT": "0 0% 100%",
       "foreground": "240 10% 3.9%"
     },
