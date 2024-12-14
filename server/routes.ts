@@ -193,7 +193,7 @@ export function registerRoutes(app: Express) {
         previousPermissions: currentRole.permissions,
         newPermissions: finalPermissions,
         timestamp,
-        updatedBy: req.user?.id || 'unknown'
+        updatedBy: req.user?.uid || 'unknown'
       });
 
       // Update role definition
@@ -390,7 +390,7 @@ export function registerRoutes(app: Express) {
       }
 
       // Update user role with validated permissions
-      const result = await updateUserRole(userId, role);
+      const result = await updateUserRole(userId, role, validatedPermissions);
       
       console.log('[ROLE-UPDATE] Update successful:', result);
       
