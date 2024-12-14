@@ -266,7 +266,7 @@ export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
       };
       
       firebaseApp = admin.initializeApp({
-        credential: credential.cert({
+        credential: admin.credential.cert({
           projectId,
           clientEmail,
           privateKey: formattedKey
