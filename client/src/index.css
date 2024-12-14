@@ -1,52 +1,38 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  * {
-    @apply border-secondary-200;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
   html, body, #root {
-    @apply h-full w-full;
+    @apply h-full w-full m-0 p-0;
   }
 
   body {
-    @apply font-sans antialiased text-foreground bg-background;
-    font-family: 'Inter', sans-serif;
+    @apply bg-background text-foreground antialiased;
   }
 }
 
 @layer components {
-  .main-layout {
-    @apply min-h-screen w-full;
+  .modal-overlay {
+    @apply fixed inset-0 bg-[rgba(0,0,0,0.75)] backdrop-blur-sm;
   }
 
-  .content-container {
-    @apply w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8;
+  .modal-content {
+    @apply fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 
+           bg-white rounded-lg shadow-xl p-6 w-full max-w-lg
+           border border-gray-200;
   }
 
-  /* Dialog/Modal styles */
-  .dialog-overlay {
-    @apply fixed inset-0 bg-modal-overlay;
-  }
-
-  .dialog-content {
-    @apply fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-secondary-200 bg-modal-background p-6 shadow-lg duration-200 sm:rounded-lg;
-  }
-
-  /* Button styles */
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+    @apply px-4 py-2 bg-primary text-white rounded-md
+           hover:bg-primary-dark focus:outline-none focus:ring-2
+           focus:ring-primary focus:ring-offset-2 transition-colors;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-md bg-secondary-100 px-4 py-2 text-sm font-medium text-secondary-900 shadow-sm hover:bg-secondary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2;
+    @apply px-4 py-2 bg-secondary text-white rounded-md
+           hover:bg-secondary-dark focus:outline-none focus:ring-2
+           focus:ring-secondary focus:ring-offset-2 transition-colors;
   }
 }
