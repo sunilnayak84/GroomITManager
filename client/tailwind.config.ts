@@ -1,6 +1,7 @@
 import { type Config } from "tailwindcss";
 
 export default {
+  darkMode: 'class',
   content: [
     './index.html',
     './src/**/*.{ts,tsx}',
@@ -8,41 +9,47 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: 'hsl(0, 0%, 100%)',
-        foreground: 'hsl(222.2, 84%, 4.9%)',
+        background: {
+          DEFAULT: 'var(--background)',
+          darker: 'var(--background-darker)',
+        },
+        foreground: {
+          DEFAULT: 'var(--foreground)',
+          muted: 'var(--foreground-muted)',
+        },
         primary: {
-          DEFAULT: 'hsl(221.2, 83.2%, 53.3%)',
-          dark: 'hsl(221.2, 83.2%, 43.3%)',
-          light: 'hsl(221.2, 83.2%, 63.3%)',
-          foreground: 'hsl(210, 40%, 98%)'
+          DEFAULT: 'var(--primary)',
+          dark: 'var(--primary-dark)',
+          light: 'var(--primary-light)',
+          foreground: 'var(--primary-foreground)',
         },
         secondary: {
-          DEFAULT: 'hsl(210, 40%, 96.1%)',
-          dark: 'hsl(215, 20.2%, 65.1%)',
-          light: 'hsl(210, 40%, 98%)',
-          foreground: 'hsl(222.2, 47.4%, 11.2%)'
+          DEFAULT: 'var(--secondary)',
+          dark: 'var(--secondary-dark)',
+          light: 'var(--secondary-light)',
+          foreground: 'var(--secondary-foreground)',
         },
         accent: {
-          DEFAULT: 'hsl(262.1, 83.3%, 57.8%)',
-          dark: 'hsl(262.1, 83.3%, 47.8%)',
-          light: 'hsl(262.1, 83.3%, 67.8%)',
-          foreground: 'hsl(210, 40%, 98%)'
+          DEFAULT: 'var(--accent)',
+          dark: 'var(--accent-dark)',
+          light: 'var(--accent-light)',
+          foreground: 'var(--accent-foreground)',
         },
         muted: {
-          DEFAULT: 'hsl(210, 40%, 96.1%)',
-          foreground: 'hsl(215.4, 16.3%, 46.9%)'
+          DEFAULT: 'var(--muted)',
+          foreground: 'var(--muted-foreground)',
         },
         card: {
-          DEFAULT: 'hsl(0, 0%, 100%)',
-          foreground: 'hsl(222.2, 84%, 4.9%)'
+          DEFAULT: 'var(--card)',
+          foreground: 'var(--card-foreground)',
         },
         popover: {
-          DEFAULT: 'hsl(0, 0%, 100%)',
-          foreground: 'hsl(222.2, 84%, 4.9%)'
+          DEFAULT: 'var(--popover)',
+          foreground: 'var(--popover-foreground)',
         },
-        border: 'hsl(214.3, 31.8%, 91.4%)',
-        input: 'hsl(214.3, 31.8%, 91.4%)',
-        ring: 'hsl(221.2, 83.2%, 53.3%)'
+        border: 'var(--border)',
+        input: 'var(--input)',
+        ring: 'var(--ring)',
       },
       borderRadius: {
         lg: '0.5rem',

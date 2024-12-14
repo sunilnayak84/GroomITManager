@@ -4,6 +4,76 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --background: hsl(0, 0%, 100%);
+    --background-darker: hsl(0, 0%, 97%);
+    --foreground: hsl(222.2, 84%, 4.9%);
+    --foreground-muted: hsl(215.4, 16.3%, 46.9%);
+    
+    --primary: hsl(221.2, 83.2%, 53.3%);
+    --primary-dark: hsl(221.2, 83.2%, 43.3%);
+    --primary-light: hsl(221.2, 83.2%, 63.3%);
+    --primary-foreground: hsl(210, 40%, 98%);
+    
+    --secondary: hsl(210, 40%, 96.1%);
+    --secondary-dark: hsl(215, 20.2%, 65.1%);
+    --secondary-light: hsl(210, 40%, 98%);
+    --secondary-foreground: hsl(222.2, 47.4%, 11.2%);
+    
+    --accent: hsl(262.1, 83.3%, 57.8%);
+    --accent-dark: hsl(262.1, 83.3%, 47.8%);
+    --accent-light: hsl(262.1, 83.3%, 67.8%);
+    --accent-foreground: hsl(210, 40%, 98%);
+    
+    --muted: hsl(210, 40%, 96.1%);
+    --muted-foreground: hsl(215.4, 16.3%, 46.9%);
+    
+    --card: hsl(0, 0%, 100%);
+    --card-foreground: hsl(222.2, 84%, 4.9%);
+    
+    --popover: hsl(0, 0%, 100%);
+    --popover-foreground: hsl(222.2, 84%, 4.9%);
+    
+    --border: hsl(214.3, 31.8%, 91.4%);
+    --input: hsl(214.3, 31.8%, 91.4%);
+    --ring: hsl(221.2, 83.2%, 53.3%);
+  }
+
+  .dark {
+    --background: hsl(222.2, 84%, 4.9%);
+    --background-darker: hsl(222.2, 84%, 3.9%);
+    --foreground: hsl(210, 40%, 98%);
+    --foreground-muted: hsl(215.4, 16.3%, 76.9%);
+    
+    --primary: hsl(217.2, 91.2%, 59.8%);
+    --primary-dark: hsl(217.2, 91.2%, 49.8%);
+    --primary-light: hsl(217.2, 91.2%, 69.8%);
+    --primary-foreground: hsl(222.2, 47.4%, 11.2%);
+    
+    --secondary: hsl(217.2, 32.6%, 17.5%);
+    --secondary-dark: hsl(217.2, 32.6%, 12.5%);
+    --secondary-light: hsl(217.2, 32.6%, 22.5%);
+    --secondary-foreground: hsl(210, 40%, 98%);
+    
+    --accent: hsl(280, 89.9%, 65.8%);
+    --accent-dark: hsl(280, 89.9%, 55.8%);
+    --accent-light: hsl(280, 89.9%, 75.8%);
+    --accent-foreground: hsl(222.2, 47.4%, 11.2%);
+    
+    --muted: hsl(217.2, 32.6%, 17.5%);
+    --muted-foreground: hsl(215, 20.2%, 65.1%);
+    
+    --card: hsl(222.2, 84%, 4.9%);
+    --card-foreground: hsl(210, 40%, 98%);
+    
+    --popover: hsl(222.2, 84%, 4.9%);
+    --popover-foreground: hsl(210, 40%, 98%);
+    
+    --border: hsl(217.2, 32.6%, 17.5%);
+    --input: hsl(217.2, 32.6%, 17.5%);
+    --ring: hsl(224.3, 76.3%, 48%);
+  }
+
   html, body, #root {
     @apply h-full w-full m-0 p-0;
   }
