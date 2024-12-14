@@ -58,6 +58,7 @@ export default function ServicesPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [showConsumablesModal, setShowConsumablesModal] = useState(false);
+  // Theme values are now handled by CSS custom properties
 
   const { toast } = useToast();
 

@@ -1,11 +1,13 @@
 import { StrictMode, lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { Switch, Route } from "wouter";
-import "./styles/theme.css";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
+import { Loader2 } from "lucide-react";
+import { ChakraProvider } from "@chakra-ui/react";
 import { ThemeProvider } from "@/lib/theme-context";
+import theme from "@/theme/theme";
 import HomePage from "./pages/HomePage";
 import AuthPage from "./pages/AuthPage";
 import AppointmentsPage from "./pages/AppointmentsPage";
@@ -13,7 +15,6 @@ import CustomersPage from "./pages/CustomersPage";
 import PetsPage from "./pages/PetsPage";
 import ServicesPage from "./pages/ServicesPage";
 import InventoryPage from "./pages/InventoryPage";
-import { Loader2 } from "lucide-react";
 import { useUser } from "./hooks/use-user";
 import Layout from "./components/Layout";
 import { ErrorBoundary } from "react-error-boundary";
@@ -79,12 +80,14 @@ function Router() {
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <ThemeProvider>
-        <QueryClientProvider client={queryClient}>
-          <Router />
-          <Toaster />
-        </QueryClientProvider>
-      </ThemeProvider>
+      <ChakraProvider theme={theme}>
+        <ThemeProvider>
+          <QueryClientProvider client={queryClient}>
+            <Router />
+            <Toaster />
+          </QueryClientProvider>
+        </ThemeProvider>
+      </ChakraProvider>
     </ErrorBoundary>
   </StrictMode>
 );
