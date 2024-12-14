@@ -60,13 +60,17 @@
       "value": "262.1 83.3% 57.8%"
     },
     "dialog-overlay": {
-      "value": "0 0% 0% / 50%"
+      "value": "0 0% 0% / 80%"
+    },
+    "dialog": {
+      "value": "0 0% 100%",
+      "foreground": "240 10% 3.9%"
     }
   },
   "radius": {
-    "lg": "0.75rem",
-    "md": "0.5rem",
-    "sm": "0.25rem"
+    "lg": "12px",
+    "md": "8px",
+    "sm": "6px"
   },
   "font": {
     "sans": "Inter"
