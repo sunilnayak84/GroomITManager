@@ -18,7 +18,7 @@
   }
 
   body {
-    @apply font-sans antialiased text-foreground;
+    @apply font-sans antialiased text-[hsl(var(--foreground))];
     @apply bg-[hsl(var(--background))];
     font-family: 'Inter', sans-serif;
   }
