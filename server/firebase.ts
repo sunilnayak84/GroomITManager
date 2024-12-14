@@ -1,6 +1,7 @@
 import * as admin from 'firebase-admin';
 import { getAuth } from 'firebase-admin/auth';
 import { getDatabase } from 'firebase-admin/database';
+import { credential } from 'firebase-admin';
 
 // Role Types
 export enum RoleTypes {
@@ -265,7 +266,11 @@ export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
       };
       
       firebaseApp = admin.initializeApp({
-        credential: admin.credential.cert(credential),
+        credential: credential.cert({
+          projectId,
+          clientEmail,
+          privateKey: formattedKey
+        }),
         databaseURL
       });
 
