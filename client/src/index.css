@@ -1,196 +1,33 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: hsl(0, 0%, 100%);
-    --background-darker: hsl(0, 0%, 97%);
-    --foreground: hsl(222.2, 84%, 4.9%);
-    --foreground-muted: hsl(215.4, 16.3%, 46.9%);
-    
-    --primary: hsl(221.2, 83.2%, 53.3%);
-    --primary-dark: hsl(221.2, 83.2%, 43.3%);
-    --primary-light: hsl(221.2, 83.2%, 63.3%);
-    --primary-foreground: hsl(210, 40%, 98%);
-    
-    --secondary: hsl(210, 40%, 96.1%);
-    --secondary-dark: hsl(215, 20.2%, 65.1%);
-    --secondary-light: hsl(210, 40%, 98%);
-    --secondary-foreground: hsl(222.2, 47.4%, 11.2%);
-    
-    --accent: hsl(262.1, 83.3%, 57.8%);
-    --accent-dark: hsl(262.1, 83.3%, 47.8%);
-    --accent-light: hsl(262.1, 83.3%, 67.8%);
-    --accent-foreground: hsl(210, 40%, 98%);
-    
-    --muted: hsl(210, 40%, 96.1%);
-    --muted-foreground: hsl(215.4, 16.3%, 46.9%);
-    
-    --card: hsl(0, 0%, 100%);
-    --card-foreground: hsl(222.2, 84%, 4.9%);
-    
-    --popover: hsl(0, 0%, 100%);
-    --popover-foreground: hsl(222.2, 84%, 4.9%);
-    
-    --border: hsl(214.3, 31.8%, 91.4%);
-    --input: hsl(214.3, 31.8%, 91.4%);
-    --ring: hsl(221.2, 83.2%, 53.3%);
-  }
-
-  .dark {
-    --background: hsl(222.2, 84%, 4.9%);
-    --background-darker: hsl(222.2, 84%, 3.9%);
-    --foreground: hsl(210, 40%, 98%);
-    --foreground-muted: hsl(215.4, 16.3%, 76.9%);
-    
-    --primary: hsl(217.2, 91.2%, 59.8%);
-    --primary-dark: hsl(217.2, 91.2%, 49.8%);
-    --primary-light: hsl(217.2, 91.2%, 69.8%);
-    --primary-foreground: hsl(222.2, 47.4%, 11.2%);
-    
-    --secondary: hsl(217.2, 32.6%, 17.5%);
-    --secondary-dark: hsl(217.2, 32.6%, 12.5%);
-    --secondary-light: hsl(217.2, 32.6%, 22.5%);
-    --secondary-foreground: hsl(210, 40%, 98%);
-    
-    --accent: hsl(280, 89.9%, 65.8%);
-    --accent-dark: hsl(280, 89.9%, 55.8%);
-    --accent-light: hsl(280, 89.9%, 75.8%);
-    --accent-foreground: hsl(222.2, 47.4%, 11.2%);
-    
-    --muted: hsl(217.2, 32.6%, 17.5%);
-    --muted-foreground: hsl(215, 20.2%, 65.1%);
-    
-    --card: hsl(222.2, 84%, 4.9%);
-    --card-foreground: hsl(210, 40%, 98%);
-    
-    --popover: hsl(222.2, 84%, 4.9%);
-    --popover-foreground: hsl(210, 40%, 98%);
-    
-    --border: hsl(217.2, 32.6%, 17.5%);
-    --input: hsl(217.2, 32.6%, 17.5%);
-    --ring: hsl(224.3, 76.3%, 48%);
+  * {
+    @apply border-[hsl(var(--border))];
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
 
   html, body, #root {
-    @apply h-full w-full m-0 p-0;
+    @apply h-full w-full;
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
-  }
-}
-
-@layer components {
-  .page-header {
-    @apply relative w-full h-[200px] mb-6 rounded-lg overflow-hidden;
+    @apply font-sans antialiased text-[hsl(var(--foreground))];
+    @apply bg-[hsl(var(--background))];
+    font-family: 'Inter', sans-serif;
   }
 
-  .page-header-content {
-    @apply absolute inset-0 bg-gradient-to-r from-primary/80 to-primary-dark/80
-           flex flex-col justify-center px-8 text-white;
+  .main-layout {
+    @apply min-h-screen w-full;
   }
 
-  .page-header-title {
-    @apply text-2xl font-bold mb-2;
-  }
-
-  .page-header-description {
-    @apply text-primary-foreground/90;
-  }
-
-  .modal-overlay {
-    @apply fixed inset-0 bg-foreground/60 backdrop-blur-sm z-50;
-  }
-
-  .modal-content {
-    @apply fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 
-           bg-card rounded-lg shadow-lg
-           w-full max-w-[85%] sm:max-w-[380px]
-           max-h-[80vh] flex flex-col
-           border border-border;
-  }
-
-  .modal-header {
-    @apply flex items-center justify-between px-3 py-2 border-b border-border;
-  }
-
-  .modal-body {
-    @apply px-3 py-2 overflow-y-auto flex-1 space-y-2;
-  }
-
-  .modal-footer {
-    @apply flex justify-end gap-1.5 px-3 py-2 border-t border-border bg-card/50;
-  }
-
-  /* Form field spacing */
-  .form-group {
-    @apply mb-4 last:mb-0;
-  }
-
-  .form-label {
-    @apply block text-sm font-medium text-foreground mb-1.5;
-  }
-
-  .form-input {
-    @apply w-full rounded-md border border-input bg-background px-3 py-2
-           text-sm placeholder:text-muted-foreground focus:outline-none 
-           focus:ring-1 focus:ring-ring;
-  }
-
-  .btn {
-    @apply inline-flex items-center justify-center rounded-md text-sm font-medium
-           ring-offset-background transition-colors focus-visible:outline-none 
-           focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
-           disabled:pointer-events-none disabled:opacity-50 h-9 px-4;
-  }
-
-  .btn-primary {
-    @apply btn bg-primary text-primary-foreground hover:bg-primary-dark;
-  }
-
-  .btn-secondary {
-    @apply btn bg-secondary text-secondary-foreground hover:bg-secondary-dark;
-  }
-
-  .btn-accent {
-    @apply btn bg-accent text-accent-foreground hover:bg-accent-dark;
-  }
-
-  .btn-outline {
-    @apply btn border border-input bg-background hover:bg-secondary 
-           hover:text-secondary-foreground;
-  }
-
-  .table-container {
-    @apply w-full overflow-auto rounded-md border border-border bg-card;
-  }
-
-  .table {
-    @apply w-full caption-bottom text-sm;
-  }
-
-  .table-header {
-    @apply [&_tr]:border-b [&_tr]:border-border;
-  }
-
-  .table-body {
-    @apply [&_tr:last-child]:border-0;
-  }
-
-  .table-row {
-    @apply border-b border-border transition-colors hover:bg-muted/50 
-           data-[state=selected]:bg-muted;
-  }
-
-  .table-cell {
-    @apply p-4 align-middle [&:has([role=checkbox])]:pr-0;
-  }
-
-  .table-head {
-    @apply h-12 px-4 text-left align-middle font-medium text-muted-foreground 
-           [&:has([role=checkbox])]:pr-0;
+  .content-container {
+    @apply w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8;
   }
 }
