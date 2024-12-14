@@ -82,13 +82,5 @@ args = "cd server && NODE_ENV=production PORT=3000 tsx watch --clear-screen=fals
 waitForPort = 3000
 
 [[ports]]
-localPort = 3000
-externalPort = 3001
-
-[[ports]]
-localPort = 3001
-externalPort = 3000
-
-[[ports]]
 localPort = 5174
 externalPort = 80
