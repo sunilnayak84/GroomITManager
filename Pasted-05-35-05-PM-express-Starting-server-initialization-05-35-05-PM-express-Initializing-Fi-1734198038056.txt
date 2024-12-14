@@ -1,0 +1,256 @@
+05:35:05 PM [express] 🟢 Starting server initialization...
+05:35:05 PM [express] 🟢 Initializing Firebase Admin...
+[FIREBASE] Starting Firebase Admin initialization...
+[FIREBASE] Starting Firebase instance cleanup...
+[FIREBASE] Firebase instance cleanup completed
+[FIREBASE] Initialization attempt 1/3
+[FIREBASE] Starting Firebase instance cleanup...
+[FIREBASE] Firebase instance cleanup completed
+[FIREBASE] Validating credentials...
+[FIREBASE] Formatting private key...
+[FIREBASE] Starting private key formatting...
+[FIREBASE] Private key formatted successfully
+[FIREBASE] Initializing new Firebase Admin instance...
+[FIREBASE] ✓ Firebase Admin initialized successfully
+05:35:05 PM [express] 🟢 Firebase Admin initialized successfully
+05:35:05 PM [express] 🟢 Checking database connection...
+05:35:06 PM [express] 🟢 Database connection successful
+05:35:06 PM [express] 🟡 Build directory not found, falling back to development mode
+AssertError: Expected required property
+    at AssertValue (file:///home/runner/GroomITManager/node_modules/@sinclair/typebox/build/esm/value/assert/assert.mjs:44:11)
+    at Assert (file:///home/runner/GroomITManager/node_modules/@sinclair/typebox/build/esm/value/assert/assert.mjs:48:32)
+    at file:///home/runner/GroomITManager/node_modules/@sinclair/typebox/build/esm/value/parse/parse.mjs:13:38
+    at file:///home/runner/GroomITManager/node_modules/@sinclair/typebox/build/esm/value/parse/parse.mjs:20:52
+    at Array.reduce (<anonymous>)
+    at ParseValue (file:///home/runner/GroomITManager/node_modules/@sinclair/typebox/build/esm/value/parse/parse.mjs:20:25)
+    at Module.Parse (file:///home/runner/GroomITManager/node_modules/@sinclair/typebox/build/esm/value/parse/parse.mjs:24:72)
+    at safeParseThemeJson (/home/runner/GroomITManager/node_modules/@replit/vite-plugin-shadcn-theme-json/src/schemas.ts:25:26)
+    at PluginContext.buildStart (/home/runner/GroomITManager/node_modules/@replit/vite-plugin-shadcn-theme-json/src/index.ts:35:43)
+    at async Promise.all (index 6) {
+  error: {
+    type: 45,
+    schema: { type: 'string', [Symbol(TypeBox.Kind)]: 'String' },
+    path: '/primary',
+    value: undefined,
+    message: 'Expected required property',
+    errors: []
+  }
+}
+Re-optimizing dependencies because vite config has changed
+05:35:07 PM [express] 🟢 Server started successfully on port 3000
+../client/src/components/AppointmentForm.tsx:73:7 - error TS2353: Object literal may only specify known properties, and 'customerId' does not exist in type 'AsyncDefaultValues<{ date: string; branchId: string; serviceId: string; notes: string | null; petId: string; groomerId: string; status: "pending" | "confirmed" | "completed" | "cancelled"; time: string; productsUsed: string | null; }> | { ...; }'.
+
+73       customerId: user?.id || ''
+         ~~~~~~~~~~
+
+../client/src/components/ConsumablesUsageModal.tsx:83:25 - error TS2345: Argument of type '{ item_id: string; quantity_used: number; service_id: string | undefined; appointment_id: string | undefined; used_by: string; notes: string | undefined; }' is not assignable to parameter of type 'Omit<{ item_id: string; quantity_used: number; usage_id: string; used_by: string; used_at: Date; service_linked: boolean; auto_deducted: boolean; service_id?: string | undefined; notes?: string | undefined; appointment_id?: string | undefined; service_name?: string | undefined; }, "usage_id" | "used_at">'.
+  Type '{ item_id: string; quantity_used: number; service_id: string | undefined; appointment_id: string | undefined; used_by: string; notes: string | undefined; }' is missing the following properties from type 'Omit<{ item_id: string; quantity_used: number; usage_id: string; used_by: string; used_at: Date; service_linked: boolean; auto_deducted: boolean; service_id?: string | undefined; notes?: string | undefined; appointment_id?: string | undefined; service_name?: string | undefined; }, "usage_id" | "used_at">': service_linked, auto_deducted
+
+ 83       await recordUsage({
+                            ~
+ 84         item_id: itemId,
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+... 
+ 89         notes: data.notes,
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 90       });
+    ~~~~~~~
+
+../client/src/components/WorkingHoursForm.tsx:118:9 - error TS2322: Type 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+
+118         breakStart: data.breakStart || null,
+            ~~~~~~~~~~
+
+  ../client/src/lib/schema.ts:216:3
+    216   breakStart: z.string().optional(),
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    The expected type comes from property 'breakStart' which is declared here on type '{ branchId: number; dayOfWeek: number; isOpen: boolean; openingTime: string; closingTime: string; maxDailyAppointments: number; breakStart?: string | undefined; breakEnd?: string | undefined; } & { ...; }'
+
+../client/src/components/WorkingHoursForm.tsx:119:9 - error TS2322: Type 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+
+119         breakEnd: data.breakEnd || null,
+            ~~~~~~~~
+
+  ../client/src/lib/schema.ts:217:3
+    217   breakEnd: z.string().optional(),
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    The expected type comes from property 'breakEnd' which is declared here on type '{ branchId: number; dayOfWeek: number; isOpen: boolean; openingTime: string; closingTime: string; maxDailyAppointments: number; breakStart?: string | undefined; breakEnd?: string | undefined; } & { ...; }'
+
+../client/src/hooks/use-roles.ts:110:11 - error TS18046: 'error' is of type 'unknown'.
+
+110       if (error.message.includes('401')) {
+              ~~~~~
+
+../client/src/hooks/use-roles.ts:195:27 - error TS2339: Property 'description' does not exist on type 'Role'.
+
+195         description: role.description
+                              ~~~~~~~~~~~
+
+../client/src/lib/firestore.ts:245:7 - error TS2353: Object literal may only specify known properties, and 'date' does not exist in type 'WithFieldValue<{ updatedAt: string | null; id: string; createdAt: string; branchId: string; serviceId: string; notes: string | null; petId: string; groomerId: string; status: "pending" | "confirmed" | "completed" | "cancelled"; appointmentDate: string; appointmentTime: string; productsUsed: string | null; }>'.
+
+245       date: appointment.date,
+          ~~~~
+
+../client/src/lib/firestore.ts:245:25 - error TS2339: Property 'date' does not exist on type 'Omit<{ updatedAt: string | null; id: string; createdAt: string; branchId: string; serviceId: string; notes: string | null; petId: string; groomerId: string; status: "pending" | "confirmed" | "completed" | "cancelled"; appointmentDate: string; appointmentTime: string; productsUsed: string | null; }, "updatedAt" | ......'.
+
+245       date: appointment.date,
+                            ~~~~
+
+../client/src/pages/ServicesPage.tsx:533:24 - error TS2322: Type '{ onChange: (...event: any[]) => void; onBlur: Noop; value: string | null; disabled?: boolean | undefined; name: "description"; ref: RefCallBack; placeholder: string; }' is not assignable to type 'TextareaProps'.
+  Types of property 'value' are incompatible.
+    Type 'string | null' is not assignable to type 'string | number | readonly string[] | undefined'.
+      Type 'null' is not assignable to type 'string | number | readonly string[] | undefined'.
+
+533                       <Textarea
+                           ~~~~~~~~
+
+../client/src/pages/ServicesPage.tsx:656:24 - error TS2322: Type '{ onChange: (...event: any[]) => void; onBlur: Noop; value: string | null; disabled?: boolean | undefined; name: "description"; ref: RefCallBack; placeholder: string; }' is not assignable to type 'TextareaProps'.
+  Types of property 'value' are incompatible.
+    Type 'string | null' is not assignable to type 'string | number | readonly string[] | undefined'.
+      Type 'null' is not assignable to type 'string | number | readonly string[] | undefined'.
+
+656                       <Textarea
+                           ~~~~~~~~
+
+../client/src/pages/StaffPage.tsx:94:11 - error TS2322: Type '{ isGroomer: boolean; isActive: boolean; specialties: string[]; petTypePreferences: string[]; experienceYears: number; maxDailyAppointments: number; role: string; name: string; email: string; phone: string; branchId?: number | undefined; certifications?: string[] | undefined; availability?: string | undefined; }' is not assignable to type 'Partial<User>'.
+  Types of property 'role' are incompatible.
+    Type 'string' is not assignable to type '"staff" | "groomer" | "admin" | undefined'.
+
+94           data: staffData
+             ~~~~
+
+  ../client/src/hooks/use-staff.ts:50:52
+    50     mutationFn: async ({ id, data }: { id: string; data: Partial<User> }) => {
+                                                          ~~~~
+    The expected type comes from property 'data' which is declared here on type '{ id: string; data: Partial<User>; }'
+
+../client/src/pages/StaffPage.tsx:101:30 - error TS2345: Argument of type '{ isGroomer: boolean; isActive: boolean; specialties: string[]; petTypePreferences: string[]; experienceYears: number; maxDailyAppointments: number; role: string; name: string; email: string; phone: string; branchId?: number | undefined; certifications?: string[] | undefined; availability?: string | undefined; }' is not assignable to parameter of type '{ name: string; role: "staff" | "groomer" | "admin"; email: string; phone: string; isGroomer: boolean; isActive: boolean; branchId?: number | undefined; specialties?: string[] | undefined; ... 4 more ...; maxDailyAppointments?: number | undefined; }'.
+  Types of property 'role' are incompatible.
+    Type 'string' is not assignable to type '"staff" | "groomer" | "admin"'.
+
+101         await addStaffMember(staffData);
+                                 ~~~~~~~~~
+
+auth.ts:175:17 - error TS2304: Cannot find name 'getFirebaseAdmin'.
+
+175     const app = getFirebaseAdmin();
+                    ~~~~~~~~~~~~~~~~
+
+auth.ts:362:39 - error TS2339: Property 'query' does not exist on type 'Database'.
+
+362         const existingUser = await db.query.users.findFirst({
+                                          ~~~~~
+
+middleware/auth.ts:9:7 - error TS2717: Subsequent property declarations must have the same type.  Property 'user' must be of type 'FirebaseUser | undefined', but here has type '{ uid: string; email: string | null; role: "manager" | "staff" | "receptionist" | "admin"; permissions: string[]; displayName: string; } | undefined'.
+
+9       user?: {
+        ~~~~
+
+  auth.ts:27:7
+    27       user?: FirebaseUser;
+             ~~~~
+    'user' was also declared here.
+
+middleware/auth.ts:66:11 - error TS2353: Object literal may only specify known properties, and 'uid' does not exist in type 'FirebaseUser'.
+
+66           uid: 'dev-admin',
+             ~~~
+
+middleware/auth.ts:153:9 - error TS2353: Object literal may only specify known properties, and 'uid' does not exist in type 'FirebaseUser'.
+
+153         uid: user.uid,
+            ~~~
+
+middleware/auth.ts:161:16 - error TS18048: 'req.user' is possibly 'undefined'.
+
+161         email: req.user.email,
+                   ~~~~~~~~
+
+middleware/auth.ts:162:15 - error TS18048: 'req.user' is possibly 'undefined'.
+
+162         role: req.user.role,
+                  ~~~~~~~~
+
+middleware/auth.ts:163:22 - error TS18048: 'req.user' is possibly 'undefined'.
+
+163         permissions: req.user.permissions.length
+                         ~~~~~~~~
+
+middleware/auth.ts:163:22 - error TS18048: 'req.user.permissions' is possibly 'undefined'.
+
+163         permissions: req.user.permissions.length
+                         ~~~~~~~~~~~~~~~~~~~~
+
+middleware/auth.ts:334:14 - error TS18048: 'req.user.permissions' is possibly 'undefined'.
+
+334       op => !req.user?.permissions.includes(op) && !req.user?.permissions.includes('all')
+                 ~~~~~~~~~~~~~~~~~~~~~
+
+middleware/auth.ts:334:53 - error TS18048: 'req.user.permissions' is possibly 'undefined'.
+
+334       op => !req.user?.permissions.includes(op) && !req.user?.permissions.includes('all')
+                                                        ~~~~~~~~~~~~~~~~~~~~~
+
+routes.ts:34:25 - error TS2304: Cannot find name 'getFirebaseAdmin'.
+
+34       const app = await getFirebaseAdmin();
+                           ~~~~~~~~~~~~~~~~
+
+routes.ts:35:20 - error TS2304: Cannot find name 'getAuth'.
+
+35       const auth = getAuth(app);
+                      ~~~~~~~
+
+routes.ts:36:18 - error TS2304: Cannot find name 'getDatabase'.
+
+36       const db = getDatabase(app);
+                    ~~~~~~~~~~~
+
+routes.ts:52:71 - error TS7006: Parameter 'user' implicitly has an 'any' type.
+
+52       const users = await Promise.all(listUsersResult.users.map(async user => {
+                                                                         ~~~~
+
+routes.ts:194:30 - error TS2339: Property 'uid' does not exist on type 'FirebaseUser'.
+
+194         updatedBy: req.user?.uid || 'unknown'
+                                 ~~~
+
+routes.ts:272:49 - error TS7006: Parameter 'p' implicitly has an 'any' type.
+
+272         const invalidPerms = permissions.filter(p => !isValidPermission(p));
+                                                    ~
+
+routes.ts:319:30 - error TS2339: Property 'uid' does not exist on type 'FirebaseUser'.
+
+319         createdBy: req.user?.uid || 'unknown'
+                                 ~~~
+
+routes.ts:366:55 - error TS2345: Argument of type '"manager" | "staff" | "receptionist" | "admin"' is not assignable to parameter of type 'RoleTypes'.
+  Type '"manager"' is not assignable to type 'RoleTypes'.
+
+366       if (!role || !Object.values(RoleTypes).includes(role)) {
+                                                          ~~~~
+
+routes.ts:391:51 - error TS2345: Argument of type '"manager" | "staff" | "receptionist" | "admin"' is not assignable to parameter of type 'RoleTypes'.
+  Type '"manager"' is not assignable to type 'RoleTypes'.
+
+391       const result = await updateUserRole(userId, role, validatedPermissions);
+                                                      ~~~~
+
+
+Found 32 errors in 10 files.
+
+Errors  Files
+     1  ../client/src/components/AppointmentForm.tsx:73
+     1  ../client/src/components/ConsumablesUsageModal.tsx:83
+     2  ../client/src/components/WorkingHoursForm.tsx:118
+     2  ../client/src/hooks/use-roles.ts:110
+     2  ../client/src/lib/firestore.ts:245
+     2  ../client/src/pages/ServicesPage.tsx:533
+     2  ../client/src/pages/StaffPage.tsx:94
+     2  auth.ts:175
+     9  middleware/auth.ts:9
+     9  routes.ts:34
