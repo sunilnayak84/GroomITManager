@@ -4,7 +4,8 @@
   "colors": {
     "primary": {
       "DEFAULT": "267 75% 40%",
-      "foreground": "0 0% 100%"
+      "foreground": "0 0% 100%",
+      "background": "0 0% 100%"
     },
     "secondary": {
       "DEFAULT": "267 60% 35%",
@@ -42,6 +43,17 @@
     "destructive": {
       "DEFAULT": "0 84% 60%",
       "foreground": "0 0% 98%"
+    },
+    "dialog": {
+      "overlay": "267 75% 5% / 0.85",
+      "DEFAULT": "0 0% 100%",
+      "foreground": "240 10% 3.9%",
+      "background": "0 0% 100%"
+    },
+    "popover": {
+      "DEFAULT": "0 0% 100%",
+      "foreground": "240 10% 3.9%",
+      "background": "0 0% 100%"
     }
   },
   "borderRadius": {
