@@ -38,21 +38,21 @@
   .modal-content {
     @apply fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 
            bg-card rounded-lg shadow-lg
-           w-full max-w-[90%] sm:max-w-[420px]
-           max-h-[85vh] flex flex-col
+           w-full max-w-[85%] sm:max-w-[380px]
+           max-h-[80vh] flex flex-col
            border border-border;
   }
 
   .modal-header {
-    @apply flex items-center justify-between px-4 py-3 border-b border-border;
+    @apply flex items-center justify-between px-3 py-2 border-b border-border;
   }
 
   .modal-body {
-    @apply px-4 py-3 overflow-y-auto flex-1 space-y-3;
+    @apply px-3 py-2 overflow-y-auto flex-1 space-y-2;
   }
 
   .modal-footer {
-    @apply flex justify-end gap-2 px-4 py-3 border-t border-border bg-card/50;
+    @apply flex justify-end gap-1.5 px-3 py-2 border-t border-border bg-card/50;
   }
 
   /* Form field spacing */
