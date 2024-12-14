@@ -1,86 +1,64 @@
-import { type Config } from "tailwindcss";
+import type { Config } from "tailwindcss";
 
 export default {
-  darkMode: 'class',
   content: [
     './index.html',
-    './src/**/*.{ts,tsx}',
+    './src/**/*.{js,ts,jsx,tsx}',
   ],
+  darkMode: 'class',
   theme: {
-    container: {
-      center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
-    },
     extend: {
       colors: {
-        border: {
-          DEFAULT: "var(--color-border)",
-          input: "var(--color-border)", // Add border-input definition
-        },
-        input: {
-          DEFAULT: "var(--color-input)",
-        },
-        ring: "var(--color-ring)",
-        background: "var(--color-background)",
-        foreground: "var(--color-foreground)",
         primary: {
-          DEFAULT: "var(--color-primary)",
-          foreground: "var(--color-primary-foreground)",
+          DEFAULT: 'var(--color-primary)',
+          light: 'var(--color-primary-light)',
+          dark: 'var(--color-primary-dark)',
+          contrast: 'var(--color-primary-contrast)',
         },
         secondary: {
-          DEFAULT: "var(--color-secondary)",
-          foreground: "var(--color-secondary-foreground)",
+          DEFAULT: 'var(--color-secondary)',
+          light: 'var(--color-secondary-light)',
+          dark: 'var(--color-secondary-dark)',
+          contrast: 'var(--color-secondary-contrast)',
         },
-        destructive: {
-          DEFAULT: "var(--color-destructive)",
-          foreground: "var(--color-destructive-foreground)",
+        background: {
+          DEFAULT: 'var(--color-background)',
+          alt: 'var(--color-background-alt)',
         },
-        muted: {
-          DEFAULT: "var(--color-muted)",
-          foreground: "var(--color-muted-foreground)",
+        text: {
+          DEFAULT: 'var(--color-text)',
+          muted: 'var(--color-text-muted)',
+          inverse: 'var(--color-text-inverse)',
         },
-        accent: {
-          DEFAULT: "var(--color-accent)",
-          foreground: "var(--color-accent-foreground)",
+        border: {
+          DEFAULT: 'var(--color-border)',
+          light: 'var(--color-border-light)',
         },
-        popover: {
-          DEFAULT: "var(--color-popover)",
-          foreground: "var(--color-popover-foreground)",
+        success: {
+          DEFAULT: 'var(--color-success)',
+          contrast: 'var(--color-success-contrast)',
         },
-        card: {
-          DEFAULT: "var(--color-card)",
-          foreground: "var(--color-card-foreground)",
+        error: {
+          DEFAULT: 'var(--color-error)',
+          contrast: 'var(--color-error-contrast)',
         },
-      },
-      borderColor: {
-        input: "var(--color-border)", // Add border-input definition
       },
       borderRadius: {
-        lg: "var(--radius-lg)",
-        md: "var(--radius-md)",
-        sm: "var(--radius-sm)",
+        lg: '0.5rem',
+        md: '0.375rem',
+        sm: '0.25rem',
       },
-      keyframes: {
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
+      container: {
+        center: true,
+        padding: '2rem',
+        screens: {
+          '2xl': '1400px',
         },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
-      },
-      animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
   },
   plugins: [
-    require("@tailwindcss/forms"),
-    require("tailwindcss-animate")
+    require('@tailwindcss/forms'),
+    require('tailwindcss-animate'),
   ],
 } satisfies Config;
