@@ -3,6 +3,21 @@ import * as admin from 'firebase-admin';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 
+export const DefaultPermissions = {
+  admin: ['all'],
+  staff: ['view_appointments', 'update_appointment_status'],
+  manager: [
+    'manage_appointments',
+    'view_all_appointments',
+    'manage_services',
+    'view_services',
+    'manage_customers',
+    'view_customers',
+    'manage_inventory',
+    'view_inventory'
+  ]
+};
+
 let firebaseAdmin: admin.app.App | null = null;
 
 export function initializeFirebaseAdmin() {
