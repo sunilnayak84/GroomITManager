@@ -533,6 +533,7 @@ export default function ServicesPage() {
                       <Textarea
                         placeholder="Service description"
                         {...field}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -656,6 +657,7 @@ export default function ServicesPage() {
                       <Textarea
                         placeholder="Package description"
                         {...field}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
