@@ -21,35 +21,36 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(262.1 83.3% 57.8%)",
-          foreground: "hsl(0 0% 100%)",
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "hsl(240 4.8% 95.9%)",
-          foreground: "hsl(240 5.9% 10%)",
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
         },
         destructive: {
-          DEFAULT: "hsl(0 84.2% 60.2%)",
-          foreground: "hsl(0 0% 98%)",
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
-          DEFAULT: "hsl(240 4.8% 95.9%)",
-          foreground: "hsl(240 3.8% 46.1%)",
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "hsl(240 4.8% 95.9%)",
-          foreground: "hsl(240 5.9% 10%)",
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
         },
         popover: {
-          DEFAULT: "hsl(0 0% 100%)",
-          foreground: "hsl(240 10% 3.9%)",
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
         },
         card: {
-          DEFAULT: "hsl(0 0% 100%)",
-          foreground: "hsl(240 10% 3.9%)",
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
         },
         dialog: {
-          overlay: "hsl(0 0% 0% / 50%)",
+          overlay: "hsl(var(--dialog-overlay))",
+          background: "hsl(var(--background-solid))",
         },
         sidebar: {
           DEFAULT: "hsl(262.1 83.3% 57.8%)",
@@ -70,12 +71,11 @@ export default {
         }
       },
       borderRadius: {
-        lg: "var(--radius-lg)",
-        md: "var(--radius-md)",
-        sm: "var(--radius-sm)",
-        "apple-lg": "12px",
-        "apple-md": "8px",
-        "apple-sm": "6px",
+        lg: "12px",
+        md: "8px",
+        sm: "6px",
+        xl: "16px",
+        "2xl": "20px",
       },
       fontFamily: {
         sans: ["Inter", ...fontFamily.sans],
