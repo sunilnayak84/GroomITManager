@@ -268,37 +268,63 @@ async function setupDevelopmentAdmin(app: admin.app.App) {
     const auth = app.auth();
     const db = getDatabase(app);
     
+    console.log('🟢 Setting up development admin user...');
+    
     // Get or create admin user
     let adminUser;
     try {
       adminUser = await auth.getUserByEmail(adminEmail);
+      console.log('🟢 Found existing admin user:', adminUser.uid);
     } catch {
+      console.log('🟢 Creating new admin user...');
       adminUser = await auth.createUser({
         email: adminEmail,
         password: 'admin123',
         emailVerified: true,
         displayName: 'Admin User'
       });
+      console.log('🟢 Created new admin user:', adminUser.uid);
     }
 
-    // Set admin role
-    const roleRef = db.ref(`roles/${adminUser.uid}`);
+    // Set admin role in both locations
     const timestamp = Date.now();
     
+    // 1. Set in roles collection
+    const roleRef = db.ref(`roles/${adminUser.uid}`);
     const adminData = {
       role: RoleTypes.admin,
       permissions: DefaultPermissions.admin,
       isAdmin: true,
       updatedAt: timestamp
     };
-    
     await roleRef.set(adminData);
-    await auth.setCustomUserClaims(adminUser.uid, adminData);
+    console.log('🟢 Set admin role in roles collection');
+
+    // 2. Set in role-definitions
+    const roleDefRef = db.ref(`role-definitions/${RoleTypes.admin}`);
+    const adminRoleData = {
+      name: RoleTypes.admin,
+      permissions: DefaultPermissions.admin,
+      isSystem: true,
+      updatedAt: timestamp
+    };
+    await roleDefRef.set(adminRoleData);
+    console.log('🟢 Set admin role in role-definitions');
+
+    // 3. Set custom claims
+    const customClaims = {
+      role: RoleTypes.admin,
+      permissions: DefaultPermissions.admin,
+      isAdmin: true,
+      updatedAt: timestamp
+    };
+    await auth.setCustomUserClaims(adminUser.uid, customClaims);
+    console.log('🟢 Set admin custom claims');
+
     console.log('🟢 Development admin setup complete');
-    
     return adminUser;
   } catch (error) {
-    console.error('Development admin setup failed:', error);
+    console.error('🔴 Development admin setup failed:', error);
     throw error;
   }
 }
