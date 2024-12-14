@@ -25,15 +25,23 @@ export default {
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          foreground: "hsl(var(--primary-foreground))"
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          foreground: "hsl(var(--secondary-foreground))"
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
+        },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
@@ -55,23 +63,6 @@ export default {
           DEFAULT: "hsl(var(--dialog-background))",
           foreground: "hsl(var(--foreground))",
           overlay: "hsl(var(--dialog-overlay))",
-        },
-        sidebar: {
-          DEFAULT: "hsl(262.1 83.3% 57.8%)",
-          foreground: "hsl(0 0% 100%)",
-          muted: "hsl(262.1 83.3% 45%)",
-          "muted-foreground": "hsl(0 0% 90%)",
-          accent: "hsl(262.1 83.3% 65%)",
-          "accent-foreground": "hsl(0 0% 100%)",
-          border: "hsl(262.1 83.3% 52%)",
-          ring: "hsl(0 0% 100%)",
-        },
-        chart: {
-          "1": "hsl(var(--chart-1))",
-          "2": "hsl(var(--chart-2))",
-          "3": "hsl(var(--chart-3))",
-          "4": "hsl(var(--chart-4))",
-          "5": "hsl(var(--chart-5))",
         }
       },
       borderRadius: {

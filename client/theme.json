@@ -1,40 +1,41 @@
-
 {
-  "name": "groomit-purple",
+  "name": "groomit-modern",
   "type": "light",
   "colors": {
-    "primary": "267 75% 40%",
+    "primary": "262.1 83.3% 45.8%",
     "primary-foreground": "0 0% 98%",
-    "secondary": "267 60% 35%",
+    "secondary": "262.1 40% 40%",
     "secondary-foreground": "0 0% 98%",
     "background": "0 0% 100%",
-    "foreground": "240 10% 3.9%",
-    "muted": "267 10% 96%",
-    "muted-foreground": "267 30% 46%",
-    "accent": "267 59% 94%",
-    "accent-foreground": "267 75% 40%",
+    "foreground": "224 71.4% 4.1%",
+    "muted": "262.1 10% 96%",
+    "muted-foreground": "262.1 30% 46%",
+    "accent": "262.1 59% 94%",
+    "accent-foreground": "262.1 75% 40%",
     "destructive": "0 84.2% 60.2%",
     "destructive-foreground": "0 0% 98%",
-    "border": "267 20% 91%",
-    "input": "267 20% 91%",
-    "ring": "267 75% 40%",
+    "success": "142.1 76.2% 36.3%",
+    "success-foreground": "0 0% 98%",
+    "warning": "38 92% 50%",
+    "warning-foreground": "0 0% 98%",
     "card": "0 0% 100%",
-    "card-foreground": "240 10% 3.9%",
+    "card-foreground": "224 71.4% 4.1%",
     "popover": "0 0% 100%",
-    "popover-foreground": "240 10% 3.9%",
-    "dialog": {
-      "overlay": "0 0% 0% / 50%",
-      "background": "0 0% 100%"
-    }
+    "popover-foreground": "224 71.4% 4.1%",
+    "border": "220 13% 91%",
+    "input": "220 13% 91%",
+    "ring": "262.1 83.3% 45.8%",
+    "dialog-overlay": "0 0% 0% / 50%",
+    "dialog-background": "0 0% 100%"
   },
   "borderRadius": {
-    "lg": "0.5rem",
-    "md": "0.375rem",
-    "sm": "0.25rem",
-    "xl": "0.75rem",
-    "2xl": "1rem"
+    "lg": "0.75rem",
+    "md": "0.5rem",
+    "sm": "0.375rem",
+    "xl": "1rem",
+    "2xl": "1.5rem"
   },
   "font": {
-    "sans": "Inter"
+    "sans": ["Inter", "sans-serif"]
   }
 }
