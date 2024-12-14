@@ -9,7 +9,7 @@
     "popover": "0 0% 100%",
     "popover-foreground": "240 10% 3.9%",
     "primary": "262.1 83.3% 57.8%",
-    "primary-foreground": "210 40% 98%",
+    "primary-foreground": "0 0% 100%",
     "secondary": "240 4.8% 95.9%",
     "secondary-foreground": "240 5.9% 10%",
     "muted": "240 4.8% 95.9%",
@@ -21,18 +21,23 @@
     "border": "240 5.9% 90%",
     "input": "240 5.9% 90%",
     "ring": "262.1 83.3% 57.8%",
-    "dialog": "0 0% 100%",
-    "dialog-foreground": "240 10% 3.9%",
-    "dialog-overlay": "0 0% 0% / 80%",
+    "dialog-overlay": "0 0% 0% / 50%",
     "sidebar": {
-      "background": "0 0% 100%",
-      "foreground": "240 10% 3.9%",
-      "primary": "262.1 83.3% 57.8%",
-      "primary-foreground": "210 40% 98%",
-      "accent": "240 4.8% 95.9%",
-      "accent-foreground": "240 5.9% 10%",
-      "border": "240 5.9% 90%",
-      "ring": "262.1 83.3% 57.8%"
+      "background": "262.1 83.3% 57.8%",
+      "foreground": "0 0% 100%",
+      "muted": "262.1 83.3% 45%",
+      "muted-foreground": "0 0% 90%",
+      "accent": "262.1 83.3% 65%",
+      "accent-foreground": "0 0% 100%",
+      "border": "262.1 83.3% 52%",
+      "ring": "0 0% 100%"
+    },
+    "chart": {
+      "1": "262.1 83.3% 57.8%",
+      "2": "262.1 83.3% 65%",
+      "3": "262.1 83.3% 45%",
+      "4": "262.1 60% 57.8%",
+      "5": "262.1 40% 57.8%"
     }
   },
   "radius": {
