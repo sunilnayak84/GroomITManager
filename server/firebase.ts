@@ -258,12 +258,14 @@ export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
       const databaseURL = `https://${projectId}-default-rtdb.${region}.firebasedatabase.app`;
       console.log('[FIREBASE] Database URL:', databaseURL);
 
+      const credential = {
+        projectId,
+        clientEmail,
+        privateKey: formattedKey,
+      };
+      
       firebaseApp = admin.initializeApp({
-        credential: admin.credential.cert({
-          projectId,
-          clientEmail,
-          privateKey: formattedKey,
-        }),
+        credential: admin.credential.cert(credential),
         databaseURL
       });
 
