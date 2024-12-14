@@ -305,36 +305,125 @@ async function setupDevelopmentAdmin(app: admin.app.App) {
     // Set up user role in roles collection
     console.log('🟢 Setting up user role in roles collection...');
     const userRoleRef = db.ref(`roles/${adminUid}`);
+    const rolesRef = db.ref('roles');
+    const roleAssignmentsRef = db.ref('role-assignments');
+    
     const adminRoleData = {
+      uid: adminUid,
+      email: adminEmail,
       role: RoleTypes.admin,
       permissions: DefaultPermissions.admin,
       isSystem: true,
       isAdmin: true,
-      updatedAt: timestamp
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      displayName: 'Admin User'
     };
     
-    // Set up admin role assignments
-    const updates = {
-      [`roles/${adminUid}`]: adminRoleData,
-      [`role-assignments/${adminUid}`]: {
-        role: RoleTypes.admin,
-        assignedAt: timestamp,
-        isAdmin: true
-      },
-      [`role-definitions/admin`]: {
-        name: 'admin',
-        permissions: DefaultPermissions.admin,
-        isSystem: true,
-        description: 'Administrator role with full system access',
-        createdAt: timestamp,
-        updatedAt: timestamp
+    // Set up admin role assignments with more detailed tracking
+    const roleAssignmentData = {
+      uid: adminUid,
+      email: adminEmail,
+      role: RoleTypes.admin,
+      assignedBy: 'system',
+      assignedAt: timestamp,
+      lastUpdated: timestamp,
+      isAdmin: true,
+      permissions: DefaultPermissions.admin,
+      displayName: 'Admin User',
+      status: 'active'
+    };
+
+    // Set up role assignments with error handling
+    try {
+      // First ensure admin role definition exists
+      const adminRoleSnapshot = await db.ref('role-definitions/admin').once('value');
+      if (!adminRoleSnapshot.exists()) {
+        console.log('🟡 Admin role definition missing, creating it...');
+        await db.ref('role-definitions').child('admin').set({
+          name: 'admin',
+          permissions: DefaultPermissions.admin,
+          isSystem: true,
+          createdAt: timestamp,
+          updatedAt: timestamp
+        });
       }
-    };
+
+      // Prepare updates for roles and role-assignments
+      const updates = {
+        [`roles/${adminUid}`]: {
+          uid: adminUid,
+          email: adminEmail,
+          role: RoleTypes.admin,
+          permissions: DefaultPermissions.admin,
+          isAdmin: true,
+          displayName: 'Admin User',
+          updatedAt: timestamp
+        },
+        [`role-assignments/${adminUid}`]: {
+          uid: adminUid,
+          email: adminEmail,
+          role: RoleTypes.admin,
+          assignedBy: 'system',
+          assignedAt: timestamp,
+          lastUpdated: timestamp,
+          isAdmin: true,
+          permissions: DefaultPermissions.admin,
+          status: 'active'
+        }
+      };
+
+      // Log the data being written
+      console.log('🟢 Writing role data:', {
+        roleData: adminRoleData,
+        assignmentData: roleAssignmentData
+      });
     
-    // Force set the role data
-    console.log('🟢 Setting admin role data in database:', { adminUid, updates });
-    await db.ref().update(updates);
-    console.log('🟢 Successfully set admin role data in database');
+    // Force set the role data with detailed logging
+    console.log('🟢 Setting admin role data in database:', {
+      uid: adminUid,
+      email: adminEmail,
+      roleUpdates: Object.keys(updates)
+    });
+    
+    try {
+      // Attempt to set role data
+      // Execute updates
+      await db.ref().update(updates);
+      console.log('🟢 Writing role assignments to database for:', adminEmail);
+      
+      // Verify the data was written correctly
+      const [roleVerify, assignmentVerify] = await Promise.all([
+        db.ref(`roles/${adminUid}`).once('value'),
+        db.ref(`role-assignments/${adminUid}`).once('value')
+      ]);
+      
+      // Get the written data
+      const roleData = roleVerify.val();
+      const assignmentData = assignmentVerify.val();
+      
+      // Validate roles data
+      if (!roleData || roleData.role !== RoleTypes.admin || !roleData.permissions) {
+        console.error('🔴 Failed to verify role data:', roleData);
+        throw new Error('Role data verification failed');
+      }
+      
+      // Validate role assignments data
+      if (!assignmentData || assignmentData.role !== RoleTypes.admin) {
+        console.error('🔴 Failed to verify role assignment data:', assignmentData);
+        throw new Error('Role assignment data verification failed');
+      }
+      
+      console.log('✅ Successfully verified role assignments for admin:', {
+        email: adminEmail,
+        uid: adminUid,
+        roleDataPath: `roles/${adminUid}`,
+        assignmentPath: `role-assignments/${adminUid}`
+      });
+    } catch (error) {
+      console.error('🔴 Error setting admin role data:', error);
+      throw new Error(`Failed to set admin role data: ${error.message}`);
+    }
     console.log('🟢 User role set in database');
 
     // Force revoke all existing tokens to ensure clean state
