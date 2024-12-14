@@ -4,7 +4,11 @@ import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
-  content: ["./src/**/*.{ts,tsx}", "./index.html"],
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+    "./index.html",
+    "./src/components/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
     container: {
       center: true,
