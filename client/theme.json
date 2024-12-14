@@ -1,5 +1,5 @@
 {
-  "name": "modern-light",
+  "name": "modern",
   "type": "light",
   "colors": {
     "background": "0 0% 100%",
@@ -8,8 +8,8 @@
     "card-foreground": "240 10% 3.9%",
     "popover": "0 0% 100%",
     "popover-foreground": "240 10% 3.9%",
-    "primary": "240 5.9% 10%",
-    "primary-foreground": "0 0% 98%",
+    "primary": "262.1 83.3% 57.8%",
+    "primary-foreground": "210 40% 98%",
     "secondary": "240 4.8% 95.9%",
     "secondary-foreground": "240 5.9% 10%",
     "muted": "240 4.8% 95.9%",
@@ -20,10 +20,20 @@
     "destructive-foreground": "0 0% 98%",
     "border": "240 5.9% 90%",
     "input": "240 5.9% 90%",
-    "ring": "240 5.9% 10%",
+    "ring": "262.1 83.3% 57.8%",
     "dialog": "0 0% 100%",
     "dialog-foreground": "240 10% 3.9%",
-    "dialog-overlay": "0 0% 0% / 50%"
+    "dialog-overlay": "0 0% 0% / 80%",
+    "sidebar": {
+      "background": "0 0% 100%",
+      "foreground": "240 10% 3.9%",
+      "primary": "262.1 83.3% 57.8%",
+      "primary-foreground": "210 40% 98%",
+      "accent": "240 4.8% 95.9%",
+      "accent-foreground": "240 5.9% 10%",
+      "border": "240 5.9% 90%",
+      "ring": "262.1 83.3% 57.8%"
+    }
   },
   "radius": {
     "lg": "0.75rem",
