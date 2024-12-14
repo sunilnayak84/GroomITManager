@@ -112,114 +112,61 @@ let firebaseApp: admin.app.App | null = null;
 
 export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
   if (firebaseApp) {
-    console.log('[FIREBASE] Using existing Firebase Admin instance');
     return firebaseApp;
   }
 
   try {
-    console.log('[FIREBASE] Starting Firebase Admin initialization');
+    console.log('[FIREBASE] Starting Firebase Admin initialization...');
     
-    // Step 1: Validate environment variables
+    // Get environment variables with validation
     const projectId = process.env.FIREBASE_PROJECT_ID;
     const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
     let privateKey = process.env.FIREBASE_PRIVATE_KEY;
 
-    console.log('[FIREBASE] Checking credentials:', {
-      hasProjectId: !!projectId,
-      hasClientEmail: !!clientEmail,
-      hasPrivateKey: !!privateKey,
-      projectId: projectId
+    // Enhanced validation with detailed error messages
+    if (!projectId) throw new Error('FIREBASE_PROJECT_ID is missing');
+    if (!clientEmail) throw new Error('FIREBASE_CLIENT_EMAIL is missing');
+    if (!privateKey) throw new Error('FIREBASE_PRIVATE_KEY is missing');
+
+    // Format private key properly
+    privateKey = privateKey.replace(/\\n/g, '\n');
+    
+    // Add BEGIN/END markers if they're missing
+    if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
+      privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----`;
+    }
+
+    console.log('[FIREBASE] Credentials validation passed');
+    console.log('[FIREBASE] Attempting to initialize with project:', projectId);
+
+    // Create credential cert with formatted key
+    const credential = admin.credential.cert({
+      projectId: projectId,
+      clientEmail: clientEmail,
+      privateKey: privateKey
     });
 
-    if (!projectId || !clientEmail || !privateKey) {
-      throw new Error('Missing required Firebase Admin credentials');
-    }
+    // Initialize app with credential
+    const app = admin.initializeApp({
+      credential: credential,
+      databaseURL: `https://${projectId}-default-rtdb.asia-southeast1.firebasedatabase.app`
+    });
 
-    // Step 2: Format private key
-    console.log('[FIREBASE] Formatting private key...');
-    try {
-      // Remove surrounding quotes and whitespace
-      privateKey = privateKey.trim().replace(/^["']|["']$/g, '');
-      
-      // Replace literal \n with actual newlines
-      privateKey = privateKey.replace(/\\n/g, '\n');
-      
-      // Ensure proper PEM format
-      if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
-        privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----`;
-      }
-      
-      console.log('[FIREBASE] Private key formatted successfully');
-    } catch (error) {
-      console.error('[FIREBASE] Private key formatting error:', error);
-      throw new Error('Failed to format Firebase private key');
-    }
-
-    // Step 3: Create service account credential
-    console.log('[FIREBASE] Creating service account credential...');
-    const serviceAccount = {
-      projectId,
-      clientEmail,
-      privateKey
-    };
-    
-    // Step 4: Initialize credential
-    console.log('[FIREBASE] Initializing credential...');
-    if (!admin.credential) {
-      throw new Error('Firebase Admin credential is undefined');
-    }
-    
-    try {
-      const credential = admin.credential.cert({
-        projectId: serviceAccount.projectId,
-        clientEmail: serviceAccount.clientEmail,
-        privateKey: serviceAccount.privateKey
-      });
-      
-      if (!credential) {
-        throw new Error('Failed to create Firebase credential');
-      }
-      
-      console.log('[FIREBASE] Credential created successfully');
-
-    // Step 5: Initialize Firebase app
-      console.log('[FIREBASE] Initializing Firebase app...');
-      const app = admin.initializeApp({
-        credential,
-        databaseURL: `https://${projectId}-default-rtdb.asia-southeast1.firebasedatabase.app`
-      });
-    } catch (error) {
-      console.error('[FIREBASE] Error creating credential:', error);
-      if (error instanceof Error) {
-        console.error('[FIREBASE] Error details:', {
-          name: error.name,
-          message: error.message,
-          stack: error.stack
-        });
-      }
-      throw new Error('Failed to create Firebase credential');
-    }
-
-    // Step 6: Verify database connection
-    console.log('[FIREBASE] Verifying database connection...');
-    const db = getDatabase(app);
-    await db.ref('.info/connected').once('value');
-    console.log('[FIREBASE] Database connection verified successfully');
-
+    console.log('[FIREBASE] Firebase Admin initialized successfully');
     firebaseApp = app;
-    console.log('[FIREBASE] Firebase Admin SDK initialized successfully');
-    
     return app;
   } catch (error) {
-    console.error('[FIREBASE] Initialization error:', error);
+    console.error('[FIREBASE] Failed to initialize Firebase Admin:', error);
     if (error instanceof Error) {
-      console.error('[FIREBASE] Error details:', {
-        name: error.name,
-        message: error.message,
-        stack: error.stack
-      });
+      console.error('[FIREBASE] Error details:', error.message);
+      console.error('[FIREBASE] Error stack:', error.stack);
+      
+      // Additional debugging for credential issues
+      if (error.message.includes('cert')) {
+        console.error('[FIREBASE] Credential creation failed. Please check the format of your credentials.');
+      }
     }
-    throw error; // Re-throw the error to be handled by the caller
+    throw error;
   }
 }
 
