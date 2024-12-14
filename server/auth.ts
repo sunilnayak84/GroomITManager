@@ -4,12 +4,40 @@ import { users } from "@db/schema";
 import { db } from "../db";
 import { eq } from "drizzle-orm";
 
-// Initialize Firebase Admin - simplified to use the instance from server/index.ts
-function getFirebaseAdmin() {
-  if (!admin.apps.length) {
-    throw new Error('Firebase Admin not initialized. Initialize in server/index.ts first.');
+// Initialize Firebase Admin SDK
+export async function getFirebaseAdmin() {
+  if (admin.apps.length) {
+    return admin.app();
   }
-  return admin.app();
+
+  try {
+    console.log('[AUTH] Initializing Firebase Admin...');
+    const isDevelopment = process.env.NODE_ENV === 'development';
+
+    // Format private key correctly
+    let privateKey = process.env.FIREBASE_PRIVATE_KEY || '';
+    if (privateKey) {
+      privateKey = privateKey.replace(/\\n/g, '\n');
+      if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
+        privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----`;
+      }
+    }
+
+    const app = admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID || 'test-project',
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL || 'test@example.com',
+        privateKey: isDevelopment ? 'test-key' : privateKey,
+      } as admin.ServiceAccount),
+      databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`
+    });
+
+    console.log('[AUTH] Firebase Admin initialized successfully');
+    return app;
+  } catch (error) {
+    console.error('[AUTH] Firebase Admin initialization error:', error);
+    throw error;
+  }
 }
 
 // Type for our Firebase auth user
@@ -258,41 +286,110 @@ export async function setUserRole(userId: string, role: 'admin' | 'staff' | 'rec
   }
 }
 
+async function setupDevelopmentAdmin() {
+  try {
+    const auth = admin.auth();
+    const adminEmail = 'admin@groomery.in';
+    const adminUid = 'MjQnuZnthzUIh2huoDpqCSMMvxe2';
+    
+    // Try to get admin user or create if doesn't exist
+    try {
+      await auth.getUser(adminUid);
+      console.log('[AUTH] Found existing admin user');
+    } catch (error) {
+      // Create admin user if not found
+      await auth.createUser({
+        uid: adminUid,
+        email: adminEmail,
+        emailVerified: true,
+        displayName: 'Admin User',
+        password: 'admin123'
+      });
+      console.log('[AUTH] Created new admin user');
+    }
+
+    // Set admin role in Realtime Database
+    const db = admin.database();
+    const userRolesRef = db.ref(`roles/${adminUid}`);
+    
+    await userRolesRef.set({
+      role: 'admin',
+      permissions: ['all'],
+      updatedAt: Date.now(),
+      isAdmin: true
+    });
+
+    // Set admin custom claims
+    await auth.setCustomUserClaims(adminUid, {
+      role: 'admin',
+      permissions: ['all'],
+      isAdmin: true,
+      updatedAt: Date.now()
+    });
+
+    // Log role update in history
+    await db.ref(`role-history/${adminUid}`).push({
+      action: 'development_setup',
+      role: 'admin',
+      permissions: ['all'],
+      timestamp: Date.now(),
+      type: 'initial_setup'
+    });
+
+    console.log('[AUTH] Development admin user set up successfully');
+  } catch (error) {
+    console.error('[AUTH] Error setting up development admin:', error);
+  }
+}
 
 export function setupAuth(app: Express) {
   try {
-    // Always initialize Firebase in development mode for testing
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Running in development mode - initializing Firebase for testing');
-      if (!admin.apps.length) {
-        admin.initializeApp({
-          credential: admin.credential.cert({
-            projectId: process.env.FIREBASE_PROJECT_ID || 'test',
-            clientEmail: process.env.FIREBASE_CLIENT_EMAIL || 'test@example.com',
-            privateKey: (process.env.FIREBASE_PRIVATE_KEY || 'test-key').replace(/\\n/g, '\n')
-          } as admin.ServiceAccount)
-        });
-      }
-    }
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    console.log(`[AUTH] Setting up authentication middleware in ${isDevelopment ? 'development' : 'production'} mode`);
 
+    const firebaseApp = await getFirebaseAdmin();
+    if (!firebaseApp && !isDevelopment) {
+      throw new Error('Failed to initialize Firebase Admin');
+    }
 
     // Add authentication middleware
     app.use(async (req, res, next) => {
-      // Skip authentication for health check
-      if (req.path === '/api/health') {
+      // Skip authentication for health check and options requests
+      if (req.path === '/api/health' || req.method === 'OPTIONS') {
         return next();
       }
 
       try {
         const authHeader = req.headers.authorization;
         if (!authHeader?.startsWith('Bearer ')) {
-          return res.status(401).json({ message: "Not authenticated" });
+          return res.status(401).json({ 
+            message: "Not authenticated",
+            code: "NO_TOKEN" 
+          });
+        }
+
+        // In development mode, allow test token
+        if (isDevelopment && authHeader === 'Bearer test-token') {
+          req.user = {
+            id: 'MjQnuZnthzUIh2huoDpqCSMMvxe2',
+            email: 'admin@groomery.in',
+            name: 'Admin User',
+            role: 'admin',
+            permissions: ['all']
+          };
+          return next();
         }
 
         const token = authHeader.split('Bearer ')[1];
-        const decodedToken = await admin.auth().verifyIdToken(token);
+        const auth = admin.auth();
+        const decodedToken = await auth.verifyIdToken(token);
         
-        // Get user from database or create if doesn't exist
+        // Get role and permissions from Firebase Realtime Database
+        const db = admin.database();
+        const userRoleSnapshot = await db.ref(`roles/${decodedToken.uid}`).once('value');
+        const userRole = userRoleSnapshot.val() || { role: 'staff', permissions: [] };
+
+        // Get user from PostgreSQL database or create if doesn't exist
         const [existingUser] = await db
           .select()
           .from(users)
@@ -300,12 +397,11 @@ export function setupAuth(app: Express) {
           .limit(1);
 
         if (!existingUser) {
-          // Create user in database
           await createUserInDatabase({
             id: decodedToken.uid,
             email: decodedToken.email || '',
-            name: decodedToken.name || decodedToken.email || '',
-            role: 'staff'
+            name: decodedToken.displayName || decodedToken.email || '',
+            role: userRole.role
           });
         }
 
@@ -313,27 +409,52 @@ export function setupAuth(app: Express) {
           id: decodedToken.uid,
           email: decodedToken.email || '',
           name: decodedToken.name || decodedToken.email || '',
-          role: (existingUser?.role || 'staff') as 'admin' | 'manager' | 'staff' | 'receptionist'
+          role: userRole.role as 'admin' | 'manager' | 'staff' | 'receptionist',
+          permissions: userRole.permissions || []
         };
 
         next();
       } catch (error) {
-        console.error('Auth error:', error);
-        return res.status(401).json({ message: "Authentication failed" });
+        console.error('[AUTH] Authentication error:', error);
+        
+        if (error instanceof Error) {
+          return res.status(401).json({ 
+            message: "Authentication failed",
+            error: error.message,
+            code: "AUTH_ERROR"
+          });
+        }
+        
+        return res.status(401).json({ 
+          message: "Authentication failed",
+          code: "UNKNOWN_ERROR"
+        });
       }
     });
 
     // Simple auth check endpoint
     app.get("/api/user", (req, res) => {
       if (!req.user) {
-        return res.status(401).json({ message: "Not authenticated" });
+        return res.status(401).json({ 
+          message: "Not authenticated",
+          code: "NO_USER" 
+        });
       }
       res.json(req.user);
     });
 
-    console.log('Auth middleware setup completed');
+    console.log('[AUTH] Authentication middleware setup completed');
+    
+    // In development mode, ensure admin user exists
+    if (isDevelopment) {
+      await setupDevelopmentAdmin();
+    }
   } catch (error) {
-    console.error('Failed to setup auth:', error);
-    throw error;
+    console.error('[AUTH] Failed to setup authentication:', error);
+    if (isDevelopment) {
+      console.warn('[AUTH] Continuing in development mode despite setup error');
+    } else {
+      throw error;
+    }
   }
 }
