@@ -73,6 +73,9 @@ export default {
         lg: "var(--radius-lg)",
         md: "var(--radius-md)",
         sm: "var(--radius-sm)",
+        "apple-lg": "12px",
+        "apple-md": "8px",
+        "apple-sm": "6px",
       },
       fontFamily: {
         sans: ["Inter", ...fontFamily.sans],
