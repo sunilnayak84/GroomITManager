@@ -2,75 +2,33 @@
   "name": "modern",
   "type": "light",
   "colors": {
-    "background": {
-      "value": "0 0% 100%"
-    },
-    "foreground": {
-      "value": "240 10% 3.9%"
-    },
-    "card": {
-      "value": "0 0% 100%"
-    },
-    "card-foreground": {
-      "value": "240 10% 3.9%"
-    },
-    "popover": {
-      "value": "0 0% 100%"
-    },
-    "popover-foreground": {
-      "value": "240 10% 3.9%"
-    },
-    "primary": {
-      "value": "262.1 83.3% 57.8%"
-    },
-    "primary-foreground": {
-      "value": "0 0% 100%"
-    },
-    "secondary": {
-      "value": "240 4.8% 95.9%"
-    },
-    "secondary-foreground": {
-      "value": "240 5.9% 10%"
-    },
-    "muted": {
-      "value": "240 4.8% 95.9%"
-    },
-    "muted-foreground": {
-      "value": "240 3.8% 46.1%"
-    },
-    "accent": {
-      "value": "240 4.8% 95.9%"
-    },
-    "accent-foreground": {
-      "value": "240 5.9% 10%"
-    },
-    "destructive": {
-      "value": "0 84.2% 60.2%"
-    },
-    "destructive-foreground": {
-      "value": "0 0% 98%"
-    },
-    "border": {
-      "value": "240 5.9% 90%"
-    },
-    "input": {
-      "value": "240 5.9% 90%"
-    },
-    "ring": {
-      "value": "262.1 83.3% 57.8%"
-    },
-    "dialog-overlay": {
-      "value": "0 0% 0% / 80%"
-    },
-    "dialog": {
-      "value": "0 0% 100%",
-      "foreground": "240 10% 3.9%"
-    }
+    "background": "0 0% 100%",
+    "foreground": "240 10% 3.9%",
+    "card": "0 0% 100%",
+    "card-foreground": "240 10% 3.9%",
+    "popover": "0 0% 100%",
+    "popover-foreground": "240 10% 3.9%",
+    "primary": "262.1 83.3% 57.8%",
+    "primary-foreground": "0 0% 100%",
+    "secondary": "240 4.8% 95.9%",
+    "secondary-foreground": "240 5.9% 10%",
+    "muted": "240 4.8% 95.9%",
+    "muted-foreground": "240 3.8% 46.1%",
+    "accent": "240 4.8% 95.9%",
+    "accent-foreground": "240 5.9% 10%",
+    "destructive": "0 84.2% 60.2%",
+    "destructive-foreground": "0 0% 98%",
+    "border": "240 5.9% 90%",
+    "input": "240 5.9% 90%",
+    "ring": "262.1 83.3% 57.8%",
+    "dialog-overlay": "0 0% 0% / 50%",
+    "background-solid": "0 0% 100%"
   },
   "radius": {
-    "lg": "12px",
-    "md": "8px",
-    "sm": "6px"
+    "lg": "0.75rem",
+    "md": "0.5rem",
+    "sm": "0.25rem",
+    "xl": "1rem"
   },
   "font": {
     "sans": "Inter"
