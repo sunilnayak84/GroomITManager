@@ -28,8 +28,12 @@ export function registerRoutes(app: Express) {
     try {
       console.log('[FIREBASE-USERS] Starting user fetch request');
       
-      const auth = admin.auth();
-      const db = admin.database();
+      // Ensure content type is set to JSON
+      res.setHeader('Content-Type', 'application/json');
+      
+      const app = await getFirebaseAdmin();
+      const auth = getAuth(app);
+      const db = getDatabase(app);
       
       // Parse pagination parameters with defaults
       const pageSize = Math.min(Number(req.query.pageSize) || 100, 1000);
