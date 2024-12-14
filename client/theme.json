@@ -40,6 +40,7 @@
     "destructive-foreground": "hsl(210 20% 98%)",
     "border": "hsl(215 27.9% 16.9%)",
     "input": "hsl(215 27.9% 16.9%)",
-    "ring": "hsl(263.4 70% 50.4%)"
+    "ring": "hsl(263.4 70% 50.4%)",
+    "radius": "0.5rem"
   }
 }
