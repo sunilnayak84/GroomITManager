@@ -16,8 +16,13 @@ export default {
     },
     extend: {
       colors: {
-        border: "var(--color-border)",
-        input: "var(--color-input)",
+        border: {
+          DEFAULT: "var(--color-border)",
+          input: "var(--color-border)", // Add border-input definition
+        },
+        input: {
+          DEFAULT: "var(--color-input)",
+        },
         ring: "var(--color-ring)",
         background: "var(--color-background)",
         foreground: "var(--color-foreground)",
@@ -49,6 +54,9 @@ export default {
           DEFAULT: "var(--color-card)",
           foreground: "var(--color-card-foreground)",
         },
+      },
+      borderColor: {
+        input: "var(--color-border)", // Add border-input definition
       },
       borderRadius: {
         lg: "var(--radius-lg)",
