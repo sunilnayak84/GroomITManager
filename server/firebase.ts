@@ -106,94 +106,210 @@ export function getFirebaseAdmin(): admin.app.App {
 }
 
 function formatPrivateKey(key: string): string {
-  // Remove any wrapping quotes
-  let formattedKey = key.replace(/['"]/g, '');
-  
-  // Replace literal \n with actual newlines if they exist
-  formattedKey = formattedKey.replace(/\\n/g, '\n');
-  
-  // Ensure proper PEM format
-  if (!formattedKey.includes('-----BEGIN PRIVATE KEY-----')) {
-    formattedKey = `-----BEGIN PRIVATE KEY-----\n${formattedKey}\n-----END PRIVATE KEY-----`;
+  try {
+    console.log('[FIREBASE] Starting private key formatting...');
+    
+    if (!key) {
+      throw new Error('Private key is empty or undefined');
+    }
+
+    // Clean the key: remove quotes and whitespace
+    let cleanKey = key.replace(/['"]/g, '').trim();
+
+    // Handle potential base64 encoding
+    if (cleanKey.match(/^[A-Za-z0-9+/=]+$/)) {
+      try {
+        const decoded = Buffer.from(cleanKey, 'base64').toString('utf8');
+        // Verify the decoded content looks like a private key
+        if (decoded.includes('PRIVATE KEY')) {
+          console.log('[FIREBASE] Successfully decoded base64 private key');
+          cleanKey = decoded;
+        }
+      } catch (e) {
+        console.log('[FIREBASE] Key is not base64 encoded, proceeding with original');
+      }
+    }
+
+    // Handle newlines
+    cleanKey = cleanKey
+      .replace(/\\n/g, '\n')
+      .replace(/\r\n/g, '\n')
+      .replace(/\r/g, '\n');
+
+
+    // Ensure the key has the proper PEM format
+    if (!cleanKey.includes('-----BEGIN PRIVATE KEY-----')) {
+      cleanKey = `-----BEGIN PRIVATE KEY-----\n${cleanKey.split('\n').join('')}\n-----END PRIVATE KEY-----`;
+    }
+
+    // Ensure proper formatting of the PEM content
+    const keyParts = cleanKey.split(/-----[^-]+-----/);
+    if (keyParts.length === 3) {
+      const keyContent = keyParts[1].trim().match(/.{1,64}/g)?.join('\n') || '';
+      cleanKey = `-----BEGIN PRIVATE KEY-----\n${keyContent}\n-----END PRIVATE KEY-----`;
+    }
+
+    // Final validation
+    const validationRegex = /^-----BEGIN PRIVATE KEY-----\n[\s\S]+\n-----END PRIVATE KEY-----$/;
+    if (!validationRegex.test(cleanKey)) {
+      throw new Error('Invalid private key format after formatting');
+    }
+
+    console.log('[FIREBASE] Private key formatted successfully');
+    return cleanKey;
+  } catch (error) {
+    console.error('[FIREBASE] Error formatting private key:', error);
+    throw new Error('Failed to format private key: ' + 
+      (error instanceof Error ? error.message : 'Unknown error'));
   }
-  
-  return formattedKey;
 }
 
 export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
   console.log('[FIREBASE] Starting Firebase Admin initialization...');
   
-  try {
-    // Return existing instance if available
-    if (firebaseApp) {
-      console.log('[FIREBASE] Using existing Firebase Admin instance');
-      return firebaseApp;
-    }
-
-    // Clean up any existing apps
+  // Maximum number of retries for initialization
+  const MAX_RETRIES = 3;
+  const RETRY_DELAY = 2000; // 2 seconds
+  const STARTUP_TIMEOUT = 10000; // 10 seconds
+  
+  async function cleanupExistingInstances() {
+    console.log('[FIREBASE] Cleaning up existing Firebase instances...');
     const existingApps = admin.apps.filter((app): app is admin.app.App => app !== null);
-    await Promise.all(existingApps.map(app => app.delete()));
-    
-    // Validate environment variables
+    if (existingApps.length > 0) {
+      console.log(`[FIREBASE] Found ${existingApps.length} existing Firebase instances to clean up`);
+      try {
+        await Promise.allSettled(existingApps.map(app => app.delete()));
+        console.log('[FIREBASE] Successfully cleaned up existing Firebase instances');
+      } catch (error) {
+        console.warn('[FIREBASE] Error during cleanup:', error);
+        // Continue despite cleanup errors
+      }
+      // Reset our cached instance
+      firebaseApp = null;
+    }
+  }
+
+  // Add timeout wrapper for async operations
+  function withTimeout<T>(promise: Promise<T>, timeoutMs: number, operation: string): Promise<T> {
+    return Promise.race([
+      promise,
+      new Promise<T>((_, reject) => 
+        setTimeout(() => reject(new Error(`${operation} timed out after ${timeoutMs}ms`)), timeoutMs)
+      )
+    ]);
+  }
+
+  async function validateCredentials() {
     const projectId = process.env.FIREBASE_PROJECT_ID?.trim();
     const clientEmail = process.env.FIREBASE_CLIENT_EMAIL?.trim();
     const privateKey = process.env.FIREBASE_PRIVATE_KEY;
 
-    console.log('[FIREBASE] Checking credentials...');
-    console.log('[FIREBASE] Project ID exists:', !!projectId);
-    console.log('[FIREBASE] Client Email exists:', !!clientEmail);
-    console.log('[FIREBASE] Private Key exists:', !!privateKey);
+    console.log('[FIREBASE] Validating credentials...');
+    console.log('[FIREBASE] Project ID:', projectId ? 'Valid' : 'Missing');
+    console.log('[FIREBASE] Client Email:', clientEmail ? 'Valid' : 'Missing');
+    console.log('[FIREBASE] Private Key:', privateKey ? 'Present' : 'Missing');
 
     if (!projectId || !clientEmail || !privateKey) {
-      throw new Error('Missing required Firebase credentials. Check environment variables.');
+      const missing = [];
+      if (!projectId) missing.push('FIREBASE_PROJECT_ID');
+      if (!clientEmail) missing.push('FIREBASE_CLIENT_EMAIL');
+      if (!privateKey) missing.push('FIREBASE_PRIVATE_KEY');
+      throw new Error(`Missing required Firebase credentials: ${missing.join(', ')}`);
     }
 
-    // Format private key
-    const formattedKey = formatPrivateKey(privateKey);
-    
-    // Initialize app with credentials
-    console.log('[FIREBASE] Initializing Firebase Admin with project:', projectId);
-    const region = 'asia-southeast1';
-    const databaseURL = `https://${projectId}-default-rtdb.${region}.firebasedatabase.app`;
+    return { projectId, clientEmail, privateKey };
+  }
 
-    firebaseApp = admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId,
-        clientEmail,
-        privateKey: formattedKey,
-      }),
-      databaseURL
-    });
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      console.log(`[FIREBASE] Initialization attempt ${attempt}/${MAX_RETRIES}`);
+      
+      // Clean up existing instances with timeout
+      await withTimeout(
+        cleanupExistingInstances(),
+        STARTUP_TIMEOUT,
+        'Firebase cleanup'
+      );
+
+      // Return existing instance if somehow still available after cleanup
+      if (firebaseApp) {
+        console.log('[FIREBASE] Using existing Firebase Admin instance');
+        const auth = getAuth(firebaseApp);
+        await withTimeout(
+          auth.listUsers(1),
+          STARTUP_TIMEOUT,
+          'Firebase Auth verification'
+        );
+        return firebaseApp;
+      }
+
+      // Validate and get credentials
+      const { projectId, clientEmail, privateKey } = await validateCredentials();
+
+      // Format private key with detailed logging
+      console.log('[FIREBASE] Formatting private key...');
+      const formattedKey = formatPrivateKey(privateKey);
+      console.log('[FIREBASE] Private key formatted successfully');
+      
+      // Initialize app with credentials
+      console.log(`[FIREBASE] Initializing Firebase Admin (Attempt ${attempt}/${MAX_RETRIES})...`);
+      
+      const region = 'asia-southeast1';
+      const databaseURL = `https://${projectId}-default-rtdb.${region}.firebasedatabase.app`;
+      console.log('[FIREBASE] Database URL:', databaseURL);
+
+      firebaseApp = admin.initializeApp({
+        credential: admin.credential.cert({
+          projectId,
+          clientEmail,
+          privateKey: formattedKey,
+        }),
+        databaseURL
+      });
 
     // Verify services
-    console.log('[FIREBASE] Verifying Firebase services...');
-    
-    // Test Auth service
-    const auth = getAuth(firebaseApp);
-    await auth.listUsers(1);
-    console.log('[FIREBASE] Auth service verified');
+      console.log('[FIREBASE] Verifying Firebase services...');
+      
+      // Test Auth service
+      const auth = getAuth(firebaseApp);
+      await auth.listUsers(1);
+      console.log('[FIREBASE] ✓ Auth service verified');
 
-    // Test Database service
-    const db = getDatabase(firebaseApp);
-    await db.ref('.info/connected').once('value');
-    console.log('[FIREBASE] Database connection verified');
+      // Test Database service
+      const db = getDatabase(firebaseApp);
+      await db.ref('.info/connected').once('value');
+      console.log('[FIREBASE] ✓ Database connection verified');
 
-    console.log('[FIREBASE] Firebase Admin initialized successfully');
-    return firebaseApp;
+      console.log('[FIREBASE] ✓ Firebase Admin initialized successfully');
+      return firebaseApp;
 
-  } catch (error) {
-    console.error('[FIREBASE] Initialization error:', error);
-    
-    // Clean up failed instance
-    if (firebaseApp) {
-      await firebaseApp.delete();
-      firebaseApp = null;
+    } catch (error) {
+      console.error(`[FIREBASE] Initialization attempt ${attempt} failed:`, error);
+      
+      // Clean up failed instance
+      if (firebaseApp) {
+        try {
+          await firebaseApp.delete();
+        } catch (cleanupError) {
+          console.warn('[FIREBASE] Error during cleanup after failed initialization:', cleanupError);
+        }
+        firebaseApp = null;
+      }
+
+      if (attempt === MAX_RETRIES) {
+        throw new Error(
+          `Firebase initialization failed after ${MAX_RETRIES} attempts: ${error instanceof Error ? error.message : 'Unknown error'}`
+        );
+      }
+
+      // Wait before retrying
+      console.log(`[FIREBASE] Waiting ${RETRY_DELAY}ms before retry...`);
+      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
     }
-    
-    throw new Error(
-      `Firebase initialization failed: ${error instanceof Error ? error.message : 'Unknown error'}`
-    );
   }
+
+  // This should never be reached due to the throw in the last iteration
+  throw new Error('Firebase initialization failed under unexpected circumstances');
 }
 
 // Permission validation
