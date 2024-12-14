@@ -268,25 +268,20 @@ async function initializeRoles(app: admin.app.App) {
 async function setupDevelopmentAdmin(app: admin.app.App) {
   try {
     const adminEmail = 'admin@groomery.in';
+    const adminUid = 'MjQnuZnthzUIh2huoDpqCSMMvxe2'; // Hardcode the known admin UID
     const auth = app.auth();
     const db = getDatabase(app);
     
     console.log('🟢 Setting up development admin user...');
     
-    // Get or create admin user
+    // Get admin user
     let adminUser;
     try {
-      adminUser = await auth.getUserByEmail(adminEmail);
+      adminUser = await auth.getUser(adminUid);
       console.log('🟢 Found existing admin user:', adminUser.uid);
     } catch {
-      console.log('🟢 Creating new admin user...');
-      adminUser = await auth.createUser({
-        email: adminEmail,
-        password: 'admin123',
-        emailVerified: true,
-        displayName: 'Admin User'
-      });
-      console.log('🟢 Created new admin user:', adminUser.uid);
+      console.error('🔴 Admin user not found with UID:', adminUid);
+      throw new Error('Admin user not found');
     }
 
     const timestamp = Date.now();
@@ -307,9 +302,9 @@ async function setupDevelopmentAdmin(app: admin.app.App) {
     await roleDefRef.set(roleDefData);
     console.log('🟢 Role definitions updated');
 
-    // Next, set up user role in roles collection
+    // Set up user role in roles collection
     console.log('🟢 Setting up user role in roles collection...');
-    const userRoleRef = db.ref(`roles/${adminUser.uid}`);
+    const userRoleRef = db.ref(`roles/${adminUid}`);
     const adminRoleData = {
       role: RoleTypes.admin,
       permissions: DefaultPermissions.admin,
@@ -317,7 +312,29 @@ async function setupDevelopmentAdmin(app: admin.app.App) {
       isAdmin: true,
       updatedAt: timestamp
     };
-    await userRoleRef.set(adminRoleData);
+    
+    // Set up admin role assignments
+    const updates = {
+      [`roles/${adminUid}`]: adminRoleData,
+      [`role-assignments/${adminUid}`]: {
+        role: RoleTypes.admin,
+        assignedAt: timestamp,
+        isAdmin: true
+      },
+      [`role-definitions/admin`]: {
+        name: 'admin',
+        permissions: DefaultPermissions.admin,
+        isSystem: true,
+        description: 'Administrator role with full system access',
+        createdAt: timestamp,
+        updatedAt: timestamp
+      }
+    };
+    
+    // Force set the role data
+    console.log('🟢 Setting admin role data in database:', { adminUid, updates });
+    await db.ref().update(updates);
+    console.log('🟢 Successfully set admin role data in database');
     console.log('🟢 User role set in database');
 
     // Force revoke all existing tokens to ensure clean state
