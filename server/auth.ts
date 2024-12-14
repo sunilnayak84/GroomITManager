@@ -1,5 +1,4 @@
 import { type Express } from "express";
-import { type Express } from "express";
 import * as admin from "firebase-admin";
 import { users } from "@db/schema";
 import { db } from "../db";
@@ -154,7 +153,7 @@ export async function createUserInDatabase(user: FirebaseUser) {
       await db.insert(users).values(userData);
 
       if (process.env.NODE_ENV !== 'development') {
-        const app = getFirebaseAdmin();
+        const app = await initializeFirebaseAdmin();
         await admin.auth().setCustomUserClaims(user.id, {
           role: user.role,
           permissions: RolePermissions[user.role] || []
@@ -360,11 +359,9 @@ export async function setupAuth(app: Express) {
         const userRole = userRoleSnapshot.val() || { role: 'staff', permissions: [] };
 
         // Get user from PostgreSQL database or create if doesn't exist
-        const [existingUser] = await db
-          .select()
-          .from(users)
-          .where(eq(users.id, decodedToken.uid))
-          .limit(1);
+        const existingUser = await db.query.users.findFirst({
+  where: eq(users.id, decodedToken.uid)
+});
 
         if (!existingUser) {
           await createUserInDatabase({
