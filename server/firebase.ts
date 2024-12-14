@@ -3,6 +3,12 @@ import * as admin from 'firebase-admin';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 
+export enum RoleTypes {
+  admin = 'admin',
+  staff = 'staff',
+  manager = 'manager'
+}
+
 export const DefaultPermissions = {
   admin: ['all'],
   staff: ['view_appointments', 'update_appointment_status'],
