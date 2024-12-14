@@ -3,44 +3,44 @@
   "type": "light",
   "colors": {
     "primary": {
-      "DEFAULT": "268 70% 50%",
+      "DEFAULT": "267 75% 40%",
       "foreground": "0 0% 100%"
     },
     "secondary": {
-      "DEFAULT": "268 55% 40%",
+      "DEFAULT": "267 60% 35%",
       "foreground": "0 0% 100%"
     },
     "accent": {
-      "DEFAULT": "268 59% 94%",
-      "foreground": "268 70% 50%"
+      "DEFAULT": "267 59% 94%",
+      "foreground": "267 75% 40%"
     },
     "background": {
       "DEFAULT": "0 0% 100%",
-      "foreground": "224 71.4% 4.1%"
+      "foreground": "240 10% 3.9%"
     },
     "muted": {
-      "DEFAULT": "220 14.3% 95.9%",
-      "foreground": "220 8.9% 46.1%"
+      "DEFAULT": "267 10% 96%",
+      "foreground": "267 30% 46%"
     },
     "card": {
       "DEFAULT": "0 0% 100%",
-      "foreground": "224 71.4% 4.1%"
+      "foreground": "240 10% 3.9%"
     },
     "popover": {
       "DEFAULT": "0 0% 100%",
-      "foreground": "224 71.4% 4.1%"
+      "foreground": "240 10% 3.9%"
     },
     "border": {
-      "DEFAULT": "220 13% 91%"
+      "DEFAULT": "267 20% 91%"
     },
     "input": {
-      "DEFAULT": "220 13% 91%"
+      "DEFAULT": "267 20% 91%"
     },
     "ring": {
-      "DEFAULT": "268 70% 50%"
+      "DEFAULT": "267 75% 40%"
     },
     "destructive": {
-      "DEFAULT": "0 84.2% 60.2%",
+      "DEFAULT": "0 84% 60%",
       "foreground": "0 0% 98%"
     }
   },
