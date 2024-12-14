@@ -1,6 +1,25 @@
 {
+  "name": "groomery",
   "variant": "professional",
-  "primary": "oklch(70% 0.1 230)",
+  "primary": "#0ea5e9",
+  "primaryForeground": "#ffffff",
+  "secondary": "#64748b",
+  "secondaryForeground": "#ffffff",
+  "background": "#ffffff",
+  "foreground": "#0f172a",
+  "muted": "#f1f5f9",
+  "mutedForeground": "#64748b",
+  "accent": "#f1f5f9",
+  "accentForeground": "#0f172a",
+  "border": "#e2e8f0",
+  "input": "#e2e8f0",
+  "destructive": "#ef4444",
+  "destructiveForeground": "#ffffff",
+  "ring": "#0ea5e9",
+  "card": "#ffffff",
+  "cardForeground": "#0f172a",
+  "popover": "#ffffff",
+  "popoverForeground": "#0f172a",
   "appearance": "light",
-  "radius": 1
+  "radius": 0.5
 }
