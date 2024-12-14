@@ -2,41 +2,16 @@ import * as admin from 'firebase-admin';
 import { getAuth } from 'firebase-admin/auth';
 import { getDatabase } from 'firebase-admin/database';
 
+// Role Types
 export enum RoleTypes {
   admin = 'admin',
-  staff = 'staff',
   manager = 'manager',
+  staff = 'staff',
   receptionist = 'receptionist'
 }
 
-export type Permission = 
-  | 'all'
-  | 'manage_appointments'
-  | 'view_appointments'
-  | 'create_appointments'
-  | 'cancel_appointments'
-  | 'manage_customers'
-  | 'view_customers'
-  | 'create_customers'
-  | 'edit_customer_info'
-  | 'manage_services'
-  | 'view_services'
-  | 'create_services'
-  | 'edit_services'
-  | 'manage_inventory'
-  | 'view_inventory'
-  | 'update_stock'
-  | 'manage_consumables'
-  | 'manage_staff_schedule'
-  | 'view_staff_schedule'
-  | 'manage_own_schedule'
-  | 'view_analytics'
-  | 'view_reports'
-  | 'view_financial_reports'
-  | 'update_appointment_status'
-  | 'view_all_appointments';
-
-export const ALL_PERMISSIONS: Permission[] = [
+// All available permissions as a const array
+export const ALL_PERMISSIONS = [
   'all',
   'manage_appointments',
   'view_appointments',
@@ -60,20 +35,28 @@ export const ALL_PERMISSIONS: Permission[] = [
   'view_analytics',
   'view_reports',
   'view_financial_reports'
-];
+] as const;
 
+// Permission type derived from the const array
+export type Permission = typeof ALL_PERMISSIONS[number];
+
+// Default permissions for each role
 export const DefaultPermissions: Record<RoleTypes, Permission[]> = {
   [RoleTypes.admin]: ['all'],
-  [RoleTypes.staff]: ['view_appointments', 'update_appointment_status'],
   [RoleTypes.manager]: [
     'manage_appointments',
-    'view_all_appointments',
+    'view_appointments',
     'manage_services',
     'view_services',
     'manage_customers',
     'view_customers',
     'manage_inventory',
     'view_inventory'
+  ],
+  [RoleTypes.staff]: [
+    'view_appointments',
+    'manage_own_schedule',
+    'view_customers'
   ],
   [RoleTypes.receptionist]: [
     'view_appointments',
@@ -83,82 +66,83 @@ export const DefaultPermissions: Record<RoleTypes, Permission[]> = {
   ]
 };
 
-export const InitialRoleConfigs = {
+// Role configuration interface
+export interface RoleConfig {
+  permissions: Permission[];
+  description: string;
+  isSystem: boolean;
+  createdAt: number;
+  updatedAt: number;
+}
+
+// Initial role configurations
+export const InitialRoleConfigs: Record<RoleTypes, RoleConfig> = {
   [RoleTypes.admin]: {
-    name: RoleTypes.admin,
-    permissions: DefaultPermissions[RoleTypes.admin],
-    description: 'Full system access',
+    permissions: ['all'],
+    description: 'Full system access with all permissions',
     isSystem: true,
     createdAt: Date.now(),
     updatedAt: Date.now()
   },
   [RoleTypes.manager]: {
-    name: RoleTypes.manager,
     permissions: DefaultPermissions[RoleTypes.manager],
-    description: 'Manage daily operations',
+    description: 'Manages daily operations and staff',
     isSystem: true,
     createdAt: Date.now(),
     updatedAt: Date.now()
   },
   [RoleTypes.staff]: {
-    name: RoleTypes.staff,
     permissions: DefaultPermissions[RoleTypes.staff],
-    description: 'Basic staff access',
+    description: 'Regular staff member access',
     isSystem: true,
     createdAt: Date.now(),
     updatedAt: Date.now()
   },
   [RoleTypes.receptionist]: {
-    name: RoleTypes.receptionist,
     permissions: DefaultPermissions[RoleTypes.receptionist],
-    description: 'Handle appointments and customers',
+    description: 'Front desk and customer service access',
     isSystem: true,
     createdAt: Date.now(),
     updatedAt: Date.now()
   }
 };
 
+
 let firebaseApp: admin.app.App | null = null;
 
 export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
+  if (firebaseApp) {
+    console.log('[FIREBASE] Using existing Firebase Admin instance');
+    return firebaseApp;
+  }
+
   try {
     console.log('[FIREBASE] Starting Firebase Admin initialization');
     
-    // Check for existing Firebase Admin instance
-    if (admin.apps.length > 0) {
-      const existingApp = admin.apps[0];
-      if (existingApp) {
-        console.log('[FIREBASE] Using existing Firebase Admin instance');
-        return existingApp;
-      }
-    }
-
-    // Get and validate required environment variables
+    // Step 1: Validate environment variables
     const projectId = process.env.FIREBASE_PROJECT_ID;
     const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
     let privateKey = process.env.FIREBASE_PRIVATE_KEY;
 
+    console.log('[FIREBASE] Checking credentials:', {
+      hasProjectId: !!projectId,
+      hasClientEmail: !!clientEmail,
+      hasPrivateKey: !!privateKey,
+      projectId: projectId
+    });
+
     if (!projectId || !clientEmail || !privateKey) {
-      const missingVars = [];
-      if (!projectId) missingVars.push('FIREBASE_PROJECT_ID');
-      if (!clientEmail) missingVars.push('FIREBASE_CLIENT_EMAIL');
-      if (!privateKey) missingVars.push('FIREBASE_PRIVATE_KEY');
-      
-      console.error('[FIREBASE] Missing required credentials:', missingVars.join(', '));
-      throw new Error(`Missing required Firebase Admin credentials: ${missingVars.join(', ')}`);
+      throw new Error('Missing required Firebase Admin credentials');
     }
 
-    console.log('[FIREBASE] All required credentials found, formatting private key');
-
-    // Format private key
+    // Step 2: Format private key
+    console.log('[FIREBASE] Formatting private key...');
     try {
-      // Remove quotes and escape characters
-      privateKey = privateKey.replace(/\\n/g, '\n');
+      // Remove surrounding quotes and whitespace
+      privateKey = privateKey.trim().replace(/^["']|["']$/g, '');
       
-      // Remove any surrounding quotes
-      if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
-        privateKey = privateKey.slice(1, -1);
-      }
+      // Replace literal \n with actual newlines
+      privateKey = privateKey.replace(/\\n/g, '\n');
       
       // Ensure proper PEM format
       if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
@@ -166,107 +150,103 @@ export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
       }
       
       console.log('[FIREBASE] Private key formatted successfully');
-    } catch (formatError) {
-      console.error('[FIREBASE] Error formatting private key:', formatError);
-      throw new Error(`Failed to format Firebase private key: ${formatError.message}`);
+    } catch (error) {
+      console.error('[FIREBASE] Private key formatting error:', error);
+      throw new Error('Failed to format Firebase private key');
+    }
+
+    // Step 3: Create service account credential
+    console.log('[FIREBASE] Creating service account credential...');
+    const serviceAccount = {
+      projectId,
+      clientEmail,
+      privateKey
+    };
+    
+    // Step 4: Initialize credential
+    console.log('[FIREBASE] Initializing credential...');
+    if (!admin.credential) {
+      throw new Error('Firebase Admin credential is undefined');
     }
     
-    console.log('[FIREBASE] Private key formatted successfully');
-    console.log('[FIREBASE] Private key formatted, length:', privateKey.length);
-
     try {
-      // Create service account credential
-      const serviceAccount = {
-        projectId,
-        clientEmail,
-        privateKey
-      };
-      
-      console.log('[FIREBASE] Creating Firebase Admin credential');
-      const credential = admin.credential.cert(serviceAccount);
-      
-      console.log('[FIREBASE] Initializing Firebase Admin app');
-      firebaseApp = admin.initializeApp({
-        credential,
-        databaseURL: `https://${projectId}-default-rtdb.firebaseio.com`
+      const credential = admin.credential.cert({
+        projectId: serviceAccount.projectId,
+        clientEmail: serviceAccount.clientEmail,
+        privateKey: serviceAccount.privateKey
       });
-
-      console.log('[FIREBASE] Firebase Admin app initialized successfully');
-
-      // Verify database connection
-      const db = admin.database(firebaseApp);
-      await db.ref('.info/connected').once('value');
-      console.log('[FIREBASE] Database connection verified');
-
-      // Initialize or verify role definitions
-      const rolesRef = db.ref('role-definitions');
-      const rolesSnapshot = await rolesRef.once('value');
       
-      if (!rolesSnapshot.exists()) {
-        console.log('[FIREBASE] Initializing default role definitions');
-        await rolesRef.set(InitialRoleConfigs);
-        console.log('[FIREBASE] Default roles initialized');
-      } else {
-        console.log('[FIREBASE] Existing role definitions found');
+      if (!credential) {
+        throw new Error('Failed to create Firebase credential');
       }
-
-      // Verify admin user setup
-      const adminUid = 'MjQnuZnthzUIh2huoDpqCSMMvxe2';
-      const adminRef = db.ref(`roles/${adminUid}`);
-      const adminSnapshot = await adminRef.once('value');
       
-      if (!adminSnapshot.exists()) {
-        console.log('[FIREBASE] Setting up admin user role');
-        await adminRef.set({
-          role: RoleTypes.admin,
-          permissions: DefaultPermissions[RoleTypes.admin],
-          isAdmin: true,
-          updatedAt: Date.now()
+      console.log('[FIREBASE] Credential created successfully');
+
+    // Step 5: Initialize Firebase app
+      console.log('[FIREBASE] Initializing Firebase app...');
+      const app = admin.initializeApp({
+        credential,
+        databaseURL: `https://${projectId}-default-rtdb.asia-southeast1.firebasedatabase.app`
+      });
+    } catch (error) {
+      console.error('[FIREBASE] Error creating credential:', error);
+      if (error instanceof Error) {
+        console.error('[FIREBASE] Error details:', {
+          name: error.name,
+          message: error.message,
+          stack: error.stack
         });
-        console.log('[FIREBASE] Admin user role configured');
       }
-
-      console.log('[FIREBASE] Firebase Admin SDK initialized successfully');
-      return firebaseApp;
-    } catch (initError) {
-      console.error('[FIREBASE] Error during app initialization:', initError);
-      throw new Error(`Failed to initialize Firebase Admin: ${initError.message}`);
+      throw new Error('Failed to create Firebase credential');
     }
+
+    // Step 6: Verify database connection
+    console.log('[FIREBASE] Verifying database connection...');
+    const db = getDatabase(app);
+    await db.ref('.info/connected').once('value');
+    console.log('[FIREBASE] Database connection verified successfully');
+
+    firebaseApp = app;
+    console.log('[FIREBASE] Firebase Admin SDK initialized successfully');
+    
+    return app;
   } catch (error) {
-    console.error('[FIREBASE] Error during Firebase Admin initialization:', error);
-    throw error;
+    console.error('[FIREBASE] Initialization error:', error);
+    if (error instanceof Error) {
+      console.error('[FIREBASE] Error details:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
+    }
+    throw error; // Re-throw the error to be handled by the caller
   }
 }
 
+// Helper functions
 export async function getFirebaseAdmin(): Promise<admin.app.App> {
-  try {
-    return await initializeFirebaseAdmin();
-  } catch (error) {
-    console.error('[FIREBASE] Failed to get Firebase Admin instance:', error);
-    throw new Error('Failed to initialize Firebase Admin');
-  }
+  const app = await initializeFirebaseAdmin();
+  return app;
 }
 
-// Helper function to safely get database instance
-export async function getFirebaseDatabase() {
-  try {
-    const app = await getFirebaseAdmin();
-    return admin.database(app);
-  } catch (error) {
-    console.error('[FIREBASE] Failed to get Firebase Database instance:', error);
-    throw new Error('Failed to get Firebase Database instance');
-  }
-}
-
-// Helper function to safely get auth instance
 export async function getFirebaseAuth() {
-  try {
-    const app = await getFirebaseAdmin();
-    return admin.auth(app);
-  } catch (error) {
-    console.error('[FIREBASE] Failed to get Firebase Auth instance:', error);
-    throw new Error('Failed to get Firebase Auth instance');
-  }
+  const app = await getFirebaseAdmin();
+  return getAuth(app);
+}
+
+export async function getFirebaseDatabase() {
+  const app = await getFirebaseAdmin();
+  return getDatabase(app);
+}
+
+// Permission validation
+export function isValidPermission(permission: unknown): permission is Permission {
+  if (typeof permission !== 'string') return false;
+  return (ALL_PERMISSIONS as string[]).includes(permission);
+}
+
+export function validatePermissions(permissions: unknown[]): Permission[] {
+  return permissions.filter(isValidPermission);
 }
 
 export async function getUserRole(userId: string): Promise<{ role: RoleTypes; permissions: Permission[] }> {
@@ -287,14 +267,6 @@ export async function getUserRole(userId: string): Promise<{ role: RoleTypes; pe
   };
 }
 
-export function validatePermissions(permissions: unknown[]): Permission[] {
-  return permissions.filter(isValidPermission);
-}
-
-export function isValidPermission(permission: unknown): permission is Permission {
-  return typeof permission === 'string' && ALL_PERMISSIONS.includes(permission as Permission);
-}
-
 export async function updateUserRole(
   userId: string,
   role: RoleTypes,
@@ -308,16 +280,8 @@ export async function updateUserRole(
     // Get user record to verify existence
     const userRecord = await auth.getUser(userId);
     
-    // Get role definition
-    const roleDefSnapshot = await db.ref(`role-definitions/${role}`).once('value');
-    const roleDef = roleDefSnapshot.val();
-    
-    if (!roleDef) {
-      throw new Error(`Role ${role} not found`);
-    }
-    
     // Determine final permissions
-    const permissions = customPermissions || roleDef.permissions || DefaultPermissions[role];
+    const permissions = customPermissions || DefaultPermissions[role];
     
     // Update role in Firebase Realtime Database
     await db.ref(`roles/${userId}`).set({
@@ -378,7 +342,7 @@ export async function listAllUsers(pageToken?: string) {
 export async function getRoleDefinitions() {
   const db = await getFirebaseDatabase();
   const snapshot = await db.ref('role-definitions').once('value');
-  return snapshot.val() || InitialRoleConfigs;
+  return snapshot.val() || {}; // Return empty object if no roles defined.
 }
 
 export async function updateRoleDefinition(

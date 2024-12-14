@@ -1,4 +1,3 @@
-
 import * as admin from 'firebase-admin';
 import { getDatabase } from 'firebase-admin/database';
 import { getAuth } from 'firebase-admin/auth';
@@ -25,7 +24,21 @@ async function initializeRoles() {
 
     // Initialize role definitions
     console.log('[ROLES] Setting up role definitions...');
-    await db.ref('role-definitions').set(InitialRoleConfigs);
+    const roleDefinitionsRef = db.ref('role-definitions');
+
+    // Check if roles already exist
+    const existingRoles = await roleDefinitionsRef.once('value');
+    if (!existingRoles.exists()) {
+      console.log('[ROLES] No existing roles found, initializing default roles...');
+      await roleDefinitionsRef.set(InitialRoleConfigs);
+      console.log('[ROLES] Default roles initialized successfully');
+    } else {
+      console.log('[ROLES] Existing roles found, skipping initialization');
+      
+      // Log existing roles for verification
+      const currentRoles = existingRoles.val();
+      console.log('[ROLES] Current roles:', Object.keys(currentRoles));
+    }
     
     // Setup admin user
     const adminEmail = 'admin@groomery.in';
