@@ -1,4 +1,5 @@
-import { extendTheme, type ThemeConfig } from '@chakra-ui/react';
+import { extendTheme } from "@chakra-ui/react";
+import type { ThemeConfig } from "@chakra-ui/react";
 
 const config: ThemeConfig = {
   initialColorMode: 'light',
@@ -7,40 +8,40 @@ const config: ThemeConfig = {
 
 const colors = {
   brand: {
-    50: '#f5e9ff',
-    100: '#dbc1ff',
-    200: '#c199ff',
-    300: '#a770ff',
-    400: '#8d48ff',
-    500: '#742fff',
-    600: '#5a24cc',
-    700: '#411a99',
-    800: '#291166',
-    900: '#120733',
+    50: 'hsl(270, 100%, 98%)',
+    100: 'hsl(270, 100%, 94%)',
+    200: 'hsl(270, 100%, 88%)',
+    300: 'hsl(270, 100%, 82%)',
+    400: 'hsl(270, 100%, 76%)',
+    500: 'hsl(270, 100%, 70%)',
+    600: 'hsl(270, 100%, 64%)',
+    700: 'hsl(270, 100%, 58%)',
+    800: 'hsl(270, 100%, 52%)',
+    900: 'hsl(270, 100%, 46%)',
   },
   primary: {
-    50: '#e3f2fd',
-    100: '#bbdefb',
-    200: '#90caf9',
-    300: '#64b5f6',
-    400: '#42a5f5',
-    500: '#2196f3',
-    600: '#1e88e5',
-    700: '#1976d2',
-    800: '#1565c0',
-    900: '#0d47a1',
+    50: 'hsl(262, 83%, 98%)',
+    100: 'hsl(262, 83%, 94%)',
+    200: 'hsl(262, 83%, 88%)',
+    300: 'hsl(262, 83%, 82%)',
+    400: 'hsl(262, 83%, 76%)',
+    500: 'hsl(262, 83%, 58%)',
+    600: 'hsl(262, 83%, 52%)',
+    700: 'hsl(262, 83%, 46%)',
+    800: 'hsl(262, 83%, 40%)',
+    900: 'hsl(262, 83%, 34%)',
   },
   secondary: {
-    50: '#fce4ec',
-    100: '#f8bbd0',
-    200: '#f48fb1',
-    300: '#f06292',
-    400: '#ec407a',
-    500: '#e91e63',
-    600: '#d81b60',
-    700: '#c2185b',
-    800: '#ad1457',
-    900: '#880e4f',
+    50: 'hsl(210, 40%, 98%)',
+    100: 'hsl(210, 40%, 94%)',
+    200: 'hsl(210, 40%, 88%)',
+    300: 'hsl(210, 40%, 82%)',
+    400: 'hsl(210, 40%, 76%)',
+    500: 'hsl(210, 40%, 70%)',
+    600: 'hsl(210, 40%, 64%)',
+    700: 'hsl(210, 40%, 58%)',
+    800: 'hsl(210, 40%, 52%)',
+    900: 'hsl(210, 40%, 46%)',
   }
 };
 
@@ -49,6 +50,7 @@ const components = {
     baseStyle: {
       fontWeight: 'semibold',
       borderRadius: 'md',
+      transition: 'all 0.2s',
     },
     variants: {
       solid: {
@@ -56,9 +58,18 @@ const components = {
         color: 'white',
         _hover: {
           bg: 'primary.600',
+          transform: 'translateY(-1px)',
+          boxShadow: 'lg',
           _disabled: {
             bg: 'primary.500',
+            transform: 'none',
+            boxShadow: 'none',
           },
+        },
+        _active: {
+          bg: 'primary.700',
+          transform: 'translateY(0)',
+          boxShadow: 'md',
         },
       },
       outline: {
@@ -66,12 +77,23 @@ const components = {
         color: 'primary.500',
         _hover: {
           bg: 'primary.50',
+          transform: 'translateY(-1px)',
+          boxShadow: 'sm',
+        },
+        _active: {
+          bg: 'primary.100',
+          transform: 'translateY(0)',
         },
       },
       ghost: {
         color: 'primary.500',
         _hover: {
           bg: 'primary.50',
+          transform: 'translateY(-1px)',
+        },
+        _active: {
+          bg: 'primary.100',
+          transform: 'translateY(0)',
         },
       },
     },
@@ -85,6 +107,11 @@ const components = {
       bg: 'white',
       rounded: 'lg',
       boxShadow: 'lg',
+      transition: 'all 0.2s',
+      _hover: {
+        transform: 'translateY(-2px)',
+        boxShadow: 'xl',
+      },
       _dark: {
         bg: 'gray.800',
       },
@@ -95,6 +122,7 @@ const components = {
       outline: {
         field: {
           borderColor: 'gray.200',
+          transition: 'all 0.2s',
           _hover: {
             borderColor: 'primary.500',
           },
