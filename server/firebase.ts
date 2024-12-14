@@ -286,32 +286,32 @@ async function setupDevelopmentAdmin(app: admin.app.App) {
       console.log('🟢 Created new admin user:', adminUser.uid);
     }
 
-    // Set admin role in both locations
     const timestamp = Date.now();
-    
-    // 1. Set in roles collection
-    const roleRef = db.ref(`roles/${adminUser.uid}`);
-    const adminData = {
-      role: RoleTypes.admin,
-      permissions: DefaultPermissions.admin,
-      isAdmin: true,
-      updatedAt: timestamp
-    };
-    await roleRef.set(adminData);
-    console.log('🟢 Set admin role in roles collection');
 
-    // 2. Set in role-definitions
-    const roleDefRef = db.ref(`role-definitions/${RoleTypes.admin}`);
-    const adminRoleData = {
+    // Ensure admin role exists in role-definitions first
+    const roleDefRef = db.ref('role-definitions');
+    await roleDefRef.child(RoleTypes.admin).set({
       name: RoleTypes.admin,
       permissions: DefaultPermissions.admin,
       isSystem: true,
+      createdAt: timestamp,
+      updatedAt: timestamp
+    });
+    console.log('🟢 Ensured admin role exists in role-definitions');
+
+    // Set admin role for the user
+    const userRoleRef = db.ref(`roles/${adminUser.uid}`);
+    const adminRoleData = {
+      role: RoleTypes.admin,
+      permissions: DefaultPermissions.admin,
+      isSystem: true,
+      isAdmin: true,
       updatedAt: timestamp
     };
-    await roleDefRef.set(adminRoleData);
-    console.log('🟢 Set admin role in role-definitions');
+    await userRoleRef.set(adminRoleData);
+    console.log('🟢 Set admin role in roles collection');
 
-    // 3. Set custom claims
+    // Set custom claims with full admin privileges
     const customClaims = {
       role: RoleTypes.admin,
       permissions: DefaultPermissions.admin,
@@ -319,9 +319,15 @@ async function setupDevelopmentAdmin(app: admin.app.App) {
       updatedAt: timestamp
     };
     await auth.setCustomUserClaims(adminUser.uid, customClaims);
-    console.log('🟢 Set admin custom claims');
+    console.log('🟢 Set admin custom claims:', customClaims);
 
-    console.log('🟢 Development admin setup complete');
+    // Verify the setup
+    const updatedUser = await auth.getUser(adminUser.uid);
+    if (!updatedUser.customClaims?.isAdmin) {
+      throw new Error('Failed to verify admin privileges');
+    }
+
+    console.log('🟢 Development admin setup complete and verified');
     return adminUser;
   } catch (error) {
     console.error('🔴 Development admin setup failed:', error);
