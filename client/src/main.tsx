@@ -83,8 +83,10 @@ createRoot(document.getElementById("root")!).render(
       <ChakraProvider theme={theme}>
         <ThemeProvider>
           <QueryClientProvider client={queryClient}>
-            <Router />
-            <Toaster />
+            <div className="min-h-screen bg-background font-sans antialiased">
+              <Router />
+              <Toaster />
+            </div>
           </QueryClientProvider>
         </ThemeProvider>
       </ChakraProvider>

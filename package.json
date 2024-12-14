@@ -11,8 +11,8 @@
     "db:push": "drizzle-kit push"
   },
   "dependencies": {
-    "@chakra-ui/react": "^3.2.3",
-    "@chakra-ui/theme-tools": "^2.2.6",
+    "@chakra-ui/react": "^2.10.4",
+    "@chakra-ui/theme-tools": "^2.2.7",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@firebase/auth": "^1.8.1",
@@ -74,7 +74,7 @@
     "express-session": "^1.18.1",
     "firebase": "^11.0.2",
     "firebase-admin": "^13.0.1",
-    "framer-motion": "^11.14.4",
+    "framer-motion": "^10.18.0",
     "input-otp": "^1.4.1",
     "lucide-react": "^0.453.0",
     "memorystore": "^1.6.7",
