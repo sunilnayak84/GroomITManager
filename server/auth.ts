@@ -3,42 +3,7 @@ import admin from "firebase-admin";
 import { users } from "@db/schema";
 import { db } from "../db";
 import { eq } from "drizzle-orm";
-
-// Initialize Firebase Admin SDK
-export async function getFirebaseAdmin() {
-  if (admin.apps.length) {
-    return admin.app();
-  }
-
-  try {
-    console.log('[AUTH] Initializing Firebase Admin...');
-    const isDevelopment = process.env.NODE_ENV === 'development';
-
-    // Format private key correctly
-    let privateKey = process.env.FIREBASE_PRIVATE_KEY || '';
-    if (privateKey) {
-      privateKey = privateKey.replace(/\\n/g, '\n');
-      if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
-        privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----`;
-      }
-    }
-
-    const app = admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: process.env.FIREBASE_PROJECT_ID || 'test-project',
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL || 'test@example.com',
-        privateKey: isDevelopment ? 'test-key' : privateKey,
-      } as admin.ServiceAccount),
-      databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`
-    });
-
-    console.log('[AUTH] Firebase Admin initialized successfully');
-    return app;
-  } catch (error) {
-    console.error('[AUTH] Firebase Admin initialization error:', error);
-    throw error;
-  }
-}
+import { getFirebaseAdmin, getFirebaseAuth, getFirebaseDatabase } from "./firebase";
 
 // Type for our Firebase auth user
 export interface FirebaseUser {
@@ -342,15 +307,14 @@ async function setupDevelopmentAdmin() {
   }
 }
 
-export function setupAuth(app: Express) {
-  try {
-    const isDevelopment = process.env.NODE_ENV === 'development';
-    console.log(`[AUTH] Setting up authentication middleware in ${isDevelopment ? 'development' : 'production'} mode`);
+export async function setupAuth(app: Express) {
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  console.log(`[AUTH] Setting up authentication middleware in ${isDevelopment ? 'development' : 'production'} mode`);
 
-    const firebaseApp = await getFirebaseAdmin();
-    if (!firebaseApp && !isDevelopment) {
-      throw new Error('Failed to initialize Firebase Admin');
-    }
+  try {
+    // Initialize Firebase Admin
+    await initializeFirebaseAdmin();
+    console.log('[AUTH] Firebase Admin initialized successfully');
 
     // Add authentication middleware
     app.use(async (req, res, next) => {

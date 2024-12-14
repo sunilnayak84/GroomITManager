@@ -26,15 +26,6 @@ if (missingVars.length > 0) {
   process.exit(1);
 }
 
-// Verify environment variables are loaded
-const requiredEnvVars = ['FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY'];
-const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
-
-if (missingVars.length > 0) {
-  console.error('Missing required environment variables:', missingVars.join(', '));
-  process.exit(1);
-}
-
 async function setupRoles() {
   console.log('Starting role setup...');
   
