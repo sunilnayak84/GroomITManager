@@ -133,24 +133,59 @@ export function useWorkingHours(branchId?: string) {
           ? doc(workingHoursRef, data.existingId)
           : doc(workingHoursRef);
         
+        // Validate and format the data before saving
         const workingHoursData = {
-          branchId: data.branchId.toString(),
-          dayOfWeek: data.dayOfWeek,
-          isOpen: data.isOpen,
-          openingTime: data.openingTime,
-          closingTime: data.closingTime,
-          breakStart: data.breakStart,
-          breakEnd: data.breakEnd,
-          maxDailyAppointments: data.maxDailyAppointments || 8,
-          createdAt: data.existingId ? Timestamp.fromDate(new Date()) : Timestamp.fromDate(new Date()),
-          updatedAt: Timestamp.fromDate(new Date())
+          branchId: data.branchId?.toString() || "1",
+          dayOfWeek: Number(data.dayOfWeek),
+          isOpen: Boolean(data.isOpen),
+          openingTime: data.openingTime || "09:00",
+          closingTime: data.closingTime || "17:00",
+          breakStart: data.breakStart || null,
+          breakEnd: data.breakEnd || null,
+          maxDailyAppointments: Number(data.maxDailyAppointments) || 8
         };
 
-        await setDoc(dayRef, workingHoursData, { merge: true });
+        // Add timestamps
+        const now = new Date();
+        const timestamps = {
+          updatedAt: Timestamp.fromDate(now)
+        };
+
+        // Only set createdAt for new records
+        if (!data.existingId) {
+          timestamps.createdAt = Timestamp.fromDate(now);
+        }
+
+        // Combine data with timestamps
+        const finalData = {
+          ...workingHoursData,
+          ...timestamps
+        };
+
+        // Use merge true to preserve existing fields
+        await setDoc(dayRef, finalData, { merge: true });
         return dayRef.id;
       } catch (error) {
         console.error('Error adding working hours:', error);
-        throw error;
+        
+        // Log detailed information about the failed operation
+        console.error('Failed operation details:', {
+          dayOfWeek: data.dayOfWeek,
+          existingId: data.existingId,
+          isUpdate: !!data.existingId
+        });
+
+        // Provide a more specific error message
+        if (error instanceof Error) {
+          if (error.message.includes('setDoc')) {
+            throw new Error('Failed to save working hours: Invalid data format');
+          } else if (error.name === 'DuplicateScheduleError') {
+            throw error; // Rethrow duplicate schedule errors
+          }
+        }
+        
+        // Throw a general error if we can't determine the specific cause
+        throw new Error('Failed to save working hours. Please try again.');
       }
     },
     onSuccess: () => {
