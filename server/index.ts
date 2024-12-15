@@ -49,34 +49,46 @@ app.set('trust proxy', 1);
 
 // CORS configuration
 import cors from 'cors';
-const allowedOrigins = process.env.NODE_ENV === 'development'
-  ? [
-      'http://localhost:5174',
-      'http://0.0.0.0:5174',
-      `http://localhost:${PORT}`,
-      `http://0.0.0.0:${PORT}`,
-      'http://localhost:3000',
-      'http://0.0.0.0:3000'
-    ]
-  : [
-      process.env.CORS_ORIGIN,
-      process.env.REPL_SLUG ? `https://${process.env.REPL_SLUG}.repl.co` : undefined,
-      'http://localhost:3000'
-    ].filter(Boolean) as string[];
+const allowedOrigins = [
+  'http://localhost:5174',
+  'http://0.0.0.0:5174',
+  `http://localhost:${PORT}`,
+  `http://0.0.0.0:${PORT}`,
+  'http://localhost:3000',
+  'http://0.0.0.0:3000',
+  process.env.CORS_ORIGIN,
+  process.env.REPL_SLUG ? [
+    `https://${process.env.REPL_SLUG}.repl.co`,
+    `https://${process.env.REPL_SLUG}-00.${process.env.REPL_OWNER}.repl.co`,
+    `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`
+  ] : [],
+].flat().filter(Boolean) as string[];
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) {
+      return callback(null, true);
+    }
+    
+    if (process.env.NODE_ENV === 'development') {
+      // In development, be more permissive with CORS
+      callback(null, true);
+    } else if (allowedOrigins.some(allowedOrigin => 
+      origin.startsWith(allowedOrigin) || 
+      origin.includes('.repl.co')
+    )) {
       callback(null, true);
     } else {
       log(`Blocked request from unauthorized origin: ${origin}`, 'warn');
-      callback(null, false);
+      callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
+  preflightContinue: false
 }));
 
 // Request logging middleware
