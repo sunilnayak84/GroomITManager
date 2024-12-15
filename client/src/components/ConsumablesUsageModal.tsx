@@ -87,6 +87,8 @@ export function ConsumablesUsageModal({
         appointment_id: data.appointment_id,
         used_by: user.id,
         notes: data.notes,
+        service_linked: !!data.service_id, // true if service_id is provided
+        auto_deducted: true // Since this is being recorded through the UI
       });
       
       onClose();
