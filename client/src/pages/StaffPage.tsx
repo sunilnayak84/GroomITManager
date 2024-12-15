@@ -75,15 +75,16 @@ export default function StaffPage() {
   const onSubmit = async (data: InsertUser) => {
     try {
       // Always ensure isGroomer is set based on role and include all required fields
+      const role = data.role === 'groomer' ? 'groomer' as const : 'staff' as const;
       const staffData = {
         ...data,
-        isGroomer: data.role === 'groomer',
+        isGroomer: role === 'groomer',
         isActive: true,
         specialties: data.specialties || [],
         petTypePreferences: data.petTypePreferences || [],
         experienceYears: data.experienceYears || 0,
         maxDailyAppointments: data.maxDailyAppointments || 8,
-        role: data.role === 'groomer' ? 'groomer' : 'staff'
+        role
       };
 
       console.log('Submitting staff data:', staffData);
