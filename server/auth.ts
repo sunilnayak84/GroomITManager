@@ -17,12 +17,22 @@ import { getDatabase } from "firebase-admin/database";
 export interface FirebaseUser {
   id: string;
   uid: string;
-  email: string;
+  email: string | null;
   role: keyof typeof RoleTypes;
   name: string;
   displayName?: string;
   branchId?: number;
   permissions: string[];
+}
+
+// Type guard for FirebaseUser
+export function isFirebaseUser(user: any): user is FirebaseUser {
+  return user && 
+    typeof user.id === 'string' && 
+    typeof user.uid === 'string' && 
+    (typeof user.email === 'string' || user.email === null) &&
+    typeof user.name === 'string' &&
+    Array.isArray(user.permissions);
 }
 
 // Extend Express Request type to avoid recursive type reference

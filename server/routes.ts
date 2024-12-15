@@ -13,9 +13,13 @@ import {
   Permission,
   validatePermissions,
   isValidPermission,
-  ALL_PERMISSIONS
+  ALL_PERMISSIONS,
+  getFirebaseAdmin
 } from "./firebase";
+import { getAuth } from "firebase-admin/auth";
+import { getDatabase } from "firebase-admin/database";
 import admin from "firebase-admin";
+import { db } from "../db";
 
 export function registerRoutes(app: Express) {
   // Health check endpoint
