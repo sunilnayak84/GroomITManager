@@ -161,18 +161,38 @@ async function startServer(port: number): Promise<void> {
 // Start the server
 const PORT = parseInt(process.env.PORT || '3000', 10);
 
-startServer(PORT).catch(error => {
-  log(`Fatal error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
-  process.exit(1);
+// Add unhandled rejection handler
+process.on('unhandledRejection', (reason, promise) => {
+  log(`Unhandled Rejection at: ${promise}\nReason: ${reason}`, 'error');
 });
+
+// Add uncaught exception handler
+process.on('uncaughtException', (error) => {
+  log(`Uncaught Exception: ${error.message}`, 'error');
+  log(error.stack || '', 'error');
+});
+
+log(`Starting server on port ${PORT}...`, 'info');
+
+startServer(PORT)
+  .then(() => {
+    log(`Server successfully started on port ${PORT}`, 'info');
+  })
+  .catch(error => {
+    log(`Fatal error during server startup: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+    if (error instanceof Error && error.stack) {
+      log(`Stack trace: ${error.stack}`, 'error');
+    }
+    process.exit(1);
+  });
 
 // Handle process signals
 process.on('SIGTERM', () => {
-  log('Received SIGTERM signal', 'warn');
+  log('Received SIGTERM signal, shutting down gracefully', 'warn');
   process.exit(0);
 });
 
 process.on('SIGINT', () => {
-  log('Received SIGINT signal', 'warn');
+  log('Received SIGINT signal, shutting down gracefully', 'warn');
   process.exit(0);
 });

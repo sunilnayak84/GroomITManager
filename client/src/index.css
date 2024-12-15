@@ -8,6 +8,7 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
+    --background-foreground: 240 10% 3.9%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
@@ -60,7 +61,7 @@
 @layer components {
   /* Layout Components */
   .main-layout {
-    @apply min-h-screen w-full bg-background text-foreground;
+    @apply min-h-screen w-full bg-white text-foreground;
   }
 
   .content-container {
