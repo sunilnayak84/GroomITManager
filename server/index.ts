@@ -5,6 +5,7 @@ import { createServer } from "http";
 import { terminateProcessOnPort } from "./utils/port_cleanup.js";
 // Server imports
 import { initializeFirebaseAdmin, getFirebaseAdmin } from "./firebase.js";
+import { getDatabase } from "firebase-admin/database";
 import path from "path";
 import fs from "fs";
 
@@ -89,6 +90,16 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
 // Main server startup function
 async function startServer(port: number): Promise<void> {
   const isDevelopment = process.env.NODE_ENV === 'development';
+  
+  // Initialize Firebase first
+  try {
+    log('Initializing Firebase Admin...', 'info');
+    await initializeFirebaseAdmin();
+    log('Firebase Admin initialized successfully', 'info');
+  } catch (error) {
+    log(`Failed to initialize Firebase: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+    throw error;
+  }
   
   // Create HTTP server and register routes
   const server = createServer(app);
@@ -178,15 +189,63 @@ process.on('uncaughtException', (error) => {
   log(`Uncaught Exception: ${error.message}`, 'error');
 });
 
-// Simple startup sequence
+// Enhanced startup sequence with proper initialization order
 const startupSequence = async () => {
   try {
-    log('Starting server...', 'info');
+    log('Starting server initialization...', 'info');
+    
+    // Initialize Firebase Admin first with retries
+    log('Initializing Firebase Admin...', 'info');
+    let firebaseApp;
+    const maxRetries = 3;
+    const retryDelay = 2000;
+    
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        // Initialize Firebase Admin
+        firebaseApp = await initializeFirebaseAdmin();
+        
+        // Test database connection
+        const db = getDatabase(firebaseApp);
+        const connectedRef = db.ref('.info/connected');
+        const snapshot = await connectedRef.once('value');
+        
+        if (snapshot.val() === true) {
+          log('Firebase Admin initialized and database connected successfully', 'info');
+          break;
+        } else {
+          throw new Error('Database connection test failed');
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        log(`Firebase initialization attempt ${attempt} failed: ${errorMessage}`, 'warn');
+        
+        if (attempt === maxRetries) {
+          throw new Error(`Firebase initialization failed after ${maxRetries} attempts`);
+        }
+        
+        log(`Retrying in ${retryDelay}ms...`, 'info');
+        await new Promise(resolve => setTimeout(resolve, retryDelay));
+      }
+    }
+    
+    if (!firebaseApp) {
+      throw new Error('Firebase initialization failed');
+    }
+    
+    // Register routes after Firebase is initialized
+    log('Registering routes...', 'info');
+    registerRoutes(app);
+    
+    // Start the appropriate server based on environment
     if (process.env.NODE_ENV === 'development') {
-      log('Running in development mode', 'info');
-      // In development, we don't need to serve static files
+      log('Starting development server...', 'info');
       const server = createServer(app);
-      registerRoutes(app);
+      
+      if (process.env.NODE_ENV === 'development') {
+        await setupVite(app, server);
+      }
+      
       await new Promise<void>((resolve, reject) => {
         server.listen(PORT, '0.0.0.0', () => {
           log(`Development server started on port ${PORT}`, 'info');
@@ -194,13 +253,15 @@ const startupSequence = async () => {
         }).on('error', reject);
       });
     } else {
+      log('Starting production server...', 'info');
       await startServer(PORT);
     }
+    
     log(`Server successfully started on port ${PORT}`, 'info');
     return true;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    log(`Server startup error: ${errorMessage}`, 'error');
+    log(`Fatal: Server startup error: ${errorMessage}`, 'error');
     throw error;
   }
 };

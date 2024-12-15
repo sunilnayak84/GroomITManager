@@ -14,7 +14,8 @@ import {
   validatePermissions,
   isValidPermission,
   ALL_PERMISSIONS,
-  getFirebaseAdmin
+  getFirebaseAdmin,
+  setupAdminUser
 } from "./firebase";
 import { getAuth } from "firebase-admin/auth";
 import { getDatabase } from "firebase-admin/database";
@@ -25,6 +26,50 @@ export function registerRoutes(app: Express) {
   // Health check endpoint
   app.get("/api/health", (req, res) => {
     res.json({ status: "healthy" });
+  });
+
+  // Setup admin user endpoint - accessible without authentication
+  app.post("/api/setup-admin", async (req, res) => {
+    try {
+      const adminEmail = 'admin@groomery.in';
+      console.log('[SETUP-ADMIN] Starting admin user setup for:', adminEmail);
+      
+      // Get Firebase Admin instance
+      const firebaseApp = getFirebaseAdmin();
+      console.log('[SETUP-ADMIN] Firebase Admin instance retrieved');
+      
+      // Setup admin user with default permissions
+      await setupAdminUser(adminEmail);
+      console.log('[SETUP-ADMIN] Admin user setup completed successfully');
+      
+      // Initialize role definitions in Realtime Database
+      const db = getDatabase(firebaseApp);
+      const roleDefsRef = db.ref('role-definitions');
+      const roleDefsSnapshot = await roleDefsRef.once('value');
+      
+      if (!roleDefsSnapshot.exists()) {
+        console.log('[SETUP-ADMIN] Initializing role definitions');
+        await roleDefsRef.set(InitialRoleConfigs);
+      }
+      
+      res.json({ 
+        success: true,
+        message: "Admin user setup completed successfully",
+        email: adminEmail,
+        roles: Object.keys(InitialRoleConfigs)
+      });
+    } catch (error) {
+      console.error('[SETUP-ADMIN] Error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('[SETUP-ADMIN] Detailed error:', errorMessage);
+      
+      res.status(500).json({ 
+        success: false,
+        message: "Failed to setup admin user",
+        error: errorMessage,
+        code: "ADMIN_SETUP_ERROR"
+      });
+    }
   });
 
   // Firebase User Management endpoints - Admin only

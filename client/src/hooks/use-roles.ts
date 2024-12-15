@@ -36,15 +36,25 @@ async function fetchRoles(): Promise<Role[]> {
       return [];
     }
     
-    const app = getApp();
-    const db = getDatabase(app);
-    console.log('[ROLES] Connected to Firebase Realtime Database');
+    // Get fresh ID token
+    const token = await auth.currentUser.getIdToken(true);
+    console.log('[ROLES] Got fresh ID token');
     
-    // First, fetch system roles from role-definitions
-    const roleDefinitionsRef = ref(db, 'role-definitions');
-    console.log('[ROLES] Fetching role definitions from:', roleDefinitionsRef.toString());
+    // Fetch roles from backend API instead of direct Firebase access
+    const response = await fetch(`${window.location.protocol}//${window.location.hostname}:3000/api/roles`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include'
+    });
     
-    const snapshot = await get(roleDefinitionsRef);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch roles: ${response.statusText}`);
+    }
+    
+    const roles = await response.json();
+    console.log('[ROLES] Fetched roles:', roles);
     
     if (!snapshot.exists()) {
       console.warn('[ROLES] No role definitions found, initializing default roles...');

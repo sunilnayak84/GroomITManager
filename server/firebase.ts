@@ -238,8 +238,8 @@ export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
       // Initialize new app instance
       console.log(`[FIREBASE] Initializing new Firebase Admin instance...`);
       
-      // Use the correct database URL for asia-southeast1 region
-      const databaseURL = process.env.FIREBASE_DATABASE_URL || 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app';
+      // Use the provided database URL for asia-southeast1 region
+      const databaseURL = 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app';
       console.log('[FIREBASE] Using database URL:', databaseURL);
       
       // Create the app with minimal configuration first
@@ -249,7 +249,10 @@ export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
             clientEmail,
             privateKey: formattedKey
           }),
-          databaseURL
+          databaseURL,
+          databaseAuthVariableOverride: {
+            uid: 'server-admin'
+          }
         }, `app-${Date.now()}`); // Unique name to avoid conflicts
 
       // Basic verification
@@ -292,21 +295,97 @@ export function validatePermissions(permissions: unknown[]): Permission[] {
 
 // Role management functions
 export async function getUserRole(userId: string): Promise<{ role: RoleTypes; permissions: Permission[] }> {
-  const db = getDatabase(getFirebaseAdmin());
-  const snapshot = await db.ref(`roles/${userId}`).once('value');
-  const roleData = snapshot.val();
-  
-  if (!roleData) {
+  try {
+    const db = getDatabase(getFirebaseAdmin());
+    const snapshot = await db.ref(`roles/${userId}`).once('value');
+    const roleData = snapshot.val();
+    
+    console.log(`[FIREBASE] Getting role for user ${userId}:`, roleData);
+    
+    if (!roleData) {
+      console.log(`[FIREBASE] No role found for user ${userId}, defaulting to staff`);
+      return {
+        role: RoleTypes.staff,
+        permissions: DefaultPermissions[RoleTypes.staff]
+      };
+    }
+    
     return {
-      role: RoleTypes.staff,
-      permissions: DefaultPermissions[RoleTypes.staff]
+      role: roleData.role as RoleTypes,
+      permissions: roleData.permissions as Permission[]
     };
+  } catch (error) {
+    console.error('[FIREBASE] Error getting user role:', error);
+    throw error;
   }
-  
-  return {
-    role: roleData.role as RoleTypes,
-    permissions: roleData.permissions as Permission[]
-  };
+}
+
+// Function to set up initial admin user
+export async function setupAdminUser(adminEmail: string): Promise<void> {
+  try {
+    console.log('[FIREBASE] Setting up admin user:', adminEmail);
+    const app = getFirebaseAdmin();
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+    
+    let userRecord;
+    try {
+      // Try to get existing user
+      userRecord = await auth.getUserByEmail(adminEmail);
+      console.log('[FIREBASE] Found existing user:', userRecord.uid);
+    } catch (error) {
+      // If user doesn't exist, create one
+      console.log('[FIREBASE] User not found, creating new user');
+      userRecord = await auth.createUser({
+        email: adminEmail,
+        emailVerified: true,
+        displayName: 'System Admin',
+      });
+      console.log('[FIREBASE] Created new user:', userRecord.uid);
+    }
+    
+    const userId = userRecord.uid;
+    
+    // Initialize role definitions if they don't exist
+    const roleDefsRef = db.ref('role-definitions');
+    const roleDefsSnapshot = await roleDefsRef.once('value');
+    if (!roleDefsSnapshot.exists()) {
+      console.log('[FIREBASE] Initializing role definitions');
+      await roleDefsRef.set(InitialRoleConfigs);
+    }
+    
+    // Set up admin role in Realtime Database
+    const adminRoleRef = db.ref(`roles/${userId}`);
+    const timestamp = Date.now();
+    
+    await adminRoleRef.set({
+      role: RoleTypes.admin,
+      permissions: DefaultPermissions[RoleTypes.admin],
+      updatedAt: timestamp,
+      createdAt: timestamp
+    });
+    
+    // Set custom claims
+    await auth.setCustomUserClaims(userId, {
+      role: RoleTypes.admin,
+      permissions: DefaultPermissions[RoleTypes.admin],
+      updatedAt: timestamp
+    });
+    
+    // Add to role history
+    const historyRef = db.ref(`role-history/${userId}`);
+    await historyRef.push({
+      role: RoleTypes.admin,
+      permissions: DefaultPermissions[RoleTypes.admin],
+      timestamp,
+      type: 'initial_setup'
+    });
+    
+    console.log('[FIREBASE] Successfully set up admin user');
+  } catch (error) {
+    console.error('[FIREBASE] Error setting up admin user:', error);
+    throw error;
+  }
 }
 
 export async function updateUserRole(
