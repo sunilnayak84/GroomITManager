@@ -360,14 +360,14 @@ export function registerRoutes(app: Express) {
     try {
       const { userId } = req.params;
       const { role, permissions } = req.body as { 
-        role: keyof typeof RoleTypes;
+        role: RoleTypes;
         permissions?: string[];
       };
 
       console.log('[ROLE-UPDATE] Received update request:', { userId, role, permissions });
 
       // Validate role
-      if (!role || !Object.values(RoleTypes).includes(role as RoleTypes)) {
+      if (!role || !Object.values(RoleTypes).includes(role)) {
         return res.status(400).json({ 
           message: "Invalid role specified",
           code: "INVALID_ROLE",
@@ -392,7 +392,7 @@ export function registerRoutes(app: Express) {
       }
 
       // Update user role with validated permissions
-      const result = await updateUserRole(userId, role as keyof typeof RoleTypes, validatedPermissions);
+      const result = await updateUserRole(userId, role, validatedPermissions);
       
       console.log('[ROLE-UPDATE] Update successful:', result);
       
