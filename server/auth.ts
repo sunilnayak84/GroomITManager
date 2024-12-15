@@ -194,7 +194,7 @@ export async function createUserInDatabase(user: FirebaseUser) {
     return false;
   }
 }
-export async function setUserRole(userId: string, role: 'admin' | 'staff' | 'receptionist' | 'manager') {
+export async function setUserRole(userId: string, role: keyof typeof RoleTypes) {
   try {
     console.log(`[AUTH] Setting role ${role} for user ${userId}`);
 
@@ -389,10 +389,9 @@ export async function setupAuth(app: Express) {
         const userRole = userRoleSnapshot.val() || { role: 'staff', permissions: [] };
 
         // Get user from PostgreSQL database or create if doesn't exist
-        const [existingUser] = await db
-          .select()
-          .from(users)
-          .where(eq(users.id, decodedToken.uid));
+        const existingUser = await db.query.users.findFirst({
+          where: eq(users.id, decodedToken.uid)
+        });
 
         if (!existingUser) {
           await createUserInDatabase({

@@ -74,8 +74,8 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "NODE_ENV=development concurrently \"PORT=3000 tsx --require dotenv/config server/index.ts\" \"cd client && npm run dev -- --host 0.0.0.0 --port 5174\""
-waitForPort = 5174
+args = "NODE_ENV=development tsx --require dotenv/config server/index.ts"
+waitForPort = 3000
 
 [[ports]]
 localPort = 3000
