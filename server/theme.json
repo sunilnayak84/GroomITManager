@@ -20,7 +20,15 @@
     "destructive-foreground": "hsl(0, 0%, 98%)",
     "border": "hsl(240, 5.9%, 90%)",
     "input": "hsl(240, 5.9%, 90%)",
-    "ring": "hsl(240, 5.9%, 10%)"
+    "ring": "hsl(240, 5.9%, 10%)",  //Reverted ring color to original to maintain consistency.
+    "text": "hsl(240, 10%, 3.9%)",
+    "background-alt": "hsl(0, 0%, 98%)",
+    "success": "hsl(142, 76%, 36%)",
+    "success-foreground": "hsl(0, 0%, 98%)",
+    "warning": "hsl(35, 92%, 65%)",
+    "warning-foreground": "hsl(0, 0%, 98%)",
+    "info": "hsl(200, 98%, 39%)",
+    "info-foreground": "hsl(0, 0%, 98%)"
   },
   "borderRadius": {
     "lg": "0.5rem",
@@ -31,5 +39,12 @@
   },
   "font": {
     "sans": "Inter"
+  },
+  "boxShadow": {
+    "sm": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+    "DEFAULT": "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
+    "md": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+    "lg": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+    "xl": "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
   }
 }
