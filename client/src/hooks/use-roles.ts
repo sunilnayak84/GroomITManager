@@ -30,7 +30,7 @@ interface FirebaseUsersResponse {
 async function fetchRoles(): Promise<Role[]> {
   const auth = getAuth();
   if (!auth.currentUser) {
-    console.warn('User not authenticated when fetching roles');
+    console.warn('[ROLES] User not authenticated when fetching roles');
     return [];
   }
   
@@ -39,14 +39,78 @@ async function fetchRoles(): Promise<Role[]> {
     const db = getDatabase(app);
     console.log('[ROLES] Fetching roles from Firebase Realtime Database...');
     
-    // Fetch system roles from role-definitions
+    // First, fetch system roles from role-definitions
     const roleDefinitionsRef = ref(db, 'role-definitions');
+    console.log('[ROLES] Attempting to fetch role definitions...');
+    
     const snapshot = await get(roleDefinitionsRef);
     
     if (!snapshot.exists()) {
-      console.warn('[ROLES] No role definitions found');
-      return [];
+      console.warn('[ROLES] No role definitions found, initializing default roles...');
+      // Initialize with default system roles if none exist
+      const defaultRoles = {
+        admin: {
+          permissions: ['all'],
+          description: 'Full system access with all permissions',
+          isSystem: true,
+          createdAt: Date.now(),
+          updatedAt: Date.now()
+        },
+        manager: {
+          permissions: [
+            'manage_appointments',
+            'manage_services',
+            'manage_inventory',
+            'view_reports',
+            'manage_staff_schedules'
+          ],
+          description: 'Manages daily operations and staff',
+          isSystem: true,
+          createdAt: Date.now(),
+          updatedAt: Date.now()
+        },
+        staff: {
+          permissions: [
+            'manage_appointments',
+            'view_customers',
+            'view_inventory',
+            'manage_own_schedule'
+          ],
+          description: 'Regular staff member access',
+          isSystem: true,
+          createdAt: Date.now(),
+          updatedAt: Date.now()
+        },
+        receptionist: {
+          permissions: [
+            'view_appointments',
+            'create_appointments',
+            'view_customers',
+            'create_customers'
+          ],
+          description: 'Front desk and customer service access',
+          isSystem: true,
+          createdAt: Date.now(),
+          updatedAt: Date.now()
+        }
+      };
+      
+      await set(roleDefinitionsRef, defaultRoles);
+      console.log('[ROLES] Default roles initialized');
+      
+      const roles: Role[] = Object.entries(defaultRoles).map(([name, data]) => ({
+        name,
+        permissions: data.permissions,
+        description: data.description,
+        isSystem: true,
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt
+      }));
+      
+      return roles;
     }
+    
+    console.log('[ROLES] Role definitions found:', snapshot.val());
     
     const roleData = snapshot.val();
     const roles: Role[] = Object.entries(roleData).map(([name, data]: [string, any]) => ({
@@ -58,17 +122,19 @@ async function fetchRoles(): Promise<Role[]> {
       updatedAt: data.updatedAt || null
     }));
     
-    console.log('[ROLES] Successfully fetched roles:', roles);
+    console.log('[ROLES] Successfully processed roles:', roles);
+    
+    // Sort roles: system roles first, then alphabetically
     return roles.sort((a, b) => {
-      // Sort system roles first, then by name
       if (a.isSystem && !b.isSystem) return -1;
-      if (!a.isSystem && b.isSystem) return 1;
+      if (!b.isSystem && a.isSystem) return 1;
       return a.name.localeCompare(b.name);
     });
     
   } catch (error) {
     console.error('[ROLES] Error in fetchRoles:', error);
-    throw error;
+    // Return empty array instead of throwing to prevent UI from breaking
+    return [];
   }
 }
 
@@ -90,19 +156,25 @@ async function fetchFirebaseUsers(params: { pageParam?: string | null }): Promis
     console.log('[FIREBASE-USERS] Fetching users...');
     
     const makeRequest = async (authToken: string) => {
-      const response = await fetch('/api/firebase-users?' + searchParams.toString(), {
+      // Updated URL to use the correct port
+      const response = await fetch(`${window.location.protocol}//${window.location.hostname}:3000/api/firebase-users?${searchParams.toString()}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${authToken}`,
           'Content-Type': 'application/json',
-        }
+        },
+        credentials: 'include'
       });
       
       if (!response.ok) {
-        throw new Error(`Failed to fetch users: ${await response.text()}`);
+        const errorText = await response.text();
+        console.error('[FIREBASE-USERS] Error response:', errorText);
+        throw new Error(`Failed to fetch users: ${errorText}`);
       }
       
-      return response.json();
+      const data = await response.json();
+      console.log('[FIREBASE-USERS] Successfully fetched users:', data);
+      return data;
     };
     
     try {
@@ -113,11 +185,12 @@ async function fetchFirebaseUsers(params: { pageParam?: string | null }): Promis
         const newToken = await auth.currentUser.getIdToken(true);
         return await makeRequest(newToken);
       }
+      console.error('[FIREBASE-USERS] Error in request:', error);
       throw error;
     }
   } catch (error) {
     console.error('[FIREBASE-USERS] Error:', error);
-    throw error;
+    return { users: [], pageToken: null };
   }
 }
 
