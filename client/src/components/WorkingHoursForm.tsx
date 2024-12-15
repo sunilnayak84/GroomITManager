@@ -115,8 +115,8 @@ export default function WorkingHoursForm({
         ...data,
         existingId: existingSchedule?.id,
         // Only include break times if both are provided
-        breakStart: data.breakStart || null,
-        breakEnd: data.breakEnd || null,
+        breakStart: data.breakStart || undefined,
+        breakEnd: data.breakEnd || undefined,
       });
       
       toast({

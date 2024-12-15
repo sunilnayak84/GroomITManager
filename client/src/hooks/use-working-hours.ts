@@ -139,8 +139,8 @@ export function useWorkingHours(branchId?: string) {
           isOpen: data.isOpen,
           openingTime: data.openingTime,
           closingTime: data.closingTime,
-          breakStart: data.breakStart || null,
-          breakEnd: data.breakEnd || null,
+          breakStart: data.breakStart,
+          breakEnd: data.breakEnd,
           maxDailyAppointments: data.maxDailyAppointments || 8,
           createdAt: data.existingId ? Timestamp.fromDate(new Date()) : Timestamp.fromDate(new Date()),
           updatedAt: Timestamp.fromDate(new Date())
