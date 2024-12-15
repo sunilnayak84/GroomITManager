@@ -389,9 +389,11 @@ export async function setupAuth(app: Express) {
         const userRole = userRoleSnapshot.val() || { role: 'staff', permissions: [] };
 
         // Get user from PostgreSQL database or create if doesn't exist
-        const existingUser = await db.query.users.findFirst({
-          where: eq(users.id, decodedToken.uid)
-        });
+        const [existingUser] = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, decodedToken.uid))
+          .limit(1);
 
         if (!existingUser) {
           await createUserInDatabase({
