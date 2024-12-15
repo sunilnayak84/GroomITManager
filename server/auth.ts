@@ -7,17 +7,22 @@ import {
   initializeFirebaseAdmin,
   RoleTypes,
   DefaultPermissions,
-  Permission
+  Permission,
+  getFirebaseAdmin
 } from "./firebase";
+import { getAuth } from "firebase-admin/auth";
+import { getDatabase } from "firebase-admin/database";
 
 // Type for our Firebase auth user
 export interface FirebaseUser {
   id: string;
+  uid: string;
   email: string;
-  role: 'admin' | 'manager' | 'staff' | 'receptionist';
+  role: keyof typeof RoleTypes;
   name: string;
+  displayName?: string;
   branchId?: number;
-  permissions?: string[];
+  permissions: string[];
 }
 
 // Extend Express Request type to avoid recursive type reference
@@ -359,9 +364,11 @@ export async function setupAuth(app: Express) {
         const userRole = userRoleSnapshot.val() || { role: 'staff', permissions: [] };
 
         // Get user from PostgreSQL database or create if doesn't exist
-        const existingUser = await db.query.users.findFirst({
-  where: eq(users.id, decodedToken.uid)
-});
+        const [existingUser] = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, decodedToken.uid))
+          .limit(1);
 
         if (!existingUser) {
           await createUserInDatabase({
