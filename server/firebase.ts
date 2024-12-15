@@ -238,8 +238,7 @@ export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
       // Initialize new app instance
       console.log(`[FIREBASE] Initializing new Firebase Admin instance...`);
       
-      const region = 'asia-southeast1';
-      const databaseURL = `https://${projectId}-default-rtdb.${region}.firebasedatabase.app`;
+      const databaseURL = 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app';
       
       // Create the app with minimal configuration first
       const newApp = admin.initializeApp({

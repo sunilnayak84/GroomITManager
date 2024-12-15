@@ -28,20 +28,21 @@ interface FirebaseUsersResponse {
 }
 
 async function fetchRoles(): Promise<Role[]> {
-  const auth = getAuth();
-  if (!auth.currentUser) {
-    console.warn('[ROLES] User not authenticated when fetching roles');
-    return [];
-  }
-  
   try {
+    console.log('[ROLES] Starting role fetch...');
+    const auth = getAuth();
+    if (!auth.currentUser) {
+      console.warn('[ROLES] User not authenticated when fetching roles');
+      return [];
+    }
+    
     const app = getApp();
     const db = getDatabase(app);
-    console.log('[ROLES] Fetching roles from Firebase Realtime Database...');
+    console.log('[ROLES] Connected to Firebase Realtime Database');
     
     // First, fetch system roles from role-definitions
     const roleDefinitionsRef = ref(db, 'role-definitions');
-    console.log('[ROLES] Attempting to fetch role definitions...');
+    console.log('[ROLES] Fetching role definitions from:', roleDefinitionsRef.toString());
     
     const snapshot = await get(roleDefinitionsRef);
     
