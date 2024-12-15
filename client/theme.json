@@ -22,6 +22,7 @@
     "border": "267 20% 91%",
     "input": "267 20% 91%",
     "ring": "267 75% 40%",
+    "radius": "0.5rem",
     "success": "142 76% 36%",
     "success-foreground": "0 0% 98%",
     "warning": "38 92% 50%",
