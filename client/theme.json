@@ -3,30 +3,50 @@
   "name": "groomit-purple",
   "type": "light",
   "colors": {
-    "background": "0 0% 100%",
-    "foreground": "240 10% 3.9%",
-    "card": "0 0% 100%",
-    "card-foreground": "240 10% 3.9%",
-    "popover": "0 0% 100%",
-    "popover-foreground": "240 10% 3.9%",
-    "primary": "267 75% 40%",
-    "primary-foreground": "0 0% 98%",
-    "secondary": "267 60% 35%",
-    "secondary-foreground": "0 0% 98%",
-    "muted": "267 10% 96%",
-    "muted-foreground": "267 30% 46%",
-    "accent": "267 59% 94%",
-    "accent-foreground": "267 75% 40%",
-    "destructive": "0 84.2% 60.2%",
-    "destructive-foreground": "0 0% 98%",
+    "primary": {
+      "DEFAULT": "267 75% 40%",
+      "foreground": "0 0% 98%"
+    },
+    "background": {
+      "DEFAULT": "0 0% 100%",
+      "foreground": "240 10% 3.9%"
+    },
+    "card": {
+      "DEFAULT": "0 0% 100%",
+      "foreground": "240 10% 3.9%"
+    },
+    "popover": {
+      "DEFAULT": "0 0% 100%",
+      "foreground": "240 10% 3.9%"
+    },
+    "secondary": {
+      "DEFAULT": "267 60% 35%",
+      "foreground": "0 0% 98%"
+    },
+    "muted": {
+      "DEFAULT": "267 10% 96%",
+      "foreground": "267 30% 46%"
+    },
+    "accent": {
+      "DEFAULT": "267 59% 94%",
+      "foreground": "267 75% 40%"
+    },
+    "destructive": {
+      "DEFAULT": "0 84.2% 60.2%",
+      "foreground": "0 0% 98%"
+    },
+    "success": {
+      "DEFAULT": "142 76% 36%",
+      "foreground": "0 0% 98%"
+    },
+    "warning": {
+      "DEFAULT": "38 92% 50%",
+      "foreground": "0 0% 98%"
+    },
     "border": "267 20% 91%",
     "input": "267 20% 91%",
     "ring": "267 75% 40%",
-    "radius": "0.5rem",
-    "success": "142 76% 36%",
-    "success-foreground": "0 0% 98%",
-    "warning": "38 92% 50%",
-    "warning-foreground": "0 0% 98%"
+    "radius": "0.5rem"
   },
   "borderRadius": {
     "lg": "0.5rem",
