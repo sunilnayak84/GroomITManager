@@ -64,9 +64,7 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
           name: 'Admin User',
           displayName: 'Admin User',
           role: 'admin',
-          permissions: DefaultPermissions.admin,
-          id: 'dev-admin',
-          name: 'Admin User'
+          permissions: DefaultPermissions.admin
         };
         console.log('[AUTH] Development admin account configured:', req.user);
         return next();
@@ -147,8 +145,10 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
       });
       
       req.user = {
+        id: user.uid,
         uid: user.uid,
         email: user.email || '',
+        name: user.displayName || user.email?.split('@')[0] || 'Unknown User',
         displayName: user.displayName || user.email?.split('@')[0] || 'Unknown User',
         role,
         permissions
