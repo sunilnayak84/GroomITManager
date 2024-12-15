@@ -45,6 +45,58 @@ try {
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// Test endpoint with detailed response and CORS verification
+app.get('/api/test', (req, res) => {
+  const response = {
+    status: 'success',
+    server: {
+      message: 'Server is working correctly',
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV,
+      port: process.env.PORT || 3000,
+      hostname: req.hostname
+    },
+    request: {
+      origin: req.headers.origin || 'no origin',
+      host: req.headers.host,
+      protocol: req.protocol,
+      method: req.method,
+      path: req.path
+    },
+    cors: {
+      allowedOrigins: allowedOrigins,
+      requestOrigin: req.headers.origin
+    }
+  };
+  
+  log('[TEST] Endpoint accessed with details:', 'info');
+  log(JSON.stringify(response, null, 2), 'info');
+  
+  res.json(response);
+});
+
+// Additional test endpoint for CORS verification
+app.options('/api/test-cors', cors(), (req, res) => {
+  log('[CORS] Preflight request received', 'info');
+  res.status(200).send('OK');
+});
+
+app.get('/api/test-cors', (req, res) => {
+  log('[CORS] Test request received', 'info');
+  res.json({
+    message: 'CORS test successful',
+    origin: req.headers.origin
+  });
+});
+
+// Health check endpoint
+app.get('/api/health', (_req, res) => {
+  res.json({ 
+    status: 'healthy',
+    serverTime: new Date().toISOString(),
+    port: process.env.PORT || 3000
+  });
+});
 app.set('trust proxy', 1);
 
 // CORS configuration
@@ -64,32 +116,52 @@ const allowedOrigins = [
   ] : [],
 ].flat().filter(Boolean) as string[];
 
+// Enhanced CORS configuration with detailed logging
 app.use(cors({
   origin: (origin, callback) => {
+    log(`Processing CORS request from origin: ${origin || 'no origin'}`, 'info');
+    
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) {
+      log(`Allowing request with no origin (local request)`, 'info');
       return callback(null, true);
     }
     
+    // In development, log more details about the request
     if (process.env.NODE_ENV === 'development') {
-      // In development, be more permissive with CORS
-      callback(null, true);
-    } else if (allowedOrigins.some(allowedOrigin => 
+      log(`Development mode - Allowing request from: ${origin}`, 'info');
+      return callback(null, true);
+    }
+    
+    // Check against allowed origins
+    const isAllowed = allowedOrigins.some(allowedOrigin => 
       origin.startsWith(allowedOrigin) || 
       origin.includes('.repl.co')
-    )) {
+    );
+    
+    if (isAllowed) {
+      log(`Allowing request from verified origin: ${origin}`, 'info');
       callback(null, true);
     } else {
       log(`Blocked request from unauthorized origin: ${origin}`, 'warn');
+      log(`Allowed origins are: ${JSON.stringify(allowedOrigins)}`, 'info');
       callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
+  exposedHeaders: ['Content-Length', 'Content-Type'],
   optionsSuccessStatus: 200,
-  preflightContinue: false
+  preflightContinue: false,
+  maxAge: 86400 // 24 hours
 }));
+
+// Log all incoming requests
+app.use((req, res, next) => {
+  log(`${req.method} ${req.path} - Origin: ${req.headers.origin || 'no origin'}`, 'info');
+  next();
+});
 
 // Request logging middleware
 app.use((req, res, next) => {
@@ -192,21 +264,56 @@ async function startServer(port: number): Promise<void> {
 
     // Step 5: Start the server
     return new Promise((resolve, reject) => {
-      server?.listen(port, '0.0.0.0', () => {
-        log(`Server started successfully on port ${port}`, 'info');
-        resolve();
-      }).on('error', (error: Error & { code?: string }) => {
-        if (error.code === 'EADDRINUSE') {
-          log(`Port ${port} is in use, attempting cleanup...`, 'warn');
-          terminateProcessOnPort(port)
-            .then(() => startServer(port))
-            .then(resolve)
-            .catch(reject);
-        } else {
-          log(`Server startup error: ${error.message}`, 'error');
-          reject(error);
+      const MAX_PORT = 3010; // Maximum port to try
+      const findAvailablePort = async (startPort: number): Promise<number> => {
+        if (startPort > MAX_PORT) {
+          throw new Error(`Could not find an available port between ${port} and ${MAX_PORT}`);
         }
-      });
+        
+        return new Promise((portResolve, portReject) => {
+          const testServer = createServer();
+          testServer.listen(startPort, '0.0.0.0')
+            .once('listening', () => {
+              testServer.close(() => portResolve(startPort));
+            })
+            .once('error', (err: Error & { code?: string }) => {
+              if (err.code === 'EADDRINUSE') {
+                log(`Port ${startPort} is in use, trying next port...`, 'info');
+                portResolve(findAvailablePort(startPort + 1));
+              } else {
+                portReject(err);
+              }
+            });
+        });
+      };
+
+      findAvailablePort(port)
+        .then((availablePort) => {
+          if (!server) {
+            throw new Error('Server instance not initialized');
+          }
+
+          if (availablePort !== port) {
+            log(`Original port ${port} was in use, using port ${availablePort} instead`, 'warn');
+          }
+          
+          server.listen(availablePort, '0.0.0.0')
+            .once('listening', () => {
+              log(`Server started successfully on port ${availablePort}`, 'info');
+              process.env.PORT = availablePort.toString();
+              activeServer = server;
+              resolve();
+            })
+            .once('error', (error: Error & { code?: string }) => {
+              const errorMessage = `Server startup error on port ${availablePort}: ${error.message}`;
+              log(errorMessage, 'error');
+              reject(new Error(errorMessage));
+            });
+        })
+        .catch((error) => {
+          log(`Fatal error during port selection: ${error.message}`, 'error');
+          reject(error);
+        });
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
