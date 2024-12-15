@@ -206,7 +206,7 @@ async function startServer(port: number): Promise<void> {
   let server: Server | null = null;
   
   try {
-    log('Starting server initialization...', 'info');
+    log(`Starting server initialization on port ${port}...`, 'info');
 
     // Step 1: Initialize Firebase Admin
     try {
@@ -225,6 +225,9 @@ async function startServer(port: number): Promise<void> {
     // Step 2: Check database connection
     try {
       log('Checking database connection...', 'info');
+      if (!process.env.DATABASE_URL) {
+        throw new Error('DATABASE_URL environment variable is not set');
+      }
       await db.execute(sql`SELECT 1`);
       log('Database connection successful', 'info');
     } catch (error) {
@@ -240,8 +243,7 @@ async function startServer(port: number): Promise<void> {
     server = createServer(app);
     registerRoutes(app);
     
-    // Global server reference for cleanup
-    let activeServer: Server | null = null;
+    // Store server reference for cleanup
     activeServer = server;
 
     // Step 4: Setup serving mode
