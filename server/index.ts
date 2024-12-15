@@ -3,7 +3,7 @@ import { registerRoutes } from "./routes.js";
 import { setupVite, serveStatic } from "./vite.js";
 import { createServer } from "http";
 import { terminateProcessOnPort } from "./utils/port_cleanup.js";
-// Remove unused PostgreSQL imports
+// Server imports
 import { initializeFirebaseAdmin, getFirebaseAdmin } from "./firebase.js";
 import path from "path";
 import fs from "fs";
