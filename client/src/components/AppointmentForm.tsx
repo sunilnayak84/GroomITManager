@@ -69,8 +69,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
       status: "pending" as const,
       notes: null,
       productsUsed: null,
-      time: "",
-      customerId: user?.id || ''
+      time: ""
     },
   });
 
