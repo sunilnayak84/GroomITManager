@@ -25,6 +25,16 @@ export interface FirebaseUser {
   permissions: string[];
 }
 
+// Ensure the Express.Request interface uses the same FirebaseUser type
+declare global {
+  namespace Express {
+    interface Request {
+      user?: FirebaseUser;
+      firebaseUser?: admin.auth.UserRecord;
+    }
+  }
+}
+
 // Type for database user
 interface DatabaseUser {
   id: string;
@@ -163,7 +173,7 @@ export async function createUserInDatabase(user: FirebaseUser) {
     });
 
     if (!existingUser) {
-      const userData: DatabaseUser = {
+      const userData = {
         id: user.id,
         email: user.email || '', // Convert null to empty string for database
         name: user.name,
@@ -174,7 +184,7 @@ export async function createUserInDatabase(user: FirebaseUser) {
         isActive: true
       };
 
-      await db.insert(users).values([userData]);
+      await db.insert(users).values(userData);
 
       if (process.env.NODE_ENV !== 'development') {
         const app = await initializeFirebaseAdmin();
@@ -363,15 +373,17 @@ export async function setupAuth(app: Express) {
 
         // In development mode, allow test token
         if (isDevelopment && authHeader === 'Bearer test-token') {
-          req.user = {
+          const devUser: FirebaseUser = {
             id: 'MjQnuZnthzUIh2huoDpqCSMMvxe2',
             uid: 'MjQnuZnthzUIh2huoDpqCSMMvxe2',
             email: 'admin@groomery.in',
             name: 'Admin User',
             role: 'admin',
             permissions: ['all'],
-            displayName: 'Admin User'
+            displayName: 'Admin User',
+            branchId: undefined
           };
+          req.user = devUser;
           return next();
         }
 
@@ -385,11 +397,9 @@ export async function setupAuth(app: Express) {
         const userRole = userRoleSnapshot.val() || { role: 'staff', permissions: [] };
 
         // Get user from PostgreSQL database or create if doesn't exist
-        const [existingUser] = await db
-          .select()
-          .from(users)
-          .where(eq(users.id, decodedToken.uid))
-          .limit(1);
+        const existingUser = await db.query.users.findFirst({
+          where: eq(users.id, decodedToken.uid)
+        });
 
         if (!existingUser) {
           await createUserInDatabase({
