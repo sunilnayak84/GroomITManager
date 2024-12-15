@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
@@ -9,8 +8,6 @@
   :root {
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
@@ -32,17 +29,25 @@
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
     --ring: 240 5% 64.9%;
-    
-    --radius-sm: 0.375rem;
-    --radius-md: 0.5rem;
-    --radius-lg: 0.75rem;
-    --radius-xl: 1rem;
+    --radius: 0.5rem;
   }
 
+  html {
+    @apply h-full antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  body {
+    @apply h-full bg-background text-foreground font-sans;
+  }
+
+  #root {
+    @apply h-full;
+  }
+}
+
   * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    @apply m-0 p-0 box-border;
   }
 
   html {
@@ -60,9 +65,8 @@
 }
 
 @layer components {
-  /* Layout Components */
   .main-layout {
-    @apply min-h-screen w-full bg-white text-foreground;
+    @apply min-h-screen w-full bg-background text-foreground;
   }
 
   .content-container {
@@ -73,7 +77,6 @@
     @apply py-4 sm:py-6 lg:py-8;
   }
 
-  /* Typography */
   .h1 {
     @apply text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl;
   }
@@ -98,7 +101,6 @@
     @apply text-xs leading-relaxed;
   }
 
-  /* Interactive Elements */
   .btn {
     @apply inline-flex items-center justify-center rounded-md text-sm font-medium 
     transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring 
@@ -137,7 +139,6 @@
     @apply btn text-primary underline-offset-4 hover:underline;
   }
 
-  /* Form Elements */
   .form-group {
     @apply space-y-2;
   }
@@ -161,7 +162,6 @@
     @apply h-10 px-4 text-base;
   }
 
-  /* Card Styles */
   .card {
     @apply rounded-lg border border-border bg-card text-card-foreground shadow-sm
     transition-shadow hover:shadow-md;
@@ -179,7 +179,6 @@
     @apply flex items-center p-4 pt-0;
   }
 
-  /* Navigation */
   .nav-link {
     @apply inline-flex items-center text-sm font-medium text-muted-foreground 
     transition-colors hover:text-foreground px-3 py-1.5 rounded-md;
@@ -189,9 +188,8 @@
     @apply text-foreground bg-accent;
   }
 
-  /* Data Display */
   .badge {
-    @apply inline-flex items-center rounded-md border-[1px] border-border px-2 py-0.5 text-xs font-medium
+    @apply inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-medium
     transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
   }
 
@@ -207,7 +205,6 @@
     @apply border-border bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground;
   }
 
-  /* Dialog/Modal */
   .dialog {
     @apply fixed inset-0 z-50 bg-black/50 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0;
   }
@@ -216,7 +213,6 @@
     @apply fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg md:w-full;
   }
 
-  /* Feedback */
   .alert {
     @apply relative w-full rounded-lg border p-3 text-sm;
   }
@@ -230,14 +226,13 @@
   }
 
   .alert-warning {
-    @apply bg-warning bg-opacity-10 text-warning border-warning border-opacity-20;
+    @apply bg-warning/10 text-warning border-warning/20;
   }
 
   .alert-error {
     @apply bg-destructive/10 text-destructive border-destructive/20;
   }
 
-  /* Tables */
   .table-container {
     @apply w-full overflow-auto rounded-md border;
   }

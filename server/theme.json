@@ -4,8 +4,10 @@
   "colors": {
     "background": "0 0% 100%",
     "foreground": "240 10% 3.9%",
-    "primary": "240 5.9% 10%",
-    "primary-foreground": "0 0% 98%",
+    "primary": {
+      "DEFAULT": "240 5.9% 10%",
+      "foreground": "0 0% 98%"
+    },
     "warning": {
       "DEFAULT": "38 92% 50%",
       "foreground": "0 0% 98%"

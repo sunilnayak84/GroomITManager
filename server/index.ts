@@ -80,132 +80,67 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
 async function startServer(port: number): Promise<void> {
   const isDevelopment = process.env.NODE_ENV === 'development';
   
-  try {
-    log('Starting server initialization...', 'info');
+  // Create HTTP server and register routes
+  const server = createServer(app);
+  registerRoutes(app);
 
-    // Step 1: Initialize Firebase Admin
-    try {
-      log('Initializing Firebase Admin...', 'info');
-      await initializeFirebaseAdmin();
-      log('Firebase Admin initialized successfully', 'info');
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      log(`Firebase initialization error: ${errorMessage}`, 'error');
-      if (!isDevelopment) {
-        throw error;
-      }
-      log('Continuing without Firebase in development mode', 'warn');
-    }
-
-    // Step 2: Check database connection
-    try {
-      log('Checking database connection...', 'info');
-      await db.execute(sql`SELECT 1`);
-      log('Database connection successful', 'info');
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      log(`Database connection error: ${errorMessage}`, 'error');
-      if (!isDevelopment) {
-        throw error;
-      }
-      log('Continuing without database in development mode', 'warn');
-    }
-
-    // Step 3: Create HTTP server and register routes
-    const server = createServer(app);
-    registerRoutes(app);
-
-    // Step 4: Setup serving mode
-    if (isDevelopment) {
-      await setupVite(app, server);
-      log('Vite middleware setup complete', 'info');
-    } else {
-      const distPath = path.resolve(process.cwd(), "client", "dist");
-      if (!fs.existsSync(distPath)) {
-        log('Build directory not found, falling back to development mode', 'warn');
-        await setupVite(app, server);
-      } else {
-        app.use(express.static(distPath));
-        app.use("*", (_req, res) => {
-          res.sendFile(path.resolve(distPath, "index.html"));
-        });
-        log('Static file serving setup complete', 'info');
-      }
-    }
-
-    // Step 5: Start the server
-    return new Promise((resolve, reject) => {
-      server.listen(port, '0.0.0.0', () => {
-        log(`Server started successfully on port ${port}`, 'info');
-        resolve();
-      }).on('error', (error: Error & { code?: string }) => {
-        if (error.code === 'EADDRINUSE') {
-          log(`Port ${port} is in use, attempting cleanup...`, 'warn');
-          terminateProcessOnPort(port)
-            .then(() => startServer(port))
-            .then(resolve)
-            .catch(reject);
-        } else {
-          log(`Server startup error: ${error.message}`, 'error');
-          reject(error);
-        }
-      });
+  // Setup development mode
+  if (isDevelopment) {
+    log('Setting up Vite middleware...', 'info');
+    await setupVite(app, server);
+  } else {
+    const distPath = path.resolve(process.cwd(), "client", "dist");
+    app.use(express.static(distPath));
+    app.use("*", (_req, res) => {
+      res.sendFile(path.resolve(distPath, "index.html"));
     });
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    log(`Fatal server error: ${errorMessage}`, 'error');
-    throw error;
   }
+
+  // Initialize services in the background
+  Promise.all([
+    initializeFirebaseAdmin().catch(error => {
+      log(`Firebase initialization error: ${error.message}`, 'warn');
+    }),
+    db.execute(sql`SELECT 1`).catch(error => {
+      log(`Database connection error: ${error.message}`, 'warn');
+    })
+  ]);
+
+  // Start the server
+  return new Promise((resolve, reject) => {
+    server.listen(port, '0.0.0.0', () => {
+      log(`Server started on port ${port}`, 'info');
+      resolve();
+    }).on('error', (error) => {
+      log(`Server startup error: ${error.message}`, 'error');
+      reject(error);
+    });
+  });
 }
 
 // Start the server
-const PORT = parseInt(process.env.PORT || '3000', 10);
+const PORT = parseInt(process.env.PORT || '3001', 10);
 
-// Add unhandled rejection handler
-process.on('unhandledRejection', (reason, promise) => {
-  log(`Unhandled Rejection at: ${promise}\nReason: ${reason}`, 'error');
+// Simple error handling
+process.on('unhandledRejection', (reason) => {
+  log(`Unhandled Rejection: ${reason}`, 'error');
 });
 
-// Add uncaught exception handler
 process.on('uncaughtException', (error) => {
   log(`Uncaught Exception: ${error.message}`, 'error');
-  log(error.stack || '', 'error');
-  // Don't exit the process, let it attempt recovery
-  log('Attempting to recover from uncaught exception...', 'warn');
 });
 
-log(`Starting server on port ${PORT}...`, 'info');
-
-// Enhanced port cleanup and server start sequence
+// Simple startup sequence
 const startupSequence = async () => {
   try {
-    // First attempt: Try to terminate any process on the port
-    log(`Attempting to clean up port ${PORT}...`, 'info');
-    await terminateProcessOnPort(PORT);
-    
-    // Second attempt: Force kill any remaining process
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      await terminateProcessOnPort(PORT);
-    } catch (error) {
-      log('Secondary port cleanup attempt completed', 'info');
-    }
-
-    // Wait a moment before starting the server
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    
-    log('Starting server after port cleanup...', 'info');
+    log('Starting server...', 'info');
     await startServer(PORT);
     log(`Server successfully started on port ${PORT}`, 'info');
+    return true;
   } catch (error) {
-    log(`Error during startup sequence: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
-    if (error instanceof Error && error.stack) {
-      log(`Stack trace: ${error.stack}`, 'error');
-    }
-    // Attempt recovery instead of exiting
-    log('Attempting startup recovery...', 'warn');
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-    return startupSequence(); // Recursive retry
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    log(`Server startup error: ${errorMessage}`, 'error');
+    throw error;
   }
 };
 
