@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { getAuth } from 'firebase/auth';
+import { getDatabase, ref, get, set, update } from 'firebase/database';
+import { getApp } from 'firebase/app';
 import { toast } from '@/components/ui/use-toast';
 import type { UserRole } from './use-user';
 
@@ -33,39 +35,37 @@ async function fetchRoles(): Promise<Role[]> {
   }
   
   try {
-    // Force token refresh
-    const token = await auth.currentUser.getIdToken(true);
-    console.log('[ROLES] Fetching roles...');
+    const app = getApp();
+    const db = getDatabase(app);
+    console.log('[ROLES] Fetching roles from Firebase Realtime Database...');
     
-    const makeRequest = async (authToken: string) => {
-      const response = await fetch('/api/roles', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to fetch roles: ${errorText}`);
-      }
-      
-      const data = await response.json();
-      console.log('[ROLES] Successfully fetched roles:', data);
-      return Array.isArray(data) ? data : Object.values(data);
-    };
+    // Fetch system roles from role-definitions
+    const roleDefinitionsRef = ref(db, 'role-definitions');
+    const snapshot = await get(roleDefinitionsRef);
     
-    try {
-      return await makeRequest(token);
-    } catch (error) {
-      if (error instanceof Error && error.message.includes('401')) {
-        console.log('[ROLES] Token expired, refreshing...');
-        const newToken = await auth.currentUser.getIdToken(true);
-        return await makeRequest(newToken);
-      }
-      throw error;
+    if (!snapshot.exists()) {
+      console.warn('[ROLES] No role definitions found');
+      return [];
     }
+    
+    const roleData = snapshot.val();
+    const roles: Role[] = Object.entries(roleData).map(([name, data]: [string, any]) => ({
+      name,
+      permissions: data.permissions || [],
+      description: data.description || '',
+      isSystem: data.isSystem || false,
+      createdAt: data.createdAt || Date.now(),
+      updatedAt: data.updatedAt || null
+    }));
+    
+    console.log('[ROLES] Successfully fetched roles:', roles);
+    return roles.sort((a, b) => {
+      // Sort system roles first, then by name
+      if (a.isSystem && !b.isSystem) return -1;
+      if (!a.isSystem && b.isSystem) return 1;
+      return a.name.localeCompare(b.name);
+    });
+    
   } catch (error) {
     console.error('[ROLES] Error in fetchRoles:', error);
     throw error;
