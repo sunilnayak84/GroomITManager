@@ -119,7 +119,12 @@ async function startServer(port: number): Promise<void> {
 }
 
 // Start the server
-const PORT = parseInt(process.env.PORT || '3001', 10);
+const PORT = parseInt(process.env.PORT || '3000', 10);
+
+// Attempt to clean up the port before starting
+await terminateProcessOnPort(PORT).catch(error => {
+  log(`Port cleanup warning: ${error.message}`, 'warn');
+});
 
 // Simple error handling
 process.on('unhandledRejection', (reason) => {
@@ -134,7 +139,20 @@ process.on('uncaughtException', (error) => {
 const startupSequence = async () => {
   try {
     log('Starting server...', 'info');
-    await startServer(PORT);
+    if (process.env.NODE_ENV === 'development') {
+      log('Running in development mode', 'info');
+      // In development, we don't need to serve static files
+      const server = createServer(app);
+      registerRoutes(app);
+      await new Promise<void>((resolve, reject) => {
+        server.listen(PORT, '0.0.0.0', () => {
+          log(`Development server started on port ${PORT}`, 'info');
+          resolve();
+        }).on('error', reject);
+      });
+    } else {
+      await startServer(PORT);
+    }
     log(`Server successfully started on port ${PORT}`, 'info');
     return true;
   } catch (error) {

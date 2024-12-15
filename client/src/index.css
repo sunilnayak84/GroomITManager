@@ -32,20 +32,6 @@
     --radius: 0.5rem;
   }
 
-  html {
-    @apply h-full antialiased;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-  }
-
-  body {
-    @apply h-full bg-background text-foreground font-sans;
-  }
-
-  #root {
-    @apply h-full;
-  }
-}
-
   * {
     @apply m-0 p-0 box-border;
   }

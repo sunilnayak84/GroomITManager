@@ -34,7 +34,7 @@ args = "React Dev Server"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Development Server"
+args = "Backend Server"
 
 [[workflows.workflow]]
 name = "Project"
@@ -67,7 +67,7 @@ args = "cd client && npm run dev -- --host 0.0.0.0 --port 5174"
 waitForPort = 5174
 
 [[workflows.workflow]]
-name = "Development Server"
+name = "Backend Server"
 author = "agent"
 
 [workflows.workflow.metadata]
@@ -78,8 +78,8 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "NODE_ENV=development PORT=3001 tsx --require dotenv/config server/index.ts"
-waitForPort = 3001
+args = "NODE_ENV=development PORT=3000 tsx --require dotenv/config server/index.ts"
+waitForPort = 3000
 
 [[ports]]
 localPort = 3000
