@@ -238,7 +238,9 @@ export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
       // Initialize new app instance
       console.log(`[FIREBASE] Initializing new Firebase Admin instance...`);
       
-      const databaseURL = 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app';
+      // Use the correct database URL for asia-southeast1 region
+      const databaseURL = process.env.FIREBASE_DATABASE_URL || 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app';
+      console.log('[FIREBASE] Using database URL:', databaseURL);
       
       // Create the app with minimal configuration first
       const newApp = admin.initializeApp({

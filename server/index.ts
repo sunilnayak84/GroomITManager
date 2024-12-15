@@ -106,34 +106,48 @@ async function startServer(port: number): Promise<void> {
     });
   }
 
-  // Initialize Firebase with retry logic
-  const initializeFirebaseWithRetry = async (maxRetries = 3, delayMs = 2000) => {
+  // Initialize Firebase with retry logic and proper error handling
+  const initializeFirebaseWithRetry = async (maxRetries = 3, delayMs = 2000): Promise<void> => {
+    log('Starting Firebase initialization...', 'info');
+    
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        await initializeFirebaseAdmin();
-        log('Firebase initialized successfully', 'info');
+        const app = await initializeFirebaseAdmin();
+        if (!app) {
+          throw new Error('Firebase Admin initialization returned null');
+        }
+        
+        // Verify database connection
+        const db = getDatabase(app);
+        await db.ref('.info/connected').once('value');
+        
+        log('Firebase initialized and database connection verified', 'info');
         return;
       } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        log(`Firebase initialization attempt ${attempt} failed: ${errorMessage}`, 'warn');
+        
         if (attempt === maxRetries) {
-          log(`Firebase initialization failed after ${maxRetries} attempts: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+          log(`Firebase initialization failed after ${maxRetries} attempts`, 'error');
           throw error;
         }
-        log(`Firebase initialization attempt ${attempt} failed, retrying in ${delayMs}ms...`, 'warn');
+        
+        log(`Retrying in ${delayMs}ms...`, 'info');
         await new Promise(resolve => setTimeout(resolve, delayMs));
         delayMs *= 1.5; // Exponential backoff
       }
     }
   };
 
-  // Initialize Firebase in the background with retry
-  initializeFirebaseWithRetry().catch(error => {
-    if (process.env.NODE_ENV === 'production') {
-      log('Fatal: Firebase initialization failed in production', 'error');
-      process.exit(1);
-    } else {
-      log('Warning: Firebase initialization failed in development', 'warn');
-    }
-  });
+  // Initialize Firebase before starting the server
+  try {
+    await initializeFirebaseWithRetry();
+    log('Firebase initialization completed successfully', 'info');
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    log(`Fatal: Firebase initialization failed - ${errorMessage}`, 'error');
+    process.exit(1);
+  }
 
   // Start the server
   return new Promise((resolve, reject) => {
