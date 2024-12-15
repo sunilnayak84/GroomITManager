@@ -392,7 +392,7 @@ export function registerRoutes(app: Express) {
       }
 
       // Update user role with validated permissions
-      const result = await updateUserRole(userId, role as RoleTypes, validatedPermissions);
+      const result = await updateUserRole(userId, role as keyof typeof RoleTypes, validatedPermissions);
       
       console.log('[ROLE-UPDATE] Update successful:', result);
       

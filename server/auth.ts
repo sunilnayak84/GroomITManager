@@ -1,8 +1,5 @@
 import { type Express } from "express";
 import * as admin from "firebase-admin";
-import { users } from "@db/schema";
-import { db } from "../db";
-import { eq } from "drizzle-orm";
 import { 
   initializeFirebaseAdmin,
   RoleTypes,
@@ -161,23 +158,28 @@ export type AuthUser = FirebaseUser;
 
 export async function createUserInDatabase(user: FirebaseUser) {
   try {
-    const existingUser = await db.query.users.findFirst({
-      where: eq(users.id, user.id)
-    });
-
-    if (!existingUser) {
+    const db = admin.database();
+    const userRef = db.ref(`users/${user.id}`);
+    
+    // Check if user exists
+    const snapshot = await userRef.once('value');
+    if (!snapshot.exists()) {
       const userData = {
         id: user.id,
-        email: user.email || '', // Convert null to empty string for database
+        email: user.email || '',
         name: user.name,
-        phone: '', // Required field
+        displayName: user.displayName,
         role: (user.role === 'admin' || user.role === 'manager' || user.role === 'staff' || user.role === 'receptionist') 
           ? user.role 
           : 'staff' as const,
-        isActive: true
+        permissions: user.permissions || RolePermissions[user.role] || [],
+        isActive: true,
+        createdAt: Date.now(),
+        lastUpdated: Date.now()
       };
 
-      await db.insert(users).values(userData);
+      await userRef.set(userData);
+      console.log('[AUTH] Created new user in Firebase:', userData);
 
       if (process.env.NODE_ENV !== 'development') {
         const app = await initializeFirebaseAdmin();
@@ -190,7 +192,7 @@ export async function createUserInDatabase(user: FirebaseUser) {
     
     return true;
   } catch (error) {
-    console.error('Error creating user in database:', error);
+    console.error('[AUTH] Error creating user in database:', error);
     return false;
   }
 }
@@ -269,10 +271,9 @@ export async function setUserRole(userId: string, role: keyof typeof RoleTypes) 
     console.log('[AUTH] Custom claims set:', customClaims);
     console.log('[AUTH] Tokens revoked, user will need to re-authenticate');
     
-    // Update user in database if needed
-    await db.update(users)
-      .set({ role })
-      .where(eq(users.id, userId));
+    // Update user role in Firebase Realtime Database
+    const db = admin.database();
+    await db.ref(`users/${userId}`).update({ role });
     
     return true;
   } catch (error) {
@@ -388,23 +389,25 @@ export async function setupAuth(app: Express) {
         const userRoleSnapshot = await db.ref(`roles/${decodedToken.uid}`).once('value');
         const userRole = userRoleSnapshot.val() || { role: 'staff', permissions: [] };
 
-        // Get user from PostgreSQL database or create if doesn't exist
-        const [existingUser] = await db
-          .select()
-          .from(users)
-          .where(eq(users.id, decodedToken.uid))
-          .limit(1);
+        // Get user from Firebase database or create if doesn't exist
+        const dbRef = admin.database();
+        const userRef = dbRef.ref(`users/${decodedToken.uid}`);
+        const snapshot = await userRef.once('value');
+        const existingUser = snapshot.val();
 
         if (!existingUser) {
-          await createUserInDatabase({
+          const newUser = {
             id: decodedToken.uid,
-            uid: decodedToken.uid,
             email: decodedToken.email || '',
             name: decodedToken.displayName || decodedToken.email || '',
             displayName: decodedToken.displayName || decodedToken.email?.split('@')[0] || 'Unknown User',
             role: userRole.role as keyof typeof RoleTypes,
-            permissions: userRole.permissions || []
-          });
+            permissions: userRole.permissions || [],
+            createdAt: Date.now(),
+            lastUpdated: Date.now()
+          };
+          await userRef.set(newUser);
+          console.log('[AUTH] Created new user in Firebase:', newUser);
         }
 
         req.user = {
