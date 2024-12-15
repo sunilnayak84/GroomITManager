@@ -1,7 +1,7 @@
 import express, { type Request, type Response, type NextFunction } from "express";
 import { registerRoutes } from "./routes.js";
 import { setupVite, serveStatic } from "./vite.js";
-import { createServer } from "http";
+import { type Server, createServer } from "http";
 import { terminateProcessOnPort } from "./utils/port_cleanup.js";
 import { db } from "../db/index.js";
 import { sql } from "drizzle-orm";
@@ -21,6 +21,26 @@ function log(message: string, type: 'info' | 'error' | 'warn' = 'info') {
   console.log(`${formattedTime} [express] ${prefix} ${message}`);
 }
 
+// Port configuration
+const DEFAULT_PORT = 3000;
+let PORT: number;
+
+try {
+  PORT = parseInt(process.env.PORT || DEFAULT_PORT.toString(), 10);
+  
+  // Validate port configuration
+  if (isNaN(PORT) || PORT <= 0 || PORT > 65535) {
+    throw new Error(`Invalid port number: ${process.env.PORT}`);
+  }
+  
+  // Log port configuration
+  log(`Configured to use port: ${PORT}`, 'info');
+} catch (error) {
+  log(`Port configuration error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+  PORT = DEFAULT_PORT;
+  log(`Falling back to default port: ${DEFAULT_PORT}`, 'warn');
+}
+
 // Configure Express app
 const app = express();
 app.use(express.json());
@@ -29,10 +49,30 @@ app.set('trust proxy', 1);
 
 // CORS configuration
 import cors from 'cors';
+const allowedOrigins = process.env.NODE_ENV === 'development'
+  ? [
+      'http://localhost:5174',
+      'http://0.0.0.0:5174',
+      `http://localhost:${PORT}`,
+      `http://0.0.0.0:${PORT}`,
+      'http://localhost:3000',
+      'http://0.0.0.0:3000'
+    ]
+  : [
+      process.env.CORS_ORIGIN,
+      process.env.REPL_SLUG ? `https://${process.env.REPL_SLUG}.repl.co` : undefined,
+      'http://localhost:3000'
+    ].filter(Boolean) as string[];
+
 app.use(cors({
-  origin: process.env.NODE_ENV === 'development'
-    ? ['http://localhost:5174', 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev', 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:5174']
-    : process.env.CORS_ORIGIN || 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      log(`Blocked request from unauthorized origin: ${origin}`, 'warn');
+      callback(null, false);
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
@@ -79,6 +119,7 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
 // Main server startup function
 async function startServer(port: number): Promise<void> {
   const isDevelopment = process.env.NODE_ENV === 'development';
+  let server: Server | null = null;
   
   try {
     log('Starting server initialization...', 'info');
@@ -112,8 +153,12 @@ async function startServer(port: number): Promise<void> {
     }
 
     // Step 3: Create HTTP server and register routes
-    const server = createServer(app);
+    server = createServer(app);
     registerRoutes(app);
+    
+    // Global server reference for cleanup
+    let activeServer: Server | null = null;
+    activeServer = server;
 
     // Step 4: Setup serving mode
     if (isDevelopment) {
@@ -135,7 +180,7 @@ async function startServer(port: number): Promise<void> {
 
     // Step 5: Start the server
     return new Promise((resolve, reject) => {
-      server.listen(port, '0.0.0.0', () => {
+      server?.listen(port, '0.0.0.0', () => {
         log(`Server started successfully on port ${port}`, 'info');
         resolve();
       }).on('error', (error: Error & { code?: string }) => {
@@ -158,21 +203,41 @@ async function startServer(port: number): Promise<void> {
   }
 }
 
-// Start the server
-const PORT = parseInt(process.env.PORT || '3000', 10);
+// Export the active server for external usage
+export { activeServer };
 
-startServer(PORT).catch(error => {
-  log(`Fatal error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
-  process.exit(1);
-});
+// Cleanup function
+async function cleanup() {
+  try {
+    if (activeServer) {
+      await new Promise<void>((resolve) => {
+        activeServer?.close(() => {
+          log('Server closed successfully', 'info');
+          resolve();
+        });
+      });
+    }
+    process.exit(0);
+  } catch (error) {
+    log(`Error during cleanup: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+    process.exit(1);
+  }
+}
 
 // Handle process signals
 process.on('SIGTERM', () => {
   log('Received SIGTERM signal', 'warn');
-  process.exit(0);
+  cleanup();
 });
 
 process.on('SIGINT', () => {
   log('Received SIGINT signal', 'warn');
-  process.exit(0);
+  cleanup();
+});
+
+// Start the server
+log(`Starting server on port ${PORT}`, 'info');
+startServer(PORT).catch(error => {
+  log(`Fatal error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+  process.exit(1);
 });
