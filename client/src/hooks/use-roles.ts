@@ -6,6 +6,7 @@ import type { UserRole } from './use-user';
 interface Role {
   name: string;
   permissions: string[];
+  description?: string;
   isSystem?: boolean;
   createdAt?: number;
   updatedAt?: number;
@@ -107,7 +108,7 @@ async function fetchFirebaseUsers(params: { pageParam?: string | null }): Promis
     try {
       return await makeRequest(token);
     } catch (error) {
-      if (error.message.includes('401')) {
+      if (error instanceof Error && error.message.includes('401')) {
         console.log('[FIREBASE-USERS] Token expired, refreshing...');
         const newToken = await auth.currentUser.getIdToken(true);
         return await makeRequest(newToken);
