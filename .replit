@@ -48,7 +48,7 @@ args = "tsx --require dotenv/config server/index.ts"
 waitForPort = 5173
 
 [[workflows.workflow]]
-name = "Express Server"
+name = "React Dev Server"
 author = "agent"
 
 [workflows.workflow.metadata]
@@ -59,8 +59,8 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "NODE_ENV=development PORT=3001 tsx --require dotenv/config server/index.ts"
-waitForPort = 3001
+args = "cd client && npm run dev -- --host 0.0.0.0 --port 5174"
+waitForPort = 5174
 
 [[workflows.workflow]]
 name = "Development Server"
@@ -88,3 +88,7 @@ externalPort = 3001
 [[ports]]
 localPort = 5174
 externalPort = 80
+
+[[ports]]
+localPort = 5175
+externalPort = 3002
