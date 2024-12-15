@@ -25,6 +25,16 @@ export interface FirebaseUser {
   permissions: string[];
 }
 
+// Type for database user
+interface DatabaseUser {
+  id: string;
+  email: string;
+  name: string;
+  phone: string;
+  role: keyof typeof RoleTypes;
+  isActive: boolean;
+}
+
 // Type guard for FirebaseUser
 export function isFirebaseUser(user: any): user is FirebaseUser {
   return user && 
@@ -148,24 +158,23 @@ export type AuthUser = FirebaseUser;
 
 export async function createUserInDatabase(user: FirebaseUser) {
   try {
-    const [existingUser] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, user.id))
-      .limit(1);
+    const existingUser = await db.query.users.findFirst({
+      where: eq(users.id, user.id)
+    });
 
     if (!existingUser) {
-      const userData = {
+      const userData: DatabaseUser = {
         id: user.id,
-        email: user.email,
+        email: user.email || '', // Convert null to empty string for database
         name: user.name,
         phone: '', // Required field
         role: (user.role === 'admin' || user.role === 'manager' || user.role === 'staff' || user.role === 'receptionist') 
-        ? user.role 
-        : 'staff' as const,
+          ? user.role 
+          : 'staff' as const,
         isActive: true
       };
-      await db.insert(users).values(userData);
+
+      await db.insert(users).values([userData]);
 
       if (process.env.NODE_ENV !== 'development') {
         const app = await initializeFirebaseAdmin();
@@ -356,10 +365,12 @@ export async function setupAuth(app: Express) {
         if (isDevelopment && authHeader === 'Bearer test-token') {
           req.user = {
             id: 'MjQnuZnthzUIh2huoDpqCSMMvxe2',
+            uid: 'MjQnuZnthzUIh2huoDpqCSMMvxe2',
             email: 'admin@groomery.in',
             name: 'Admin User',
             role: 'admin',
-            permissions: ['all']
+            permissions: ['all'],
+            displayName: 'Admin User'
           };
           return next();
         }
