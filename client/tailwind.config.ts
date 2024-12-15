@@ -11,8 +11,16 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: {
+        DEFAULT: "1rem",
+        sm: "1.5rem",
+        lg: "2rem"
+      },
       screens: {
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1280px",
         "2xl": "1400px",
       },
     },
@@ -35,6 +43,14 @@ export default {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
@@ -55,37 +71,61 @@ export default {
           DEFAULT: "hsl(var(--dialog-background))",
           foreground: "hsl(var(--foreground))",
           overlay: "hsl(var(--dialog-overlay))",
-        },
-        sidebar: {
-          DEFAULT: "hsl(262.1 83.3% 57.8%)",
-          foreground: "hsl(0 0% 100%)",
-          muted: "hsl(262.1 83.3% 45%)",
-          "muted-foreground": "hsl(0 0% 90%)",
-          accent: "hsl(262.1 83.3% 65%)",
-          "accent-foreground": "hsl(0 0% 100%)",
-          border: "hsl(262.1 83.3% 52%)",
-          ring: "hsl(0 0% 100%)",
-        },
-        chart: {
-          "1": "hsl(var(--chart-1))",
-          "2": "hsl(var(--chart-2))",
-          "3": "hsl(var(--chart-3))",
-          "4": "hsl(var(--chart-4))",
-          "5": "hsl(var(--chart-5))",
         }
       },
       borderRadius: {
-        lg: "var(--radius-lg)",
-        md: "var(--radius-md)",
-        sm: "var(--radius-sm)",
-        xl: "var(--radius-xl)",
-        "2xl": "var(--radius-2xl)",
+        "2xs": "0.125rem",
+        xs: "0.25rem",
+        sm: "0.375rem",
+        md: "0.5rem",
+        lg: "0.75rem",
+        xl: "1rem",
+        "2xl": "1.5rem",
+        full: "9999px",
       },
-      border: {
-        DEFAULT: "hsl(var(--border))",
+      spacing: {
+        "2xs": "0.25rem",
+        xs: "0.375rem",
+        sm: "0.5rem",
+        md: "0.75rem",
+        lg: "1rem",
+        xl: "1.25rem",
+        "2xl": "1.5rem",
+        "3xl": "2rem",
+      },
+      fontSize: {
+        "2xs": ["0.625rem", { lineHeight: "0.75rem" }],
+        xs: ["0.75rem", { lineHeight: "1rem" }],
+        sm: ["0.875rem", { lineHeight: "1.25rem" }],
+        base: ["1rem", { lineHeight: "1.5rem" }],
+        lg: ["1.125rem", { lineHeight: "1.75rem" }],
+        xl: ["1.25rem", { lineHeight: "1.875rem" }],
+        "2xl": ["1.5rem", { lineHeight: "2rem" }],
+        "3xl": ["1.875rem", { lineHeight: "2.375rem" }],
+        "4xl": ["2.25rem", { lineHeight: "2.75rem" }],
+        "5xl": ["3rem", { lineHeight: "3.75rem" }],
+        "6xl": ["3.75rem", { lineHeight: "4.5rem" }],
       },
       fontFamily: {
-        sans: ["Inter", ...fontFamily.sans],
+        sans: ["Inter var", ...fontFamily.sans],
+      },
+      boxShadow: {
+        xs: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        sm: "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+        md: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+        lg: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+        xl: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
+        inner: "inset 0 2px 4px 0 rgb(0 0 0 / 0.05)",
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+        "fade-in": "fade-in 0.15s ease-out",
+        "fade-out": "fade-out 0.15s ease-out",
+        "slide-in": "slide-in 0.15s cubic-bezier(0.4, 0, 0.2, 1)",
+        "slide-out": "slide-out 0.15s cubic-bezier(0.4, 0, 0.2, 1)",
+        "scale-in": "scale-in 0.15s ease-out",
+        "scale-out": "scale-out 0.15s ease-out",
       },
       keyframes: {
         "accordion-down": {
@@ -96,16 +136,38 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-      },
-      animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
+        "fade-in": {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
+        "fade-out": {
+          from: { opacity: "1" },
+          to: { opacity: "0" },
+        },
+        "slide-in": {
+          from: { transform: "translateY(4px)", opacity: "0" },
+          to: { transform: "translateY(0)", opacity: "1" },
+        },
+        "slide-out": {
+          from: { transform: "translateY(0)", opacity: "1" },
+          to: { transform: "translateY(4px)", opacity: "0" },
+        },
+        "scale-in": {
+          from: { transform: "scale(0.95)", opacity: "0" },
+          to: { transform: "scale(1)", opacity: "1" },
+        },
+        "scale-out": {
+          from: { transform: "scale(1)", opacity: "1" },
+          to: { transform: "scale(0.95)", opacity: "0" },
+        },
       },
     },
   },
   plugins: [
     tailwindcssAnimate,
     require("@tailwindcss/typography"),
-    require("@tailwindcss/forms"),
+    require("@tailwindcss/forms")({
+      strategy: 'class',
+    }),
   ],
 } satisfies Config;

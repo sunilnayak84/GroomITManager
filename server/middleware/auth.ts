@@ -2,20 +2,17 @@ import { Request, Response, NextFunction } from 'express';
 import { getFirebaseAdmin, getUserRole, RoleTypes, DefaultPermissions } from '../firebase';
 import admin from 'firebase-admin';
 
-// Define custom user interface
-interface CustomUser {
-  uid: string;
-  email: string | null;
-  role: keyof typeof RoleTypes;
-  permissions: string[];
-  displayName: string;
-}
-
 // Define the user type for Express
 declare global {
   namespace Express {
     interface Request {
-      user?: CustomUser;
+      user?: {
+        uid: string;
+        email: string | null;
+        role: keyof typeof RoleTypes;
+        permissions: string[];
+        displayName: string;
+      };
       firebaseUser?: admin.auth.UserRecord;
     }
   }
@@ -64,15 +61,17 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
       if (process.env.NODE_ENV === 'development') {
         console.log('[AUTH] Development mode: Setting up admin privileges');
         // In development, set admin privileges with all required fields
-        const devUser: CustomUser = {
+        req.user = {
+          id: 'dev-admin',
           uid: 'dev-admin',
           email: 'admin@groomery.in',
+          name: 'Admin User',
           displayName: 'Admin User',
           role: 'admin',
-          permissions: DefaultPermissions.admin
+          permissions: DefaultPermissions.admin,
+          branchId: undefined
         };
-        req.user = devUser;
-        console.log('[AUTH] Development admin account configured:', devUser);
+        console.log('[AUTH] Development admin account configured:', req.user);
         return next();
       }
       return res.status(500).json({ 
@@ -150,20 +149,18 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
         isAdmin: role === RoleTypes.admin
       });
       
-      const userObj: CustomUser = {
+      req.user = {
         uid: user.uid,
         email: user.email || '',
         displayName: user.displayName || user.email?.split('@')[0] || 'Unknown User',
         role,
         permissions
       };
-
-      req.user = userObj;
-
+      
       console.log(`[AUTH] User authenticated:`, {
-        email: userObj.email,
-        role: userObj.role,
-        permissions: userObj.permissions.length
+        email: req.user.email,
+        role: req.user.role,
+        permissions: req.user.permissions.length
       });
       
       next();
