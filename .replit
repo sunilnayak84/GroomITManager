@@ -78,8 +78,12 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd server && NODE_ENV=production PORT=3000 tsx watch --clear-screen=false index.ts"
+args = "NODE_ENV=development PORT=3000 tsx --require dotenv/config server/index.ts"
 waitForPort = 3000
+
+[[ports]]
+localPort = 3000
+externalPort = 3000
 
 [[ports]]
 localPort = 5174
