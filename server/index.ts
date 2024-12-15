@@ -26,17 +26,28 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set('trust proxy', 1);
 
-// CORS configuration
+// CORS configuration with enhanced stability
 import cors from 'cors';
-app.use(cors({
-  origin: process.env.NODE_ENV === 'development'
-    ? ['http://localhost:5174', 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev', 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:5174']
-    : process.env.CORS_ORIGIN || 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev',
+const corsOptions = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    const allowedOrigins = process.env.NODE_ENV === 'development'
+      ? ['http://localhost:5174', 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev', 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:5174']
+      : [process.env.CORS_ORIGIN || 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev'];
+    
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      log(`Rejected CORS request from origin: ${origin}`, 'warn');
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
-  optionsSuccessStatus: 200
-}));
+  optionsSuccessStatus: 200,
+  maxAge: 86400 // 24 hours
+};
+app.use(cors(corsOptions));
 
 // Request logging middleware
 app.use((req, res, next) => {
@@ -95,9 +106,33 @@ async function startServer(port: number): Promise<void> {
     });
   }
 
-  // Initialize Firebase in the background
-  initializeFirebaseAdmin().catch(error => {
-    log(`Firebase initialization error: ${error.message}`, 'warn');
+  // Initialize Firebase with retry logic
+  const initializeFirebaseWithRetry = async (maxRetries = 3, delayMs = 2000) => {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        await initializeFirebaseAdmin();
+        log('Firebase initialized successfully', 'info');
+        return;
+      } catch (error) {
+        if (attempt === maxRetries) {
+          log(`Firebase initialization failed after ${maxRetries} attempts: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+          throw error;
+        }
+        log(`Firebase initialization attempt ${attempt} failed, retrying in ${delayMs}ms...`, 'warn');
+        await new Promise(resolve => setTimeout(resolve, delayMs));
+        delayMs *= 1.5; // Exponential backoff
+      }
+    }
+  };
+
+  // Initialize Firebase in the background with retry
+  initializeFirebaseWithRetry().catch(error => {
+    if (process.env.NODE_ENV === 'production') {
+      log('Fatal: Firebase initialization failed in production', 'error');
+      process.exit(1);
+    } else {
+      log('Warning: Firebase initialization failed in development', 'warn');
+    }
   });
 
   // Start the server

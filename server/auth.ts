@@ -340,9 +340,33 @@ async function setupDevelopmentAdmin() {
   }
 }
 
+// Health check interval in milliseconds
+const HEALTH_CHECK_INTERVAL = 30000; // 30 seconds
+
 export async function setupAuth(app: Express) {
   const isDevelopment = process.env.NODE_ENV === 'development';
   console.log(`[AUTH] Setting up authentication middleware in ${isDevelopment ? 'development' : 'production'} mode`);
+
+  // Setup connection health monitoring
+  let isHealthy = true;
+  const checkConnectionHealth = async () => {
+    try {
+      const auth = admin.auth();
+      await auth.listUsers(1); // Light query to check connection
+      if (!isHealthy) {
+        console.log('[AUTH] Connection restored');
+        isHealthy = true;
+      }
+    } catch (error) {
+      if (isHealthy) {
+        console.error('[AUTH] Connection health check failed:', error);
+        isHealthy = false;
+      }
+    }
+  };
+
+  // Start health monitoring
+  setInterval(checkConnectionHealth, HEALTH_CHECK_INTERVAL);
 
   try {
     // Initialize Firebase Admin
