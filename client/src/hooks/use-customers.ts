@@ -1,5 +1,4 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { Customer } from "@db/schema";
 import { getDocs, onSnapshot, query, deleteDoc, doc, where, collection, Timestamp } from "firebase/firestore";
 import { customersCollection, createCustomer, updateCustomer as updateCustomerDoc, deleteCustomerAndRelated } from "../lib/firestore";
 import { useEffect } from "react";

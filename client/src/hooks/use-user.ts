@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { User, InsertUser } from "@db/schema";
 import { auth } from '../lib/firebase';
 import { 
   signInWithEmailAndPassword,
