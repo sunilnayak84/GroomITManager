@@ -12,6 +12,7 @@ interface Role {
   isSystem?: boolean;
   createdAt?: number;
   updatedAt?: number;
+  canEdit?: boolean;
 }
 
 interface FirebaseUser {
@@ -20,6 +21,9 @@ interface FirebaseUser {
   displayName: string | null;
   role: string;
   permissions: string[];
+  disabled?: boolean;
+  lastSignInTime?: string;
+  creationTime?: string;
 }
 
 interface FirebaseUsersResponse {
@@ -40,106 +44,34 @@ async function fetchRoles(): Promise<Role[]> {
     const token = await auth.currentUser.getIdToken(true);
     console.log('[ROLES] Got fresh ID token');
     
-    // Fetch roles from backend API instead of direct Firebase access
-    const response = await fetch(`${window.location.protocol}//${window.location.hostname}:3000/api/roles`, {
+    // Fetch roles from backend API
+    const port = import.meta.env.VITE_SERVER_PORT || '3000';
+    const response = await fetch(`${window.location.protocol}//${window.location.hostname}:${port}/api/roles`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
       credentials: 'include'
     });
+
+    if (response.status === 401) {
+      // Token expired, refresh and retry
+      const newToken = await auth.currentUser.getIdToken(true);
+      return await fetchRoles(); // Retry with new token
+    }
     
     if (!response.ok) {
       throw new Error(`Failed to fetch roles: ${response.statusText}`);
     }
     
-    const roles = await response.json();
-    console.log('[ROLES] Fetched roles:', roles);
-    
-    if (!snapshot.exists()) {
-      console.warn('[ROLES] No role definitions found, initializing default roles...');
-      // Initialize with default system roles if none exist
-      const defaultRoles = {
-        admin: {
-          permissions: ['all'],
-          description: 'Full system access with all permissions',
-          isSystem: true,
-          createdAt: Date.now(),
-          updatedAt: Date.now()
-        },
-        manager: {
-          permissions: [
-            'manage_appointments',
-            'manage_services',
-            'manage_inventory',
-            'view_reports',
-            'manage_staff_schedules'
-          ],
-          description: 'Manages daily operations and staff',
-          isSystem: true,
-          createdAt: Date.now(),
-          updatedAt: Date.now()
-        },
-        staff: {
-          permissions: [
-            'manage_appointments',
-            'view_customers',
-            'view_inventory',
-            'manage_own_schedule'
-          ],
-          description: 'Regular staff member access',
-          isSystem: true,
-          createdAt: Date.now(),
-          updatedAt: Date.now()
-        },
-        receptionist: {
-          permissions: [
-            'view_appointments',
-            'create_appointments',
-            'view_customers',
-            'create_customers'
-          ],
-          description: 'Front desk and customer service access',
-          isSystem: true,
-          createdAt: Date.now(),
-          updatedAt: Date.now()
-        }
-      };
-      
-      await set(roleDefinitionsRef, defaultRoles);
-      console.log('[ROLES] Default roles initialized');
-      
-      const roles: Role[] = Object.entries(defaultRoles).map(([name, data]) => ({
-        name,
-        permissions: data.permissions,
-        description: data.description,
-        isSystem: true,
-        createdAt: data.createdAt,
-        updatedAt: data.updatedAt
-      }));
-      
-      return roles;
-    }
-    
-    console.log('[ROLES] Role definitions found:', snapshot.val());
-    
-    const roleData = snapshot.val();
-    const roles: Role[] = Object.entries(roleData).map(([name, data]: [string, any]) => ({
-      name,
-      permissions: data.permissions || [],
-      description: data.description || '',
-      isSystem: data.isSystem || false,
-      createdAt: data.createdAt || Date.now(),
-      updatedAt: data.updatedAt || null
-    }));
-    
-    console.log('[ROLES] Successfully processed roles:', roles);
+    const fetchedRoles = await response.json() as Role[];
+    console.log('[ROLES] Fetched roles:', fetchedRoles);
     
     // Sort roles: system roles first, then alphabetically
-    return roles.sort((a, b) => {
-      if (a.isSystem && !b.isSystem) return -1;
-      if (!b.isSystem && a.isSystem) return 1;
-      return a.name.localeCompare(b.name);
+    return fetchedRoles.sort((roleA: Role, roleB: Role) => {
+      if (roleA.isSystem && !roleB.isSystem) return -1;
+      if (!roleB.isSystem && roleA.isSystem) return 1;
+      return roleA.name.localeCompare(roleB.name);
     });
     
   } catch (error) {
@@ -168,7 +100,8 @@ async function fetchFirebaseUsers(params: { pageParam?: string | null }): Promis
     
     const makeRequest = async (authToken: string) => {
       // Updated URL to use the correct port
-      const response = await fetch(`${window.location.protocol}//${window.location.hostname}:3000/api/firebase-users?${searchParams.toString()}`, {
+      const port = import.meta.env.VITE_SERVER_PORT || '3000';
+      const response = await fetch(`${window.location.protocol}//${window.location.hostname}:${port}/api/firebase-users?${searchParams.toString()}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${authToken}`,

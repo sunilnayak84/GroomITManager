@@ -147,7 +147,7 @@ export function useWorkingHours(branchId?: string) {
 
         // Add timestamps
         const now = new Date();
-        const timestamps = {
+        const timestamps: { createdAt?: Timestamp; updatedAt: Timestamp } = {
           updatedAt: Timestamp.fromDate(now)
         };
 
