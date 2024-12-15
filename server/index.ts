@@ -3,8 +3,7 @@ import { registerRoutes } from "./routes.js";
 import { setupVite, serveStatic } from "./vite.js";
 import { createServer } from "http";
 import { terminateProcessOnPort } from "./utils/port_cleanup.js";
-import { db } from "../db/index.js";
-import { sql } from "drizzle-orm";
+// Remove unused PostgreSQL imports
 import { initializeFirebaseAdmin, getFirebaseAdmin } from "./firebase.js";
 import path from "path";
 import fs from "fs";
@@ -96,15 +95,10 @@ async function startServer(port: number): Promise<void> {
     });
   }
 
-  // Initialize services in the background
-  Promise.all([
-    initializeFirebaseAdmin().catch(error => {
-      log(`Firebase initialization error: ${error.message}`, 'warn');
-    }),
-    db.execute(sql`SELECT 1`).catch(error => {
-      log(`Database connection error: ${error.message}`, 'warn');
-    })
-  ]);
+  // Initialize Firebase in the background
+  initializeFirebaseAdmin().catch(error => {
+    log(`Firebase initialization error: ${error.message}`, 'warn');
+  });
 
   // Start the server
   return new Promise((resolve, reject) => {
