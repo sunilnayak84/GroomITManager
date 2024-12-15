@@ -20,7 +20,7 @@ export interface FirebaseUser {
   email: string | null;
   role: keyof typeof RoleTypes;
   name: string;
-  displayName?: string;
+  displayName: string;
   branchId?: number;
   permissions: string[];
 }
@@ -397,24 +397,32 @@ export async function setupAuth(app: Express) {
         const userRole = userRoleSnapshot.val() || { role: 'staff', permissions: [] };
 
         // Get user from PostgreSQL database or create if doesn't exist
-        const existingUser = await db.query.users.findFirst({
-          where: eq(users.id, decodedToken.uid)
-        });
+        const existingUser = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, decodedToken.uid))
+          .limit(1)
+          .then(rows => rows[0]);
 
         if (!existingUser) {
           await createUserInDatabase({
             id: decodedToken.uid,
+            uid: decodedToken.uid,
             email: decodedToken.email || '',
             name: decodedToken.displayName || decodedToken.email || '',
-            role: userRole.role
+            displayName: decodedToken.displayName || decodedToken.email?.split('@')[0] || 'Unknown User',
+            role: userRole.role as keyof typeof RoleTypes,
+            permissions: userRole.permissions || []
           });
         }
 
         req.user = {
           id: decodedToken.uid,
+          uid: decodedToken.uid,
           email: decodedToken.email || '',
-          name: decodedToken.name || decodedToken.email || '',
-          role: userRole.role as 'admin' | 'manager' | 'staff' | 'receptionist',
+          name: decodedToken.displayName || decodedToken.email || '',
+          displayName: decodedToken.displayName || decodedToken.email?.split('@')[0] || 'Unknown User',
+          role: userRole.role as keyof typeof RoleTypes,
           permissions: userRole.permissions || []
         };
 
