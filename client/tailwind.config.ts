@@ -18,21 +18,20 @@ export default {
     },
     extend: {
       colors: {
-        border: {
-          DEFAULT: "hsl(var(--border))",
-          input: "hsl(var(--input))",
-          ring: "hsl(var(--ring))"
-        },
         background: {
-          DEFAULT: "hsl(var(--background))"
+          DEFAULT: "hsl(var(--background))",
+          foreground: "hsl(var(--foreground))",
         },
-        foreground: {
-          DEFAULT: "hsl(var(--foreground))"
-        },
+        foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          foreground: "hsl(var(--primary-foreground))"
         },
+        border: {
+          DEFAULT: "hsl(var(--border))",
+        },
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
