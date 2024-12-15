@@ -170,21 +170,53 @@ process.on('unhandledRejection', (reason, promise) => {
 process.on('uncaughtException', (error) => {
   log(`Uncaught Exception: ${error.message}`, 'error');
   log(error.stack || '', 'error');
+  // Don't exit the process, let it attempt recovery
+  log('Attempting to recover from uncaught exception...', 'warn');
 });
 
 log(`Starting server on port ${PORT}...`, 'info');
 
-startServer(PORT)
-  .then(() => {
+// Enhanced port cleanup and server start sequence
+const startupSequence = async () => {
+  try {
+    // First attempt: Try to terminate any process on the port
+    log(`Attempting to clean up port ${PORT}...`, 'info');
+    await terminateProcessOnPort(PORT);
+    
+    // Second attempt: Force kill any remaining process
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await terminateProcessOnPort(PORT);
+    } catch (error) {
+      log('Secondary port cleanup attempt completed', 'info');
+    }
+
+    // Wait a moment before starting the server
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    
+    log('Starting server after port cleanup...', 'info');
+    await startServer(PORT);
     log(`Server successfully started on port ${PORT}`, 'info');
-  })
-  .catch(error => {
-    log(`Fatal error during server startup: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+  } catch (error) {
+    log(`Error during startup sequence: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
     if (error instanceof Error && error.stack) {
       log(`Stack trace: ${error.stack}`, 'error');
     }
-    process.exit(1);
-  });
+    // Attempt recovery instead of exiting
+    log('Attempting startup recovery...', 'warn');
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    return startupSequence(); // Recursive retry
+  }
+};
+
+// Begin startup sequence
+startupSequence().catch(error => {
+  log(`Fatal error during server startup: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+  if (error instanceof Error && error.stack) {
+    log(`Stack trace: ${error.stack}`, 'error');
+  }
+  process.exit(1);
+});
 
 // Handle process signals
 process.on('SIGTERM', () => {

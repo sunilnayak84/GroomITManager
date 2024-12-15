@@ -30,11 +30,11 @@ args = "NODE_ENV=development PORT=3000 tsx --require dotenv/config server/index.
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Development Server"
+args = "React Dev Server"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "React Dev Server"
+args = "Development Server"
 
 [[workflows.workflow]]
 name = "Project"
@@ -78,8 +78,8 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "NODE_ENV=development DEBUG=express:* PORT=3000 tsx --require dotenv/config server/index.ts"
-waitForPort = 3000
+args = "NODE_ENV=development PORT=3001 tsx --require dotenv/config server/index.ts"
+waitForPort = 3001
 
 [[ports]]
 localPort = 3000

@@ -2,11 +2,13 @@
   "name": "modern",
   "type": "light",
   "colors": {
+    "background": "0 0% 100%",
+    "foreground": "240 10% 3.9%",
     "primary": "240 5.9% 10%",
     "primary-foreground": "0 0% 98%",
-    "background": {
-      "DEFAULT": "0 0% 100%",
-      "foreground": "240 10% 3.9%"
+    "warning": {
+      "DEFAULT": "38 92% 50%",
+      "foreground": "0 0% 98%"
     },
     "card": {
       "DEFAULT": "0 0% 100%",

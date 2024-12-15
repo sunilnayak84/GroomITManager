@@ -7,6 +7,8 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
+    "./src/**/*.css",
+    "../server/theme.json"
   ],
   theme: {
     container: {
@@ -18,12 +20,22 @@ export default {
     },
     extend: {
       colors: {
-        background: "hsl(var(--background))",
-        "background-foreground": "hsl(var(--background-foreground))",
+        background: {
+          DEFAULT: "hsl(var(--background))",
+          foreground: "hsl(var(--foreground))",
+        },
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))"
+        },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))"
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))"
         },
         border: {
           DEFAULT: "hsl(var(--border))",
