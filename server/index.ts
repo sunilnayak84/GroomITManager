@@ -203,8 +203,8 @@ async function startServer(port: number): Promise<void> {
   }
 }
 
-// Export the active server for external usage
-export { activeServer };
+// Global server reference for cleanup
+let activeServer: Server | null = null;
 
 // Cleanup function
 async function cleanup() {
@@ -223,6 +223,9 @@ async function cleanup() {
     process.exit(1);
   }
 }
+
+// Export the active server for external usage
+export { activeServer };
 
 // Handle process signals
 process.on('SIGTERM', () => {
