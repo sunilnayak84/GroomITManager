@@ -2,17 +2,13 @@ import { Request, Response, NextFunction } from 'express';
 import { getFirebaseAdmin, getUserRole, RoleTypes, DefaultPermissions } from '../firebase';
 import admin from 'firebase-admin';
 
-// Define the user type for Express
+// Import FirebaseUser interface
+import { FirebaseUser } from '../auth';
+
 declare global {
   namespace Express {
     interface Request {
-      user?: {
-        uid: string;
-        email: string | null;
-        role: keyof typeof RoleTypes;
-        permissions: string[];
-        displayName: string;
-      };
+      user?: FirebaseUser;
       firebaseUser?: admin.auth.UserRecord;
     }
   }
@@ -69,7 +65,8 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
           displayName: 'Admin User',
           role: 'admin',
           permissions: DefaultPermissions.admin,
-          branchId: undefined
+          id: 'dev-admin',
+          name: 'Admin User'
         };
         console.log('[AUTH] Development admin account configured:', req.user);
         return next();
@@ -157,11 +154,13 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
         permissions
       };
       
-      console.log(`[AUTH] User authenticated:`, {
-        email: req.user.email,
-        role: req.user.role,
-        permissions: req.user.permissions.length
-      });
+      if (req.user) {
+        console.log(`[AUTH] User authenticated:`, {
+          email: req.user.email,
+          role: req.user.role,
+          permissions: req.user.permissions.length
+        });
+      }
       
       next();
     } catch (verifyError) {

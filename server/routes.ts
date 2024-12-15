@@ -273,7 +273,7 @@ export function registerRoutes(app: Express) {
       // Validate permissions
       const validatedPermissions = validatePermissions(permissions);
       if (validatedPermissions.length !== permissions.length) {
-        const invalidPerms = permissions.filter(p => !isValidPermission(p));
+        const invalidPerms = permissions.filter((p: string) => !isValidPermission(p));
         return res.status(400).json({
           message: "Some permissions were invalid",
           code: "INVALID_PERMISSIONS",
@@ -367,7 +367,7 @@ export function registerRoutes(app: Express) {
       console.log('[ROLE-UPDATE] Received update request:', { userId, role, permissions });
 
       // Validate role
-      if (!role || !Object.values(RoleTypes).includes(role)) {
+      if (!role || !Object.values(RoleTypes).includes(role as RoleTypes)) {
         return res.status(400).json({ 
           message: "Invalid role specified",
           code: "INVALID_ROLE",

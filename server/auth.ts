@@ -21,18 +21,20 @@ export interface FirebaseUser {
   role: keyof typeof RoleTypes;
   name: string;
   displayName: string;
-  branchId?: number;
   permissions: string[];
 }
 
-// Ensure the Express.Request interface uses the same FirebaseUser type
-declare global {
-  namespace Express {
-    interface Request {
-      user?: FirebaseUser;
-      firebaseUser?: admin.auth.UserRecord;
-    }
-  }
+// Type guard for FirebaseUser
+export function isFirebaseUser(user: any): user is FirebaseUser {
+  return (
+    user &&
+    typeof user.id === 'string' &&
+    typeof user.uid === 'string' &&
+    (typeof user.email === 'string' || user.email === null) &&
+    typeof user.name === 'string' &&
+    typeof user.displayName === 'string' &&
+    Array.isArray(user.permissions)
+  );
 }
 
 // Type for database user
@@ -45,21 +47,12 @@ interface DatabaseUser {
   isActive: boolean;
 }
 
-// Type guard for FirebaseUser
-export function isFirebaseUser(user: any): user is FirebaseUser {
-  return user && 
-    typeof user.id === 'string' && 
-    typeof user.uid === 'string' && 
-    (typeof user.email === 'string' || user.email === null) &&
-    typeof user.name === 'string' &&
-    Array.isArray(user.permissions);
-}
-
-// Extend Express Request type to avoid recursive type reference
+// Extend Express Request type
 declare global {
   namespace Express {
     interface Request {
       user?: FirebaseUser;
+      firebaseUser?: admin.auth.UserRecord;
     }
   }
 }
@@ -380,8 +373,7 @@ export async function setupAuth(app: Express) {
             name: 'Admin User',
             role: 'admin',
             permissions: ['all'],
-            displayName: 'Admin User',
-            branchId: undefined
+            displayName: 'Admin User'
           };
           req.user = devUser;
           return next();
