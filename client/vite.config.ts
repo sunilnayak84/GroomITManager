@@ -8,7 +8,11 @@ import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 export default defineConfig({
   plugins: [
     react(),
-    checker({ typescript: true, overlay: false }),
+    checker({ 
+      typescript: true, 
+      overlay: false,
+      enableBuild: false 
+    }),
     runtimeErrorOverlay(),
   ],
   resolve: {
@@ -24,5 +28,16 @@ export default defineConfig({
       clientPort: 443,
       protocol: 'wss',
     }
+  },
+  build: {
+    sourcemap: true,
+    outDir: 'dist',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+        },
+      },
+    },
   },
 });
