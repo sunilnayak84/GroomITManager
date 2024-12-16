@@ -62,14 +62,16 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
     resolver: zodResolver(insertAppointmentSchema),
     defaultValues: {
       petId: "",
-      serviceId: "",
+      services: [],
       groomerId: "",
       branchId: "1",
       date: "",
       status: "pending" as const,
       notes: null,
       productsUsed: null,
-      time: ""
+      time: "",
+      totalPrice: 0,
+      totalDuration: 0
     },
   });
 
@@ -520,33 +522,67 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
             />
           </div>
 
-          <FormField
-            control={form.control}
-            name="serviceId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Service Type</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a service" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="services"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Services</FormLabel>
+                  <div className="space-y-2">
                     {(services || []).map((service) => (
-                      <SelectItem 
-                        key={String(service.service_id)} 
-                        value={String(service.service_id)}
-                      >
-                        {service.name}
-                      </SelectItem>
+                      <div key={service.service_id} className="flex items-center space-x-2">
+                        <Checkbox
+                          checked={field.value.includes(String(service.service_id))}
+                          onCheckedChange={(checked) => {
+                            const serviceId = String(service.service_id);
+                            const updatedServices = checked
+                              ? [...field.value, serviceId]
+                              : field.value.filter((id) => id !== serviceId);
+                            field.onChange(updatedServices);
+                            
+                            // Calculate total duration and price
+                            const selectedServices = services.filter((s) => 
+                              updatedServices.includes(String(s.service_id))
+                            );
+                            const totalDuration = selectedServices.reduce(
+                              (sum, s) => sum + (s.duration || 0), 
+                              0
+                            );
+                            const totalPrice = selectedServices.reduce(
+                              (sum, s) => sum + (s.price || 0), 
+                              0
+                            );
+                            
+                            form.setValue('totalDuration', totalDuration);
+                            form.setValue('totalPrice', totalPrice);
+                          }}
+                        />
+                        <div className="flex-1">
+                          <div className="font-medium">{service.name}</div>
+                          <div className="text-sm text-gray-500">
+                            ₹{service.price} • {service.duration} minutes
+                          </div>
+                        </div>
+                      </div>
                     ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  </div>
+                  {field.value.length > 0 && (
+                    <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                      <div className="font-medium">Selected Services Summary</div>
+                      <div className="text-sm text-gray-500">
+                        Total Duration: {form.watch('totalDuration')} minutes
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        Total Price: ₹{form.watch('totalPrice')}
+                      </div>
+                    </div>
+                  )}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           <FormField
             control={form.control}

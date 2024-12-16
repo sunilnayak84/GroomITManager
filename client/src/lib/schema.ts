@@ -79,10 +79,20 @@ export const insertPetSchema = petSchema.omit({
 });
 
 // Schema for Appointment
+// Schema for appointment services
+export const appointmentServiceSchema = z.object({
+  id: z.string(),
+  appointmentId: z.string(),
+  serviceId: z.string().min(1, "Service must be selected"),
+  price: z.number(),
+  duration: z.number(),
+  notes: z.string().nullable(),
+});
+
 export const appointmentSchema = z.object({
   id: z.string(),
   petId: z.string().min(1, "Pet must be selected"),
-  serviceId: z.string().min(1, "Service must be selected"),
+  services: z.array(z.string()).min(1, "At least one service must be selected"),
   groomerId: z.string().min(1, "Groomer must be selected"),
   branchId: z.string().min(1, "Branch must be selected"),
   appointmentDate: z.string().refine(
@@ -104,6 +114,8 @@ export const appointmentSchema = z.object({
   status: z.enum(["pending", "confirmed", "completed", "cancelled"]),
   notes: z.string().nullable(),
   productsUsed: z.string().nullable(),
+  totalPrice: z.number(),
+  totalDuration: z.number(),
   createdAt: z.string(),
   updatedAt: z.string().nullable(),
 });
@@ -114,7 +126,7 @@ export type FirestoreAppointment = z.infer<typeof appointmentSchema>;
 // Schema for appointment creation/updates
 export const insertAppointmentSchema = z.object({
   petId: z.string().min(1, "Pet must be selected"),
-  serviceId: z.string().min(1, "Service must be selected"),
+  services: z.array(z.string()).min(1, "At least one service must be selected"),
   groomerId: z.string().min(1, "Groomer must be selected"),
   branchId: z.string().min(1, "Branch must be selected"),
   date: z.string().min(1, "Date must be selected"),
@@ -128,7 +140,9 @@ export const insertAppointmentSchema = z.object({
   ),
   status: z.enum(["pending", "confirmed", "completed", "cancelled"]).default("pending"),
   notes: z.string().nullable(),
-  productsUsed: z.string().nullable()
+  productsUsed: z.string().nullable(),
+  totalPrice: z.number().optional(),
+  totalDuration: z.number().optional()
 });
 
 // Schema for User (Groomer)
