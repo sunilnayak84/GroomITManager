@@ -52,23 +52,7 @@ args = "Backend Server"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Development Servers"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
 args = "Frontend Server"
-
-[[workflows.workflow]]
-name = "Development Servers"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "concurrently --kill-others \"cd server && tsx watch --clear-screen=false index.ts\" \"cd client && npm run dev\""
-waitForPort = 5174
 
 [[workflows.workflow]]
 name = "Backend Server"
