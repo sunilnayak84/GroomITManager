@@ -87,8 +87,8 @@
 
 .hover-preview {
   display: none;
-  position: absolute;
-  z-index: 999999;
+  position: fixed;
+  z-index: 9999999;
   background: white;
   border: 1px solid #e2e8f0;
   border-radius: 0.5rem;
@@ -96,21 +96,23 @@
   padding: 1rem;
   min-width: 300px;
   max-width: 400px;
-  top: 0;
-  left: 100%;
-  margin-left: 10px;
   pointer-events: none;
 }
 
-/* Ensure the event container has proper positioning */
 .fc-event {
   position: relative !important;
+}
+
+.fc-event:hover {
+  z-index: 100 !important;
+}
+
+.fc-view-harness {
   z-index: 1;
 }
 
-/* When hovering, increase the z-index */
-.fc-event:hover {
-  z-index: 999999 !important;
+.fc .fc-popover {
+  z-index: 1000;
 }
 
 .hover-preview-header {
