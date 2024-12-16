@@ -1,4 +1,4 @@
-import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { capitalize } from "@/lib/utils";
 
@@ -30,27 +30,6 @@ interface PetDetailsProps {
 }
 
 export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProps) {
-  const getOwnerName = () => {
-    if (pet.owner?.name) return pet.owner.name;
-    if (pet.owner?.firstName || pet.owner?.lastName) {
-      return `${pet.owner.firstName || ''} ${pet.owner.lastName || ''}`.trim();
-    }
-    return 'Not specified';
-  };
-
-  const displayValue = (value: any, unit?: string) => {
-    if (value === null || value === undefined || value === '') {
-      return 'Not specified';
-    }
-    if (typeof value === 'number' && unit) {
-      return `${value} ${unit}`;
-    }
-    if (typeof value === 'string') {
-      return capitalize(value);
-    }
-    return String(value);
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
@@ -70,7 +49,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
         <div>
           <h2 className="text-2xl font-bold">{pet.name}</h2>
           <p className="text-muted-foreground">
-            {displayValue(pet.type)} • {displayValue(pet.breed)}
+            {pet.type && capitalize(pet.type)} • {capitalize(pet.breed)}
           </p>
         </div>
       </div>
@@ -81,15 +60,15 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
           <div className="space-y-2">
             <p>
               <span className="text-muted-foreground">Type: </span>
-              {displayValue(pet.type)}
+              {pet.type ? capitalize(pet.type) : 'Not specified'}
             </p>
             <p>
               <span className="text-muted-foreground">Breed: </span>
-              {displayValue(pet.breed)}
+              {capitalize(pet.breed)}
             </p>
             <p>
               <span className="text-muted-foreground">Gender: </span>
-              {displayValue(pet.gender)}
+              {pet.gender ? capitalize(pet.gender) : 'Not specified'}
             </p>
             <p>
               <span className="text-muted-foreground">Age: </span>
@@ -111,7 +90,9 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
             </p>
             <p>
               <span className="text-muted-foreground">Owner: </span>
-              {getOwnerName()}
+              {pet.owner?.name || (pet.owner?.firstName && pet.owner?.lastName 
+                ? `${pet.owner.firstName} ${pet.owner.lastName}`.trim()
+                : 'Not specified')}
             </p>
             {pet.owner?.email && (
               <p>
