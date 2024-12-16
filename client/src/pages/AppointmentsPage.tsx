@@ -205,7 +205,10 @@ export default function AppointmentsPage() {
           />
         </div>
       ) : (
-        <AppointmentCalendar />
+        <AppointmentCalendar 
+          setSelectedAppointment={setSelectedAppointment}
+          setOpenDetails={setOpenDetails}
+        />
       )}
 
       {selectedAppointment && (

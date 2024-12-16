@@ -18,7 +18,12 @@ const viewOptions = [
   { label: 'Day', value: 'timeGridDay' },
 ];
 
-export default function AppointmentCalendar() {
+interface AppointmentCalendarProps {
+  setSelectedAppointment: (appointment: AppointmentWithRelations | null) => void;
+  setOpenDetails: (open: boolean) => void;
+}
+
+export default function AppointmentCalendar({ setSelectedAppointment, setOpenDetails }: AppointmentCalendarProps) {
   const [currentView, setCurrentView] = useState<'dayGridMonth' | 'timeGridWeek' | 'timeGridDay'>('timeGridWeek');
   const [openNewForm, setOpenNewForm] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -111,8 +116,12 @@ export default function AppointmentCalendar() {
             setOpenNewForm(true);
           }}
           eventClick={(info) => {
-            // Handle event click - could show appointment details
-            console.log('Event clicked:', info.event);
+            const appointmentId = info.event.id;
+            const appointment = appointments?.find(apt => apt.id === appointmentId);
+            if (appointment) {
+              setSelectedAppointment(appointment);
+              setOpenDetails(true);
+            }
           }}
           slotMinTime={workingHours?.[0]?.openingTime || '09:00:00'}
           slotMaxTime={workingHours?.[0]?.closingTime || '17:00:00'}
