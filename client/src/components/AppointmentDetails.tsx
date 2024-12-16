@@ -67,13 +67,11 @@ const AppointmentDetails = ({
   });
 
   const onSubmit = async (data: UpdateAppointmentForm) => {
-    let previousData: AppointmentWithRelations[] | undefined;
-    
     try {
       setIsUpdating(true);
     
       // Store the previous data for rollback
-      previousData = queryClient.getQueryData<AppointmentWithRelations[]>(["appointments"]);
+      const previousData = queryClient.getQueryData<AppointmentWithRelations[]>(["appointments"]);
         
       // Optimistically update the UI
       if (previousData) {
@@ -101,10 +99,8 @@ const AppointmentDetails = ({
       
       onOpenChange(false);
     } catch (error) {
-      // Revert optimistic update on error if we had previous data
-      if (previousData) {
-        queryClient.setQueryData(["appointments"], previousData);
-      }
+      // Invalidate the query to refetch correct data on error
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
       
       toast({
         variant: "destructive",
