@@ -81,6 +81,11 @@ export default function AppointmentsPage() {
         const [isDeleting, setIsDeleting] = useState(false);
 
         const handleDelete = async () => {
+          if (!deleteAppointment) {
+            console.error('Delete appointment function is not available');
+            return;
+          }
+
           if (confirm("Are you sure you want to delete this appointment? This action cannot be undone.")) {
             try {
               setIsDeleting(true);
@@ -90,6 +95,7 @@ export default function AppointmentsPage() {
                 description: "Appointment deleted successfully",
               });
             } catch (error) {
+              console.error('Error deleting appointment:', error);
               toast({
                 variant: "destructive",
                 title: "Error",

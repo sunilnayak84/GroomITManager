@@ -1,8 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AppointmentWithRelations, InsertAppointment } from "@/lib/schema";
 import { 
-  collection, getDocs, setDoc, doc, 
-  Timestamp, getDoc
+  collection, doc, setDoc, getDoc, getDocs, deleteDoc, query, 
+  where, DocumentData, CollectionReference, runTransaction,
+  QuerySnapshot, DocumentSnapshot, WithFieldValue, 
+  FieldValue, serverTimestamp
 } from 'firebase/firestore';
 import { db } from "../lib/firebase";
 
@@ -325,14 +327,6 @@ export function useAppointments() {
     }
   });
 
-  return {
-    data: appointments,
-    isLoading,
-    error,
-    addAppointment: addAppointmentMutation.mutateAsync,
-    updateAppointment: updateAppointmentMutation.mutateAsync,
-    isTimeSlotAvailable,
-  };
   const deleteAppointmentMutation = useMutation({
     mutationFn: async (appointmentId: string) => {
       try {
