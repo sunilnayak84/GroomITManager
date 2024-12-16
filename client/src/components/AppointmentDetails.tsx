@@ -4,7 +4,9 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
+import { PetDetails } from "@/components/PetDetails";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -269,28 +271,7 @@ const AppointmentDetails = ({
             <DialogTitle>Pet Details</DialogTitle>
           </DialogHeader>
           <PetDetails 
-            pet={{
-              id: appointment.pet.id,
-              firebaseId: null,
-              name: appointment.pet.name,
-              type: appointment.pet.type,
-              breed: appointment.pet.breed,
-              customerId: appointment.customer.id,
-              image: appointment.pet.image,
-              gender: appointment.pet.gender,
-              age: appointment.pet.age,
-              weight: appointment.pet.weight,
-              weightUnit: appointment.pet.weightUnit || 'kg',
-              dateOfBirth: appointment.pet.dateOfBirth,
-              notes: appointment.pet.notes,
-              createdAt: appointment.pet.createdAt,
-              updatedAt: appointment.pet.updatedAt,
-              owner: {
-                id: appointment.customer.id,
-                name: `${appointment.customer.firstName} ${appointment.customer.lastName}`,
-                email: appointment.customer.email
-              }
-            }}
+            pet={appointment.pet}
             formatDate={format}
           />
         </DialogContent>
