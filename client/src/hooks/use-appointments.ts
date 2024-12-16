@@ -333,4 +333,30 @@ export function useAppointments() {
     updateAppointment: updateAppointmentMutation.mutateAsync,
     isTimeSlotAvailable,
   };
+  const deleteAppointmentMutation = useMutation({
+    mutationFn: async (appointmentId: string) => {
+      try {
+        console.log('Deleting appointment:', appointmentId);
+        const appointmentRef = doc(db, 'appointments', appointmentId);
+        await deleteDoc(appointmentRef);
+        return true;
+      } catch (error) {
+        console.error('Error deleting appointment:', error);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
+    }
+  });
+
+  return {
+    data: appointments,
+    isLoading,
+    error,
+    addAppointment: addAppointmentMutation.mutateAsync,
+    updateAppointment: updateAppointmentMutation.mutateAsync,
+    deleteAppointment: deleteAppointmentMutation.mutateAsync,
+    isTimeSlotAvailable,
+  };
 }

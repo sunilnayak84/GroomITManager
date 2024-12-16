@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Calendar, List } from "lucide-react";
+import { Plus, Calendar, List, Trash2 } from "lucide-react";
+import { useUser } from "@/hooks/use-user";
+import { useToast } from "@/hooks/use-toast";
 import { useAppointments } from "../hooks/use-appointments";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import AppointmentForm from "../components/AppointmentForm";
@@ -72,18 +74,59 @@ export default function AppointmentsPage() {
     },
     {
       header: "Actions",
-      cell: (row: AppointmentWithRelations) => (
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={() => {
-            setSelectedAppointment(row);
-            setOpenDetails(true);
-          }}
-        >
-          View
-        </Button>
-      ),
+      cell: (row: AppointmentWithRelations) => {
+        const { user } = useUser();
+        const { deleteAppointment } = useAppointments();
+        const { toast } = useToast();
+        const [isDeleting, setIsDeleting] = useState(false);
+
+        const handleDelete = async () => {
+          if (confirm("Are you sure you want to delete this appointment? This action cannot be undone.")) {
+            try {
+              setIsDeleting(true);
+              await deleteAppointment(row.id);
+              toast({
+                title: "Success",
+                description: "Appointment deleted successfully",
+              });
+            } catch (error) {
+              toast({
+                variant: "destructive",
+                title: "Error",
+                description: error instanceof Error ? error.message : "Failed to delete appointment",
+              });
+            } finally {
+              setIsDeleting(false);
+            }
+          }
+        };
+
+        return (
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => {
+                setSelectedAppointment(row);
+                setOpenDetails(true);
+              }}
+            >
+              View
+            </Button>
+            {user?.role === 'admin' && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="text-destructive hover:text-destructive"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+        );
+      },
     },
   ];
 
