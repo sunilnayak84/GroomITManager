@@ -38,28 +38,17 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
     return 'Not specified';
   };
 
-  const formatValue = (value: any, unit?: string) => {
-    if (value === null || value === undefined || value === '') return 'Not specified';
-    if (typeof value === 'number' && unit) return `${value} ${unit}`;
-    if (typeof value === 'string') return value.trim();
-    return String(value);
-  };
-
-  const getDisplayValue = (label: string, value: any, unit?: string) => {
-    if (value === null || value === undefined) return 'Not specified';
-    
-    switch (label) {
-      case 'Type':
-        return pet.type ? capitalize(pet.type) : 'Not specified';
-      case 'Gender':
-        return pet.gender ? capitalize(pet.gender) : 'Not specified';
-      case 'Age':
-        return value ? `${value} years` : 'Not specified';
-      case 'Weight':
-        return value ? `${value} ${pet.weightUnit || 'kg'}` : 'Not specified';
-      default:
-        return formatValue(value, unit);
+  const displayValue = (value: any, unit?: string) => {
+    if (value === null || value === undefined || value === '') {
+      return 'Not specified';
     }
+    if (typeof value === 'number' && unit) {
+      return `${value} ${unit}`;
+    }
+    if (typeof value === 'string') {
+      return capitalize(value);
+    }
+    return String(value);
   };
 
   return (
@@ -81,7 +70,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
         <div>
           <h2 className="text-2xl font-bold">{pet.name}</h2>
           <p className="text-muted-foreground">
-            {formatValue(pet.type)} • {formatValue(pet.breed)}
+            {displayValue(pet.type)} • {displayValue(pet.breed)}
           </p>
         </div>
       </div>
@@ -92,19 +81,19 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
           <div className="space-y-2">
             <p>
               <span className="text-muted-foreground">Type: </span>
-              {getDisplayValue('Type', pet.type)}
+              {displayValue(pet.type)}
             </p>
             <p>
               <span className="text-muted-foreground">Breed: </span>
-              {pet.breed || 'Not specified'}
+              {displayValue(pet.breed)}
             </p>
             <p>
               <span className="text-muted-foreground">Gender: </span>
-              {getDisplayValue('Gender', pet.gender)}
+              {displayValue(pet.gender)}
             </p>
             <p>
               <span className="text-muted-foreground">Age: </span>
-              {getDisplayValue('Age', pet.age)}
+              {pet.age ? `${pet.age} years` : 'Not specified'}
             </p>
           </div>
         </div>
@@ -118,7 +107,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
             </p>
             <p>
               <span className="text-muted-foreground">Weight: </span>
-              {formatValue(pet.weight, pet.weightUnit)}
+              {pet.weight ? `${pet.weight} ${pet.weightUnit || 'kg'}` : 'Not specified'}
             </p>
             <p>
               <span className="text-muted-foreground">Owner: </span>
@@ -141,14 +130,18 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
         </div>
       )}
 
-      {onEdit && onDelete && (
+      {(onEdit || onDelete) && (
         <div className="mt-6 flex justify-center gap-2">
-          <Button variant="outline" onClick={onDelete}>
-            Delete
-          </Button>
-          <Button onClick={onEdit}>
-            Edit
-          </Button>
+          {onDelete && (
+            <Button variant="outline" onClick={onDelete}>
+              Delete
+            </Button>
+          )}
+          {onEdit && (
+            <Button onClick={onEdit}>
+              Edit
+            </Button>
+          )}
         </div>
       )}
     </div>
