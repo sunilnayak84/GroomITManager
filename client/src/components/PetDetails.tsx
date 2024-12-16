@@ -4,7 +4,26 @@ import { Button } from "@/components/ui/button";
 import type { Pet } from "@/lib/types";
 
 interface PetDetailsProps {
-  pet: Pet;
+  pet: {
+    id?: string;
+    name: string;
+    type?: string;
+    breed: string;
+    gender?: string;
+    age?: number;
+    dateOfBirth?: string | null;
+    weight?: number | null;
+    weightUnit?: string;
+    notes?: string | null;
+    image: string | null;
+    owner?: {
+      name?: string;
+      firstName?: string;
+      lastName?: string;
+    };
+    createdAt?: string;
+    updatedAt?: string | null;
+  };
   onEdit?: () => void;
   onDelete?: () => void;
   formatDate: (date: any) => string;
