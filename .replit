@@ -8,7 +8,7 @@ channel = "stable-24_05"
 [deployment]
 deploymentTarget = "cloudrun"
 build = ["npm", "run", "build"]
-run = ["sh", "-c", "npm run dev"]
+run = ["sh", "-c", "npx concurrently -n frontend,backend -c blue,green \"cd client && npm run dev\" \"cd server && tsx watch --clear-screen=false index.ts\""]
 
 [[ports]]
 localPort = 3000
@@ -48,14 +48,10 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Backend Server"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Frontend Server"
+args = "Development Servers"
 
 [[workflows.workflow]]
-name = "Backend Server"
+name = "Development Servers"
 author = "agent"
 
 [workflows.workflow.metadata]
@@ -66,20 +62,5 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd server && NODE_ENV=development tsx watch --clear-screen=false index.ts"
-waitForPort = 3000
-
-[[workflows.workflow]]
-name = "Frontend Server"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "packager.installForAll"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd client && NODE_ENV=development npm run dev"
+args = "npx concurrently -n frontend,backend -c blue,green \"cd client && npm run dev\" \"cd server && tsx watch --clear-screen=false index.ts\""
 waitForPort = 5174
