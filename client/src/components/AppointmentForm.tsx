@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { insertAppointmentSchema, type InsertAppointment } from "@/lib/schema";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -126,14 +127,15 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
   };
 
   useEffect(() => {
-    const serviceId = form.watch("serviceId");
-    if (serviceId) {
-      const service = services?.find(s => s.service_id === serviceId);
+    const selectedServices = form.watch("services");
+    if (selectedServices && selectedServices.length > 0) {
+      const lastServiceId = selectedServices[selectedServices.length - 1];
+      const service = services?.find(s => s.service_id === lastServiceId);
       setSelectedService(service || null);
     } else {
       setSelectedService(null);
     }
-  }, [form.watch("serviceId"), services]);
+  }, [form.watch("services"), services]);
 
   const validateTimeSlot = (
     date: string,
@@ -263,8 +265,8 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
     setValidationError(null);
     
     try {
-      if (!data.petId || !data.serviceId) {
-        throw new Error("Please select both pet and service");
+      if (!data.petId || !data.services || data.services.length === 0) {
+        throw new Error("Please select both pet and at least one service");
       }
 
       if (!data.groomerId) {

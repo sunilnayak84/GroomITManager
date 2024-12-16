@@ -1,0 +1,82 @@
+Global error: Object
+window.onerror @ main.tsx:68Understand this errorAI
+AppointmentForm.tsx:535 Uncaught ReferenceError: Checkbox is not defined
+    at AppointmentForm.tsx:535:26
+    at Array.map (<anonymous>)
+    at Object.render (AppointmentForm.tsx:533:39)
+    at Controller (chunk-YGGBEVKP.js?v=2a205a0e:323:35)
+    at renderWithHooks (chunk-GNC7SI6A.js?v=2a205a0e:11548:26)
+    at mountIndeterminateComponent (chunk-GNC7SI6A.js?v=2a205a0e:14926:21)
+    at beginWork (chunk-GNC7SI6A.js?v=2a205a0e:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-GNC7SI6A.js?v=2a205a0e:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-GNC7SI6A.js?v=2a205a0e:3699:24)
+    at invokeGuardedCallback (chunk-GNC7SI6A.js?v=2a205a0e:3733:39)Understand this errorAI
+main.tsx:68 Global error: Object
+window.onerror @ main.tsx:68Understand this errorAI
+AppointmentForm.tsx:535 Uncaught ReferenceError: Checkbox is not defined
+    at AppointmentForm.tsx:535:26
+    at Array.map (<anonymous>)
+    at Object.render (AppointmentForm.tsx:533:39)
+    at Controller (chunk-YGGBEVKP.js?v=2a205a0e:323:35)
+    at renderWithHooks (chunk-GNC7SI6A.js?v=2a205a0e:11548:26)
+    at mountIndeterminateComponent (chunk-GNC7SI6A.js?v=2a205a0e:14926:21)
+    at beginWork (chunk-GNC7SI6A.js?v=2a205a0e:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-GNC7SI6A.js?v=2a205a0e:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-GNC7SI6A.js?v=2a205a0e:3699:24)
+    at invokeGuardedCallback (chunk-GNC7SI6A.js?v=2a205a0e:3733:39)Understand this errorAI
+chunk-GNC7SI6A.js?v=2a205a0e:14032 The above error occurred in the <Controller> component:
+
+    at Controller (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-YGGBEVKP.js?v=2a205a0e:323:35)
+    at FormField (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/form.tsx:32:6)
+    at div
+    at form
+    at FormProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-YGGBEVKP.js?v=2a205a0e:103:11)
+    at div
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-HXY2Y4R7.js?v=2a205a0e:41:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-6Q46GNLB.js?v=2a205a0e:61:7
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-7GGLAJHR.js?v=2a205a0e:52:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-7GGLAJHR.js?v=2a205a0e:33:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-HXY2Y4R7.js?v=2a205a0e:41:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-CBG34CSU.js?v=2a205a0e:34:5
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-BL4MLIG6.js?v=2a205a0e:234:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-BL4MLIG6.js?v=2a205a0e:157:58
+    at Presence (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-MCVYB5XE.js?v=2a205a0e:24:11)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-BL4MLIG6.js?v=2a205a0e:148:64
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-7GGLAJHR.js?v=2a205a0e:52:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-7GGLAJHR.js?v=2a205a0e:33:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-HXY2Y4R7.js?v=2a205a0e:41:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-6Q46GNLB.js?v=2a205a0e:260:22
+    at Presence (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-MCVYB5XE.js?v=2a205a0e:24:11)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DCAJILPT.js?v=2a205a0e:38:15)
+    at DialogPortal (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-BL4MLIG6.js?v=2a205a0e:111:11)
+    at _c3 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/dialog.tsx:49:12)
+    at AppointmentForm (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/AppointmentForm.tsx:55:43)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DCAJILPT.js?v=2a205a0e:38:15)
+    at Dialog (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-BL4MLIG6.js?v=2a205a0e:52:5)
+    at div
+    at div
+    at div
+    at div
+    at div
+    at AppointmentsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/AppointmentsPage.tsx:121:41)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+    at div
+    at main
+    at main
+    at _c9 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:398:48)
+    at div
+    at div
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DCAJILPT.js?v=2a205a0e:38:15)
+    at TooltipProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=2a205a0e:63:5)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:54:7
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:28:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:135:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=2a205a0e:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+logCapturedError @ chunk-GNC7SI6A.js?v=2a205a0e:14032Understand this errorAI
