@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -6,9 +6,11 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { PetDetails } from "@/components/PetDetails";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { usePets } from "@/hooks/use-pets";
+import { useCustomers } from "@/hooks/use-customers";
+import { Loader2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -60,6 +62,12 @@ const AppointmentDetails = ({
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const queryClient = useQueryClient();
+  const { getPetById } = usePets();
+  const { getCustomerById } = useCustomers();
+  const [fullPetData, setFullPetData] = useState<any>(null); // Updated state for full pet data
+  const [fullCustomerData, setFullCustomerData] = useState<any>(null); // Updated state for full customer data
+  const [loadingPet, setLoadingPet] = useState(false); // Loading states
+  const [loadingCustomer, setLoadingCustomer] = useState(false);
 
   const form = useForm<UpdateAppointmentForm>({
     resolver: zodResolver(updateAppointmentSchema),
@@ -73,11 +81,7 @@ const AppointmentDetails = ({
   const onSubmit = async (data: UpdateAppointmentForm) => {
     try {
       setIsUpdating(true);
-    
-      // Store the previous data for rollback
       const previousData = queryClient.getQueryData<AppointmentWithRelations[]>(["appointments"]);
-        
-      // Optimistically update the UI
       if (previousData) {
         queryClient.setQueryData<AppointmentWithRelations[]>(
           ["appointments"],
@@ -95,17 +99,13 @@ const AppointmentDetails = ({
         cancellationReason: data.status === 'cancelled' ? data.cancellationReason : undefined,
         notes: data.notes,
       });
-      
       toast({
         title: "Success",
         description: "Appointment status updated successfully",
       });
-      
       onOpenChange(false);
     } catch (error) {
-      // Revert optimistic update on error
       queryClient.setQueryData(["appointments"], previousData);
-      
       toast({
         variant: "destructive",
         title: "Error",
@@ -117,6 +117,36 @@ const AppointmentDetails = ({
       setIsUpdating(false);
     }
   };
+
+  useEffect(() => {
+    const fetchPetData = async () => {
+      setLoadingPet(true);
+      try {
+        const data = await getPetById(appointment.pet.id);
+        setFullPetData(data);
+      } catch (error) {
+        console.error("Error fetching pet data:", error);
+      } finally {
+        setLoadingPet(false);
+      }
+    };
+    const fetchCustomerData = async () => {
+      setLoadingCustomer(true);
+      try {
+        const data = await getCustomerById(appointment.customer.id);
+        setFullCustomerData(data);
+      } catch (error) {
+        console.error("Error fetching customer data:", error);
+      } finally {
+        setLoadingCustomer(false);
+      }
+    };
+
+    fetchPetData();
+    fetchCustomerData();
+
+  }, [getPetById, appointment.pet.id, getCustomerById, appointment.customer.id]);
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -264,77 +294,118 @@ const AppointmentDetails = ({
         </Form>
       </DialogContent>
 
-      {/* Link to Pet Details page with modal view */}
+      {/* Pet Details Modal */}
       <Dialog open={showPetDetails} onOpenChange={setShowPetDetails}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>Pet Details</DialogTitle>
           </DialogHeader>
-          <div className="flex items-center gap-4">
-            <img
-              src={appointment.pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${appointment.pet.name}`}
-              alt={appointment.pet.name}
-              className="w-16 h-16 rounded-full object-cover"
-            />
-            <div>
-              <h2 className="text-xl font-bold">{appointment.pet.name}</h2>
-              <p className="text-sm text-muted-foreground">
-                {appointment.pet.breed} • {appointment.pet.type}
-              </p>
-            </div>
-          </div>
-          <div className="space-y-4">
-            <div>
-              <h3 className="font-semibold mb-2">Basic Information</h3>
-              <div className="grid gap-2 text-sm">
-                <p><span className="text-muted-foreground">Type:</span> {appointment.pet.type}</p>
-                <p><span className="text-muted-foreground">Breed:</span> {appointment.pet.breed}</p>
-                <p><span className="text-muted-foreground">Age:</span> {appointment.pet.age || 'Not specified'}</p>
+          <div className="space-y-6">
+            {/* Pet Header */}
+            <div className="flex items-center gap-4">
+              <img
+                src={appointment.pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${appointment.pet.name}`}
+                alt={appointment.pet.name}
+                className="w-16 h-16 rounded-full object-cover"
+              />
+              <div>
+                <h2 className="text-xl font-bold">{appointment.pet.name}</h2>
+                <p className="text-sm text-muted-foreground">
+                  {appointment.pet.breed}
+                </p>
               </div>
             </div>
-            <Button 
-              className="w-full"
-              onClick={() => {
-                setShowPetDetails(false);
-                // Navigate to pets page with this pet's details open
-                window.location.href = `/pets?petId=${appointment.pet.id}`;
-              }}
-            >
-              View Full Details
-            </Button>
+
+            {/* Pet Details */}
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <h3 className="font-semibold mb-2">Basic Information</h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Breed:</span>
+                    <span>{appointment.pet.breed}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Owner:</span>
+                    <span>{appointment.customer.firstName} {appointment.customer.lastName}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="font-semibold mb-2">Appointment History</h3>
+                <div className="text-sm text-muted-foreground">
+                  Current appointment scheduled for {format(new Date(appointment.date), "PPP")}
+                </div>
+              </div>
+            </div>
+
+            {/* Notes Section */}
+            <div>
+              <h3 className="font-semibold mb-2">Notes</h3>
+              <div className="text-sm text-muted-foreground">
+                {appointment.notes || "No notes available"}
+              </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* Link to Customer Details page with modal view */}
+      {/* Customer Details Modal */}
       <Dialog open={showCustomerDetails} onOpenChange={setShowCustomerDetails}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>Customer Details</DialogTitle>
           </DialogHeader>
-          <div className="flex items-center gap-4">
-            <img
-              src={`https://api.dicebear.com/7.x/initials/svg?seed=${appointment.customer.firstName} ${appointment.customer.lastName}`}
-              alt={`${appointment.customer.firstName} ${appointment.customer.lastName}`}
-              className="w-16 h-16 rounded-full"
-            />
-            <div>
-              <h2 className="text-xl font-bold">
-                {appointment.customer.firstName} {appointment.customer.lastName}
-              </h2>
+          <div className="space-y-6">
+            {/* Customer Header */}
+            <div className="flex items-center gap-4">
+              <img
+                src={`https://api.dicebear.com/7.x/initials/svg?seed=${appointment.customer.firstName} ${appointment.customer.lastName}`}
+                alt={`${appointment.customer.firstName} ${appointment.customer.lastName}`}
+                className="w-16 h-16 rounded-full"
+              />
+              <div>
+                <h2 className="text-xl font-bold">
+                  {appointment.customer.firstName} {appointment.customer.lastName}
+                </h2>
+              </div>
             </div>
-          </div>
-          <div className="space-y-4">
-            <Button 
-              className="w-full"
-              onClick={() => {
-                setShowCustomerDetails(false);
-                // Navigate to customers page with this customer's details open
-                window.location.href = `/customers?customerId=${appointment.customer.id}`;
-              }}
-            >
-              View Full Details
-            </Button>
+
+            {/* Customer Details */}
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <h3 className="font-semibold mb-2">Contact Information</h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Email:</span>
+                    <span>{appointment.customer.email}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Phone:</span>
+                    <span>{appointment.customer.phone}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="font-semibold mb-2">Pets</h3>
+                <div className="text-sm text-muted-foreground">
+                  Currently viewing appointment for {appointment.pet.name}
+                </div>
+              </div>
+            </div>
+
+            {/* Additional Information */}
+            <div>
+              <h3 className="font-semibold mb-2">Additional Information</h3>
+              <div className="text-sm text-muted-foreground">
+                <div className="flex justify-between">
+                  <span>Address:</span>
+                  <span>{appointment.customer.address || "Not provided"}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
