@@ -1,4 +1,4 @@
-import { StrictMode, lazy, Suspense } from "react";
+import { StrictMode, lazy, Suspense, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { Switch, Route } from "wouter";
 import "./index.css";
@@ -12,10 +12,11 @@ import CustomersPage from "./pages/CustomersPage";
 import PetsPage from "./pages/PetsPage";
 import ServicesPage from "./pages/ServicesPage";
 import InventoryPage from "./pages/InventoryPage";
-import { Loader2 } from "lucide-react";
+import { AlertTriangle, Loader2, RefreshCw } from "lucide-react";
 import { useUser } from "./hooks/use-user";
 import Layout from "./components/Layout";
 import { ErrorBoundary } from "react-error-boundary";
+import { Button } from "@/components/ui/button";
 
 // Loading component for suspense fallback
 function LoadingSpinner() {
@@ -27,19 +28,52 @@ function LoadingSpinner() {
 }
 
 // Error fallback component
+// Enhanced error fallback component with better UI and error details
 function ErrorFallback({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4">
-      <h2 className="text-lg font-semibold text-red-600 mb-2">Something went wrong</h2>
-      <pre className="text-sm text-gray-500 mb-4">{error.message}</pre>
-      <button
-        onClick={resetErrorBoundary}
-        className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
-      >
-        Try again
-      </button>
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-background">
+      <div className="max-w-md w-full space-y-4">
+        <div className="flex items-center justify-center">
+          <AlertTriangle className="h-12 w-12 text-destructive" />
+        </div>
+        <div className="text-center space-y-2">
+          <h2 className="text-xl font-semibold text-foreground">Something went wrong</h2>
+          <p className="text-sm text-muted-foreground">
+            We encountered an error while processing your request. Please try again.
+          </p>
+        </div>
+        <div className="bg-muted/50 rounded-lg p-4">
+          <pre className="text-sm text-muted-foreground whitespace-pre-wrap">
+            {error.message}
+          </pre>
+        </div>
+        <div className="flex justify-center">
+          <Button 
+            onClick={resetErrorBoundary}
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Try again
+          </Button>
+        </div>
+      </div>
     </div>
   );
+}
+
+// Global error handler setup
+function setupErrorHandlers() {
+  if (typeof window !== 'undefined') {
+    window.onerror = (message, source, lineno, colno, error) => {
+      console.error('Global error:', { message, source, lineno, colno, error });
+      // You could also send this to an error tracking service
+    };
+
+    window.onunhandledrejection = (event) => {
+      console.error('Unhandled promise rejection:', event.reason);
+      // You could also send this to an error tracking service
+    };
+  }
 }
 
 function Router() {
@@ -75,12 +109,24 @@ function Router() {
   );
 }
 
+// Initialize error handlers
+setupErrorHandlers();
+
+// Create root and render app
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ErrorBoundary FallbackComponent={ErrorFallback}>
+    <ErrorBoundary 
+      FallbackComponent={ErrorFallback}
+      onReset={() => {
+        // Reset app state here if needed
+        queryClient.clear();
+      }}
+    >
       <QueryClientProvider client={queryClient}>
-        <Router />
-        <Toaster />
+        <Suspense fallback={<LoadingSpinner />}>
+          <Router />
+          <Toaster />
+        </Suspense>
       </QueryClientProvider>
     </ErrorBoundary>
   </StrictMode>
