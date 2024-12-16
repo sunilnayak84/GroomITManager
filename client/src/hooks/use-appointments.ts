@@ -19,6 +19,7 @@ interface FirestoreAppointmentData {
   productsUsed: string | null;
   createdAt: Timestamp;
   updatedAt: Timestamp | null;
+  deletedAt: Timestamp | null;
 }
 
 const timestampToISOString = (timestamp: Timestamp | null | undefined): string => {
@@ -68,8 +69,13 @@ export function useAppointments() {
         const appointmentsRef = collection(db, 'appointments');
         console.log('FETCH_APPOINTMENTS: Created collection reference');
 
-        const querySnapshot = await getDocs(appointmentsRef);
-        console.log('FETCH_APPOINTMENTS: Got snapshot with', querySnapshot.size, 'documents');
+        // Only fetch non-deleted appointments
+        const appointmentsQuery = query(
+          appointmentsRef,
+          where("deletedAt", "==", null)
+        );
+        const querySnapshot = await getDocs(appointmentsQuery);
+        console.log('FETCH_APPOINTMENTS: Got snapshot with', querySnapshot.size, 'active documents');
 
         if (querySnapshot.empty) {
           console.log('FETCH_APPOINTMENTS: No appointments found');
@@ -330,12 +336,27 @@ export function useAppointments() {
   const deleteAppointmentMutation = useMutation({
     mutationFn: async (appointmentId: string) => {
       try {
-        console.log('Deleting appointment:', appointmentId);
+        console.log('Soft deleting appointment:', appointmentId);
         const appointmentRef = doc(db, 'appointments', appointmentId);
-        await deleteDoc(appointmentRef);
+        
+        // Get current appointment data
+        const appointmentSnap = await getDoc(appointmentRef);
+        if (!appointmentSnap.exists()) {
+          throw new Error('Appointment not found');
+        }
+
+        const currentData = appointmentSnap.data();
+        const updateData = {
+          ...currentData,
+          deletedAt: Timestamp.fromDate(new Date()),
+          updatedAt: Timestamp.fromDate(new Date())
+        };
+
+        await setDoc(appointmentRef, updateData);
+        console.log('Appointment soft deleted successfully');
         return true;
       } catch (error) {
-        console.error('Error deleting appointment:', error);
+        console.error('Error soft deleting appointment:', error);
         throw error;
       }
     },
