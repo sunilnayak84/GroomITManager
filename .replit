@@ -30,15 +30,11 @@ args = "NODE_ENV=development PORT=3000 tsx --require dotenv/config server/index.
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "React Dev Server"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Backend Server"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
 args = "Cleanup PostgreSQL"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Full Stack Dev"
 
 [[workflows.workflow]]
 name = "Project"
@@ -56,36 +52,6 @@ args = "tsx --require dotenv/config server/index.ts"
 waitForPort = 5173
 
 [[workflows.workflow]]
-name = "React Dev Server"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "packager.installForAll"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd client && npm run dev -- --host 0.0.0.0 --port 5174"
-waitForPort = 5174
-
-[[workflows.workflow]]
-name = "Backend Server"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "packager.installForAll"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "NODE_ENV=development DEBUG=express:* PORT=3000 tsx --require dotenv/config server/index.ts"
-waitForPort = 3000
-
-[[workflows.workflow]]
 name = "Cleanup PostgreSQL"
 author = "agent"
 
@@ -99,6 +65,21 @@ task = "packager.installForAll"
 task = "shell.exec"
 args = "rm -rf migrations && rm -rf db/schema.ts && rm drizzle.config.ts"
 
+[[workflows.workflow]]
+name = "Full Stack Dev"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "concurrently \"cd server && tsx watch --clear-screen=false index.ts\" \"cd client && npm run dev -- --port 5174\""
+waitForPort = 5174
+
 [[ports]]
 localPort = 3000
 externalPort = 3000
@@ -106,6 +87,10 @@ externalPort = 3000
 [[ports]]
 localPort = 3001
 externalPort = 3001
+
+[[ports]]
+localPort = 5173
+externalPort = 5173
 
 [[ports]]
 localPort = 5174
