@@ -13,6 +13,7 @@ import { z } from "zod";
 import { appointmentSchema, type Appointment, type AppointmentWithRelations } from "@/lib/schema";
 import AppointmentDetails from "../components/AppointmentDetails";
 import AppointmentCalendar from "../components/AppointmentCalendar";
+import { PetDetailsModal } from "../components/PetDetailsModal";
 
 // Get status type from the schema
 interface ActionButtonsProps {
@@ -89,6 +90,8 @@ export default function AppointmentsPage() {
   const [openNewForm, setOpenNewForm] = useState(false);
   const [openDetails, setOpenDetails] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithRelations | null>(null);
+  const [selectedPet, setSelectedPet] = useState<AppointmentWithRelations['pet'] | null>(null);
+  const [openPetDetails, setOpenPetDetails] = useState(false);
   const [view, setView] = useState<'list' | 'calendar'>('list');
   const { data: appointments, isLoading, error } = useAppointments();
   
@@ -100,7 +103,13 @@ export default function AppointmentsPage() {
     {
       header: "Pet",
       cell: ({ pet }: AppointmentWithRelations) => (
-        <div className="flex items-center gap-2">
+        <div 
+          className="flex items-center gap-2 cursor-pointer hover:opacity-80"
+          onClick={() => {
+            setSelectedPet(pet);
+            setOpenPetDetails(true);
+          }}
+        >
           <img
             src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
             alt={pet.name}
@@ -213,6 +222,22 @@ export default function AppointmentsPage() {
           appointment={selectedAppointment}
           open={openDetails}
           onOpenChange={setOpenDetails}
+        />
+      )}
+
+      {selectedPet && (
+        <PetDetailsModal
+          pet={{
+            ...selectedPet,
+            owner: selectedAppointment?.customer 
+              ? {
+                  firstName: selectedAppointment.customer.firstName,
+                  lastName: selectedAppointment.customer.lastName,
+                }
+              : undefined,
+          }}
+          open={openPetDetails}
+          onOpenChange={setOpenPetDetails}
         />
       )}
     </div>
