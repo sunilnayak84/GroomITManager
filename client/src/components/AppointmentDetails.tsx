@@ -30,6 +30,7 @@ import { z } from "zod";
 import type { AppointmentWithRelations } from "@/lib/schema";
 import { useAppointments } from "@/hooks/use-appointments";
 import { useToast } from "@/hooks/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface AppointmentDetailsProps {
   appointment: AppointmentWithRelations;
@@ -53,7 +54,9 @@ const AppointmentDetails = ({
   const { updateAppointment } = useAppointments();
   const { toast } = useToast();
   const [showCancellationForm, setShowCancellationForm] = useState(false);
-  
+  const [isUpdating, setIsUpdating] = useState(false);
+  const queryClient = useQueryClient();
+
   const form = useForm<UpdateAppointmentForm>({
     resolver: zodResolver(updateAppointmentSchema),
     defaultValues: {
@@ -65,6 +68,19 @@ const AppointmentDetails = ({
 
   const onSubmit = async (data: UpdateAppointmentForm) => {
     try {
+      setIsUpdating(true);
+    
+      // Optimistically update the UI
+      const previousData = queryClient.getQueryData<AppointmentWithRelations[]>(["appointments"]);
+      queryClient.setQueryData<AppointmentWithRelations[]>(["appointments"], (old) => {
+        if (!old) return old;
+        return old.map((apt) =>
+          apt.id === appointment.id
+            ? { ...apt, status: data.status, notes: data.notes }
+            : apt
+        );
+      });
+
       await updateAppointment({
         id: appointment.id,
         status: data.status,
@@ -79,11 +95,18 @@ const AppointmentDetails = ({
       
       onOpenChange(false);
     } catch (error) {
+      // Revert optimistic update on error
+      queryClient.setQueryData(["appointments"], previousData);
+      
       toast({
         variant: "destructive",
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update appointment status",
+        description: error instanceof Error 
+          ? `Failed to update appointment: ${error.message}` 
+          : "Failed to update appointment status",
       });
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -206,8 +229,19 @@ const AppointmentDetails = ({
               >
                 Cancel
               </Button>
-              <Button type="submit">
-                Update Appointment
+              <Button 
+                type="submit" 
+                disabled={isUpdating}
+                className="min-w-[140px]"
+              >
+                {isUpdating ? (
+                  <>
+                    <span className="mr-2">Updating...</span>
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  </>
+                ) : (
+                  "Update Appointment"
+                )}
               </Button>
             </div>
           </form>
