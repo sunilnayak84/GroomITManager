@@ -271,6 +271,10 @@ export type AppointmentWithRelations = Omit<Appointment, "status" | "appointment
     name: string;
     duration: number;
     price: number;
+    description?: string | null;
+    category?: string;
+    discount_percentage?: number;
+    consumables?: any[];
   };
 };
 

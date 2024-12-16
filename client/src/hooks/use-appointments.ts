@@ -163,6 +163,35 @@ export function useAppointments() {
               }
             }
 
+            // Get service data
+            let serviceData = null;
+
+            if (rawData.serviceId) {
+              console.log('FETCH_APPOINTMENTS: Fetching service data for ID:', rawData.serviceId);
+              const serviceDoc = await getDoc(doc(db, 'services', rawData.serviceId));
+              
+              if (serviceDoc.exists()) {
+                const rawServiceData = serviceDoc.data();
+                console.log('FETCH_APPOINTMENTS: Raw service data:', rawServiceData);
+                
+                // Map all required service fields
+                serviceData = {
+                  name: rawServiceData.name || 'Unknown Service',
+                  duration: rawServiceData.duration || 30,
+                  price: rawServiceData.price || 0,
+                  description: rawServiceData.description || null,
+                  category: rawServiceData.category || 'Service',
+                  discount_percentage: rawServiceData.discount_percentage || 0,
+                  consumables: rawServiceData.consumables || []
+                };
+                console.log('FETCH_APPOINTMENTS: Processed service data:', serviceData);
+              } else {
+                console.error('FETCH_APPOINTMENTS: Service not found for ID:', rawData.serviceId);
+              }
+            } else {
+              console.log('FETCH_APPOINTMENTS: No serviceId provided for appointment');
+            }
+
             const appointment: AppointmentWithRelations = {
               id: appointmentDoc.id,
               petId: rawData.petId,
@@ -186,7 +215,16 @@ export function useAppointments() {
               },
               groomer: {
                 name: groomerData.name
-              }
+              },
+              service: serviceData ? {
+                name: serviceData.name || 'Unknown Service',
+                duration: serviceData.duration || 0,
+                price: serviceData.price || 0,
+                description: serviceData.description,
+                category: serviceData.category,
+                discount_percentage: serviceData.discount_percentage,
+                consumables: serviceData.consumables
+              } : undefined
             };
 
             appointments.push(appointment);

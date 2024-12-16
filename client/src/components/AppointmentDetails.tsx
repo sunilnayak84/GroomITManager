@@ -183,7 +183,7 @@ const AppointmentDetails = ({
                 </p>
                 {appointment.service?.price && (
                   <p className="text-sm text-gray-500">
-                    Price: ${appointment.service.price}
+                    Price: ₹{appointment.service.price}
                   </p>
                 )}
                 {appointment.service?.duration && (

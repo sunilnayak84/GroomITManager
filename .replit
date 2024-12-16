@@ -8,7 +8,7 @@ channel = "stable-24_05"
 [deployment]
 deploymentTarget = "cloudrun"
 build = ["npm", "run", "build"]
-run = ["sh", "-c", "npx concurrently -n frontend,backend -c blue,green \"cd client && npm run dev\" \"cd server && tsx watch --clear-screen=false index.ts\""]
+run = ["sh", "-c", "npx concurrently -n frontend,backend \"cd client && npm run dev -- --port 5174\" \"cd server && tsx watch --clear-screen=false index.ts\""]
 
 [[ports]]
 localPort = 3000
@@ -62,5 +62,5 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npx concurrently -n frontend,backend -c blue,green \"cd client && npm run dev\" \"cd server && tsx watch --clear-screen=false index.ts\""
+args = "npx concurrently -n frontend,backend \"cd client && npm run dev -- --port 5174\" \"cd server && tsx watch --clear-screen=false index.ts\""
 waitForPort = 5174

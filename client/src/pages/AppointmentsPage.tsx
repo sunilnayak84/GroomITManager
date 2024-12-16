@@ -132,7 +132,7 @@ export default function AppointmentsPage() {
           <div className="font-medium">{row.service?.name || 'Unknown Service'}</div>
           {row.service?.price && (
             <div className="text-sm text-muted-foreground">
-              ${row.service.price}
+              ₹{row.service.price}
             </div>
           )}
         </div>
