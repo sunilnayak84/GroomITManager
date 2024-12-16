@@ -87,8 +87,8 @@
 
 .hover-preview {
   display: none;
-  position: absolute;
-  z-index: 9999;
+  position: fixed;
+  z-index: 99999;
   background: white;
   border: 1px solid #e2e8f0;
   border-radius: 0.5rem;
@@ -96,8 +96,7 @@
   padding: 1rem;
   min-width: 300px;
   max-width: 400px;
-  top: -100%;
-  left: 100%;
+  transform: translate(20px, -100%);
   pointer-events: none;
 }
 
