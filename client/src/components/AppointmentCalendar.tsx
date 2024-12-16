@@ -226,8 +226,10 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
             // Skip if date is undefined
             if (!arg.date) return '';
             
+            if (!arg.date) return '';
+            
             const dayEvents = breakTimeEvents.filter(event => 
-              event.daysOfWeek?.includes(arg.date.getDay())
+              event.daysOfWeek?.includes(arg.date!.getDay())
             );
             
             const isInBreakTime = dayEvents.some(event => {
@@ -236,13 +238,14 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
               const [breakStartHour, breakStartMinute] = event.startTime.split(':');
               const [breakEndHour, breakEndMinute] = event.endTime.split(':');
               
-              const breakStart = new Date(arg.date);
+              const date = arg.date!;
+              const breakStart = new Date(date);
               breakStart.setHours(parseInt(breakStartHour), parseInt(breakStartMinute));
               
-              const breakEnd = new Date(arg.date);
+              const breakEnd = new Date(date);
               breakEnd.setHours(parseInt(breakEndHour), parseInt(breakEndMinute));
               
-              return arg.date >= breakStart && arg.date < breakEnd;
+              return date >= breakStart && date < breakEnd;
             });
             
             return isInBreakTime ? 'break-time-slot' : '';
@@ -272,7 +275,7 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
                           props.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
                           props.status === 'completed' ? 'bg-green-100 text-green-800' :
                           'bg-red-100 text-red-800'
-                        }">${props.status.charAt(0).toUpperCase() + props.status.slice(1)}</span>
+                        }">${props.status ? props.status.charAt(0).toUpperCase() + props.status.slice(1) : 'Unknown'}</span>
                       </div>
                       <div class="flex items-center justify-between">
                         <span class="text-sm font-medium">Service</span>
