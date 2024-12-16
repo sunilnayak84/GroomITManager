@@ -61,11 +61,21 @@ async function startServer(port: number) {
     if (process.env.NODE_ENV === 'development') {
       await setupVite(app, server);
     } else {
-      const distPath = path.resolve(process.cwd(), "client", "dist");
-      app.use(express.static(distPath));
-      app.use("*", (_req, res) => {
-        res.sendFile(path.resolve(distPath, "index.html"));
-      });
+      const distPath = path.resolve(process.cwd(), "client/dist");
+      // Check if the directory exists before serving
+      if (fs.existsSync(distPath)) {
+        app.use(express.static(distPath));
+        app.use("*", (_req, res) => {
+          const indexPath = path.resolve(distPath, "index.html");
+          if (fs.existsSync(indexPath)) {
+            res.sendFile(indexPath);
+          } else {
+            res.status(404).send('Frontend build not found. Please build the frontend first.');
+          }
+        });
+      } else {
+        console.log('Development mode: Frontend will be served by Vite dev server');
+      }
     }
 
     // Start server
