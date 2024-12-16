@@ -54,6 +54,8 @@ const AppointmentDetails = ({
   const { updateAppointment } = useAppointments();
   const { toast } = useToast();
   const [showCancellationForm, setShowCancellationForm] = useState(false);
+  const [showPetDetails, setShowPetDetails] = useState(false);
+  const [showCustomerDetails, setShowCustomerDetails] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const queryClient = useQueryClient();
 
@@ -131,7 +133,10 @@ const AppointmentDetails = ({
 
             <div>
               <h3 className="text-sm font-medium text-gray-500">Pet</h3>
-              <div className="mt-1 flex items-center gap-2">
+              <div 
+                className="mt-1 flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
+                onClick={() => setShowPetDetails(true)}
+              >
                 <img
                   src={appointment.pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${appointment.pet.name}`}
                   alt={appointment.pet.name}
@@ -146,9 +151,14 @@ const AppointmentDetails = ({
 
             <div>
               <h3 className="text-sm font-medium text-gray-500">Customer</h3>
-              <p className="mt-1 text-sm">
-                {appointment.customer.firstName} {appointment.customer.lastName}
-              </p>
+              <div 
+                className="mt-1 p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
+                onClick={() => setShowCustomerDetails(true)}
+              >
+                <p className="text-sm">
+                  {appointment.customer.firstName} {appointment.customer.lastName}
+                </p>
+              </div>
             </div>
 
             <div>
@@ -251,6 +261,73 @@ const AppointmentDetails = ({
           </form>
         </Form>
       </DialogContent>
+
+      {/* Pet Details Modal */}
+      <Dialog open={showPetDetails} onOpenChange={setShowPetDetails}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Pet Details</DialogTitle>
+          </DialogHeader>
+          <PetDetails 
+            pet={{
+              id: appointment.pet.id,
+              firebaseId: null,
+              name: appointment.pet.name,
+              type: appointment.pet.type,
+              breed: appointment.pet.breed,
+              customerId: appointment.customer.id,
+              image: appointment.pet.image,
+              gender: appointment.pet.gender,
+              age: appointment.pet.age,
+              weight: appointment.pet.weight,
+              weightUnit: appointment.pet.weightUnit || 'kg',
+              dateOfBirth: appointment.pet.dateOfBirth,
+              notes: appointment.pet.notes,
+              createdAt: appointment.pet.createdAt,
+              updatedAt: appointment.pet.updatedAt,
+              owner: {
+                id: appointment.customer.id,
+                name: `${appointment.customer.firstName} ${appointment.customer.lastName}`,
+                email: appointment.customer.email
+              }
+            }}
+            formatDate={format}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Customer Details Modal */}
+      <Dialog open={showCustomerDetails} onOpenChange={setShowCustomerDetails}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Customer Details</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <img
+                src={`https://api.dicebear.com/7.x/initials/svg?seed=${appointment.customer.firstName} ${appointment.customer.lastName}`}
+                alt={`${appointment.customer.firstName} ${appointment.customer.lastName}`}
+                className="w-16 h-16 rounded-full"
+              />
+              <div>
+                <h2 className="text-xl font-bold">
+                  {appointment.customer.firstName} {appointment.customer.lastName}
+                </h2>
+                <p className="text-sm text-muted-foreground">{appointment.customer.email}</p>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="font-semibold">Contact Information</h3>
+              <p><span className="text-muted-foreground">Email:</span> {appointment.customer.email}</p>
+              <p><span className="text-muted-foreground">Phone:</span> {appointment.customer.phone}</p>
+              {appointment.customer.address && (
+                <p><span className="text-muted-foreground">Address:</span> {appointment.customer.address}</p>
+              )}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Dialog>
   );
 };
