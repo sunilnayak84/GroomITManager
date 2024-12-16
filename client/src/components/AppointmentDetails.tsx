@@ -70,16 +70,20 @@ const AppointmentDetails = ({
     try {
       setIsUpdating(true);
     
-      // Optimistically update the UI
+      // Store the previous data for rollback
       const previousData = queryClient.getQueryData<AppointmentWithRelations[]>(["appointments"]);
-      queryClient.setQueryData<AppointmentWithRelations[]>(["appointments"], (old) => {
-        if (!old) return old;
-        return old.map((apt) =>
-          apt.id === appointment.id
-            ? { ...apt, status: data.status, notes: data.notes }
-            : apt
+      
+      // Optimistically update the UI
+      if (previousData) {
+        queryClient.setQueryData<AppointmentWithRelations[]>(
+          ["appointments"],
+          previousData.map((apt) =>
+            apt.id === appointment.id
+              ? { ...apt, status: data.status, notes: data.notes || null }
+              : apt
+          )
         );
-      });
+      }
 
       await updateAppointment({
         id: appointment.id,

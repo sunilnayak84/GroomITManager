@@ -1,10 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AppointmentWithRelations, InsertAppointment } from "@/lib/schema";
 import { 
-  collection, doc, setDoc, getDoc, getDocs, deleteDoc, query, 
+  collection, doc, setDoc, getDoc, getDocs, query, 
   where, DocumentData, CollectionReference, runTransaction,
   QuerySnapshot, DocumentSnapshot, WithFieldValue, 
-  FieldValue, serverTimestamp
+  FieldValue, serverTimestamp, Timestamp
 } from 'firebase/firestore';
 import { db } from "../lib/firebase";
 
@@ -48,7 +48,8 @@ const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppoi
     notes: data.notes,
     productsUsed: data.productsUsed,
     createdAt: Timestamp.fromDate(new Date()),
-    updatedAt: null
+    updatedAt: null,
+    deletedAt: null
   };
 };
 
