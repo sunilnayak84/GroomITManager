@@ -72,21 +72,20 @@ export function useAppointments() {
 
         // Only fetch non-deleted appointments
         console.log('FETCH_APPOINTMENTS: Creating query for non-deleted appointments');
-        const appointmentsQuery = query(appointmentsRef);
-        
-        // Debug: Log all appointments before filtering
-        const allAppointments = await getDocs(appointmentsQuery);
-        console.log('FETCH_APPOINTMENTS: Total appointments in database:', allAppointments.size);
-        allAppointments.forEach(doc => {
-          console.log('FETCH_APPOINTMENTS: Appointment data:', doc.id, doc.data());
-        });
-
-        // Now create the filtered query
-        const filteredQuery = query(
+        // Create query for active (non-deleted) appointments
+        const appointmentsQuery = query(
           appointmentsRef,
           where("deletedAt", "==", null)
         );
-        const querySnapshot = await getDocs(filteredQuery);
+
+        // Get all active appointments
+        const querySnapshot = await getDocs(appointmentsQuery);
+        console.log('FETCH_APPOINTMENTS: Found', querySnapshot.size, 'active appointments');
+        
+        // Debug: Log all appointments
+        querySnapshot.forEach(doc => {
+          console.log('FETCH_APPOINTMENTS: Active appointment:', doc.id, doc.data());
+        });
         console.log('FETCH_APPOINTMENTS: Got snapshot with', querySnapshot.size, 'active documents');
 
         if (querySnapshot.empty) {
