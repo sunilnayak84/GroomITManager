@@ -256,41 +256,9 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
             
             return {
               html: `
-                <div class="p-1 hover-preview-container">
+                <div class="p-1">
                   <div class="font-medium">${event.title}</div>
                   <div class="text-xs">${format(event.start!, 'HH:mm')} - ${format(event.end!, 'HH:mm')}</div>
-                  <div class="hover-preview">
-                    <div class="hover-preview-header">
-                      <img src="${props.petImage}" alt="${props.petName}" />
-                      <div>
-                        <div class="font-medium">${props.petName}</div>
-                        <div class="text-sm text-gray-600">${props.customerName}</div>
-                      </div>
-                    </div>
-                    <div class="hover-preview-content">
-                      <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium">Status</span>
-                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          props.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                          props.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
-                          props.status === 'completed' ? 'bg-green-100 text-green-800' :
-                          'bg-red-100 text-red-800'
-                        }">${props.status ? props.status.charAt(0).toUpperCase() + props.status.slice(1) : 'Unknown'}</span>
-                      </div>
-                      <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium">Service</span>
-                        <span class="text-sm text-gray-600">${props.service?.name || 'N/A'}</span>
-                      </div>
-                      <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium">Groomer</span>
-                        <span class="text-sm text-gray-600">${props.groomerName}</span>
-                      </div>
-                      <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium">Duration</span>
-                        <span class="text-sm text-gray-600">${props.service?.duration || 60} minutes</span>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               `
             };
