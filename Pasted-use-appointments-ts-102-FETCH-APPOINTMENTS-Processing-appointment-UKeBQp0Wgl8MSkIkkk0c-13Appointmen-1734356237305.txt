@@ -1,0 +1,532 @@
+use-appointments.ts:102 FETCH_APPOINTMENTS: Processing appointment UKeBQp0Wgl8MSkIkkk0c
+13AppointmentDetails.tsx:71 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at AppointmentDetails (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/AppointmentDetails.tsx:55:3)
+    at div
+    at AppointmentsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/AppointmentsPage.tsx:121:41)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+    at div
+    at main
+    at main
+    at _c9 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:398:48)
+    at div
+    at div
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DCAJILPT.js?v=2a205a0e:38:15)
+    at TooltipProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=2a205a0e:63:5)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:54:7
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:28:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:135:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=2a205a0e:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+printWarning @ chunk-GNC7SI6A.js?v=2a205a0e:521
+error @ chunk-GNC7SI6A.js?v=2a205a0e:505
+checkForNestedUpdates @ chunk-GNC7SI6A.js?v=2a205a0e:19665
+scheduleUpdateOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18533
+dispatchSetState @ chunk-GNC7SI6A.js?v=2a205a0e:12403
+next @ chunk-YGGBEVKP.js?v=2a205a0e:1931
+next @ chunk-YGGBEVKP.js?v=2a205a0e:913
+_reset @ chunk-YGGBEVKP.js?v=2a205a0e:1791
+reset @ chunk-YGGBEVKP.js?v=2a205a0e:1802
+(anonymous) @ AppointmentDetails.tsx:71
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=2a205a0e:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=2a205a0e:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=2a205a0e:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=2a205a0e:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=2a205a0e:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=2a205a0e:19447
+(anonymous) @ chunk-GNC7SI6A.js?v=2a205a0e:19328
+workLoop @ chunk-GNC7SI6A.js?v=2a205a0e:197
+flushWork @ chunk-GNC7SI6A.js?v=2a205a0e:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=2a205a0e:384Understand this errorAI
+use-appointments.ts:102 FETCH_APPOINTMENTS: Processing appointment gTBP3aX9Y9dJSprU2v2q
+14AppointmentDetails.tsx:71 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at AppointmentDetails (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/AppointmentDetails.tsx:55:3)
+    at div
+    at AppointmentsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/AppointmentsPage.tsx:121:41)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+    at div
+    at main
+    at main
+    at _c9 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:398:48)
+    at div
+    at div
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DCAJILPT.js?v=2a205a0e:38:15)
+    at TooltipProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=2a205a0e:63:5)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:54:7
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:28:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:135:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=2a205a0e:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+printWarning @ chunk-GNC7SI6A.js?v=2a205a0e:521
+error @ chunk-GNC7SI6A.js?v=2a205a0e:505
+checkForNestedUpdates @ chunk-GNC7SI6A.js?v=2a205a0e:19665
+scheduleUpdateOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18533
+dispatchSetState @ chunk-GNC7SI6A.js?v=2a205a0e:12403
+next @ chunk-YGGBEVKP.js?v=2a205a0e:1931
+next @ chunk-YGGBEVKP.js?v=2a205a0e:913
+_reset @ chunk-YGGBEVKP.js?v=2a205a0e:1791
+reset @ chunk-YGGBEVKP.js?v=2a205a0e:1802
+(anonymous) @ AppointmentDetails.tsx:71
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=2a205a0e:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=2a205a0e:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=2a205a0e:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=2a205a0e:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=2a205a0e:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=2a205a0e:19447
+(anonymous) @ chunk-GNC7SI6A.js?v=2a205a0e:19328
+workLoop @ chunk-GNC7SI6A.js?v=2a205a0e:197
+flushWork @ chunk-GNC7SI6A.js?v=2a205a0e:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=2a205a0e:384Understand this errorAI
+use-appointments.ts:202 FETCH_APPOINTMENTS: Processed 3 appointments. Success: 3, Errors: 0
+199AppointmentDetails.tsx:71 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at AppointmentDetails (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/AppointmentDetails.tsx:55:3)
+    at div
+    at AppointmentsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/AppointmentsPage.tsx:121:41)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+    at div
+    at main
+    at main
+    at _c9 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:398:48)
+    at div
+    at div
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DCAJILPT.js?v=2a205a0e:38:15)
+    at TooltipProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=2a205a0e:63:5)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:54:7
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:28:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:135:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=2a205a0e:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+printWarning @ chunk-GNC7SI6A.js?v=2a205a0e:521
+error @ chunk-GNC7SI6A.js?v=2a205a0e:505
+checkForNestedUpdates @ chunk-GNC7SI6A.js?v=2a205a0e:19665
+scheduleUpdateOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18533
+dispatchSetState @ chunk-GNC7SI6A.js?v=2a205a0e:12403
+next @ chunk-YGGBEVKP.js?v=2a205a0e:1931
+next @ chunk-YGGBEVKP.js?v=2a205a0e:913
+_reset @ chunk-YGGBEVKP.js?v=2a205a0e:1791
+reset @ chunk-YGGBEVKP.js?v=2a205a0e:1802
+(anonymous) @ AppointmentDetails.tsx:71
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=2a205a0e:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=2a205a0e:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=2a205a0e:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=2a205a0e:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=2a205a0e:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=2a205a0e:19447
+(anonymous) @ chunk-GNC7SI6A.js?v=2a205a0e:19328
+workLoop @ chunk-GNC7SI6A.js?v=2a205a0e:197
+flushWork @ chunk-GNC7SI6A.js?v=2a205a0e:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=2a205a0e:384Understand this errorAI
+use-toast.ts:64 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+printWarning @ chunk-GNC7SI6A.js?v=2a205a0e:521
+error @ chunk-GNC7SI6A.js?v=2a205a0e:505
+checkForNestedUpdates @ chunk-GNC7SI6A.js?v=2a205a0e:19665
+scheduleUpdateOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18533
+dispatchSetState @ chunk-GNC7SI6A.js?v=2a205a0e:12403
+(anonymous) @ use-toast.ts:64Understand this errorAI
+202AppointmentDetails.tsx:71 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at AppointmentDetails (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/AppointmentDetails.tsx:55:3)
+    at div
+    at AppointmentsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/AppointmentsPage.tsx:121:41)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+    at div
+    at main
+    at main
+    at _c9 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:398:48)
+    at div
+    at div
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DCAJILPT.js?v=2a205a0e:38:15)
+    at TooltipProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=2a205a0e:63:5)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:54:7
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:28:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:135:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=2a205a0e:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+printWarning @ chunk-GNC7SI6A.js?v=2a205a0e:521
+error @ chunk-GNC7SI6A.js?v=2a205a0e:505
+checkForNestedUpdates @ chunk-GNC7SI6A.js?v=2a205a0e:19665
+scheduleUpdateOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18533
+dispatchSetState @ chunk-GNC7SI6A.js?v=2a205a0e:12403
+next @ chunk-YGGBEVKP.js?v=2a205a0e:1931
+next @ chunk-YGGBEVKP.js?v=2a205a0e:913
+_reset @ chunk-YGGBEVKP.js?v=2a205a0e:1791
+reset @ chunk-YGGBEVKP.js?v=2a205a0e:1802
+(anonymous) @ AppointmentDetails.tsx:71
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=2a205a0e:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=2a205a0e:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=2a205a0e:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=2a205a0e:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=2a205a0e:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=2a205a0e:19447
+(anonymous) @ chunk-GNC7SI6A.js?v=2a205a0e:19328
+workLoop @ chunk-GNC7SI6A.js?v=2a205a0e:197
+flushWork @ chunk-GNC7SI6A.js?v=2a205a0e:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=2a205a0e:384Understand this errorAI
+use-toast.ts:64 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+printWarning @ chunk-GNC7SI6A.js?v=2a205a0e:521
+error @ chunk-GNC7SI6A.js?v=2a205a0e:505
+checkForNestedUpdates @ chunk-GNC7SI6A.js?v=2a205a0e:19665
+scheduleUpdateOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18533
+dispatchSetState @ chunk-GNC7SI6A.js?v=2a205a0e:12403
+(anonymous) @ use-toast.ts:64Understand this errorAI
+69AppointmentDetails.tsx:71 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at AppointmentDetails (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/AppointmentDetails.tsx:55:3)
+    at div
+    at AppointmentsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/AppointmentsPage.tsx:121:41)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+    at div
+    at main
+    at main
+    at _c9 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:398:48)
+    at div
+    at div
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DCAJILPT.js?v=2a205a0e:38:15)
+    at TooltipProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=2a205a0e:63:5)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:54:7
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:28:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:135:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=2a205a0e:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+printWarning @ chunk-GNC7SI6A.js?v=2a205a0e:521
+error @ chunk-GNC7SI6A.js?v=2a205a0e:505
+checkForNestedUpdates @ chunk-GNC7SI6A.js?v=2a205a0e:19665
+scheduleUpdateOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18533
+dispatchSetState @ chunk-GNC7SI6A.js?v=2a205a0e:12403
+next @ chunk-YGGBEVKP.js?v=2a205a0e:1931
+next @ chunk-YGGBEVKP.js?v=2a205a0e:913
+_reset @ chunk-YGGBEVKP.js?v=2a205a0e:1791
+reset @ chunk-YGGBEVKP.js?v=2a205a0e:1802
+(anonymous) @ AppointmentDetails.tsx:71
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=2a205a0e:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=2a205a0e:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=2a205a0e:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=2a205a0e:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=2a205a0e:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=2a205a0e:19447
+(anonymous) @ chunk-GNC7SI6A.js?v=2a205a0e:19328
+workLoop @ chunk-GNC7SI6A.js?v=2a205a0e:197
+flushWork @ chunk-GNC7SI6A.js?v=2a205a0e:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=2a205a0e:384Understand this errorAI
+use-toast.ts:64 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+printWarning @ chunk-GNC7SI6A.js?v=2a205a0e:521
+error @ chunk-GNC7SI6A.js?v=2a205a0e:505
+checkForNestedUpdates @ chunk-GNC7SI6A.js?v=2a205a0e:19665
+scheduleUpdateOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18533
+dispatchSetState @ chunk-GNC7SI6A.js?v=2a205a0e:12403
+(anonymous) @ use-toast.ts:64Understand this errorAI
+350AppointmentDetails.tsx:71 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at AppointmentDetails (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/AppointmentDetails.tsx:55:3)
+    at div
+    at AppointmentsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/AppointmentsPage.tsx:121:41)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+    at div
+    at main
+    at main
+    at _c9 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:398:48)
+    at div
+    at div
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DCAJILPT.js?v=2a205a0e:38:15)
+    at TooltipProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=2a205a0e:63:5)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:54:7
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:28:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:135:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=2a205a0e:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+printWarning @ chunk-GNC7SI6A.js?v=2a205a0e:521
+error @ chunk-GNC7SI6A.js?v=2a205a0e:505
+checkForNestedUpdates @ chunk-GNC7SI6A.js?v=2a205a0e:19665
+scheduleUpdateOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18533
+dispatchSetState @ chunk-GNC7SI6A.js?v=2a205a0e:12403
+next @ chunk-YGGBEVKP.js?v=2a205a0e:1931
+next @ chunk-YGGBEVKP.js?v=2a205a0e:913
+_reset @ chunk-YGGBEVKP.js?v=2a205a0e:1791
+reset @ chunk-YGGBEVKP.js?v=2a205a0e:1802
+(anonymous) @ AppointmentDetails.tsx:71
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=2a205a0e:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=2a205a0e:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=2a205a0e:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=2a205a0e:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=2a205a0e:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=2a205a0e:19447
+(anonymous) @ chunk-GNC7SI6A.js?v=2a205a0e:19328
+workLoop @ chunk-GNC7SI6A.js?v=2a205a0e:197
+flushWork @ chunk-GNC7SI6A.js?v=2a205a0e:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=2a205a0e:384Understand this errorAI
+use-toast.ts:64 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+printWarning @ chunk-GNC7SI6A.js?v=2a205a0e:521
+error @ chunk-GNC7SI6A.js?v=2a205a0e:505
+checkForNestedUpdates @ chunk-GNC7SI6A.js?v=2a205a0e:19665
+scheduleUpdateOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18533
+dispatchSetState @ chunk-GNC7SI6A.js?v=2a205a0e:12403
+(anonymous) @ use-toast.ts:64Understand this errorAI
+580AppointmentDetails.tsx:71 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at AppointmentDetails (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/AppointmentDetails.tsx:55:3)
+    at div
+    at AppointmentsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/AppointmentsPage.tsx:121:41)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+    at div
+    at main
+    at main
+    at _c9 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:398:48)
+    at div
+    at div
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DCAJILPT.js?v=2a205a0e:38:15)
+    at TooltipProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=2a205a0e:63:5)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:54:7
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:28:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:135:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=2a205a0e:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+printWarning @ chunk-GNC7SI6A.js?v=2a205a0e:521
+error @ chunk-GNC7SI6A.js?v=2a205a0e:505
+checkForNestedUpdates @ chunk-GNC7SI6A.js?v=2a205a0e:19665
+scheduleUpdateOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18533
+dispatchSetState @ chunk-GNC7SI6A.js?v=2a205a0e:12403
+next @ chunk-YGGBEVKP.js?v=2a205a0e:1931
+next @ chunk-YGGBEVKP.js?v=2a205a0e:913
+_reset @ chunk-YGGBEVKP.js?v=2a205a0e:1791
+reset @ chunk-YGGBEVKP.js?v=2a205a0e:1802
+(anonymous) @ AppointmentDetails.tsx:71
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=2a205a0e:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=2a205a0e:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=2a205a0e:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=2a205a0e:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=2a205a0e:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=2a205a0e:19447
+(anonymous) @ chunk-GNC7SI6A.js?v=2a205a0e:19328
+workLoop @ chunk-GNC7SI6A.js?v=2a205a0e:197
+flushWork @ chunk-GNC7SI6A.js?v=2a205a0e:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=2a205a0e:384Understand this errorAI
+use-toast.ts:64 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+printWarning @ chunk-GNC7SI6A.js?v=2a205a0e:521
+error @ chunk-GNC7SI6A.js?v=2a205a0e:505
+checkForNestedUpdates @ chunk-GNC7SI6A.js?v=2a205a0e:19665
+scheduleUpdateOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18533
+dispatchSetState @ chunk-GNC7SI6A.js?v=2a205a0e:12403
+(anonymous) @ use-toast.ts:64Understand this errorAI
+19AppointmentDetails.tsx:71 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at AppointmentDetails (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/AppointmentDetails.tsx:55:3)
+    at div
+    at AppointmentsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/AppointmentsPage.tsx:121:41)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+    at div
+    at main
+    at main
+    at _c9 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:398:48)
+    at div
+    at div
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DCAJILPT.js?v=2a205a0e:38:15)
+    at TooltipProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=2a205a0e:63:5)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:54:7
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:28:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:135:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=2a205a0e:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+printWarning @ chunk-GNC7SI6A.js?v=2a205a0e:521
+error @ chunk-GNC7SI6A.js?v=2a205a0e:505
+checkForNestedUpdates @ chunk-GNC7SI6A.js?v=2a205a0e:19665
+scheduleUpdateOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18533
+dispatchSetState @ chunk-GNC7SI6A.js?v=2a205a0e:12403
+next @ chunk-YGGBEVKP.js?v=2a205a0e:1931
+next @ chunk-YGGBEVKP.js?v=2a205a0e:913
+_reset @ chunk-YGGBEVKP.js?v=2a205a0e:1791
+reset @ chunk-YGGBEVKP.js?v=2a205a0e:1802
+(anonymous) @ AppointmentDetails.tsx:71
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=2a205a0e:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=2a205a0e:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=2a205a0e:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=2a205a0e:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=2a205a0e:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=2a205a0e:19447
+(anonymous) @ chunk-GNC7SI6A.js?v=2a205a0e:19328
+workLoop @ chunk-GNC7SI6A.js?v=2a205a0e:197
+flushWork @ chunk-GNC7SI6A.js?v=2a205a0e:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=2a205a0e:384Understand this errorAI
+use-toast.ts:64 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+printWarning @ chunk-GNC7SI6A.js?v=2a205a0e:521
+error @ chunk-GNC7SI6A.js?v=2a205a0e:505
+checkForNestedUpdates @ chunk-GNC7SI6A.js?v=2a205a0e:19665
+scheduleUpdateOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18533
+dispatchSetState @ chunk-GNC7SI6A.js?v=2a205a0e:12403
+(anonymous) @ use-toast.ts:64Understand this errorAI
+183AppointmentDetails.tsx:71 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at AppointmentDetails (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/AppointmentDetails.tsx:55:3)
+    at div
+    at AppointmentsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/AppointmentsPage.tsx:121:41)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+    at div
+    at main
+    at main
+    at _c9 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:398:48)
+    at div
+    at div
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DCAJILPT.js?v=2a205a0e:38:15)
+    at TooltipProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=2a205a0e:63:5)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:54:7
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:28:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:135:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=2a205a0e:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+printWarning @ chunk-GNC7SI6A.js?v=2a205a0e:521
+error @ chunk-GNC7SI6A.js?v=2a205a0e:505
+checkForNestedUpdates @ chunk-GNC7SI6A.js?v=2a205a0e:19665
+scheduleUpdateOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18533
+dispatchSetState @ chunk-GNC7SI6A.js?v=2a205a0e:12403
+next @ chunk-YGGBEVKP.js?v=2a205a0e:1931
+next @ chunk-YGGBEVKP.js?v=2a205a0e:913
+_reset @ chunk-YGGBEVKP.js?v=2a205a0e:1791
+reset @ chunk-YGGBEVKP.js?v=2a205a0e:1802
+(anonymous) @ AppointmentDetails.tsx:71
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=2a205a0e:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=2a205a0e:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=2a205a0e:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=2a205a0e:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=2a205a0e:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=2a205a0e:19447
+(anonymous) @ chunk-GNC7SI6A.js?v=2a205a0e:19328
+workLoop @ chunk-GNC7SI6A.js?v=2a205a0e:197
+flushWork @ chunk-GNC7SI6A.js?v=2a205a0e:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=2a205a0e:384Understand this errorAI
+use-toast.ts:64 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+printWarning @ chunk-GNC7SI6A.js?v=2a205a0e:521
+error @ chunk-GNC7SI6A.js?v=2a205a0e:505
+checkForNestedUpdates @ chunk-GNC7SI6A.js?v=2a205a0e:19665
+scheduleUpdateOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18533
+dispatchSetState @ chunk-GNC7SI6A.js?v=2a205a0e:12403
+(anonymous) @ use-toast.ts:64Understand this errorAI
+163AppointmentDetails.tsx:71 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at AppointmentDetails (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/AppointmentDetails.tsx:55:3)
+    at div
+    at AppointmentsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/AppointmentsPage.tsx:121:41)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+    at div
+    at main
+    at main
+    at _c9 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:398:48)
+    at div
+    at div
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DCAJILPT.js?v=2a205a0e:38:15)
+    at TooltipProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=2a205a0e:63:5)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:54:7
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:28:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:135:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=2a205a0e:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+printWarning @ chunk-GNC7SI6A.js?v=2a205a0e:521
+error @ chunk-GNC7SI6A.js?v=2a205a0e:505
+checkForNestedUpdates @ chunk-GNC7SI6A.js?v=2a205a0e:19665
+scheduleUpdateOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18533
+dispatchSetState @ chunk-GNC7SI6A.js?v=2a205a0e:12403
+next @ chunk-YGGBEVKP.js?v=2a205a0e:1931
+next @ chunk-YGGBEVKP.js?v=2a205a0e:913
+_reset @ chunk-YGGBEVKP.js?v=2a205a0e:1791
+reset @ chunk-YGGBEVKP.js?v=2a205a0e:1802
+(anonymous) @ AppointmentDetails.tsx:71
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=2a205a0e:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=2a205a0e:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=2a205a0e:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=2a205a0e:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=2a205a0e:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=2a205a0e:19447
+(anonymous) @ chunk-GNC7SI6A.js?v=2a205a0e:19328
+workLoop @ chunk-GNC7SI6A.js?v=2a205a0e:197
+flushWork @ chunk-GNC7SI6A.js?v=2a205a0e:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=2a205a0e:384Understand this errorAI
+use-toast.ts:64 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+printWarning @ chunk-GNC7SI6A.js?v=2a205a0e:521
+error @ chunk-GNC7SI6A.js?v=2a205a0e:505
+checkForNestedUpdates @ chunk-GNC7SI6A.js?v=2a205a0e:19665
+scheduleUpdateOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18533
+dispatchSetState @ chunk-GNC7SI6A.js?v=2a205a0e:12403
+(anonymous) @ use-toast.ts:64Understand this errorAI
+40AppointmentDetails.tsx:71 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at AppointmentDetails (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/AppointmentDetails.tsx:55:3)
+    at div
+    at AppointmentsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/AppointmentsPage.tsx:121:41)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=2a205a0e:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+    at div
+    at main
+    at main
+    at _c9 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:398:48)
+    at div
+    at div
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DCAJILPT.js?v=2a205a0e:38:15)
+    at TooltipProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=2a205a0e:63:5)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:54:7
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:28:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:135:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=2a205a0e:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=2a205a0e:18:5)
+printWarning @ chunk-GNC7SI6A.js?v=2a205a0e:521
+error @ chunk-GNC7SI6A.js?v=2a205a0e:505
+checkForNestedUpdates @ chunk-GNC7SI6A.js?v=2a205a0e:19665
+scheduleUpdateOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18533
+dispatchSetState @ chunk-GNC7SI6A.js?v=2a205a0e:12403
+next @ chunk-YGGBEVKP.js?v=2a205a0e:1931
+next @ chunk-YGGBEVKP.js?v=2a205a0e:913
+_reset @ chunk-YGGBEVKP.js?v=2a205a0e:1791
+reset @ chunk-YGGBEVKP.js?v=2a205a0e:1802
+(anonymous) @ AppointmentDetails.tsx:71
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=2a205a0e:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=2a205a0e:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=2a205a0e:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=2a205a0e:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=2a205a0e:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=2a205a0e:19447
+(anonymous) @ chunk-GNC7SI6A.js?v=2a205a0e:19328
+workLoop @ chunk-GNC7SI6A.js?v=2a205a0e:197
+flushWork @ chunk-GNC7SI6A.js?v=2a205a0e:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=2a205a0e:384Understand this errorAI

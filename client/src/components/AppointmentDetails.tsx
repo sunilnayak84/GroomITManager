@@ -66,14 +66,16 @@ const AppointmentDetails = ({
     },
   });
 
-  // Reset form when appointment changes
+  // Reset form when dialog opens or appointment changes
   React.useEffect(() => {
-    form.reset({
-      status: appointment.status,
-      cancellationReason: undefined,
-      notes: appointment.notes || undefined,
-    });
-  }, [appointment.id, appointment.status, appointment.notes, form]);
+    if (open) {
+      form.reset({
+        status: appointment.status,
+        cancellationReason: undefined,
+        notes: appointment.notes || undefined,
+      });
+    }
+  }, [open, appointment.id]); // Only reset when dialog opens or appointment ID changes
 
   // Reset state when dialog closes
   React.useEffect(() => {
