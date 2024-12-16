@@ -21,10 +21,10 @@ export default defineConfig({
     port: 5174,
     strictPort: true,
     hmr: {
-      host: '0.0.0.0',
-      protocol: 'wss',
       clientPort: 443,
-      path: '/'
+      host: process.env.REPL_SLUG + '.' + process.env.REPL_OWNER + '.repl.co',
+      protocol: 'wss',
+      path: '/hmr/'
     }
   },
 });
