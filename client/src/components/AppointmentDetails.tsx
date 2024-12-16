@@ -264,48 +264,77 @@ const AppointmentDetails = ({
         </Form>
       </DialogContent>
 
-      {/* Pet Details Modal */}
+      {/* Link to Pet Details page with modal view */}
       <Dialog open={showPetDetails} onOpenChange={setShowPetDetails}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Pet Details</DialogTitle>
           </DialogHeader>
-          <PetDetails 
-            pet={appointment.pet}
-            formatDate={format}
-          />
+          <div className="flex items-center gap-4">
+            <img
+              src={appointment.pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${appointment.pet.name}`}
+              alt={appointment.pet.name}
+              className="w-16 h-16 rounded-full object-cover"
+            />
+            <div>
+              <h2 className="text-xl font-bold">{appointment.pet.name}</h2>
+              <p className="text-sm text-muted-foreground">
+                {appointment.pet.breed} • {appointment.pet.type}
+              </p>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <div>
+              <h3 className="font-semibold mb-2">Basic Information</h3>
+              <div className="grid gap-2 text-sm">
+                <p><span className="text-muted-foreground">Type:</span> {appointment.pet.type}</p>
+                <p><span className="text-muted-foreground">Breed:</span> {appointment.pet.breed}</p>
+                <p><span className="text-muted-foreground">Age:</span> {appointment.pet.age || 'Not specified'}</p>
+              </div>
+            </div>
+            <Button 
+              className="w-full"
+              onClick={() => {
+                setShowPetDetails(false);
+                // Navigate to pets page with this pet's details open
+                window.location.href = `/pets?petId=${appointment.pet.id}`;
+              }}
+            >
+              View Full Details
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
 
-      {/* Customer Details Modal */}
+      {/* Link to Customer Details page with modal view */}
       <Dialog open={showCustomerDetails} onOpenChange={setShowCustomerDetails}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Customer Details</DialogTitle>
           </DialogHeader>
+          <div className="flex items-center gap-4">
+            <img
+              src={`https://api.dicebear.com/7.x/initials/svg?seed=${appointment.customer.firstName} ${appointment.customer.lastName}`}
+              alt={`${appointment.customer.firstName} ${appointment.customer.lastName}`}
+              className="w-16 h-16 rounded-full"
+            />
+            <div>
+              <h2 className="text-xl font-bold">
+                {appointment.customer.firstName} {appointment.customer.lastName}
+              </h2>
+            </div>
+          </div>
           <div className="space-y-4">
-            <div className="flex items-center gap-4">
-              <img
-                src={`https://api.dicebear.com/7.x/initials/svg?seed=${appointment.customer.firstName} ${appointment.customer.lastName}`}
-                alt={`${appointment.customer.firstName} ${appointment.customer.lastName}`}
-                className="w-16 h-16 rounded-full"
-              />
-              <div>
-                <h2 className="text-xl font-bold">
-                  {appointment.customer.firstName} {appointment.customer.lastName}
-                </h2>
-                <p className="text-sm text-muted-foreground">{appointment.customer.email}</p>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <h3 className="font-semibold">Contact Information</h3>
-              <p><span className="text-muted-foreground">Email:</span> {appointment.customer.email}</p>
-              <p><span className="text-muted-foreground">Phone:</span> {appointment.customer.phone}</p>
-              {appointment.customer.address && (
-                <p><span className="text-muted-foreground">Address:</span> {appointment.customer.address}</p>
-              )}
-            </div>
+            <Button 
+              className="w-full"
+              onClick={() => {
+                setShowCustomerDetails(false);
+                // Navigate to customers page with this customer's details open
+                window.location.href = `/customers?customerId=${appointment.customer.id}`;
+              }}
+            >
+              View Full Details
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
