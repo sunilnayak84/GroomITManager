@@ -1,4 +1,3 @@
-
 import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { capitalize } from "@/lib/utils";
@@ -40,16 +39,27 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
   };
 
   const formatValue = (value: any, unit?: string) => {
-    if (value === null || value === undefined) return 'Not specified';
-    if (value === '') return 'Not specified';
-    if (unit) return `${value} ${unit}`;
-    return value;
+    if (value === null || value === undefined || value === '') return 'Not specified';
+    if (typeof value === 'number' && unit) return `${value} ${unit}`;
+    if (typeof value === 'string') return value.trim();
+    return String(value);
   };
 
   const getDisplayValue = (label: string, value: any, unit?: string) => {
-    if (label === 'Type' && pet.type) return capitalize(pet.type);
-    if (label === 'Gender' && pet.gender) return capitalize(pet.gender);
-    return formatValue(value, unit);
+    if (value === null || value === undefined) return 'Not specified';
+    
+    switch (label) {
+      case 'Type':
+        return pet.type ? capitalize(pet.type) : 'Not specified';
+      case 'Gender':
+        return pet.gender ? capitalize(pet.gender) : 'Not specified';
+      case 'Age':
+        return value ? `${value} years` : 'Not specified';
+      case 'Weight':
+        return value ? `${value} ${pet.weightUnit || 'kg'}` : 'Not specified';
+      default:
+        return formatValue(value, unit);
+    }
   };
 
   return (
@@ -86,7 +96,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
             </p>
             <p>
               <span className="text-muted-foreground">Breed: </span>
-              {getDisplayValue('Breed', pet.breed)}
+              {pet.breed || 'Not specified'}
             </p>
             <p>
               <span className="text-muted-foreground">Gender: </span>
@@ -94,7 +104,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
             </p>
             <p>
               <span className="text-muted-foreground">Age: </span>
-              {getDisplayValue('Age', pet.age, 'years')}
+              {getDisplayValue('Age', pet.age)}
             </p>
           </div>
         </div>
