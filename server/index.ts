@@ -1,10 +1,10 @@
 import express, { type Request, type Response, type NextFunction } from "express";
 import { registerRoutes } from "./routes.js";
-import { setupVite, serveStatic } from "./vite.js";
 import { createServer } from "http";
 import { terminateProcessOnPort } from "./utils/port_cleanup.js";
 import { initializeFirebaseAdmin } from "./firebase.js";
 import path from "path";
+import fs from "fs";
 
 // Configure Express app
 const app = express();
@@ -57,26 +57,8 @@ async function startServer(port: number) {
     // Register routes
     registerRoutes(app);
 
-    // Setup development mode
-    if (process.env.NODE_ENV === 'development') {
-      await setupVite(app, server);
-    } else {
-      const distPath = path.resolve(process.cwd(), "client/dist");
-      // Check if the directory exists before serving
-      if (fs.existsSync(distPath)) {
-        app.use(express.static(distPath));
-        app.use("*", (_req, res) => {
-          const indexPath = path.resolve(distPath, "index.html");
-          if (fs.existsSync(indexPath)) {
-            res.sendFile(indexPath);
-          } else {
-            res.status(404).send('Frontend build not found. Please build the frontend first.');
-          }
-        });
-      } else {
-        console.log('Development mode: Frontend will be served by Vite dev server');
-      }
-    }
+    // API endpoints will be registered by registerRoutes
+    console.log('Server routes registered successfully');
 
     // Start server
     server.listen(port, '0.0.0.0', () => {
