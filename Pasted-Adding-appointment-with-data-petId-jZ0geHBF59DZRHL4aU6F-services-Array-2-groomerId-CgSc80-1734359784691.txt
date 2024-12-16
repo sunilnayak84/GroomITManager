@@ -1,0 +1,60 @@
+Adding appointment with data: {petId: 'jZ0geHBF59DZRHL4aU6F', services: Array(2), groomerId: 'CgSc80R5lkzwclhWfbQ2', branchId: '1', date: '2024-12-18T05:30:00.000Z', …}branchId: "1"date: "2024-12-18T05:30:00.000Z"groomerId: "CgSc80R5lkzwclhWfbQ2"notes: nullpetId: "jZ0geHBF59DZRHL4aU6F"productsUsed: nullservices: (2) ['AQHbTzU3YledKBcjrVBI', 'Uk3sJfczpr2xteskm5Hp']status: "pending"time: "11:00"totalDuration: 60totalPrice: 321[[Prototype]]: Object
+use-appointments.ts:259 Error adding appointment: FirebaseError: Function setDoc() called with invalid data. Unsupported field value: undefined (found in field serviceId in document appointments/f3T2aUJb2FuX2gVhMm5d)
+mutationFn @ use-appointments.ts:259
+fn @ @tanstack_react-query.js?v=2a205a0e:1188
+run @ @tanstack_react-query.js?v=2a205a0e:493
+start @ @tanstack_react-query.js?v=2a205a0e:535
+execute @ @tanstack_react-query.js?v=2a205a0e:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=2a205a0e:2621
+onSubmit @ AppointmentForm.tsx:335
+(anonymous) @ chunk-YGGBEVKP.js?v=2a205a0e:1694
+await in (anonymous)
+callCallback2 @ chunk-GNC7SI6A.js?v=2a205a0e:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=2a205a0e:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=2a205a0e:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-GNC7SI6A.js?v=2a205a0e:3736
+executeDispatch @ chunk-GNC7SI6A.js?v=2a205a0e:7014
+processDispatchQueueItemsInOrder @ chunk-GNC7SI6A.js?v=2a205a0e:7034
+processDispatchQueue @ chunk-GNC7SI6A.js?v=2a205a0e:7043
+dispatchEventsForPlugins @ chunk-GNC7SI6A.js?v=2a205a0e:7051
+(anonymous) @ chunk-GNC7SI6A.js?v=2a205a0e:7174
+batchedUpdates$1 @ chunk-GNC7SI6A.js?v=2a205a0e:18913
+batchedUpdates @ chunk-GNC7SI6A.js?v=2a205a0e:3579
+dispatchEventForPluginEventSystem @ chunk-GNC7SI6A.js?v=2a205a0e:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-GNC7SI6A.js?v=2a205a0e:5478
+dispatchEvent @ chunk-GNC7SI6A.js?v=2a205a0e:5472
+dispatchDiscreteEvent @ chunk-GNC7SI6A.js?v=2a205a0e:5449Understand this errorAI
+use-appointments.ts:252 Adding appointment with data: {petId: 'jZ0geHBF59DZRHL4aU6F', services: Array(2), groomerId: 'CgSc80R5lkzwclhWfbQ2', branchId: '1', date: '2024-12-18T05:30:00.000Z', …}branchId: "1"date: "2024-12-18T05:30:00.000Z"groomerId: "CgSc80R5lkzwclhWfbQ2"notes: nullpetId: "jZ0geHBF59DZRHL4aU6F"productsUsed: nullservices: (2) ['AQHbTzU3YledKBcjrVBI', 'Uk3sJfczpr2xteskm5Hp']status: "pending"time: "11:00"totalDuration: 60totalPrice: 321[[Prototype]]: Object
+use-appointments.ts:259 Error adding appointment: FirebaseError: Function setDoc() called with invalid data. Unsupported field value: undefined (found in field serviceId in document appointments/AAuWSlJ1fqqt0yLkM0we)
+mutationFn @ use-appointments.ts:259
+fn @ @tanstack_react-query.js?v=2a205a0e:1188
+run @ @tanstack_react-query.js?v=2a205a0e:493
+(anonymous) @ @tanstack_react-query.js?v=2a205a0e:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=2a205a0e:514
+Promise.catch
+run @ @tanstack_react-query.js?v=2a205a0e:497
+start @ @tanstack_react-query.js?v=2a205a0e:535
+execute @ @tanstack_react-query.js?v=2a205a0e:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=2a205a0e:2621
+onSubmit @ AppointmentForm.tsx:335
+(anonymous) @ chunk-YGGBEVKP.js?v=2a205a0e:1694
+await in (anonymous)
+callCallback2 @ chunk-GNC7SI6A.js?v=2a205a0e:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=2a205a0e:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=2a205a0e:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-GNC7SI6A.js?v=2a205a0e:3736
+executeDispatch @ chunk-GNC7SI6A.js?v=2a205a0e:7014
+processDispatchQueueItemsInOrder @ chunk-GNC7SI6A.js?v=2a205a0e:7034
+processDispatchQueue @ chunk-GNC7SI6A.js?v=2a205a0e:7043
+dispatchEventsForPlugins @ chunk-GNC7SI6A.js?v=2a205a0e:7051
+(anonymous) @ chunk-GNC7SI6A.js?v=2a205a0e:7174
+batchedUpdates$1 @ chunk-GNC7SI6A.js?v=2a205a0e:18913
+batchedUpdates @ chunk-GNC7SI6A.js?v=2a205a0e:3579
+dispatchEventForPluginEventSystem @ chunk-GNC7SI6A.js?v=2a205a0e:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-GNC7SI6A.js?v=2a205a0e:5478
+dispatchEvent @ chunk-GNC7SI6A.js?v=2a205a0e:5472
+dispatchDiscreteEvent @ chunk-GNC7SI6A.js?v=2a205a0e:5449Understand this errorAI
+AppointmentForm.tsx:380 Failed to schedule appointment: FirebaseError: Function setDoc() called with invalid data. Unsupported field value: undefined (found in field serviceId in document appointments/AAuWSlJ1fqqt0yLkM0we)

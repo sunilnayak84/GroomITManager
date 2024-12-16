@@ -239,14 +239,16 @@ export async function createAppointment(appointment: Omit<Appointment, 'id' | 'c
     const appointmentData: WithFieldValue<Appointment> = {
       id: appointmentRef.id,
       petId: appointment.petId,
-      serviceId: appointment.serviceId,
+      services: appointment.services,
       groomerId: appointment.groomerId,
       branchId: appointment.branchId,
-      appointmentDate: appointment.appointmentDate,
-      appointmentTime: appointment.appointmentTime || '00:00',
+      appointmentDate: appointment.date,
+      appointmentTime: appointment.time || '00:00',
       status: appointment.status,
       notes: appointment.notes || null,
       productsUsed: appointment.productsUsed || null,
+      totalPrice: appointment.totalPrice || 0,
+      totalDuration: appointment.totalDuration || 30,
       createdAt: timestamp,
       updatedAt: null
     };

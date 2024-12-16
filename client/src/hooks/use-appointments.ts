@@ -10,13 +10,15 @@ import { db } from "../lib/firebase";
 
 interface FirestoreAppointmentData {
   petId: string;
-  serviceId: string;
+  services: string[];
   groomerId: string;
   branchId: string;
   date: Timestamp;
   status: "pending" | "confirmed" | "completed" | "cancelled";
   notes: string | null;
   productsUsed: string | null;
+  totalPrice: number;
+  totalDuration: number;
   createdAt: Timestamp;
   updatedAt: Timestamp | null;
   deletedAt: Timestamp | null;
@@ -33,25 +35,27 @@ const timestampToISOString = (timestamp: Timestamp | null | undefined): string =
 };
 
 const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppointmentData => {
-  const appointmentDate = new Date(data.date);
-  if (isNaN(appointmentDate.getTime())) {
-    throw new Error('Invalid appointment date');
-  }
-  
-  return {
-    petId: data.petId,
-    serviceId: data.serviceId,
-    groomerId: data.groomerId,
-    branchId: data.branchId,
-    date: Timestamp.fromDate(appointmentDate),
-    status: data.status,
-    notes: data.notes,
-    productsUsed: data.productsUsed,
-    createdAt: Timestamp.fromDate(new Date()),
-    updatedAt: null,
-    deletedAt: null
+    const appointmentDate = new Date(data.date);
+    if (isNaN(appointmentDate.getTime())) {
+      throw new Error('Invalid appointment date');
+    }
+    
+    return {
+      petId: data.petId,
+      services: data.services,
+      groomerId: data.groomerId,
+      branchId: data.branchId,
+      date: Timestamp.fromDate(appointmentDate),
+      status: data.status,
+      notes: data.notes,
+      productsUsed: data.productsUsed,
+      totalPrice: data.totalPrice || 0,
+      totalDuration: data.totalDuration || 30,
+      createdAt: Timestamp.fromDate(new Date()),
+      updatedAt: null,
+      deletedAt: null
+    };
   };
-};
 
 export function useAppointments() {
   const queryClient = useQueryClient();
@@ -164,29 +168,31 @@ export function useAppointments() {
             }
 
             // Get service data
-            let serviceData = null;
+            let serviceData = [];
 
-            if (rawData.serviceId) {
-              console.log('FETCH_APPOINTMENTS: Fetching service data for ID:', rawData.serviceId);
-              const serviceDoc = await getDoc(doc(db, 'services', rawData.serviceId));
-              
-              if (serviceDoc.exists()) {
-                const rawServiceData = serviceDoc.data();
-                console.log('FETCH_APPOINTMENTS: Raw service data:', rawServiceData);
+            if (rawData.services) {
+              for (const serviceId of rawData.services) {
+                console.log('FETCH_APPOINTMENTS: Fetching service data for ID:', serviceId);
+                const serviceDoc = await getDoc(doc(db, 'services', serviceId));
                 
-                // Map all required service fields
-                serviceData = {
-                  name: rawServiceData.name || 'Unknown Service',
-                  duration: rawServiceData.duration || 30,
-                  price: rawServiceData.price || 0,
-                  description: rawServiceData.description || null,
-                  category: rawServiceData.category || 'Service',
-                  discount_percentage: rawServiceData.discount_percentage || 0,
-                  consumables: rawServiceData.consumables || []
-                };
-                console.log('FETCH_APPOINTMENTS: Processed service data:', serviceData);
-              } else {
-                console.error('FETCH_APPOINTMENTS: Service not found for ID:', rawData.serviceId);
+                if (serviceDoc.exists()) {
+                  const rawServiceData = serviceDoc.data();
+                  console.log('FETCH_APPOINTMENTS: Raw service data:', rawServiceData);
+                  
+                  // Map all required service fields
+                  serviceData.push({
+                    name: rawServiceData.name || 'Unknown Service',
+                    duration: rawServiceData.duration || 30,
+                    price: rawServiceData.price || 0,
+                    description: rawServiceData.description || null,
+                    category: rawServiceData.category || 'Service',
+                    discount_percentage: rawServiceData.discount_percentage || 0,
+                    consumables: rawServiceData.consumables || []
+                  });
+                  console.log('FETCH_APPOINTMENTS: Processed service data:', serviceData);
+                } else {
+                  console.error('FETCH_APPOINTMENTS: Service not found for ID:', serviceId);
+                }
               }
             } else {
               console.log('FETCH_APPOINTMENTS: No serviceId provided for appointment');
@@ -195,7 +201,7 @@ export function useAppointments() {
             const appointment: AppointmentWithRelations = {
               id: appointmentDoc.id,
               petId: rawData.petId,
-              serviceId: rawData.serviceId,
+              services: rawData.services,
               groomerId: rawData.groomerId,
               branchId: rawData.branchId,
               date: timestampToISOString(rawData.date),
@@ -216,15 +222,7 @@ export function useAppointments() {
               groomer: {
                 name: groomerData.name
               },
-              service: serviceData ? {
-                name: serviceData.name || 'Unknown Service',
-                duration: serviceData.duration || 0,
-                price: serviceData.price || 0,
-                description: serviceData.description,
-                category: serviceData.category,
-                discount_percentage: serviceData.discount_percentage,
-                consumables: serviceData.consumables
-              } : undefined
+              service: serviceData.length > 0 ? serviceData : undefined
             };
 
             appointments.push(appointment);
@@ -285,7 +283,7 @@ export function useAppointments() {
       const appointmentStart = new Date(appointment.date);
       const appointmentEnd = new Date(appointmentStart);
       // Use the existing appointment's service duration, default to 60 minutes
-      const appointmentDuration = appointment.service?.duration || 60;
+      const appointmentDuration = appointment.service?.[0]?.duration || 60; // Changed to handle array of services
       appointmentEnd.setMinutes(appointmentEnd.getMinutes() + appointmentDuration);
 
       // Check if the new appointment overlaps with existing appointment
