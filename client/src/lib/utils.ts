@@ -37,3 +37,11 @@ export function formatIndianDate(date: Date | string | null): string {
 export function formatQuantity(quantity: number, unit: string): string {
   return `${quantity} ${unit}`;
 }
+
+/**
+ * Capitalizes the first letter of a string
+ */
+export function capitalize(str: string): string {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.toLowerCase().slice(1);
+}

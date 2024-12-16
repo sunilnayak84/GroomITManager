@@ -229,13 +229,12 @@ export default function AppointmentsPage() {
         <PetDetailsModal
           pet={{
             ...selectedPet,
-            owner: {
-              firstName: selectedAppointment?.customer?.firstName,
-              lastName: selectedAppointment?.customer?.lastName,
-              name: selectedAppointment?.customer ? 
-                `${selectedAppointment.customer.firstName} ${selectedAppointment.customer.lastName}` : 
-                undefined
-            }
+            owner: selectedAppointment?.customer ? {
+              id: selectedAppointment.customer.id,
+              firstName: selectedAppointment.customer.firstName,
+              lastName: selectedAppointment.customer.lastName,
+              name: `${selectedAppointment.customer.firstName} ${selectedAppointment.customer.lastName}`.trim()
+            } : undefined
           }}
           open={openPetDetails}
           onOpenChange={setOpenPetDetails}

@@ -1,7 +1,7 @@
 
 import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import type { Pet } from "@/lib/types";
+import { capitalize } from "@/lib/utils";
 
 interface PetDetailsProps {
   pet: {
@@ -20,6 +20,7 @@ interface PetDetailsProps {
       name?: string;
       firstName?: string;
       lastName?: string;
+      email?: string;
     };
     createdAt?: string;
     updatedAt?: string | null;
@@ -30,66 +31,109 @@ interface PetDetailsProps {
 }
 
 export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProps) {
+  const getOwnerName = () => {
+    if (pet.owner?.name) return pet.owner.name;
+    if (pet.owner?.firstName || pet.owner?.lastName) {
+      return `${pet.owner.firstName || ''} ${pet.owner.lastName || ''}`.trim();
+    }
+    return 'Not specified';
+  };
+
+  const formatValue = (value: any, unit?: string) => {
+    if (value === null || value === undefined || value === '') return 'Not specified';
+    if (unit) return `${value} ${unit}`;
+    return value;
+  };
+
   return (
-    <>
-      <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          {pet.image ? (
-            <img
-              src={pet.image}
-              alt={pet.name}
-              className="w-24 h-24 rounded-full object-cover"
-            />
-          ) : (
-            <div className="w-24 h-24 rounded-full bg-secondary flex items-center justify-center">
-              <span className="text-2xl font-semibold">
-                {pet.name.substring(0, 2).toUpperCase()}
-              </span>
-            </div>
-          )}
-          <div>
-            <h2 className="text-2xl font-bold">{pet.name}</h2>
-            <p className="text-muted-foreground">
-              {pet.type} • {pet.breed}
+    <div className="space-y-6">
+      <div className="flex items-center gap-4">
+        {pet.image ? (
+          <img
+            src={pet.image}
+            alt={pet.name}
+            className="h-24 w-24 rounded-full object-cover"
+          />
+        ) : (
+          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-secondary">
+            <span className="text-2xl font-semibold">
+              {pet.name.substring(0, 2).toUpperCase()}
+            </span>
+          </div>
+        )}
+        <div>
+          <h2 className="text-2xl font-bold">{pet.name}</h2>
+          <p className="text-muted-foreground">
+            {formatValue(pet.type)} • {formatValue(pet.breed)}
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-8">
+        <div className="space-y-3">
+          <h3 className="font-semibold">Basic Information</h3>
+          <div className="space-y-2">
+            <p>
+              <span className="text-muted-foreground">Type: </span>
+              {formatValue(pet.type)}
+            </p>
+            <p>
+              <span className="text-muted-foreground">Breed: </span>
+              {formatValue(pet.breed)}
+            </p>
+            <p>
+              <span className="text-muted-foreground">Gender: </span>
+              {formatValue(pet.gender ? capitalize(pet.gender) : null)}
+            </p>
+            <p>
+              <span className="text-muted-foreground">Age: </span>
+              {formatValue(pet.age, 'years')}
             </p>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8">
+        <div className="space-y-3">
+          <h3 className="font-semibold">Additional Information</h3>
           <div className="space-y-2">
-            <h3 className="font-semibold">Basic Information</h3>
-            <p><span className="text-muted-foreground">Type:</span> {pet.type}</p>
-            <p><span className="text-muted-foreground">Breed:</span> {pet.breed}</p>
-            <p><span className="text-muted-foreground">Gender:</span> {pet.gender || 'Not specified'}</p>
-            <p><span className="text-muted-foreground">Age:</span> {pet.age || 'Not specified'}</p>
-          </div>
-
-          <div className="space-y-2">
-            <h3 className="font-semibold">Additional Information</h3>
-            <p><span className="text-muted-foreground">Date of Birth:</span> {formatDate(pet.dateOfBirth)}</p>
-            <p><span className="text-muted-foreground">Weight:</span> {pet.weight ? `${pet.weight} ${pet.weightUnit}` : 'Not specified'}</p>
-            <p><span className="text-muted-foreground">Owner:</span> {pet.owner?.name || 'Not specified'}</p>
+            <p>
+              <span className="text-muted-foreground">Date of Birth: </span>
+              {formatDate(pet.dateOfBirth)}
+            </p>
+            <p>
+              <span className="text-muted-foreground">Weight: </span>
+              {formatValue(pet.weight, pet.weightUnit)}
+            </p>
+            <p>
+              <span className="text-muted-foreground">Owner: </span>
+              {getOwnerName()}
+            </p>
+            {pet.owner?.email && (
+              <p>
+                <span className="text-muted-foreground">Owner Email: </span>
+                {pet.owner.email}
+              </p>
+            )}
           </div>
         </div>
-
-        {pet.notes && (
-          <div className="space-y-2">
-            <h3 className="font-semibold">Notes</h3>
-            <p className="text-sm text-muted-foreground">{pet.notes}</p>
-          </div>
-        )}
-
-        {onEdit && onDelete && (
-          <div className="flex justify-center gap-2 mt-6">
-            <Button variant="outline" onClick={onDelete}>
-              Delete
-            </Button>
-            <Button onClick={onEdit}>
-              Edit
-            </Button>
-          </div>
-        )}
       </div>
-    </>
+
+      {pet.notes && (
+        <div className="space-y-2">
+          <h3 className="font-semibold">Notes</h3>
+          <p className="text-sm text-muted-foreground">{pet.notes}</p>
+        </div>
+      )}
+
+      {onEdit && onDelete && (
+        <div className="mt-6 flex justify-center gap-2">
+          <Button variant="outline" onClick={onDelete}>
+            Delete
+          </Button>
+          <Button onClick={onEdit}>
+            Edit
+          </Button>
+        </div>
+      )}
+    </div>
   );
 }
