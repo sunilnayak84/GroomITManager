@@ -126,6 +126,19 @@ export default function AppointmentsPage() {
       cell: (row: AppointmentWithRelations) => row.groomer.name,
     },
     {
+      header: "Service",
+      cell: (row: AppointmentWithRelations) => (
+        <div>
+          <div className="font-medium">{row.service?.name || 'Unknown Service'}</div>
+          {row.service?.price && (
+            <div className="text-sm text-muted-foreground">
+              ${row.service.price}
+            </div>
+          )}
+        </div>
+      ),
+    },
+    {
       header: "Status",
       cell: ({ status }: AppointmentWithRelations) => (
         <Badge className={statusColors[status]}>

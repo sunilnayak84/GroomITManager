@@ -175,6 +175,25 @@ const AppointmentDetails = ({
               <p className="mt-1 text-sm">{appointment.groomer.name}</p>
             </div>
 
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Service</h3>
+              <div className="mt-1">
+                <p className="text-sm font-medium">
+                  {appointment.service?.name || 'Unknown Service'}
+                </p>
+                {appointment.service?.price && (
+                  <p className="text-sm text-gray-500">
+                    Price: ${appointment.service.price}
+                  </p>
+                )}
+                {appointment.service?.duration && (
+                  <p className="text-sm text-gray-500">
+                    Duration: {appointment.service.duration} minutes
+                  </p>
+                )}
+              </div>
+            </div>
+
             <FormField
               control={form.control}
               name="status"
