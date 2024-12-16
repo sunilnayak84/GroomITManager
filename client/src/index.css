@@ -77,18 +77,23 @@
   transform: scale(1.02);
 }
 /* Appointment hover preview styles */
-.hover-trigger {
+/* Calendar event styles */
+.fc-event {
+  position: relative !important;
+}
+
+/* Hover preview container */
+.hover-preview-container {
   position: relative;
 }
 
-.fc-event:hover .hover-preview {
-  display: block;
-}
-
+/* Hover preview styles */
 .hover-preview {
   display: none;
-  position: fixed;
-  z-index: 9999999;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  margin-left: 10px;
   background: white;
   border: 1px solid #e2e8f0;
   border-radius: 0.5rem;
@@ -96,15 +101,29 @@
   padding: 1rem;
   min-width: 300px;
   max-width: 400px;
-  pointer-events: none;
+  z-index: 9999;
 }
 
-.fc-event {
-  position: relative !important;
+/* Show preview on hover */
+.hover-preview-container:hover .hover-preview {
+  display: block;
+}
+
+/* Ensure calendar events stack properly */
+.fc-view-harness {
+  z-index: 0;
+}
+
+.fc .fc-popover {
+  z-index: 1000;
+}
+
+.fc-event-main {
+  z-index: 2;
 }
 
 .fc-event:hover {
-  z-index: 100 !important;
+  z-index: 9998 !important;
 }
 
 .fc-view-harness {

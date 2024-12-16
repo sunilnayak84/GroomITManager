@@ -256,14 +256,7 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
             
             return {
               html: `
-                <div class="p-1 relative group" onmousemove="(function(e) {
-                    const preview = this.querySelector('.hover-preview');
-                    if (preview) {
-                      const rect = e.target.getBoundingClientRect();
-                      preview.style.top = (e.clientY + 10) + 'px';
-                      preview.style.left = (rect.right + 10) + 'px';
-                    }
-                  })(event)">
+                <div class="p-1 hover-preview-container">
                   <div class="font-medium">${event.title}</div>
                   <div class="text-xs">${format(event.start!, 'HH:mm')} - ${format(event.end!, 'HH:mm')}</div>
                   <div class="hover-preview">
