@@ -15,6 +15,67 @@ import AppointmentDetails from "../components/AppointmentDetails";
 import AppointmentCalendar from "../components/AppointmentCalendar";
 
 // Get status type from the schema
+interface ActionButtonsProps {
+  appointment: AppointmentWithRelations;
+  onView: () => void;
+}
+
+function ActionButtons({ appointment, onView }: ActionButtonsProps) {
+  const { user } = useUser();
+  const { deleteAppointment } = useAppointments();
+  const { toast } = useToast();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!deleteAppointment) {
+      console.error('Delete appointment function is not available');
+      return;
+    }
+
+    if (confirm("Are you sure you want to delete this appointment? This action cannot be undone.")) {
+      try {
+        setIsDeleting(true);
+        await deleteAppointment(appointment.id);
+        toast({
+          title: "Success",
+          description: "Appointment deleted successfully",
+        });
+      } catch (error) {
+        console.error('Error deleting appointment:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: error instanceof Error ? error.message : "Failed to delete appointment",
+        });
+      } finally {
+        setIsDeleting(false);
+      }
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      <Button 
+        variant="outline" 
+        size="sm" 
+        onClick={onView}
+      >
+        View
+      </Button>
+      {user?.role === 'admin' && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleDelete}
+          disabled={isDeleting}
+          className="text-destructive hover:text-destructive"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      )}
+    </div>
+  );
+}
 type AppointmentStatus = z.infer<typeof appointmentSchema>["status"];
 
 const statusColors: Record<AppointmentStatus, string> = {
@@ -74,65 +135,15 @@ export default function AppointmentsPage() {
     },
     {
       header: "Actions",
-      cell: (row: AppointmentWithRelations) => {
-        const { user } = useUser();
-        const { deleteAppointment } = useAppointments();
-        const { toast } = useToast();
-        const [isDeleting, setIsDeleting] = useState(false);
-
-        const handleDelete = async () => {
-          if (!deleteAppointment) {
-            console.error('Delete appointment function is not available');
-            return;
-          }
-
-          if (confirm("Are you sure you want to delete this appointment? This action cannot be undone.")) {
-            try {
-              setIsDeleting(true);
-              await deleteAppointment(row.id);
-              toast({
-                title: "Success",
-                description: "Appointment deleted successfully",
-              });
-            } catch (error) {
-              console.error('Error deleting appointment:', error);
-              toast({
-                variant: "destructive",
-                title: "Error",
-                description: error instanceof Error ? error.message : "Failed to delete appointment",
-              });
-            } finally {
-              setIsDeleting(false);
-            }
-          }
-        };
-
-        return (
-          <div className="flex items-center gap-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => {
-                setSelectedAppointment(row);
-                setOpenDetails(true);
-              }}
-            >
-              View
-            </Button>
-            {user?.role === 'admin' && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleDelete}
-                disabled={isDeleting}
-                className="text-destructive hover:text-destructive"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
-        );
-      },
+      cell: (row: AppointmentWithRelations) => (
+        <ActionButtons
+          appointment={row}
+          onView={() => {
+            setSelectedAppointment(row);
+            setOpenDetails(true);
+          }}
+        />
+      ),
     },
   ];
 
