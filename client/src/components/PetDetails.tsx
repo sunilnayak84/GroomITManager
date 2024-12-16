@@ -40,9 +40,16 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
   };
 
   const formatValue = (value: any, unit?: string) => {
-    if (value === null || value === undefined || value === '') return 'Not specified';
+    if (value === null || value === undefined) return 'Not specified';
+    if (value === '') return 'Not specified';
     if (unit) return `${value} ${unit}`;
     return value;
+  };
+
+  const getDisplayValue = (label: string, value: any, unit?: string) => {
+    if (label === 'Type' && pet.type) return capitalize(pet.type);
+    if (label === 'Gender' && pet.gender) return capitalize(pet.gender);
+    return formatValue(value, unit);
   };
 
   return (
@@ -75,19 +82,19 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
           <div className="space-y-2">
             <p>
               <span className="text-muted-foreground">Type: </span>
-              {formatValue(pet.type)}
+              {getDisplayValue('Type', pet.type)}
             </p>
             <p>
               <span className="text-muted-foreground">Breed: </span>
-              {formatValue(pet.breed)}
+              {getDisplayValue('Breed', pet.breed)}
             </p>
             <p>
               <span className="text-muted-foreground">Gender: </span>
-              {formatValue(pet.gender ? capitalize(pet.gender) : null)}
+              {getDisplayValue('Gender', pet.gender)}
             </p>
             <p>
               <span className="text-muted-foreground">Age: </span>
-              {formatValue(pet.age, 'years')}
+              {getDisplayValue('Age', pet.age, 'years')}
             </p>
           </div>
         </div>
