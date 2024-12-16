@@ -66,6 +66,23 @@ const AppointmentDetails = ({
     },
   });
 
+  // Reset form when appointment changes
+  React.useEffect(() => {
+    form.reset({
+      status: appointment.status,
+      cancellationReason: undefined,
+      notes: appointment.notes || undefined,
+    });
+  }, [appointment.id, appointment.status, appointment.notes, form]);
+
+  // Reset state when dialog closes
+  React.useEffect(() => {
+    if (!open) {
+      setShowCancellationForm(false);
+      setIsUpdating(false);
+    }
+  }, [open]);
+
   const onSubmit = async (data: UpdateAppointmentForm) => {
     try {
       setIsUpdating(true);
