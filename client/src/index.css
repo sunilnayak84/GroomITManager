@@ -50,6 +50,83 @@
   }
 }
 
+/* Calendar styles */
+.closed-day {
+  background-color: rgba(239, 68, 68, 0.1) !important; /* Light red background */
+  cursor: not-allowed !important;
+}
+
+.break-time {
+  background-color: rgba(254, 226, 226, 0.5) !important; /* Lighter red for break times */
+}
+
+.break-time-slot {
+  background-color: rgba(254, 226, 226, 0.3) !important;
+}
+
+.fc-day-today {
+  background-color: rgba(59, 130, 246, 0.1) !important; /* Light blue for today */
+}
+
+.fc-event {
+  cursor: pointer;
+  transition: transform 0.1s ease-in-out;
+}
+
+.fc-event:hover {
+  transform: scale(1.02);
+}
+/* Appointment hover preview styles */
+.hover-trigger {
+  position: relative;
+}
+
+.fc-event:hover .hover-preview {
+  display: block;
+}
+
+.hover-preview {
+  display: none;
+  position: absolute;
+  z-index: 1000;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 1rem;
+  min-width: 300px;
+  max-width: 400px;
+}
+
+.hover-preview-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.hover-preview-content {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.hover-preview img {
+  width: 48px;
+  height: 48px;
+  border-radius: 9999px;
+  object-fit: cover;
+}
+
+.fc-timeline-slot.fc-timeline-slot-lane.break-time-slot {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(254, 226, 226, 0.3),
+    rgba(254, 226, 226, 0.3) 10px,
+    rgba(254, 226, 226, 0.5) 10px,
+    rgba(254, 226, 226, 0.5) 20px
+  ) !important;
+}
+
 @layer components {
   .main-layout {
     @apply min-h-screen w-full bg-background text-foreground;

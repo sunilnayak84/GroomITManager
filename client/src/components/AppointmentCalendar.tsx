@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import type { CalendarApi } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -9,8 +9,15 @@ import { useWorkingHours } from '../hooks/use-working-hours';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import AppointmentForm from './AppointmentForm';
 import { Button } from './ui/button';
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { Badge } from "@/components/ui/badge";
 import type { AppointmentWithRelations } from '@/lib/schema';
-import type { EventInput } from '@fullcalendar/core';
+import type { EventInput, BusinessHoursInput } from '@fullcalendar/core';
+import { format } from 'date-fns';
 
 const viewOptions = [
   { label: 'Month', value: 'dayGridMonth' },
@@ -53,19 +60,63 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
       }
     })(),
     extendedProps: {
+      ...appointment,
       status: appointment.status,
       petName: appointment.pet.name,
       customerName: `${appointment.customer.firstName} ${appointment.customer.lastName}`,
       groomerName: appointment.groomer.name,
+      service: appointment.service,
+      petImage: appointment.pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${appointment.pet.name}`,
     },
+    display: 'block',
+    classNames: ['hover-trigger'],
   })) || [];
 
-  // Get business hours from working hours data
-  const businessHours = workingHours?.map(schedule => ({
-    daysOfWeek: [schedule.dayOfWeek],
-    startTime: schedule.openingTime,
-    endTime: schedule.closingTime,
-  })) || [];
+  // Transform working hours into business hours, breaks, and background events
+  const { businessHours, nonBusinessDays, breakTimeEvents } = useMemo(() => {
+    if (!workingHours) return { businessHours: [], nonBusinessDays: [], breakTimeEvents: [] };
+    
+    const hours: BusinessHoursInput[] = [];
+    const closedDays: number[] = [];
+    const breaks: EventInput[] = [];
+    
+    workingHours.forEach(schedule => {
+      if (!schedule.isOpen) {
+        closedDays.push(schedule.dayOfWeek);
+        return;
+      }
+      
+      // Add main working hours
+      hours.push({
+        daysOfWeek: [schedule.dayOfWeek],
+        startTime: schedule.openingTime,
+        endTime: schedule.closingTime,
+        color: '#f3f4f6', // Light gray background for business hours
+      });
+      
+      // Add break time events if break exists
+      if (schedule.breakStart && schedule.breakEnd) {
+        breaks.push({
+          title: 'Break Time',
+          startTime: schedule.breakStart,
+          endTime: schedule.breakEnd,
+          daysOfWeek: [schedule.dayOfWeek],
+          display: 'background',
+          color: '#fee2e2', // Light red background for break time
+          classNames: ['break-time'],
+          rendering: 'background',
+          overlap: false,
+          groupId: 'breakTimes'
+        });
+      }
+    });
+    
+    return { 
+      businessHours: hours, 
+      nonBusinessDays: closedDays,
+      breakTimeEvents: breaks 
+    };
+  }, [workingHours]);
 
   return (
     <div className="space-y-4">
@@ -105,17 +156,47 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
             center: 'title',
             right: ''
           }}
-          events={events}
+          events={[...events, ...breakTimeEvents]}
           businessHours={businessHours}
           selectMirror={true}
           dayMaxEvents={true}
           weekends={true}
           selectable={true}
           select={(info) => {
+            // Prevent selection on closed days
+            if (nonBusinessDays.includes(info.start.getDay())) {
+              info.view.calendar.unselect();
+              return;
+            }
+            
+            // Check if selection overlaps with break time
+            const dayEvents = breakTimeEvents.filter(event => 
+              event.daysOfWeek?.includes(info.start.getDay())
+            );
+            
+            const isInBreakTime = dayEvents.some(event => {
+              const [breakStartHour, breakStartMinute] = (event.startTime as string).split(':');
+              const [breakEndHour, breakEndMinute] = (event.endTime as string).split(':');
+              const breakStart = new Date(info.start);
+              breakStart.setHours(parseInt(breakStartHour), parseInt(breakStartMinute));
+              const breakEnd = new Date(info.start);
+              breakEnd.setHours(parseInt(breakEndHour), parseInt(breakEndMinute));
+              
+              return info.start < breakEnd && info.end > breakStart;
+            });
+            
+            if (isInBreakTime) {
+              info.view.calendar.unselect();
+              return;
+            }
+            
             setSelectedDate(info.start);
             setOpenNewForm(true);
           }}
           eventClick={(info) => {
+            // Ignore clicks on break time events
+            if (info.event.groupId === 'breakTimes') return;
+            
             const appointmentId = info.event.id;
             const appointment = appointments?.find(apt => apt.id === appointmentId);
             if (appointment) {
@@ -130,6 +211,87 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
           expandRows={true}
           height="auto"
           contentHeight="auto"
+          hiddenDays={nonBusinessDays}
+          selectConstraint="businessHours"
+          eventConstraint="businessHours"
+          slotEventOverlap={false}
+          displayEventEnd={true}
+          nowIndicator={true}
+          viewClassNames="calendar-view"
+          dayCellClassNames={(arg) => {
+            return nonBusinessDays.includes(arg.date.getDay()) ? 'closed-day' : '';
+          }}
+          slotLaneClassNames={(arg) => {
+            // Add classes for slots during break time
+            // Skip if date is undefined
+            if (!arg.date) return '';
+            
+            const dayEvents = breakTimeEvents.filter(event => 
+              event.daysOfWeek?.includes(arg.date.getDay())
+            );
+            
+            const isInBreakTime = dayEvents.some(event => {
+              if (!event.startTime || !event.endTime) return false;
+              
+              const [breakStartHour, breakStartMinute] = event.startTime.split(':');
+              const [breakEndHour, breakEndMinute] = event.endTime.split(':');
+              
+              const breakStart = new Date(arg.date);
+              breakStart.setHours(parseInt(breakStartHour), parseInt(breakStartMinute));
+              
+              const breakEnd = new Date(arg.date);
+              breakEnd.setHours(parseInt(breakEndHour), parseInt(breakEndMinute));
+              
+              return arg.date >= breakStart && arg.date < breakEnd;
+            });
+            
+            return isInBreakTime ? 'break-time-slot' : '';
+          }}
+          eventContent={(arg) => {
+            const event = arg.event;
+            const props = event.extendedProps;
+            
+            return {
+              html: `
+                <div class="p-1 relative group">
+                  <div class="font-medium">${event.title}</div>
+                  <div class="text-xs">${format(event.start!, 'HH:mm')} - ${format(event.end!, 'HH:mm')}</div>
+                  <div class="hover-preview">
+                    <div class="hover-preview-header">
+                      <img src="${props.petImage}" alt="${props.petName}" />
+                      <div>
+                        <div class="font-medium">${props.petName}</div>
+                        <div class="text-sm text-gray-600">${props.customerName}</div>
+                      </div>
+                    </div>
+                    <div class="hover-preview-content">
+                      <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium">Status</span>
+                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          props.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                          props.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
+                          props.status === 'completed' ? 'bg-green-100 text-green-800' :
+                          'bg-red-100 text-red-800'
+                        }">${props.status.charAt(0).toUpperCase() + props.status.slice(1)}</span>
+                      </div>
+                      <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium">Service</span>
+                        <span class="text-sm text-gray-600">${props.service?.name || 'N/A'}</span>
+                      </div>
+                      <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium">Groomer</span>
+                        <span class="text-sm text-gray-600">${props.groomerName}</span>
+                      </div>
+                      <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium">Duration</span>
+                        <span class="text-sm text-gray-600">${props.service?.duration || 60} minutes</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `
+            };
+          }}
         />
       </div>
     </div>
