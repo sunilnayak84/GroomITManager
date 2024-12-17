@@ -11,12 +11,14 @@ import { Button } from "@/components/ui/button";
 import { useNotifications } from "@/hooks/use-notifications";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 
 interface NotificationsListProps {
   userId: string;
 }
 
 export function NotificationsList({ userId }: NotificationsListProps) {
+  const navigate = useNavigate();
   const { notifications, unreadCount, markAsRead } = useNotifications(userId);
 
   const handleNotificationClick = (notificationId: string) => {
@@ -58,7 +60,7 @@ export function NotificationsList({ userId }: NotificationsListProps) {
                   handleNotificationClick(notification.id);
                   // Handle navigation based on notification type
                   if (notification.appointmentId) {
-                    window.location.href = `/appointments?id=${notification.appointmentId}`;
+                    navigate(`/appointments?id=${notification.appointmentId}`);
                   }
                 }}
               >

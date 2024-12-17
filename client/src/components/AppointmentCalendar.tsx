@@ -31,7 +31,9 @@ interface AppointmentCalendarProps {
 }
 
 export default function AppointmentCalendar({ setSelectedAppointment, setOpenDetails }: AppointmentCalendarProps) {
-  const [currentView, setCurrentView] = useState<'dayGridMonth' | 'timeGridWeek' | 'timeGridDay'>('timeGridWeek');
+  const [currentView, setCurrentView] = useState<'dayGridMonth' | 'timeGridWeek' | 'timeGridDay'>(() => 
+    localStorage.getItem('calendarView') as 'dayGridMonth' | 'timeGridWeek' | 'timeGridDay' || 'timeGridWeek'
+  );
   const [openNewForm, setOpenNewForm] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const calendarRef = useRef<FullCalendar | null>(null);
@@ -133,7 +135,9 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
               key={option.value}
               variant={currentView === option.value ? "default" : "outline"}
               onClick={() => {
-                setCurrentView(option.value as typeof currentView);
+                const newView = option.value as typeof currentView;
+                setCurrentView(newView);
+                localStorage.setItem('calendarView', newView);
                 if (calendarRef.current) {
                   const calendar = calendarRef.current.getApi();
                   calendar.changeView(option.value);
