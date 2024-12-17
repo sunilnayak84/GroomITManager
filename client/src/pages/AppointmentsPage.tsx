@@ -1,12 +1,11 @@
 import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Calendar, List, Trash2, Pencil } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useUser } from "@/hooks/use-user";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useAppointments } from "../hooks/use-appointments";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import AppointmentForm from "../components/AppointmentForm";
 import { DataTable } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
