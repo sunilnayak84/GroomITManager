@@ -47,8 +47,8 @@ interface AppointmentEditFormProps {
 
 export default function AppointmentEditForm({ appointment, setOpen }: AppointmentEditFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { staff } = useStaff();
-  const availableGroomers = staff?.filter(s => s.isGroomer) || [];
+  const { staffMembers } = useStaff();
+  const availableGroomers = staffMembers?.filter(staff => staff.role === 'groomer') || [];
   const { updateAppointment } = useAppointments();
   const { toast } = useToast();
 
