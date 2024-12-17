@@ -57,46 +57,6 @@ export type FirestoreData<T> = Omit<T, 'id'> & {
   updatedAt?: FirestoreTimestamp | string | null;
 };
 
-export interface FirestorePet {
-  id: string;
-  firebaseId: string | null;
-  name: string;
-  type: "dog" | "cat" | "bird" | "fish" | "other";
-  breed: string;
-  customerId: string;
-  dateOfBirth: string | null;
-  age: number | null;
-  gender: "male" | "female" | "unknown" | "other" | null;
-  weight: number | null;
-  weightUnit: "kg" | "lbs";
-  notes: string | null;
-  image: string | null;
-  createdAt: Timestamp;
-  updatedAt: Timestamp | null;
-  owner?: {
-    id: string;
-    name: string;
-    email: string | null;
-  } | null;
-  submissionId?: string;
-}
-
-// Helper to convert Firestore timestamp to ISO string
-export function timestampToString(timestamp: FirestoreTimestamp | string | null | undefined): string | null {
-  if (!timestamp) return null;
-  if (typeof timestamp === 'string') return timestamp;
-  return timestamp.toDate().toISOString();
-}
-
-export function convertToFirestoreTimestamp(date: Date | string | Timestamp | null): Timestamp | null {
-  if (!date) return null;
-  if (date instanceof Timestamp) return date;
-  if (date instanceof Date) return Timestamp.fromDate(date);
-  try {
-    return Timestamp.fromDate(new Date(date));
-  } catch {
-    return null;
-  }
-}
-
-// Additional types remain unchanged...
+export type { Pet, InsertPet } from './schema';
+export type { Customer, InsertCustomer } from './schema';
+export type { FirestoreCustomerData, CustomerWithTimestamp } from './schema';

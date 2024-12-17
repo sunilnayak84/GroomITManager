@@ -43,6 +43,12 @@ export const insertCustomerSchema = customerSchema.omit({
 // Re-export types from types.ts for convenience
 export type { FirestoreTimestamp, FirestoreDate, WithFirestoreTimestamp, FirestoreData } from './types';
 
+export type Pet = z.infer<typeof petSchema>;
+export type InsertPet = z.infer<typeof insertPetSchema>;
+export type PetInput = z.infer<typeof insertPetSchema>;
+export type FirestoreCustomerData = z.infer<typeof customerSchema>;
+export type CustomerWithTimestamp = WithFirestoreTimestamp<Customer>;
+
 // Schema for Pet
 export const petSchema = z.object({
   id: z.string(),
