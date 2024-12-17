@@ -11,7 +11,6 @@ import { uploadFile } from "../lib/storage";
 import { useState } from 'react';
 import type { Pet } from '../lib/types';
 import type { InsertPet as PetInput, FirestorePet } from '../lib/schema';
-import type { WithFieldValue } from 'firebase/firestore';
 
 // Helper function to convert string to number safely
 function toNumber(value: string | number | null | undefined): number | null {
