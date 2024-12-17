@@ -329,7 +329,8 @@ export function PetForm({
             name="breed"
             render={({ field }) => {
               const { breeds } = useBreeds();
-              const filteredBreeds = breeds?.filter(breed => breed.type === form.watch('type')) || [];
+              const filteredBreeds = breeds?.filter(breed => breed.type === form.watch('type'))
+                .sort((a, b) => a.name.localeCompare(b.name)) || [];
               
               return (
                 <FormItem>
