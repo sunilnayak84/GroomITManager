@@ -100,14 +100,16 @@ const statusColors: Record<AppointmentStatus, string> = {
 };
 
 export default function AppointmentsPage() {
-  const [openNewForm, setOpenNewForm] = useState(false);
+  import { useState, useEffect } from "react";
+const [openNewForm, setOpenNewForm] = useState(false);
   const [openDetails, setOpenDetails] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithRelations | null>(null);
   const [view, setView] = useState<'list' | 'calendar'>('list');
+  const { data: appointments } = useAppointments();
   
   // Handle route parameter for appointment ID
-  React.useEffect(() => {
+  useEffect(() => {
     const pathParts = window.location.pathname.split('/');
     const appointmentId = pathParts[pathParts.length - 1];
     
@@ -380,6 +382,7 @@ export default function AppointmentsPage() {
             appointment={selectedAppointment}
             open={openDetails}
             onOpenChange={setOpenDetails}
+            onEdit={() => setOpenEdit(true)}
           />
           <Dialog open={openEdit} onOpenChange={setOpenEdit}>
             <DialogTrigger asChild>
