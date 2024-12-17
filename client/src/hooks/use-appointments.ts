@@ -248,6 +248,8 @@ export function useAppointments() {
               id: appointmentDoc.id,
               petId: rawData.petId,
               services: rawData.services,
+              totalPrice: rawData.totalPrice,
+              totalDuration: rawData.totalDuration,
               groomerId: rawData.groomerId,
               branchId: rawData.branchId,
               date: timestampToISOString(rawData.date),

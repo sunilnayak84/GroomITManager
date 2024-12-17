@@ -45,10 +45,7 @@ export default function CustomersPage() {
         const parsedDate = new Date(date);
         return !isNaN(parsedDate.getTime()) ? parsedDate.toLocaleDateString() : 'N/A';
       }
-      if (date instanceof Timestamp) {
-        return date.toDate().toLocaleDateString();
-      }
-      if (date && typeof date === 'object' && date instanceof Timestamp) {
+      if ('toDate' in date && typeof date.toDate === 'function') {
         return date.toDate().toLocaleDateString();
       }
       return 'N/A';
