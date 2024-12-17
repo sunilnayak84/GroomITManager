@@ -105,6 +105,8 @@ export default function AppointmentsPage() {
   const [openDetails, setOpenDetails] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithRelations | null>(null);
+  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+  const [showCustomerDetails, setShowCustomerDetails] = useState(false);
   const [view, setView] = useState<'list' | 'calendar'>('list');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -245,7 +247,13 @@ export default function AppointmentsPage() {
     {
       header: "Customer",
       cell: (row: AppointmentWithRelations) => (
-        <div className="font-medium">
+        <div 
+          className="font-medium cursor-pointer hover:text-primary transition-colors"
+          onClick={() => {
+            setSelectedCustomer(row.customer);
+            setShowCustomerDetails(true);
+          }}
+        >
           {`${row.customer.firstName} ${row.customer.lastName}`}
         </div>
       ),
@@ -434,6 +442,37 @@ export default function AppointmentsPage() {
           </Dialog>
         </>
       )}
+
+      {/* Customer Details Dialog */}
+      <Dialog open={showCustomerDetails} onOpenChange={setShowCustomerDetails}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Customer Details</DialogTitle>
+          </DialogHeader>
+          {selectedCustomer && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <h3 className="font-semibold">Contact Information</h3>
+                  <div className="space-y-2 mt-2">
+                    <p><span className="text-muted-foreground">Name:</span> {selectedCustomer.firstName} {selectedCustomer.lastName}</p>
+                    <p><span className="text-muted-foreground">Email:</span> {selectedCustomer.email}</p>
+                    <p><span className="text-muted-foreground">Phone:</span> {selectedCustomer.phone}</p>
+                    <p><span className="text-muted-foreground">Address:</span> {selectedCustomer.address || 'Not specified'}</p>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-semibold">Additional Information</h3>
+                  <div className="space-y-2 mt-2">
+                    <p><span className="text-muted-foreground">Gender:</span> {selectedCustomer.gender || 'Not specified'}</p>
+                    <p><span className="text-muted-foreground">Pets:</span> {selectedCustomer.petCount || 0}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
