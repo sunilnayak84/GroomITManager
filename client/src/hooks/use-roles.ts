@@ -48,6 +48,13 @@ export async function updateUserStatus(userId: string, disabled: boolean) {
     const error = await response.json().catch(() => ({ message: 'Failed to update user status' }));
     throw new Error(error.message || 'Failed to update user status');
   }
+  
+  // Force refresh of user data
+  await Promise.all([
+    queryClient.invalidateQueries({ queryKey: ['firebase-users'] }),
+    queryClient.refetchQueries({ queryKey: ['firebase-users'] })
+  ]);
+  
   return response.json();
 }
 
