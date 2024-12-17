@@ -54,7 +54,13 @@ export function NotificationsList({ userId }: NotificationsListProps) {
                   "flex flex-col items-start gap-1 p-4",
                   !notification.isRead && "bg-accent/50"
                 )}
-                onClick={() => handleNotificationClick(notification.id)}
+                onClick={() => {
+                  handleNotificationClick(notification.id);
+                  // Handle navigation based on notification type
+                  if (notification.appointmentId) {
+                    window.location.href = `/appointments?id=${notification.appointmentId}`;
+                  }
+                }}
               >
                 <div className="flex w-full items-start justify-between gap-2">
                   <span className="font-medium">{notification.title}</span>
