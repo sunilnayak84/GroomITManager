@@ -203,12 +203,33 @@ export default function AppointmentsPage() {
             </div>
             
             <Dialog open={showPetDetails} onOpenChange={setShowPetDetails}>
-              <DialogContent className="sm:max-w-[625px]">
+              <DialogContent className="sm:max-w-[625px]" aria-describedby="pet-details-description">
                 <DialogHeader>
                   <DialogTitle>Pet Details</DialogTitle>
+                  <DialogDescription id="pet-details-description">
+                    View detailed information about {pet.name}
+                  </DialogDescription>
                 </DialogHeader>
                 <PetDetails 
-                  pet={pet}
+                  pet={{
+                    id: pet.id,
+                    name: pet.name,
+                    type: pet.type || 'dog',
+                    breed: pet.breed,
+                    gender: pet.gender,
+                    age: pet.age,
+                    image: pet.image,
+                    dateOfBirth: pet.dateOfBirth,
+                    weight: pet.weight,
+                    weightUnit: pet.weightUnit,
+                    notes: pet.notes,
+                    createdAt: pet.createdAt,
+                    updatedAt: pet.updatedAt,
+                    customerId: pet.customerId,
+                    firebaseId: pet.firebaseId,
+                    owner: pet.owner,
+                    submissionId: pet.submissionId
+                  }}
                   formatDate={(date) => date ? new Date(date).toLocaleDateString() : 'Not specified'}
                 />
               </DialogContent>
