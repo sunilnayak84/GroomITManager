@@ -26,13 +26,13 @@ function timestampToString(timestamp: Timestamp | null | undefined): string | nu
 
 // Helper function to parse Firestore pet data
 function parseFirestorePet(id: string, data: FirestorePet): Pet {
-  const createdAt = data.createdAt instanceof Timestamp 
+  const createdAt = (data.createdAt instanceof Timestamp) 
     ? data.createdAt.toDate().toISOString()
-    : new Date().toISOString();
+    : (data.createdAt as any)?.toDate?.()?.toISOString() || new Date().toISOString();
     
-  const updatedAt = data.updatedAt instanceof Timestamp
+  const updatedAt = (data.updatedAt instanceof Timestamp)
     ? data.updatedAt.toDate().toISOString()
-    : null;
+    : (data.updatedAt as any)?.toDate?.()?.toISOString() || null;
 
   return {
     id,
