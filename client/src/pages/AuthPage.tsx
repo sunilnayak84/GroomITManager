@@ -42,6 +42,12 @@ export default function AuthPage() {
       console.error("Login error:", error);
       const errorMessage = error instanceof Error ? error.message : "Failed to login. Please try again.";
       
+      // Set form error
+      form.setError('email', {
+        type: 'manual',
+        message: errorMessage
+      });
+      
       toast({
         variant: "destructive",
         title: "Login Error",
