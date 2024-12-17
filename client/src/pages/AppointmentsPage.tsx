@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Calendar, List, Trash2, Pencil } from "lucide-react";
 import { useUser } from "@/hooks/use-user";
@@ -100,8 +100,7 @@ const statusColors: Record<AppointmentStatus, string> = {
 };
 
 export default function AppointmentsPage() {
-  import { useState, useEffect } from "react";
-const [openNewForm, setOpenNewForm] = useState(false);
+  const [openNewForm, setOpenNewForm] = useState(false);
   const [openDetails, setOpenDetails] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithRelations | null>(null);
