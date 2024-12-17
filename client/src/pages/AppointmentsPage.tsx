@@ -212,23 +212,23 @@ export default function AppointmentsPage() {
                 </DialogHeader>
                 <PetDetails 
                   pet={{
-                    id: String(appointment.pet.id),
-                    name: appointment.pet.name,
-                    type: appointment.pet.type || 'dog',
-                    breed: appointment.pet.breed,
-                    gender: appointment.pet.gender || 'unknown',
-                    age: appointment.pet.age || null,
-                    image: appointment.pet.image,
-                    dateOfBirth: appointment.pet.dateOfBirth || null,
-                    weight: appointment.pet.weight || null,
-                    weightUnit: appointment.pet.weightUnit || 'kg',
-                    notes: appointment.pet.notes || null,
-                    createdAt: appointment.pet.createdAt || new Date().toISOString(),
-                    updatedAt: appointment.pet.updatedAt || null,
-                    customerId: String(appointment.pet.customerId),
-                    firebaseId: appointment.pet.firebaseId || null,
-                    owner: appointment.pet.owner || null,
-                    submissionId: appointment.pet.submissionId || undefined
+                    id: String(row.pet.id),
+                    name: row.pet.name,
+                    type: row.pet.type || 'dog',
+                    breed: row.pet.breed,
+                    gender: row.pet.gender || 'unknown',
+                    age: row.pet.age || null,
+                    image: row.pet.image,
+                    dateOfBirth: row.pet.dateOfBirth || null,
+                    weight: row.pet.weight || null,
+                    weightUnit: row.pet.weightUnit || 'kg',
+                    notes: row.pet.notes || null,
+                    createdAt: row.pet.createdAt || new Date().toISOString(),
+                    updatedAt: row.pet.updatedAt || null,
+                    customerId: String(row.pet.customerId),
+                    firebaseId: row.pet.firebaseId || null,
+                    owner: row.pet.owner || null,
+                    submissionId: row.pet.submissionId || undefined
                   }}
                   formatDate={(date) => date ? new Date(date).toLocaleDateString() : 'Not specified'}
                 />
