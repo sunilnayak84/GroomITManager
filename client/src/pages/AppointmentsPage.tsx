@@ -1,7 +1,8 @@
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Calendar, List, Trash2, Pencil } from "lucide-react"; // Added Pencil icon
+import { Plus, Calendar, List, Trash2, Pencil } from "lucide-react";
 import { useUser } from "@/hooks/use-user";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useAppointments } from "../hooks/use-appointments";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
@@ -13,17 +14,17 @@ import { z } from "zod";
 import { appointmentSchema, type Appointment, type AppointmentWithRelations } from "@/lib/schema";
 import AppointmentDetails from "../components/AppointmentDetails";
 import AppointmentCalendar from "../components/AppointmentCalendar";
-import AppointmentEditForm from "../components/AppointmentEditForm"; // Added import for edit form
+import AppointmentEditForm from "../components/AppointmentEditForm";
 
 
 // Get status type from the schema
 interface ActionButtonsProps {
   appointment: AppointmentWithRelations;
   onView: () => void;
-  onEdit: () => void; // Added onEdit prop
+  onEdit: () => void;
 }
 
-function ActionButtons({ appointment, onView, onEdit }: ActionButtonsProps) { // Added onEdit prop
+function ActionButtons({ appointment, onView, onEdit }: ActionButtonsProps) {
   const { user } = useUser();
   const { deleteAppointment } = useAppointments();
   const { toast } = useToast();
@@ -70,8 +71,8 @@ function ActionButtons({ appointment, onView, onEdit }: ActionButtonsProps) { //
           <Button
             variant="outline"
             size="sm"
-            onClick={onEdit} // Use onEdit prop
-            className="text-primary hover:text-primary" // Changed styling for edit button
+            onClick={onEdit}
+            className="text-primary hover:text-primary"
           >
             <Pencil className="h-4 w-4" />
           </Button>
@@ -101,7 +102,7 @@ const statusColors: Record<AppointmentStatus, string> = {
 export default function AppointmentsPage() {
   const [openNewForm, setOpenNewForm] = useState(false);
   const [openDetails, setOpenDetails] = useState(false);
-  const [openEdit, setOpenEdit] = useState(false); // Added openEdit state
+  const [openEdit, setOpenEdit] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithRelations | null>(null);
   const [view, setView] = useState<'list' | 'calendar'>('list');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
@@ -200,9 +201,9 @@ export default function AppointmentsPage() {
             setSelectedAppointment(row);
             setOpenDetails(true);
           }}
-          onEdit={() => { // Added onEdit handler
+          onEdit={() => {
             setSelectedAppointment(row);
-            setOpenEdit(true); // Open the edit dialog
+            setOpenEdit(true);
           }}
         />
       ),
@@ -304,11 +305,11 @@ export default function AppointmentsPage() {
             open={openDetails}
             onOpenChange={setOpenDetails}
           />
-          <Dialog open={openEdit} onOpenChange={setOpenEdit}> {/* Added Edit Dialog */}
+          <Dialog open={openEdit} onOpenChange={setOpenEdit}>
             <DialogTrigger asChild>
               {/* This trigger is already handled in ActionButtons */}
             </DialogTrigger>
-            <AppointmentEditForm appointment={selectedAppointment} setOpen={setOpenEdit} /> {/* Added Edit Form */}
+            <AppointmentEditForm appointment={selectedAppointment} setOpen={setOpenEdit} />
           </Dialog>
         </>
       )}
