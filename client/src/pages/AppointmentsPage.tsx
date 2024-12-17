@@ -129,8 +129,21 @@ export default function AppointmentsPage() {
   
   const columns = [
     {
-      header: "Date",
-      cell: ({ date }: AppointmentWithRelations) => format(new Date(date), "PPp"),
+      header: "Appointment Time",
+      cell: ({ date, totalDuration }: AppointmentWithRelations) => {
+        const startTime = new Date(date);
+        const endTime = new Date(startTime);
+        endTime.setMinutes(endTime.getMinutes() + (totalDuration || 30));
+        
+        return (
+          <div className="space-y-1">
+            <div className="font-medium">{format(startTime, "PP")}</div>
+            <div className="text-sm text-muted-foreground">
+              {format(startTime, "h:mm a")} - {format(endTime, "h:mm a")}
+            </div>
+          </div>
+        );
+      },
     },
     {
       header: "Pet",
