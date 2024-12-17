@@ -1,4 +1,21 @@
 
+export const catBreeds = [
+  "Abyssinian", "American Bobtail", "American Curl", "American Shorthair", "American Wirehair",
+  "Balinese", "Bengal", "Birman", "Bombay", "British Shorthair",
+  "Burmese", "Burmilla", "Chartreux", "Cornish Rex", "Devon Rex",
+  "Egyptian Mau", "European Shorthair", "Exotic Shorthair", "Havana Brown", "Himalayan",
+  "Japanese Bobtail", "Javanese", "Korat", "LaPerm", "Maine Coon",
+  "Manx", "Munchkin", "Nebelung", "Norwegian Forest Cat", "Ocicat",
+  "Oriental", "Persian", "Peterbald", "Pixie-Bob", "Ragamuffin",
+  "Ragdoll", "Russian Blue", "Scottish Fold", "Selkirk Rex", "Siamese",
+  "Siberian", "Singapura", "Snowshoe", "Somali", "Sphynx",
+  "Tonkinese", "Toyger", "Turkish Angora", "Turkish Van", "York Chocolate",
+  "Savannah", "Serengeti", "Bambino", "Lykoi", "Chausie",
+  "Khao Manee", "Cheetoh", "Highlander", "Foldex", "Ojos Azules",
+  "Australian Mist", "Asian Semi-Longhair", "Arabian Mau", "British Longhair", "Oriental Longhair",
+  "German Rex", "Cyprus", "Thai", "Ukrainian Levkoy"
+];
+
 export const dogBreeds = [
   "Labrador Retriever", "Golden Retriever", "German Shepherd", "Bulldog", "Beagle",
   "Poodle", "Rottweiler", "Yorkshire Terrier", "Boxer", "Dachshund",
