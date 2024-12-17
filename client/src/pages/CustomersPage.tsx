@@ -41,7 +41,7 @@ export default function CustomersPage() {
   const formatDate = (date: FirestoreTimestamp | string | null | undefined) => {
     if (!date) return 'Never';
     try {
-      if (typeof date === 'string') {
+      if (typeof date === 'string' && date.trim()) {
         const parsedDate = new Date(date);
         return !isNaN(parsedDate.getTime()) ? parsedDate.toLocaleDateString() : 'Never';
       }
