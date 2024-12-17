@@ -1,6 +1,7 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useStaff } from "@/hooks/use-staff";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type AppointmentWithRelations } from "@/lib/schema";
 import { Button } from "@/components/ui/button";
@@ -46,6 +47,8 @@ interface AppointmentEditFormProps {
 
 export default function AppointmentEditForm({ appointment, setOpen }: AppointmentEditFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { staff } = useStaff();
+  const availableGroomers = staff?.filter(s => s.isGroomer) || [];
   const { updateAppointment } = useAppointments();
   const { toast } = useToast();
 
@@ -181,6 +184,34 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
                     <SelectItem value="confirmed">Confirmed</SelectItem>
                     <SelectItem value="completed">Completed</SelectItem>
                     <SelectItem value="cancelled">Cancelled</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="groomerId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Groomer</FormLabel>
+                <Select onValueChange={field.onChange} value={appointment.groomerId}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a groomer" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {availableGroomers?.map((groomer) => (
+                      <SelectItem 
+                        key={groomer.id} 
+                        value={groomer.id}
+                      >
+                        {groomer.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
