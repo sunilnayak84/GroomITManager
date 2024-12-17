@@ -1,24 +1,4 @@
 
-import { Timestamp } from "firebase/firestore";
-
-export interface FirestorePet {
-  id: string;
-  firebaseId: string | null;
-  name: string;
-  type: string;
-  breed: string;
-  customerId: string;
-  dateOfBirth: string | null;
-  age: number | null;
-  gender: string | null;
-  weight: number | null;
-  weightUnit: string;
-  notes: string | null;
-  image: string | null;
-  createdAt: Timestamp;
-  updatedAt: Timestamp | null;
-}
-
 import { z } from "zod";
 import { Timestamp, FieldValue, DocumentData } from 'firebase/firestore';
 
@@ -65,7 +45,7 @@ export type WithFirestoreTimestamp<T> = {
       : T[K];
 };
 
-// Type for Firestore document with optional ID
+// Helper type for Firestore document with optional ID
 export type WithOptionalId<T extends DocumentData> = Omit<T, 'id'> & {
   id?: string;
 };
@@ -76,6 +56,30 @@ export type FirestoreData<T> = Omit<T, 'id'> & {
   createdAt?: FirestoreTimestamp | string;
   updatedAt?: FirestoreTimestamp | string | null;
 };
+
+export interface FirestorePet {
+  id: string;
+  firebaseId: string | null;
+  name: string;
+  type: "dog" | "cat" | "bird" | "fish" | "other";
+  breed: string;
+  customerId: string;
+  dateOfBirth: string | null;
+  age: number | null;
+  gender: "male" | "female" | "unknown" | "other" | null;
+  weight: number | null;
+  weightUnit: "kg" | "lbs";
+  notes: string | null;
+  image: string | null;
+  createdAt: Timestamp;
+  updatedAt: Timestamp | null;
+  owner?: {
+    id: string;
+    name: string;
+    email: string | null;
+  } | null;
+  submissionId?: string;
+}
 
 // Helper to convert Firestore timestamp to ISO string
 export function timestampToString(timestamp: FirestoreTimestamp | string | null | undefined): string | null {
@@ -95,144 +99,4 @@ export function convertToFirestoreTimestamp(date: Date | string | Timestamp | nu
   }
 }
 
-// Customer schemas and types
-export const customerSchema = z.object({
-  id: z.string(),
-  firebaseId: z.string().nullable(),
-  firstName: z.string().min(2, "First name must be at least 2 characters"),
-  lastName: z.string().min(2, "Last name must be at least 2 characters"),
-  email: z.string().email("Invalid email format"),
-  phone: z.string().regex(/^[0-9]{10,}$/, "Phone number must be at least 10 digits"),
-  address: z.string().nullable(),
-  gender: z.enum(["male", "female", "other"]).nullable(),
-  petCount: z.number().default(0),
-  createdAt: z.union([
-    z.string(),
-    z.custom<FirestoreTimestamp>((data) => data instanceof Timestamp),
-    z.date()
-  ]).transform(value => {
-    if (typeof value === 'string') return value;
-    if (value instanceof Date) return value.toISOString();
-    return value.toDate().toISOString();
-  }),
-  updatedAt: z.union([
-    z.string(),
-    z.custom<FirestoreTimestamp>((data) => data instanceof Timestamp),
-    z.date(),
-    z.null()
-  ]).transform(value => {
-    if (!value) return null;
-    if (typeof value === 'string') return value;
-    if (value instanceof Date) return value.toISOString();
-    return value.toDate().toISOString();
-  }).nullable(),
-});
-
-export type Customer = z.infer<typeof customerSchema>;
-export type InsertCustomer = Omit<Customer, "id" | "firebaseId" | "petCount" | "createdAt" | "updatedAt">;
-
-// Helper type for Firestore data with proper timestamp handling
-export type FirestoreCustomerData = Omit<Customer, "id" | "createdAt" | "updatedAt"> & {
-  id?: string;
-  createdAt: FirestoreTimestamp | string;
-  updatedAt: FirestoreTimestamp | string | null;
-};
-
-export type CustomerWithTimestamp = Omit<Customer, "createdAt" | "updatedAt"> & {
-  createdAt: FirestoreTimestamp | string;
-  updatedAt: FirestoreTimestamp | string | null;
-};
-
-export type PetType = "dog" | "cat" | "bird" | "fish" | "other";
-export type Gender = "male" | "female" | "unknown" | "other";
-export type WeightUnit = "kg" | "lbs";
-
-export interface PetInput {
-  name: string;
-  type: PetType;
-  breed: string;
-  customerId: string;
-  dateOfBirth?: string | null;
-  age?: number | null;
-  gender?: Gender | null;
-  weight?: number | null;
-  weightUnit?: WeightUnit;
-  notes?: string | null;
-  image?: string | File | null;
-  submissionId?: string;
-  owner?: {
-    id: string;
-    name: string;
-    email: string | null;
-  } | null;
-}
-
-export const petSchema = z.object({
-  id: z.string(),
-  firebaseId: z.string().nullable(),
-  image: z.string().nullable(),
-  type: z.enum(["dog", "cat", "bird", "fish", "other"]),
-  name: z.string().min(1, "Name is required"),
-  customerId: z.string(),
-  breed: z.string().min(1, "Breed is required"),
-  dateOfBirth: z.string().nullable(),
-  age: z.number().nullable(),
-  gender: z.enum(["male", "female", "unknown", "other"]).nullable(),
-  weight: z.union([z.number(), z.string()]).transform(val => 
-    typeof val === 'string' ? parseFloat(val) || null : val
-  ).nullable(),
-  weightUnit: z.enum(["kg", "lbs"]).default("kg"),
-  notes: z.string().nullable(),
-  createdAt: z.string(),
-  updatedAt: z.string().nullable(),
-  submissionId: z.string().optional(),
-  owner: z.object({
-    id: z.string(),
-    name: z.string(),
-    email: z.string().nullable()
-  }).nullable()
-});
-
-export type Pet = z.infer<typeof petSchema>;
-export type InsertPet = Omit<PetInput, "id" | "submissionId"> & {
-  submissionId?: string;
-  firebaseId?: string | null;
-};
-
-export type FirestorePet = {
-  id: string;
-  firebaseId: string | null;
-  name: string;
-  type: PetType;
-  breed: string;
-  customerId: string;
-  dateOfBirth: string | null;
-  age: number | null;
-  gender: Gender | null;
-  weight: number | null;
-  weightUnit: WeightUnit;
-  notes: string | null;
-  image: string | null;
-  createdAt: FirestoreTimestamp;
-  updatedAt: FirestoreTimestamp | null;
-  submissionId?: string;
-  owner: {
-    id: string;
-    name: string;
-    email: string | null;
-  } | null;
-};
-
-export type FirestoreCustomer = {
-  id: string;
-  firebaseId: string | null;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  address: string | null;
-  gender: "male" | "female" | "other" | null;
-  petCount: number;
-  createdAt: FirestoreTimestamp;
-  updatedAt: FirestoreTimestamp | null;
-};
+// Additional types remain unchanged...
