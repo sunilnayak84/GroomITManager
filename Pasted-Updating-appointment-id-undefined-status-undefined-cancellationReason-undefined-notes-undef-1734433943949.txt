@@ -1,0 +1,74 @@
+Updating appointment: {id: undefined, status: undefined, cancellationReason: undefined, notes: undefined}cancellationReason: undefinedid: undefinednotes: undefinedstatus: undefined[[Prototype]]: Object
+use-appointments.ts:374  Error updating appointment: TypeError: Cannot read properties of undefined (reading 'indexOf')
+    at _ResourcePath.fromString (path.ts:239:16)
+    at doc (reference.ts:570:39)
+    at Object.mutationFn (use-appointments.ts:353:32)
+    at Object.fn (mutation.ts:170:29)
+    at run (retryer.ts:153:49)
+    at Object.start (retryer.ts:218:9)
+    at _a6.execute (mutation.ts:208:40)
+    at async onSubmit (AppointmentEditForm.tsx:80:7)
+    at async createFormControl.ts:1193:11
+mutationFn @ use-appointments.ts:374
+fn @ mutation.ts:170
+run @ retryer.ts:153
+start @ retryer.ts:218
+execute @ mutation.ts:208
+await in execute
+mutate @ mutationObserver.ts:125
+onSubmit @ AppointmentEditForm.tsx:80
+(anonymous) @ createFormControl.ts:1193
+await in (anonymous)
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+dispatchDiscreteEvent @ react-dom.development.js:6430
+use-appointments.ts:352 Updating appointment: {id: undefined, status: undefined, cancellationReason: undefined, notes: undefined}cancellationReason: undefinedid: undefinednotes: undefinedstatus: undefined[[Prototype]]: Object
+use-appointments.ts:374  Error updating appointment: TypeError: Cannot read properties of undefined (reading 'indexOf')
+    at _ResourcePath.fromString (path.ts:239:16)
+    at doc (reference.ts:570:39)
+    at Object.mutationFn (use-appointments.ts:353:32)
+    at Object.fn (mutation.ts:170:29)
+    at run (retryer.ts:153:49)
+    at retryer.ts:199:15
+mutationFn @ use-appointments.ts:374
+fn @ mutation.ts:170
+run @ retryer.ts:153
+(anonymous) @ retryer.ts:199
+Promise.then
+(anonymous) @ retryer.ts:195
+Promise.catch
+run @ retryer.ts:160
+start @ retryer.ts:218
+execute @ mutation.ts:208
+await in execute
+mutate @ mutationObserver.ts:125
+onSubmit @ AppointmentEditForm.tsx:80
+(anonymous) @ createFormControl.ts:1193
+await in (anonymous)
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+dispatchDiscreteEvent @ react-dom.development.js:6430

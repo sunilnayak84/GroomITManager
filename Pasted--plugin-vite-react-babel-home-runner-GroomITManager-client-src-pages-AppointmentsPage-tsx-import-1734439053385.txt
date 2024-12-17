@@ -1,0 +1,56 @@
+[plugin:vite:react-babel] /home/runner/GroomITManager/client/src/pages/AppointmentsPage.tsx: 'import' and 'export' may only appear at the top level. (103:2)
+  106 |   const [openEdit, setOpenEdit] = useState(false);
+/home/runner/GroomITManager/client/src/pages/AppointmentsPage.tsx:103:2
+101|  
+102|  export default function AppointmentsPage() {
+103|    import { useState, useEffect } from "react";
+   |    ^
+104|  const [openNewForm, setOpenNewForm] = useState(false);
+105|    const [openDetails, setOpenDetails] = useState(false);
+    at constructor (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:359:19)
+    at TypeScriptParserMixin.raise (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:3266:19)
+    at TypeScriptParserMixin.parseStatementContent (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:12360:18)
+    at TypeScriptParserMixin.parseStatementContent (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:9163:18)
+    at TypeScriptParserMixin.parseStatementLike (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:12257:17)
+    at TypeScriptParserMixin.parseStatementListItem (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:12237:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:12810:61)
+    at TypeScriptParserMixin.parseBlockBody (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:12803:10)
+    at TypeScriptParserMixin.parseBlock (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:12791:10)
+    at TypeScriptParserMixin.parseFunctionBody (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:11634:24)
+    at TypeScriptParserMixin.parseFunctionBodyAndFinish (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:11620:10)
+    at TypeScriptParserMixin.parseFunctionBodyAndFinish (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:8904:18)
+    at /home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:12935:12
+    at TypeScriptParserMixin.withSmartMixTopicForbiddingContext (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:11928:14)
+    at TypeScriptParserMixin.parseFunction (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:12934:10)
+    at TypeScriptParserMixin.parseExportDefaultExpression (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:13389:19)
+    at TypeScriptParserMixin.parseExportDefaultExpression (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:9127:18)
+    at TypeScriptParserMixin.parseExport (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:13315:25)
+    at TypeScriptParserMixin.parseExport (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:9110:20)
+    at TypeScriptParserMixin.parseStatementContent (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:12370:27)
+    at TypeScriptParserMixin.parseStatementContent (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:9163:18)
+    at TypeScriptParserMixin.parseStatementLike (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:12257:17)
+    at TypeScriptParserMixin.parseModuleItem (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:12234:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:12810:36)
+    at TypeScriptParserMixin.parseBlockBody (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:12803:10)
+    at TypeScriptParserMixin.parseProgram (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:12131:10)
+    at TypeScriptParserMixin.parseTopLevel (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:12121:25)
+    at TypeScriptParserMixin.parse (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:13929:10)
+    at TypeScriptParserMixin.parse (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:9777:18)
+    at parse (/home/runner/GroomITManager/node_modules/@babel/parser/lib/index.js:13963:38)
+    at parser (/home/runner/GroomITManager/node_modules/@babel/core/lib/parser/index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (/home/runner/GroomITManager/node_modules/@babel/core/lib/transformation/normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (/home/runner/GroomITManager/node_modules/@babel/core/lib/transformation/index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (/home/runner/GroomITManager/node_modules/@babel/core/lib/transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (/home/runner/GroomITManager/node_modules/gensync/index.js:261:32)
+    at /home/runner/GroomITManager/node_modules/gensync/index.js:273:13
+    at async.call.result.err.err (/home/runner/GroomITManager/node_modules/gensync/index.js:223:11)
+    at /home/runner/GroomITManager/node_modules/gensync/index.js:189:28
+    at /home/runner/GroomITManager/node_modules/@babel/core/lib/gensync-utils/async.js:67:7
+    at /home/runner/GroomITManager/node_modules/gensync/index.js:113:33
+    at step (/home/runner/GroomITManager/node_modules/gensync/index.js:287:14)
+    at /home/runner/GroomITManager/node_modules/gensync/index.js:273:13
+    at async.call.result.err.err (/home/runner/GroomITManager/node_modules/gensync/index.js:223:11
