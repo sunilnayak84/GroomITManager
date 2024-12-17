@@ -41,13 +41,15 @@ export default function CustomersPage() {
   const formatDate = (date: FirestoreTimestamp | string | null | undefined) => {
     if (!date) return 'N/A';
     try {
-      if (typeof date === 'string' && date.trim()) {
+      if (typeof date === 'string') {
         const parsedDate = new Date(date);
         return !isNaN(parsedDate.getTime()) ? parsedDate.toLocaleDateString() : 'N/A';
       }
-      if (date && typeof date === 'object' && 'seconds' in date && date.seconds) {
-        const timestamp = new Date(date.seconds * 1000);
-        return timestamp.toLocaleDateString();
+      if (date instanceof Timestamp) {
+        return date.toDate().toLocaleDateString();
+      }
+      if (date && typeof date === 'object' && 'seconds' in date) {
+        return new Date(date.seconds * 1000).toLocaleDateString();
       }
       return 'N/A';
     } catch (error) {
