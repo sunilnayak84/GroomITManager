@@ -20,10 +20,11 @@ export function formatIndianCurrency(amount: number): string {
 /**
  * Formats a date in Indian format (DD/MM/YYYY)
  */
-export function formatIndianDate(date: Date | string | null): string {
+export function formatIndianDate(date: Date | string | null | undefined): string {
   if (!date) return 'Never';
   try {
     const dateObj = typeof date === 'string' ? new Date(date) : date;
+    if (!(dateObj instanceof Date) || isNaN(dateObj.getTime())) return 'Never';
     return format(dateObj, 'dd/MM/yyyy');
   } catch (error) {
     console.error('Error formatting date:', error);
