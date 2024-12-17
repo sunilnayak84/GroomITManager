@@ -204,7 +204,7 @@ export function RoleManagement() {
                   fallback={<div className="text-sm text-muted-foreground">Permission details hidden</div>}
                 >
                   <div className="text-sm text-muted-foreground mb-4">
-                    {Array.isArray(role.permissions) && `${role.permissions.length} permissions granted`}
+                    {/* Permission count shown in CardDescription */}
                   </div>
                 </ProtectedElement>
                 {role.name !== 'admin' && (
