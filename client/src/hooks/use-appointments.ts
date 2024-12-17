@@ -369,10 +369,15 @@ export function useAppointments() {
           status: data.status || currentData.status,
           updatedAt: Timestamp.fromDate(new Date()),
           notes: data.notes !== undefined ? data.notes : currentData.notes,
-          cancellationReason: data.status === 'cancelled' ? data.cancellationReason : null
+          cancellationReason: data.status === 'cancelled' ? data.cancellationReason : null,
+          services: data.services || currentData.services,
+          groomerId: data.groomerId || currentData.groomerId,
+          date: data.date ? Timestamp.fromDate(data.date) : currentData.date,
+          totalDuration: data.totalDuration || currentData.totalDuration,
+          totalPrice: data.totalPrice || currentData.totalPrice
         };
 
-        await setDoc(appointmentRef, updateData);
+        await setDoc(appointmentRef, updateData, { merge: true });
         console.log('Appointment updated successfully');
         return true;
       } catch (error) {
