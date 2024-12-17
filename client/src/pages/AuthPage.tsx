@@ -29,6 +29,11 @@ export default function AuthPage() {
   const [resetEmail, setResetEmail] = useState("");
   const [showReset, setShowReset] = useState(false);
 
+  const resetForms = () => {
+    loginForm.reset();
+    registerForm.reset();
+  };
+
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -43,6 +48,7 @@ export default function AuthPage() {
       name: "",
       email: "",
       password: "",
+      phone: "",
     },
   });
 
@@ -236,7 +242,10 @@ export default function AuthPage() {
               <div className="mt-4 text-center space-y-2">
                 <Button
                   variant="link"
-                  onClick={() => setIsLogin(!isLogin)}
+                  onClick={() => {
+                  setIsLogin(!isLogin);
+                  resetForms();
+                }}
                   className="text-sm"
                 >
                   {isLogin ? "Need an account? Register" : "Already have an account? Login"}
