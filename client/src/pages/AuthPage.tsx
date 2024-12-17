@@ -40,17 +40,7 @@ export default function AuthPage() {
       
     } catch (error) {
       console.error("Login error:", error);
-      let errorMessage = "Failed to login. Please try again.";
-      
-      if (error instanceof Error) {
-        if (error.message.includes('user-disabled')) {
-          errorMessage = "This account has been disabled. Please contact an administrator.";
-        } else if (error.message.includes('user-not-found')) {
-          errorMessage = "User not found. Please check your credentials.";
-        } else if (error.message.includes('wrong-password')) {
-          errorMessage = "Incorrect password. Please try again.";
-        }
-      }
+      const errorMessage = error instanceof Error ? error.message : "Failed to login. Please try again.";
       
       toast({
         variant: "destructive",

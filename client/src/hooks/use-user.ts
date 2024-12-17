@@ -70,8 +70,12 @@ async function loginWithFirebase(credentials: { email: string; password: string 
     ).catch(error => {
       if (error.code === 'auth/user-disabled') {
         throw new Error('This account has been disabled. Please contact an administrator.');
+      } else if (error.code === 'auth/wrong-password') {
+        throw new Error('Invalid password');
+      } else if (error.code === 'auth/user-not-found') {
+        throw new Error('User not found');
       }
-      throw error;
+      throw new Error('Login failed. Please try again.');
     });
     
     // Get custom claims from Firebase user
