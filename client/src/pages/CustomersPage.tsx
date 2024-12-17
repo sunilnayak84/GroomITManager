@@ -39,19 +39,19 @@ export default function CustomersPage() {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const formatDate = (date: FirestoreTimestamp | string | null | undefined) => {
-    if (!date) return 'N/A';
+    if (!date) return 'Never';
     try {
+      if (typeof date === 'string') {
+        const parsedDate = new Date(date);
+        return !isNaN(parsedDate.getTime()) ? parsedDate.toLocaleDateString() : 'Never';
+      }
       if (date instanceof Timestamp) {
         return date.toDate().toLocaleDateString();
       }
-      if (typeof date === 'string') {
-        const parsedDate = new Date(date);
-        return !isNaN(parsedDate.getTime()) ? parsedDate.toLocaleDateString() : 'Invalid Date';
-      }
-      return 'N/A';
+      return 'Never';
     } catch (error) {
       console.error('Error formatting date:', error);
-      return 'Invalid Date';
+      return 'Never';
     }
   };
   const [showPetDetails, setShowPetDetails] = useState(false);
