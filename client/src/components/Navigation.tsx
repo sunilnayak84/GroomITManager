@@ -30,6 +30,7 @@ export default function Navigation() {
 
   const settingsLinks = [
     { href: "/settings/working-hours", icon: Calendar, label: "Working Hours" },
+    { href: "/settings/inventory-categories", icon: Package, label: "Inventory Categories" },
     ...(user?.role === 'admin' || user?.role === 'manager' ? [
       { href: "/settings/roles", icon: Shield, label: "Role Management" }
     ] : []),
