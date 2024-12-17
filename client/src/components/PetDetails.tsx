@@ -31,11 +31,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
           <p className="text-muted-foreground">
             {pet.type} • {pet.breed}
           </p>
-          {pet.notes && (
-            <p className="text-sm text-muted-foreground mt-1">
-              "{pet.notes}"
-            </p>
-          )}
+          
         </div>
       </div>
 
