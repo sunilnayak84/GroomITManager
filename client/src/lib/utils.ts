@@ -21,7 +21,7 @@ export function formatIndianCurrency(amount: number): string {
  * Formats a date in Indian format (DD/MM/YYYY)
  */
 export function formatIndianDate(date: Date | string | null): string {
-  if (!date) return 'N/A';
+  if (!date) return 'Never';
   try {
     const dateObj = typeof date === 'string' ? new Date(date) : date;
     return format(dateObj, 'dd/MM/yyyy');
