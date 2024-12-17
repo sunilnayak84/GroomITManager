@@ -3,7 +3,7 @@ import {
   collection, getDocs, doc, runTransaction, increment, 
   addDoc, serverTimestamp, query, updateDoc, deleteDoc, 
   getDoc, where, Timestamp, FieldValue, WithFieldValue,
-  DocumentData
+  DocumentData, serverTimestamp as firestoreServerTimestamp
 } from 'firebase/firestore';
 import { db } from "../lib/firebase";
 import { petsCollection, customersCollection } from "../lib/firestore";
@@ -254,7 +254,7 @@ export function usePets() {
           ...(('notes' in updateData) && { notes: updateData.notes }),
           ...(imageUrl && { image: imageUrl })
         };
-        updates.updatedAt = serverTimestamp();
+        updates.updatedAt = firestoreServerTimestamp();
 
         await updateDoc(petRef, updates);
         return { success: true };
