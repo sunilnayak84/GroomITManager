@@ -50,6 +50,7 @@ export default function AuthPage() {
       password: "",
       phone: "",
     },
+    mode: "onChange"
   });
 
   async function handleLogin(data: z.infer<typeof loginSchema>) {
@@ -147,7 +148,13 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input {...field} />
+                            <Input 
+                              type="text"
+                              value={field.value}
+                              onChange={field.onChange}
+                              onBlur={field.onBlur}
+                              name={field.name}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -183,7 +190,13 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Name</FormLabel>
                           <FormControl>
-                            <Input {...field} />
+                            <Input 
+                              type="text"
+                              value={field.value}
+                              onChange={field.onChange}
+                              onBlur={field.onBlur}
+                              name={field.name}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -197,7 +210,13 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input {...field} />
+                            <Input 
+                              type="text"
+                              value={field.value}
+                              onChange={field.onChange}
+                              onBlur={field.onBlur}
+                              name={field.name}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
