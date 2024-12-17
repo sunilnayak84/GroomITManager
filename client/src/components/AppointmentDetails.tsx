@@ -300,16 +300,7 @@ const AppointmentDetails = ({
                   "Update Appointment"
                 )}
               </Button>
-              <ProtectedElement requiredPermissions="appointments.edit">
-                <Button
-                  variant="outline"
-                  onClick={onEdit}
-                  className="ml-2"
-                >
-                  <Pencil className="h-4 w-4 mr-2" />
-                  Edit
-                </Button>
-              </ProtectedElement>
+              
             </div>
           </form>
         </Form>
