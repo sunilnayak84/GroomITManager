@@ -212,27 +212,27 @@ export default function AppointmentsPage() {
                 </DialogHeader>
                 <PetDetails 
                   pet={{
-                    id: row.petId,
-                    name: row.pet.name,
-                    type: 'dog',
-                    breed: row.pet.breed,
-                    gender: 'unknown',
-                    age: null,
-                    image: row.pet.image,
-                    dateOfBirth: null,
-                    weight: null,
-                    weightUnit: 'kg',
-                    notes: null,
-                    createdAt: new Date().toISOString(),
-                    updatedAt: null,
-                    customerId: row.customer?.id || 'unknown',
-                    firebaseId: null,
-                    owner: {
-                      id: row.customer?.id || 'unknown',
-                      name: `${row.customer?.firstName} ${row.customer?.lastName}`,
+                    id: pet.id,
+                    name: pet.name,
+                    type: pet.type || 'dog',
+                    breed: pet.breed,
+                    gender: pet.gender || 'unknown',
+                    age: pet.age || null,
+                    image: pet.image,
+                    dateOfBirth: pet.dateOfBirth || null,
+                    weight: pet.weight || null,
+                    weightUnit: pet.weightUnit || 'kg',
+                    notes: pet.notes || null,
+                    createdAt: pet.createdAt || new Date().toISOString(),
+                    updatedAt: pet.updatedAt || null,
+                    customerId: pet.customerId || 'unknown',
+                    firebaseId: pet.firebaseId || null,
+                    owner: pet.owner || {
+                      id: 'unknown',
+                      name: 'Unknown',
                       email: null
                     },
-                    submissionId: undefined
+                    submissionId: pet.submissionId
                   }}
                   formatDate={(date) => date ? new Date(date).toLocaleDateString() : 'Not specified'}
                 />
