@@ -178,6 +178,29 @@ export type FirestoreUser = z.infer<typeof userSchema>;
 // Helper type for Firebase compatibility
 export type FirestoreCustomer = z.infer<typeof customerSchema>;
 
+export interface FirestorePet {
+  id: string;
+  firebaseId: string | null;
+  name: string;
+  type: "dog" | "cat" | "bird" | "fish" | "other";
+  breed: string;
+  customerId: string;
+  dateOfBirth: string | null;
+  age: number | null;
+  gender: "male" | "female" | "other" | "unknown" | null;
+  weight: number | null;
+  weightUnit: "kg" | "lbs";
+  notes: string | null;
+  image: string | null;
+  createdAt: FirestoreTimestamp | string;
+  updatedAt: FirestoreTimestamp | string | null;
+  owner: {
+    id: string;
+    name: string;
+    email: string | null;
+  } | null;
+}
+
 export interface Customer {
   id: string;
   firstName: string;
