@@ -58,9 +58,8 @@ export function NotificationsList({ userId }: NotificationsListProps) {
                 )}
                 onClick={() => {
                   handleNotificationClick(notification.id);
-                  // Handle navigation based on notification type
                   if (notification.appointmentId) {
-                    setLocation(`/appointments?id=${notification.appointmentId}`);
+                    window.location.href = `/appointments/${notification.appointmentId}`;
                   }
                 }}
               >

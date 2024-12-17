@@ -105,6 +105,20 @@ export default function AppointmentsPage() {
   const [openEdit, setOpenEdit] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithRelations | null>(null);
   const [view, setView] = useState<'list' | 'calendar'>('list');
+  
+  // Handle route parameter for appointment ID
+  React.useEffect(() => {
+    const pathParts = window.location.pathname.split('/');
+    const appointmentId = pathParts[pathParts.length - 1];
+    
+    if (appointmentId && appointments) {
+      const appointment = appointments.find(apt => apt.id === appointmentId);
+      if (appointment) {
+        setSelectedAppointment(appointment);
+        setOpenDetails(true);
+      }
+    }
+  }, [appointments]);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [dateRange, setDateRange] = useState<'day' | 'week' | 'month'>('day'); // Added date range state
