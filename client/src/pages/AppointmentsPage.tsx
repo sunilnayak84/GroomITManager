@@ -260,7 +260,7 @@ export default function AppointmentsPage() {
               <h1 className="text-2xl font-bold">Appointments</h1>
               <p className="text-white/80">Manage your pet grooming appointments</p>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4">
               <div className="flex rounded-lg bg-white/10 p-1">
                 <Button
                   variant="ghost"
@@ -281,7 +281,7 @@ export default function AppointmentsPage() {
                   Calendar
                 </Button>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4">
                 <Select
                   value={statusFilter}
                   onValueChange={(value) => setStatusFilter(value)}
