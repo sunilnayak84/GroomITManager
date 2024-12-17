@@ -27,15 +27,27 @@ interface FirebaseUser {
 }
 
 export async function updateUserStatus(userId: string, disabled: boolean) {
-  const response = await fetch(`/api/users/${userId}/disable`, {
+  const auth = getAuth();
+  if (!auth.currentUser) {
+    throw new Error('User not authenticated');
+  }
+  
+  const token = await auth.currentUser.getIdToken(true);
+  const port = import.meta.env.VITE_SERVER_PORT || '3000';
+  const response = await fetch(`${window.location.protocol}//${window.location.hostname}:${port}/api/users/${userId}/disable`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${await getAuth().currentUser?.getIdToken()}`
+      'Authorization': `Bearer ${token}`,
     },
-    body: JSON.stringify({ disabled })
+    body: JSON.stringify({ disabled }),
+    credentials: 'include'
   });
-  if (!response.ok) throw new Error('Failed to update user status');
+  
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ message: 'Failed to update user status' }));
+    throw new Error(error.message || 'Failed to update user status');
+  }
   return response.json();
 }
 
