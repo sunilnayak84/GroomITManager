@@ -65,7 +65,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
       notes: appointment.notes || "",
       appointmentDate: appointmentDate.toISOString().split('T')[0],
       appointmentTime: appointmentDate.toTimeString().slice(0, 5),
-      services: appointment.service?.map(s => s.service_id) || [],
+      services: appointment.services || [],
       groomerId: appointment.groomerId
     },
   });
