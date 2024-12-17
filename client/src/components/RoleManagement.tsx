@@ -203,12 +203,8 @@ export function RoleManagement() {
                   requiredPermissions={['view_roles', 'manage_roles']} 
                   fallback={<div className="text-sm text-muted-foreground">Permission details hidden</div>}
                 >
-                  <div className="space-y-2">
-                    {Array.isArray(role.permissions) && role.permissions.map(permission => (
-                      <div key={permission} className="text-sm text-muted-foreground">
-                        • {permission.replace(/_/g, ' ')}
-                      </div>
-                    ))}
+                  <div className="text-sm text-muted-foreground mb-4">
+                    {Array.isArray(role.permissions) && `${role.permissions.length} permissions granted`}
                   </div>
                 </ProtectedElement>
                 {role.name !== 'admin' && (
