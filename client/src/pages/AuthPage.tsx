@@ -1,3 +1,5 @@
+
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUser } from "../hooks/use-user";
@@ -7,52 +9,108 @@ import { Button } from "@/components/ui/button";
 import { PawPrint } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
+import { auth } from "@/lib/firebase";
+import { createUserWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
+
+const loginSchema = z.object({
+  email: z.string().email("Invalid email format"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+const registerSchema = loginSchema.extend({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+});
 
 export default function AuthPage() {
   const { login } = useUser();
   const { toast } = useToast();
-  const form = useForm<{ email: string; password: string }>({
-    resolver: zodResolver(
-      z.object({
-        email: z.string().email("Invalid email format"),
-        password: z.string().min(6, "Password must be at least 6 characters"),
-      })
-    ),
+  const [isLogin, setIsLogin] = useState(true);
+  const [resetEmail, setResetEmail] = useState("");
+  const [showReset, setShowReset] = useState(false);
+
+  const loginForm = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  async function onSubmit(data: { email: string; password: string }) {
+  const registerForm = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
+  });
+
+  async function handleLogin(data: z.infer<typeof loginSchema>) {
     try {
-      console.log('Attempting login...');
-      form.clearErrors();
       await login(data);
-      
       toast({
         title: "Success",
         description: "Logged in successfully",
       });
-      
-      // Use window.location.reload() instead of changing href to properly handle SPA navigation
       window.location.reload();
-      
     } catch (error) {
-      console.error("Login error:", error);
-      const errorMessage = error instanceof Error ? error.message : "Failed to login. Please try again.";
-      
-      // Set form error
-      form.setError('email', {
-        type: 'manual',
-        message: errorMessage
-      });
-      
+      const errorMessage = error instanceof Error ? error.message : "Failed to login";
+      loginForm.setError('email', { type: 'manual', message: errorMessage });
       toast({
         variant: "destructive",
         title: "Login Error",
         description: errorMessage,
-        duration: 5000,
+      });
+    }
+  }
+
+  async function handleRegister(data: z.infer<typeof registerSchema>) {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+      
+      // Set default role for new user
+      const idToken = await userCredential.user.getIdToken();
+      
+      await fetch(`${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_SERVER_PORT}/api/users/${userCredential.user.uid}/role`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`
+        },
+        body: JSON.stringify({ role: 'User' })
+      });
+
+      toast({
+        title: "Success",
+        description: "Account created successfully",
+      });
+      
+      // Auto login after registration
+      await login({ email: data.email, password: data.password });
+      window.location.reload();
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to register";
+      toast({
+        variant: "destructive",
+        title: "Registration Error",
+        description: errorMessage,
+      });
+    }
+  }
+
+  async function handleResetPassword() {
+    try {
+      await sendPasswordResetEmail(auth, resetEmail);
+      toast({
+        title: "Success",
+        description: "Password reset email sent",
+      });
+      setShowReset(false);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to send reset email",
       });
     }
   }
@@ -66,41 +124,134 @@ export default function AuthPage() {
             <h1 className="text-2xl font-bold">GroomIT</h1>
           </div>
 
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          {!showReset ? (
+            <>
+              {isLogin ? (
+                <Form {...loginForm}>
+                  <form onSubmit={loginForm.handleSubmit(handleLogin)} className="space-y-4">
+                    <FormField
+                      control={loginForm.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                    <FormField
+                      control={loginForm.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Password</FormLabel>
+                          <FormControl>
+                            <Input type="password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-              <Button type="submit" className="w-full">
-                Login
+                    <Button type="submit" className="w-full">
+                      Login
+                    </Button>
+                  </form>
+                </Form>
+              ) : (
+                <Form {...registerForm}>
+                  <form onSubmit={registerForm.handleSubmit(handleRegister)} className="space-y-4">
+                    <FormField
+                      control={registerForm.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={registerForm.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={registerForm.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Password</FormLabel>
+                          <FormControl>
+                            <Input type="password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <Button type="submit" className="w-full">
+                      Register
+                    </Button>
+                  </form>
+                </Form>
+              )}
+
+              <div className="mt-4 text-center space-y-2">
+                <Button
+                  variant="link"
+                  onClick={() => setIsLogin(!isLogin)}
+                  className="text-sm"
+                >
+                  {isLogin ? "Need an account? Register" : "Already have an account? Login"}
+                </Button>
+                <Button
+                  variant="link"
+                  onClick={() => setShowReset(true)}
+                  className="text-sm block mx-auto"
+                >
+                  Forgot Password?
+                </Button>
+              </div>
+            </>
+          ) : (
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold">Reset Password</h2>
+              <Input
+                type="email"
+                placeholder="Enter your email"
+                value={resetEmail}
+                onChange={(e) => setResetEmail(e.target.value)}
+              />
+              <Button onClick={handleResetPassword} className="w-full">
+                Send Reset Link
               </Button>
-            </form>
-          </Form>
+              <Button
+                variant="link"
+                onClick={() => setShowReset(false)}
+                className="block mx-auto"
+              >
+                Back to Login
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 
