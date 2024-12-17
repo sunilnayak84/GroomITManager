@@ -26,6 +26,14 @@ function timestampToString(timestamp: Timestamp | null | undefined): string | nu
 
 // Helper function to parse Firestore pet data
 function parseFirestorePet(id: string, data: FirestorePet): Pet {
+  const createdAt = data.createdAt instanceof Timestamp 
+    ? data.createdAt.toDate().toISOString()
+    : new Date().toISOString();
+    
+  const updatedAt = data.updatedAt instanceof Timestamp
+    ? data.updatedAt.toDate().toISOString()
+    : null;
+
   return {
     id,
     firebaseId: data.firebaseId,
@@ -40,8 +48,8 @@ function parseFirestorePet(id: string, data: FirestorePet): Pet {
     weightUnit: data.weightUnit || 'kg',
     notes: data.notes || null,
     image: data.image || null,
-    createdAt: timestampToString(data.createdAt) ?? new Date().toISOString(),
-    updatedAt: timestampToString(data.updatedAt),
+    createdAt,
+    updatedAt,
     owner: data.owner || null
   };
 }
