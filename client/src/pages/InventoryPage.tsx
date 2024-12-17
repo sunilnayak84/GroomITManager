@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { Plus, Trash2, Edit, History } from "lucide-react";
 import { useInventory } from "@/hooks/use-inventory";
+import { useCategories } from "@/hooks/use-categories";
 import {
   Dialog,
   DialogContent,
@@ -67,6 +68,7 @@ export default function InventoryPage() {
     deleteInventoryItem, 
     getUsageHistory 
   } = useInventory();
+  const { categories } = useCategories();
   
   const [showItemDialog, setShowItemDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null);
