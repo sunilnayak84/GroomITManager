@@ -222,7 +222,8 @@ export default function AppointmentForm({ setOpen, initialDate }: AppointmentFor
       }
 
       // Check for overlapping appointments
-      if (!isTimeSlotAvailable(appointmentStartTime, groomerId, selectedService.duration)) {
+      const timeSlotValidation = isTimeSlotAvailable(appointmentStartTime, groomerId, selectedService.duration);
+      if (!timeSlotValidation) {
         // Find the conflicting appointment for a more specific error message
         const conflictingAppointment = appointments?.find(a => {
           if (a.groomerId !== groomerId) return false;
