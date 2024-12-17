@@ -116,20 +116,48 @@ export function useAppointments() {
             const petDocRef = doc(db, 'pets', rawData.petId);
             const petDoc = await getDoc(petDocRef);
             
-            let petData = {
-              name: 'Unknown Pet',
-              breed: 'Unknown Breed',
-              image: null as string | null,
-              customerId: 'unknown'
-            };
+            let petData = null;
 
             if (petDoc.exists()) {
-              const rawPetData = petDoc.data();
+              const rawPetData = petDoc.data() as FirestorePet;
               petData = {
+                id: rawPetData.id || rawData.petId,
+                firebaseId: rawPetData.firebaseId,
                 name: rawPetData.name || 'Unknown Pet',
+                type: rawPetData.type || 'dog',
                 breed: rawPetData.breed || 'Unknown Breed',
-                image: rawPetData.image || null,
-                customerId: rawPetData.customerId || 'unknown'
+                customerId: rawPetData.customerId,
+                dateOfBirth: rawPetData.dateOfBirth,
+                age: rawPetData.age,
+                gender: rawPetData.gender,
+                weight: rawPetData.weight,
+                weightUnit: rawPetData.weightUnit || 'kg',
+                notes: rawPetData.notes,
+                image: rawPetData.image,
+                createdAt: timestampToString(rawPetData.createdAt),
+                updatedAt: timestampToString(rawPetData.updatedAt),
+                owner: rawPetData.owner
+              };
+            }
+
+            if (!petData) {
+              petData = {
+                id: rawData.petId,
+                firebaseId: null,
+                name: 'Unknown Pet',
+                type: 'dog',
+                breed: 'Unknown Breed',
+                customerId: 'unknown',
+                dateOfBirth: null,
+                age: null,
+                gender: null,
+                weight: null,
+                weightUnit: 'kg',
+                notes: null,
+                image: null,
+                createdAt: new Date().toISOString(),
+                updatedAt: null,
+                owner: null
               };
             }
 
@@ -210,11 +238,7 @@ export function useAppointments() {
               productsUsed: rawData.productsUsed,
               createdAt: timestampToISOString(rawData.createdAt),
               updatedAt: timestampToISOString(rawData.updatedAt),
-              pet: {
-                name: petData.name,
-                breed: petData.breed,
-                image: petData.image
-              },
+              pet: petData,
               customer: {
                 firstName: customerData.firstName,
                 lastName: customerData.lastName
