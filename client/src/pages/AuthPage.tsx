@@ -40,6 +40,7 @@ export default function AuthPage() {
       email: "",
       password: "",
     },
+    mode: "onChange"
   });
 
   const registerForm = useForm<z.infer<typeof registerSchema>>({
@@ -150,7 +151,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input {...register(field.name)} />
+                            <Input {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -186,7 +187,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Name</FormLabel>
                           <FormControl>
-                            <Input {...register(field.name)} />
+                            <Input {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -200,7 +201,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input {...register(field.name)} />
+                            <Input {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
