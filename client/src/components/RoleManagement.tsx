@@ -219,8 +219,10 @@ export function RoleManagement() {
                           }}
                           disabled={isUpdatingUserRole}
                         >
-                          {roles.map(role => (
-                            <option key={role} value={role}>{role}</option>
+                          {roles?.map(role => (
+                            <option key={role.name} value={role.name}>
+                              {role.name}
+                            </option>
                           ))}
                         </select>
                       </div>
