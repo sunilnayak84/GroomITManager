@@ -41,14 +41,16 @@ export default function CustomersPage() {
   const formatDate = (date: FirestoreTimestamp | string | null | undefined) => {
     if (!date) return 'Never';
     try {
-      if (typeof date === 'string' && date.trim()) {
+      if (typeof date === 'string') {
         const parsedDate = new Date(date);
-        return !isNaN(parsedDate.getTime()) ? parsedDate.toLocaleDateString() : 'Never';
+        if (!isNaN(parsedDate.getTime())) {
+          return parsedDate.toLocaleDateString();
+        }
       }
       if (date instanceof Timestamp) {
         return date.toDate().toLocaleDateString();
       }
-      return 'Never';
+      return date ? new Date(date).toLocaleDateString() : 'Never';
     } catch (error) {
       console.error('Error formatting date:', error);
       return 'Never';
