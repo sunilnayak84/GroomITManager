@@ -145,17 +145,19 @@ async function updateUserRole(userId: string, role: string): Promise<void> {
   }
 
   const token = await auth.currentUser.getIdToken(true);
-  const response = await fetch(`/api/users/${userId}/role`, {
+  const port = import.meta.env.VITE_SERVER_PORT || '3000';
+  const response = await fetch(`${window.location.protocol}//${window.location.hostname}:${port}/api/users/${userId}/role`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ role }),
+    credentials: 'include'
   });
 
   if (!response.ok) {
-    const error = await response.json();
+    const error = await response.json().catch(() => ({ message: 'Failed to update user role' }));
     throw new Error(error.message || 'Failed to update user role');
   }
 }
