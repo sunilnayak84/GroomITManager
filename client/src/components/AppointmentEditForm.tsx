@@ -63,12 +63,10 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
   const onSubmit = async (data: EditAppointmentForm) => {
     try {
       setIsSubmitting(true);
-      const combinedDate = new Date(`${data.appointmentDate}T${data.appointmentTime}`);
-      
       await updateAppointment({
         id: appointment.id,
         status: data.status,
-        notes: data.notes || null,
+        notes: data.notes || "",
         appointmentDate: data.appointmentDate,
         appointmentTime: data.appointmentTime,
         totalDuration: appointment.totalDuration,
@@ -99,6 +97,41 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
           Update the appointment details below
         </DialogDescription>
       </DialogHeader>
+
+      <div className="space-y-4 py-4">
+        <div className="flex items-center space-x-4">
+          <div className="flex-shrink-0">
+            <img
+              src={appointment.pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${appointment.pet.name}`}
+              alt={appointment.pet.name}
+              className="h-12 w-12 rounded-full"
+            />
+          </div>
+          <div>
+            <h4 className="text-sm font-medium">{appointment.pet.name}</h4>
+            <p className="text-sm text-gray-500">{appointment.pet.breed}</p>
+          </div>
+        </div>
+
+        <div>
+          <h4 className="text-sm font-medium">Customer</h4>
+          <p className="text-sm text-gray-500">
+            {appointment.customer.firstName} {appointment.customer.lastName}
+          </p>
+        </div>
+
+        <div>
+          <h4 className="text-sm font-medium">Services</h4>
+          <div className="mt-1 space-y-1">
+            {appointment.service?.map((service, index) => (
+              <div key={index} className="text-sm text-gray-500">
+                {service.name} - {service.duration}min - ₹{service.price}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
