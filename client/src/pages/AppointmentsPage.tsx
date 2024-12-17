@@ -120,9 +120,27 @@ export default function AppointmentsPage() {
       filtered = filtered.filter(app => app.status === statusFilter);
     }
 
-    // Apply date range filter (This needs implementation based on your date logic)
-    // Example:  filter by date based on 'dateRange' state
-    // filtered = filtered.filter(app => isWithinDateRange(app.date, dateRange));
+    // Apply date range filter
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
+    filtered = filtered.filter(app => {
+      const appointmentDate = new Date(app.date);
+      
+      switch (dateRange) {
+        case 'day':
+          return appointmentDate >= startOfDay && 
+                 appointmentDate < new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000);
+        case 'week':
+          const endOfWeek = new Date(startOfDay.getTime() + 7 * 24 * 60 * 60 * 1000);
+          return appointmentDate >= startOfDay && appointmentDate < endOfWeek;
+        case 'month':
+          const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+          return appointmentDate >= startOfDay && appointmentDate <= endOfMonth;
+        default:
+          return true;
+      }
+    });
 
     // Sort by date
     return filtered.sort((a, b) => {
