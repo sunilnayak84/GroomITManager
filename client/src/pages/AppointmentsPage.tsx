@@ -212,23 +212,23 @@ export default function AppointmentsPage() {
                 </DialogHeader>
                 <PetDetails 
                   pet={{
-                    id: pet.id,
-                    name: pet.name,
-                    type: pet.type || 'dog',
-                    breed: pet.breed,
-                    gender: pet.gender,
-                    age: pet.age,
-                    image: pet.image,
-                    dateOfBirth: pet.dateOfBirth,
-                    weight: pet.weight,
-                    weightUnit: pet.weightUnit,
-                    notes: pet.notes,
-                    createdAt: pet.createdAt,
-                    updatedAt: pet.updatedAt,
-                    customerId: pet.customerId,
-                    firebaseId: pet.firebaseId,
-                    owner: pet.owner,
-                    submissionId: pet.submissionId
+                    id: String(appointment.pet.id),
+                    name: appointment.pet.name,
+                    type: appointment.pet.type || 'dog',
+                    breed: appointment.pet.breed,
+                    gender: appointment.pet.gender || 'unknown',
+                    age: appointment.pet.age || null,
+                    image: appointment.pet.image,
+                    dateOfBirth: appointment.pet.dateOfBirth || null,
+                    weight: appointment.pet.weight || null,
+                    weightUnit: appointment.pet.weightUnit || 'kg',
+                    notes: appointment.pet.notes || null,
+                    createdAt: appointment.pet.createdAt || new Date().toISOString(),
+                    updatedAt: appointment.pet.updatedAt || null,
+                    customerId: String(appointment.pet.customerId),
+                    firebaseId: appointment.pet.firebaseId || null,
+                    owner: appointment.pet.owner || null,
+                    submissionId: appointment.pet.submissionId || undefined
                   }}
                   formatDate={(date) => date ? new Date(date).toLocaleDateString() : 'Not specified'}
                 />
