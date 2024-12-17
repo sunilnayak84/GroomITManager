@@ -303,25 +303,30 @@ export function PetForm({
           <FormField
             control={form.control}
             name="type"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Pet Type*</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select pet type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="dog">Dog</SelectItem>
-                    <SelectItem value="cat">Cat</SelectItem>
-                    <SelectItem value="bird">Bird</SelectItem>
-                    <SelectItem value="fish">Fish</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </FormItem>
-            )}
+            render={({ field }) => {
+              const { breeds } = useBreeds();
+              const uniqueTypes = [...new Set(breeds?.map(breed => breed.type) || [])].sort();
+              
+              return (
+                <FormItem>
+                  <FormLabel>Pet Type*</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select pet type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {uniqueTypes.map((type) => (
+                        <SelectItem key={type} value={type} className="capitalize">
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              );
+            }}
           />
 
           <FormField
