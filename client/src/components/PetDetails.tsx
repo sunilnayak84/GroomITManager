@@ -36,6 +36,11 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
           <p className="text-muted-foreground">
             {pet.type} • {pet.breed}
           </p>
+          {pet.notes && (
+            <p className="text-sm text-muted-foreground mt-1">
+              "{pet.notes}"
+            </p>
+          )}
         </div>
       </div>
 
@@ -45,8 +50,9 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
           <div className="space-y-2">
             <p><span className="text-muted-foreground">Type:</span> {pet.type}</p>
             <p><span className="text-muted-foreground">Breed:</span> {pet.breed}</p>
-            <p><span className="text-muted-foreground">Gender:</span> {pet.gender || 'Not specified'}</p>
-            <p><span className="text-muted-foreground">Age:</span> {pet.age || 'Not specified'}</p>
+            <p><span className="text-muted-foreground">Gender:</span> {pet.gender ? pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1) : 'Not specified'}</p>
+            <p><span className="text-muted-foreground">Age:</span> {pet.age ? `${pet.age} years` : 'Not specified'}</p>
+            <p><span className="text-muted-foreground">Weight:</span> {pet.weight ? `${pet.weight} ${pet.weightUnit}` : 'Not specified'}</p>
           </div>
         </div>
 
@@ -54,8 +60,9 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
           <h3 className="font-semibold text-lg">Additional Information</h3>
           <div className="space-y-2">
             <p><span className="text-muted-foreground">Date of Birth:</span> {formatDate(pet.dateOfBirth)}</p>
-            <p><span className="text-muted-foreground">Weight:</span> {pet.weight ? `${pet.weight} ${pet.weightUnit}` : 'Not specified'}</p>
             <p><span className="text-muted-foreground">Owner:</span> {pet.owner?.name || 'Not specified'}</p>
+            <p><span className="text-muted-foreground">Created:</span> {formatDate(pet.createdAt)}</p>
+            <p><span className="text-muted-foreground">Last Updated:</span> {pet.updatedAt ? formatDate(pet.updatedAt) : 'Never'}</p>
           </div>
         </div>
       </div>
