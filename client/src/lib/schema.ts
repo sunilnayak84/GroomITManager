@@ -305,6 +305,11 @@ export type AppointmentWithRelations = {
   customer: {
     firstName: string;
     lastName: string;
+    email: string | null;
+    phone: string | null;
+    address: string | null;
+    gender: string | null;
+    petCount: number;
   };
   groomer: {
     name: string;
