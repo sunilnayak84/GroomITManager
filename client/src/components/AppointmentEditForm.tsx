@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useStaff } from "@/hooks/use-staff";
@@ -70,12 +69,36 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
     },
   });
 
+  // Placeholder for the actual isTimeSlotAvailable function.  Replace with your actual implementation.
+  const isTimeSlotAvailable = (appointmentDate: Date, groomerId: string, duration: number): boolean => {
+    //  This is a placeholder - replace with your actual logic to check time slot availability
+    // Consider fetching data from a server to check for overlaps
+    console.log("Checking time slot availability...", appointmentDate, groomerId, duration);
+    return true; // Replace with actual availability check
+  };
+
+
   const onSubmit = async (data: EditAppointmentForm) => {
     try {
       setIsSubmitting(true);
       const selectedServices = services?.filter(s => data.services.includes(s.service_id)) || [];
       const totalDuration = selectedServices.reduce((sum, s) => sum + (s.duration || 0), 0);
       const totalPrice = selectedServices.reduce((sum, s) => sum + (s.price || 0), 0);
+      const appointmentDateTime = new Date(`${data.appointmentDate}T${data.appointmentTime}`);
+
+      if (isNaN(appointmentDateTime.getTime())) {
+        throw new Error("Invalid appointment date or time");
+      }
+
+      // Check if timeslot is available
+      if (!isTimeSlotAvailable(appointmentDateTime, data.groomerId, totalDuration)) {
+        toast({
+          variant: "destructive",
+          title: "Time Slot Not Available",
+          description: "This time slot conflicts with another appointment. Please select a different time.",
+        });
+        return;
+      }
 
       await updateAppointment({
         id: appointment.id,
@@ -83,7 +106,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
         notes: data.notes || "",
         services: data.services,
         groomerId: data.groomerId,
-        date: new Date(`${data.appointmentDate}T${data.appointmentTime}`),
+        date: appointmentDateTime,
         totalDuration,
         totalPrice
       });
