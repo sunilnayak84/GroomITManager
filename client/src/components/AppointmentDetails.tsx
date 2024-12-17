@@ -31,11 +31,21 @@ import type { AppointmentWithRelations } from "@/lib/schema";
 import { useAppointments } from "@/hooks/use-appointments";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { PencilIcon } from "@heroicons/react/24/solid"; // Assuming this icon is used
+
+// Placeholder for ProtectedElement.  Replace with your actual implementation.
+const ProtectedElement = ({ children, requiredPermissions }: { children: any; requiredPermissions: string }) => {
+  // Replace this with your actual permission check logic
+  const hasPermission = true; // Replace with a check against user roles and permissions
+  return hasPermission ? children : null;
+};
+
 
 interface AppointmentDetailsProps {
   appointment: AppointmentWithRelations;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onEdit: () => void; // Added onEdit prop
 }
 
 const updateAppointmentSchema = z.object({
@@ -50,6 +60,7 @@ const AppointmentDetails = ({
   appointment,
   open,
   onOpenChange,
+  onEdit, // Added onEdit prop
 }: AppointmentDetailsProps): React.ReactElement => {
   const { updateAppointment } = useAppointments();
   const { toast } = useToast();
@@ -176,21 +187,25 @@ const AppointmentDetails = ({
             </div>
 
             <div>
-              <h3 className="text-sm font-medium text-gray-500">Service</h3>
-              <div className="mt-1">
-                <p className="text-sm font-medium">
-                  {appointment.service?.name || 'Unknown Service'}
-                </p>
-                {appointment.service?.price && (
-                  <p className="text-sm text-gray-500">
-                    Price: ₹{appointment.service.price}
-                  </p>
-                )}
-                {appointment.service?.duration && (
-                  <p className="text-sm text-gray-500">
-                    Duration: {appointment.service.duration} minutes
-                  </p>
-                )}
+              <h3 className="text-sm font-medium text-gray-500">Services</h3>
+              <div className="mt-1 space-y-2">
+                {appointment.services.map((serviceId, index) => (
+                  <div key={serviceId} className="border-b pb-2 last:border-b-0">
+                    <p className="text-sm font-medium">
+                      {appointment.service?.[index]?.name || 'Unknown Service'}
+                    </p>
+                    {appointment.service?.[index]?.price && (
+                      <p className="text-sm text-gray-500">
+                        Price: ₹{appointment.service[index].price}
+                      </p>
+                    )}
+                    {appointment.service?.[index]?.duration && (
+                      <p className="text-sm text-gray-500">
+                        Duration: {appointment.service[index].duration} minutes
+                      </p>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -285,6 +300,16 @@ const AppointmentDetails = ({
                   "Update Appointment"
                 )}
               </Button>
+              <ProtectedElement requiredPermissions="appointments.edit">
+                <Button
+                  variant="outline"
+                  onClick={onEdit}
+                  className="ml-2"
+                >
+                  <PencilIcon className="h-4 w-4 mr-2" />
+                  Edit
+                </Button>
+              </ProtectedElement>
             </div>
           </form>
         </Form>

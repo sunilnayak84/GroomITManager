@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Calendar, List, Trash2 } from "lucide-react";
+import { Plus, Calendar, List, Trash2, Pencil } from "lucide-react"; // Added Pencil icon
 import { useUser } from "@/hooks/use-user";
 import { useToast } from "@/hooks/use-toast";
 import { useAppointments } from "../hooks/use-appointments";
@@ -13,14 +13,17 @@ import { z } from "zod";
 import { appointmentSchema, type Appointment, type AppointmentWithRelations } from "@/lib/schema";
 import AppointmentDetails from "../components/AppointmentDetails";
 import AppointmentCalendar from "../components/AppointmentCalendar";
+import AppointmentEditForm from "../components/AppointmentEditForm"; // Added import for edit form
+
 
 // Get status type from the schema
 interface ActionButtonsProps {
   appointment: AppointmentWithRelations;
   onView: () => void;
+  onEdit: () => void; // Added onEdit prop
 }
 
-function ActionButtons({ appointment, onView }: ActionButtonsProps) {
+function ActionButtons({ appointment, onView, onEdit }: ActionButtonsProps) { // Added onEdit prop
   const { user } = useUser();
   const { deleteAppointment } = useAppointments();
   const { toast } = useToast();
@@ -63,15 +66,25 @@ function ActionButtons({ appointment, onView }: ActionButtonsProps) {
         View
       </Button>
       {user?.role === 'admin' && (
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleDelete}
-          disabled={isDeleting}
-          className="text-destructive hover:text-destructive"
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
+        <>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onEdit} // Use onEdit prop
+            className="text-primary hover:text-primary" // Changed styling for edit button
+          >
+            <Pencil className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleDelete}
+            disabled={isDeleting}
+            className="text-destructive hover:text-destructive"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </>
       )}
     </div>
   );
@@ -88,6 +101,7 @@ const statusColors: Record<AppointmentStatus, string> = {
 export default function AppointmentsPage() {
   const [openNewForm, setOpenNewForm] = useState(false);
   const [openDetails, setOpenDetails] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false); // Added openEdit state
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithRelations | null>(null);
   const [view, setView] = useState<'list' | 'calendar'>('list');
   const { data: appointments, isLoading, error } = useAppointments();
@@ -129,10 +143,21 @@ export default function AppointmentsPage() {
       header: "Service",
       cell: (row: AppointmentWithRelations) => (
         <div>
-          <div className="font-medium">{row.service?.name || 'Unknown Service'}</div>
-          {row.service?.price && (
-            <div className="text-sm text-muted-foreground">
-              ₹{row.service.price}
+          {row.service && row.service.length > 1 ? (
+            <div>
+              <div className="font-medium">Multiple Services</div>
+              <div className="text-sm text-muted-foreground">
+                {row.service.length} services selected
+              </div>
+            </div>
+          ) : (
+            <div>
+              <div className="font-medium">{row.service?.[0]?.name || 'Unknown Service'}</div>
+              {row.service?.[0]?.price && (
+                <div className="text-sm text-muted-foreground">
+                  ₹{row.service[0].price}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -154,6 +179,10 @@ export default function AppointmentsPage() {
           onView={() => {
             setSelectedAppointment(row);
             setOpenDetails(true);
+          }}
+          onEdit={() => { // Added onEdit handler
+            setSelectedAppointment(row);
+            setOpenEdit(true); // Open the edit dialog
           }}
         />
       ),
@@ -225,11 +254,19 @@ export default function AppointmentsPage() {
       )}
 
       {selectedAppointment && (
-        <AppointmentDetails
-          appointment={selectedAppointment}
-          open={openDetails}
-          onOpenChange={setOpenDetails}
-        />
+        <>
+          <AppointmentDetails
+            appointment={selectedAppointment}
+            open={openDetails}
+            onOpenChange={setOpenDetails}
+          />
+          <Dialog open={openEdit} onOpenChange={setOpenEdit}> {/* Added Edit Dialog */}
+            <DialogTrigger asChild>
+              {/* This trigger is already handled in ActionButtons */}
+            </DialogTrigger>
+            <AppointmentEditForm appointment={selectedAppointment} setOpen={setOpenEdit} /> {/* Added Edit Form */}
+          </Dialog>
+        </>
       )}
     </div>
   );
