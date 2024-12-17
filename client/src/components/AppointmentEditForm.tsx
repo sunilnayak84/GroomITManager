@@ -46,9 +46,10 @@ type EditAppointmentForm = z.infer<typeof editAppointmentSchema>;
 interface AppointmentEditFormProps {
   appointment: AppointmentWithRelations;
   setOpen: (open: boolean) => void;
+  open: boolean;
 }
 
-export default function AppointmentEditForm({ appointment, setOpen }: AppointmentEditFormProps) {
+export default function AppointmentEditForm({ appointment, setOpen, open }: AppointmentEditFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { staffMembers } = useStaff();
   const availableGroomers = staffMembers?.filter(staff => staff.role === 'groomer') || [];
@@ -63,12 +64,23 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
     }
   }, [services]);
 
-  // Reset form errors when dialog closes or appointment changes
   useEffect(() => {
-    if (!setOpen || appointment.id) {
+    if (!open) {
+      form.reset();
       form.clearErrors();
     }
-  }, [setOpen, appointment.id]);
+  }, [open, appointment.id]);
+
+  useEffect(() => {
+    form.reset({
+      status: appointment.status,
+      notes: appointment.notes || '',
+      appointmentDate: new Date(appointment.date).toISOString().split('T')[0],
+      appointmentTime: new Date(appointment.date).toTimeString().slice(0, 5),
+      services: Array.isArray(appointment.services) ? [...appointment.services] : [],
+      groomerId: appointment.groomerId
+    });
+  }, [appointment]);
 
   const form = useForm<EditAppointmentForm>({
     resolver: zodResolver(editAppointmentSchema),
