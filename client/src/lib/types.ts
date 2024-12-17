@@ -1,3 +1,24 @@
+
+import { Timestamp } from "firebase/firestore";
+
+export interface FirestorePet {
+  id: string;
+  firebaseId: string | null;
+  name: string;
+  type: string;
+  breed: string;
+  customerId: string;
+  dateOfBirth: string | null;
+  age: number | null;
+  gender: string | null;
+  weight: number | null;
+  weightUnit: string;
+  notes: string | null;
+  image: string | null;
+  createdAt: Timestamp;
+  updatedAt: Timestamp | null;
+}
+
 import { z } from "zod";
 import { Timestamp, FieldValue, DocumentData } from 'firebase/firestore';
 

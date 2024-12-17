@@ -120,7 +120,7 @@ export function useAppointments() {
             let petData = null;
 
             if (petDoc.exists()) {
-              const rawPetData = petDoc.data() as FirestorePet;
+              const rawPetData = petDoc.data() as any;
               const customerDoc = await getDoc(doc(db, 'customers', rawPetData.customerId));
               const customerData = customerDoc.exists() ? customerDoc.data() : null;
 
