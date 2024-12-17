@@ -32,9 +32,8 @@ import { z } from "zod";
 const editAppointmentSchema = z.object({
   status: z.enum(['pending', 'confirmed', 'completed', 'cancelled']),
   notes: z.string().optional(),
-  date: z.string(),
-  time: z.string(),
-  services: z.array(z.string())
+  appointmentDate: z.string(),
+  appointmentTime: z.string(),
 });
 
 type EditAppointmentForm = z.infer<typeof editAppointmentSchema>;
@@ -56,22 +55,22 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
     defaultValues: {
       status: appointment.status,
       notes: appointment.notes || "",
-      date: appointmentDate.toISOString().split('T')[0],
-      time: appointmentDate.toTimeString().slice(0, 5),
-      services: appointment.services
+      appointmentDate: appointmentDate.toISOString().split('T')[0],
+      appointmentTime: appointmentDate.toTimeString().slice(0, 5),
     },
   });
 
   const onSubmit = async (data: EditAppointmentForm) => {
     try {
       setIsSubmitting(true);
-      const combinedDate = new Date(`${data.date}T${data.time}`);
+      const combinedDate = new Date(`${data.appointmentDate}T${data.appointmentTime}`);
       
       await updateAppointment({
         id: appointment.id,
         status: data.status,
         notes: data.notes,
-        date: combinedDate.toISOString(),
+        appointmentDate: data.appointmentDate,
+        appointmentTime: data.appointmentTime
       });
       
       toast({
@@ -99,7 +98,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
-            name="date"
+            name="appointmentDate"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Date</FormLabel>
@@ -113,7 +112,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
 
           <FormField
             control={form.control}
-            name="time"
+            name="appointmentTime"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Time</FormLabel>
