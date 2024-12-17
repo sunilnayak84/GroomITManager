@@ -67,7 +67,12 @@ async function loginWithFirebase(credentials: { email: string; password: string 
       auth,
       credentials.email,
       credentials.password
-    );
+    ).catch(error => {
+      if (error.code === 'auth/user-disabled') {
+        throw new Error('This account has been disabled. Please contact an administrator.');
+      }
+      throw error;
+    });
     
     // Get custom claims from Firebase user
     const tokenResult = await user.getIdTokenResult();
