@@ -256,7 +256,11 @@ export function useAppointments() {
               productsUsed: rawData.productsUsed,
               createdAt: timestampToISOString(rawData.createdAt),
               updatedAt: timestampToISOString(rawData.updatedAt),
-              pet: petData,
+              pet: {
+                ...petData,
+                createdAt: petData.createdAt || new Date().toISOString(),
+                updatedAt: petData.updatedAt || null,
+              },
               customer: customerData,
               groomer: {
                 name: groomerData.name

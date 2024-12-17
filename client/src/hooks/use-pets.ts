@@ -2,8 +2,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   collection, getDocs, doc, runTransaction, increment, 
   addDoc, serverTimestamp, query, updateDoc, deleteDoc, 
-  getDoc, where, Timestamp, FieldValue, WithFieldValue,
-  DocumentData, serverTimestamp as firestoreServerTimestamp
+  getDoc, where, Timestamp, FieldValue,
+  DocumentData, serverTimestamp as firestoreServerTimestamp,
+  type WithFieldValue
 } from 'firebase/firestore';
 import { db } from "../lib/firebase";
 import { petsCollection, customersCollection } from "../lib/firestore";
