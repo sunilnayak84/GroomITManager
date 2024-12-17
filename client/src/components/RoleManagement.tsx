@@ -182,23 +182,23 @@ export function RoleManagement() {
     <div className="container mx-auto p-6">
 
       {/* System Roles */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {isLoadingRoles ? (
-          <div className="col-span-2 text-center py-4">Loading roles...</div>
+          <div className="col-span-3 text-center py-4">Loading roles...</div>
         ) : !roles ? (
-          <div className="col-span-2 text-center py-4">No roles found. Please check your connection.</div>
+          <div className="col-span-3 text-center py-4">No roles found. Please check your connection.</div>
         ) : roles.length === 0 ? (
-          <div className="col-span-2 text-center py-4">No roles available.</div>
+          <div className="col-span-3 text-center py-4">No roles available.</div>
         ) : (
-          roles.map((role) => (
+          roles.filter(role => role.name !== 'admin').map((role) => (
             <Card key={role.name} className="relative">
-              <CardHeader>
-                <CardTitle className="capitalize">{role.name}</CardTitle>
-                <CardDescription>
+              <CardHeader className="p-4">
+                <CardTitle className="capitalize text-lg">{role.name}</CardTitle>
+                <CardDescription className="text-sm">
                   {Array.isArray(role.permissions) ? `${role.permissions.length} permissions granted` : 'All permissions'}
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 pt-0">
                 <ProtectedElement 
                   requiredPermissions={['view_roles', 'manage_roles']} 
                   fallback={<div className="text-sm text-muted-foreground">Permission details hidden</div>}
