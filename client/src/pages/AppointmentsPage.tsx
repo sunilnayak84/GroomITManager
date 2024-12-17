@@ -212,23 +212,23 @@ export default function AppointmentsPage() {
                 </DialogHeader>
                 <PetDetails 
                   pet={{
-                    id: String(row.pet.id),
-                    name: row.pet.name,
-                    type: row.pet.type || 'dog',
-                    breed: row.pet.breed,
-                    gender: row.pet.gender || 'unknown',
-                    age: row.pet.age || null,
-                    image: row.pet.image,
-                    dateOfBirth: row.pet.dateOfBirth || null,
-                    weight: row.pet.weight || null,
-                    weightUnit: row.pet.weightUnit || 'kg',
-                    notes: row.pet.notes || null,
-                    createdAt: row.pet.createdAt || new Date().toISOString(),
-                    updatedAt: row.pet.updatedAt || null,
-                    customerId: String(row.pet.customerId),
-                    firebaseId: row.pet.firebaseId || null,
-                    owner: row.pet.owner || null,
-                    submissionId: row.pet.submissionId || undefined
+                    id: String(pet.id),
+                    name: pet.name,
+                    type: pet.type || 'dog',
+                    breed: pet.breed,
+                    gender: pet.gender || 'unknown',
+                    age: pet.age || null,
+                    image: pet.image,
+                    dateOfBirth: pet.dateOfBirth || null,
+                    weight: pet.weight || null,
+                    weightUnit: pet.weightUnit || 'kg',
+                    notes: pet.notes || null,
+                    createdAt: pet.createdAt || new Date().toISOString(),
+                    updatedAt: pet.updatedAt || null,
+                    customerId: String(pet.customerId),
+                    firebaseId: pet.firebaseId || null,
+                    owner: pet.owner || null,
+                    submissionId: pet.submissionId || undefined
                   }}
                   formatDate={(date) => date ? new Date(date).toLocaleDateString() : 'Not specified'}
                 />
