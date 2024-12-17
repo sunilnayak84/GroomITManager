@@ -53,7 +53,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
             <p><span className="text-muted-foreground">Date of Birth:</span> {formatDate(pet.dateOfBirth)}</p>
             <p><span className="text-muted-foreground">Owner:</span> {pet.owner?.name || 'Not specified'}</p>
             <p><span className="text-muted-foreground">Created:</span> {formatDate(pet.createdAt)}</p>
-            <p><span className="text-muted-foreground">Last Updated:</span> {formatDate(pet.updatedAt)}</p>
+            <p><span className="text-muted-foreground">Last Updated:</span> {pet.updatedAt ? formatDate(pet.updatedAt) : formatDate(pet.createdAt)}</p>
           </div>
         </div>
       </div>
