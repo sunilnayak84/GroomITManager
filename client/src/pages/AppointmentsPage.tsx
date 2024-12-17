@@ -105,7 +105,10 @@ export default function AppointmentsPage() {
   const [openEdit, setOpenEdit] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithRelations | null>(null);
   const [view, setView] = useState<'list' | 'calendar'>('list');
-  const { data: appointments } = useAppointments();
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [dateRange, setDateRange] = useState<'day' | 'week' | 'month'>('day');
+  const { data: appointments, isLoading, error } = useAppointments();
   
   // Handle route parameter for appointment ID
   useEffect(() => {
@@ -120,10 +123,6 @@ export default function AppointmentsPage() {
       }
     }
   }, [appointments]);
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [dateRange, setDateRange] = useState<'day' | 'week' | 'month'>('day'); // Added date range state
-  const { data: appointments, isLoading, error } = useAppointments();
 
   const filteredAndSortedAppointments = useMemo(() => {
     if (!appointments) return [];
