@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import { useBreeds } from "@/hooks/use-breeds";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { type InsertPet, type Customer } from "@/lib/types";
@@ -326,14 +327,30 @@ export function PetForm({
           <FormField
             control={form.control}
             name="breed"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Breed*</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-              </FormItem>
-            )}
+            render={({ field }) => {
+              const { breeds } = useBreeds();
+              const filteredBreeds = breeds?.filter(breed => breed.type === form.watch('type')) || [];
+              
+              return (
+                <FormItem>
+                  <FormLabel>Breed*</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select breed" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {filteredBreeds.map((breed) => (
+                        <SelectItem key={breed.id} value={breed.name}>
+                          {breed.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              );
+            }}
           />
 
           <FormField
