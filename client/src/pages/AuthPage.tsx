@@ -19,6 +19,7 @@ const loginSchema = z.object({
 
 const registerSchema = loginSchema.extend({
   name: z.string().min(2, "Name must be at least 2 characters"),
+  phone: z.string().min(10, "Phone number must be at least 10 digits"),
 });
 
 export default function AuthPage() {
@@ -77,7 +78,11 @@ export default function AuthPage() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${idToken}`
         },
-        body: JSON.stringify({ role: 'User' })
+        body: JSON.stringify({ 
+          role: 'User',
+          name: data.name,
+          phone: data.phone
+        })
       });
 
       toast({
@@ -201,6 +206,20 @@ export default function AuthPage() {
                           <FormLabel>Password</FormLabel>
                           <FormControl>
                             <Input type="password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={registerForm.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Phone Number</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="Enter phone number" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
