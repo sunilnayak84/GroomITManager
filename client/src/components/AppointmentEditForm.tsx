@@ -57,6 +57,12 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
   const { services } = useServices();
 
   const appointmentDate = new Date(appointment.date);
+  useEffect(() => {
+    if (services && services.length > 0) {
+      form.setValue('services', Array.isArray(appointment.services) ? [...appointment.services] : []);
+    }
+  }, [services]);
+
   const form = useForm<EditAppointmentForm>({
     resolver: zodResolver(editAppointmentSchema),
     defaultValues: {
@@ -64,7 +70,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
       notes: appointment.notes || "",
       appointmentDate: appointmentDate.toISOString().split('T')[0],
       appointmentTime: appointmentDate.toTimeString().slice(0, 5),
-      services: appointment.services || [],
+      services: Array.isArray(appointment.services) ? [...appointment.services] : [],
       groomerId: appointment.groomerId
     },
   });
