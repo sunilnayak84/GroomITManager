@@ -92,10 +92,19 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
 
       // Check if timeslot is available
       if (!isTimeSlotAvailable(appointmentDateTime, data.groomerId, totalDuration, appointment.id)) {
+        const errorMessage = "This time slot conflicts with another appointment. Please select a different time.";
+        form.setError('appointmentTime', {
+          type: 'manual',
+          message: errorMessage
+        });
+        form.setError('appointmentDate', {
+          type: 'manual',
+          message: errorMessage
+        });
         toast({
           variant: "destructive",
           title: "Time Slot Not Available",
-          description: "This time slot conflicts with another appointment. Please select a different time.",
+          description: errorMessage,
         });
         return;
       }
