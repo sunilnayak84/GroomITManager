@@ -1,12 +1,19 @@
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import type { Pet } from "@/lib/types";
+import type { Pet } from "@/lib/schema";
 
 interface PetDetailsProps {
-  pet: Pet;
+  pet: Pet & {
+    image: string | null;
+    owner: {
+      id: string;
+      name: string;
+      email: string | null;
+    } | null;
+  };
   onEdit?: () => void;
   onDelete?: () => void;
-  formatDate: (date: any) => string;
+  formatDate: (date: string | null) => string;
 }
 
 export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProps) {

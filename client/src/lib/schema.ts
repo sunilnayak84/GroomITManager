@@ -62,7 +62,7 @@ export const petSchema = z.object({
   gender: z.enum(["male", "female", "other", "unknown"]).nullable(),
   weight: z.number().nullable(),
   weightUnit: z.enum(["kg", "lbs"]).default("kg"),
-  image: z.union([z.string(), z.instanceof(File)]).nullable(),
+  image: z.string().nullable(),
   notes: z.string().nullable(),
   createdAt: z.string(),
   updatedAt: z.string().nullable(),
