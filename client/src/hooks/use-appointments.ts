@@ -366,10 +366,10 @@ export function useAppointments() {
         const currentData = appointmentSnap.data();
         const updateData = {
           ...currentData,
-          status,
+          status: data.status || currentData.status,
           updatedAt: Timestamp.fromDate(new Date()),
-          notes: notes !== undefined ? notes : currentData.notes,
-          cancellationReason: status === 'cancelled' ? cancellationReason : null
+          notes: data.notes !== undefined ? data.notes : currentData.notes,
+          cancellationReason: data.status === 'cancelled' ? data.cancellationReason : null
         };
 
         await setDoc(appointmentRef, updateData);
