@@ -54,6 +54,25 @@ export default function PetBreedsPage() {
       setImporting(false);
     }
   };
+
+  const importCatBreeds = async () => {
+    try {
+      setImporting(true);
+      const { catBreeds } = await import('@/lib/breeds-data');
+      for (const breedName of catBreeds) {
+        await addBreed({ name: breedName, type: 'cat' });
+      }
+      toast({ title: "Success", description: "Cat breeds imported successfully" });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to import breeds",
+        variant: "destructive",
+      });
+    } finally {
+      setImporting(false);
+    }
+  };
   const [selectedBreed, setSelectedBreed] = useState<string | null>(null);
   const [breedName, setBreedName] = useState("");
   const [animalType, setAnimalType] = useState<"dog" | "cat">("dog");
@@ -91,8 +110,16 @@ export default function PetBreedsPage() {
             onClick={importDogBreeds}
             disabled={importing}
             variant="outline"
+            className="mr-2"
           >
             {importing ? "Importing..." : "Import Dog Breeds"}
+          </Button>
+          <Button
+            onClick={importCatBreeds}
+            disabled={importing}
+            variant="outline"
+          >
+            {importing ? "Importing..." : "Import Cat Breeds"}
           </Button>
           <Button
             onClick={() => {
