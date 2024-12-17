@@ -93,6 +93,9 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
     <DialogContent>
       <DialogHeader>
         <DialogTitle>Edit Appointment</DialogTitle>
+        <DialogDescription>
+          Update the appointment details below
+        </DialogDescription>
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
