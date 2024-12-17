@@ -81,7 +81,7 @@ export default function AuthPage() {
       // Set default role for new user
       const idToken = await userCredential.user.getIdToken();
       
-      await fetch(`${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_SERVER_PORT}/api/users/${userCredential.user.uid}/role`, {
+      await fetch(`${window.location.protocol}//${window.location.hostname}:3000/api/users/${userCredential.user.uid}/role`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
