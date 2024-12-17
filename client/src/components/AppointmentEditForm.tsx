@@ -34,6 +34,7 @@ const editAppointmentSchema = z.object({
   notes: z.string().optional(),
   date: z.string(),
   time: z.string(),
+  services: z.array(z.string())
 });
 
 type EditAppointmentForm = z.infer<typeof editAppointmentSchema>;
@@ -57,6 +58,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
       notes: appointment.notes || "",
       date: appointmentDate.toISOString().split('T')[0],
       time: appointmentDate.toTimeString().slice(0, 5),
+      services: appointment.services
     },
   });
 
@@ -154,20 +156,28 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
               <FormItem>
                 <FormLabel>Notes</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} value={field.value || ''} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <Button 
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full"
-          >
-            {isSubmitting ? "Updating..." : "Update Appointment"}
-          </Button>
+          <div className="flex justify-end space-x-2">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => setOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button 
+              type="submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Updating..." : "Update Appointment"}
+            </Button>
+          </div>
         </form>
       </Form>
     </DialogContent>
