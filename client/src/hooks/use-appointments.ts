@@ -263,7 +263,7 @@ export function useAppointments() {
     }
   });
 
-  const isTimeSlotAvailable = (date: Date, groomerId: string, duration: number = 30): boolean => {
+  const isTimeSlotAvailable = (date: Date, groomerId: string, duration: number = 30, currentAppointmentId?: string): boolean => {
     if (!appointments) return true;
     
     // Convert input date to start of 15-min slot
@@ -277,8 +277,12 @@ export function useAppointments() {
 
     // Check if there are any overlapping appointments
     const hasOverlap = appointments.some(appointment => {
-      // Skip if not the same groomer or if appointment is cancelled
-      if (appointment.groomerId !== groomerId || appointment.status === 'cancelled') return false;
+      // Skip if this is the appointment being edited or if appointment is cancelled
+      if (
+        (currentAppointmentId && appointment.id === currentAppointmentId) || 
+        appointment.groomerId !== groomerId || 
+        appointment.status === 'cancelled'
+      ) return false;
       
       const appointmentStart = new Date(appointment.date);
       const appointmentEnd = new Date(appointmentStart);

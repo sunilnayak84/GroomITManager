@@ -76,10 +76,10 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
   });
 
   // Placeholder for the actual isTimeSlotAvailable function.  Replace with your actual implementation.
-  const isTimeSlotAvailable = (appointmentDate: Date, groomerId: string, duration: number): boolean => {
+  const isTimeSlotAvailable = (appointmentDate: Date, groomerId: string, duration: number, appointmentId?: string): boolean => {
     //  This is a placeholder - replace with your actual logic to check time slot availability
     // Consider fetching data from a server to check for overlaps
-    console.log("Checking time slot availability...", appointmentDate, groomerId, duration);
+    console.log("Checking time slot availability...", appointmentDate, groomerId, duration, appointmentId);
     return true; // Replace with actual availability check
   };
 
@@ -97,7 +97,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
       }
 
       // Check if timeslot is available
-      if (!isTimeSlotAvailable(appointmentDateTime, data.groomerId, totalDuration)) {
+      if (!isTimeSlotAvailable(appointmentDateTime, data.groomerId, totalDuration, appointment.id)) {
         toast({
           variant: "destructive",
           title: "Time Slot Not Available",
