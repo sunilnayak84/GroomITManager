@@ -1,9 +1,11 @@
-import { useState, useEffect } from "react";
+
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useStaff } from "@/hooks/use-staff";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type AppointmentWithRelations } from "@/lib/schema";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DialogContent,
   DialogHeader,
@@ -29,14 +31,15 @@ import {
 import { useAppointments } from "@/hooks/use-appointments";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
-import { useServices } from "@/hooks/use-services"; // Added import for services
+import { useServices } from "@/hooks/use-services";
 
 const editAppointmentSchema = z.object({
   status: z.enum(['pending', 'confirmed', 'completed', 'cancelled']),
   notes: z.string().optional(),
   appointmentDate: z.string(),
   appointmentTime: z.string(),
-  services: z.array(z.string()).optional(), // Added services field to schema
+  services: z.array(z.string()),
+  groomerId: z.string()
 });
 
 type EditAppointmentForm = z.infer<typeof editAppointmentSchema>;
@@ -52,7 +55,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
   const availableGroomers = staffMembers?.filter(staff => staff.role === 'groomer') || [];
   const { updateAppointment } = useAppointments();
   const { toast } = useToast();
-  const { services } = useServices(); // Added hook for services
+  const { services } = useServices();
 
   const appointmentDate = new Date(appointment.date);
   const form = useForm<EditAppointmentForm>({
@@ -62,22 +65,28 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
       notes: appointment.notes || "",
       appointmentDate: appointmentDate.toISOString().split('T')[0],
       appointmentTime: appointmentDate.toTimeString().slice(0, 5),
-      services: appointment.service?.map(s => s.id) || [], // Added default services
+      services: appointment.service?.map(s => s.service_id) || [],
+      groomerId: appointment.groomerId
     },
   });
 
   const onSubmit = async (data: EditAppointmentForm) => {
     try {
       setIsSubmitting(true);
+      const selectedServices = services?.filter(s => data.services.includes(s.service_id)) || [];
+      const totalDuration = selectedServices.reduce((sum, s) => sum + (s.duration || 0), 0);
+      const totalPrice = selectedServices.reduce((sum, s) => sum + (s.price || 0), 0);
+
       await updateAppointment({
         id: appointment.id,
         status: data.status,
         notes: data.notes || "",
         appointmentDate: data.appointmentDate,
         appointmentTime: data.appointmentTime,
-        totalDuration: appointment.totalDuration,
-        totalPrice: appointment.totalPrice,
-        service: data.services?.map(serviceId => services?.find(s => s.id === serviceId)) || [] //Map service Ids back to service objects
+        groomerId: data.groomerId,
+        service: selectedServices,
+        totalDuration,
+        totalPrice
       });
       
       toast({
@@ -125,17 +134,6 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
           <p className="text-sm text-gray-500">
             {appointment.customer.firstName} {appointment.customer.lastName}
           </p>
-        </div>
-
-        <div>
-          <h4 className="text-sm font-medium">Services</h4>
-          <div className="mt-1 space-y-1">
-            {appointment.service?.map((service, index) => (
-              <div key={index} className="text-sm text-gray-500">
-                {service.name} - {service.duration}min - ₹{service.price}
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 
@@ -191,7 +189,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Groomer</FormLabel>
-                <Select onValueChange={field.onChange} value={appointment.groomerId}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a groomer" />
@@ -219,45 +217,40 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Services</FormLabel>
-                <Select 
-                  onValueChange={(value) => field.onChange([...field.value, value])}
-                  value={field.value?.[0] || ""}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Add a service" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {services?.map((service) => (
-                      <SelectItem key={service.id} value={service.id}>
-                        {service.name} - ₹{service.price}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <div className="space-y-2 mt-2">
-                  {field.value?.map((serviceId, index) => {
-                    const service = services?.find(s => s.id === serviceId);
-                    return service ? (
-                      <div key={index} className="flex items-center justify-between bg-secondary p-2 rounded-md">
-                        <span>{service.name} - ₹{service.price}</span>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            const newServices = [...field.value];
-                            newServices.splice(index, 1);
-                            field.onChange(newServices);
-                          }}
-                        >
-                          Remove
-                        </Button>
+                <div className="space-y-2">
+                  {services?.map((service) => (
+                    <div key={service.service_id} className="flex items-center space-x-2">
+                      <Checkbox
+                        checked={field.value.includes(service.service_id)}
+                        onCheckedChange={(checked) => {
+                          const updatedServices = checked
+                            ? [...field.value, service.service_id]
+                            : field.value.filter((id) => id !== service.service_id);
+                          field.onChange(updatedServices);
+                        }}
+                      />
+                      <div className="flex-1">
+                        <div className="font-medium">{service.name}</div>
+                        <div className="text-sm text-gray-500">
+                          ₹{service.price} • {service.duration} minutes
+                        </div>
                       </div>
-                    ) : null;
-                  })}
+                    </div>
+                  ))}
                 </div>
+                {field.value.length > 0 && (
+                  <div className="mt-4 p-4 bg-secondary rounded-lg">
+                    <div className="font-medium">Selected Services Summary</div>
+                    <div className="text-sm text-gray-500">
+                      Total Duration: {services?.filter(s => field.value.includes(s.service_id))
+                        .reduce((sum, s) => sum + (s.duration || 0), 0)} minutes
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      Total Price: ₹{services?.filter(s => field.value.includes(s.service_id))
+                        .reduce((sum, s) => sum + (s.price || 0), 0)}
+                    </div>
+                  </div>
+                )}
                 <FormMessage />
               </FormItem>
             )}
