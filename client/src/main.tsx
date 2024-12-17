@@ -103,6 +103,7 @@ function Router() {
             <Route path="/settings/inventory-categories" component={lazy(() => import('./pages/settings/categories'))} />
             <Route path="/settings/pet-breeds" component={lazy(() => import('./pages/settings/pet-breeds'))} />
             <Route path="/settings/roles" component={lazy(() => import('./pages/RoleManagementPage'))} />
+            <Route path="/settings/user-management" component={lazy(() => import('./pages/settings/user-management'))} />
             <Route>404 Page Not Found</Route>
           </Switch>
         </Suspense>
