@@ -301,8 +301,10 @@ export default function AppointmentForm({ setOpen, initialDate }: AppointmentFor
       );
 
       const validation = validateTimeSlot(formDate, formTime, daySchedule, data.groomerId);
-      if (!validation.isValid) {
-        const errorMessage = validation.error || "This time slot is not available";
+      const timeSlotValidation = isTimeSlotAvailable(appointmentDateTime, data.groomerId, selectedService?.duration || 30);
+      
+      if (!validation.isValid || !timeSlotValidation) {
+        const errorMessage = validation.error || "This time slot conflicts with an existing appointment";
         
         setValidationError(errorMessage);
         
