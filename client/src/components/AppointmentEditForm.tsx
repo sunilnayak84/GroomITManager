@@ -63,6 +63,13 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
     }
   }, [services]);
 
+  // Reset form errors when dialog closes or appointment changes
+  useEffect(() => {
+    if (!setOpen || appointment.id) {
+      form.clearErrors();
+    }
+  }, [setOpen, appointment.id]);
+
   const form = useForm<EditAppointmentForm>({
     resolver: zodResolver(editAppointmentSchema),
     defaultValues: {
