@@ -53,6 +53,8 @@ export default function AuthPage() {
     mode: "onChange"
   });
 
+  const { register, formState: { errors } } = registerForm;
+
   async function handleLogin(data: z.infer<typeof loginSchema>) {
     try {
       await login(data);
@@ -148,13 +150,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input 
-                              type="text"
-                              value={field.value}
-                              onChange={field.onChange}
-                              onBlur={field.onBlur}
-                              name={field.name}
-                            />
+                            <Input {...register(field.name)} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -190,13 +186,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Name</FormLabel>
                           <FormControl>
-                            <Input 
-                              type="text"
-                              value={field.value}
-                              onChange={field.onChange}
-                              onBlur={field.onBlur}
-                              name={field.name}
-                            />
+                            <Input {...register(field.name)} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -210,13 +200,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input 
-                              type="text"
-                              value={field.value}
-                              onChange={field.onChange}
-                              onBlur={field.onBlur}
-                              name={field.name}
-                            />
+                            <Input {...register(field.name)} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
