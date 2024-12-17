@@ -9,6 +9,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { updateUserStatus, resetUserPassword } from '@/hooks/use-roles';
 import { UserRole } from '@/hooks/use-user';
 import { toast } from '@/components/ui/use-toast';
 
@@ -56,6 +58,47 @@ export default function UserManagementPage() {
                         </p>
                       </div>
                       <div className="flex items-center gap-4">
+                        <Switch
+                          checked={!user.disabled}
+                          onCheckedChange={async (enabled) => {
+                            try {
+                              await updateUserStatus(user.uid, !enabled);
+                              toast({
+                                title: "Success",
+                                description: `User ${enabled ? 'enabled' : 'disabled'} successfully`
+                              });
+                            } catch (error) {
+                              toast({
+                                title: "Error",
+                                description: "Failed to update user status",
+                                variant: "destructive"
+                              });
+                            }
+                          }}
+                        />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={async () => {
+                            try {
+                              const { resetLink } = await resetUserPassword(user.uid);
+                              toast({
+                                title: "Success",
+                                description: "Password reset link generated"
+                              });
+                              // Copy reset link to clipboard
+                              navigator.clipboard.writeText(resetLink);
+                            } catch (error) {
+                              toast({
+                                title: "Error",
+                                description: "Failed to generate password reset link",
+                                variant: "destructive"
+                              });
+                            }
+                          }}
+                        >
+                          Reset Password
+                        </Button>
                         <select
                           className="border rounded p-2 bg-white"
                           value={user.role}

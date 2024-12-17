@@ -26,6 +26,30 @@ interface FirebaseUser {
   creationTime?: string;
 }
 
+export async function updateUserStatus(userId: string, disabled: boolean) {
+  const response = await fetch(`/api/users/${userId}/disable`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${await getAuth().currentUser?.getIdToken()}`
+    },
+    body: JSON.stringify({ disabled })
+  });
+  if (!response.ok) throw new Error('Failed to update user status');
+  return response.json();
+}
+
+export async function resetUserPassword(userId: string) {
+  const response = await fetch(`/api/users/${userId}/reset-password`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${await getAuth().currentUser?.getIdToken()}`
+    }
+  });
+  if (!response.ok) throw new Error('Failed to reset password');
+  return response.json();
+}
+
 interface FirebaseUsersResponse {
   users: FirebaseUser[];
   pageToken?: string | null;

@@ -454,6 +454,41 @@ export function registerRoutes(app: Express) {
     }
   });
 
+  // User management endpoints
+  app.post("/api/users/:userId/disable", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const { disabled } = req.body;
+      
+      const auth = getAuth();
+      await auth.updateUser(userId, { disabled });
+      
+      res.json({ message: `User ${disabled ? 'disabled' : 'enabled'} successfully` });
+    } catch (error) {
+      console.error('[USER-DISABLE] Error:', error);
+      res.status(500).json({ 
+        message: "Failed to update user status",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  app.post("/api/users/:userId/reset-password", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const auth = getAuth();
+      const user = await auth.generatePasswordResetLink((await auth.getUser(userId)).email || '');
+      
+      res.json({ message: "Password reset link generated successfully", resetLink: user });
+    } catch (error) {
+      console.error('[PASSWORD-RESET] Error:', error);
+      res.status(500).json({ 
+        message: "Failed to generate password reset link",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
   // Get current user profile
   app.get("/api/me", authenticateFirebase, (req, res) => {
     if (!req.user) {
