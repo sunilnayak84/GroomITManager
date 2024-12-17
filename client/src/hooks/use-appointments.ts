@@ -7,6 +7,7 @@ import {
   FieldValue, serverTimestamp, Timestamp
 } from 'firebase/firestore';
 import { db } from "../lib/firebase";
+import { timestampToString } from "../lib/types";
 
 interface FirestoreAppointmentData {
   petId: string;
