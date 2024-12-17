@@ -268,19 +268,19 @@ export default function AppointmentsPage() {
                 >
                   Sort {sortOrder === 'asc' ? '↑' : '↓'}
                 </Button>
-                <Dialog open={openNewForm} onOpenChange={setOpenNewForm}>
-                  <DialogTrigger asChild>
-                    <Button variant="secondary">
-                      <Plus className="mr-2 h-4 w-4" />
-                      New Appointment
-                    </Button>
-                  </DialogTrigger>
-                  <AppointmentForm setOpen={setOpenNewForm} />
-                </Dialog>
-              </div>
+                </div>
             </div>
           </div>
         </div>
+        <Dialog open={openNewForm} onOpenChange={setOpenNewForm}>
+          <DialogTrigger asChild>
+            <Button variant="secondary" className="fixed bottom-6 right-6">
+              <Plus className="mr-2 h-4 w-4" />
+              New Appointment
+            </Button>
+          </DialogTrigger>
+          <AppointmentForm setOpen={setOpenNewForm} />
+        </Dialog>
       </div>
 
       {view === 'list' ? (
