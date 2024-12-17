@@ -121,12 +121,15 @@ export function useAppointments() {
 
             if (petDoc.exists()) {
               const rawPetData = petDoc.data() as FirestorePet;
+              const customerDoc = await getDoc(doc(db, 'customers', rawPetData.customerId));
+              const customerData = customerDoc.exists() ? customerDoc.data() : null;
+
               petData = {
                 id: rawPetData.id || rawData.petId,
                 firebaseId: rawPetData.firebaseId,
-                name: rawPetData.name || 'Unknown Pet',
+                name: rawPetData.name,
                 type: rawPetData.type || 'dog',
-                breed: rawPetData.breed || 'Unknown Breed',
+                breed: rawPetData.breed,
                 customerId: rawPetData.customerId,
                 dateOfBirth: rawPetData.dateOfBirth,
                 age: rawPetData.age,
@@ -137,7 +140,11 @@ export function useAppointments() {
                 image: rawPetData.image,
                 createdAt: timestampToString(rawPetData.createdAt),
                 updatedAt: timestampToString(rawPetData.updatedAt),
-                owner: rawPetData.owner
+                owner: customerData ? {
+                  id: rawPetData.customerId,
+                  name: `${customerData.firstName} ${customerData.lastName}`,
+                  email: customerData.email
+                } : null
               };
             }
 
