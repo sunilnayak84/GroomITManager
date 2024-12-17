@@ -222,7 +222,7 @@ export function useAppointments() {
               groomer: {
                 name: groomerData.name
               },
-              service: serviceData.length > 0 ? serviceData : undefined
+              service: serviceData
             };
 
             appointments.push(appointment);
@@ -283,7 +283,7 @@ export function useAppointments() {
       const appointmentStart = new Date(appointment.date);
       const appointmentEnd = new Date(appointmentStart);
       // Use the existing appointment's service duration, default to 60 minutes
-      const appointmentDuration = appointment.service?.[0]?.duration || 60; // Changed to handle array of services
+      const appointmentDuration = appointment.totalDuration || 60;
       appointmentEnd.setMinutes(appointmentEnd.getMinutes() + appointmentDuration);
 
       // Check if the new appointment overlaps with existing appointment

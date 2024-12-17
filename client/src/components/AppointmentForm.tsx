@@ -42,9 +42,10 @@ import { useUser } from '@/hooks/use-user';
 
 interface AppointmentFormProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  initialDate?: string;
 }
 
-export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
+export default function AppointmentForm({ setOpen, initialDate }: AppointmentFormProps) {
   const { user } = useUser();
   const { createNotification } = useNotifications(user?.id || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -66,11 +67,11 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
       services: [],
       groomerId: "",
       branchId: "1",
-      date: "",
+      date: initialDate || "",
+      time: "",
       status: "pending" as const,
       notes: null,
       productsUsed: null,
-      time: "",
       totalPrice: 0,
       totalDuration: 0
     },
@@ -227,8 +228,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
           if (a.groomerId !== groomerId) return false;
           const existingStart = new Date(a.date);
           const existingEnd = new Date(existingStart);
-          const existingDuration = a.service?.duration || 60;
-          existingEnd.setMinutes(existingEnd.getMinutes() + existingDuration);
+          existingEnd.setMinutes(existingEnd.getMinutes() + (a.totalDuration || 60));
             
           return (
             // New appointment starts during existing appointment
@@ -247,7 +247,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
           error: conflictingAppointment 
             ? `This time slot conflicts with an existing appointment from ${format(new Date(conflictingAppointment.date), 'h:mm a')} to ${format((() => {
                 const end = new Date(conflictingAppointment.date);
-                end.setMinutes(end.getMinutes() + (conflictingAppointment.service?.duration || 60));
+                end.setMinutes(end.getMinutes() + (conflictingAppointment.totalDuration || 60));
                 return end;
               })(), 'h:mm a')}`
             : "The selected groomer is not available during this time. Please choose another time slot."

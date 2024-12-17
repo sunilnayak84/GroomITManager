@@ -266,9 +266,19 @@ export const insertWorkingDaysSchema = workingDaysSchema.omit({
 
 export type WorkingDays = z.infer<typeof workingDaysSchema>;
 export type InsertWorkingDays = z.infer<typeof insertWorkingDaysSchema>;
-export type AppointmentWithRelations = Omit<Appointment, "status" | "appointmentDate" | "appointmentTime"> & {
-  status: "pending" | "confirmed" | "completed" | "cancelled";
+export type AppointmentWithRelations = {
+  id: string;
+  petId: string;
+  services: string[];
+  groomerId: string;
+  branchId: string;
   date: string;
+  time?: string;
+  status: "pending" | "confirmed" | "completed" | "cancelled";
+  notes: string | null;
+  productsUsed: string | null;
+  totalPrice: number;
+  totalDuration: number;
   pet: {
     name: string;
     breed: string;
@@ -281,7 +291,7 @@ export type AppointmentWithRelations = Omit<Appointment, "status" | "appointment
   groomer: {
     name: string;
   };
-  service?: {
+  service?: Array<{
     name: string;
     duration: number;
     price: number;
@@ -289,7 +299,9 @@ export type AppointmentWithRelations = Omit<Appointment, "status" | "appointment
     category?: string;
     discount_percentage?: number;
     consumables?: any[];
-  };
+  }>;
+  createdAt: string;
+  updatedAt: string | null;
 };
 
 // Additional types for inventory usage
