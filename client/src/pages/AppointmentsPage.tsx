@@ -271,7 +271,7 @@ export default function AppointmentsPage() {
         <div className="absolute inset-0 flex items-center p-8">
           <div className="flex items-center justify-between w-full">
             <div className="text-white">
-              <h1 className="text-2xl font-bold">Appointments</h1>
+              <h1 className="text-white/95 text-2xl font-bold">Appointments</h1>
               <p className="text-white/80">Manage your pet grooming appointments</p>
             </div>
             <div className="flex flex-wrap items-center gap-2 sm:gap-4">
@@ -279,7 +279,7 @@ export default function AppointmentsPage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className={`${view === 'list' ? 'bg-white text-purple-950' : 'text-white hover:bg-white/20'}`}
+                  className={`${view === 'list' ? 'bg-white text-purple-950' : 'text-white/90 hover:bg-white/20 font-medium'}`}
                   onClick={() => setView('list')}
                 >
                   <List className="mr-2 h-4 w-4" />
@@ -288,7 +288,7 @@ export default function AppointmentsPage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className={`${view === 'calendar' ? 'bg-white text-purple-950' : 'text-white hover:bg-white/20'}`}
+                  className={`${view === 'calendar' ? 'bg-white text-purple-950' : 'text-white/90 hover:bg-white/20 font-medium'}`}
                   onClick={() => setView('calendar')}
                 >
                   <Calendar className="mr-2 h-4 w-4" />
@@ -315,7 +315,7 @@ export default function AppointmentsPage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className={`${dateRange === 'day' ? 'bg-white text-purple-950' : 'text-white hover:bg-white/20'}`}
+                  className={`${dateRange === 'day' ? 'bg-white text-purple-950' : 'text-white/90 hover:bg-white/20 font-medium'}`}
                   onClick={() => setDateRange('day')}
                 >
                   Day
@@ -323,7 +323,7 @@ export default function AppointmentsPage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className={`${dateRange === 'week' ? 'bg-white text-purple-950' : 'text-white hover:bg-white/20'}`}
+                  className={`${dateRange === 'week' ? 'bg-white text-purple-950' : 'text-white/90 hover:bg-white/20 font-medium'}`}
                   onClick={() => setDateRange('week')}
                 >
                   Week
@@ -331,7 +331,7 @@ export default function AppointmentsPage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className={`${dateRange === 'month' ? 'bg-white text-purple-950' : 'text-white hover:bg-white/20'}`}
+                  className={`${dateRange === 'month' ? 'bg-white text-purple-950' : 'text-white/90 hover:bg-white/20 font-medium'}`}
                   onClick={() => setDateRange('month')}
                 >
                   Month
