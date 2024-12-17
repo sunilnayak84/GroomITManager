@@ -77,7 +77,8 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
       const totalDuration = selectedServices.reduce((sum, s) => sum + (s.duration || 0), 0);
       const totalPrice = selectedServices.reduce((sum, s) => sum + (s.price || 0), 0);
 
-      await updateAppointment(appointment.id, {
+      await updateAppointment({
+        id: appointment.id,
         status: data.status,
         notes: data.notes || "",
         services: data.services,

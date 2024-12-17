@@ -342,15 +342,20 @@ export function useAppointments() {
   };
 
   const updateAppointmentMutation = useMutation({
-    mutationFn: async ({ id, status, cancellationReason, notes }: { 
-      id: string; 
-      status: "pending" | "confirmed" | "completed" | "cancelled";
+    mutationFn: async (data: {
+      id: string;
+      status?: "pending" | "confirmed" | "completed" | "cancelled";
       cancellationReason?: string;
       notes?: string;
+      services?: string[];
+      groomerId?: string;
+      date?: Date;
+      totalDuration?: number;
+      totalPrice?: number;
     }) => {
       try {
-        console.log('Updating appointment:', { id, status, cancellationReason, notes });
-        const appointmentRef = doc(db, 'appointments', id);
+        console.log('Updating appointment:', data);
+        const appointmentRef = doc(db, 'appointments', data.id);
         
         // Get current appointment data
         const appointmentSnap = await getDoc(appointmentRef);
