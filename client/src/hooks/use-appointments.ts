@@ -187,7 +187,12 @@ export function useAppointments() {
             // Get customer data
             let customerData = {
               firstName: 'Unknown',
-              lastName: 'Customer'
+              lastName: 'Customer',
+              email: null,
+              phone: null,
+              address: null,
+              gender: null,
+              petCount: 0
             };
 
             if (petData.customerId !== 'unknown') {
@@ -196,7 +201,12 @@ export function useAppointments() {
                 const rawCustomerData = customerDoc.data();
                 customerData = {
                   firstName: rawCustomerData.firstName || 'Unknown',
-                  lastName: rawCustomerData.lastName || 'Customer'
+                  lastName: rawCustomerData.lastName || 'Customer',
+                  email: rawCustomerData.email || null,
+                  phone: rawCustomerData.phone || null,
+                  address: rawCustomerData.address || null,
+                  gender: rawCustomerData.gender || null,
+                  petCount: rawCustomerData.petCount || 0
                 };
               } else {
                 console.error('Customer not found for ID:', petData.customerId);
@@ -247,10 +257,7 @@ export function useAppointments() {
               createdAt: timestampToISOString(rawData.createdAt),
               updatedAt: timestampToISOString(rawData.updatedAt),
               pet: petData,
-              customer: {
-                firstName: customerData.firstName,
-                lastName: customerData.lastName
-              },
+              customer: customerData,
               groomer: {
                 name: groomerData.name
               },

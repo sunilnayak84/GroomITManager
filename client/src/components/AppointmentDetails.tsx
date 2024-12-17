@@ -176,9 +176,23 @@ const AppointmentDetails = ({
 
             <div>
               <h3 className="text-sm font-medium text-gray-500">Customer</h3>
-              <p className="mt-1 text-sm">
-                {appointment.customer.firstName} {appointment.customer.lastName}
-              </p>
+              <div className="mt-1 space-y-1">
+                <p className="text-sm font-medium">
+                  {appointment.customer.firstName} {appointment.customer.lastName}
+                </p>
+                {appointment.customer.email && (
+                  <p className="text-sm text-gray-500">Email: {appointment.customer.email}</p>
+                )}
+                {appointment.customer.phone && (
+                  <p className="text-sm text-gray-500">Phone: {appointment.customer.phone}</p>
+                )}
+                {appointment.customer.address && (
+                  <p className="text-sm text-gray-500">Address: {appointment.customer.address}</p>
+                )}
+                <p className="text-sm text-gray-500">
+                  Pets: {appointment.customer.petCount}
+                </p>
+              </div>
             </div>
 
             <div>
