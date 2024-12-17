@@ -430,7 +430,7 @@ export default function AppointmentsPage() {
             <DialogTrigger asChild>
               {/* This trigger is already handled in ActionButtons */}
             </DialogTrigger>
-            <AppointmentEditForm appointment={selectedAppointment} setOpen={setOpenEdit} />
+            <AppointmentEditForm appointment={selectedAppointment} open={openEdit} setOpen={setOpenEdit} />
           </Dialog>
         </>
       )}

@@ -280,9 +280,27 @@ export type AppointmentWithRelations = {
   totalPrice: number;
   totalDuration: number;
   pet: {
+    id: string;
     name: string;
     breed: string;
+    type: string;
+    gender: string | null;
+    age: number | null;
+    dateOfBirth: string | null;
+    weight: number | null;
+    weightUnit: string;
+    notes: string | null;
     image: string | null;
+    createdAt: string;
+    updatedAt: string | null;
+    customerId: string;
+    firebaseId: string | null;
+    owner: {
+      id: string;
+      name: string;
+      email: string | null;
+    } | null;
+    submissionId?: string;
   };
   customer: {
     firstName: string;
