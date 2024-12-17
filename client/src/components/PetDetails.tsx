@@ -13,10 +13,6 @@ interface PetDetailsProps {
 export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProps) {
   return (
     <div className="space-y-6 p-6">
-      <DialogHeader>
-        <DialogTitle>Pet Details</DialogTitle>
-      </DialogHeader>
-
       <div className="flex items-start gap-4 mb-6">
         {pet.image ? (
           <img
