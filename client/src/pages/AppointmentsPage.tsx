@@ -107,6 +107,7 @@ export default function AppointmentsPage() {
   const [view, setView] = useState<'list' | 'calendar'>('list');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [dateRange, setDateRange] = useState<'day' | 'week' | 'month'>('day'); // Added date range state
   const { data: appointments, isLoading, error } = useAppointments();
 
   const filteredAndSortedAppointments = useMemo(() => {
@@ -118,14 +119,18 @@ export default function AppointmentsPage() {
     if (statusFilter !== 'all') {
       filtered = filtered.filter(app => app.status === statusFilter);
     }
-    
+
+    // Apply date range filter (This needs implementation based on your date logic)
+    // Example:  filter by date based on 'dateRange' state
+    // filtered = filtered.filter(app => isWithinDateRange(app.date, dateRange));
+
     // Sort by date
     return filtered.sort((a, b) => {
       const dateA = new Date(a.date).getTime();
       const dateB = new Date(b.date).getTime();
       return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
     });
-  }, [appointments, sortOrder, statusFilter]);
+  }, [appointments, sortOrder, statusFilter, dateRange]); // Added dateRange to dependencies
   
   const columns = [
     {
@@ -274,14 +279,40 @@ export default function AppointmentsPage() {
                     <SelectItem value="cancelled">Cancelled</SelectItem>
                   </SelectContent>
                 </Select>
+                <div className="flex rounded-lg bg-white/10 p-1 mr-2">
                 <Button
-                  variant="outline"
-                  onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
-                  className="bg-white"
+                  variant="ghost"
+                  size="sm"
+                  className={`${dateRange === 'day' ? 'bg-white text-purple-950' : 'text-white hover:bg-white/20'}`}
+                  onClick={() => setDateRange('day')}
                 >
-                  Sort {sortOrder === 'asc' ? '↑' : '↓'}
+                  Day
                 </Button>
-                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={`${dateRange === 'week' ? 'bg-white text-purple-950' : 'text-white hover:bg-white/20'}`}
+                  onClick={() => setDateRange('week')}
+                >
+                  Week
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={`${dateRange === 'month' ? 'bg-white text-purple-950' : 'text-white hover:bg-white/20'}`}
+                  onClick={() => setDateRange('month')}
+                >
+                  Month
+                </Button>
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
+                className="bg-white"
+              >
+                Sort {sortOrder === 'asc' ? '↑' : '↓'}
+              </Button>
+              </div>
             </div>
           </div>
         </div>
