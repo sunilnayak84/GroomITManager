@@ -215,7 +215,8 @@ async function createRole(role: Role): Promise<Role> {
     const token = await auth.currentUser.getIdToken(true);
     console.log('[ROLES] Creating new role:', role);
 
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/roles`, {
+    const port = import.meta.env.VITE_SERVER_PORT || '3000';
+    const response = await fetch(`${window.location.protocol}//${window.location.hostname}:${port}/api/roles`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
