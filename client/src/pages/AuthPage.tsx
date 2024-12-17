@@ -40,10 +40,14 @@ export default function AuthPage() {
       
     } catch (error) {
       console.error("Login error:", error);
+      const errorMessage = error instanceof Error && error.message.includes('user-disabled') 
+        ? "This account has been disabled. Please contact an administrator."
+        : "Failed to login. Please try again.";
+        
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to login. Please try again.",
+        description: errorMessage,
       });
     }
   }
