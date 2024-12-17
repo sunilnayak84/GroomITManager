@@ -187,7 +187,12 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Name</FormLabel>
                           <FormControl>
-                            <Input {...field} />
+                            <Input 
+                              type="text"
+                              {...field}
+                              onChange={(e) => field.onChange(e.target.value)}
+                              value={field.value || ''}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -201,7 +206,12 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input {...field} />
+                            <Input 
+                              type="email"
+                              {...field}
+                              onChange={(e) => field.onChange(e.target.value)}
+                              value={field.value || ''}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
