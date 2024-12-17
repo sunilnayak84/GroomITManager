@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Calendar, List, Trash2, Pencil } from "lucide-react"; // Added Pencil icon
 import { useUser } from "@/hooks/use-user";
