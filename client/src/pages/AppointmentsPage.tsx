@@ -104,7 +104,27 @@ export default function AppointmentsPage() {
   const [openEdit, setOpenEdit] = useState(false); // Added openEdit state
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithRelations | null>(null);
   const [view, setView] = useState<'list' | 'calendar'>('list');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
   const { data: appointments, isLoading, error } = useAppointments();
+
+  const filteredAndSortedAppointments = useMemo(() => {
+    if (!appointments) return [];
+    
+    let filtered = [...appointments];
+    
+    // Apply status filter
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(app => app.status === statusFilter);
+    }
+    
+    // Sort by date
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+      return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+    });
+  }, [appointments, sortOrder, statusFilter]);
   
   const columns = [
     {
@@ -224,15 +244,39 @@ export default function AppointmentsPage() {
                   Calendar
                 </Button>
               </div>
-              <Dialog open={openNewForm} onOpenChange={setOpenNewForm}>
-                <DialogTrigger asChild>
-                  <Button variant="secondary">
-                    <Plus className="mr-2 h-4 w-4" />
-                    New Appointment
-                  </Button>
-                </DialogTrigger>
-                <AppointmentForm setOpen={setOpenNewForm} />
-              </Dialog>
+              <div className="flex items-center gap-4">
+                <Select
+                  value={statusFilter}
+                  onValueChange={(value) => setStatusFilter(value)}
+                >
+                  <SelectTrigger className="w-[150px] bg-white">
+                    <SelectValue placeholder="Filter by status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="confirmed">Confirmed</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button
+                  variant="outline"
+                  onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
+                  className="bg-white"
+                >
+                  Sort {sortOrder === 'asc' ? '↑' : '↓'}
+                </Button>
+                <Dialog open={openNewForm} onOpenChange={setOpenNewForm}>
+                  <DialogTrigger asChild>
+                    <Button variant="secondary">
+                      <Plus className="mr-2 h-4 w-4" />
+                      New Appointment
+                    </Button>
+                  </DialogTrigger>
+                  <AppointmentForm setOpen={setOpenNewForm} />
+                </Dialog>
+              </div>
             </div>
           </div>
         </div>
@@ -242,7 +286,7 @@ export default function AppointmentsPage() {
         <div className="bg-white rounded-lg border shadow-sm">
           <DataTable
             columns={columns}
-            data={(appointments || []) as AppointmentWithRelations[]}
+            data={filteredAndSortedAppointments as AppointmentWithRelations[]}
             isLoading={isLoading}
           />
         </div>
