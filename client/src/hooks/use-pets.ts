@@ -241,7 +241,7 @@ export function usePets() {
           imageUrl = await uploadFile(updateData.image, path);
         }
 
-        const updates = {
+        const updates: Record<string, any> = {
           ...(updateData.name && { name: updateData.name }),
           ...(updateData.type && { type: updateData.type }),
           ...(updateData.breed && { breed: updateData.breed }),
@@ -252,9 +252,9 @@ export function usePets() {
           ...(('weight' in updateData) && { weight: toNumber(updateData.weight) }),
           ...(updateData.weightUnit && { weightUnit: updateData.weightUnit }),
           ...(('notes' in updateData) && { notes: updateData.notes }),
-          ...(imageUrl && { image: imageUrl }),
-          updatedAt: timestamp
+          ...(imageUrl && { image: imageUrl })
         };
+        updates.updatedAt = serverTimestamp();
 
         await updateDoc(petRef, updates);
         return { success: true };
