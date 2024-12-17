@@ -34,6 +34,26 @@ import {
 export default function PetBreedsPage() {
   const { breeds, addBreed, updateBreed, deleteBreed } = useBreeds();
   const [showDialog, setShowDialog] = useState(false);
+  const [importing, setImporting] = useState(false);
+
+  const importDogBreeds = async () => {
+    try {
+      setImporting(true);
+      const { dogBreeds } = await import('@/lib/breeds-data');
+      for (const breedName of dogBreeds) {
+        await addBreed({ name: breedName, type: 'dog' });
+      }
+      toast({ title: "Success", description: "Dog breeds imported successfully" });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to import breeds",
+        variant: "destructive",
+      });
+    } finally {
+      setImporting(false);
+    }
+  };
   const [selectedBreed, setSelectedBreed] = useState<string | null>(null);
   const [breedName, setBreedName] = useState("");
   const [animalType, setAnimalType] = useState<"dog" | "cat">("dog");
@@ -66,17 +86,26 @@ export default function PetBreedsPage() {
     <div className="container mx-auto py-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Pet Breeds</h1>
-        <Button
-          onClick={() => {
-            setSelectedBreed(null);
-            setBreedName("");
-            setAnimalType("dog");
-            setShowDialog(true);
-          }}
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Add Breed
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={importDogBreeds}
+            disabled={importing}
+            variant="outline"
+          >
+            {importing ? "Importing..." : "Import Dog Breeds"}
+          </Button>
+          <Button
+            onClick={() => {
+              setSelectedBreed(null);
+              setBreedName("");
+              setAnimalType("dog");
+              setShowDialog(true);
+            }}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add Breed
+          </Button>
+        </div>
       </div>
 
       <div className="rounded-md border">
