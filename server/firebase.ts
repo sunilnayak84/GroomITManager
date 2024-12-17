@@ -173,6 +173,18 @@ export async function updateUserRole(
   
   const permissions = customPermissions || DefaultPermissions[role];
   
+  // Save to role history
+  const historyRef = db.ref(`role-history/${userId}`);
+  await historyRef.push({
+    action: 'role_update',
+    previousRole: DefaultPermissions[role],
+    newRole: role,
+    previousPermissions: customPermissions || [],
+    newPermissions: permissions || [],
+    timestamp: Date.now(),
+    type: 'role_change'
+  });
+
   await db.ref(`roles/${userId}`).set({
     role,
     permissions,
