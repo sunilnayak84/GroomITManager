@@ -212,24 +212,24 @@ export default function AppointmentsPage() {
                 </DialogHeader>
                 <PetDetails 
                   pet={{
-                    id: appointment.petId,
-                    name: appointment.pet.name,
+                    id: row.petId,
+                    name: row.pet.name,
                     type: 'dog',
-                    breed: appointment.pet.breed,
+                    breed: row.pet.breed,
                     gender: 'unknown',
                     age: null,
-                    image: appointment.pet.image,
+                    image: row.pet.image,
                     dateOfBirth: null,
                     weight: null,
                     weightUnit: 'kg',
                     notes: null,
                     createdAt: new Date().toISOString(),
                     updatedAt: null,
-                    customerId: appointment.customer?.id || 'unknown',
+                    customerId: row.customer?.id || 'unknown',
                     firebaseId: null,
                     owner: {
-                      id: appointment.customer?.id || 'unknown',
-                      name: `${appointment.customer?.firstName} ${appointment.customer?.lastName}`,
+                      id: row.customer?.id || 'unknown',
+                      name: `${row.customer?.firstName} ${row.customer?.lastName}`,
                       email: null
                     },
                     submissionId: undefined
