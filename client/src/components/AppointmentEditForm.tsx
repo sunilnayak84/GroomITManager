@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useStaff } from "@/hooks/use-staff";
@@ -30,12 +29,14 @@ import {
 import { useAppointments } from "@/hooks/use-appointments";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
+import { useServices } from "@/hooks/use-services"; // Added import for services
 
 const editAppointmentSchema = z.object({
   status: z.enum(['pending', 'confirmed', 'completed', 'cancelled']),
   notes: z.string().optional(),
   appointmentDate: z.string(),
   appointmentTime: z.string(),
+  services: z.array(z.string()).optional(), // Added services field to schema
 });
 
 type EditAppointmentForm = z.infer<typeof editAppointmentSchema>;
@@ -51,6 +52,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
   const availableGroomers = staffMembers?.filter(staff => staff.role === 'groomer') || [];
   const { updateAppointment } = useAppointments();
   const { toast } = useToast();
+  const { services } = useServices(); // Added hook for services
 
   const appointmentDate = new Date(appointment.date);
   const form = useForm<EditAppointmentForm>({
@@ -60,6 +62,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
       notes: appointment.notes || "",
       appointmentDate: appointmentDate.toISOString().split('T')[0],
       appointmentTime: appointmentDate.toTimeString().slice(0, 5),
+      services: appointment.service?.map(s => s.id) || [], // Added default services
     },
   });
 
@@ -73,7 +76,8 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
         appointmentDate: data.appointmentDate,
         appointmentTime: data.appointmentTime,
         totalDuration: appointment.totalDuration,
-        totalPrice: appointment.totalPrice
+        totalPrice: appointment.totalPrice,
+        service: data.services?.map(serviceId => services?.find(s => s.id === serviceId)) || [] //Map service Ids back to service objects
       });
       
       toast({
@@ -173,19 +177,9 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Status</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="confirmed">Confirmed</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                  </SelectContent>
-                </Select>
+                <FormControl>
+                  <Input {...field} disabled readOnly />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -214,6 +208,56 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
                     ))}
                   </SelectContent>
                 </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="services"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Services</FormLabel>
+                <Select 
+                  onValueChange={(value) => field.onChange([...field.value, value])}
+                  value={field.value?.[0] || ""}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Add a service" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {services?.map((service) => (
+                      <SelectItem key={service.id} value={service.id}>
+                        {service.name} - ₹{service.price}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <div className="space-y-2 mt-2">
+                  {field.value?.map((serviceId, index) => {
+                    const service = services?.find(s => s.id === serviceId);
+                    return service ? (
+                      <div key={index} className="flex items-center justify-between bg-secondary p-2 rounded-md">
+                        <span>{service.name} - ₹{service.price}</span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            const newServices = [...field.value];
+                            newServices.splice(index, 1);
+                            field.onChange(newServices);
+                          }}
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    ) : null;
+                  })}
+                </div>
                 <FormMessage />
               </FormItem>
             )}
