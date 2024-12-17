@@ -77,14 +77,12 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
       const totalDuration = selectedServices.reduce((sum, s) => sum + (s.duration || 0), 0);
       const totalPrice = selectedServices.reduce((sum, s) => sum + (s.price || 0), 0);
 
-      const appointmentDate = new Date(`${data.appointmentDate}T${data.appointmentTime}`);
-      await updateAppointment({
-        id: appointment.id,
+      await updateAppointment(appointment.id, {
         status: data.status,
         notes: data.notes || "",
         services: data.services,
         groomerId: data.groomerId,
-        date: appointmentDate.toISOString(),
+        date: new Date(`${data.appointmentDate}T${data.appointmentTime}`),
         totalDuration,
         totalPrice
       });
