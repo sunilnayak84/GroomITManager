@@ -50,7 +50,6 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
   const { toast } = useToast();
 
   const appointmentDate = new Date(appointment.date);
-  
   const form = useForm<EditAppointmentForm>({
     resolver: zodResolver(editAppointmentSchema),
     defaultValues: {
@@ -69,9 +68,11 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
       await updateAppointment({
         id: appointment.id,
         status: data.status,
-        notes: data.notes,
+        notes: data.notes || null,
         appointmentDate: data.appointmentDate,
-        appointmentTime: data.appointmentTime
+        appointmentTime: data.appointmentTime,
+        totalDuration: appointment.totalDuration,
+        totalPrice: appointment.totalPrice
       });
       
       toast({
@@ -100,33 +101,35 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="appointmentDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Date</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="appointmentDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Date</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="appointmentTime"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Time</FormLabel>
-                <FormControl>
-                  <Input type="time" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="appointmentTime"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Time</FormLabel>
+                  <FormControl>
+                    <Input type="time" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           <FormField
             control={form.control}
@@ -166,7 +169,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
             )}
           />
 
-          <div className="flex justify-end space-x-2">
+          <div className="flex justify-end space-x-2 pt-4">
             <Button 
               type="button" 
               variant="outline" 
