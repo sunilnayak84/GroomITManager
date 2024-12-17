@@ -48,7 +48,7 @@ export default function CustomersPage() {
       if (date instanceof Timestamp) {
         return date.toDate().toLocaleDateString();
       }
-      if (date && typeof date === 'object' && 'seconds' in date) {
+      if (date && typeof date === 'object' && 'seconds' in date && date.seconds) {
         return new Date(date.seconds * 1000).toLocaleDateString();
       }
       return 'N/A';
