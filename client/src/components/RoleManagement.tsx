@@ -180,10 +180,61 @@ export function RoleManagement() {
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Role Management</h1>
-      
-      {/* Existing Roles */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      {/* User Role Management */}
+      <ProtectedElement 
+        requiredPermissions={['manage_roles']} 
+        fallback={<div className="text-muted-foreground text-center py-4">You don't have permission to manage user roles.</div>}
+      >
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>User Role Management</CardTitle>
+            <CardDescription>
+              Assign roles to users in the system
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {isLoadingUsers ? (
+                <div>Loading users...</div>
+              ) : (
+                <div className="space-y-4">
+                  {users.map(user => (
+                    <div
+                      key={user.uid}
+                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
+                    >
+                      <div>
+                        <p className="font-medium">{user.email}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Current Role: <span className="font-semibold capitalize">{user.role}</span>
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <select
+                          className="border rounded p-2 bg-white"
+                          value={user.role}
+                          onChange={(e) => {
+                            const newRole = e.target.value as UserRole;
+                            updateUserRole({ uid: user.uid, role: newRole });
+                          }}
+                          disabled={isUpdatingUserRole}
+                        >
+                          {roles.map(role => (
+                            <option key={role} value={role}>{role}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </ProtectedElement>
+
+      {/* System Roles */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {isLoadingRoles ? (
           <div className="col-span-2 text-center py-4">Loading roles...</div>
         ) : !roles ? (
