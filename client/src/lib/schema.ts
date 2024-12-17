@@ -279,8 +279,6 @@ export type AppointmentWithRelations = {
   productsUsed: string | null;
   totalPrice: number;
   totalDuration: number;
-  totalPrice: number;
-  totalDuration: number;
   pet: {
     id: string;
     name: string;

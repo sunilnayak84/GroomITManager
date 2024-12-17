@@ -9,7 +9,9 @@ import { db } from "../lib/firebase";
 import { petsCollection, customersCollection } from "../lib/firestore";
 import { uploadFile } from "../lib/storage";
 import { useState } from 'react';
-import type { Pet, PetInput, FirestorePet } from '../lib/types';
+import type { Pet } from '../lib/types';
+import type { InsertPet as PetInput } from '../lib/schema';
+import type { FirestoreCustomer as FirestorePet } from '../lib/schema';
 
 // Helper function to convert string to number safely
 function toNumber(value: string | number | null | undefined): number | null {

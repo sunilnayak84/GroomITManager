@@ -24,4 +24,10 @@ export type WithFirestoreTimestamp<T> = Omit<T, 'createdAt' | 'updatedAt'> & {
 };
 
 // Re-export types from schema
-export type { Pet, InsertPet, Customer, InsertCustomer, FirestoreCustomerData, CustomerWithTimestamp } from './schema';
+export type { Pet, InsertPet, Customer, InsertCustomer, FirestoreCustomer as FirestoreCustomerData } from './schema';
+export type CustomerWithTimestamp = WithFirestoreTimestamp<Customer>;
+export function toISOString(date: FirestoreTimestamp | string | null | undefined): string | null {
+  if (!date) return null;
+  if (typeof date === 'string') return date;
+  return date.toDate().toISOString();
+}
