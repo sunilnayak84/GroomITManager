@@ -262,13 +262,13 @@ export default function AppointmentsPage() {
 
   return (
     <div className="container mx-auto max-w-7xl space-y-6 px-6">
-      <div className="relative h-48 rounded-xl overflow-hidden bg-gradient-to-r from-purple-500/80 to-purple-500/20 mb-6">
+      <div className="relative h-48 rounded-xl overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1727681200732-0086492c217d"
-          alt="Pet Grooming"
-          className="w-full h-full object-cover mix-blend-overlay"
+          src="https://images.unsplash.com/photo-1516734212186-a967f81ad0d7"
+          alt="Professional Pet Grooming Services"
+          className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 flex items-center p-8">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-transparent flex items-center p-8">
           <div className="flex items-center justify-between w-full">
             <div className="text-white">
               <h1 className="text-white/95 text-2xl font-bold">Appointments</h1>
