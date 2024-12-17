@@ -263,7 +263,7 @@ export function useAppointments() {
     }
   });
 
-  const isTimeSlotAvailable = (date: Date, groomerId: string, duration: number = 60): boolean => {
+  const isTimeSlotAvailable = (date: Date, groomerId: string, duration: number = 30): boolean => {
     if (!appointments) return true;
     
     // Convert input date to start of 15-min slot
@@ -282,8 +282,7 @@ export function useAppointments() {
       
       const appointmentStart = new Date(appointment.date);
       const appointmentEnd = new Date(appointmentStart);
-      // Use the existing appointment's service duration, default to 60 minutes
-      const appointmentDuration = appointment.totalDuration || 60;
+      const appointmentDuration = appointment.totalDuration || 30;
       appointmentEnd.setMinutes(appointmentEnd.getMinutes() + appointmentDuration);
 
       // Check if the new appointment overlaps with existing appointment
