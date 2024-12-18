@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,9 +7,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PawPrint } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/components/ui/use-toast";
 import { auth } from "@/lib/firebase";
-import { createUserWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendPasswordResetEmail, updateProfile } from "firebase/auth";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email format"),
@@ -28,14 +27,16 @@ const registerSchema = z.object({
   path: ["confirmPassword"],
 });
 
+type LoginFormData = z.infer<typeof loginSchema>;
+type RegisterFormData = z.infer<typeof registerSchema>;
+
 export default function AuthPage() {
   const { login } = useUser();
-  const { toast } = useToast();
   const [isLogin, setIsLogin] = useState(true);
   const [resetEmail, setResetEmail] = useState("");
   const [showReset, setShowReset] = useState(false);
 
-  const loginForm = useForm<z.infer<typeof loginSchema>>({
+  const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
@@ -43,7 +44,7 @@ export default function AuthPage() {
     },
   });
 
-  const registerForm = useForm<z.infer<typeof registerSchema>>({
+  const registerForm = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
@@ -52,10 +53,9 @@ export default function AuthPage() {
       confirmPassword: "",
       phone: "",
     },
-    mode: "onBlur"
   });
 
-  async function handleLogin(data: z.infer<typeof loginSchema>) {
+  async function handleLogin(data: LoginFormData) {
     try {
       await login(data);
       toast({
@@ -73,26 +73,29 @@ export default function AuthPage() {
     }
   }
 
-  async function handleRegister(data: z.infer<typeof registerSchema>) {
+  async function handleRegister(data: RegisterFormData) {
     try {
+      console.log('Registration data:', data);
+      
       // Create user in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-      const idToken = await userCredential.user.getIdToken();
+      const user = userCredential.user;
+      const idToken = await user.getIdToken();
       
       // Update user profile with name
-      await userCredential.user.updateProfile({
+      await updateProfile(user, {
         displayName: data.name
       });
       
       // Register user in backend with role assignment
-      const response = await fetch(`${window.location.protocol}//${window.location.hostname}:3000/api/users/${userCredential.user.uid}/role`, {
+      const response = await fetch(`${window.location.protocol}//${window.location.hostname}:3000/api/users/${user.uid}/role`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${idToken}`
         },
         body: JSON.stringify({ 
-          role: 'staff', // Default role from Firebase RBAC
+          role: 'staff',
           name: data.name,
           phone: data.phone,
           email: data.email
@@ -197,9 +200,9 @@ export default function AuthPage() {
                           <FormLabel>Name</FormLabel>
                           <FormControl>
                             <Input 
-                              {...field}
                               type="text"
                               placeholder="Enter your name"
+                              {...field}
                             />
                           </FormControl>
                           <FormMessage />
@@ -209,15 +212,15 @@ export default function AuthPage() {
 
                     <FormField
                       control={registerForm.control}
-                      name="email" 
+                      name="email"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
                             <Input 
-                              {...field}
                               type="email"
                               placeholder="Enter your email"
+                              {...field}
                             />
                           </FormControl>
                           <FormMessage />
@@ -232,7 +235,11 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Password</FormLabel>
                           <FormControl>
-                            <Input type="password" {...field} />
+                            <Input 
+                              type="password"
+                              placeholder="Enter password"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -246,7 +253,11 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Confirm Password</FormLabel>
                           <FormControl>
-                            <Input type="password" {...field} />
+                            <Input 
+                              type="password"
+                              placeholder="Confirm password"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -260,7 +271,11 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Phone Number</FormLabel>
                           <FormControl>
-                            <Input type="tel" {...field} />
+                            <Input 
+                              type="tel"
+                              placeholder="Enter phone number"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
