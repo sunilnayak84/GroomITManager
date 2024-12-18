@@ -372,10 +372,95 @@ export function RoleManagement() {
         </TabsContent>
 
         <TabsContent value="staff-roles">
-          {/* Staff role management content will be added here */}
-          <div className="text-center py-4">
-            Staff role management coming soon...
-          </div>
+          <ProtectedElement 
+            requiredPermissions={['manage_staff_schedule', 'manage_roles']} 
+            fallback={<div className="text-muted-foreground text-center py-4">You don't have permission to manage staff roles.</div>}
+          >
+            <Card>
+              <CardHeader>
+                <CardTitle>Staff Role Management</CardTitle>
+                <CardDescription>
+                  Manage staff roles and permissions across branches
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {isLoadingUsers ? (
+                    <div>Loading staff members...</div>
+                  ) : (
+                    <div className="space-y-4">
+                      {users
+                        .filter(user => user.role === 'staff')
+                        .map(staff => (
+                        <div
+                          key={staff.uid}
+                          className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
+                        >
+                          <div>
+                            <p className="font-medium">{staff.email}</p>
+                            <p className="text-sm text-muted-foreground">
+                              Branch: {staff.branch || 'All Branches'}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <Switch
+                              checked={!staff.disabled}
+                              onCheckedChange={async (enabled) => {
+                                try {
+                                  await updateUserStatus(staff.uid, !enabled);
+                                  toast({
+                                    title: "Success",
+                                    description: `Staff member ${enabled ? 'enabled' : 'disabled'} successfully`
+                                  });
+                                } catch (error) {
+                                  toast({
+                                    title: "Error",
+                                    description: "Failed to update staff status",
+                                    variant: "destructive"
+                                  });
+                                }
+                              }}
+                            />
+                            <select
+                              className="border rounded p-2 bg-white"
+                              defaultValue={staff.permissions?.join(',')}
+                              onChange={(e) => {
+                                const newPermissions = e.target.value.split(',').filter(Boolean);
+                                updateUserRole({ 
+                                  userId: staff.uid, 
+                                  role: 'staff',
+                                  permissions: newPermissions 
+                                });
+                              }}
+                            >
+                              {Object.entries(permissionCategories).map(([category, permissions]) => (
+                                <optgroup key={category} label={category.replace(/_/g, ' ')}>
+                                  {permissions.map(permission => (
+                                    <option key={permission} value={permission}>
+                                      {permission.replace(/_/g, ' ')}
+                                    </option>
+                                  ))}
+                                </optgroup>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {hasNextPage && (
+                    <Button
+                      onClick={() => fetchNextPage()}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      Load More Staff Members
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </ProtectedElement>
         </TabsContent>
       </Tabs>
     </div>
