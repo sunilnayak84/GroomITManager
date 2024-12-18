@@ -3,9 +3,9 @@ import * as admin from "firebase-admin";
 import { 
   initializeFirebaseAdmin,
   RoleTypes,
-  DefaultPermissions,
   Permission,
-  getFirebaseAdmin
+  getFirebaseAdmin,
+  getDefaultPermissions
 } from "./firebase";
 import { getAuth } from "firebase-admin/auth";
 import { getDatabase } from "firebase-admin/database";
@@ -167,13 +167,14 @@ export async function createUserInDatabase(user: FirebaseUser) {
       // Default to user role for new users
       const defaultRole = 'user';
       
+      const defaultPermissions = await getDefaultPermissions(defaultRole as RoleTypes);
       const userData = {
         id: user.id,
         email: user.email || '',
         name: user.name,
         displayName: user.displayName,
         role: defaultRole,
-        permissions: DefaultPermissions[defaultRole],
+        permissions: defaultPermissions,
         isActive: true,
         createdAt: Date.now(),
         lastUpdated: Date.now()
@@ -186,7 +187,7 @@ export async function createUserInDatabase(user: FirebaseUser) {
       // Set role in roles collection
       await db.ref(`roles/${user.id}`).set({
         role: defaultRole,
-        permissions: DefaultPermissions[defaultRole],
+        permissions: defaultPermissions,
         updatedAt: Date.now()
       });
 
@@ -194,7 +195,7 @@ export async function createUserInDatabase(user: FirebaseUser) {
       const app = await initializeFirebaseAdmin();
       await admin.auth().setCustomUserClaims(user.id, {
         role: defaultRole,
-        permissions: DefaultPermissions[defaultRole],
+        permissions: defaultPermissions,
         updatedAt: Date.now()
       });
 
@@ -426,7 +427,8 @@ export async function setupAuth(app: Express) {
         // Get role and permissions from Firebase Realtime Database
         const db = admin.database();
         const userRoleSnapshot = await db.ref(`roles/${decodedToken.uid}`).once('value');
-        const userRole = userRoleSnapshot.val() || { role: RoleTypes.customer, permissions: DefaultPermissions[RoleTypes.customer] };
+        const defaultCustomerPermissions = await getDefaultPermissions(RoleTypes.customer);
+        const userRole = userRoleSnapshot.val() || { role: RoleTypes.customer, permissions: defaultCustomerPermissions };
 
         // Get user from Firebase database or create if doesn't exist
         const dbRef = admin.database();

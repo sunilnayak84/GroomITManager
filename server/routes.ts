@@ -3,7 +3,6 @@ import { authenticateFirebase, requireRole } from "./middleware/auth";
 import path from "path";
 import { 
   RoleTypes, 
-  DefaultPermissions, 
   getUserRole, 
   updateUserRole, 
   listAllUsers,
@@ -15,7 +14,8 @@ import {
   isValidPermission,
   ALL_PERMISSIONS,
   getFirebaseAdmin,
-  setupAdminUser
+  setupAdminUser,
+  getDefaultPermissions
 } from "./firebase";
 import { getAuth } from "firebase-admin/auth";
 import { getDatabase } from "firebase-admin/database";
@@ -98,17 +98,20 @@ export function registerRoutes(app: Express) {
       const userRef = db.ref(`users/${userId}`);
       const roleRef = db.ref(`roles/${userId}`);
 
+      // Get customer permissions
+      const customerPermissions = await getDefaultPermissions(RoleTypes.customer);
+      
       // Set role as customer
       const roleData = {
         role: RoleTypes.customer,
-        permissions: DefaultPermissions[RoleTypes.customer],
+        permissions: customerPermissions,
         updatedAt: Date.now()
       };
 
       // Update custom claims
       await auth.setCustomUserClaims(userId, {
         role: RoleTypes.customer,
-        permissions: DefaultPermissions[RoleTypes.customer],
+        permissions: customerPermissions,
         updatedAt: Date.now()
       });
 
@@ -289,8 +292,8 @@ export function registerRoutes(app: Express) {
       
       // For system roles, merge with default permissions
       let finalPermissions = [...validatedPermissions];
-      if (currentRole.isSystem && roleName in DefaultPermissions) {
-        const defaultPerms = DefaultPermissions[roleName as keyof typeof DefaultPermissions];
+      if (currentRole.isSystem && Object.values(RoleTypes).includes(roleName as RoleTypes)) {
+        const defaultPerms = await getDefaultPermissions(roleName as RoleTypes);
         finalPermissions = Array.from(new Set([...defaultPerms, ...validatedPermissions]));
         console.log(`[ROLE-UPDATE] Merged permissions for system role ${roleName}:`, finalPermissions);
       }
