@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Plus, Users } from "lucide-react";
-import { useStaff } from "@/hooks/use-staff";
+import { Plus, Scissors, Users, BadgeCheck, X } from "lucide-react";
+import { useStaffManagement } from "@/hooks/use-staff-management";
 import {
   Dialog,
   DialogContent,
@@ -23,6 +23,7 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -30,7 +31,17 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertUserSchema, type InsertUser, type User } from "@/lib/user-types";
+import { 
+  staffSchema,
+  type Staff,
+  type InsertStaff,
+  GROOMER_SPECIALTIES,
+  PET_TYPE_PREFERENCES,
+  getSpecialtyLabel,
+  getPetTypeLabel,
+  type GroomerSpecialty,
+  type PetTypePreference
+} from "@/lib/staff-types";
 import {
   Select,
   SelectContent,
@@ -38,6 +49,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+} from "@/components/ui/command";
 import {
   AlertDialog,
   AlertDialogAction,
