@@ -35,6 +35,7 @@ export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [resetEmail, setResetEmail] = useState("");
   const [showReset, setShowReset] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -56,6 +57,9 @@ export default function AuthPage() {
   });
 
   async function handleLogin(data: LoginFormData) {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    
     try {
       await login(data);
       toast({
@@ -70,10 +74,15 @@ export default function AuthPage() {
         title: "Login Error",
         description: errorMessage,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
   async function handleRegister(data: RegisterFormData) {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    
     try {
       // Create user in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
@@ -93,7 +102,7 @@ export default function AuthPage() {
           'Authorization': `Bearer ${idToken}`
         },
         body: JSON.stringify({ 
-          role: 'staff', // Default role, will be overridden by RBAC
+          role: 'staff',
           name: data.name,
           phone: data.phone,
           email: data.email
@@ -120,10 +129,15 @@ export default function AuthPage() {
         title: "Registration Error",
         description: errorMessage,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
   async function handleResetPassword() {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    
     try {
       await sendPasswordResetEmail(auth, resetEmail);
       toast({
@@ -137,6 +151,8 @@ export default function AuthPage() {
         title: "Error",
         description: "Failed to send reset email",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -190,8 +206,8 @@ export default function AuthPage() {
                       )}
                     />
 
-                    <Button type="submit" className="w-full">
-                      Login
+                    <Button type="submit" className="w-full" disabled={isSubmitting}>
+                      {isSubmitting ? "Logging in..." : "Login"}
                     </Button>
                   </form>
                 </Form>
@@ -206,13 +222,8 @@ export default function AuthPage() {
                           <FormLabel>Name</FormLabel>
                           <FormControl>
                             <Input 
-                              type="text"
                               placeholder="Enter your name"
                               {...field}
-                              onChange={(e) => {
-                                field.onChange(e);
-                                console.log('Name value after change:', e.target.value);
-                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -231,10 +242,6 @@ export default function AuthPage() {
                               type="email"
                               placeholder="Enter your email"
                               {...field}
-                              onChange={(e) => {
-                                field.onChange(e);
-                                console.log('Email value after change:', e.target.value);
-                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -296,8 +303,8 @@ export default function AuthPage() {
                       )}
                     />
 
-                    <Button type="submit" className="w-full">
-                      Register
+                    <Button type="submit" className="w-full" disabled={isSubmitting}>
+                      {isSubmitting ? "Creating Account..." : "Register"}
                     </Button>
                   </form>
                 </Form>
@@ -333,8 +340,12 @@ export default function AuthPage() {
                 value={resetEmail}
                 onChange={(e) => setResetEmail(e.target.value)}
               />
-              <Button onClick={handleResetPassword} className="w-full">
-                Send Reset Link
+              <Button 
+                onClick={handleResetPassword} 
+                className="w-full"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Sending..." : "Send Reset Link"}
               </Button>
               <Button
                 variant="link"
