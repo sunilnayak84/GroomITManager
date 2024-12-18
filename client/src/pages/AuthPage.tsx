@@ -268,15 +268,6 @@ export default function AuthPage() {
                           <FormMessage />
                         </FormItem>
                       )}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Confirm Password</FormLabel>
-                          <FormControl>
-                            <Input type="password" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
                     />
 
                     <Button type="submit" className="w-full">
