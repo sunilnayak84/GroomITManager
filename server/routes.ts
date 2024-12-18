@@ -569,7 +569,38 @@ export function registerRoutes(app: Express) {
   // User and Staff Management endpoints
   app.post("/api/users/create", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
     try {
-      const { email, name, role, password } = req.body;
+      console.log('[STAFF-CREATE] Received create request:', req.body);
+      const { email, name, role, password, isGroomer, phone, experienceYears, maxDailyAppointments } = req.body;
+      
+      if (!email || !name || !role || !password) {
+        return res.status(400).json({
+          message: "Missing required fields",
+          code: "INVALID_REQUEST"
+        });
+      }
+
+      // Validate email format
+      if (!email.includes('@') || !email.includes('.')) {
+        return res.status(400).json({
+          message: "Invalid email format",
+          code: "INVALID_EMAIL"
+        });
+      }
+
+      // Check if user already exists
+      try {
+        const existingUser = await admin.auth().getUserByEmail(email);
+        if (existingUser) {
+          return res.status(400).json({
+            message: "User with this email already exists",
+            code: "USER_EXISTS"
+          });
+        }
+      } catch (error) {
+        // User does not exist, proceed with creation
+      }
+
+      console.log('[STAFF-CREATE] Creating user in Firebase Auth');
       
       // Create user in Firebase Auth
       const userRecord = await admin.auth().createUser({
@@ -579,45 +610,68 @@ export function registerRoutes(app: Express) {
         displayName: name,
       });
 
+      console.log('[STAFF-CREATE] User created in Firebase Auth:', userRecord.uid);
+
       // Validate role
       if (!(role in DefaultPermissions)) {
         throw new Error(`Invalid role: ${role}`);
       }
 
       // Set custom claims based on role
-      await admin.auth().setCustomUserClaims(userRecord.uid, {
+      const customClaims = {
         role,
         permissions: DefaultPermissions[role as keyof typeof RoleTypes],
         updatedAt: Date.now()
-      });
+      };
+
+      console.log('[STAFF-CREATE] Setting custom claims:', customClaims);
+      
+      await admin.auth().setCustomUserClaims(userRecord.uid, customClaims);
 
       // Create user entry in Realtime Database
       const db = getDatabase();
-      await db.ref(`users/${userRecord.uid}`).set({
+      const userData = {
         id: userRecord.uid,
         email,
         name,
         role,
+        phone: phone || null,
+        isGroomer: isGroomer || false,
+        experienceYears: experienceYears || 0,
+        maxDailyAppointments: maxDailyAppointments || 8,
         permissions: DefaultPermissions[role as keyof typeof RoleTypes],
+        isActive: true,
         createdAt: Date.now(),
         lastUpdated: Date.now()
-      });
+      };
+
+      console.log('[STAFF-CREATE] Creating user in Realtime Database:', userData);
+      
+      await db.ref(`users/${userRecord.uid}`).set(userData);
 
       // Create role history entry
-      await db.ref(`role-history/${userRecord.uid}`).push({
+      const historyEntry = {
         action: 'create',
         role,
         permissions: DefaultPermissions[role as keyof typeof RoleTypes],
         timestamp: Date.now(),
-        type: 'initial_setup'
-      });
+        type: 'initial_setup',
+        createdBy: req.user?.uid
+      };
+
+      console.log('[STAFF-CREATE] Creating role history entry:', historyEntry);
+      
+      await db.ref(`role-history/${userRecord.uid}`).push(historyEntry);
+
+      console.log('[STAFF-CREATE] Staff member created successfully');
 
       res.json({ 
         message: "User created successfully",
-        uid: userRecord.uid 
+        uid: userRecord.uid,
+        user: userData
       });
     } catch (error) {
-      console.error('[AUTH] Error creating user:', error);
+      console.error('[STAFF-CREATE] Error creating user:', error);
       res.status(500).json({ 
         message: error instanceof Error ? error.message : "Failed to create user",
         code: "CREATE_ERROR"
