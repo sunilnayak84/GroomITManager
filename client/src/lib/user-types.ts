@@ -21,7 +21,7 @@ const staffSpecificSchema = z.object({
   experienceYears: z.number().min(0).default(0),
   maxDailyAppointments: z.number().min(1).default(8),
   permissions: z.array(z.string()).default([]),
-  branchId: z.number().optional(),
+  branchId: z.string().optional(),
   firebaseUid: z.string().optional(),
 });
 

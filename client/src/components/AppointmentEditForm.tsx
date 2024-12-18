@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useStaff } from "@/hooks/use-staff";
+import { StaffMember } from "@/lib/user-types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type AppointmentWithRelations } from "@/lib/schema";
 import { Button } from "@/components/ui/button";
@@ -52,7 +53,7 @@ interface AppointmentEditFormProps {
 export default function AppointmentEditForm({ appointment, setOpen, open }: AppointmentEditFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { staffMembers } = useStaff();
-  const availableGroomers = staffMembers?.filter(staff => staff.role === 'groomer') || [];
+  const availableGroomers = staffMembers?.filter((staff: StaffMember) => staff.role === 'groomer' && staff.isActive) || [];
   const { updateAppointment } = useAppointments();
   const { toast } = useToast();
   const { services } = useServices();
@@ -246,7 +247,7 @@ export default function AppointmentEditForm({ appointment, setOpen, open }: Appo
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {availableGroomers?.map((groomer) => (
+                    {availableGroomers?.map((groomer: StaffMember) => (
                       <SelectItem 
                         key={groomer.id} 
                         value={groomer.id}
