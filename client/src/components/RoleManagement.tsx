@@ -31,7 +31,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 
-
 // Schema for role creation/editing
 const roleSchema = z.object({
   name: z.string()
@@ -205,171 +204,180 @@ export function RoleManagement() {
 
         <TabsContent value="system-roles">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {isLoadingRoles ? (
-          <div className="col-span-3 text-center py-4">Loading roles...</div>
-        ) : !roles ? (
-          <div className="col-span-3 text-center py-4">No roles found. Please check your connection.</div>
-        ) : roles.length === 0 ? (
-          <div className="col-span-3 text-center py-4">No roles available.</div>
-        ) : (
-          roles.filter(role => role.name !== 'admin').map((role) => (
-            <Card key={role.name} className="relative">
-              <CardHeader className="p-4">
-                <CardTitle className="capitalize text-lg">{role.name}</CardTitle>
-                <CardDescription className="text-sm">
-                  {Array.isArray(role.permissions) ? `${role.permissions.length} permissions granted` : 'All permissions'}
+            {isLoadingRoles ? (
+              <div className="col-span-3 text-center py-4">Loading roles...</div>
+            ) : !roles ? (
+              <div className="col-span-3 text-center py-4">No roles found. Please check your connection.</div>
+            ) : roles.length === 0 ? (
+              <div className="col-span-3 text-center py-4">No roles available.</div>
+            ) : (
+              roles.filter(role => role.name !== 'admin').map((role) => (
+                <Card key={role.name} className="relative">
+                  <CardHeader className="p-4">
+                    <CardTitle className="capitalize text-lg">{role.name}</CardTitle>
+                    <CardDescription className="text-sm">
+                      {Array.isArray(role.permissions) ? `${role.permissions.length} permissions granted` : 'All permissions'}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-4 pt-0">
+                    <ProtectedElement 
+                      requiredPermissions={['view_roles', 'manage_roles']} 
+                      fallback={<div className="text-sm text-muted-foreground">Permission details hidden</div>}
+                    >
+                      <div className="text-sm text-muted-foreground mb-4">
+                        {/* Permission count shown in CardDescription */}
+                      </div>
+                    </ProtectedElement>
+                    {role.name !== 'admin' && (
+                      <ProtectedElement 
+                        requiredPermissions={['manage_roles']} 
+                        fallback={null}
+                      >
+                        <Button
+                          variant="outline"
+                          className="mt-4"
+                          onClick={() => {
+                            console.log('Editing role:', role);
+                            setEditingRole(role.name);
+                            form.reset({
+                              name: role.name,
+                              permissions: Array.isArray(role.permissions) ? role.permissions : [],
+                              description: '',
+                            });
+                          }}
+                        >
+                          Edit Role
+                        </Button>
+                      </ProtectedElement>
+                    )}
+                    {isUpdating && editingRole === role.name && (
+                      <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
+                        <div className="text-sm text-muted-foreground">Updating role...</div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="custom-roles">
+          <ProtectedElement 
+            requiredPermissions={['manage_roles']} 
+            fallback={<div className="text-muted-foreground text-center py-4">You don't have permission to manage roles.</div>}
+          >
+            <Card>
+              <CardHeader>
+                <CardTitle>{editingRole ? 'Edit Role' : 'Create New Role'}</CardTitle>
+                <CardDescription>
+                  Define role permissions to control access to different features
                 </CardDescription>
               </CardHeader>
-              <CardContent className="p-4 pt-0">
-                <ProtectedElement 
-                  requiredPermissions={['view_roles', 'manage_roles']} 
-                  fallback={<div className="text-sm text-muted-foreground">Permission details hidden</div>}
-                >
-                  <div className="text-sm text-muted-foreground mb-4">
-                    {/* Permission count shown in CardDescription */}
-                  </div>
-                </ProtectedElement>
-                {role.name !== 'admin' && (
-                  <ProtectedElement 
-                    requiredPermissions={['manage_roles']} 
-                    fallback={null}
-                  >
-                    <Button
-                      variant="outline"
-                      className="mt-4"
-                      onClick={() => {
-                        console.log('Editing role:', role);
-                        setEditingRole(role.name);
-                        form.reset({
-                          name: role.name,
-                          permissions: Array.isArray(role.permissions) ? role.permissions : [],
-                          description: '',
-                        });
-                      }}
-                    >
-                      Edit Role
-                    </Button>
-                  </ProtectedElement>
-                )}
-                {isUpdating && editingRole === role.name && (
-                  <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
-                    <div className="text-sm text-muted-foreground">Updating role...</div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))
-        )}
-      </div>
+              <CardContent>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Role Name</FormLabel>
+                          <FormControl>
+                            <Input 
+                              {...field} 
+                              placeholder="Enter role name" 
+                              disabled={!!editingRole}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-      {/* Create/Edit Role Form */}
-      <ProtectedElement 
-        requiredPermissions={['manage_roles']} 
-        fallback={<div className="text-muted-foreground text-center py-4">You don't have permission to manage roles.</div>}
-      >
-        <Card>
-          <CardHeader>
-            <CardTitle>{editingRole ? 'Edit Role' : 'Create New Role'}</CardTitle>
-            <CardDescription>
-              Define role permissions to control access to different features
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Role Name</FormLabel>
-                    <FormControl>
-                      <Input 
-                        {...field} 
-                        placeholder="Enter role name" 
-                        disabled={!!editingRole}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Input 
+                              {...field} 
+                              placeholder="Role description" 
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Input 
-                        {...field} 
-                        placeholder="Role description" 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="space-y-4">
-                {Object.entries(permissionCategories).map(([category, permissions]) => (
-                  <div key={category}>
-                    <h3 className="font-medium capitalize mb-2">{category}</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {permissions.map(permission => (
-                        <FormField
-                          key={permission}
-                          control={form.control}
-                          name="permissions"
-                          render={({ field }) => (
-                            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                              <FormControl>
-                                <Checkbox
-                                  checked={field.value?.includes(permission)}
-                                  onCheckedChange={(checked) => {
-                                    const newValue = checked
-                                      ? [...field.value || [], permission]
-                                      : field.value?.filter(p => p !== permission) || [];
-                                    field.onChange(newValue);
-                                  }}
-                                />
-                              </FormControl>
-                              <FormLabel className="font-normal">
-                                {permission.replace(/_/g, ' ')}
-                              </FormLabel>
-                            </FormItem>
-                          )}
-                        />
+                    <div className="space-y-4">
+                      {Object.entries(permissionCategories).map(([category, permissions]) => (
+                        <div key={category}>
+                          <h3 className="font-medium capitalize mb-2">{category}</h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {permissions.map(permission => (
+                              <FormField
+                                key={permission}
+                                control={form.control}
+                                name="permissions"
+                                render={({ field }) => (
+                                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes(permission)}
+                                        onCheckedChange={(checked) => {
+                                          const newValue = checked
+                                            ? [...field.value || [], permission]
+                                            : field.value?.filter(p => p !== permission) || [];
+                                          field.onChange(newValue);
+                                        }}
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">
+                                      {permission.replace(/_/g, ' ')}
+                                    </FormLabel>
+                                  </FormItem>
+                                )}
+                              />
+                            ))}
+                          </div>
+                        </div>
                       ))}
                     </div>
-                  </div>
-                ))}
-              </div>
 
-              <div className="flex justify-end space-x-4">
-                {editingRole && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setEditingRole(null);
-                      form.reset();
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                )}
-                <Button type="submit">
-                  {editingRole ? 'Update Role' : 'Create Role'}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-        </Card>
-      </ProtectedElement>
+                    <div className="flex justify-end space-x-4">
+                      {editingRole && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => {
+                            setEditingRole(null);
+                            form.reset();
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                      )}
+                      <Button type="submit">
+                        {editingRole ? 'Update Role' : 'Create Role'}
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
+          </ProtectedElement>
+        </TabsContent>
 
-      </div>
+        <TabsContent value="staff-roles">
+          {/* Staff role management content will be added here */}
+          <div className="text-center py-4">
+            Staff role management coming soon...
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }
