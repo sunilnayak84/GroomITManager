@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { useElementVisibility } from '@/hooks/use-element-visibility';
+import { useRole } from '@/hooks/use-role';
 import { Skeleton } from './ui/skeleton';
 
 interface ProtectedElementProps {
@@ -7,21 +7,37 @@ interface ProtectedElementProps {
   requiredPermissions: string | string[];
   fallback?: ReactNode;
   showLoader?: boolean;
+  requireAll?: boolean;
 }
 
 export function ProtectedElement({ 
   children, 
   requiredPermissions, 
   fallback = null,
-  showLoader = false
+  showLoader = true,
+  requireAll = false
 }: ProtectedElementProps): JSX.Element {
-  const { canView, isLoading } = useElementVisibility();
+  const { hasPermission, hasAllPermissions, hasAnyPermission, isLoading, error } = useRole();
 
+  // Show loader while checking permissions
   if (isLoading && showLoader) {
     return <Skeleton className="h-8 w-full" />;
   }
 
-  if (!canView(requiredPermissions)) {
+  // Handle errors gracefully
+  if (error) {
+    console.error('Permission check error:', error);
+    return <>{fallback}</>;
+  }
+
+  // Check permissions based on input type and requirements
+  const hasAccess = Array.isArray(requiredPermissions)
+    ? requireAll
+      ? hasAllPermissions(requiredPermissions)
+      : hasAnyPermission(requiredPermissions)
+    : hasPermission(requiredPermissions);
+
+  if (!hasAccess) {
     return <>{fallback}</>;
   }
 
