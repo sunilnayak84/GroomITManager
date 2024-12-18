@@ -164,30 +164,45 @@ export async function createUserInDatabase(user: FirebaseUser) {
     // Check if user exists
     const snapshot = await userRef.once('value');
     if (!snapshot.exists()) {
+      // Default to staff role for new users
+      const defaultRole = RoleTypes.staff;
+      
       const userData = {
         id: user.id,
         email: user.email || '',
         name: user.name,
         displayName: user.displayName,
-        role: (user.role === 'admin' || user.role === 'manager' || user.role === 'staff' || user.role === 'receptionist') 
-          ? user.role 
-          : 'staff' as const,
-        permissions: user.permissions || RolePermissions[user.role] || [],
+        role: defaultRole,
+        permissions: DefaultPermissions[defaultRole],
         isActive: true,
         createdAt: Date.now(),
         lastUpdated: Date.now()
       };
 
+      // Set user data in users collection
       await userRef.set(userData);
       console.log('[AUTH] Created new user in Firebase:', userData);
 
-      if (process.env.NODE_ENV !== 'development') {
-        const app = await initializeFirebaseAdmin();
-        await admin.auth().setCustomUserClaims(user.id, {
-          role: user.role,
-          permissions: RolePermissions[user.role] || []
-        });
-      }
+      // Set role in roles collection
+      await db.ref(`roles/${user.id}`).set({
+        role: defaultRole,
+        permissions: DefaultPermissions[defaultRole],
+        updatedAt: Date.now()
+      });
+
+      // Set custom claims
+      const app = await initializeFirebaseAdmin();
+      await admin.auth().setCustomUserClaims(user.id, {
+        role: defaultRole,
+        permissions: DefaultPermissions[defaultRole],
+        updatedAt: Date.now()
+      });
+
+      console.log('[AUTH] Assigned default role and permissions for new user:', {
+        userId: user.id,
+        role: defaultRole,
+        permissions: DefaultPermissions[defaultRole]
+      });
     }
     
     return true;
