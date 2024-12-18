@@ -96,7 +96,11 @@ export default function StaffPage() {
       petTypePreferences: [],
       experienceYears: 0,
       maxDailyAppointments: 8,
-      isActive: true
+      isActive: true,
+      primaryBranchId: null,
+      isMultiBranchEnabled: false,
+      managedBranchIds: [],
+      branchId: null
     },
   });
 
@@ -146,24 +150,28 @@ export default function StaffPage() {
     }
   };
 
-  const handleEdit = (staff: User) => {
+  const handleEdit = (staff: Staff) => {
     setSelectedStaff(staff);
     form.reset({
       name: staff.name,
       email: staff.email,
-      phone: staff.phone,
+      phone: staff.phone || "",
       role: staff.role,
       isGroomer: staff.isGroomer,
       specialties: staff.specialties || [],
       petTypePreferences: staff.petTypePreferences || [],
       experienceYears: staff.experienceYears || 0,
       maxDailyAppointments: staff.maxDailyAppointments || 8,
-      isActive: staff.isActive
+      isActive: staff.isActive,
+      primaryBranchId: staff.primaryBranchId,
+      isMultiBranchEnabled: staff.isMultiBranchEnabled,
+      managedBranchIds: staff.managedBranchIds,
+      branchId: staff.branchId
     });
     setShowStaffDialog(true);
   };
 
-  const handleDelete = (staff: User) => {
+  const handleDelete = (staff: Staff) => {
     setSelectedStaff(staff);
     setShowDeleteConfirm(true);
   };
@@ -302,7 +310,7 @@ export default function StaffPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {staffMembers.map((staff: User) => (
+            {staffMembers.map((staff: Staff) => (
               <TableRow key={staff.id}>
                 {columns.map((column, index) => (
                   <TableCell key={index}>{column.cell(staff)}</TableCell>
@@ -417,6 +425,87 @@ export default function StaffPage() {
                 )}
               />
 
+              <FormField
+                control={form.control}
+                name="primaryBranchId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Primary Branch</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      defaultValue={field.value || undefined}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select primary branch" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="branch1">Main Branch</SelectItem>
+                        <SelectItem value="branch2">Downtown Branch</SelectItem>
+                        <SelectItem value="branch3">North Branch</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="isMultiBranchEnabled"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                    <div className="space-y-0.5">
+                      <FormLabel>Multi-Branch Access</FormLabel>
+                      <FormDescription>
+                        Allow this staff member to work across multiple branches
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="managedBranchIds"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Managed Branches</FormLabel>
+                    <FormDescription>
+                      Select additional branches this staff member can work at
+                    </FormDescription>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {['branch1', 'branch2', 'branch3'].map((branchId) => (
+                        <Badge
+                          key={branchId}
+                          variant={field.value?.includes(branchId) ? "default" : "outline"}
+                          className="cursor-pointer"
+                          onClick={() => {
+                            const currentValue = field.value || [];
+                            field.onChange(
+                              currentValue.includes(branchId)
+                                ? currentValue.filter(id => id !== branchId)
+                                : [...currentValue, branchId]
+                            );
+                          }}
+                        >
+                          {branchId === 'branch1' ? 'Main Branch' :
+                           branchId === 'branch2' ? 'Downtown Branch' : 'North Branch'}
+                        </Badge>
+                      ))}
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <div className="flex justify-end gap-2">
                 <Button
                   type="button"
@@ -451,17 +540,17 @@ export default function StaffPage() {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={async () => {
-                if (selectedStaff) {
+                if (selectedStaff?.id) {
                   try {
-                    await deleteStaffMember(selectedStaff.id);
+                    await deactivateStaff(selectedStaff.id);
                     toast({
                       title: "Success",
-                      description: "Staff member deleted successfully",
+                      description: "Staff member deactivated successfully",
                     });
                   } catch (error) {
                     toast({
                       title: "Error",
-                      description: "Failed to delete staff member",
+                      description: "Failed to deactivate staff member",
                       variant: "destructive",
                     });
                   }

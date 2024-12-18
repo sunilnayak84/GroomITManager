@@ -148,11 +148,74 @@ export function useStaffManagement() {
   });
 
   // Get available groomers (active staff members who are groomers)
-  const getAvailableGroomers = () => {
+  const getAvailableGroomers = (branchId?: string) => {
+    return staffMembers.filter(staff => {
+      const isActiveGroomer = staff.isActive && (staff.role === 'groomer' || staff.isGroomer);
+      if (!branchId) return isActiveGroomer;
+      return isActiveGroomer && (
+        staff.branchId === branchId || 
+        staff.isMultiBranchEnabled ||
+        staff.managedBranchIds.includes(branchId)
+      );
+    });
+  };
+
+  // Get staff members by branch
+  const getStaffByBranch = (branchId: string) => {
     return staffMembers.filter(staff => 
-      staff.isActive && (staff.role === 'groomer' || staff.isGroomer)
+      staff.branchId === branchId || 
+      staff.isMultiBranchEnabled ||
+      staff.managedBranchIds.includes(branchId)
     );
   };
+
+  // Update staff branch assignments
+  const updateStaffBranches = useMutation({
+    mutationFn: async ({ 
+      staffId, 
+      primaryBranchId,
+      managedBranchIds,
+      isMultiBranchEnabled 
+    }: {
+      staffId: string;
+      primaryBranchId: string;
+      managedBranchIds: string[];
+      isMultiBranchEnabled: boolean;
+    }) => {
+      console.log('[STAFF] Updating staff branch assignments:', { 
+        staffId, 
+        primaryBranchId,
+        managedBranchIds,
+        isMultiBranchEnabled 
+      });
+      
+      const staffRef = doc(db, 'users', staffId);
+      const updateData = {
+        branchId: primaryBranchId,
+        primaryBranchId,
+        managedBranchIds,
+        isMultiBranchEnabled,
+        updatedAt: Timestamp.now()
+      };
+
+      await updateDoc(staffRef, updateData);
+      return { id: staffId, ...updateData };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['staff-members'] });
+      toast({
+        title: "Success",
+        description: "Staff branch assignments updated successfully"
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
 
   return {
     staffMembers,
@@ -161,8 +224,11 @@ export function useStaffManagement() {
     updateStaff: updateStaff.mutateAsync,
     deactivateStaff: deactivateStaff.mutateAsync,
     getAvailableGroomers,
+    getStaffByBranch,
+    updateStaffBranches: updateStaffBranches.mutateAsync,
     isAddingStaff: addStaff.isPending,
     isUpdatingStaff: updateStaff.isPending,
-    isDeactivatingStaff: deactivateStaff.isPending
+    isDeactivatingStaff: deactivateStaff.isPending,
+    isUpdatingBranches: updateStaffBranches.isPending
   };
 }

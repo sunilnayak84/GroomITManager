@@ -33,6 +33,10 @@ const baseStaffSchema = {
   name: z.string().min(1, "Name is required"),
   phone: z.string().optional(),
   isActive: z.boolean().default(true),
+  branchId: z.string().nullable().default(null),
+  managedBranchIds: z.array(z.string()).default([]),
+  isMultiBranchEnabled: z.boolean().default(false),
+  primaryBranchId: z.string().nullable().default(null),
   createdAt: z.union([
     z.string(),
     z.number(),
