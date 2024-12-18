@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { auth } from '../lib/firebase';
 
 interface FormData {
   name: string;
@@ -11,6 +13,7 @@ interface FormErrors {
   name?: string;
   email?: string;
   password?: string;
+  submit?: string;
 }
 
 export default function NewRegistrationPage() {
@@ -68,11 +71,25 @@ export default function NewRegistrationPage() {
     setIsSubmitting(true);
     
     try {
-      // We'll implement the actual registration logic later
-      console.log('Form submitted with:', formData);
-      // navigate('/'); // Uncomment when ready to redirect after successful registration
-    } catch (error) {
+      // Create user with Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
+
+      // Update user profile with name
+      await updateProfile(userCredential.user, {
+        displayName: formData.name
+      });
+
+      // Once registration is successful, redirect to home page
+      setLocation('/');
+    } catch (error: any) {
       console.error('Registration error:', error);
+      setErrors({
+        submit: error.message || 'Failed to create account. Please try again.'
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -88,6 +105,18 @@ export default function NewRegistrationPage() {
         </div>
         
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          {errors.submit && (
+            <div className="rounded-md bg-red-50 p-4">
+              <div className="flex">
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-red-800">
+                    {errors.submit}
+                  </h3>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="rounded-md shadow-sm -space-y-px">
             <div className="mb-4">
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">

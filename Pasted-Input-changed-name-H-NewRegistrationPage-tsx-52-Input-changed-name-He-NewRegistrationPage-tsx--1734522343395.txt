@@ -1,0 +1,41 @@
+Input changed - name: H
+NewRegistrationPage.tsx:52 Input changed - name: He
+NewRegistrationPage.tsx:52 Input changed - name: Hel
+NewRegistrationPage.tsx:52 Input changed - name: Hell
+NewRegistrationPage.tsx:52 Input changed - name: Hello
+NewRegistrationPage.tsx:52 Input changed - name: Hello 
+NewRegistrationPage.tsx:52 Input changed - name: Hello G
+NewRegistrationPage.tsx:52 Input changed - name: Hello Gr
+NewRegistrationPage.tsx:52 Input changed - name: Hello Gro
+NewRegistrationPage.tsx:52 Input changed - name: Hello Groo
+NewRegistrationPage.tsx:52 Input changed - name: Hello Groom
+NewRegistrationPage.tsx:52 Input changed - name: Hello Groome
+NewRegistrationPage.tsx:52 Input changed - name: Hello Groomer
+NewRegistrationPage.tsx:52 Input changed - name: Hello Groomery
+NewRegistrationPage.tsx:52 Input changed - email: h
+NewRegistrationPage.tsx:52 Input changed - email: he
+NewRegistrationPage.tsx:52 Input changed - email: hel
+NewRegistrationPage.tsx:52 Input changed - email: hell
+NewRegistrationPage.tsx:52 Input changed - email: hello
+NewRegistrationPage.tsx:52 Input changed - email: hello@
+NewRegistrationPage.tsx:52 Input changed - email: hello@g
+NewRegistrationPage.tsx:52 Input changed - email: hello@gr
+NewRegistrationPage.tsx:52 Input changed - email: hello@gro
+NewRegistrationPage.tsx:52 Input changed - email: hello@groo
+NewRegistrationPage.tsx:52 Input changed - email: hello@groom
+NewRegistrationPage.tsx:52 Input changed - email: hello@groome
+NewRegistrationPage.tsx:52 Input changed - email: hello@groomer
+NewRegistrationPage.tsx:52 Input changed - email: hello@groomery
+NewRegistrationPage.tsx:52 Input changed - email: hello@groomery.
+NewRegistrationPage.tsx:52 Input changed - email: hello@groomery.i
+NewRegistrationPage.tsx:52 Input changed - email: hello@groomery.in
+NewRegistrationPage.tsx:52 Input changed - password: h
+NewRegistrationPage.tsx:52 Input changed - password: he
+NewRegistrationPage.tsx:52 Input changed - password: hel
+NewRegistrationPage.tsx:52 Input changed - password: hell
+NewRegistrationPage.tsx:52 Input changed - password: hello
+NewRegistrationPage.tsx:52 Input changed - password: hello1
+NewRegistrationPage.tsx:52 Input changed - password: hello12
+NewRegistrationPage.tsx:52 Input changed - password: hello123
+NewRegistrationPage.tsx:61 Form submission attempted
+NewRegistrationPage.tsx:72 Form submitted with: {name: 'Hello Groomery', email: 'hello@groomery.in', password: 'hello123'}email: "hello@groomery.in"name: "Hello Groomery"password: "hello123"[[Prototype]]: Object
