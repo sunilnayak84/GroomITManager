@@ -399,7 +399,7 @@ export function RoleManagement() {
                           <div>
                             <p className="font-medium">{staff.email}</p>
                             <p className="text-sm text-muted-foreground">
-                              Branch: {staff.branch || 'All Branches'}
+                              Branch: {staff.branch || staff.branchId || 'All Branches'}
                             </p>
                           </div>
                           <div className="flex items-center gap-4">

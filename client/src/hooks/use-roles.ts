@@ -24,6 +24,10 @@ interface FirebaseUser {
   disabled?: boolean;
   lastSignInTime?: string;
   creationTime?: string;
+  branch?: string | null;
+  branchId?: string | null;
+  managedBranchIds?: string[];
+  isMultiBranchEnabled?: boolean;
 }
 
 export async function updateUserStatus(userId: string, disabled: boolean) {
@@ -296,8 +300,8 @@ export function useRoles() {
   });
 
   const updateUserRoleMutation = useMutation({
-    mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
-      console.log('[ROLES] Updating user role:', { userId, role });
+    mutationFn: async ({ userId, role, permissions }: { userId: string; role: string; permissions?: string[] }) => {
+      console.log('[ROLES] Updating user role:', { userId, role, permissions });
       await updateUserRole(userId, role);
       // Force token refresh after role update
       const auth = getAuth();

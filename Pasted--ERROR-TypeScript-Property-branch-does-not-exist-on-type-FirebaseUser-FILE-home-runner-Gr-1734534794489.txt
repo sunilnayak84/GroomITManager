@@ -1,0 +1,48 @@
+ ERROR(TypeScript)  Property 'branch' does not exist on type 'FirebaseUser'.
+ FILE  /home/runner/GroomITManager/client/src/components/RoleManagement.tsx:402:46
+
+    400 |                             <p className="font-medium">{staff.email}</p>
+    401 |                             <p className="text-sm text-muted-foreground">
+  > 402 |                               Branch: {staff.branch || 'All Branches'}
+        |                                              ^^^^^^
+    403 |                             </p>
+    404 |                           </div>
+    405 |                           <div className="flex items-center gap-4">
+
+ ERROR(TypeScript)  Argument of type '{ userId: string; role: string; permissions: string[]; }' is not assignable to parameter of type '{ userId: string; role: string; }'.
+  Object literal may only specify known properties, and 'permissions' does not exist in type '{ userId: string; role: string; }'.
+ FILE  /home/runner/GroomITManager/client/src/components/RoleManagement.tsx:432:35
+
+    430 |                                   userId: staff.uid, 
+    431 |                                   role: 'staff',
+  > 432 |                                   permissions: newPermissions 
+        |                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    433 |                                 });
+    434 |                               }}
+    435 |                             >
+
+ ERROR(TypeScript)  Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+ FILE  /home/runner/GroomITManager/client/src/pages/StaffPage.tsx:124:11
+
+    122 |       if (selectedStaff) {
+    123 |         await updateStaff({
+  > 124 |           id: selectedStaff.id,
+        |           ^^
+    125 |           ...staffData
+    126 |         });
+    127 |
+
+ ERROR(TypeScript)  Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+ FILE  /home/runner/GroomITManager/client/src/pages/StaffPage.tsx:236:15
+
+    234 |           onCheckedChange={async (checked) => {
+    235 |             await updateStaff({
+  > 236 |               id: staff.id,
+        |               ^^
+    237 |               isActive: checked
+    238 |             });
+    239 |           }}
+
+[TypeScript] Found 4 errors. Watching for file changes.
