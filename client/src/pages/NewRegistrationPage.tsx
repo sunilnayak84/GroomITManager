@@ -4,14 +4,18 @@ import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 
 interface FormData {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
+  phone: string;
   password: string;
 }
 
 interface FormErrors {
-  name?: string;
+  firstName?: string;
+  lastName?: string;
   email?: string;
+  phone?: string;
   password?: string;
   submit?: string;
 }
@@ -19,8 +23,10 @@ interface FormErrors {
 export default function NewRegistrationPage() {
   const [_, setLocation] = useLocation();
   const [formData, setFormData] = useState<FormData>({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
+    phone: '',
     password: ''
   });
   
@@ -30,14 +36,28 @@ export default function NewRegistrationPage() {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = 'First name is required';
+    } else if (formData.firstName.length < 2) {
+      newErrors.firstName = 'First name must be at least 2 characters';
+    }
+
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = 'Last name is required';
+    } else if (formData.lastName.length < 2) {
+      newErrors.lastName = 'Last name must be at least 2 characters';
     }
     
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Email is invalid';
+    }
+
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Phone number is required';
+    } else if (formData.phone.length < 10) {
+      newErrors.phone = 'Phone number must be at least 10 digits';
     }
     
     if (!formData.password) {
@@ -80,17 +100,34 @@ export default function NewRegistrationPage() {
 
       console.log('Firebase Auth user created successfully');
 
-      // Update user profile with name
+      // Update user profile with full name
       await updateProfile(userCredential.user, {
-        displayName: formData.name
+        displayName: `${formData.firstName} ${formData.lastName}`
       });
 
       console.log('User profile updated with display name');
 
-      // Create user in our database with default role
-      const idToken = await userCredential.user.getIdToken();
-      console.log('Got ID token, making API request to register endpoint');
+      // Create customer in Firestore
+      const { createCustomer } = await import('../lib/firestore');
+      const customerData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        firebaseId: userCredential.user.uid
+      };
 
+      console.log('Creating customer record:', customerData);
+      const customerId = await createCustomer(customerData);
+
+      if (!customerId) {
+        throw new Error('Failed to create customer record');
+      }
+
+      console.log('Customer record created successfully');
+
+      // Create user role in Firebase
+      const idToken = await userCredential.user.getIdToken();
       const response = await fetch('/api/register', {
         method: 'POST',
         headers: {
@@ -98,7 +135,9 @@ export default function NewRegistrationPage() {
           'Authorization': `Bearer ${idToken}`
         },
         body: JSON.stringify({
-          name: formData.name,
+          customerId,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
           email: formData.email
         })
       });
@@ -166,23 +205,44 @@ export default function NewRegistrationPage() {
 
           <div className="rounded-md shadow-sm -space-y-px">
             <div className="mb-4">
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                Name
+              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
+                First Name
               </label>
               <input
-                id="name"
-                name="name"
+                id="firstName"
+                name="firstName"
                 type="text"
                 required
-                value={formData.name}
+                value={formData.firstName}
                 onChange={handleChange}
                 className={`appearance-none rounded relative block w-full px-3 py-2 border ${
-                  errors.name ? 'border-red-300' : 'border-gray-300'
+                  errors.firstName ? 'border-red-300' : 'border-gray-300'
                 } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
-                placeholder="Your name"
+                placeholder="Your first name"
               />
-              {errors.name && (
-                <p className="mt-2 text-sm text-red-600">{errors.name}</p>
+              {errors.firstName && (
+                <p className="mt-2 text-sm text-red-600">{errors.firstName}</p>
+              )}
+            </div>
+
+            <div className="mb-4">
+              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
+                Last Name
+              </label>
+              <input
+                id="lastName"
+                name="lastName"
+                type="text"
+                required
+                value={formData.lastName}
+                onChange={handleChange}
+                className={`appearance-none rounded relative block w-full px-3 py-2 border ${
+                  errors.lastName ? 'border-red-300' : 'border-gray-300'
+                } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                placeholder="Your last name"
+              />
+              {errors.lastName && (
+                <p className="mt-2 text-sm text-red-600">{errors.lastName}</p>
               )}
             </div>
 
@@ -205,6 +265,27 @@ export default function NewRegistrationPage() {
               />
               {errors.email && (
                 <p className="mt-2 text-sm text-red-600">{errors.email}</p>
+              )}
+            </div>
+
+            <div className="mb-4">
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                Phone Number
+              </label>
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                required
+                value={formData.phone}
+                onChange={handleChange}
+                className={`appearance-none rounded relative block w-full px-3 py-2 border ${
+                  errors.phone ? 'border-red-300' : 'border-gray-300'
+                } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                placeholder="Your phone number"
+              />
+              {errors.phone && (
+                <p className="mt-2 text-sm text-red-600">{errors.phone}</p>
               )}
             </div>
 
