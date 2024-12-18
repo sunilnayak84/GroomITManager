@@ -186,7 +186,7 @@ export default function AuthPage() {
                 <Form {...registerForm}>
                   <form onSubmit={registerForm.handleSubmit(handleRegister)} className="space-y-4">
                     <FormField
-                      control={control}
+                      control={registerForm.control}
                       name="name"
                       render={({ field }) => (
                         <FormItem>
@@ -195,8 +195,7 @@ export default function AuthPage() {
                             <Input 
                               type="text"
                               placeholder="Enter your name"
-                              onChange={field.onChange}
-                              value={field.value}
+                              {...field}
                             />
                           </FormControl>
                           <FormMessage />
@@ -214,7 +213,9 @@ export default function AuthPage() {
                             <Input 
                               type="email"
                               placeholder="Enter your email"
-                              {...field}
+                              value={field.value}
+                              onChange={field.onChange}
+                              onBlur={field.onBlur}
                             />
                           </FormControl>
                           <FormMessage />
