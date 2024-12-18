@@ -7,7 +7,8 @@ export enum RoleTypes {
   admin = 'admin',
   manager = 'manager',
   staff = 'staff',
-  receptionist = 'receptionist'
+  receptionist = 'receptionist',
+  customer = 'customer'
 }
 
 // All available permissions
@@ -62,6 +63,11 @@ export const DefaultPermissions: Record<RoleTypes, Permission[]> = {
     'create_appointments',
     'view_customers',
     'create_customers'
+  ],
+  [RoleTypes.customer]: [
+    'view_appointments',
+    'create_appointments',
+    'view_services'
   ]
 };
 
@@ -90,6 +96,13 @@ export const InitialRoleConfigs = {
   [RoleTypes.receptionist]: {
     permissions: DefaultPermissions[RoleTypes.receptionist],
     description: 'Front desk and customer service access',
+    isSystem: true,
+    createdAt: Date.now(),
+    updatedAt: Date.now()
+  },
+  [RoleTypes.customer]: {
+    permissions: DefaultPermissions[RoleTypes.customer],
+    description: 'Customer access for booking appointments and viewing services',
     isSystem: true,
     createdAt: Date.now(),
     updatedAt: Date.now()
