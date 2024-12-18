@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getAuth } from 'firebase/auth';
-import { getDatabase, ref, get, set, update, remove, push } from 'firebase/database';
+import { getFirestore, collection, getDocs, doc, setDoc, updateDoc, query, where, Timestamp } from 'firebase/firestore';
 import type { Staff, InsertStaff, UpdateStaff } from '@/lib/staff-types';
 import { staffSchema } from '@/lib/staff-types';
 import { toast } from '@/components/ui/use-toast';
+import { db } from '@/lib/firebase';
 
 export function useStaffManagement() {
   const queryClient = useQueryClient();
@@ -15,30 +16,32 @@ export function useStaffManagement() {
     queryFn: async () => {
       try {
         console.log('[STAFF] Starting to fetch staff members');
-        const db = getDatabase();
-        const staffRef = ref(db, 'users');
-        const snapshot = await get(staffRef);
+        const usersCollection = collection(db, 'users');
+        const staffQuery = query(usersCollection, where('role', 'in', ['staff', 'groomer']));
+        const snapshot = await getDocs(staffQuery);
         
-        if (!snapshot.exists()) {
+        if (snapshot.empty) {
           console.log('[STAFF] No staff members found');
           return [];
         }
 
-        const staffData = snapshot.val();
         const staff: Staff[] = [];
 
-        // Convert Firebase data to Staff type and validate
-        for (const [id, data] of Object.entries<any>(staffData)) {
+        // Convert Firestore data to Staff type and validate
+        snapshot.forEach(doc => {
           try {
+            const data = doc.data();
             const validatedStaff = staffSchema.parse({
-              id,
-              ...data
+              id: doc.id,
+              ...data,
+              createdAt: data.createdAt?.toMillis() || Date.now(),
+              updatedAt: data.updatedAt?.toMillis() || null
             });
             staff.push(validatedStaff);
           } catch (error) {
-            console.error(`[STAFF] Invalid staff data for ID ${id}:`, error);
+            console.error(`[STAFF] Invalid staff data for ID ${doc.id}:`, error);
           }
-        }
+        });
 
         console.log('[STAFF] Successfully fetched staff members:', staff.length);
         return staff;
@@ -54,19 +57,18 @@ export function useStaffManagement() {
   const addStaff = useMutation({
     mutationFn: async (data: InsertStaff) => {
       console.log('[STAFF] Creating new staff member:', data);
-      const db = getDatabase();
-      const staffRef = ref(db, 'users');
-      const newStaffRef = push(staffRef);
+      const usersCollection = collection(db, 'users');
+      const docRef = doc(usersCollection);
       
-      const timestamp = Date.now();
+      const now = Timestamp.now();
       const staffData = {
         ...data,
-        id: newStaffRef.key,
-        createdAt: timestamp,
-        updatedAt: timestamp
+        id: docRef.id,
+        createdAt: now,
+        updatedAt: now
       };
 
-      await set(newStaffRef, staffData);
+      await setDoc(docRef, staffData);
       return staffData;
     },
     onSuccess: () => {
@@ -89,15 +91,14 @@ export function useStaffManagement() {
   const updateStaff = useMutation({
     mutationFn: async ({ id, ...data }: UpdateStaff) => {
       console.log('[STAFF] Updating staff member:', { id, data });
-      const db = getDatabase();
-      const staffRef = ref(db, `users/${id}`);
+      const staffRef = doc(db, 'users', id);
       
       const updateData = {
         ...data,
-        updatedAt: Date.now()
+        updatedAt: Timestamp.now()
       };
 
-      await update(staffRef, updateData);
+      await updateDoc(staffRef, updateData);
       return { id, ...updateData };
     },
     onSuccess: () => {
@@ -116,16 +117,15 @@ export function useStaffManagement() {
     }
   });
 
-  // Delete/deactivate staff member
+  // Deactivate staff member
   const deactivateStaff = useMutation({
     mutationFn: async (id: string) => {
       console.log('[STAFF] Deactivating staff member:', id);
-      const db = getDatabase();
-      const staffRef = ref(db, `users/${id}`);
+      const staffRef = doc(db, 'users', id);
       
-      await update(staffRef, {
+      await updateDoc(staffRef, {
         isActive: false,
-        updatedAt: Date.now()
+        updatedAt: Timestamp.now()
       });
 
       return id;
