@@ -15,7 +15,9 @@ export function useStaff() {
         const token = await auth.currentUser?.getIdToken();
         if (!token) throw new Error('No authentication token available');
 
-        const response = await fetch('/api/firebase-users?role=staff', {
+        // Get server port from environment variable
+        const port = import.meta.env.VITE_SERVER_PORT || '3000';
+        const response = await fetch(`${window.location.protocol}//${window.location.hostname}:${port}/api/firebase-users?role=staff`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
