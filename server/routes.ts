@@ -160,8 +160,9 @@ export function registerRoutes(app: Express) {
       // Parse pagination parameters with defaults
       const pageSize = Math.min(Number(req.query.pageSize) || 100, 1000);
       const pageToken = req.query.pageToken as string | undefined;
+      const roleFilter = req.query.role as string | undefined;
       
-      console.log('[FIREBASE-USERS] Fetching users with params:', { pageSize, pageToken });
+      console.log('[FIREBASE-USERS] Fetching users with params:', { pageSize, pageToken, roleFilter });
 
       // List users from Firebase Auth
       const listUsersResult = await auth.listUsers(pageSize, pageToken);
@@ -170,8 +171,8 @@ export function registerRoutes(app: Express) {
       const rolesSnapshot = await db.ref('roles').once('value');
       const roles = rolesSnapshot.val() || {};
       
-      // Combine user data with roles
-      const users = await Promise.all(listUsersResult.users.map(async user => {
+      // Combine user data with roles and apply role filter if specified
+      const users = (await Promise.all(listUsersResult.users.map(async user => {
         const userRole = roles[user.uid] || { role: 'staff', permissions: [] };
         return {
           uid: user.uid,
@@ -183,7 +184,7 @@ export function registerRoutes(app: Express) {
           lastSignInTime: user.metadata.lastSignInTime,
           creationTime: user.metadata.creationTime
         };
-      }));
+      }))).filter(user => !roleFilter || user.role === roleFilter);
       
       console.log('[FIREBASE-USERS] Successfully fetched users:', users.length);
       

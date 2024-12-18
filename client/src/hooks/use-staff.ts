@@ -19,7 +19,8 @@ export function useStaff() {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
-          }
+          },
+          credentials: 'include'
         });
 
         if (!response.ok) {
@@ -33,15 +34,17 @@ export function useStaff() {
           throw new Error(errorMessage);
         }
 
-        try {
-          const data = await response.json();
-          const staff = Array.isArray(data) ? data : [];
-          console.log('FETCH_STAFF: Successfully fetched staff members:', staff);
-          return staff;
-        } catch (e) {
-          console.error('Error parsing staff response:', e);
+        const data = await response.json();
+        console.log('FETCH_STAFF: Retrieved data:', data);
+        
+        if (!data.users || !Array.isArray(data.users)) {
+          console.error('FETCH_STAFF: Invalid response format', data);
           throw new Error('Invalid response format from server');
         }
+        
+        const staff = data.users.filter(user => user.role === 'staff');
+        console.log('FETCH_STAFF: Successfully filtered staff members:', staff);
+        return staff;
       } catch (error) {
         console.error('FETCH_STAFF: Error fetching staff:', error);
         throw error;
