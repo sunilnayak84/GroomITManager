@@ -164,8 +164,8 @@ export async function createUserInDatabase(user: FirebaseUser) {
     // Check if user exists
     const snapshot = await userRef.once('value');
     if (!snapshot.exists()) {
-      // Default to staff role for new users
-      const defaultRole = RoleTypes.staff;
+      // Default to user role for new users
+      const defaultRole = 'user';
       
       const userData = {
         id: user.id,

@@ -83,6 +83,24 @@ export default function NewRegistrationPage() {
         displayName: formData.name
       });
 
+      // Create user in our database with default role
+      const idToken = await userCredential.user.getIdToken();
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create user profile');
+      }
+
       // Once registration is successful, redirect to home page
       setLocation('/');
     } catch (error: any) {
