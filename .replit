@@ -48,26 +48,11 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Development Servers"
+args = "Backend Server"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Backend Server"
-
-[[workflows.workflow]]
-name = "Development Servers"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "packager.installForAll"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npx concurrently -n frontend,backend \"cd client && npm run dev -- --port 5174\" \"cd server && tsx watch --clear-screen=false index.ts\""
-waitForPort = 5174
+args = "Frontend Server"
 
 [[workflows.workflow]]
 name = "Backend Server"
@@ -83,3 +68,18 @@ task = "packager.installForAll"
 task = "shell.exec"
 args = "cd server && tsx watch --clear-screen=false index.ts"
 waitForPort = 3000
+
+[[workflows.workflow]]
+name = "Frontend Server"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd client && npm run dev -- --port 5174"
+waitForPort = 5174
