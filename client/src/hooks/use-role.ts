@@ -62,7 +62,7 @@ export function useRole() {
   };
 
   return {
-    role: role?.role,
+    role,
     permissions: role?.permissions || [],
     isLoading,
     error,

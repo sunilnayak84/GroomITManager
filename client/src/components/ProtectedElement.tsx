@@ -30,7 +30,12 @@ export function ProtectedElement({
     return <>{fallback}</>;
   }
 
-  // Check permissions based on input type and requirements
+  // Admin always has access
+  if (role?.role === 'admin') {
+    return <>{children}</>;
+  }
+
+  // For non-admin users, check specific permissions
   const hasAccess = Array.isArray(requiredPermissions)
     ? requireAll
       ? hasAllPermissions(requiredPermissions)
