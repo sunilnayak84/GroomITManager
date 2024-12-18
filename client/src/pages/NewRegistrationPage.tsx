@@ -1,38 +1,34 @@
-import { useRef, useEffect } from 'react'
+import React, { useState } from 'react';
 
-export default function NewRegistrationPage() {
-  const inputRef = useRef<HTMLInputElement>(null)
-  
-  // Log when component mounts
-  useEffect(() => {
-    console.log('Component mounted')
-  }, [])
+const NewRegistrationPage: React.FC = () => {
+  console.log('Rendering NewRegistrationPage');
+  const [inputText, setInputText] = useState('');
 
-  const handleChange = () => {
-    // Read value directly from DOM
-    const currentValue = inputRef.current?.value
-    console.log('Current input value:', currentValue)
-    
-    // Update display value
-    if (document.getElementById('display-value')) {
-      document.getElementById('display-value')!.textContent = currentValue || ''
-    }
-  }
-  
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+    console.log('Input changed:', newValue);
+    setInputText(newValue);
+  };
+
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>Test Input (Uncontrolled)</h2>
-      <input 
-        ref={inputRef}
+    <div style={{ padding: 20 }}>
+      <h1>Basic Input Test</h1>
+      <input
         type="text"
-        onChange={handleChange}
+        value={inputText}
+        onChange={handleInputChange}
         style={{ 
+          display: 'block',
+          width: '100%',
+          maxWidth: '300px',
           padding: '8px',
-          margin: '10px 0',
+          margin: '20px 0',
           border: '1px solid #ccc'
         }}
       />
-      <p id="display-value"></p>
+      <div>Typed value: {inputText}</div>
     </div>
-  )
-}
+  );
+};
+
+export default NewRegistrationPage;
