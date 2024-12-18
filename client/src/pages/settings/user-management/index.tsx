@@ -30,7 +30,7 @@ export default function UserManagementPage() {
       <h1 className="text-2xl font-bold mb-6">User Management</h1>
       
       <ProtectedElement 
-        requiredPermissions={['manage_roles']} 
+        requiredPermissions={['manage_users', 'manage_roles']} 
         fallback={<div className="text-muted-foreground text-center py-4">You don't have permission to manage user roles.</div>}
       >
         <Card>

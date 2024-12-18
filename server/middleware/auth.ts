@@ -130,8 +130,8 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
       // For admin users, ensure they have all admin permissions
       if (role === 'admin') {
         const adminPerms = await getDefaultPermissions(RoleTypes.admin);
-        permissions = [...new Set([...permissions, ...adminPerms])];
-        console.log('[AUTH] Ensured admin has all admin permissions');
+        permissions = [...new Set([...permissions, ...adminPerms, 'all', 'manage_users', 'manage_roles'])];
+        console.log('[AUTH] Ensured admin has all admin permissions:', permissions);
       }
 
       // Additional admin verification for development
