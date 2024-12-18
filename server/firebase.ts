@@ -11,6 +11,37 @@ export enum RoleTypes {
   customer = 'customer'
 }
 
+// Default permissions for each role
+const DefaultPermissions: Record<RoleTypes, Permission[]> = {
+  [RoleTypes.admin]: ['all'],
+  [RoleTypes.manager]: [
+    'manage_appointments',
+    'view_appointments',
+    'manage_services',
+    'view_services',
+    'manage_customers',
+    'view_customers',
+    'manage_inventory',
+    'view_inventory'
+  ],
+  [RoleTypes.staff]: [
+    'view_appointments',
+    'manage_own_schedule',
+    'view_customers'
+  ],
+  [RoleTypes.receptionist]: [
+    'view_appointments',
+    'create_appointments',
+    'view_customers',
+    'create_customers'
+  ],
+  [RoleTypes.customer]: [
+    'view_appointments',
+    'create_appointments',
+    'view_services'
+  ]
+};
+
 // All available permissions
 export const ALL_PERMISSIONS = [
   'all',
@@ -38,10 +69,8 @@ export const ALL_PERMISSIONS = [
   'view_financial_reports'
 ] as const;
 
-export type Permission = typeof ALL_PERMISSIONS[number];
-
 // Get role permissions from Firebase Realtime Database
-export async function getRolePermissions(role: RoleTypes): Promise<Permission[]> {
+async function getRolePermissions(role: RoleTypes): Promise<Permission[]> {
   const db = getDatabase(getFirebaseAdmin());
   const snapshot = await db.ref(`role-definitions/${role}`).once('value');
   const roleData = snapshot.val();
@@ -64,7 +93,7 @@ export async function getRolePermissions(role: RoleTypes): Promise<Permission[]>
 const permissionsCache = new Map<RoleTypes, { permissions: Permission[], timestamp: number }>();
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-export async function getDefaultPermissions(role: RoleTypes): Promise<Permission[]> {
+async function getDefaultPermissions(role: RoleTypes): Promise<Permission[]> {
   const now = Date.now();
   const cached = permissionsCache.get(role);
   
@@ -164,12 +193,12 @@ export function getFirebaseAdmin(): admin.app.App {
 }
 
 // Permission validation
-export function isValidPermission(permission: unknown): permission is Permission {
+function isValidPermission(permission: unknown): permission is Permission {
   if (typeof permission !== 'string') return false;
   return ALL_PERMISSIONS.includes(permission as Permission);
 }
 
-export function validatePermissions(permissions: unknown[]): Permission[] {
+function validatePermissions(permissions: unknown[]): Permission[] {
   return permissions.filter(isValidPermission);
 }
 
@@ -354,3 +383,25 @@ export async function updateRoleDefinition(
   
   return updatedRole;
 }
+
+// Type definitions
+export type Permission = typeof ALL_PERMISSIONS[number];
+
+// Export single type definition
+export type { Permission };
+
+// Export everything else
+export {
+  RoleTypes,
+  DefaultPermissions,
+  InitialRoleConfigs,
+  getDefaultPermissions,
+  validatePermissions,
+  isValidPermission,
+  getFirebaseAdmin,
+  initializeFirebaseAdmin,
+  setupAdminUser,
+  listAllUsers,
+  updateUserRole,
+  getUserRole
+};

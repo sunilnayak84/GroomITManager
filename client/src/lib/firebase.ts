@@ -2,6 +2,7 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { getDatabase } from "firebase/database";
 
 // Validate required environment variables
 const requiredEnvVars = [
@@ -10,7 +11,8 @@ const requiredEnvVars = [
   'VITE_FIREBASE_PROJECT_ID',
   'VITE_FIREBASE_STORAGE_BUCKET',
   'VITE_FIREBASE_MESSAGING_SENDER_ID',
-  'VITE_FIREBASE_APP_ID'
+  'VITE_FIREBASE_APP_ID',
+  'VITE_FIREBASE_DATABASE_URL'
 ];
 
 console.log('Checking Firebase environment variables...');
@@ -27,6 +29,7 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
   experimentalForceLongPolling: true, // Add this for better connection stability
   experimentalAutoDetectLongPolling: true // Enable auto-detection of long polling needs
 };
@@ -34,14 +37,15 @@ const firebaseConfig = {
 let app;
 try {
   // Validate required config
-  if (!firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId) {
+  if (!firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId || !firebaseConfig.databaseURL) {
     throw new Error('Missing required Firebase configuration');
   }
 
   console.log('FIREBASE_INIT: Initializing Firebase with config:', {
     authDomain: firebaseConfig.authDomain,
     projectId: firebaseConfig.projectId,
-    storageBucket: firebaseConfig.storageBucket
+    storageBucket: firebaseConfig.storageBucket,
+    databaseURL: firebaseConfig.databaseURL
   });
   
   if (!getApps().length) {
@@ -59,6 +63,7 @@ try {
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
+export const database = getDatabase(app);
 
 // Export the app instance for use in other parts of the application
 export default app;
