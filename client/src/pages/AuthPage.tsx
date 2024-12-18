@@ -197,12 +197,9 @@ export default function AuthPage() {
                           <FormLabel>Name</FormLabel>
                           <FormControl>
                             <Input 
+                              {...field}
                               type="text"
                               placeholder="Enter your name"
-                              onChange={(e) => field.onChange(e)}
-                              onBlur={field.onBlur}
-                              value={field.value}
-                              name={field.name}
                             />
                           </FormControl>
                           <FormMessage />
@@ -218,12 +215,9 @@ export default function AuthPage() {
                           <FormLabel>Email</FormLabel>
                           <FormControl>
                             <Input 
+                              {...field}
                               type="email"
                               placeholder="Enter your email"
-                              onChange={(e) => field.onChange(e)}
-                              onBlur={field.onBlur}
-                              value={field.value}
-                              name={field.name}
                             />
                           </FormControl>
                           <FormMessage />
