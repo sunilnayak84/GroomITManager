@@ -185,7 +185,9 @@ export default function AuthPage() {
                             <Input 
                               type="text"
                               placeholder="Enter your name"
-                              {...field}
+                              value={field.value}
+                              onChange={field.onChange}
+                              autoComplete="off"
                             />
                           </FormControl>
                           <FormMessage />
@@ -203,7 +205,9 @@ export default function AuthPage() {
                             <Input 
                               type="email"
                               placeholder="Enter your email"
-                              {...field}
+                              value={field.value}
+                              onChange={field.onChange}
+                              autoComplete="off"
                             />
                           </FormControl>
                           <FormMessage />
