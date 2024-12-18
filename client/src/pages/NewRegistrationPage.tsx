@@ -2,6 +2,19 @@ import React, { useState } from 'react';
 import { useLocation } from 'wouter';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '../lib/firebase';
+import { PawPrint } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 interface FormData {
   firstName: string;
@@ -72,7 +85,6 @@ export default function NewRegistrationPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    console.log(`Input changed - ${name}:`, value);
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -81,54 +93,24 @@ export default function NewRegistrationPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submission attempted');
     
     if (!validateForm()) {
-      console.log('Validation failed');
       return;
     }
 
     setIsSubmitting(true);
     
     try {
-      // Create user with Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         formData.email,
         formData.password
       );
 
-      console.log('Firebase Auth user created successfully');
-
-      // Update user profile with full name
       await updateProfile(userCredential.user, {
         displayName: `${formData.firstName} ${formData.lastName}`
       });
 
-      console.log('User profile updated with display name');
-
-      // Create customer in Firestore
-      const { createCustomer } = await import('../lib/firestore');
-      const customerData = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        phone: formData.phone,
-        address: null,
-        gender: null,
-        firebaseId: userCredential.user.uid
-      };
-
-      console.log('Creating customer record:', customerData);
-      const customerId = await createCustomer(customerData);
-
-      if (!customerId) {
-        throw new Error('Failed to create customer record');
-      }
-
-      console.log('Customer record created successfully');
-
-      // Create user role in Firebase
       const idToken = await userCredential.user.getIdToken();
       const response = await fetch('/api/register', {
         method: 'POST',
@@ -137,10 +119,10 @@ export default function NewRegistrationPage() {
           'Authorization': `Bearer ${idToken}`
         },
         body: JSON.stringify({
-          customerId,
           firstName: formData.firstName,
           lastName: formData.lastName,
-          email: formData.email
+          email: formData.email,
+          phone: formData.phone
         })
       });
 
@@ -150,17 +132,18 @@ export default function NewRegistrationPage() {
         throw new Error(responseData.message || 'Failed to create user profile');
       }
 
-      console.log('User profile created in database:', responseData);
+      toast({
+        title: "Success",
+        description: "Account created successfully",
+      });
 
       // Force token refresh to get new role claims
       await userCredential.user.getIdTokenResult(true);
 
-      // Once registration is successful, redirect to home page
       setLocation('/');
     } catch (error: any) {
       console.error('Registration error:', error);
       
-      // Handle Firebase Auth specific errors
       if (error.code === 'auth/email-already-in-use') {
         setErrors({
           email: 'An account with this email already exists',
@@ -177,86 +160,85 @@ export default function NewRegistrationPage() {
           submit: 'Registration failed: Password too weak'
         });
       } else {
-        // Handle other errors
         setErrors({
           submit: error.message || 'Failed to create account. Please try again.'
         });
       }
+
+      toast({
+        variant: "destructive",
+        title: "Registration Error",
+        description: error.message || 'Failed to create account',
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
-        </div>
+    <div className="min-h-screen flex">
+      <div className="flex-1 flex items-center justify-center p-8">
+        <div className="w-full max-w-sm">
+          <div className="flex items-center gap-2 mb-8">
+            <PawPrint className="h-8 w-8 text-primary" />
+            <h1 className="text-2xl font-bold">GroomIT</h1>
+          </div>
+          <div>
+            <h2 className="text-2xl font-semibold mb-6">Create your account</h2>
+          </div>
         
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {errors.submit && (
-            <div className="rounded-md bg-red-50 p-4">
-              <div className="flex">
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800">
-                    {errors.submit}
-                  </h3>
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            {errors.submit && (
+              <div className="rounded-md bg-destructive/10 p-4">
+                <div className="flex">
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-destructive">
+                      {errors.submit}
+                    </h3>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div className="mb-4">
-              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
-                First Name
-              </label>
-              <input
-                id="firstName"
-                name="firstName"
-                type="text"
-                required
-                value={formData.firstName}
-                onChange={handleChange}
-                className={`appearance-none rounded relative block w-full px-3 py-2 border ${
-                  errors.firstName ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
-                placeholder="Your first name"
-              />
-              {errors.firstName && (
-                <p className="mt-2 text-sm text-red-600">{errors.firstName}</p>
-              )}
-            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="firstName">First Name</Label>
+                <Input
+                  id="firstName"
+                  name="firstName"
+                  type="text"
+                  required
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  className={errors.firstName ? 'border-destructive' : ''}
+                  placeholder="Your first name"
+                />
+                {errors.firstName && (
+                  <p className="text-sm text-destructive">{errors.firstName}</p>
+                )}
+              </div>
 
-            <div className="mb-4">
-              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
-                Last Name
-              </label>
-              <input
-                id="lastName"
-                name="lastName"
-                type="text"
-                required
-                value={formData.lastName}
-                onChange={handleChange}
-                className={`appearance-none rounded relative block w-full px-3 py-2 border ${
-                  errors.lastName ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
-                placeholder="Your last name"
-              />
-              {errors.lastName && (
-                <p className="mt-2 text-sm text-red-600">{errors.lastName}</p>
-              )}
+              <div className="space-y-2">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  required
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  className={errors.lastName ? 'border-destructive' : ''}
+                  placeholder="Your last name"
+                />
+                {errors.lastName && (
+                  <p className="text-sm text-destructive">{errors.lastName}</p>
+                )}
+              </div>
             </div>
 
-            <div className="mb-4">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address
-              </label>
-              <input
+            <div className="space-y-2">
+              <Label htmlFor="email">Email address</Label>
+              <Input
                 id="email"
                 name="email"
                 type="email"
@@ -264,42 +246,34 @@ export default function NewRegistrationPage() {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className={`appearance-none rounded relative block w-full px-3 py-2 border ${
-                  errors.email ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                className={errors.email ? 'border-destructive' : ''}
                 placeholder="you@example.com"
               />
               {errors.email && (
-                <p className="mt-2 text-sm text-red-600">{errors.email}</p>
+                <p className="text-sm text-destructive">{errors.email}</p>
               )}
             </div>
 
-            <div className="mb-4">
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                Phone Number
-              </label>
-              <input
+            <div className="space-y-2">
+              <Label htmlFor="phone">Phone Number</Label>
+              <Input
                 id="phone"
                 name="phone"
                 type="tel"
                 required
                 value={formData.phone}
                 onChange={handleChange}
-                className={`appearance-none rounded relative block w-full px-3 py-2 border ${
-                  errors.phone ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                className={errors.phone ? 'border-destructive' : ''}
                 placeholder="Your phone number"
               />
               {errors.phone && (
-                <p className="mt-2 text-sm text-red-600">{errors.phone}</p>
+                <p className="text-sm text-destructive">{errors.phone}</p>
               )}
             </div>
 
-            <div className="mb-4">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <input
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
                 id="password"
                 name="password"
                 type="password"
@@ -307,40 +281,42 @@ export default function NewRegistrationPage() {
                 required
                 value={formData.password}
                 onChange={handleChange}
-                className={`appearance-none rounded relative block w-full px-3 py-2 border ${
-                  errors.password ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                className={errors.password ? 'border-destructive' : ''}
                 placeholder="••••••••"
               />
               {errors.password && (
-                <p className="mt-2 text-sm text-red-600">{errors.password}</p>
+                <p className="text-sm text-destructive">{errors.password}</p>
               )}
             </div>
-          </div>
 
-          <div>
-            <button
-              type="submit"
+            <Button 
+              type="submit" 
+              className="w-full" 
               disabled={isSubmitting}
-              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white ${
-                isSubmitting
-                  ? 'bg-indigo-400 cursor-not-allowed'
-                  : 'bg-indigo-600 hover:bg-indigo-700'
-              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
             >
               {isSubmitting ? 'Creating account...' : 'Create account'}
-            </button>
-          </div>
-        </form>
+            </Button>
+          </form>
 
-        <div className="text-center">
-          <a
-            href="/login"
-            className="font-medium text-indigo-600 hover:text-indigo-500"
-          >
-            Already have an account? Sign in
-          </a>
+          <div className="mt-4 text-center">
+            <Button
+              variant="link"
+              onClick={() => window.location.href = '/login'}
+              className="text-sm"
+            >
+              Already have an account? Sign in
+            </Button>
+          </div>
         </div>
+      </div>
+
+      <div className="flex-1 hidden lg:block relative">
+        <img
+          src="https://images.unsplash.com/photo-1672931653595-1e2e9d4050ef"
+          alt="Pet Grooming"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-primary/20" />
       </div>
     </div>
   );
