@@ -59,6 +59,8 @@ export default function AuthPage() {
     mode: "onChange"
   });
 
+  const { control, handleSubmit, formState: { errors } } = registerForm;
+
   async function handleLogin(data: z.infer<typeof loginSchema>) {
     try {
       await login(data);
@@ -184,7 +186,7 @@ export default function AuthPage() {
                 <Form {...registerForm}>
                   <form onSubmit={registerForm.handleSubmit(handleRegister)} className="space-y-4">
                     <FormField
-                      control={registerForm.control}
+                      control={control}
                       name="name"
                       render={({ field }) => (
                         <FormItem>
@@ -193,7 +195,8 @@ export default function AuthPage() {
                             <Input 
                               type="text"
                               placeholder="Enter your name"
-                              {...field}
+                              onChange={field.onChange}
+                              value={field.value}
                             />
                           </FormControl>
                           <FormMessage />
