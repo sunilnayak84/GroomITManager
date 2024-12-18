@@ -72,14 +72,20 @@ import {
 import { getAuth } from "firebase/auth";
 
 export default function StaffPage() {
-  const { staffMembers, isLoading, addStaffMember, updateStaffMember, deleteStaffMember } = useStaff();
+  const { 
+    staffMembers, 
+    isLoading, 
+    addStaff, 
+    updateStaff, 
+    deactivateStaff 
+  } = useStaffManagement();
   const [showStaffDialog, setShowStaffDialog] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [selectedStaff, setSelectedStaff] = useState<User | null>(null);
+  const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null);
   const { toast } = useToast();
 
-  const form = useForm<InsertUser>({
-    resolver: zodResolver(insertUserSchema),
+  const form = useForm<InsertStaff>({
+    resolver: zodResolver(staffSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -94,100 +100,37 @@ export default function StaffPage() {
     },
   });
 
-  const onSubmit = async (data: InsertUser) => {
+  const onSubmit = async (data: InsertStaff) => {
     try {
-      // Always ensure isGroomer is set based on role and include all required fields
-      const role = data.role === 'groomer' ? 'groomer' as const : 'staff' as const;
-      const staffData = {
+      // Always ensure isGroomer is set based on role
+      const isGroomer = data.role === 'groomer';
+      const staffData: InsertStaff = {
         ...data,
-        isGroomer: role === 'groomer',
-        isActive: true,
-        specialties: data.specialties || [],
-        petTypePreferences: data.petTypePreferences || [],
-        experienceYears: data.experienceYears || 0,
-        maxDailyAppointments: data.maxDailyAppointments || 8,
-        role
+        isGroomer,
+        specialties: isGroomer ? data.specialties : [],
+        petTypePreferences: isGroomer ? data.petTypePreferences : [],
+        experienceYears: isGroomer ? data.experienceYears : 0,
+        maxDailyAppointments: data.maxDailyAppointments || 8
       };
 
       console.log('Submitting staff data:', staffData);
 
       if (selectedStaff) {
-        // Update existing staff member
-        await updateStaffMember({
+        await updateStaff({
           id: selectedStaff.id,
-          data: staffData
+          ...staffData
         });
-
-        // Update role in Firebase Auth if email changed
-        if (selectedStaff.email !== data.email) {
-          const response = await fetch(`/api/users/update-role`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${await getAuth().currentUser?.getIdToken()}`
-            },
-            body: JSON.stringify({
-              email: data.email,
-              role: role,
-              name: data.name
-            }),
-          });
-
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Failed to update user role in Firebase Auth');
-          }
-        }
 
         toast({
           title: "Success",
           description: "Staff member updated successfully",
         });
       } else {
-        try {
-          // Create new staff member in Firebase Auth first
-          const response = await fetch(`/api/users/create`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${await getAuth().currentUser?.getIdToken()}`
-            },
-            body: JSON.stringify({
-              email: data.email,
-              role: role,
-              name: data.name,
-              password: Math.random().toString(36).slice(-8), // Generate random initial password
-              isGroomer: staffData.isGroomer,
-              phone: staffData.phone,
-              experienceYears: staffData.experienceYears,
-              maxDailyAppointments: staffData.maxDailyAppointments
-            }),
-          });
-
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Failed to create user in Firebase Auth');
-          }
-
-          const { uid, user } = await response.json();
-          console.log('Created user in Firebase:', user);
-          
-          // Add staff member to Firestore with Firebase UID
-          await addStaffMember({
-            ...staffData,
-            firebaseUid: uid,
-            role: role,
-            isActive: true
-          });
-
-          toast({
-            title: "Success",
-            description: "Staff member added successfully. A welcome email has been sent with login instructions.",
-          });
-        } catch (error) {
-          console.error('Error creating staff:', error);
-          throw error;
-        }
+        await addStaff(staffData);
+        toast({
+          title: "Success",
+          description: "Staff member added successfully",
+        });
       }
       
       setShowStaffDialog(false);
@@ -228,29 +171,62 @@ export default function StaffPage() {
   const columns = [
     {
       header: "Name",
-      cell: (staff: User) => staff.name,
+      cell: (staff: Staff) => staff.name,
     },
     {
       header: "Role",
-      cell: (staff: User) => staff.role,
+      cell: (staff: Staff) => (
+        <div className="flex items-center gap-2">
+          {staff.role === 'groomer' ? (
+            <div className="flex items-center gap-1">
+              <Scissors className="h-4 w-4" />
+              <span>Groomer</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1">
+              <Users className="h-4 w-4" />
+              <span>Staff</span>
+            </div>
+          )}
+        </div>
+      ),
     },
     {
       header: "Email",
-      cell: (staff: User) => staff.email,
+      cell: (staff: Staff) => staff.email,
     },
     {
       header: "Phone",
-      cell: (staff: User) => staff.phone,
+      cell: (staff: Staff) => staff.phone || "N/A",
+    },
+    {
+      header: "Specialties",
+      cell: (staff: Staff) => staff.isGroomer ? (
+        <div className="flex flex-wrap gap-1">
+          {staff.specialties.slice(0, 3).map((specialty) => (
+            <Badge key={specialty} variant="secondary" className="text-xs">
+              {getSpecialtyLabel(specialty)}
+            </Badge>
+          ))}
+          {staff.specialties.length > 3 && (
+            <Badge variant="secondary" className="text-xs">
+              +{staff.specialties.length - 3} more
+            </Badge>
+          )}
+        </div>
+      ) : (
+        "N/A"
+      ),
     },
     {
       header: "Active",
-      cell: (staff: User) => (
+      cell: (staff: Staff) => (
         <Switch
           checked={staff.isActive}
           onCheckedChange={async (checked) => {
-            await updateStaffMember({
+            await updateStaff({
               id: staff.id,
-              data: { isActive: checked }
+              isActive: checked
             });
           }}
         />
@@ -258,7 +234,7 @@ export default function StaffPage() {
     },
     {
       header: "Actions",
-      cell: (staff: User) => (
+      cell: (staff: Staff) => (
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => handleEdit(staff)}>
             Edit
