@@ -35,8 +35,8 @@ export function useStaffManagement() {
             const validatedStaff = staffSchema.parse({
               id: doc.id,
               ...data,
-              createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toMillis() : Date.now(),
-              updatedAt: data.updatedAt instanceof Timestamp ? data.updatedAt.toMillis() : null
+              createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate().toISOString() : data.createdAt || new Date().toISOString(),
+              updatedAt: data.updatedAt instanceof Timestamp ? data.updatedAt.toDate().toISOString() : data.updatedAt
             });
             staff.push(validatedStaff);
           } catch (error) {

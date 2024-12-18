@@ -33,8 +33,24 @@ const baseStaffSchema = {
   name: z.string().min(1, "Name is required"),
   phone: z.string().optional(),
   isActive: z.boolean().default(true),
-  createdAt: z.number().optional(),
-  updatedAt: z.number().optional()
+  createdAt: z.union([
+    z.string(),
+    z.number(),
+    z.null()
+  ]).transform(val => {
+    if (!val) return Date.now();
+    if (typeof val === 'number') return val;
+    return new Date(val).getTime();
+  }),
+  updatedAt: z.union([
+    z.string(),
+    z.number(),
+    z.null()
+  ]).transform(val => {
+    if (!val) return null;
+    if (typeof val === 'number') return val;
+    return new Date(val).getTime();
+  }).nullable()
 };
 
 // Schema specifically for groomers
