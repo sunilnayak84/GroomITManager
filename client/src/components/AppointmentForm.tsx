@@ -39,6 +39,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { format } from 'date-fns';
 import { useNotifications } from '@/hooks/use-notifications';
 import { useUser } from '@/hooks/use-user';
+import { StaffMember } from '@/lib/user-types';
 
 interface AppointmentFormProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -55,7 +56,7 @@ export default function AppointmentForm({ setOpen, initialDate }: AppointmentFor
   const { services } = useServices();
   const { toast } = useToast();
   const { staffMembers } = useStaff();
-  const availableGroomers = staffMembers.filter(user => user.isGroomer && user.isActive);
+  const availableGroomers = staffMembers.filter((user: StaffMember) => user.isGroomer && user.isActive);
   const { data: workingHours } = useWorkingHours();
   const [selectedService, setSelectedService] = useState<{ duration: number } | null>(null);
   const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
@@ -602,7 +603,7 @@ export default function AppointmentForm({ setOpen, initialDate }: AppointmentFor
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {availableGroomers.map((groomer) => (
+                    {availableGroomers.map((groomer: StaffMember) => (
                       <SelectItem 
                         key={groomer.id} 
                         value={groomer.id}

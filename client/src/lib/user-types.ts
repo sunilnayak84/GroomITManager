@@ -44,9 +44,33 @@ export type InsertUser = z.infer<typeof insertUserSchema>;
 // Role-specific types
 export type StaffRole = typeof STAFF_ROLES[number];
 
+// Staff member interface extending base User type
+export interface StaffMember extends User {
+  role: StaffRole;
+  isGroomer: boolean;
+  isActive: boolean;
+  specialties: string[];
+  petTypePreferences: typeof PET_TYPES[number][];
+  experienceYears: number;
+  maxDailyAppointments: number;
+  branchId?: string;
+  permissions: string[];
+}
+
 // Validation helpers
 export const isValidRole = (role: unknown): role is StaffRole => 
   STAFF_ROLES.includes(role as StaffRole);
 
 export const isValidPetType = (petType: unknown): petType is typeof PET_TYPES[number] =>
   PET_TYPES.includes(petType as typeof PET_TYPES[number]);
+
+// Type guard for StaffMember
+export const isStaffMember = (user: any): user is StaffMember => {
+  return user && 
+    typeof user.isGroomer === 'boolean' &&
+    typeof user.isActive === 'boolean' &&
+    Array.isArray(user.specialties) &&
+    Array.isArray(user.petTypePreferences) &&
+    typeof user.experienceYears === 'number' &&
+    typeof user.maxDailyAppointments === 'number';
+};

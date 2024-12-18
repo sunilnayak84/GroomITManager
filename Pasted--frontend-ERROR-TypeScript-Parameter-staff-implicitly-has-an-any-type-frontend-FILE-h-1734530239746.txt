@@ -1,0 +1,191 @@
+[frontend]  ERROR(TypeScript)  Parameter 'staff' implicitly has an 'any' type.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/components/AppointmentEditForm.tsx:55:50
+[frontend] 
+[frontend]     53 |   const [isSubmitting, setIsSubmitting] = useState(false);
+[frontend]     54 |   const { staffMembers } = useStaff();
+[frontend]   > 55 |   const availableGroomers = staffMembers?.filter(staff => staff.role === 'groomer') || [];
+[frontend]        |                                                  ^^^^^
+[frontend]     56 |   const { updateAppointment } = useAppointments();
+[frontend]     57 |   const { toast } = useToast();
+[frontend]     58 |   const { services } = useServices();
+[frontend] 
+[frontend]  ERROR(TypeScript)  Parameter 'groomer' implicitly has an 'any' type.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/components/AppointmentEditForm.tsx:249:46
+[frontend] 
+[frontend]     247 |                   </FormControl>
+[frontend]     248 |                   <SelectContent>
+[frontend]   > 249 |                     {availableGroomers?.map((groomer) => (
+[frontend]         |                                              ^^^^^^^
+[frontend]     250 |                       <SelectItem 
+[frontend]     251 |                         key={groomer.id} 
+[frontend]     252 |                         value={groomer.id}
+[frontend] 
+[frontend]  ERROR(TypeScript)  Parameter 'user' implicitly has an 'any' type.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/components/AppointmentForm.tsx:58:49
+[frontend] 
+[frontend]     56 |   const { toast } = useToast();
+[frontend]     57 |   const { staffMembers } = useStaff();
+[frontend]   > 58 |   const availableGroomers = staffMembers.filter(user => user.isGroomer && user.isActive);
+[frontend]        |                                                 ^^^^
+[frontend]     59 |   const { data: workingHours } = useWorkingHours();
+[frontend]     60 |   const [selectedService, setSelectedService] = useState<{ duration: number } | null>(null);
+[frontend]     61 |   const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
+[frontend] 
+[frontend]  ERROR(TypeScript)  Parameter 'groomer' implicitly has an 'any' type.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/components/AppointmentForm.tsx:605:45
+[frontend] 
+[frontend]     603 |                   </FormControl>
+[frontend]     604 |                   <SelectContent>
+[frontend]   > 605 |                     {availableGroomers.map((groomer) => (
+[frontend]         |                                             ^^^^^^^
+[frontend]     606 |                       <SelectItem 
+[frontend]     607 |                         key={groomer.id} 
+[frontend]     608 |                         value={groomer.id}
+[frontend] 
+[frontend]  ERROR(TypeScript)  Type 'string | ((instance: HTMLDivElement | null) => void) | RefObject<HTMLDivElement> | null' is not assignable to type '((string | ((instance: HTMLDivElement | null) => void) | RefObject<HTMLDivElement>) & (((instance: HTMLElement | null) => void) | RefObject<...>)) | null | undefined'.
+[frontend]   Type 'string' is not assignable to type '((string | ((instance: HTMLDivElement | null) => void) | RefObject<HTMLDivElement>) & (((instance: HTMLElement | null) => void) | RefObject<...>)) | null | undefined'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/components/ui/sidebar.tsx:438:7
+[frontend] 
+[frontend]     436 |   return (
+[frontend]     437 |     <Comp
+[frontend]   > 438 |       ref={ref}
+[frontend]         |       ^^^
+[frontend]     439 |       data-sidebar="group-label"
+[frontend]     440 |       className={cn(
+[frontend]     441 |         "duration-200 flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium text-sidebar-foreground/70 outline-none ring-sidebar-ring transition-[margin,opa] ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+[frontend] 
+[frontend]  ERROR(TypeScript)  Type 'string | ((instance: HTMLButtonElement | null) => void) | RefObject<HTMLButtonElement> | null' is not assignable to type '((string | ((instance: HTMLButtonElement | null) => void) | RefObject<HTMLButtonElement>) & (((instance: HTMLElement | null) => void) | RefObject<...>)) | null | undefined'.
+[frontend]   Type 'string' is not assignable to type '((string | ((instance: HTMLButtonElement | null) => void) | RefObject<HTMLButtonElement>) & (((instance: HTMLElement | null) => void) | RefObject<...>)) | null | undefined'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/components/ui/sidebar.tsx:459:7
+[frontend] 
+[frontend]     457 |   return (
+[frontend]     458 |     <Comp
+[frontend]   > 459 |       ref={ref}
+[frontend]         |       ^^^
+[frontend]     460 |       data-sidebar="group-action"
+[frontend]     461 |       className={cn(
+[frontend]     462 |         "absolute right-3 top-3.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground outline-none ring-sidebar-ring transition-transform hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+[frontend] 
+[frontend]  ERROR(TypeScript)  Type 'string | ((instance: HTMLButtonElement | null) => void) | RefObject<HTMLButtonElement> | null' is not assignable to type '((string | ((instance: HTMLButtonElement | null) => void) | RefObject<HTMLButtonElement>) & (((instance: HTMLElement | null) => void) | RefObject<...>)) | null | undefined'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/components/ui/sidebar.tsx:560:9
+[frontend] 
+[frontend]     558 |     const button = (
+[frontend]     559 |       <Comp
+[frontend]   > 560 |         ref={ref}
+[frontend]         |         ^^^
+[frontend]     561 |         data-sidebar="menu-button"
+[frontend]     562 |         data-size={size}
+[frontend]     563 |         data-active={isActive}
+[frontend] 
+[frontend]  ERROR(TypeScript)  Type 'string | ((instance: HTMLButtonElement | null) => void) | RefObject<HTMLButtonElement> | null' is not assignable to type '((string | ((instance: HTMLButtonElement | null) => void) | RefObject<HTMLButtonElement>) & (((instance: HTMLElement | null) => void) | RefObject<...>)) | null | undefined'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/components/ui/sidebar.tsx:605:7
+[frontend] 
+[frontend]     603 |   return (
+[frontend]     604 |     <Comp
+[frontend]   > 605 |       ref={ref}
+[frontend]         |       ^^^
+[frontend]     606 |       data-sidebar="menu-action"
+[frontend]     607 |       className={cn(
+[frontend]     608 |         "absolute right-1 top-1.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground outline-none ring-sidebar-ring transition-transform hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 peer-hover/menu-button:text-sidebar-accent-foreground [&>svg]:size-4 [&>svg]:shrink-0",
+[frontend] 
+[frontend]  ERROR(TypeScript)  Type 'string | ((instance: HTMLAnchorElement | null) => void) | RefObject<HTMLAnchorElement> | null' is not assignable to type '((string | ((instance: HTMLAnchorElement | null) => void) | RefObject<HTMLAnchorElement>) & (((instance: HTMLElement | null) => void) | RefObject<...>)) | null | undefined'.
+[frontend]   Type 'string' is not assignable to type '((string | ((instance: HTMLAnchorElement | null) => void) | RefObject<HTMLAnchorElement>) & (((instance: HTMLElement | null) => void) | RefObject<...>)) | null | undefined'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/components/ui/sidebar.tsx:719:7
+[frontend] 
+[frontend]     717 |   return (
+[frontend]     718 |     <Comp
+[frontend]   > 719 |       ref={ref}
+[frontend]         |       ^^^
+[frontend]     720 |       data-sidebar="menu-sub-button"
+[frontend]     721 |       data-size={size}
+[frontend]     722 |       data-active={isActive}
+[frontend] 
+[frontend]  ERROR(TypeScript)  Cannot find name 'DefaultPermissions'. Did you mean 'defaultPermissions'?
+[frontend]  FILE  /home/runner/GroomITManager/server/auth.ts:205:22
+[frontend] 
+[frontend]     203 |         userId: user.id,
+[frontend]     204 |         role: defaultRole,
+[frontend]   > 205 |         permissions: DefaultPermissions[defaultRole]
+[frontend]         |                      ^^^^^^^^^^^^^^^^^^
+[frontend]     206 |       });
+[frontend]     207 |     }
+[frontend]     208 |     
+[frontend] 
+[frontend]  ERROR(TypeScript)  Cannot find name 'DefaultPermissions'. Did you mean 'getDefaultPermissions'?
+[frontend]  FILE  /home/runner/GroomITManager/server/firebase.ts:194:20
+[frontend] 
+[frontend]     192 |     return {
+[frontend]     193 |       role: RoleTypes.staff,
+[frontend]   > 194 |       permissions: DefaultPermissions[RoleTypes.staff]
+[frontend]         |                    ^^^^^^^^^^^^^^^^^^
+[frontend]     195 |     };
+[frontend]     196 |   }
+[frontend]     197 |   
+[frontend] 
+[frontend]  ERROR(TypeScript)  Cannot find name 'DefaultPermissions'. Did you mean 'getDefaultPermissions'?
+[frontend]  FILE  /home/runner/GroomITManager/server/firebase.ts:216:44
+[frontend] 
+[frontend]     214 |   await auth.getUser(userId);
+[frontend]     215 |   
+[frontend]   > 216 |   const permissions = customPermissions || DefaultPermissions[role];
+[frontend]         |                                            ^^^^^^^^^^^^^^^^^^
+[frontend]     217 |   
+[frontend]     218 |   // Save to role history
+[frontend]     219 |   const historyRef = db.ref(`role-history/${userId}`);
+[frontend] 
+[frontend]  ERROR(TypeScript)  Cannot find name 'DefaultPermissions'. Did you mean 'getDefaultPermissions'?
+[frontend]  FILE  /home/runner/GroomITManager/server/firebase.ts:222:19
+[frontend] 
+[frontend]     220 |   await historyRef.push({
+[frontend]     221 |     action: 'role_update',
+[frontend]   > 222 |     previousRole: DefaultPermissions[role],
+[frontend]         |                   ^^^^^^^^^^^^^^^^^^
+[frontend]     223 |     newRole: role,
+[frontend]     224 |     previousPermissions: customPermissions || [],
+[frontend]     225 |     newPermissions: permissions || [],
+[frontend] 
+[frontend]  ERROR(TypeScript)  Cannot find name 'DefaultPermissions'. Did you mean 'getDefaultPermissions'?
+[frontend]  FILE  /home/runner/GroomITManager/server/firebase.ts:277:18
+[frontend] 
+[frontend]     275 |   await db.ref(`roles/${userId}`).set({
+[frontend]     276 |     role: RoleTypes.admin,
+[frontend]   > 277 |     permissions: DefaultPermissions[RoleTypes.admin],
+[frontend]         |                  ^^^^^^^^^^^^^^^^^^
+[frontend]     278 |     updatedAt: Date.now(),
+[frontend]     279 |     createdAt: Date.now()
+[frontend]     280 |   });
+[frontend] 
+[frontend]  ERROR(TypeScript)  Cannot find name 'DefaultPermissions'. Did you mean 'getDefaultPermissions'?
+[frontend]  FILE  /home/runner/GroomITManager/server/firebase.ts:284:18
+[frontend] 
+[frontend]     282 |   await auth.setCustomUserClaims(userId, {
+[frontend]     283 |     role: RoleTypes.admin,
+[frontend]   > 284 |     permissions: DefaultPermissions[RoleTypes.admin],
+[frontend]         |                  ^^^^^^^^^^^^^^^^^^
+[frontend]     285 |     updatedAt: Date.now()
+[frontend]     286 |   });
+[frontend]     287 | }
+[frontend] 
+[frontend]  ERROR(TypeScript)  '"../firebase"' has no exported member named 'DefaultPermissions'. Did you mean 'getDefaultPermissions'?
+[frontend]  FILE  /home/runner/GroomITManager/server/scripts/initialize-roles.ts:6:3
+[frontend] 
+[frontend]     4 | import { 
+[frontend]     5 |   RoleTypes, 
+[frontend]   > 6 |   DefaultPermissions,
+[frontend]       |   ^^^^^^^^^^^^^^^^^^
+[frontend]     7 |   InitialRoleConfigs,
+[frontend]     8 |   initializeFirebaseAdmin
+[frontend]     9 | } from '../firebase';
+[frontend] 
+[frontend]  ERROR(TypeScript)  '"../firebase"' has no exported member named 'DefaultPermissions'. Did you mean 'getDefaultPermissions'?
+[frontend]  FILE  /home/runner/GroomITManager/server/scripts/setup-admin-role.ts:9:3
+[frontend] 
+[frontend]      7 |   RoleTypes,
+[frontend]      8 |   updateUserRole,
+[frontend]   >  9 |   DefaultPermissions 
+[frontend]        |   ^^^^^^^^^^^^^^^^^^
+[frontend]     10 | } from '../firebase';
+[frontend]     11 | import { getDatabase } from 'firebase-admin/database';
+[frontend]     12 | import { getAuth } from 'firebase-admin/auth';
+[frontend] 
+[frontend] [TypeScript] Found 17 errors. Watching for file changes.
