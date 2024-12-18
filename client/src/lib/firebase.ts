@@ -33,12 +33,24 @@ const firebaseConfig = {
 
 let app;
 try {
+  // Validate required config
+  if (!firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId) {
+    throw new Error('Missing required Firebase configuration');
+  }
+
   console.log('FIREBASE_INIT: Initializing Firebase with config:', {
-    ...firebaseConfig,
-    apiKey: '***' // Hide sensitive data in logs
+    authDomain: firebaseConfig.authDomain,
+    projectId: firebaseConfig.projectId,
+    storageBucket: firebaseConfig.storageBucket
   });
-  app = initializeApp(firebaseConfig);
-  console.log('FIREBASE_INIT: Firebase initialized successfully');
+  
+  if (!getApps().length) {
+    app = initializeApp(firebaseConfig);
+    console.log('FIREBASE_INIT: Firebase initialized successfully');
+  } else {
+    app = getApp();
+    console.log('FIREBASE_INIT: Using existing Firebase app');
+  }
 } catch (error) {
   console.error('FIREBASE_INIT: Error initializing Firebase:', error);
   throw new Error(`Failed to initialize Firebase: ${error instanceof Error ? error.message : 'Unknown error'}`);
