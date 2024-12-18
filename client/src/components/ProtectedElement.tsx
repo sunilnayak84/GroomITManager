@@ -17,7 +17,14 @@ export function ProtectedElement({
   showLoader = true,
   requireAll = false
 }: ProtectedElementProps): JSX.Element {
-  const { hasPermission, hasAllPermissions, hasAnyPermission, isLoading, error } = useRole();
+  const { 
+    hasPermission, 
+    hasAllPermissions, 
+    hasAnyPermission, 
+    isLoading, 
+    error,
+    role 
+  } = useRole();
 
   // Show loader while checking permissions
   if (isLoading && showLoader) {
@@ -30,8 +37,6 @@ export function ProtectedElement({
     return <>{fallback}</>;
   }
 
-  const { role } = useRole();
-  
   // Admin always has access
   if (role?.role === 'admin') {
     return <>{children}</>;
