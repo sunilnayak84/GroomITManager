@@ -153,45 +153,38 @@ export function registerRoutes(app: Express) {
       // Ensure content type is set to JSON
       res.setHeader('Content-Type', 'application/json');
       
-      const app = await getFirebaseAdmin();
-      const auth = getAuth(app);
+      const app = getFirebaseAdmin();
       const db = getDatabase(app);
-      
-      // Parse pagination parameters with defaults
-      const pageSize = Math.min(Number(req.query.pageSize) || 100, 1000);
-      const pageToken = req.query.pageToken as string | undefined;
       const roleFilter = req.query.role as string | undefined;
       
-      console.log('[FIREBASE-USERS] Fetching users with params:', { pageSize, pageToken, roleFilter });
+      console.log('[FIREBASE-USERS] Fetching users with role filter:', roleFilter);
 
-      // List users from Firebase Auth
-      const listUsersResult = await auth.listUsers(pageSize, pageToken);
+      // Query users from Realtime Database
+      const usersRef = db.ref('users');
+      const snapshot = await usersRef.once('value');
+      const allUsers = snapshot.val() || {};
       
-      // Get roles for all users
-      const rolesSnapshot = await db.ref('roles').once('value');
-      const roles = rolesSnapshot.val() || {};
-      
-      // Combine user data with roles and apply role filter if specified
-      const users = (await Promise.all(listUsersResult.users.map(async user => {
-        const userRole = roles[user.uid] || { role: 'staff', permissions: [] };
-        return {
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-          role: userRole.role,
-          permissions: userRole.permissions,
-          disabled: user.disabled,
-          lastSignInTime: user.metadata.lastSignInTime,
-          creationTime: user.metadata.creationTime
-        };
-      }))).filter(user => !roleFilter || user.role === roleFilter);
+      // Convert users object to array and filter by role if specified
+      const users = Object.entries(allUsers)
+        .map(([uid, userData]: [string, any]) => ({
+          uid,
+          email: userData.email,
+          displayName: userData.name,
+          role: userData.role || 'staff',
+          permissions: userData.permissions || [],
+          disabled: userData.disabled || false,
+          lastSignInTime: userData.lastSignInTime,
+          creationTime: userData.createdAt,
+          branch: userData.branch
+        }))
+        .filter(user => !roleFilter || user.role === roleFilter);
       
       console.log('[FIREBASE-USERS] Successfully fetched users:', users.length);
       
       res.json({
         users,
-        pageToken: listUsersResult.pageToken,
-        hasNextPage: !!listUsersResult.pageToken
+        pageToken: null,
+        hasNextPage: false
       });
     } catch (error) {
       console.error('[FIREBASE-USERS] Error fetching users:', error);

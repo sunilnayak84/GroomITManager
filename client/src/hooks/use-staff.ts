@@ -44,9 +44,9 @@ export function useStaff() {
           throw new Error('Invalid response format from server');
         }
         
-        const staff = data.users.filter(user => user.role === 'staff');
-        console.log('FETCH_STAFF: Successfully filtered staff members:', staff);
-        return staff;
+        // No need to filter by role since the server already did it
+        console.log('FETCH_STAFF: Successfully retrieved staff members:', data.users);
+        return data.users;
       } catch (error) {
         console.error('FETCH_STAFF: Error fetching staff:', error);
         throw error;
