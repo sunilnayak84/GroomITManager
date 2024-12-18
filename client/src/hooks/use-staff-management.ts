@@ -31,11 +31,12 @@ export function useStaffManagement() {
         snapshot.forEach(doc => {
           try {
             const data = doc.data();
+            console.log('[STAFF] Processing staff data:', { id: doc.id, data });
             const validatedStaff = staffSchema.parse({
               id: doc.id,
               ...data,
-              createdAt: data.createdAt?.toMillis() || Date.now(),
-              updatedAt: data.updatedAt?.toMillis() || null
+              createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toMillis() : Date.now(),
+              updatedAt: data.updatedAt instanceof Timestamp ? data.updatedAt.toMillis() : null
             });
             staff.push(validatedStaff);
           } catch (error) {

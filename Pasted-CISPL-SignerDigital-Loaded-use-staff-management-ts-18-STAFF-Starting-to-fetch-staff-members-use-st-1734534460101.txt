@@ -1,0 +1,46 @@
+CISPL SignerDigital Loaded
+use-staff-management.ts:18 [STAFF] Starting to fetch staff members
+use-staff-management.ts:42 [STAFF] Invalid staff data for ID CgSc80R5lkzwclhWfbQ2: TypeError: data.createdAt?.toMillis is not a function
+    at use-staff-management.ts:37:42
+    at firebase_firestore.js?v=bcdbbe4a:17122:9
+    at firebase_firestore.js?v=bcdbbe4a:13189:48
+    at _LLRBNode.inorderTraversal (firebase_firestore.js?v=bcdbbe4a:4232:45)
+    at _SortedMap.inorderTraversal (firebase_firestore.js?v=bcdbbe4a:4148:22)
+    at _DocumentSet.forEach (firebase_firestore.js?v=bcdbbe4a:13189:20)
+    at QuerySnapshot.forEach (firebase_firestore.js?v=bcdbbe4a:17121:25)
+    at queryFn (use-staff-management.ts:31:18)
+(anonymous) @ use-staff-management.ts:42
+(anonymous) @ firebase_firestore.js?v=bcdbbe4a:17122
+(anonymous) @ firebase_firestore.js?v=bcdbbe4a:13189
+inorderTraversal @ firebase_firestore.js?v=bcdbbe4a:4232
+inorderTraversal @ firebase_firestore.js?v=bcdbbe4a:4148
+forEach @ firebase_firestore.js?v=bcdbbe4a:13189
+forEach @ firebase_firestore.js?v=bcdbbe4a:17121
+queryFn @ use-staff-management.ts:31
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=bcdbbe4a:839
+run @ @tanstack_react-query.js?v=bcdbbe4a:493
+start @ @tanstack_react-query.js?v=bcdbbe4a:535
+fetch @ @tanstack_react-query.js?v=bcdbbe4a:925
+executeFetch_fn @ @tanstack_react-query.js?v=bcdbbe4a:2211
+onSubscribe @ @tanstack_react-query.js?v=bcdbbe4a:1898
+subscribe @ @tanstack_react-query.js?v=bcdbbe4a:24
+(anonymous) @ @tanstack_react-query.js?v=bcdbbe4a:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=bcdbbe4a:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=bcdbbe4a:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=bcdbbe4a:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=bcdbbe4a:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=bcdbbe4a:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=bcdbbe4a:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=bcdbbe4a:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=bcdbbe4a:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=bcdbbe4a:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=bcdbbe4a:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=bcdbbe4a:19400
+commitRoot @ chunk-DRXX46FI.js?v=bcdbbe4a:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=bcdbbe4a:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=bcdbbe4a:18686
+workLoop @ chunk-DRXX46FI.js?v=bcdbbe4a:197
+flushWork @ chunk-DRXX46FI.js?v=bcdbbe4a:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=bcdbbe4a:384Understand this errorAI
+use-staff-management.ts:46 [STAFF] Successfully fetched staff members: 0
