@@ -1,0 +1,47 @@
+ERROR(TypeScript)  Type 'string | ((instance: HTMLButtonElement | null) => void) | RefObject<HTMLButtonElement> | null' is not assignable to type '((string | ((instance: HTMLButtonElement | null) => void) | RefObject<HTMLButtonElement>) & (((instance: HTMLElement | null) => void) | RefObject<...>)) | null | undefined'.
+  Type 'string' is not assignable to type '((string | ((instance: HTMLButtonElement | null) => void) | RefObject<HTMLButtonElement>) & (((instance: HTMLElement | null) => void) | RefObject<...>)) | null | undefined'.
+ FILE  /home/runner/GroomITManager/client/src/components/ui/sidebar.tsx:459:7
+
+    457 |   return (
+    458 |     <Comp
+  > 459 |       ref={ref}
+        |       ^^^
+    460 |       data-sidebar="group-action"
+    461 |       className={cn(
+    462 |         "absolute right-3 top-3.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground outline-none ring-sidebar-ring transition-transform hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+
+ ERROR(TypeScript)  Element implicitly has an 'any' type because expression of type '"user"' can't be used to index type 'Record<RoleTypes, ("all" | "manage_appointments" | "manage_services" | "manage_inventory" | "view_reports" | "manage_customers" | "view_analytics" | "manage_consumables" | ... 14 more ... | "view_staff_schedule")[]>'.
+  Property 'user' does not exist on type 'Record<RoleTypes, ("all" | "manage_appointments" | "manage_services" | "manage_inventory" | "view_reports" | "manage_customers" | "view_analytics" | "manage_consumables" | ... 14 more ... | "view_staff_schedule")[]>'.
+ FILE  /home/runner/GroomITManager/server/auth.ts:206:22
+
+    204 |         userId: user.id,
+    205 |         role: defaultRole,
+  > 206 |         permissions: DefaultPermissions[defaultRole]
+        |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    207 |       });
+    208 |     }
+    209 |     
+
+ ERROR(TypeScript)  Module '"./firebase"' has no exported member 'getRoleDefinitions'.
+ FILE  /home/runner/GroomITManager/server/routes.ts:9:3
+
+     7 |   updateUserRole, 
+     8 |   listAllUsers,
+  >  9 |   getRoleDefinitions,
+       |   ^^^^^^^^^^^^^^^^^^
+    10 |   updateRoleDefinition,
+    11 |   InitialRoleConfigs,
+    12 |   Permission,
+
+ ERROR(TypeScript)  Module '"./firebase"' has no exported member 'updateRoleDefinition'.
+ FILE  /home/runner/GroomITManager/server/routes.ts:10:3
+
+     8 |   listAllUsers,
+     9 |   getRoleDefinitions,
+  > 10 |   updateRoleDefinition,
+       |   ^^^^^^^^^^^^^^^^^^^^
+    11 |   InitialRoleConfigs,
+    12 |   Permission,
+    13 |   validatePermissions,
+
+[TypeScript] Found 4 errors. Watching for file changes.
