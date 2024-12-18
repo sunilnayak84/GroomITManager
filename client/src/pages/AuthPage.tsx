@@ -2,13 +2,13 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { useUser } from "../hooks/use-user";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PawPrint } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { z } from "zod";
 import { auth } from "@/lib/firebase";
 import { createUserWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 
@@ -17,10 +17,12 @@ const loginSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-const registerSchema = loginSchema.extend({
+const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
+  email: z.string().email("Invalid email format"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
+  phone: z.string().min(10, "Phone number must be at least 10 digits"),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -33,18 +35,12 @@ export default function AuthPage() {
   const [resetEmail, setResetEmail] = useState("");
   const [showReset, setShowReset] = useState(false);
 
-  const resetForms = () => {
-    loginForm.reset();
-    registerForm.reset();
-  };
-
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
     },
-    mode: "onChange"
   });
 
   const registerForm = useForm<z.infer<typeof registerSchema>>({
@@ -53,13 +49,10 @@ export default function AuthPage() {
       name: "",
       email: "",
       password: "",
-      phone: "",
       confirmPassword: "",
+      phone: "",
     },
-    mode: "onChange"
   });
-
-  const { control, handleSubmit, formState: { errors } } = registerForm;
 
   async function handleLogin(data: z.infer<typeof loginSchema>) {
     try {
@@ -71,7 +64,6 @@ export default function AuthPage() {
       window.location.reload();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to login";
-      loginForm.setError('email', { type: 'manual', message: errorMessage });
       toast({
         variant: "destructive",
         title: "Login Error",
@@ -83,8 +75,6 @@ export default function AuthPage() {
   async function handleRegister(data: z.infer<typeof registerSchema>) {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-      
-      // Set default role for new user
       const idToken = await userCredential.user.getIdToken();
       
       await fetch(`${window.location.protocol}//${window.location.hostname}:3000/api/users/${userCredential.user.uid}/role`, {
@@ -105,7 +95,6 @@ export default function AuthPage() {
         description: "Account created successfully",
       });
       
-      // Auto login after registration
       await login({ email: data.email, password: data.password });
       window.location.reload();
     } catch (error) {
@@ -156,7 +145,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input {...field} />
+                            <Input type="email" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -192,11 +181,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Name</FormLabel>
                           <FormControl>
-                            <Input 
-                              type="text"
-                              placeholder="Enter your name"
-                              {...field}
-                            />
+                            <Input type="text" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -210,13 +195,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input 
-                              type="email"
-                              placeholder="Enter your email"
-                              value={field.value}
-                              onChange={field.onChange}
-                              onBlur={field.onBlur}
-                            />
+                            <Input type="email" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -258,7 +237,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Phone Number</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="Enter phone number" />
+                            <Input type="tel" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -276,9 +255,10 @@ export default function AuthPage() {
                 <Button
                   variant="link"
                   onClick={() => {
-                  setIsLogin(!isLogin);
-                  resetForms();
-                }}
+                    setIsLogin(!isLogin);
+                    loginForm.reset();
+                    registerForm.reset();
+                  }}
                   className="text-sm"
                 >
                   {isLogin ? "Need an account? Register" : "Already have an account? Login"}
