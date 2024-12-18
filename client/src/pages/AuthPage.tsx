@@ -162,9 +162,9 @@ export default function AuthPage() {
                           <FormLabel>Email</FormLabel>
                           <FormControl>
                             <Input 
-                              type="email" 
                               placeholder="Enter your email"
-                              {...field} 
+                              type="email"
+                              {...field}
                             />
                           </FormControl>
                           <FormMessage />
@@ -205,15 +205,14 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Name</FormLabel>
                           <FormControl>
-                            <Input
+                            <Input 
                               type="text"
                               placeholder="Enter your name"
+                              {...field}
                               onChange={(e) => {
-                                console.log('Name onChange:', e.target.value);
                                 field.onChange(e);
+                                console.log('Name value after change:', e.target.value);
                               }}
-                              value={field.value}
-                              name={field.name}
                             />
                           </FormControl>
                           <FormMessage />
@@ -231,12 +230,11 @@ export default function AuthPage() {
                             <Input
                               type="email"
                               placeholder="Enter your email"
+                              {...field}
                               onChange={(e) => {
-                                console.log('Email onChange:', e.target.value);
                                 field.onChange(e);
+                                console.log('Email value after change:', e.target.value);
                               }}
-                              value={field.value}
-                              name={field.name}
                             />
                           </FormControl>
                           <FormMessage />
