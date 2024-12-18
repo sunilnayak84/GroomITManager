@@ -1,49 +1,37 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
 import { auth } from "@/lib/firebase";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { Link } from "wouter";
-
-// Define the form schema with Zod
-const registrationSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email format"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
-});
-
-type RegistrationFormData = z.infer<typeof registrationSchema>;
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/use-toast";
 
 export default function NewRegistrationPage() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    phone: "",
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm<RegistrationFormData>({
-    resolver: zodResolver(registrationSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      phone: "",
-    },
-    mode: "onChange",
-  });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
-  async function onSubmit(data: RegistrationFormData) {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (isSubmitting) return;
+    
     setIsSubmitting(true);
-
     try {
       // Create user in Firebase
       const userCredential = await createUserWithEmailAndPassword(
         auth,
-        data.email,
-        data.password
+        formData.email,
+        formData.password
       );
       
       const user = userCredential.user;
@@ -51,7 +39,7 @@ export default function NewRegistrationPage() {
 
       // Update user profile
       await updateProfile(user, {
-        displayName: data.name
+        displayName: formData.name
       });
 
       // Assign role
@@ -65,9 +53,9 @@ export default function NewRegistrationPage() {
           },
           body: JSON.stringify({
             role: "staff",
-            name: data.name,
-            phone: data.phone,
-            email: data.email,
+            name: formData.name,
+            phone: formData.phone,
+            email: formData.email,
           }),
         }
       );
@@ -81,20 +69,19 @@ export default function NewRegistrationPage() {
         description: "Account created successfully",
       });
 
-      // Redirect to login or home page
+      // Redirect to home page
       window.location.href = "/";
     } catch (error) {
       console.error("Registration error:", error);
-      const errorMessage = error instanceof Error ? error.message : "Failed to register";
       toast({
         variant: "destructive",
         title: "Registration Error",
-        description: errorMessage,
+        description: error instanceof Error ? error.message : "Failed to register",
       });
     } finally {
       setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -106,147 +93,131 @@ export default function NewRegistrationPage() {
           </p>
         </div>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Full Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      placeholder="John Doe"
-                      autoComplete="name"
-                      value={field.value}
-                      onChange={(e) => field.onChange(e.target.value)}
-                      onBlur={field.onBlur}
-                      name={field.name}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email Address</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="john@example.com"
-                      autoComplete="email"
-                      value={field.value}
-                      onChange={(e) => field.onChange(e.target.value)}
-                      onBlur={field.onBlur}
-                      name={field.name}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="••••••••"
-                      autoComplete="new-password"
-                      value={field.value}
-                      onChange={(e) => field.onChange(e.target.value)}
-                      onBlur={field.onBlur}
-                      name={field.name}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Phone Number</FormLabel>
-                  <FormControl>
-                    <div className="flex">
-                      <div className="flex-shrink-0">
-                        <select className="h-10 rounded-l-md border border-r-0 bg-background px-3 text-sm ring-offset-background">
-                          <option value="+91">🇮🇳 +91</option>
-                        </select>
-                      </div>
-                      <Input
-                        className="rounded-l-none"
-                        type="tel"
-                        placeholder="9876543210"
-                        autoComplete="tel"
-                        value={field.value}
-                        onChange={(e) => field.onChange(e.target.value)}
-                        onBlur={field.onBlur}
-                        name={field.name}
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isSubmitting || !form.formState.isValid}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label 
+              htmlFor="name" 
+              className="block text-sm font-medium text-gray-700"
             >
-              {isSubmitting ? (
-                <span className="flex items-center justify-center">
-                  <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                    ></path>
-                  </svg>
-                  Creating Account...
-                </span>
-              ) : (
-                "Create Account"
-              )}
-            </Button>
+              Full Name
+            </label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              required
+              value={formData.name}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+              placeholder="John Doe"
+            />
+          </div>
 
-            <div className="text-center">
-              <Link href="/">
-                <Button type="button" variant="link" className="text-sm">
-                  Already have an account? Sign in
-                </Button>
-              </Link>
+          <div>
+            <label 
+              htmlFor="email" 
+              className="block text-sm font-medium text-gray-700"
+            >
+              Email Address
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              value={formData.email}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+              placeholder="you@example.com"
+            />
+          </div>
+
+          <div>
+            <label 
+              htmlFor="password" 
+              className="block text-sm font-medium text-gray-700"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              value={formData.password}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+              placeholder="••••••••"
+            />
+          </div>
+
+          <div>
+            <label 
+              htmlFor="phone" 
+              className="block text-sm font-medium text-gray-700"
+            >
+              Phone Number
+            </label>
+            <div className="flex">
+              <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
+                🇮🇳 +91
+              </span>
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                required
+                value={formData.phone}
+                onChange={handleChange}
+                className="block w-full rounded-r-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                placeholder="9876543210"
+              />
             </div>
-          </form>
-        </Form>
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <span className="flex items-center justify-center">
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                  ></path>
+                </svg>
+                Creating Account...
+              </span>
+            ) : (
+              "Create Account"
+            )}
+          </Button>
+
+          <div className="text-center">
+            <a 
+              href="/" 
+              className="text-sm text-indigo-600 hover:text-indigo-500"
+            >
+              Already have an account? Sign in
+            </a>
+          </div>
+        </form>
       </div>
     </div>
   );
