@@ -23,6 +23,7 @@ import admin from "firebase-admin";
 
 
 export function registerRoutes(app: Express) {
+  console.log('[ROUTES] Starting route registration...');
   // Health check endpoint
   app.get("/api/health", (req, res) => {
     res.json({ status: "healthy" });
