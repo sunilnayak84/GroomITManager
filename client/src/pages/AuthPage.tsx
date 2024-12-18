@@ -244,6 +244,20 @@ export default function AuthPage() {
 
                     <FormField
                       control={registerForm.control}
+                      name="confirmPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Confirm Password</FormLabel>
+                          <FormControl>
+                            <Input type="password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={registerForm.control}
                       name="phone"
                       render={({ field }) => (
                         <FormItem>
@@ -254,11 +268,6 @@ export default function AuthPage() {
                           <FormMessage />
                         </FormItem>
                       )}
-                    />
-
-                    <FormField
-                      control={registerForm.control}
-                      name="confirmPassword"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Confirm Password</FormLabel>
