@@ -1,0 +1,77 @@
+[APPOINTMENT] All staff members: []
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []
+use-appointments.ts:68 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:76 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:79 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+use-staff.ts:13 FETCH_STAFF: Starting to fetch staff members
+use-appointments.ts:88 FETCH_APPOINTMENTS: Found 4 active appointments
+use-appointments.ts:92 FETCH_APPOINTMENTS: Active appointment: 1EK9277qK5otQ2tTQxAU {totalDuration: 30, productsUsed: null, branchId: '1', date: _Timestamp, createdAt: _Timestamp, …}
+use-appointments.ts:92 FETCH_APPOINTMENTS: Active appointment: Y2jWYuOQqLxO3TIPzLKn {date: _Timestamp, productsUsed: null, deletedAt: null, branchId: '1', services: Array(1), …}
+use-appointments.ts:92 FETCH_APPOINTMENTS: Active appointment: qFYE6AvpX8gAH0falqxS {deletedAt: null, date: _Timestamp, updatedAt: null, status: 'pending', petId: 'jZ0geHBF59DZRHL4aU6F', …}
+use-appointments.ts:92 FETCH_APPOINTMENTS: Active appointment: wNeFmTKOYJ73elUKuuYG {totalPrice: 222, productsUsed: null, groomerId: 'CgSc80R5lkzwclhWfbQ2', notes: null, petId: '1dXEhJTY6ilmxAeqv4As', …}
+use-appointments.ts:94 FETCH_APPOINTMENTS: Got snapshot with 4 active documents
+use-appointments.ts:107 FETCH_APPOINTMENTS: Processing appointment 1EK9277qK5otQ2tTQxAU
+use-services.ts:77 FETCH_SERVICES: Completed fetching services {count: 4, services: Array(4)}
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []
+use-pets.ts:115 FETCH_PETS: Completed fetching pets {totalPets: 3, pets: Array(3)}
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []
+use-appointments.ts:221 FETCH_APPOINTMENTS: Fetching service data for ID: AQHbTzU3YledKBcjrVBI
+use-staff.ts:41 FETCH_STAFF: Retrieved data: {users: Array(0), pageToken: null, hasNextPage: false}
+use-staff.ts:65 FETCH_STAFF: Successfully transformed staff data: []
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []
+use-appointments.ts:226 FETCH_APPOINTMENTS: Raw service data: {name: 'Basic Cut', price: 222, consumables: Array(1), duration: 30, selectedAddons: Array(0), …}
+use-appointments.ts:238 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:107 FETCH_APPOINTMENTS: Processing appointment Y2jWYuOQqLxO3TIPzLKn
+use-appointments.ts:221 FETCH_APPOINTMENTS: Fetching service data for ID: AQHbTzU3YledKBcjrVBI
+use-appointments.ts:226 FETCH_APPOINTMENTS: Raw service data: {name: 'Basic Cut', price: 222, consumables: Array(1), duration: 30, selectedAddons: Array(0), …}
+use-appointments.ts:238 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:107 FETCH_APPOINTMENTS: Processing appointment qFYE6AvpX8gAH0falqxS
+use-appointments.ts:221 FETCH_APPOINTMENTS: Fetching service data for ID: AQHbTzU3YledKBcjrVBI
+use-appointments.ts:226 FETCH_APPOINTMENTS: Raw service data: {name: 'Basic Cut', price: 222, consumables: Array(1), duration: 30, selectedAddons: Array(0), …}
+use-appointments.ts:238 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:107 FETCH_APPOINTMENTS: Processing appointment wNeFmTKOYJ73elUKuuYG
+use-appointments.ts:221 FETCH_APPOINTMENTS: Fetching service data for ID: AQHbTzU3YledKBcjrVBI
+use-appointments.ts:226 FETCH_APPOINTMENTS: Raw service data: {name: 'Basic Cut', price: 222, consumables: Array(1), duration: 30, selectedAddons: Array(0), …}
+use-appointments.ts:238 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:283 FETCH_APPOINTMENTS: Processed 4 appointments. Success: 4, Errors: 0
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []
