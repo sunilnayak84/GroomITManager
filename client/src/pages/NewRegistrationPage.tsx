@@ -335,7 +335,7 @@ export default function NewRegistrationPage() {
 
         <div className="text-center">
           <a
-            href="/"
+            href="/login"
             className="font-medium text-indigo-600 hover:text-indigo-500"
           >
             Already have an account? Sign in

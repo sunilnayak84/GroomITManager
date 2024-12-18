@@ -318,13 +318,15 @@ export default function AuthPage() {
                 <Button
                   variant="link"
                   onClick={() => {
-                    setIsLogin(!isLogin);
-                    loginForm.reset();
-                    registerForm.reset();
+                    if (isLogin) {
+                      window.location.href = '/register';
+                    } else {
+                      window.location.href = '/login';
+                    }
                   }}
                   className="text-sm"
                 >
-                  {isLogin ? "Need an account? Register" : "Already have an account? Login"}
+                  {isLogin ? "Need an account? Sign up" : "Already have an account? Sign in"}
                 </Button>
                 <Button
                   variant="link"

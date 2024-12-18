@@ -88,6 +88,7 @@ function Router() {
     return (
       <Switch>
         <Route path="/register" component={NewRegistrationPage} />
+        <Route path="/login" component={AuthPage} />
         <Route path="/" component={AuthPage} />
       </Switch>
     );
