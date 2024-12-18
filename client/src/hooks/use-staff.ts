@@ -17,7 +17,8 @@ export function useStaff() {
 
         // Get server port from environment variable
         const port = import.meta.env.VITE_SERVER_PORT || '3000';
-        const response = await fetch(`${window.location.protocol}//${window.location.hostname}:${port}/api/firebase-users?role=staff`, {
+        // Fetch both staff and groomers
+        const response = await fetch(`${window.location.protocol}//${window.location.hostname}:${port}/api/firebase-users?role=all`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -44,9 +45,25 @@ export function useStaff() {
           throw new Error('Invalid response format from server');
         }
         
-        // No need to filter by role since the server already did it
-        console.log('FETCH_STAFF: Successfully retrieved staff members:', data.users);
-        return data.users;
+        // Filter and transform the data to match our staff type
+        const staffData = data.users.map(user => ({
+          id: user.uid || user.id,
+          email: user.email,
+          name: user.displayName || user.name,
+          phone: user.phoneNumber || user.phone,
+          role: user.role || 'staff',
+          isActive: typeof user.disabled === 'boolean' ? !user.disabled : true,
+          isGroomer: user.role === 'groomer' || user.isGroomer === true,
+          branchId: user.branchId || null,
+          managedBranchIds: Array.isArray(user.managedBranchIds) ? user.managedBranchIds : [],
+          isMultiBranchEnabled: user.isMultiBranchEnabled || false,
+          primaryBranchId: user.primaryBranchId || null,
+          createdAt: user.createdAt || Date.now(),
+          updatedAt: user.updatedAt || null
+        }));
+        
+        console.log('FETCH_STAFF: Successfully transformed staff data:', staffData);
+        return staffData;
       } catch (error) {
         console.error('FETCH_STAFF: Error fetching staff:', error);
         throw error;
