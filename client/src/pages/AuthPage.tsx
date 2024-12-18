@@ -177,11 +177,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder="Enter your email"
-                              type="email"
-                              {...field}
-                            />
+                            <Input placeholder="Enter your email" type="email" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -195,11 +191,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Password</FormLabel>
                           <FormControl>
-                            <Input 
-                              type="password"
-                              placeholder="Enter your password"
-                              {...field}
-                            />
+                            <Input placeholder="Enter your password" type="password" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -221,10 +213,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Name</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder="Enter your name"
-                              {...field}
-                            />
+                            <Input placeholder="Enter your name" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -238,11 +227,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input
-                              type="email"
-                              placeholder="Enter your email"
-                              {...field}
-                            />
+                            <Input placeholder="Enter your email" type="email" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -256,11 +241,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Password</FormLabel>
                           <FormControl>
-                            <Input
-                              type="password"
-                              placeholder="Enter password"
-                              {...field}
-                            />
+                            <Input placeholder="Enter password" type="password" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -274,11 +255,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Confirm Password</FormLabel>
                           <FormControl>
-                            <Input
-                              type="password"
-                              placeholder="Confirm password"
-                              {...field}
-                            />
+                            <Input placeholder="Confirm password" type="password" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -292,11 +269,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Phone Number</FormLabel>
                           <FormControl>
-                            <Input
-                              type="tel"
-                              placeholder="Enter phone number"
-                              {...field}
-                            />
+                            <Input placeholder="Enter phone number" type="tel" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
