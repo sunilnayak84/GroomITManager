@@ -30,6 +30,8 @@ export function ProtectedElement({
     return <>{fallback}</>;
   }
 
+  const { role } = useRole();
+  
   // Admin always has access
   if (role?.role === 'admin') {
     return <>{children}</>;
