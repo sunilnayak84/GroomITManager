@@ -317,13 +317,7 @@ export default function AuthPage() {
               <div className="mt-4 text-center space-y-2">
                 <Button
                   variant="link"
-                  onClick={() => {
-                    if (isLogin) {
-                      window.location.href = '/register';
-                    } else {
-                      window.location.href = '/login';
-                    }
-                  }}
+                  onClick={() => window.location.href = isLogin ? '/register' : '/login'}
                   className="text-sm"
                 >
                   {isLogin ? "Need an account? Sign up" : "Already have an account? Sign in"}

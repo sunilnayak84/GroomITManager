@@ -34,7 +34,6 @@ interface FormErrors {
 }
 
 export default function NewRegistrationPage() {
-  const [_, setLocation] = useLocation();
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
@@ -42,94 +41,46 @@ export default function NewRegistrationPage() {
     phone: '',
     password: ''
   });
-  
+
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
-    
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = 'First name is required';
-    } else if (formData.firstName.length < 2) {
-      newErrors.firstName = 'First name must be at least 2 characters';
-    }
-
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required';
-    } else if (formData.lastName.length < 2) {
-      newErrors.lastName = 'Last name must be at least 2 characters';
-    }
-    
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
-    }
-
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone number is required';
-    } else if (formData.phone.length < 10) {
-      newErrors.phone = 'Phone number must be at least 10 digits';
-    }
-    
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
-
     setIsSubmitting(true);
     
     try {
+      // Create user in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         formData.email,
         formData.password
       );
 
+      // Update profile with full name
       await updateProfile(userCredential.user, {
         displayName: `${formData.firstName} ${formData.lastName}`
       });
 
       const idToken = await userCredential.user.getIdToken();
-      const response = await fetch('/api/register', {
+
+      // Create user profile with customer role
+      const response = await fetch(`${window.location.protocol}//${window.location.hostname}:3000/api/users/${userCredential.user.uid}/role`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${idToken}`
         },
         body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          phone: formData.phone
+          role: 'customer',
+          name: `${formData.firstName} ${formData.lastName}`,
+          phone: formData.phone,
+          email: formData.email
         })
       });
 
-      const responseData = await response.json();
-      
       if (!response.ok) {
-        throw new Error(responseData.message || 'Failed to create user profile');
+        throw new Error(await response.text());
       }
 
       toast({
@@ -139,36 +90,16 @@ export default function NewRegistrationPage() {
 
       // Force token refresh to get new role claims
       await userCredential.user.getIdTokenResult(true);
-
-      setLocation('/');
+      
+      window.location.href = '/';
     } catch (error: any) {
       console.error('Registration error:', error);
       
-      if (error.code === 'auth/email-already-in-use') {
-        setErrors({
-          email: 'An account with this email already exists',
-          submit: 'Registration failed: Email already in use'
-        });
-      } else if (error.code === 'auth/invalid-email') {
-        setErrors({
-          email: 'Please enter a valid email address',
-          submit: 'Registration failed: Invalid email format'
-        });
-      } else if (error.code === 'auth/weak-password') {
-        setErrors({
-          password: 'Password should be at least 6 characters',
-          submit: 'Registration failed: Password too weak'
-        });
-      } else {
-        setErrors({
-          submit: error.message || 'Failed to create account. Please try again.'
-        });
-      }
-
+      const errorMessage = error instanceof Error ? error.message : "Failed to register";
       toast({
         variant: "destructive",
         title: "Registration Error",
-        description: error.message || 'Failed to create account',
+        description: errorMessage,
       });
     } finally {
       setIsSubmitting(false);
@@ -183,120 +114,109 @@ export default function NewRegistrationPage() {
             <PawPrint className="h-8 w-8 text-primary" />
             <h1 className="text-2xl font-bold">GroomIT</h1>
           </div>
-          <div>
-            <h2 className="text-2xl font-semibold mb-6">Create your account</h2>
-          </div>
-        
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {errors.submit && (
-              <div className="rounded-md bg-destructive/10 p-4">
-                <div className="flex">
-                  <div className="ml-3">
-                    <h3 className="text-sm font-medium text-destructive">
-                      {errors.submit}
-                    </h3>
-                  </div>
-                </div>
-              </div>
-            )}
 
+          <Form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
-                <Input
-                  id="firstName"
-                  name="firstName"
-                  type="text"
-                  required
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  className={errors.firstName ? 'border-destructive' : ''}
-                  placeholder="Your first name"
-                />
-                {errors.firstName && (
-                  <p className="text-sm text-destructive">{errors.firstName}</p>
+              <FormField
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>First Name</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="text"
+                        placeholder="First name"
+                        value={formData.firstName}
+                        onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
+                        required
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-              </div>
+              />
 
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input
-                  id="lastName"
-                  name="lastName"
-                  type="text"
-                  required
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  className={errors.lastName ? 'border-destructive' : ''}
-                  placeholder="Your last name"
-                />
-                {errors.lastName && (
-                  <p className="text-sm text-destructive">{errors.lastName}</p>
+              <FormField
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last Name</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="text"
+                        placeholder="Last name"
+                        value={formData.lastName}
+                        onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
+                        required
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">Email address</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                className={errors.email ? 'border-destructive' : ''}
-                placeholder="you@example.com"
               />
-              {errors.email && (
-                <p className="text-sm text-destructive">{errors.email}</p>
-              )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
-              <Input
-                id="phone"
-                name="phone"
-                type="tel"
-                required
-                value={formData.phone}
-                onChange={handleChange}
-                className={errors.phone ? 'border-destructive' : ''}
-                placeholder="Your phone number"
-              />
-              {errors.phone && (
-                <p className="text-sm text-destructive">{errors.phone}</p>
+            <FormField
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="email"
+                      placeholder="you@example.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                      required
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-            </div>
+            />
 
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                required
-                value={formData.password}
-                onChange={handleChange}
-                className={errors.password ? 'border-destructive' : ''}
-                placeholder="••••••••"
-              />
-              {errors.password && (
-                <p className="text-sm text-destructive">{errors.password}</p>
+            <FormField
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone Number</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="tel"
+                      placeholder="Your phone number"
+                      value={formData.phone}
+                      onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                      required
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-            </div>
+            />
 
-            <Button 
-              type="submit" 
-              className="w-full" 
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Creating account...' : 'Create account'}
+            <FormField
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="password"
+                      placeholder="••••••••"
+                      value={formData.password}
+                      onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                      required
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "Creating Account..." : "Create account"}
             </Button>
-          </form>
+          </Form>
 
           <div className="mt-4 text-center">
             <Button
