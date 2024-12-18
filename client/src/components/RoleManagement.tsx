@@ -1,11 +1,14 @@
 import { useEffect, useState, useMemo } from "react";
 import { useRoles } from '@/hooks/use-roles';
-import type { UserRole } from '@/hooks/use-user';
+import type { UserRole, RolePermissions } from '@/hooks/use-user';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useElementVisibility } from '../hooks/use-element-visibility';
 import { ProtectedElement } from './ProtectedElement';
+import { Alert, AlertDescription } from './ui/alert';
+import { Badge } from './ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import {
   Card,
   CardContent,
@@ -30,10 +33,24 @@ import { RolePermissions } from '@/hooks/use-user';
 
 // Schema for role creation/editing
 const roleSchema = z.object({
-  name: z.string().min(2, 'Role name must be at least 2 characters'),
+  name: z.string()
+    .min(2, 'Role name must be at least 2 characters')
+    .regex(/^[a-zA-Z0-9_-]+$/, 'Role name can only contain letters, numbers, underscores, and hyphens')
+    .transform(val => val.toLowerCase()),
   permissions: z.array(z.string()),
-  description: z.string().optional(),
+  description: z.string().min(10, 'Description must be at least 10 characters').optional(),
+  isStaffRole: z.boolean().default(false),
+  maxDailyAppointments: z.number().min(0).optional(),
+  allowedServices: z.array(z.string()).optional(),
+  canManageInventory: z.boolean().default(false),
 });
+
+// Extended type for role management
+type RoleFormValues = z.infer<typeof roleSchema> & {
+  isSystem?: boolean;
+  createdAt?: number;
+  updatedAt?: number;
+};
 
 type RoleFormValues = z.infer<typeof roleSchema>;
 
@@ -180,9 +197,15 @@ export function RoleManagement() {
 
   return (
     <div className="container mx-auto p-6">
+      <Tabs defaultValue="system-roles" className="w-full">
+        <TabsList className="mb-4">
+          <TabsTrigger value="system-roles">System Roles</TabsTrigger>
+          <TabsTrigger value="custom-roles">Custom Roles</TabsTrigger>
+          <TabsTrigger value="staff-roles">Staff Management</TabsTrigger>
+        </TabsList>
 
-      {/* System Roles */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <TabsContent value="system-roles">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {isLoadingRoles ? (
           <div className="col-span-3 text-center py-4">Loading roles...</div>
         ) : !roles ? (
