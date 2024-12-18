@@ -426,7 +426,7 @@ export async function setupAuth(app: Express) {
         // Get role and permissions from Firebase Realtime Database
         const db = admin.database();
         const userRoleSnapshot = await db.ref(`roles/${decodedToken.uid}`).once('value');
-        const userRole = userRoleSnapshot.val() || { role: 'staff', permissions: [] };
+        const userRole = userRoleSnapshot.val() || { role: RoleTypes.customer, permissions: DefaultPermissions[RoleTypes.customer] };
 
         // Get user from Firebase database or create if doesn't exist
         const dbRef = admin.database();

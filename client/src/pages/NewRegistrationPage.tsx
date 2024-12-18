@@ -144,12 +144,16 @@ export default function NewRegistrationPage() {
         })
       });
 
+      const responseData = await response.json();
+      
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Failed to create user profile');
+        throw new Error(responseData.message || 'Failed to create user profile');
       }
 
-      console.log('User profile created in database');
+      console.log('User profile created in database:', responseData);
+
+      // Force token refresh to get new role claims
+      await userCredential.user.getIdTokenResult(true);
 
       // Once registration is successful, redirect to home page
       setLocation('/');

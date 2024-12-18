@@ -26,19 +26,28 @@ async function initializeRoles() {
     console.log('[ROLES] Setting up role definitions...');
     const roleDefinitionsRef = db.ref('role-definitions');
 
-    // Check if roles already exist
+    // Get existing roles
     const existingRoles = await roleDefinitionsRef.once('value');
-    if (!existingRoles.exists()) {
-      console.log('[ROLES] No existing roles found, initializing default roles...');
-      await roleDefinitionsRef.set(InitialRoleConfigs);
-      console.log('[ROLES] Default roles initialized successfully');
-    } else {
-      console.log('[ROLES] Existing roles found, skipping initialization');
-      
-      // Log existing roles for verification
-      const currentRoles = existingRoles.val();
-      console.log('[ROLES] Current roles:', Object.keys(currentRoles));
-    }
+    const currentRoles = existingRoles.exists() ? existingRoles.val() : {};
+    
+    // Merge existing roles with new roles, preserving existing configurations
+    const mergedRoles = {
+      ...InitialRoleConfigs,
+      ...currentRoles,
+      // Ensure customer role is properly set
+      [RoleTypes.customer]: {
+        ...InitialRoleConfigs[RoleTypes.customer],
+        ...currentRoles[RoleTypes.customer],
+        permissions: DefaultPermissions[RoleTypes.customer],
+        isSystem: true,
+        updatedAt: Date.now()
+      }
+    };
+
+    console.log('[ROLES] Updating role definitions...');
+    await roleDefinitionsRef.set(mergedRoles);
+    console.log('[ROLES] Role definitions updated successfully');
+    console.log('[ROLES] Current roles:', Object.keys(mergedRoles));
     
     // Setup admin user
     const adminEmail = 'admin@groomery.in';
