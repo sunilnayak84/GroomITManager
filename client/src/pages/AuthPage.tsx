@@ -75,30 +75,44 @@ export default function AuthPage() {
 
   async function handleRegister(data: z.infer<typeof registerSchema>) {
     try {
+      // Create user in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
       const idToken = await userCredential.user.getIdToken();
       
-      await fetch(`${window.location.protocol}//${window.location.hostname}:3000/api/users/${userCredential.user.uid}/role`, {
+      // Update user profile with name
+      await userCredential.user.updateProfile({
+        displayName: data.name
+      });
+      
+      // Register user in backend with role assignment
+      const response = await fetch(`${window.location.protocol}//${window.location.hostname}:3000/api/users/${userCredential.user.uid}/role`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${idToken}`
         },
         body: JSON.stringify({ 
-          role: 'User',
+          role: 'staff', // Default role from Firebase RBAC
           name: data.name,
-          phone: data.phone
+          phone: data.phone,
+          email: data.email
         })
       });
+
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
 
       toast({
         title: "Success",
         description: "Account created successfully",
       });
       
+      // Log in the user
       await login({ email: data.email, password: data.password });
       window.location.reload();
     } catch (error) {
+      console.error('Registration error:', error);
       const errorMessage = error instanceof Error ? error.message : "Failed to register";
       toast({
         variant: "destructive",
@@ -185,7 +199,7 @@ export default function AuthPage() {
                             <Input 
                               type="text"
                               placeholder="Enter your name"
-                              onChange={e => field.onChange(e.target.value)}
+                              {...field}
                             />
                           </FormControl>
                           <FormMessage />
@@ -203,7 +217,7 @@ export default function AuthPage() {
                             <Input 
                               type="email"
                               placeholder="Enter your email"
-                              onChange={e => field.onChange(e.target.value)}
+                              {...field}
                             />
                           </FormControl>
                           <FormMessage />
