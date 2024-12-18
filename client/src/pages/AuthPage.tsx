@@ -42,7 +42,7 @@ export default function AuthPage() {
     defaultValues: {
       email: "",
       password: "",
-    },
+    }
   });
 
   const registerForm = useForm<RegisterFormData>({
@@ -53,7 +53,7 @@ export default function AuthPage() {
       password: "",
       confirmPassword: "",
       phone: "",
-    },
+    }
   });
 
   async function handleLogin(data: LoginFormData) {
@@ -84,17 +84,14 @@ export default function AuthPage() {
     setIsSubmitting(true);
     
     try {
-      // Create user in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
       const user = userCredential.user;
       const idToken = await user.getIdToken();
       
-      // Update user profile with name
       await updateProfile(user, {
         displayName: data.name
       });
-      
-      // Get user role from Firebase RBAC
+
       const response = await fetch(`${window.location.protocol}//${window.location.hostname}:3000/api/users/${user.uid}/role`, {
         method: 'POST',
         headers: {
@@ -118,7 +115,6 @@ export default function AuthPage() {
         description: "Account created successfully",
       });
       
-      // Log in the user
       await login({ email: data.email, password: data.password });
       window.location.reload();
     } catch (error) {
@@ -177,7 +173,12 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter your email" type="email" {...field} />
+                            <Input 
+                              type="email"
+                              {...field}
+                              value={field.value || ""}
+                              onChange={(e) => field.onChange(e.target.value)}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -191,7 +192,12 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Password</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter your password" type="password" {...field} />
+                            <Input 
+                              type="password"
+                              {...field}
+                              value={field.value || ""}
+                              onChange={(e) => field.onChange(e.target.value)}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -213,7 +219,12 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter your name" {...field} />
+                            <Input 
+                              type="text"
+                              {...field}
+                              value={field.value || ""}
+                              onChange={(e) => field.onChange(e.target.value)}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -227,7 +238,12 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter your email" type="email" {...field} />
+                            <Input 
+                              type="email"
+                              {...field}
+                              value={field.value || ""}
+                              onChange={(e) => field.onChange(e.target.value)}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -241,7 +257,12 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Password</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter password" type="password" {...field} />
+                            <Input 
+                              type="password"
+                              {...field}
+                              value={field.value || ""}
+                              onChange={(e) => field.onChange(e.target.value)}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -255,7 +276,12 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Confirm Password</FormLabel>
                           <FormControl>
-                            <Input placeholder="Confirm password" type="password" {...field} />
+                            <Input 
+                              type="password"
+                              {...field}
+                              value={field.value || ""}
+                              onChange={(e) => field.onChange(e.target.value)}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -269,7 +295,12 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Phone Number</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter phone number" type="tel" {...field} />
+                            <Input 
+                              type="tel"
+                              {...field}
+                              value={field.value || ""}
+                              onChange={(e) => field.onChange(e.target.value)}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
