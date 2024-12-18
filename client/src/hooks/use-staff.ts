@@ -33,10 +33,12 @@ export function useStaff() {
   });
 
   const addStaffMember = useMutation({
-    mutationFn: async (data: InsertUser) => {
+    mutationFn: async (data: InsertUser & { firebaseUid?: string }) => {
       console.log('Adding staff member with data:', data);
+      const { firebaseUid, ...staffData } = data;
       const docRef = await addDoc(collection(db, STAFF_COLLECTION), {
-        ...data,
+        ...staffData,
+        firebaseUid: firebaseUid || null,
         createdAt: new Date().toISOString()
       });
       return docRef.id;

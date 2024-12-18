@@ -148,10 +148,11 @@ export const insertAppointmentSchema = z.object({
 // Schema for User (Groomer)
 export const userSchema = z.object({
   id: z.string(),
+  firebaseUid: z.string().optional(),
   email: z.string().email(),
   name: z.string(),
   phone: z.string().nullable(),
-  role: z.enum(["admin", "groomer"]),
+  role: z.enum(["admin", "manager", "staff", "groomer", "receptionist"]),
   isActive: z.boolean().default(true),
   branchId: z.string().nullable(),
   isGroomer: z.boolean().default(false),

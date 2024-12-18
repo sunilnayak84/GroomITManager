@@ -140,10 +140,12 @@ export default function StaffPage() {
 
         const { uid } = await response.json();
         
-        // Add staff member with Firebase UID
+        // Add staff member to Firestore with Firebase UID
         await addStaffMember({
           ...staffData,
-          firebaseUid: uid
+          firebaseUid: uid,
+          role: role,
+          isActive: true
         });
 
         toast({
