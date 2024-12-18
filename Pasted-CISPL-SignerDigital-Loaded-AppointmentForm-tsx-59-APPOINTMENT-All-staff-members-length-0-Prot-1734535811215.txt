@@ -1,0 +1,47 @@
+CISPL SignerDigital Loaded
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []length: 0[[Prototype]]: Array(0)
+use-appointments.ts:68 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:76 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:79 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+use-staff.ts:13 FETCH_STAFF: Starting to fetch staff members
+use-staff.ts:24 FETCH_STAFF: Making request to: https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/firebase-users?role=all
+use-appointments.ts:88 FETCH_APPOINTMENTS: Found 0 active appointments
+use-appointments.ts:94 FETCH_APPOINTMENTS: Got snapshot with 0 active documents
+use-appointments.ts:97 FETCH_APPOINTMENTS: No appointments found
+use-services.ts:77 FETCH_SERVICES: Completed fetching services {count: 4, services: Array(4)}count: 4services: (4) [{…}, {…}, {…}, {…}][[Prototype]]: Object
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []length: 0[[Prototype]]: Array(0)
+use-pets.ts:115 FETCH_PETS: Completed fetching pets {totalPets: 3, pets: Array(3)}pets: (3) [{…}, {…}, {…}]totalPets: 3[[Prototype]]: Object
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []length: 0[[Prototype]]: Array(0)
+use-staff.ts:53 FETCH_STAFF: Retrieved data: {totalUsers: 0, users: Array(0), pageToken: null, hasNextPage: false}hasNextPage: falsepageToken: nulltotalUsers: 0users: [][[Prototype]]: Object
+use-staff.ts:82 FETCH_STAFF: Successfully transformed staff data: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:59 [APPOINTMENT] All staff members: []length: 0[[Prototype]]: Array(0)
+AppointmentForm.tsx:70 [APPOINTMENT] Available groomers: []length: 0[[Prototype]]: Array(0)

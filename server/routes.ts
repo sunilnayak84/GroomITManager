@@ -164,6 +164,8 @@ export function registerRoutes(app: Express) {
       const snapshot = await usersRef.once('value');
       const allUsers = snapshot.val() || {};
       
+      console.log('[FIREBASE-USERS] Raw users data:', allUsers);
+      
       // Convert users object to array and filter by role if specified
       const users = Object.entries(allUsers)
         .map(([uid, userData]: [string, any]) => ({
@@ -171,13 +173,23 @@ export function registerRoutes(app: Express) {
           email: userData.email,
           displayName: userData.name,
           role: userData.role || 'staff',
+          isGroomer: userData.isGroomer || userData.role === 'groomer',
           permissions: userData.permissions || [],
           disabled: userData.disabled || false,
           lastSignInTime: userData.lastSignInTime,
           creationTime: userData.createdAt,
-          branch: userData.branch
+          branch: userData.branch,
+          isActive: !userData.disabled
         }))
-        .filter(user => !roleFilter || user.role === roleFilter);
+        .filter(user => {
+          if (roleFilter === 'all') {
+            // For 'all', include staff and groomers
+            return ['staff', 'groomer'].includes(user.role) || user.isGroomer;
+          }
+          return !roleFilter || user.role === roleFilter || (roleFilter === 'groomer' && user.isGroomer);
+        });
+
+      console.log('[FIREBASE-USERS] Filtered users:', users);
       
       console.log('[FIREBASE-USERS] Successfully fetched users:', users.length);
       
@@ -603,6 +615,27 @@ export function registerRoutes(app: Express) {
     try {
       console.log('[STAFF-CREATE] Starting staff creation process');
       console.log('[STAFF-CREATE] Request body:', req.body);
+      
+      // Add test groomer if in development and no users exist
+      if (process.env.NODE_ENV === 'development') {
+        const db = getDatabase();
+        const usersRef = db.ref('users');
+        const snapshot = await usersRef.once('value');
+        if (!snapshot.exists()) {
+          console.log('[STAFF-CREATE] Adding test groomer in development mode');
+          await usersRef.child('test-groomer').set({
+            email: 'groomer@groomery.in',
+            name: 'Test Groomer',
+            role: 'groomer',
+            isGroomer: true,
+            isActive: true,
+            disabled: false,
+            permissions: ['manage_appointments', 'view_appointments'],
+            createdAt: Date.now(),
+            updatedAt: Date.now()
+          });
+        }
+      }
       
       const { 
         email, 
