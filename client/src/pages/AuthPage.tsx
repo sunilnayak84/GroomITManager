@@ -54,11 +54,10 @@ export default function AuthPage() {
       email: "",
       password: "",
       phone: "",
+      confirmPassword: "",
     },
     mode: "onChange"
   });
-
-  const { control, formState: { errors } } = registerForm;
 
   async function handleLogin(data: z.infer<typeof loginSchema>) {
     try {
@@ -194,10 +193,7 @@ export default function AuthPage() {
                             <Input 
                               type="text"
                               placeholder="Enter your name"
-                              onChange={field.onChange}
-                              onBlur={field.onBlur}
-                              value={field.value || ''}
-                              name={field.name}
+                              {...field}
                             />
                           </FormControl>
                           <FormMessage />
@@ -215,10 +211,7 @@ export default function AuthPage() {
                             <Input 
                               type="email"
                               placeholder="Enter your email"
-                              onChange={field.onChange}
-                              onBlur={field.onBlur}
-                              value={field.value || ''}
-                              name={field.name}
+                              {...field}
                             />
                           </FormControl>
                           <FormMessage />
