@@ -73,6 +73,74 @@ export function registerRoutes(app: Express) {
   });
 
   // Firebase User Management endpoints - Admin only
+  // User registration endpoint
+  app.post("/api/register", authenticateFirebase, async (req, res) => {
+    try {
+      const { name, email } = req.body;
+      const userId = req.user?.uid;
+
+      if (!userId) {
+        return res.status(401).json({
+          message: "Unauthorized",
+          error: "No authenticated user found"
+        });
+      }
+
+      console.log('[REGISTER] Creating new user profile:', { userId, name, email });
+
+      // Get Firebase Admin instance
+      const app = getFirebaseAdmin();
+      const db = getDatabase(app);
+      const auth = getAuth(app);
+
+      // Create user profile in Realtime Database
+      const userRef = db.ref(`users/${userId}`);
+      const roleRef = db.ref(`roles/${userId}`);
+
+      // Set default role as 'user'
+      const roleData = {
+        role: 'user',
+        permissions: DefaultPermissions.user || [],
+        updatedAt: Date.now()
+      };
+
+      // Update custom claims
+      await auth.setCustomUserClaims(userId, {
+        role: 'user',
+        permissions: DefaultPermissions.user || []
+      });
+
+      // Set user data
+      await userRef.set({
+        name,
+        email,
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      });
+
+      // Set role data
+      await roleRef.set(roleData);
+
+      console.log('[REGISTER] Successfully created user profile');
+      
+      res.json({
+        message: "User profile created successfully",
+        user: {
+          uid: userId,
+          name,
+          email,
+          role: 'user'
+        }
+      });
+    } catch (error) {
+      console.error('[REGISTER] Error:', error);
+      res.status(500).json({
+        message: "Failed to create user profile",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
   app.get("/api/firebase-users", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
     try {
       console.log('[FIREBASE-USERS] Starting user fetch request');

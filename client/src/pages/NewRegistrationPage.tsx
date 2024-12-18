@@ -78,13 +78,19 @@ export default function NewRegistrationPage() {
         formData.password
       );
 
+      console.log('Firebase Auth user created successfully');
+
       // Update user profile with name
       await updateProfile(userCredential.user, {
         displayName: formData.name
       });
 
+      console.log('User profile updated with display name');
+
       // Create user in our database with default role
       const idToken = await userCredential.user.getIdToken();
+      console.log('Got ID token, making API request to register endpoint');
+
       const response = await fetch('/api/register', {
         method: 'POST',
         headers: {
@@ -98,16 +104,39 @@ export default function NewRegistrationPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create user profile');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to create user profile');
       }
+
+      console.log('User profile created in database');
 
       // Once registration is successful, redirect to home page
       setLocation('/');
     } catch (error: any) {
       console.error('Registration error:', error);
-      setErrors({
-        submit: error.message || 'Failed to create account. Please try again.'
-      });
+      
+      // Handle Firebase Auth specific errors
+      if (error.code === 'auth/email-already-in-use') {
+        setErrors({
+          email: 'An account with this email already exists',
+          submit: 'Registration failed: Email already in use'
+        });
+      } else if (error.code === 'auth/invalid-email') {
+        setErrors({
+          email: 'Please enter a valid email address',
+          submit: 'Registration failed: Invalid email format'
+        });
+      } else if (error.code === 'auth/weak-password') {
+        setErrors({
+          password: 'Password should be at least 6 characters',
+          submit: 'Registration failed: Password too weak'
+        });
+      } else {
+        // Handle other errors
+        setErrors({
+          submit: error.message || 'Failed to create account. Please try again.'
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }

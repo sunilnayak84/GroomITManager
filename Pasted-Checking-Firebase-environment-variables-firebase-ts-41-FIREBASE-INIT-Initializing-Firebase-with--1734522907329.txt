@@ -1,0 +1,141 @@
+Checking Firebase environment variables...
+firebase.ts:41 FIREBASE_INIT: Initializing Firebase with config: Object
+firebase.ts:49 FIREBASE_INIT: Firebase initialized successfully
+NewRegistrationPage.tsx:55 Input changed - name: H
+NewRegistrationPage.tsx:55 Input changed - name: He
+NewRegistrationPage.tsx:55 Input changed - name: Hel
+NewRegistrationPage.tsx:55 Input changed - name: Hell
+NewRegistrationPage.tsx:55 Input changed - name: Hello
+NewRegistrationPage.tsx:55 Input changed - name: Hello 
+NewRegistrationPage.tsx:55 Input changed - name: Hello G
+NewRegistrationPage.tsx:55 Input changed - name: Hello Gr
+NewRegistrationPage.tsx:55 Input changed - name: Hello Gro
+NewRegistrationPage.tsx:55 Input changed - name: Hello Groo
+NewRegistrationPage.tsx:55 Input changed - name: Hello Groom
+NewRegistrationPage.tsx:55 Input changed - name: Hello Groome
+NewRegistrationPage.tsx:55 Input changed - name: Hello Groomer
+NewRegistrationPage.tsx:55 Input changed - name: Hello Groomery
+NewRegistrationPage.tsx:55 Input changed - email: h
+NewRegistrationPage.tsx:55 Input changed - email: he
+NewRegistrationPage.tsx:55 Input changed - email: hel
+NewRegistrationPage.tsx:55 Input changed - email: hell
+NewRegistrationPage.tsx:55 Input changed - email: hello
+NewRegistrationPage.tsx:55 Input changed - email: hello@
+NewRegistrationPage.tsx:55 Input changed - email: hello@g
+NewRegistrationPage.tsx:55 Input changed - email: hello@gr
+NewRegistrationPage.tsx:55 Input changed - email: hello@gro
+NewRegistrationPage.tsx:55 Input changed - email: hello@groo
+NewRegistrationPage.tsx:55 Input changed - email: hello@groom
+NewRegistrationPage.tsx:55 Input changed - email: hello@groome
+NewRegistrationPage.tsx:55 Input changed - email: hello@groomer
+NewRegistrationPage.tsx:55 Input changed - email: hello@groomery
+NewRegistrationPage.tsx:55 Input changed - email: hello@groomery.
+NewRegistrationPage.tsx:55 Input changed - email: hello@groomery.i
+NewRegistrationPage.tsx:55 Input changed - email: hello@groomery.in
+NewRegistrationPage.tsx:55 Input changed - password: h
+NewRegistrationPage.tsx:55 Input changed - password: he
+NewRegistrationPage.tsx:55 Input changed - password: hel
+NewRegistrationPage.tsx:55 Input changed - password: hell
+NewRegistrationPage.tsx:55 Input changed - password: hello
+NewRegistrationPage.tsx:55 Input changed - password: hello1
+NewRegistrationPage.tsx:55 Input changed - password: hello12
+NewRegistrationPage.tsx:55 Input changed - password: hello123
+NewRegistrationPage.tsx:64 Form submission attempted
+NewRegistrationPage.tsx:75 
+        
+        
+       POST https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDbosAxUqVaKMAcwcMyjK_7mtk9s9LpJ9w 400 (Bad Request)
+(anonymous) @ firebase_auth.js?v=bec9d355:1079
+await in (anonymous)
+_performFetchWithErrorHandling @ firebase_auth.js?v=bec9d355:1088
+_performApiRequest @ firebase_auth.js?v=bec9d355:1048
+_performSignInRequest @ firebase_auth.js?v=bec9d355:1123
+signUp @ firebase_auth.js?v=bec9d355:4389
+handleRecaptchaFlow @ firebase_auth.js?v=bec9d355:3134
+createUserWithEmailAndPassword @ firebase_auth.js?v=bec9d355:4772
+handleSubmit @ NewRegistrationPage.tsx:75
+callCallback2 @ chunk-DRXX46FI.js?v=bec9d355:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=bec9d355:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=bec9d355:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=bec9d355:3736
+executeDispatch @ chunk-DRXX46FI.js?v=bec9d355:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=bec9d355:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=bec9d355:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=bec9d355:7051
+(anonymous) @ chunk-DRXX46FI.js?v=bec9d355:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=bec9d355:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=bec9d355:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=bec9d355:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=bec9d355:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=bec9d355:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=bec9d355:5449Understand this errorAI
+NewRegistrationPage.tsx:107 Registration error: FirebaseError: Firebase: Error (auth/email-already-in-use).
+    at createErrorInternal (firebase_auth.js?v=bec9d355:689:37)
+    at _createError (firebase_auth.js?v=bec9d355:657:10)
+    at _makeTaggedError (firebase_auth.js?v=bec9d355:1178:17)
+    at _performFetchWithErrorHandling (firebase_auth.js?v=bec9d355:1104:15)
+    at async _performSignInRequest (firebase_auth.js?v=bec9d355:1123:26)
+    at async createUserWithEmailAndPassword (firebase_auth.js?v=bec9d355:4780:20)
+    at async handleSubmit (NewRegistrationPage.tsx:75:30)
+handleSubmit @ NewRegistrationPage.tsx:107
+await in handleSubmit
+callCallback2 @ chunk-DRXX46FI.js?v=bec9d355:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=bec9d355:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=bec9d355:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=bec9d355:3736
+executeDispatch @ chunk-DRXX46FI.js?v=bec9d355:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=bec9d355:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=bec9d355:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=bec9d355:7051
+(anonymous) @ chunk-DRXX46FI.js?v=bec9d355:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=bec9d355:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=bec9d355:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=bec9d355:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=bec9d355:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=bec9d355:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=bec9d355:5449Understand this errorAI
+NewRegistrationPage.tsx:55 Input changed - email: i@groomery.in
+NewRegistrationPage.tsx:55 Input changed - email: in@groomery.in
+NewRegistrationPage.tsx:55 Input changed - email: inf@groomery.in
+NewRegistrationPage.tsx:55 Input changed - email: info@groomery.in
+NewRegistrationPage.tsx:64 Form submission attempted
+NewRegistrationPage.tsx:88 
+        
+        
+       POST https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/api/register 404 (Not Found)
+handleSubmit @ NewRegistrationPage.tsx:88
+await in handleSubmit
+callCallback2 @ chunk-DRXX46FI.js?v=bec9d355:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=bec9d355:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=bec9d355:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=bec9d355:3736
+executeDispatch @ chunk-DRXX46FI.js?v=bec9d355:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=bec9d355:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=bec9d355:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=bec9d355:7051
+(anonymous) @ chunk-DRXX46FI.js?v=bec9d355:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=bec9d355:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=bec9d355:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=bec9d355:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=bec9d355:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=bec9d355:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=bec9d355:5449Understand this errorAI
+NewRegistrationPage.tsx:107 Registration error: Error: Failed to create user profile
+    at handleSubmit (NewRegistrationPage.tsx:101:15)
+handleSubmit @ NewRegistrationPage.tsx:107
+await in handleSubmit
+callCallback2 @ chunk-DRXX46FI.js?v=bec9d355:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=bec9d355:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=bec9d355:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=bec9d355:3736
+executeDispatch @ chunk-DRXX46FI.js?v=bec9d355:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=bec9d355:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=bec9d355:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=bec9d355:7051
+(anonymous) @ chunk-DRXX46FI.js?v=bec9d355:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=bec9d355:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=bec9d355:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=bec9d355:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=bec9d355:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=bec9d355:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=bec9d355:5449Understand this errorAI
