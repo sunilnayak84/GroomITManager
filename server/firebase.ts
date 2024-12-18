@@ -217,6 +217,11 @@ async function updateUserRole(
 }
 
 async function setupAdminUser(adminEmail: string): Promise<void> {
+  // Validate admin email domain
+  if (!adminEmail.endsWith('@groomery.in') && process.env.NODE_ENV !== 'development') {
+    throw new Error('Admin email must be from the @groomery.in domain');
+  }
+
   const app = getFirebaseAdmin();
   const auth = getAuth(app);
   const db = getDatabase(app);
@@ -224,7 +229,9 @@ async function setupAdminUser(adminEmail: string): Promise<void> {
   let userRecord;
   try {
     userRecord = await auth.getUserByEmail(adminEmail);
+    console.log('[SETUP-ADMIN] Found existing admin user:', userRecord.uid);
   } catch (error) {
+    console.log('[SETUP-ADMIN] Creating new admin user with email:', adminEmail);
     userRecord = await auth.createUser({
       email: adminEmail,
       emailVerified: true,
@@ -233,19 +240,41 @@ async function setupAdminUser(adminEmail: string): Promise<void> {
   }
   
   const userId = userRecord.uid;
+  const timestamp = Date.now();
+
+  // Ensure admin has ALL permissions
+  const adminPermissions = [...ALL_PERMISSIONS, 'all'];
   
-  await db.ref(`roles/${userId}`).set({
+  // Set role data with full permissions
+  const roleData = {
     role: RoleTypes.admin,
-    permissions: DefaultPermissions[RoleTypes.admin],
-    updatedAt: Date.now(),
-    createdAt: Date.now()
-  });
+    permissions: adminPermissions,
+    isAdmin: true,
+    updatedAt: timestamp,
+    createdAt: timestamp
+  };
+
+  // Update role in database
+  await db.ref(`roles/${userId}`).set(roleData);
   
+  // Set custom claims with full permissions
   await auth.setCustomUserClaims(userId, {
     role: RoleTypes.admin,
-    permissions: DefaultPermissions[RoleTypes.admin],
-    updatedAt: Date.now()
+    permissions: adminPermissions,
+    isAdmin: true,
+    updatedAt: timestamp
   });
+
+  // Record in role history
+  await db.ref(`role-history/${userId}`).push({
+    action: 'admin_setup',
+    role: RoleTypes.admin,
+    permissions: adminPermissions,
+    timestamp,
+    type: 'system_update'
+  });
+
+  console.log('[SETUP-ADMIN] Admin user setup completed for:', userId);
 }
 
 async function listAllUsers(pageToken?: string) {
