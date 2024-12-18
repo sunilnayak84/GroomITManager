@@ -52,6 +52,7 @@ export default function AuthPage() {
       confirmPassword: "",
       phone: "",
     },
+    mode: "onChange"
   });
 
   async function handleLogin(data: z.infer<typeof loginSchema>) {
@@ -177,15 +178,14 @@ export default function AuthPage() {
                     <FormField
                       control={registerForm.control}
                       name="name"
-                      render={({ field: { onChange, value } }) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>Name</FormLabel>
                           <FormControl>
                             <Input 
                               type="text"
                               placeholder="Enter your name"
-                              onChange={onChange}
-                              value={value || ''}
+                              {...field}
                             />
                           </FormControl>
                           <FormMessage />
@@ -196,15 +196,14 @@ export default function AuthPage() {
                     <FormField
                       control={registerForm.control}
                       name="email"
-                      render={({ field: { onChange, value } }) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
                             <Input 
                               type="email"
                               placeholder="Enter your email"
-                              onChange={onChange}
-                              value={value || ''}
+                              {...field}
                             />
                           </FormControl>
                           <FormMessage />
