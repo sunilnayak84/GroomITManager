@@ -1,34 +1,184 @@
 import React, { useState } from 'react';
+import { useLocation } from 'wouter';
 
-const NewRegistrationPage: React.FC = () => {
-  console.log('Rendering NewRegistrationPage');
-  const [inputText, setInputText] = useState('');
+interface FormData {
+  name: string;
+  email: string;
+  password: string;
+}
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = event.target.value;
-    console.log('Input changed:', newValue);
-    setInputText(newValue);
+interface FormErrors {
+  name?: string;
+  email?: string;
+  password?: string;
+}
+
+export default function NewRegistrationPage() {
+  const [_, setLocation] = useLocation();
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    email: '',
+    password: ''
+  });
+  
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+    
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+    
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email is invalid';
+    }
+    
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    console.log(`Input changed - ${name}:`, value);
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Form submission attempted');
+    
+    if (!validateForm()) {
+      console.log('Validation failed');
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      // We'll implement the actual registration logic later
+      console.log('Form submitted with:', formData);
+      // navigate('/'); // Uncomment when ready to redirect after successful registration
+    } catch (error) {
+      console.error('Registration error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Basic Input Test</h1>
-      <input
-        type="text"
-        value={inputText}
-        onChange={handleInputChange}
-        style={{ 
-          display: 'block',
-          width: '100%',
-          maxWidth: '300px',
-          padding: '8px',
-          margin: '20px 0',
-          border: '1px solid #ccc'
-        }}
-      />
-      <div>Typed value: {inputText}</div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Create your account
+          </h2>
+        </div>
+        
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div className="mb-4">
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                Name
+              </label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                required
+                value={formData.name}
+                onChange={handleChange}
+                className={`appearance-none rounded relative block w-full px-3 py-2 border ${
+                  errors.name ? 'border-red-300' : 'border-gray-300'
+                } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                placeholder="Your name"
+              />
+              {errors.name && (
+                <p className="mt-2 text-sm text-red-600">{errors.name}</p>
+              )}
+            </div>
+
+            <div className="mb-4">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email address
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                value={formData.email}
+                onChange={handleChange}
+                className={`appearance-none rounded relative block w-full px-3 py-2 border ${
+                  errors.email ? 'border-red-300' : 'border-gray-300'
+                } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                placeholder="you@example.com"
+              />
+              {errors.email && (
+                <p className="mt-2 text-sm text-red-600">{errors.email}</p>
+              )}
+            </div>
+
+            <div className="mb-4">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                Password
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="new-password"
+                required
+                value={formData.password}
+                onChange={handleChange}
+                className={`appearance-none rounded relative block w-full px-3 py-2 border ${
+                  errors.password ? 'border-red-300' : 'border-gray-300'
+                } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                placeholder="••••••••"
+              />
+              {errors.password && (
+                <p className="mt-2 text-sm text-red-600">{errors.password}</p>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white ${
+                isSubmitting
+                  ? 'bg-indigo-400 cursor-not-allowed'
+                  : 'bg-indigo-600 hover:bg-indigo-700'
+              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
+            >
+              {isSubmitting ? 'Creating account...' : 'Create account'}
+            </button>
+          </div>
+        </form>
+
+        <div className="text-center">
+          <a
+            href="/"
+            className="font-medium text-indigo-600 hover:text-indigo-500"
+          >
+            Already have an account? Sign in
+          </a>
+        </div>
+      </div>
     </div>
   );
-};
-
-export default NewRegistrationPage;
+}
