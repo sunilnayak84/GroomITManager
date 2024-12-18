@@ -40,36 +40,43 @@ export const ALL_PERMISSIONS = [
 
 export type Permission = typeof ALL_PERMISSIONS[number];
 
-// Default permissions for each role
-export const DefaultPermissions: Record<RoleTypes, Permission[]> = {
-  [RoleTypes.admin]: ['all'],
-  [RoleTypes.manager]: [
-    'manage_appointments',
-    'view_appointments',
-    'manage_services',
-    'view_services',
-    'manage_customers',
-    'view_customers',
-    'manage_inventory',
-    'view_inventory'
-  ],
-  [RoleTypes.staff]: [
-    'view_appointments',
-    'manage_own_schedule',
-    'view_customers'
-  ],
-  [RoleTypes.receptionist]: [
-    'view_appointments',
-    'create_appointments',
-    'view_customers',
-    'create_customers'
-  ],
-  [RoleTypes.customer]: [
-    'view_appointments',
-    'create_appointments',
-    'view_services'
-  ]
-};
+// Get role permissions from Firebase Realtime Database
+export async function getRolePermissions(role: RoleTypes): Promise<Permission[]> {
+  const db = getDatabase(getFirebaseAdmin());
+  const snapshot = await db.ref(`role-definitions/${role}`).once('value');
+  const roleData = snapshot.val();
+  
+  if (!roleData || !roleData.permissions) {
+    console.warn(`[ROLES] No permissions found for role ${role}, using empty set`);
+    return [];
+  }
+  
+  // Validate permissions
+  const validPermissions = validatePermissions(roleData.permissions);
+  if (validPermissions.length !== roleData.permissions.length) {
+    console.warn(`[ROLES] Some permissions were invalid for role ${role}`);
+  }
+  
+  return validPermissions;
+}
+
+// Cache role permissions for better performance
+const permissionsCache = new Map<RoleTypes, { permissions: Permission[], timestamp: number }>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+export async function getDefaultPermissions(role: RoleTypes): Promise<Permission[]> {
+  const now = Date.now();
+  const cached = permissionsCache.get(role);
+  
+  if (cached && (now - cached.timestamp) < CACHE_TTL) {
+    return cached.permissions;
+  }
+  
+  const permissions = await getRolePermissions(role);
+  permissionsCache.set(role, { permissions, timestamp: now });
+  
+  return permissions;
+}
 
 export const InitialRoleConfigs = {
   [RoleTypes.admin]: {
@@ -80,28 +87,50 @@ export const InitialRoleConfigs = {
     updatedAt: Date.now()
   },
   [RoleTypes.manager]: {
-    permissions: DefaultPermissions[RoleTypes.manager],
+    permissions: [
+      'manage_appointments',
+      'view_appointments',
+      'manage_services',
+      'view_services',
+      'manage_customers',
+      'view_customers',
+      'manage_inventory',
+      'view_inventory'
+    ],
     description: 'Manages daily operations and staff',
     isSystem: true,
     createdAt: Date.now(),
     updatedAt: Date.now()
   },
   [RoleTypes.staff]: {
-    permissions: DefaultPermissions[RoleTypes.staff],
+    permissions: [
+      'view_appointments',
+      'manage_own_schedule',
+      'view_customers'
+    ],
     description: 'Regular staff member access',
     isSystem: true,
     createdAt: Date.now(),
     updatedAt: Date.now()
   },
   [RoleTypes.receptionist]: {
-    permissions: DefaultPermissions[RoleTypes.receptionist],
+    permissions: [
+      'view_appointments',
+      'create_appointments',
+      'view_customers',
+      'create_customers'
+    ],
     description: 'Front desk and customer service access',
     isSystem: true,
     createdAt: Date.now(),
     updatedAt: Date.now()
   },
   [RoleTypes.customer]: {
-    permissions: DefaultPermissions[RoleTypes.customer],
+    permissions: [
+      'view_appointments',
+      'create_appointments',
+      'view_services'
+    ],
     description: 'Customer access for booking appointments and viewing services',
     isSystem: true,
     createdAt: Date.now(),

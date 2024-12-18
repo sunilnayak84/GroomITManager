@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { getFirebaseAdmin, getUserRole, RoleTypes, DefaultPermissions } from '../firebase';
+import { getFirebaseAdmin, getUserRole, RoleTypes, getDefaultPermissions } from '../firebase';
 import admin from 'firebase-admin';
 
 // Import FirebaseUser interface
@@ -57,6 +57,7 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
       if (process.env.NODE_ENV === 'development') {
         console.log('[AUTH] Development mode: Setting up admin privileges');
         // In development, set admin privileges with all required fields
+        const adminPermissions = await getDefaultPermissions(RoleTypes.admin);
         req.user = {
           id: 'dev-admin',
           uid: 'dev-admin',
@@ -64,7 +65,7 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
           name: 'Admin User',
           displayName: 'Admin User',
           role: 'admin',
-          permissions: DefaultPermissions.admin
+          permissions: adminPermissions
         };
         console.log('[AUTH] Development admin account configured:', req.user);
         return next();
@@ -99,19 +100,19 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
       if (isDevAdmin) {
         console.log('[AUTH] Development admin user detected');
         role = 'admin';
-        permissions = DefaultPermissions.admin;
+        permissions = await getDefaultPermissions(RoleTypes.admin);
       }
       // Check custom claims
       else if (customClaims.isAdmin === true || customClaims.role === 'admin') {
         console.log('[AUTH] User has admin claims:', customClaims);
         role = 'admin';
-        permissions = DefaultPermissions.admin;
+        permissions = await getDefaultPermissions(RoleTypes.admin);
       }
       // Check database role
       else if (userRole?.role === 'admin') {
         console.log('[AUTH] User has admin role in database');
         role = 'admin';
-        permissions = DefaultPermissions.admin;
+        permissions = await getDefaultPermissions(RoleTypes.admin);
       }
       // Use database role if available
       else if (userRole) {
@@ -123,12 +124,13 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
       else {
         console.warn(`[AUTH] No role found for user ${user.email}, using default staff role`);
         role = 'staff';
-        permissions = DefaultPermissions.staff;
+        permissions = await getDefaultPermissions(RoleTypes.staff);
       }
 
       // For admin users, ensure they have all admin permissions
       if (role === 'admin') {
-        permissions = [...new Set([...permissions, ...DefaultPermissions.admin])];
+        const adminPerms = await getDefaultPermissions(RoleTypes.admin);
+        permissions = [...new Set([...permissions, ...adminPerms])];
         console.log('[AUTH] Ensured admin has all admin permissions');
       }
 

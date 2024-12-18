@@ -305,7 +305,7 @@ export default function StaffPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {staffMembers.map((staff) => (
+            {staffMembers.map((staff: User) => (
               <TableRow key={staff.id}>
                 {columns.map((column, index) => (
                   <TableCell key={index}>{column.cell(staff)}</TableCell>

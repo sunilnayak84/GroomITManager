@@ -1,28 +1,33 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { collection, getDocs, addDoc, updateDoc, doc, deleteDoc, query, where } from 'firebase/firestore';
-import { db } from '../lib/firebase';
-import type { User, InsertUser } from '@/lib/user-types';
-
-const STAFF_COLLECTION = 'users';
+import { getAuth } from 'firebase/auth';
+import { User, InsertUser } from '@/lib/user-types';
 
 export function useStaff() {
   const queryClient = useQueryClient();
+  const auth = getAuth();
 
+  // Fetch staff members
   const { data: staffMembers = [], isLoading } = useQuery({
     queryKey: ['staff'],
     queryFn: async () => {
       console.log('FETCH_STAFF: Starting to fetch staff members');
       try {
-        const q = query(
-          collection(db, STAFF_COLLECTION),
-          where('role', 'in', ['staff', 'groomer'])
-        );
-        const snapshot = await getDocs(q);
-        const staff = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        })) as User[];
-        
+        const token = await auth.currentUser?.getIdToken();
+        if (!token) throw new Error('No authentication token available');
+
+        const response = await fetch('/api/staff', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || 'Failed to fetch staff members');
+        }
+
+        const staff = await response.json();
         console.log('FETCH_STAFF: Successfully fetched staff members:', staff);
         return staff;
       } catch (error) {
@@ -32,41 +37,91 @@ export function useStaff() {
     }
   });
 
+  // Add new staff member
   const addStaffMember = useMutation({
-    mutationFn: async (data: InsertUser & { firebaseUid?: string }) => {
-      console.log('Adding staff member with data:', data);
-      const { firebaseUid, ...staffData } = data;
-      const docRef = await addDoc(collection(db, STAFF_COLLECTION), {
-        ...staffData,
-        firebaseUid: firebaseUid || null,
-        createdAt: new Date().toISOString()
+    mutationFn: async (data: InsertUser) => {
+      console.log('STAFF_CREATE: Starting to create staff member:', data);
+      const token = await auth.currentUser?.getIdToken();
+      if (!token) throw new Error('No authentication token available');
+
+      // First create the user in Firebase Auth
+      const response = await fetch('/api/users/create', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ...data,
+          password: data.password || Math.random().toString(36).slice(-8),
+        })
       });
-      return docRef.id;
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to create staff member');
+      }
+
+      const result = await response.json();
+      console.log('STAFF_CREATE: Successfully created staff member:', result);
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['staff'] });
     }
   });
 
+  // Update existing staff member
   const updateStaffMember = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<User> }) => {
-      console.log('Updating staff member:', id, 'with data:', data);
-      const docRef = doc(db, STAFF_COLLECTION, id);
-      await updateDoc(docRef, {
-        ...data,
-        updatedAt: new Date().toISOString()
+      console.log('STAFF_UPDATE: Updating staff member:', { id, data });
+      const token = await auth.currentUser?.getIdToken();
+      if (!token) throw new Error('No authentication token available');
+
+      const response = await fetch(`/api/staff/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
       });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to update staff member');
+      }
+
+      const result = await response.json();
+      console.log('STAFF_UPDATE: Successfully updated staff member:', result);
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['staff'] });
     }
   });
 
+  // Delete staff member
   const deleteStaffMember = useMutation({
     mutationFn: async (id: string) => {
-      console.log('Deleting staff member:', id);
-      const docRef = doc(db, STAFF_COLLECTION, id);
-      await deleteDoc(docRef);
+      console.log('STAFF_DELETE: Deleting staff member:', id);
+      const token = await auth.currentUser?.getIdToken();
+      if (!token) throw new Error('No authentication token available');
+
+      const response = await fetch(`/api/staff/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to delete staff member');
+      }
+
+      console.log('STAFF_DELETE: Successfully deleted staff member:', id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['staff'] });

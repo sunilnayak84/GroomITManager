@@ -567,10 +567,42 @@ export function registerRoutes(app: Express) {
     res.json(req.user);
   });
 
-  // User and Staff Management endpoints
+  // Staff Management Endpoints
+  // Get all staff members
+  app.get("/api/staff", authenticateFirebase, requireRole([RoleTypes.admin, RoleTypes.manager]), async (req, res) => {
+    try {
+      console.log('[STAFF] Fetching all staff members');
+      const db = getDatabase();
+      const snapshot = await db.ref('users')
+        .orderByChild('role')
+        .startAt('staff')
+        .endAt('staff\uf8ff')
+        .once('value');
+      
+      const users: Array<{id: string} & Record<string, any>> = [];
+      snapshot.forEach((childSnapshot) => {
+        const userData = childSnapshot.val();
+        if (['staff', 'groomer'].includes(userData.role)) {
+          users.push({
+            id: childSnapshot.key as string,
+            ...userData
+          });
+        }
+      });
+
+      console.log(`[STAFF] Successfully fetched ${users.length} staff members`);
+      res.json(users);
+    } catch (error) {
+      console.error('[STAFF] Error fetching staff:', error);
+      res.status(500).json({
+        message: "Failed to fetch staff members",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // Create new staff member
   app.post("/api/users/create", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
-    console.log('[STAFF-CREATE] Starting staff creation process');
-    console.log('[STAFF-CREATE] Request body:', req.body);
     try {
       console.log('[STAFF-CREATE] Starting staff creation process');
       console.log('[STAFF-CREATE] Request body:', req.body);
@@ -578,15 +610,18 @@ export function registerRoutes(app: Express) {
       const { 
         email, 
         name, 
-        role = 'staff',  // Default to staff role
+        role = 'staff',
         password, 
         isGroomer = false, 
         phone, 
         experienceYears = 0, 
-        maxDailyAppointments = 8 
+        maxDailyAppointments = 8,
+        specialties = [],
+        petTypePreferences = []
       } = req.body;
       
-      if (!email || !name || !role || !password) {
+      // Validate required fields
+      if (!email || !name || !password) {
         return res.status(400).json({
           message: "Missing required fields",
           code: "INVALID_REQUEST"
@@ -614,8 +649,6 @@ export function registerRoutes(app: Express) {
         // User does not exist, proceed with creation
       }
 
-      console.log('[STAFF-CREATE] Creating user in Firebase Auth');
-      
       // Create user in Firebase Auth
       const userRecord = await admin.auth().createUser({
         email,
@@ -626,20 +659,16 @@ export function registerRoutes(app: Express) {
 
       console.log('[STAFF-CREATE] User created in Firebase Auth:', userRecord.uid);
 
-      // Validate role
-      if (!(role in DefaultPermissions)) {
-        throw new Error(`Invalid role: ${role}`);
-      }
-
+      // Get role permissions from database
+      const permissions = await getDefaultPermissions(role as RoleTypes);
+      
       // Set custom claims based on role
       const customClaims = {
         role,
-        permissions: DefaultPermissions[role as keyof typeof RoleTypes],
+        permissions,
         updatedAt: Date.now()
       };
 
-      console.log('[STAFF-CREATE] Setting custom claims:', customClaims);
-      
       await admin.auth().setCustomUserClaims(userRecord.uid, customClaims);
 
       // Create user entry in Realtime Database
@@ -650,95 +679,137 @@ export function registerRoutes(app: Express) {
         name,
         role,
         phone: phone || null,
-        isGroomer: isGroomer || false,
-        experienceYears: experienceYears || 0,
-        maxDailyAppointments: maxDailyAppointments || 8,
-        permissions: DefaultPermissions[role as keyof typeof RoleTypes],
+        isGroomer,
+        experienceYears,
+        maxDailyAppointments,
+        specialties,
+        petTypePreferences,
+        permissions: await getDefaultPermissions(role as RoleTypes),
         isActive: true,
         createdAt: Date.now(),
-        lastUpdated: Date.now()
+        updatedAt: Date.now()
       };
-
-      console.log('[STAFF-CREATE] Creating user in Realtime Database:', userData);
       
       await db.ref(`users/${userRecord.uid}`).set(userData);
 
       // Create role history entry
-      const historyEntry = {
+      await db.ref(`role-history/${userRecord.uid}`).push({
         action: 'create',
         role,
-        permissions: DefaultPermissions[role as keyof typeof RoleTypes],
+        permissions: await getDefaultPermissions(role as RoleTypes),
         timestamp: Date.now(),
-        type: 'initial_setup',
         createdBy: req.user?.uid
-      };
-
-      console.log('[STAFF-CREATE] Creating role history entry:', historyEntry);
-      
-      await db.ref(`role-history/${userRecord.uid}`).push(historyEntry);
+      });
 
       console.log('[STAFF-CREATE] Staff member created successfully');
 
       res.json({ 
-        message: "User created successfully",
+        message: "Staff member created successfully",
         uid: userRecord.uid,
         user: userData
       });
     } catch (error) {
-      console.error('[STAFF-CREATE] Error creating user:', error);
+      console.error('[STAFF-CREATE] Error creating staff:', error);
       res.status(500).json({ 
-        message: error instanceof Error ? error.message : "Failed to create user",
+        message: error instanceof Error ? error.message : "Failed to create staff member",
         code: "CREATE_ERROR"
       });
     }
   });
 
-  app.post("/api/users/update-role", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
+  // Update staff member
+  app.put("/api/staff/:id", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
     try {
-      const { email, role, name } = req.body;
+      const { id } = req.params;
+      const updates = req.body;
       
-      // Find user by email
-      const userRecord = await admin.auth().getUserByEmail(email);
+      console.log('[STAFF-UPDATE] Updating staff member:', { id, updates });
       
-      // Validate role
-      if (!(role in DefaultPermissions)) {
-        throw new Error(`Invalid role: ${role}`);
+      const db = getDatabase();
+      const userRef = db.ref(`users/${id}`);
+      
+      // Verify user exists
+      const snapshot = await userRef.once('value');
+      if (!snapshot.exists()) {
+        return res.status(404).json({
+          message: "Staff member not found",
+          code: "NOT_FOUND"
+        });
       }
 
-      // Update custom claims
-      await admin.auth().setCustomUserClaims(userRecord.uid, {
-        role,
-        permissions: DefaultPermissions[role as keyof typeof RoleTypes],
+      // Update user data
+      const updateData = {
+        ...updates,
         updatedAt: Date.now()
-      });
+      };
+      
+      await userRef.update(updateData);
+      
+      // If role is updated, update Firebase Auth claims
+      if (updates.role) {
+        const permissions = await getDefaultPermissions(updates.role as RoleTypes);
+        await admin.auth().setCustomUserClaims(id, {
+          role: updates.role,
+          permissions,
+          updatedAt: Date.now()
+        });
+      }
 
-      // Update user in Realtime Database
-      const db = getDatabase();
-      await db.ref(`users/${userRecord.uid}`).update({
-        role,
-        permissions: DefaultPermissions[role as keyof typeof RoleTypes],
-        name,
-        lastUpdated: Date.now()
-      });
-
-      // Create role history entry
-      await db.ref(`role-history/${userRecord.uid}`).push({
-        action: 'update',
-        role,
-        permissions: DefaultPermissions[role as keyof typeof RoleTypes],
-        timestamp: Date.now(),
-        type: 'role_update'
-      });
-
-      res.json({ 
-        message: "User role updated successfully",
-        uid: userRecord.uid 
+      console.log('[STAFF-UPDATE] Staff member updated successfully');
+      
+      res.json({
+        message: "Staff member updated successfully",
+        id
       });
     } catch (error) {
-      console.error('[AUTH] Error updating user role:', error);
-      res.status(500).json({ 
-        message: error instanceof Error ? error.message : "Failed to update user role",
+      console.error('[STAFF-UPDATE] Error updating staff:', error);
+      res.status(500).json({
+        message: error instanceof Error ? error.message : "Failed to update staff member",
         code: "UPDATE_ERROR"
+      });
+    }
+  });
+
+  // Delete staff member
+  app.delete("/api/staff/:id", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
+    try {
+      const { id } = req.params;
+      console.log('[STAFF-DELETE] Deleting staff member:', id);
+      
+      const db = getDatabase();
+      const userRef = db.ref(`users/${id}`);
+      
+      // Verify user exists
+      const snapshot = await userRef.once('value');
+      if (!snapshot.exists()) {
+        return res.status(404).json({
+          message: "Staff member not found",
+          code: "NOT_FOUND"
+        });
+      }
+
+      // Deactivate user in Firebase Auth
+      await admin.auth().updateUser(id, { disabled: true });
+      
+      // Mark as inactive in database (soft delete)
+      await userRef.update({
+        isActive: false,
+        updatedAt: Date.now(),
+        deactivatedAt: Date.now(),
+        deactivatedBy: req.user?.uid
+      });
+
+      console.log('[STAFF-DELETE] Staff member deactivated successfully');
+      
+      res.json({
+        message: "Staff member deactivated successfully",
+        id
+      });
+    } catch (error) {
+      console.error('[STAFF-DELETE] Error deleting staff:', error);
+      res.status(500).json({
+        message: error instanceof Error ? error.message : "Failed to delete staff member",
+        code: "DELETE_ERROR"
       });
     }
   });
