@@ -190,7 +190,7 @@ export default function AuthPage() {
                             <Input 
                               type="text"
                               {...field}
-                              onChange={(e) => field.onChange(e.target.value)}
+                              onChange={(e) => field.onChange(e)}
                               value={field.value || ''}
                             />
                           </FormControl>
@@ -209,7 +209,7 @@ export default function AuthPage() {
                             <Input 
                               type="email"
                               {...field}
-                              onChange={(e) => field.onChange(e.target.value)}
+                              onChange={(e) => field.onChange(e)}
                               value={field.value || ''}
                             />
                           </FormControl>
