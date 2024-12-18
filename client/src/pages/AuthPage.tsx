@@ -185,8 +185,7 @@ export default function AuthPage() {
                             <Input 
                               type="text"
                               placeholder="Enter your name"
-                              {...field}
-                              name="name"
+                              onChange={e => field.onChange(e.target.value)}
                             />
                           </FormControl>
                           <FormMessage />
@@ -196,7 +195,7 @@ export default function AuthPage() {
 
                     <FormField
                       control={registerForm.control}
-                      name="email"
+                      name="email" 
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Email</FormLabel>
@@ -204,8 +203,7 @@ export default function AuthPage() {
                             <Input 
                               type="email"
                               placeholder="Enter your email"
-                              {...field}
-                              name="email"
+                              onChange={e => field.onChange(e.target.value)}
                             />
                           </FormControl>
                           <FormMessage />
