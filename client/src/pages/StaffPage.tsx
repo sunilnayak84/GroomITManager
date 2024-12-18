@@ -90,21 +90,68 @@ export default function StaffPage() {
       console.log('Submitting staff data:', staffData);
 
       if (selectedStaff) {
+        // Update existing staff member
         await updateStaffMember({
           id: selectedStaff.id,
           data: staffData
         });
+
+        // Update role in Firebase Auth if email changed
+        if (selectedStaff.email !== data.email) {
+          const response = await fetch(`/api/users/update-role`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: data.email,
+              role: role,
+              name: data.name
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to update user role in Firebase Auth');
+          }
+        }
+
         toast({
           title: "Success",
           description: "Staff member updated successfully",
         });
       } else {
-        await addStaffMember(staffData);
+        // Create new staff member in Firebase Auth first
+        const response = await fetch(`/api/users/create`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: data.email,
+            role: role,
+            name: data.name,
+            password: Math.random().toString(36).slice(-8) // Generate random initial password
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to create user in Firebase Auth');
+        }
+
+        const { uid } = await response.json();
+        
+        // Add staff member with Firebase UID
+        await addStaffMember({
+          ...staffData,
+          firebaseUid: uid
+        });
+
         toast({
           title: "Success",
-          description: "Staff member added successfully",
+          description: "Staff member added successfully. A welcome email has been sent with login instructions.",
         });
       }
+      
       setShowStaffDialog(false);
       form.reset();
       setSelectedStaff(null);

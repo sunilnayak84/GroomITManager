@@ -14,7 +14,7 @@ export function ProtectedElement({
   requiredPermissions, 
   fallback = null,
   showLoader = false
-}: ProtectedElementProps) {
+}: ProtectedElementProps): JSX.Element {
   const { canView, isLoading } = useElementVisibility();
 
   if (isLoading && showLoader) {
@@ -22,7 +22,7 @@ export function ProtectedElement({
   }
 
   if (!canView(requiredPermissions)) {
-    return fallback;
+    return <>{fallback}</>;
   }
 
   return <>{children}</>;
