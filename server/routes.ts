@@ -569,9 +569,22 @@ export function registerRoutes(app: Express) {
 
   // User and Staff Management endpoints
   app.post("/api/users/create", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
+    console.log('[STAFF-CREATE] Starting staff creation process');
+    console.log('[STAFF-CREATE] Request body:', req.body);
     try {
-      console.log('[STAFF-CREATE] Received create request:', req.body);
-      const { email, name, role, password, isGroomer, phone, experienceYears, maxDailyAppointments } = req.body;
+      console.log('[STAFF-CREATE] Starting staff creation process');
+      console.log('[STAFF-CREATE] Request body:', req.body);
+      
+      const { 
+        email, 
+        name, 
+        role = 'staff',  // Default to staff role
+        password, 
+        isGroomer = false, 
+        phone, 
+        experienceYears = 0, 
+        maxDailyAppointments = 8 
+      } = req.body;
       
       if (!email || !name || !role || !password) {
         return res.status(400).json({
@@ -730,6 +743,27 @@ export function registerRoutes(app: Express) {
     }
   });
 
-  // Protected routes middleware
-  app.use(['/api/appointments', '/api/customers', '/api/pets', '/api/stats'], authenticateFirebase);
+  // Protected routes middleware - needs to be after all route definitions
+  app.use((req, res, next) => {
+    if (req.method === 'OPTIONS') {
+      return next();
+    }
+    
+    if (req.path.startsWith('/api/')) {
+      console.log(`[API] ${req.method} ${req.path}`);
+    }
+    next();
+  });
+
+  // Add authentication to all API routes except specific endpoints
+  app.use('/api', (req, res, next) => {
+    if (
+      req.path === '/health' ||
+      req.path === '/setup-admin' ||
+      req.method === 'OPTIONS'
+    ) {
+      return next();
+    }
+    authenticateFirebase(req, res, next);
+  });
 }

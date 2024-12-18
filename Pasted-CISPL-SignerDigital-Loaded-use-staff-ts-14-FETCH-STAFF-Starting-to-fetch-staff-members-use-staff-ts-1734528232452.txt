@@ -1,0 +1,48 @@
+CISPL SignerDigital Loaded
+use-staff.ts:14 FETCH_STAFF: Starting to fetch staff members
+use-staff.ts:26 FETCH_STAFF: Successfully fetched staff members: [{…}]
+StaffPage.tsx:90 Submitting staff data: {name: 'New', email: 'new@new.com', phone: '7854785485', role: 'staff', isGroomer: false, …}email: "new@new.com"experienceYears: 0isActive: trueisGroomer: falsemaxDailyAppointments: 1name: "New"petTypePreferences: []phone: "7854785485"role: "staff"specialties: [][[Prototype]]: Object
+StaffPage.tsx:124 
+        
+        
+       POST https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/api/users/create 404 (Not Found)
+onSubmit @ StaffPage.tsx:124
+(anonymous) @ chunk-VYIIT4SD.js?v=bec9d355:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=bec9d355:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=bec9d355:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=bec9d355:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=bec9d355:3736
+executeDispatch @ chunk-DRXX46FI.js?v=bec9d355:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=bec9d355:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=bec9d355:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=bec9d355:7051
+(anonymous) @ chunk-DRXX46FI.js?v=bec9d355:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=bec9d355:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=bec9d355:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=bec9d355:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=bec9d355:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=bec9d355:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=bec9d355:5449Understand this errorAI
+StaffPage.tsx:161 Error saving staff: Error: Failed to create user in Firebase Auth
+    at onSubmit (StaffPage.tsx:138:17)
+    at async chunk-VYIIT4SD.js?v=bec9d355:1694:9
+onSubmit @ StaffPage.tsx:161
+await in onSubmit
+(anonymous) @ chunk-VYIIT4SD.js?v=bec9d355:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=bec9d355:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=bec9d355:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=bec9d355:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=bec9d355:3736
+executeDispatch @ chunk-DRXX46FI.js?v=bec9d355:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=bec9d355:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=bec9d355:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=bec9d355:7051
+(anonymous) @ chunk-DRXX46FI.js?v=bec9d355:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=bec9d355:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=bec9d355:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=bec9d355:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=bec9d355:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=bec9d355:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=bec9d355:5449Understand this errorAI

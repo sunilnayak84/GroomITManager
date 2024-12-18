@@ -48,6 +48,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { getAuth } from "firebase/auth";
 
 export default function StaffPage() {
   const { staffMembers, isLoading, addStaffMember, updateStaffMember, deleteStaffMember } = useStaff();
@@ -102,6 +103,7 @@ export default function StaffPage() {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              'Authorization': `Bearer ${await getAuth().currentUser?.getIdToken()}`
             },
             body: JSON.stringify({
               email: data.email,
@@ -111,7 +113,8 @@ export default function StaffPage() {
           });
 
           if (!response.ok) {
-            throw new Error('Failed to update user role in Firebase Auth');
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to update user role in Firebase Auth');
           }
         }
 
@@ -120,38 +123,50 @@ export default function StaffPage() {
           description: "Staff member updated successfully",
         });
       } else {
-        // Create new staff member in Firebase Auth first
-        const response = await fetch(`/api/users/create`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: data.email,
+        try {
+          // Create new staff member in Firebase Auth first
+          const response = await fetch(`/api/users/create`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${await getAuth().currentUser?.getIdToken()}`
+            },
+            body: JSON.stringify({
+              email: data.email,
+              role: role,
+              name: data.name,
+              password: Math.random().toString(36).slice(-8), // Generate random initial password
+              isGroomer: staffData.isGroomer,
+              phone: staffData.phone,
+              experienceYears: staffData.experienceYears,
+              maxDailyAppointments: staffData.maxDailyAppointments
+            }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to create user in Firebase Auth');
+          }
+
+          const { uid, user } = await response.json();
+          console.log('Created user in Firebase:', user);
+          
+          // Add staff member to Firestore with Firebase UID
+          await addStaffMember({
+            ...staffData,
+            firebaseUid: uid,
             role: role,
-            name: data.name,
-            password: Math.random().toString(36).slice(-8) // Generate random initial password
-          }),
-        });
+            isActive: true
+          });
 
-        if (!response.ok) {
-          throw new Error('Failed to create user in Firebase Auth');
+          toast({
+            title: "Success",
+            description: "Staff member added successfully. A welcome email has been sent with login instructions.",
+          });
+        } catch (error) {
+          console.error('Error creating staff:', error);
+          throw error;
         }
-
-        const { uid } = await response.json();
-        
-        // Add staff member to Firestore with Firebase UID
-        await addStaffMember({
-          ...staffData,
-          firebaseUid: uid,
-          role: role,
-          isActive: true
-        });
-
-        toast({
-          title: "Success",
-          description: "Staff member added successfully. A welcome email has been sent with login instructions.",
-        });
       }
       
       setShowStaffDialog(false);
