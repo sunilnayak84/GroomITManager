@@ -15,7 +15,7 @@ export function useStaff() {
         const token = await auth.currentUser?.getIdToken();
         if (!token) throw new Error('No authentication token available');
 
-        const response = await fetch('/api/staff', {
+        const response = await fetch('/api/firebase-users?role=staff', {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -23,13 +23,25 @@ export function useStaff() {
         });
 
         if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.message || 'Failed to fetch staff members');
+          let errorMessage = 'Failed to fetch staff members';
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.message || errorMessage;
+          } catch (e) {
+            console.error('Error parsing error response:', e);
+          }
+          throw new Error(errorMessage);
         }
 
-        const staff = await response.json();
-        console.log('FETCH_STAFF: Successfully fetched staff members:', staff);
-        return staff;
+        try {
+          const data = await response.json();
+          const staff = Array.isArray(data) ? data : [];
+          console.log('FETCH_STAFF: Successfully fetched staff members:', staff);
+          return staff;
+        } catch (e) {
+          console.error('Error parsing staff response:', e);
+          throw new Error('Invalid response format from server');
+        }
       } catch (error) {
         console.error('FETCH_STAFF: Error fetching staff:', error);
         throw error;

@@ -1,0 +1,89 @@
+FETCH_STAFF: Error fetching staff: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+queryFn @ use-staff.ts:34
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=bcdbbe4a:839
+run @ @tanstack_react-query.js?v=bcdbbe4a:493
+start @ @tanstack_react-query.js?v=bcdbbe4a:535
+fetch @ @tanstack_react-query.js?v=bcdbbe4a:925
+executeFetch_fn @ @tanstack_react-query.js?v=bcdbbe4a:2211
+onSubscribe @ @tanstack_react-query.js?v=bcdbbe4a:1898
+subscribe @ @tanstack_react-query.js?v=bcdbbe4a:24
+(anonymous) @ @tanstack_react-query.js?v=bcdbbe4a:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=bcdbbe4a:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=bcdbbe4a:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=bcdbbe4a:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=bcdbbe4a:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=bcdbbe4a:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=bcdbbe4a:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=bcdbbe4a:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=bcdbbe4a:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=bcdbbe4a:19384
+commitRoot @ chunk-DRXX46FI.js?v=bcdbbe4a:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=bcdbbe4a:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=bcdbbe4a:9119
+(anonymous) @ chunk-DRXX46FI.js?v=bcdbbe4a:18595Understand this errorAI
+use-staff.ts:13 FETCH_STAFF: Starting to fetch staff members
+use-staff.ts:34 FETCH_STAFF: Error fetching staff: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+queryFn @ use-staff.ts:34
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=bcdbbe4a:839
+run @ @tanstack_react-query.js?v=bcdbbe4a:493
+(anonymous) @ @tanstack_react-query.js?v=bcdbbe4a:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=bcdbbe4a:514
+Promise.catch
+run @ @tanstack_react-query.js?v=bcdbbe4a:497
+start @ @tanstack_react-query.js?v=bcdbbe4a:535
+fetch @ @tanstack_react-query.js?v=bcdbbe4a:925
+executeFetch_fn @ @tanstack_react-query.js?v=bcdbbe4a:2211
+onSubscribe @ @tanstack_react-query.js?v=bcdbbe4a:1898
+subscribe @ @tanstack_react-query.js?v=bcdbbe4a:24
+(anonymous) @ @tanstack_react-query.js?v=bcdbbe4a:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=bcdbbe4a:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=bcdbbe4a:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=bcdbbe4a:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=bcdbbe4a:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=bcdbbe4a:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=bcdbbe4a:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=bcdbbe4a:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=bcdbbe4a:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=bcdbbe4a:19384
+commitRoot @ chunk-DRXX46FI.js?v=bcdbbe4a:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=bcdbbe4a:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=bcdbbe4a:9119
+(anonymous) @ chunk-DRXX46FI.js?v=bcdbbe4a:18595Understand this errorAI
+use-staff.ts:13 FETCH_STAFF: Starting to fetch staff members
+use-staff.ts:34 FETCH_STAFF: Error fetching staff: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+queryFn @ use-staff.ts:34
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=bcdbbe4a:839
+run @ @tanstack_react-query.js?v=bcdbbe4a:493
+(anonymous) @ @tanstack_react-query.js?v=bcdbbe4a:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=bcdbbe4a:514
+Promise.catch
+run @ @tanstack_react-query.js?v=bcdbbe4a:497
+(anonymous) @ @tanstack_react-query.js?v=bcdbbe4a:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=bcdbbe4a:514
+Promise.catch
+run @ @tanstack_react-query.js?v=bcdbbe4a:497
+start @ @tanstack_react-query.js?v=bcdbbe4a:535
+fetch @ @tanstack_react-query.js?v=bcdbbe4a:925
+executeFetch_fn @ @tanstack_react-query.js?v=bcdbbe4a:2211
+onSubscribe @ @tanstack_react-query.js?v=bcdbbe4a:1898
+subscribe @ @tanstack_react-query.js?v=bcdbbe4a:24
+(anonymous) @ @tanstack_react-query.js?v=bcdbbe4a:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=bcdbbe4a:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=bcdbbe4a:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=bcdbbe4a:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=bcdbbe4a:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=bcdbbe4a:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=bcdbbe4a:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=bcdbbe4a:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=bcdbbe4a:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=bcdbbe4a:19384
+commitRoot @ chunk-DRXX46FI.js?v=bcdbbe4a:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=bcdbbe4a:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=bcdbbe4a:9119
+(anonymous) @ chunk-DRXX46FI.js?v=bcdbbe4a:18595Understand this errorAI
