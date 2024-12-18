@@ -62,9 +62,12 @@ export function useStaffManagement() {
       const docRef = doc(usersCollection);
       
       const now = Timestamp.now();
+      // Ensure isGroomer is set based on role
+      const isGroomer = data.role === 'groomer';
       const staffData = {
         ...data,
         id: docRef.id,
+        isGroomer,
         createdAt: now,
         updatedAt: now
       };
@@ -149,15 +152,52 @@ export function useStaffManagement() {
 
   // Get available groomers (active staff members who are groomers)
   const getAvailableGroomers = (branchId?: string) => {
-    return staffMembers.filter(staff => {
-      const isActiveGroomer = staff.isActive && (staff.role === 'groomer' || staff.isGroomer);
-      if (!branchId) return isActiveGroomer;
-      return isActiveGroomer && (
-        staff.branchId === branchId || 
-        staff.isMultiBranchEnabled ||
-        staff.managedBranchIds.includes(branchId)
-      );
+    console.log('[STAFF] Getting available groomers:', {
+      totalStaff: staffMembers.length,
+      branchId
     });
+
+    const availableGroomers = staffMembers.filter(staff => {
+      // Check if staff is active and is a groomer
+      const isActiveGroomer = staff.isActive && (staff.role === 'groomer' || staff.isGroomer === true);
+      
+      // Log individual staff member evaluation
+      console.log('[STAFF] Evaluating staff member:', {
+        id: staff.id,
+        name: staff.name,
+        isActive: staff.isActive,
+        role: staff.role,
+        isGroomer: staff.isGroomer,
+        branchId: staff.branchId,
+        isMultiBranchEnabled: staff.isMultiBranchEnabled,
+        managedBranchIds: staff.managedBranchIds,
+        meetsGroomerCriteria: isActiveGroomer
+      });
+
+      // If no branch specified, return all active groomers
+      if (!branchId) {
+        return isActiveGroomer;
+      }
+
+      // Check branch access
+      const hasBranchAccess = 
+        staff.branchId === branchId || 
+        staff.isMultiBranchEnabled === true ||
+        (Array.isArray(staff.managedBranchIds) && staff.managedBranchIds.includes(branchId));
+
+      return isActiveGroomer && hasBranchAccess;
+    });
+
+    console.log('[STAFF] Available groomers found:', {
+      count: availableGroomers.length,
+      groomers: availableGroomers.map(g => ({
+        id: g.id,
+        name: g.name,
+        branchId: g.branchId
+      }))
+    });
+
+    return availableGroomers;
   };
 
   // Get staff members by branch
