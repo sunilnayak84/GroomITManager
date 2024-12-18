@@ -566,6 +566,115 @@ export function registerRoutes(app: Express) {
     res.json(req.user);
   });
 
+  // User and Staff Management endpoints
+  app.post("/api/users/create", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
+    try {
+      const { email, name, role, password } = req.body;
+      
+      // Create user in Firebase Auth
+      const userRecord = await admin.auth().createUser({
+        email,
+        emailVerified: false,
+        password,
+        displayName: name,
+      });
+
+      // Validate role
+      if (!(role in DefaultPermissions)) {
+        throw new Error(`Invalid role: ${role}`);
+      }
+
+      // Set custom claims based on role
+      await admin.auth().setCustomUserClaims(userRecord.uid, {
+        role,
+        permissions: DefaultPermissions[role as keyof typeof RoleTypes],
+        updatedAt: Date.now()
+      });
+
+      // Create user entry in Realtime Database
+      const db = getDatabase();
+      await db.ref(`users/${userRecord.uid}`).set({
+        id: userRecord.uid,
+        email,
+        name,
+        role,
+        permissions: DefaultPermissions[role as keyof typeof RoleTypes],
+        createdAt: Date.now(),
+        lastUpdated: Date.now()
+      });
+
+      // Create role history entry
+      await db.ref(`role-history/${userRecord.uid}`).push({
+        action: 'create',
+        role,
+        permissions: DefaultPermissions[role as keyof typeof RoleTypes],
+        timestamp: Date.now(),
+        type: 'initial_setup'
+      });
+
+      res.json({ 
+        message: "User created successfully",
+        uid: userRecord.uid 
+      });
+    } catch (error) {
+      console.error('[AUTH] Error creating user:', error);
+      res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Failed to create user",
+        code: "CREATE_ERROR"
+      });
+    }
+  });
+
+  app.post("/api/users/update-role", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
+    try {
+      const { email, role, name } = req.body;
+      
+      // Find user by email
+      const userRecord = await admin.auth().getUserByEmail(email);
+      
+      // Validate role
+      if (!(role in DefaultPermissions)) {
+        throw new Error(`Invalid role: ${role}`);
+      }
+
+      // Update custom claims
+      await admin.auth().setCustomUserClaims(userRecord.uid, {
+        role,
+        permissions: DefaultPermissions[role as keyof typeof RoleTypes],
+        updatedAt: Date.now()
+      });
+
+      // Update user in Realtime Database
+      const db = getDatabase();
+      await db.ref(`users/${userRecord.uid}`).update({
+        role,
+        permissions: DefaultPermissions[role as keyof typeof RoleTypes],
+        name,
+        lastUpdated: Date.now()
+      });
+
+      // Create role history entry
+      await db.ref(`role-history/${userRecord.uid}`).push({
+        action: 'update',
+        role,
+        permissions: DefaultPermissions[role as keyof typeof RoleTypes],
+        timestamp: Date.now(),
+        type: 'role_update'
+      });
+
+      res.json({ 
+        message: "User role updated successfully",
+        uid: userRecord.uid 
+      });
+    } catch (error) {
+      console.error('[AUTH] Error updating user role:', error);
+      res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Failed to update user role",
+        code: "UPDATE_ERROR"
+      });
+    }
+  });
+
   // Protected routes middleware
   app.use(['/api/appointments', '/api/customers', '/api/pets', '/api/stats'], authenticateFirebase);
 }
