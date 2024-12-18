@@ -75,8 +75,6 @@ export default function AuthPage() {
 
   async function handleRegister(data: RegisterFormData) {
     try {
-      console.log('Registration data:', data);
-      
       // Create user in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
       const user = userCredential.user;
@@ -87,7 +85,7 @@ export default function AuthPage() {
         displayName: data.name
       });
       
-      // Register user in backend with role assignment
+      // Get user role from Firebase RBAC
       const response = await fetch(`${window.location.protocol}//${window.location.hostname}:3000/api/users/${user.uid}/role`, {
         method: 'POST',
         headers: {
@@ -95,7 +93,7 @@ export default function AuthPage() {
           'Authorization': `Bearer ${idToken}`
         },
         body: JSON.stringify({ 
-          role: 'staff',
+          role: 'staff', // Default role, will be overridden by RBAC
           name: data.name,
           phone: data.phone,
           email: data.email
@@ -163,7 +161,11 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input type="email" {...field} />
+                            <Input 
+                              type="email" 
+                              placeholder="Enter your email"
+                              {...field} 
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -177,7 +179,11 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Password</FormLabel>
                           <FormControl>
-                            <Input type="password" {...field} />
+                            <Input 
+                              type="password"
+                              placeholder="Enter your password"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -199,7 +205,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Name</FormLabel>
                           <FormControl>
-                            <Input 
+                            <Input
                               type="text"
                               placeholder="Enter your name"
                               {...field}
@@ -217,7 +223,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input 
+                            <Input
                               type="email"
                               placeholder="Enter your email"
                               {...field}
@@ -235,7 +241,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Password</FormLabel>
                           <FormControl>
-                            <Input 
+                            <Input
                               type="password"
                               placeholder="Enter password"
                               {...field}
@@ -253,7 +259,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Confirm Password</FormLabel>
                           <FormControl>
-                            <Input 
+                            <Input
                               type="password"
                               placeholder="Confirm password"
                               {...field}
@@ -271,7 +277,7 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Phone Number</FormLabel>
                           <FormControl>
-                            <Input 
+                            <Input
                               type="tel"
                               placeholder="Enter phone number"
                               {...field}
