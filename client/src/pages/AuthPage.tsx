@@ -18,8 +18,8 @@ const loginSchema = z.object({
 });
 
 const registerSchema = z.object({
-  name: z.string().trim().min(2, "Name must be at least 2 characters"),
-  email: z.string().trim().email("Invalid email format"),
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Invalid email format"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
@@ -186,7 +186,6 @@ export default function AuthPage() {
                               type="text"
                               placeholder="Enter your name"
                               onChange={e => field.onChange(e.target.value)}
-                              value={field.value}
                             />
                           </FormControl>
                           <FormMessage />
@@ -205,7 +204,6 @@ export default function AuthPage() {
                               type="email"
                               placeholder="Enter your email"
                               onChange={e => field.onChange(e.target.value)}
-                              value={field.value}
                             />
                           </FormControl>
                           <FormMessage />
