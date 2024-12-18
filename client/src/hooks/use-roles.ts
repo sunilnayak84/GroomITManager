@@ -27,6 +27,7 @@ interface FirebaseUser {
 }
 
 export async function updateUserStatus(userId: string, disabled: boolean) {
+  const queryClient = useQueryClient();
   const auth = getAuth();
   if (!auth.currentUser) {
     throw new Error('User not authenticated');
