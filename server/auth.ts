@@ -490,7 +490,7 @@ export async function setupAuth(app: Express) {
     });
 // Create new user endpoint
 app.post("/api/users/create", async (req, res) => {
-  if (!req.user?.role === 'admin') {
+  if (req.user?.role !== 'admin') {
     return res.status(403).json({ 
       message: "Only admin can create users",
       code: "FORBIDDEN" 
@@ -499,19 +499,25 @@ app.post("/api/users/create", async (req, res) => {
 
   try {
     const { email, name, role, password } = req.body;
+    const auth = getAuth();
     
     // Create user in Firebase Auth
-    const userRecord = await auth.createUser({
+    const userRecord = await admin.auth().createUser({
       email,
       emailVerified: false,
       password,
       displayName: name,
     });
 
+    // Validate role and get permissions
+    if (!(role in DefaultPermissions)) {
+      throw new Error(`Invalid role: ${role}`);
+    }
+
     // Set custom claims based on role
-    await auth.setCustomUserClaims(userRecord.uid, {
+    await admin.auth().setCustomUserClaims(userRecord.uid, {
       role,
-      permissions: DefaultPermissions[role],
+      permissions: DefaultPermissions[role as keyof typeof RoleTypes],
       updatedAt: Date.now()
     });
 
@@ -551,7 +557,7 @@ app.post("/api/users/create", async (req, res) => {
 
 // Update user role endpoint
 app.post("/api/users/update-role", async (req, res) => {
-  if (!req.user?.role === 'admin') {
+  if (req.user?.role !== 'admin') {
     return res.status(403).json({ 
       message: "Only admin can update user roles",
       code: "FORBIDDEN" 
@@ -562,12 +568,17 @@ app.post("/api/users/update-role", async (req, res) => {
     const { email, role, name } = req.body;
     
     // Find user by email
-    const userRecord = await auth.getUserByEmail(email);
+    const userRecord = await admin.auth().getUserByEmail(email);
     
+    // Validate role and get permissions
+    if (!(role in DefaultPermissions)) {
+      throw new Error(`Invalid role: ${role}`);
+    }
+
     // Update custom claims
-    await auth.setCustomUserClaims(userRecord.uid, {
+    await admin.auth().setCustomUserClaims(userRecord.uid, {
       role,
-      permissions: DefaultPermissions[role],
+      permissions: DefaultPermissions[role as keyof typeof RoleTypes],
       updatedAt: Date.now()
     });
 
