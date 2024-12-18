@@ -39,7 +39,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { format } from 'date-fns';
 import { useNotifications } from '@/hooks/use-notifications';
 import { useUser } from '@/hooks/use-user';
-import { StaffMember } from '@/lib/user-types';
+import type { Staff } from '@/lib/staff-types';
 
 interface AppointmentFormProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -56,7 +56,18 @@ export default function AppointmentForm({ setOpen, initialDate }: AppointmentFor
   const { services } = useServices();
   const { toast } = useToast();
   const { staffMembers } = useStaff();
-  const availableGroomers = staffMembers.filter((user: StaffMember) => user.isGroomer && user.isActive);
+  console.log('[APPOINTMENT] All staff members:', staffMembers);
+  const availableGroomers = staffMembers.filter((staff: Staff) => {
+    console.log('[APPOINTMENT] Evaluating staff member:', {
+      id: staff.id,
+      name: staff.name,
+      isActive: staff.isActive,
+      role: staff.role,
+      isGroomer: staff.isGroomer
+    });
+    return staff.isActive && (staff.role === 'groomer' || staff.isGroomer === true);
+  });
+  console.log('[APPOINTMENT] Available groomers:', availableGroomers);
   const { data: workingHours } = useWorkingHours();
   const [selectedService, setSelectedService] = useState<{ duration: number } | null>(null);
   const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
@@ -603,12 +614,12 @@ export default function AppointmentForm({ setOpen, initialDate }: AppointmentFor
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {availableGroomers.map((groomer: StaffMember) => (
+                    {availableGroomers.map((groomer: Staff) => (
                       <SelectItem 
-                        key={groomer.id} 
-                        value={groomer.id}
+                        key={groomer.id || ''} 
+                        value={groomer.id || ''}
                       >
-                        {groomer.name}
+                        {groomer.name || 'Unknown Groomer'}
                       </SelectItem>
                     ))}
                   </SelectContent>
