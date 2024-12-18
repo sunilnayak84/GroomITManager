@@ -177,11 +177,16 @@ export default function AuthPage() {
                     <FormField
                       control={registerForm.control}
                       name="name"
-                      render={({ field }) => (
+                      render={({ field: { onChange, value } }) => (
                         <FormItem>
                           <FormLabel>Name</FormLabel>
                           <FormControl>
-                            <Input type="text" {...field} />
+                            <Input 
+                              type="text"
+                              placeholder="Enter your name"
+                              onChange={onChange}
+                              value={value || ''}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -191,11 +196,16 @@ export default function AuthPage() {
                     <FormField
                       control={registerForm.control}
                       name="email"
-                      render={({ field }) => (
+                      render={({ field: { onChange, value } }) => (
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input type="email" {...field} />
+                            <Input 
+                              type="email"
+                              placeholder="Enter your email"
+                              onChange={onChange}
+                              value={value || ''}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
