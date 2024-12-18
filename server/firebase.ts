@@ -310,6 +310,52 @@ const InitialRoleConfigs = {
   }
 };
 
+// Role definitions management
+async function getRoleDefinitions() {
+  const db = getDatabase(getFirebaseAdmin());
+  const snapshot = await db.ref('role-definitions').once('value');
+  return snapshot.val() || InitialRoleConfigs;
+}
+
+async function updateRoleDefinition(
+  roleName: string,
+  permissions: Permission[],
+  description?: string
+) {
+  const db = getDatabase(getFirebaseAdmin());
+  const timestamp = Date.now();
+  
+  const roleRef = db.ref(`role-definitions/${roleName}`);
+  const snapshot = await roleRef.once('value');
+  
+  if (!snapshot.exists()) {
+    throw new Error(`Role ${roleName} not found`);
+  }
+  
+  const currentRole = snapshot.val();
+  
+  if (currentRole.isSystem) {
+    throw new Error('Cannot modify system roles');
+  }
+  
+  const updatedRole = {
+    ...currentRole,
+    permissions,
+    description: description || currentRole.description,
+    updatedAt: timestamp
+  };
+  
+  await roleRef.update(updatedRole);
+  
+  await roleRef.child('history').push({
+    permissions,
+    timestamp,
+    type: 'definition_update'
+  });
+  
+  return updatedRole;
+}
+
 // Export all necessary functionality
 export {
   RoleTypes,
@@ -324,5 +370,7 @@ export {
   listAllUsers,
   updateUserRole,
   getUserRole,
-  ALL_PERMISSIONS
+  ALL_PERMISSIONS,
+  getRoleDefinitions,
+  updateRoleDefinition
 };

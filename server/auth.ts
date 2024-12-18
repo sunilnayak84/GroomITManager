@@ -165,10 +165,10 @@ export async function createUserInDatabase(user: FirebaseUser) {
     // Check if user exists
     const snapshot = await userRef.once('value');
     if (!snapshot.exists()) {
-      // Default to user role for new users
-      const defaultRole = 'user';
+      // Default to customer role for new users
+      const defaultRole = RoleTypes.customer;
       
-      const defaultPermissions = await getDefaultPermissions(defaultRole as RoleTypes);
+      const defaultPermissions = await getDefaultPermissions(defaultRole);
       const userData = {
         id: user.id,
         email: user.email || '',
