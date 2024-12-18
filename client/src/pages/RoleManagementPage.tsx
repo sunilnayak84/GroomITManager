@@ -1,7 +1,7 @@
 import { RoleManagement } from "@/components/RoleManagement";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
-export default function RoleManagementPage() {
+function RoleManagementPage() {
   return (
     <ProtectedRoute 
       allowedRoles={['admin']} 
@@ -14,3 +14,7 @@ export default function RoleManagementPage() {
     </ProtectedRoute>
   );
 }
+
+// Make sure we have both default and named exports
+export { RoleManagementPage };
+export default RoleManagementPage;

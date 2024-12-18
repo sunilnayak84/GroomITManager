@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { useRoles } from '@/hooks/use-roles';
+import { useRoles, updateUserStatus, resetUserPassword } from '@/hooks/use-roles';
 import type { UserRole, RolePermissions } from '@/hooks/use-user';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,6 +16,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { toast } from '@/components/ui/use-toast';
 import {
   Form,
   FormField,
@@ -26,10 +29,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { toast } from '@/components/ui/use-toast';
-import { RolePermissions } from '@/hooks/use-user';
+
 
 // Schema for role creation/editing
 const roleSchema = z.object({
@@ -51,8 +52,6 @@ type RoleFormValues = z.infer<typeof roleSchema> & {
   createdAt?: number;
   updatedAt?: number;
 };
-
-type RoleFormValues = z.infer<typeof roleSchema>;
 
 // Group permissions by category for better organization
 const permissionCategories = {
