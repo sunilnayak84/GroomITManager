@@ -1,0 +1,33 @@
+CISPL SignerDigital Loaded
+use-customers.ts:300 FETCH_CUSTOMERS: Starting customer fetch
+use-pets.ts:55 FETCH_PETS: Starting to fetch pets
+use-customers.ts:326 FETCH_CUSTOMERS: Processed customer: {id: 'iZJssbqMSl8naCwAXmCP', firebaseId: 'iZJssbqMSl8naCwAXmCP', name: 'Groomery Test'}firebaseId: "iZJssbqMSl8naCwAXmCP"id: "iZJssbqMSl8naCwAXmCP"name: "Groomery Test"[[Prototype]]: Object
+use-customers.ts:334 USE CUSTOMERS: Fetched customers {customerCount: 1, customerIds: Array(1), customerNames: Array(1)}customerCount: 1customerIds: Array(1)0: "iZJssbqMSl8naCwAXmCP"length: 1[[Prototype]]: Array(0)customerNames: Array(1)0: "Groomery Test"length: 1[[Prototype]]: Array(0)[[Prototype]]: Object
+use-pets.ts:105 FETCH_PETS: Completed fetching pets {totalPets: 2, pets: Array(2)}pets: Array(2)0: age: 3breed: "Lab"createdAt: "2024-12-11T14:45:57.498Z"customerId: "iZJssbqMSl8naCwAXmCP"dateOfBirth: "2022-01-01"firebaseId: undefinedgender: "male"id: "jZ0geHBF59DZRHL4aU6F"image: "https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/pets%2FiZJssbqMSl8naCwAXmCP%2F1733928352596_open.jpg?alt=media&token=0cf05860-47d5-4767-92fc-e700ffce19f2"name: "Doggo"notes: "nice doggo"owner: {id: 'iZJssbqMSl8naCwAXmCP', name: 'Groomery Test', email: 'test@groomery.in'}type: "dog"updatedAt: "2024-12-17T13:33:06.183Z"weight: 11weightUnit: "kg"[[Prototype]]: Object1: age: 3breed: "Persian"createdAt: "2024-12-17T13:48:35.126Z"customerId: "iZJssbqMSl8naCwAXmCP"dateOfBirth: "2021-03-05"firebaseId: nullgender: "male"id: "nsqKHaNh99KTeKU8vHJM"image: "https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/pets%2FiZJssbqMSl8naCwAXmCP%2F1734443313703_pet-image.jpg?alt=media&token=d90df035-4a78-46cf-9218-c3e60af68a13"name: "Cat"notes: "best cat"owner: {id: 'iZJssbqMSl8naCwAXmCP', name: 'Groomery Test', email: 'test@groomery.in'}type: "cat"updatedAt: nullweight: 6weightUnit: "kg"[[Prototype]]: Objectlength: 2[[Prototype]]: Array(0)totalPets: 2[[Prototype]]: Object
+chunk-BL4MLIG6.js?v=2a205a0e:338 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-BL4MLIG6.js?v=2a205a0e:338
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=2a205a0e:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=2a205a0e:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=2a205a0e:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=2a205a0e:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=2a205a0e:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=2a205a0e:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=2a205a0e:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=2a205a0e:19416
+commitRoot @ chunk-GNC7SI6A.js?v=2a205a0e:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=2a205a0e:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=2a205a0e:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=2a205a0e:18627Understand this warningAI
+chunk-BL4MLIG6.js?v=2a205a0e:338 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-BL4MLIG6.js?v=2a205a0e:338
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=2a205a0e:16915
+invokePassiveEffectMountInDEV @ chunk-GNC7SI6A.js?v=2a205a0e:18324
+invokeEffectsInDev @ chunk-GNC7SI6A.js?v=2a205a0e:19701
+commitDoubleInvokeEffectsInDEV @ chunk-GNC7SI6A.js?v=2a205a0e:19686
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=2a205a0e:19503
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=2a205a0e:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=2a205a0e:19416
+commitRoot @ chunk-GNC7SI6A.js?v=2a205a0e:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=2a205a0e:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=2a205a0e:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=2a205a0e:18627Understand this warningAI

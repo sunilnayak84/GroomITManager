@@ -1,0 +1,190 @@
+Role Management State: {roles: Array(4), isLoadingRoles: false, users: Array(2), isLoadingUsers: false, hasNextPage: false}
+RoleManagement.tsx:106 Available roles: (4) [{…}, {…}, {…}, {…}]
+RoleManagement.tsx:97 Role Management State: {roles: Array(4), isLoadingRoles: false, users: Array(2), isLoadingUsers: false, hasNextPage: false}
+RoleManagement.tsx:106 Available roles: (4) [{…}, {…}, {…}, {…}]
+RoleManagement.tsx:97 Role Management State: {roles: Array(4), isLoadingRoles: false, users: Array(2), isLoadingUsers: false, hasNextPage: false}
+RoleManagement.tsx:106 Available roles: (4) [{…}, {…}, {…}, {…}]
+RoleManagement.tsx:97 Role Management State: {roles: Array(4), isLoadingRoles: false, users: Array(2), isLoadingUsers: false, hasNextPage: false}
+RoleManagement.tsx:106 Available roles: (4) [{…}, {…}, {…}, {…}]
+RoleManagement.tsx:97 Role Management State: {roles: Array(4), isLoadingRoles: false, users: Array(2), isLoadingUsers: false, hasNextPage: false}
+RoleManagement.tsx:106 Available roles: (4) [{…}, {…}, {…}, {…}]
+RoleManagement.tsx:97 Role Management State: {roles: Array(4), isLoadingRoles: false, users: Array(2), isLoadingUsers: false, hasNextPage: false}
+RoleManagement.tsx:106 Available roles: (4) [{…}, {…}, {…}, {…}]
+RoleManagement.tsx:133 Submitting role data: {name: 'User', permissions: Array(2), description: 'User'}
+RoleManagement.tsx:146 Creating new role
+RoleManagement.tsx:97 Role Management State: {roles: Array(4), isLoadingRoles: false, users: Array(2), isLoadingUsers: false, hasNextPage: false}
+RoleManagement.tsx:106 Available roles: (4) [{…}, {…}, {…}, {…}]
+RoleManagement.tsx:97 Role Management State: {roles: Array(4), isLoadingRoles: false, users: Array(2), isLoadingUsers: false, hasNextPage: false}
+RoleManagement.tsx:106 Available roles: (4) [{…}, {…}, {…}, {…}]
+use-roles.ts:360 [ROLES] Creating new role: {name: 'User', permissions: Array(2)}
+RoleManagement.tsx:97 Role Management State: {roles: Array(4), isLoadingRoles: false, users: Array(2), isLoadingUsers: false, hasNextPage: false}
+RoleManagement.tsx:106 Available roles: (4) [{…}, {…}, {…}, {…}]
+use-roles.ts:216 [ROLES] Creating new role: {name: 'User', permissions: Array(2)}
+use-roles.ts:218 
+        
+        
+        POST https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/api/roles 404 (Not Found)
+createRole @ use-roles.ts:218
+await in createRole
+mutationFn @ use-roles.ts:361
+fn @ mutation.ts:170
+run @ retryer.ts:153
+start @ retryer.ts:218
+execute @ mutation.ts:208
+await in execute
+mutate @ mutationObserver.ts:125
+(anonymous) @ useMutation.ts:52
+onSubmit @ RoleManagement.tsx:155
+(anonymous) @ createFormControl.ts:1193
+await in (anonymous)
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+dispatchDiscreteEvent @ react-dom.development.js:6430
+use-roles.ts:234  [ROLES] Error creating role: SyntaxError: Failed to execute 'json' on 'Response': Unexpected end of JSON input
+    at createRole (use-roles.ts:228:36)
+    at async Object.mutationFn (use-roles.ts:361:22)
+createRole @ use-roles.ts:234
+await in createRole
+mutationFn @ use-roles.ts:361
+fn @ mutation.ts:170
+run @ retryer.ts:153
+start @ retryer.ts:218
+execute @ mutation.ts:208
+await in execute
+mutate @ mutationObserver.ts:125
+(anonymous) @ useMutation.ts:52
+onSubmit @ RoleManagement.tsx:155
+(anonymous) @ createFormControl.ts:1193
+await in (anonymous)
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+dispatchDiscreteEvent @ react-dom.development.js:6430
+RoleManagement.tsx:97 Role Management State: {roles: Array(4), isLoadingRoles: false, users: Array(2), isLoadingUsers: false, hasNextPage: false}
+RoleManagement.tsx:106 Available roles: (4) [{…}, {…}, {…}, {…}]
+use-roles.ts:360 [ROLES] Creating new role: {name: 'User', permissions: Array(2)}
+use-roles.ts:216 [ROLES] Creating new role: {name: 'User', permissions: Array(2)}
+use-roles.ts:218 
+        
+        
+        POST https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/api/roles 404 (Not Found)
+createRole @ use-roles.ts:218
+await in createRole
+mutationFn @ use-roles.ts:361
+fn @ mutation.ts:170
+run @ retryer.ts:153
+(anonymous) @ retryer.ts:199
+Promise.then
+(anonymous) @ retryer.ts:195
+Promise.catch
+run @ retryer.ts:160
+start @ retryer.ts:218
+execute @ mutation.ts:208
+await in execute
+mutate @ mutationObserver.ts:125
+(anonymous) @ useMutation.ts:52
+onSubmit @ RoleManagement.tsx:155
+(anonymous) @ createFormControl.ts:1193
+await in (anonymous)
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+dispatchDiscreteEvent @ react-dom.development.js:6430
+use-roles.ts:234  [ROLES] Error creating role: SyntaxError: Failed to execute 'json' on 'Response': Unexpected end of JSON input
+    at createRole (use-roles.ts:228:36)
+    at async Object.mutationFn (use-roles.ts:361:22)
+createRole @ use-roles.ts:234
+await in createRole
+mutationFn @ use-roles.ts:361
+fn @ mutation.ts:170
+run @ retryer.ts:153
+(anonymous) @ retryer.ts:199
+Promise.then
+(anonymous) @ retryer.ts:195
+Promise.catch
+run @ retryer.ts:160
+start @ retryer.ts:218
+execute @ mutation.ts:208
+await in execute
+mutate @ mutationObserver.ts:125
+(anonymous) @ useMutation.ts:52
+onSubmit @ RoleManagement.tsx:155
+(anonymous) @ createFormControl.ts:1193
+await in (anonymous)
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+dispatchDiscreteEvent @ react-dom.development.js:6430
+use-roles.ts:388  [ROLES] Role creation error: SyntaxError: Failed to execute 'json' on 'Response': Unexpected end of JSON input
+    at createRole (use-roles.ts:228:36)
+    at async Object.mutationFn (use-roles.ts:361:22)
+onError @ use-roles.ts:388
+execute @ mutation.ts:243
+await in execute
+mutate @ mutationObserver.ts:125
+(anonymous) @ useMutation.ts:52
+onSubmit @ RoleManagement.tsx:155
+(anonymous) @ createFormControl.ts:1193
+await in (anonymous)
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+dispatchDiscreteEvent @ react-dom.development.js:6430
+RoleManagement.tsx:97 Role Management State: {roles: Array(4), isLoadingRoles: false, users: Array(2), isLoadingUsers: false, hasNextPage: false}
+RoleManagement.tsx:106 Available roles: (4) [{…}, {…}, {…}, {…}]

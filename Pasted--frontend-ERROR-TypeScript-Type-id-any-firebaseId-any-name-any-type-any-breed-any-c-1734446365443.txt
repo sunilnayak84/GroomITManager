@@ -1,0 +1,260 @@
+[frontend]  ERROR(TypeScript)  Type '{ id: any; firebaseId: any; name: any; type: any; breed: any; customerId: any; dateOfBirth: any; age: any; gender: any; weight: any; weightUnit: any; notes: any; image: any; createdAt: string | null; updatedAt: string | null; owner: { ...; } | null; }' is not assignable to type '{ id: string; name: string; breed: string; type: string; gender: string | null; age: number | null; dateOfBirth: string | null; weight: number | null; weightUnit: string; notes: string | null; ... 6 more ...; submissionId?: string | undefined; }'.
+[frontend]   Types of property 'createdAt' are incompatible.
+[frontend]     Type 'string | null' is not assignable to type 'string'.
+[frontend]       Type 'null' is not assignable to type 'string'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-appointments.ts:259:15
+[frontend] 
+[frontend]     257 |               createdAt: timestampToISOString(rawData.createdAt),
+[frontend]     258 |               updatedAt: timestampToISOString(rawData.updatedAt),
+[frontend]   > 259 |               pet: petData,
+[frontend]         |               ^^^
+[frontend]     260 |               customer: customerData,
+[frontend]     261 |               groomer: {
+[frontend]     262 |                 name: groomerData.name
+[frontend] 
+[frontend]  ERROR(TypeScript)  The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:31:22
+[frontend] 
+[frontend]     29 | // Helper function to parse Firestore pet data
+[frontend]     30 | function parseFirestorePet(id: string, data: FirestorePet): Pet {
+[frontend]   > 31 |   const createdAt = (data.createdAt instanceof Timestamp) 
+[frontend]        |                      ^^^^^^^^^^^^^^
+[frontend]     32 |     ? data.createdAt.toDate().toISOString()
+[frontend]     33 |     : (data.createdAt as any)?.toDate?.()?.toISOString() || new Date().toISOString();
+[frontend]     34 |     
+[frontend] 
+[frontend]  ERROR(TypeScript)  The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:35:22
+[frontend] 
+[frontend]     33 |     : (data.createdAt as any)?.toDate?.()?.toISOString() || new Date().toISOString();
+[frontend]     34 |     
+[frontend]   > 35 |   const updatedAt = (data.updatedAt instanceof Timestamp)
+[frontend]        |                      ^^^^^^^^^^^^^^
+[frontend]     36 |     ? data.updatedAt.toDate().toISOString()
+[frontend]     37 |     : (data.updatedAt as any)?.toDate?.()?.toISOString() || null;
+[frontend]     38 |
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'name' does not exist on type '{ id: string; firstName: string; lastName: string; email: string; phone: string; address: string | null; gender: "male" | "female" | "other" | null; petCount: number; createdAt: string; updatedAt: string | null; firebaseId: string | null; }'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:42:16
+[frontend] 
+[frontend]     40 |     id,
+[frontend]     41 |     firebaseId: data.firebaseId,
+[frontend]   > 42 |     name: data.name,
+[frontend]        |                ^^^^
+[frontend]     43 |     type: data.type,
+[frontend]     44 |     breed: data.breed,
+[frontend]     45 |     customerId: data.customerId,
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'type' does not exist on type '{ id: string; firstName: string; lastName: string; email: string; phone: string; address: string | null; gender: "male" | "female" | "other" | null; petCount: number; createdAt: string; updatedAt: string | null; firebaseId: string | null; }'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:43:16
+[frontend] 
+[frontend]     41 |     firebaseId: data.firebaseId,
+[frontend]     42 |     name: data.name,
+[frontend]   > 43 |     type: data.type,
+[frontend]        |                ^^^^
+[frontend]     44 |     breed: data.breed,
+[frontend]     45 |     customerId: data.customerId,
+[frontend]     46 |     dateOfBirth: data.dateOfBirth || null,
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'breed' does not exist on type '{ id: string; firstName: string; lastName: string; email: string; phone: string; address: string | null; gender: "male" | "female" | "other" | null; petCount: number; createdAt: string; updatedAt: string | null; firebaseId: string | null; }'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:44:17
+[frontend] 
+[frontend]     42 |     name: data.name,
+[frontend]     43 |     type: data.type,
+[frontend]   > 44 |     breed: data.breed,
+[frontend]        |                 ^^^^^
+[frontend]     45 |     customerId: data.customerId,
+[frontend]     46 |     dateOfBirth: data.dateOfBirth || null,
+[frontend]     47 |     age: toNumber(data.age),
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'customerId' does not exist on type '{ id: string; firstName: string; lastName: string; email: string; phone: string; address: string | null; gender: "male" | "female" | "other" | null; petCount: number; createdAt: string; updatedAt: string | null; firebaseId: string | null; }'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:45:22
+[frontend] 
+[frontend]     43 |     type: data.type,
+[frontend]     44 |     breed: data.breed,
+[frontend]   > 45 |     customerId: data.customerId,
+[frontend]        |                      ^^^^^^^^^^
+[frontend]     46 |     dateOfBirth: data.dateOfBirth || null,
+[frontend]     47 |     age: toNumber(data.age),
+[frontend]     48 |     gender: data.gender || null,
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'dateOfBirth' does not exist on type '{ id: string; firstName: string; lastName: string; email: string; phone: string; address: string | null; gender: "male" | "female" | "other" | null; petCount: number; createdAt: string; updatedAt: string | null; firebaseId: string | null; }'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:46:23
+[frontend] 
+[frontend]     44 |     breed: data.breed,
+[frontend]     45 |     customerId: data.customerId,
+[frontend]   > 46 |     dateOfBirth: data.dateOfBirth || null,
+[frontend]        |                       ^^^^^^^^^^^
+[frontend]     47 |     age: toNumber(data.age),
+[frontend]     48 |     gender: data.gender || null,
+[frontend]     49 |     weight: toNumber(data.weight),
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'age' does not exist on type '{ id: string; firstName: string; lastName: string; email: string; phone: string; address: string | null; gender: "male" | "female" | "other" | null; petCount: number; createdAt: string; updatedAt: string | null; firebaseId: string | null; }'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:47:24
+[frontend] 
+[frontend]     45 |     customerId: data.customerId,
+[frontend]     46 |     dateOfBirth: data.dateOfBirth || null,
+[frontend]   > 47 |     age: toNumber(data.age),
+[frontend]        |                        ^^^
+[frontend]     48 |     gender: data.gender || null,
+[frontend]     49 |     weight: toNumber(data.weight),
+[frontend]     50 |     weightUnit: data.weightUnit || 'kg',
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'weight' does not exist on type '{ id: string; firstName: string; lastName: string; email: string; phone: string; address: string | null; gender: "male" | "female" | "other" | null; petCount: number; createdAt: string; updatedAt: string | null; firebaseId: string | null; }'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:49:27
+[frontend] 
+[frontend]     47 |     age: toNumber(data.age),
+[frontend]     48 |     gender: data.gender || null,
+[frontend]   > 49 |     weight: toNumber(data.weight),
+[frontend]        |                           ^^^^^^
+[frontend]     50 |     weightUnit: data.weightUnit || 'kg',
+[frontend]     51 |     notes: data.notes || null,
+[frontend]     52 |     image: data.image || null,
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'weightUnit' does not exist on type '{ id: string; firstName: string; lastName: string; email: string; phone: string; address: string | null; gender: "male" | "female" | "other" | null; petCount: number; createdAt: string; updatedAt: string | null; firebaseId: string | null; }'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:50:22
+[frontend] 
+[frontend]     48 |     gender: data.gender || null,
+[frontend]     49 |     weight: toNumber(data.weight),
+[frontend]   > 50 |     weightUnit: data.weightUnit || 'kg',
+[frontend]        |                      ^^^^^^^^^^
+[frontend]     51 |     notes: data.notes || null,
+[frontend]     52 |     image: data.image || null,
+[frontend]     53 |     createdAt,
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'notes' does not exist on type '{ id: string; firstName: string; lastName: string; email: string; phone: string; address: string | null; gender: "male" | "female" | "other" | null; petCount: number; createdAt: string; updatedAt: string | null; firebaseId: string | null; }'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:51:17
+[frontend] 
+[frontend]     49 |     weight: toNumber(data.weight),
+[frontend]     50 |     weightUnit: data.weightUnit || 'kg',
+[frontend]   > 51 |     notes: data.notes || null,
+[frontend]        |                 ^^^^^
+[frontend]     52 |     image: data.image || null,
+[frontend]     53 |     createdAt,
+[frontend]     54 |     updatedAt,
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'image' does not exist on type '{ id: string; firstName: string; lastName: string; email: string; phone: string; address: string | null; gender: "male" | "female" | "other" | null; petCount: number; createdAt: string; updatedAt: string | null; firebaseId: string | null; }'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:52:17
+[frontend] 
+[frontend]     50 |     weightUnit: data.weightUnit || 'kg',
+[frontend]     51 |     notes: data.notes || null,
+[frontend]   > 52 |     image: data.image || null,
+[frontend]        |                 ^^^^^
+[frontend]     53 |     createdAt,
+[frontend]     54 |     updatedAt,
+[frontend]     55 |     owner: data.owner || null
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'owner' does not exist on type '{ id: string; firstName: string; lastName: string; email: string; phone: string; address: string | null; gender: "male" | "female" | "other" | null; petCount: number; createdAt: string; updatedAt: string | null; firebaseId: string | null; }'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:55:17
+[frontend] 
+[frontend]     53 |     createdAt,
+[frontend]     54 |     updatedAt,
+[frontend]   > 55 |     owner: data.owner || null
+[frontend]        |                 ^^^^^
+[frontend]     56 |   };
+[frontend]     57 | }
+[frontend]     58 |
+[frontend] 
+[frontend]  ERROR(TypeScript)  Conversion of type 'WithFieldValue<{ id: string; gender: "male" | "female" | "other" | "unknown" | null; createdAt: string; updatedAt: string | null; firebaseId: string | null; name: string; type: "other" | "dog" | "cat" | "bird" | "fish"; ... 9 more ...; submissionId?: string | undefined; }>' to type '{ id: string; firstName: string; lastName: string; email: string; phone: string; address: string | null; gender: "male" | "female" | "other" | null; petCount: number; createdAt: string; updatedAt: string | null; firebaseId: string | null; }' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+[frontend]   Type '{ id: string | FieldValue; gender: FieldValue | WithFieldValue<"male" | "female" | "other" | "unknown" | null>; createdAt: string | FieldValue; ... 13 more ...; submissionId?: FieldValue | WithFieldValue<...>; }' is missing the following properties from type '{ id: string; firstName: string; lastName: string; email: string; phone: string; address: string | null; gender: "male" | "female" | "other" | null; petCount: number; createdAt: string; updatedAt: string | null; firebaseId: string | null; }': firstName, lastName, email, phone, and 2 more.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:93:25
+[frontend] 
+[frontend]     91 |
+[frontend]     92 |       const fetchedPets = querySnapshot.docs.map((doc) => {
+[frontend]   > 93 |         const petData = doc.data() as FirestorePet;
+[frontend]        |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[frontend]     94 |         const customerId = petData.customerId;
+[frontend]     95 |         const customerDetails = customersMap.get(customerId?.toString());
+[frontend]     96 |         
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'customerId' does not exist on type '{ id: string; firstName: string; lastName: string; email: string; phone: string; address: string | null; gender: "male" | "female" | "other" | null; petCount: number; createdAt: string; updatedAt: string | null; firebaseId: string | null; }'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:94:36
+[frontend] 
+[frontend]     92 |       const fetchedPets = querySnapshot.docs.map((doc) => {
+[frontend]     93 |         const petData = doc.data() as FirestorePet;
+[frontend]   > 94 |         const customerId = petData.customerId;
+[frontend]        |                                    ^^^^^^^^^^
+[frontend]     95 |         const customerDetails = customersMap.get(customerId?.toString());
+[frontend]     96 |         
+[frontend]     97 |         try {
+[frontend] 
+[frontend]  ERROR(TypeScript)  Object literal may only specify known properties, and 'owner' does not exist in type '{ id: string; firstName: string; lastName: string; email: string; phone: string; address: string | null; gender: "male" | "female" | "other" | null; petCount: number; createdAt: string; updatedAt: string | null; firebaseId: string | null; }'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:100:13
+[frontend] 
+[frontend]      98 |           return parseFirestorePet(doc.id, {
+[frontend]      99 |             ...petData,
+[frontend]   > 100 |             owner: customerDetails ? {
+[frontend]         |             ^^^^^
+[frontend]     101 |               id: customerDetails.id,
+[frontend]     102 |               name: customerDetails.name,
+[frontend]     103 |               email: customerDetails.email as string | null
+[frontend] 
+[frontend]  ERROR(TypeScript)  Conversion of type 'WithFieldValue<{ id: string; gender: "male" | "female" | "other" | "unknown" | null; createdAt: string; updatedAt: string | null; firebaseId: string | null; name: string; type: "other" | "dog" | "cat" | "bird" | "fish"; ... 9 more ...; submissionId?: string | undefined; }>' to type '{ id: string; firstName: string; lastName: string; email: string; phone: string; address: string | null; gender: "male" | "female" | "other" | null; petCount: number; createdAt: string; updatedAt: string | null; firebaseId: string | null; }' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+[frontend]   Type '{ id: string | FieldValue; gender: FieldValue | WithFieldValue<"male" | "female" | "other" | "unknown" | null>; createdAt: string | FieldValue; ... 13 more ...; submissionId?: FieldValue | WithFieldValue<...>; }' is missing the following properties from type '{ id: string; firstName: string; lastName: string; email: string; phone: string; address: string | null; gender: "male" | "female" | "other" | null; petCount: number; createdAt: string; updatedAt: string | null; firebaseId: string | null; }': firstName, lastName, email, phone, and 2 more.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:152:53
+[frontend] 
+[frontend]     150 |           return { 
+[frontend]     151 |             isDuplicate: true, 
+[frontend]   > 152 |             pet: parseFirestorePet(duplicateDoc.id, duplicateDoc.data() as FirestorePet)
+[frontend]         |                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[frontend]     153 |           };
+[frontend]     154 |         }
+[frontend]     155 |
+[frontend] 
+[frontend]  ERROR(TypeScript)  Conversion of type 'WithFieldValue<{ id: string; gender: "male" | "female" | "other" | "unknown" | null; createdAt: string; updatedAt: string | null; firebaseId: string | null; name: string; type: "other" | "dog" | "cat" | "bird" | "fish"; ... 9 more ...; submissionId?: string | undefined; }>' to type '{ id: string; firstName: string; lastName: string; email: string; phone: string; address: string | null; gender: "male" | "female" | "other" | null; petCount: number; createdAt: string; updatedAt: string | null; firebaseId: string | null; }' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+[frontend]   Type '{ id: string | FieldValue; gender: FieldValue | WithFieldValue<"male" | "female" | "other" | "unknown" | null>; createdAt: string | FieldValue; ... 13 more ...; submissionId?: FieldValue | WithFieldValue<...>; }' is missing the following properties from type '{ id: string; firstName: string; lastName: string; email: string; phone: string; address: string | null; gender: "male" | "female" | "other" | null; petCount: number; createdAt: string; updatedAt: string | null; firebaseId: string | null; }': firstName, lastName, email, phone, and 2 more.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:291:23
+[frontend] 
+[frontend]     289 |       }
+[frontend]     290 |
+[frontend]   > 291 |       const petData = petDoc.data() as FirestorePet;
+[frontend]         |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[frontend]     292 |       const customerRef = doc(customersCollection, petData.customerId);
+[frontend]     293 |
+[frontend]     294 |       await runTransaction(db, async (transaction) => {
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'customerId' does not exist on type '{ id: string; firstName: string; lastName: string; email: string; phone: string; address: string | null; gender: "male" | "female" | "other" | null; petCount: number; createdAt: string; updatedAt: string | null; firebaseId: string | null; }'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:292:60
+[frontend] 
+[frontend]     290 |
+[frontend]     291 |       const petData = petDoc.data() as FirestorePet;
+[frontend]   > 292 |       const customerRef = doc(customersCollection, petData.customerId);
+[frontend]         |                                                            ^^^^^^^^^^
+[frontend]     293 |
+[frontend]     294 |       await runTransaction(db, async (transaction) => {
+[frontend]     295 |         transaction.delete(petRef);
+[frontend] 
+[frontend]  ERROR(TypeScript)  Cannot find name 'Customer'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/lib/types.ts:28:60
+[frontend] 
+[frontend]     26 | // Re-export types from schema
+[frontend]     27 | export type { Pet, InsertPet, Customer, InsertCustomer, FirestoreCustomer as FirestoreCustomerData } from './schema';
+[frontend]   > 28 | export type CustomerWithTimestamp = WithFirestoreTimestamp<Customer>;
+[frontend]        |                                                            ^^^^^^^^
+[frontend]     29 | export function toISOString(date: FirestoreTimestamp | string | null | undefined): string | null {
+[frontend]     30 |   if (!date) return null;
+[frontend]     31 |   if (typeof date === 'string') return date;
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'seconds' does not exist on type 'never'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/pages/CustomersPage.tsx:51:80
+[frontend] 
+[frontend]     49 |         return date.toDate().toLocaleDateString();
+[frontend]     50 |       }
+[frontend]   > 51 |       if (date && typeof date === 'object' && 'seconds' in date && typeof date.seconds === 'number') {
+[frontend]        |                                                                                ^^^^^^^
+[frontend]     52 |         return new Date(date.seconds * 1000).toLocaleDateString();
+[frontend]     53 |       }
+[frontend]     54 |       return 'N/A';
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'seconds' does not exist on type 'never'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/pages/CustomersPage.tsx:52:30
+[frontend] 
+[frontend]     50 |       }
+[frontend]     51 |       if (date && typeof date === 'object' && 'seconds' in date && typeof date.seconds === 'number') {
+[frontend]   > 52 |         return new Date(date.seconds * 1000).toLocaleDateString();
+[frontend]        |                              ^^^^^^^
+[frontend]     53 |       }
+[frontend]     54 |       return 'N/A';
+[frontend]     55 |     } catch (error) {
+[frontend] 
+[frontend] [TypeScript] Found 23 errors. Watching for file changes.

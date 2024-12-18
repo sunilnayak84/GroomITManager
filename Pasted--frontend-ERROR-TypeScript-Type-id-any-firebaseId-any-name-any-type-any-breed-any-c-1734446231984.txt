@@ -1,0 +1,165 @@
+[frontend]  ERROR(TypeScript)  Type '{ id: any; firebaseId: any; name: any; type: any; breed: any; customerId: any; dateOfBirth: any; age: any; gender: any; weight: any; weightUnit: any; notes: any; image: any; createdAt: string | null; updatedAt: string | null; owner: { ...; } | null; }' is not assignable to type '{ id: string; name: string; breed: string; type: string; gender: string | null; age: number | null; dateOfBirth: string | null; weight: number | null; weightUnit: string; notes: string | null; ... 6 more ...; submissionId?: string | undefined; }'.
+[frontend]   Types of property 'createdAt' are incompatible.
+[frontend]     Type 'string | null' is not assignable to type 'string'.
+[frontend]       Type 'null' is not assignable to type 'string'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-appointments.ts:259:15
+[frontend] 
+[frontend]     257 |               createdAt: timestampToISOString(rawData.createdAt),
+[frontend]     258 |               updatedAt: timestampToISOString(rawData.updatedAt),
+[frontend]   > 259 |               pet: petData,
+[frontend]         |               ^^^
+[frontend]     260 |               customer: customerData,
+[frontend]     261 |               groomer: {
+[frontend]     262 |                 name: groomerData.name
+[frontend] 
+[frontend]  ERROR(TypeScript)  Module '"../lib/types"' has no exported member 'PetInput'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:12:20
+[frontend] 
+[frontend]     10 | import { uploadFile } from "../lib/storage";
+[frontend]     11 | import { useState } from 'react';
+[frontend]   > 12 | import type { Pet, PetInput, FirestorePet } from '../lib/types';
+[frontend]        |                    ^^^^^^^^
+[frontend]     13 |
+[frontend]     14 | // Helper function to convert string to number safely
+[frontend]     15 | function toNumber(value: string | number | null | undefined): number | null {
+[frontend] 
+[frontend]  ERROR(TypeScript)  Module '"../lib/types"' has no exported member 'FirestorePet'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:12:30
+[frontend] 
+[frontend]     10 | import { uploadFile } from "../lib/storage";
+[frontend]     11 | import { useState } from 'react';
+[frontend]   > 12 | import type { Pet, PetInput, FirestorePet } from '../lib/types';
+[frontend]        |                              ^^^^^^^^^^^^
+[frontend]     13 |
+[frontend]     14 | // Helper function to convert string to number safely
+[frontend]     15 | function toNumber(value: string | number | null | undefined): number | null {
+[frontend] 
+[frontend]  ERROR(TypeScript)  Module '"./types"' has no exported member 'toISOString'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/lib/schema.ts:3:30
+[frontend] 
+[frontend]     1 | import { z } from "zod";
+[frontend]     2 | import { Timestamp } from 'firebase/firestore';
+[frontend]   > 3 | import { FirestoreTimestamp, toISOString } from './types';
+[frontend]       |                              ^^^^^^^^^^^
+[frontend]     4 |
+[frontend]     5 | // Schema for Customer
+[frontend]     6 | export const customerSchema = z.object({
+[frontend] 
+[frontend]  ERROR(TypeScript)  Duplicate identifier 'totalPrice'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/lib/schema.ts:280:3
+[frontend] 
+[frontend]     278 |   notes: string | null;
+[frontend]     279 |   productsUsed: string | null;
+[frontend]   > 280 |   totalPrice: number;
+[frontend]         |   ^^^^^^^^^^
+[frontend]     281 |   totalDuration: number;
+[frontend]     282 |   totalPrice: number;
+[frontend]     283 |   totalDuration: number;
+[frontend] 
+[frontend]  ERROR(TypeScript)  Duplicate identifier 'totalDuration'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/lib/schema.ts:281:3
+[frontend] 
+[frontend]     279 |   productsUsed: string | null;
+[frontend]     280 |   totalPrice: number;
+[frontend]   > 281 |   totalDuration: number;
+[frontend]         |   ^^^^^^^^^^^^^
+[frontend]     282 |   totalPrice: number;
+[frontend]     283 |   totalDuration: number;
+[frontend]     284 |   pet: {
+[frontend] 
+[frontend]  ERROR(TypeScript)  Duplicate identifier 'totalPrice'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/lib/schema.ts:282:3
+[frontend] 
+[frontend]     280 |   totalPrice: number;
+[frontend]     281 |   totalDuration: number;
+[frontend]   > 282 |   totalPrice: number;
+[frontend]         |   ^^^^^^^^^^
+[frontend]     283 |   totalDuration: number;
+[frontend]     284 |   pet: {
+[frontend]     285 |     id: string;
+[frontend] 
+[frontend]  ERROR(TypeScript)  Duplicate identifier 'totalDuration'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/lib/schema.ts:283:3
+[frontend] 
+[frontend]     281 |   totalDuration: number;
+[frontend]     282 |   totalPrice: number;
+[frontend]   > 283 |   totalDuration: number;
+[frontend]         |   ^^^^^^^^^^^^^
+[frontend]     284 |   pet: {
+[frontend]     285 |     id: string;
+[frontend]     286 |     name: string;
+[frontend] 
+[frontend]  ERROR(TypeScript)  '"./schema"' has no exported member named 'FirestoreCustomerData'. Did you mean 'FirestoreCustomer'?
+[frontend]  FILE  /home/runner/GroomITManager/client/src/lib/types.ts:27:57
+[frontend] 
+[frontend]     25 |
+[frontend]     26 | // Re-export types from schema
+[frontend]   > 27 | export type { Pet, InsertPet, Customer, InsertCustomer, FirestoreCustomerData, CustomerWithTimestamp } from './schema';
+[frontend]        |                                                         ^^^^^^^^^^^^^^^^^^^^^
+[frontend]     28 |
+[frontend] 
+[frontend]  ERROR(TypeScript)  Module '"./schema"' has no exported member 'CustomerWithTimestamp'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/lib/types.ts:27:80
+[frontend] 
+[frontend]     25 |
+[frontend]     26 | // Re-export types from schema
+[frontend]   > 27 | export type { Pet, InsertPet, Customer, InsertCustomer, FirestoreCustomerData, CustomerWithTimestamp } from './schema';
+[frontend]        |                                                                                ^^^^^^^^^^^^^^^^^^^^^
+[frontend]     28 |
+[frontend] 
+[frontend]  ERROR(TypeScript)  Type 'string' is not assignable to type '"other" | "dog" | "cat" | "bird" | "fish"'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/pages/AppointmentsPage.tsx:219:21
+[frontend] 
+[frontend]     217 |                     id: pet.id,
+[frontend]     218 |                     name: pet.name,
+[frontend]   > 219 |                     type: pet.type || 'dog',
+[frontend]         |                     ^^^^
+[frontend]     220 |                     breed: pet.breed,
+[frontend]     221 |                     gender: pet.gender || 'unknown',
+[frontend]     222 |                     age: pet.age || null,
+[frontend] 
+[frontend]  ERROR(TypeScript)  Type 'string' is not assignable to type '"male" | "female" | "other" | "unknown" | null'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/pages/AppointmentsPage.tsx:221:21
+[frontend] 
+[frontend]     219 |                     type: pet.type || 'dog',
+[frontend]     220 |                     breed: pet.breed,
+[frontend]   > 221 |                     gender: pet.gender || 'unknown',
+[frontend]         |                     ^^^^^^
+[frontend]     222 |                     age: pet.age || null,
+[frontend]     223 |                     image: pet.image,
+[frontend]     224 |                     dateOfBirth: pet.dateOfBirth || null,
+[frontend] 
+[frontend]  ERROR(TypeScript)  Type 'string' is not assignable to type '"kg" | "lbs"'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/pages/AppointmentsPage.tsx:226:21
+[frontend] 
+[frontend]     224 |                     dateOfBirth: pet.dateOfBirth || null,
+[frontend]     225 |                     weight: pet.weight || null,
+[frontend]   > 226 |                     weightUnit: pet.weightUnit || 'kg',
+[frontend]         |                     ^^^^^^^^^^
+[frontend]     227 |                     notes: pet.notes || null,
+[frontend]     228 |                     createdAt: pet.createdAt || new Date().toISOString(),
+[frontend]     229 |                     updatedAt: pet.updatedAt || null,
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'seconds' does not exist on type 'never'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/pages/CustomersPage.tsx:51:80
+[frontend] 
+[frontend]     49 |         return date.toDate().toLocaleDateString();
+[frontend]     50 |       }
+[frontend]   > 51 |       if (date && typeof date === 'object' && 'seconds' in date && typeof date.seconds === 'number') {
+[frontend]        |                                                                                ^^^^^^^
+[frontend]     52 |         return new Date(date.seconds * 1000).toLocaleDateString();
+[frontend]     53 |       }
+[frontend]     54 |       return 'N/A';
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'seconds' does not exist on type 'never'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/pages/CustomersPage.tsx:52:30
+[frontend] 
+[frontend]     50 |       }
+[frontend]     51 |       if (date && typeof date === 'object' && 'seconds' in date && typeof date.seconds === 'number') {
+[frontend]   > 52 |         return new Date(date.seconds * 1000).toLocaleDateString();
+[frontend]        |                              ^^^^^^^
+[frontend]     53 |       }
+[frontend]     54 |       return 'N/A';
+[frontend]     55 |     } catch (error) {
+[frontend] 
+[frontend] [TypeScript] Found 15 errors. Watching for file changes.

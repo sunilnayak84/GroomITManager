@@ -1,0 +1,70 @@
+[frontend]  ERROR(TypeScript)  Type '{ id: any; firebaseId: any; name: any; type: any; breed: any; customerId: any; dateOfBirth: any; age: any; gender: any; weight: any; weightUnit: any; notes: any; image: any; createdAt: string | null; updatedAt: string | null; owner: { ...; } | null; }' is not assignable to type '{ id: string; name: string; breed: string; type: string; gender: string | null; age: number | null; dateOfBirth: string | null; weight: number | null; weightUnit: string; notes: string | null; ... 6 more ...; submissionId?: string | undefined; }'.
+[frontend]   Types of property 'createdAt' are incompatible.
+[frontend]     Type 'string | null' is not assignable to type 'string'.
+[frontend]       Type 'null' is not assignable to type 'string'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-appointments.ts:259:15
+[frontend] 
+[frontend]     257 |               createdAt: timestampToISOString(rawData.createdAt),
+[frontend]     258 |               updatedAt: timestampToISOString(rawData.updatedAt),
+[frontend]   > 259 |               pet: petData,
+[frontend]         |               ^^^
+[frontend]     260 |               customer: customerData,
+[frontend]     261 |               groomer: {
+[frontend]     262 |                 name: groomerData.name
+[frontend] 
+[frontend]  ERROR(TypeScript)  Duplicate identifier 'WithFieldValue'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:5:41
+[frontend] 
+[frontend]     3 |   collection, getDocs, doc, runTransaction, increment, 
+[frontend]     4 |   addDoc, serverTimestamp, query, updateDoc, deleteDoc, 
+[frontend]   > 5 |   getDoc, where, Timestamp, FieldValue, WithFieldValue,
+[frontend]       |                                         ^^^^^^^^^^^^^^
+[frontend]     6 |   DocumentData, serverTimestamp as firestoreServerTimestamp
+[frontend]     7 | } from 'firebase/firestore';
+[frontend]     8 | import { db } from "../lib/firebase";
+[frontend] 
+[frontend]  ERROR(TypeScript)  Duplicate identifier 'WithFieldValue'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-pets.ts:14:15
+[frontend] 
+[frontend]     12 | import type { Pet } from '../lib/types';
+[frontend]     13 | import type { InsertPet as PetInput, FirestorePet } from '../lib/schema';
+[frontend]   > 14 | import type { WithFieldValue } from 'firebase/firestore';
+[frontend]        |               ^^^^^^^^^^^^^^
+[frontend]     15 |
+[frontend]     16 | // Helper function to convert string to number safely
+[frontend]     17 | function toNumber(value: string | number | null | undefined): number | null {
+[frontend] 
+[frontend]  ERROR(TypeScript)  Cannot find name 'Customer'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/lib/types.ts:28:60
+[frontend] 
+[frontend]     26 | // Re-export types from schema
+[frontend]     27 | export type { Pet, InsertPet, Customer, InsertCustomer, FirestoreCustomer as FirestoreCustomerData } from './schema';
+[frontend]   > 28 | export type CustomerWithTimestamp = WithFirestoreTimestamp<Customer>;
+[frontend]        |                                                            ^^^^^^^^
+[frontend]     29 | export function toISOString(date: FirestoreTimestamp | string | null | undefined): string | null {
+[frontend]     30 |   if (!date) return null;
+[frontend]     31 |   if (typeof date === 'string') return date;
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'seconds' does not exist on type 'never'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/pages/CustomersPage.tsx:51:80
+[frontend] 
+[frontend]     49 |         return date.toDate().toLocaleDateString();
+[frontend]     50 |       }
+[frontend]   > 51 |       if (date && typeof date === 'object' && 'seconds' in date && typeof date.seconds === 'number') {
+[frontend]        |                                                                                ^^^^^^^
+[frontend]     52 |         return new Date(date.seconds * 1000).toLocaleDateString();
+[frontend]     53 |       }
+[frontend]     54 |       return 'N/A';
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'seconds' does not exist on type 'never'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/pages/CustomersPage.tsx:52:30
+[frontend] 
+[frontend]     50 |       }
+[frontend]     51 |       if (date && typeof date === 'object' && 'seconds' in date && typeof date.seconds === 'number') {
+[frontend]   > 52 |         return new Date(date.seconds * 1000).toLocaleDateString();
+[frontend]        |                              ^^^^^^^
+[frontend]     53 |       }
+[frontend]     54 |       return 'N/A';
+[frontend]     55 |     } catch (error) {
+[frontend] 
+[frontend] [TypeScript] Found 6 errors. Watching for file changes.

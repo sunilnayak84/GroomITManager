@@ -1,0 +1,34 @@
+[frontend]  ERROR(TypeScript)  Type '{ id: string; petId: string; services: string[]; groomerId: string; branchId: string; date: string; status: "pending" | "confirmed" | "completed" | "cancelled"; notes: string | null; productsUsed: string | null; ... 5 more ...; service: { ...; }[]; }' is missing the following properties from type 'AppointmentWithRelations': totalPrice, totalDuration
+[frontend]  FILE  /home/runner/GroomITManager/client/src/hooks/use-appointments.ts:247:19
+[frontend] 
+[frontend]     245 |             }
+[frontend]     246 |
+[frontend]   > 247 |             const appointment: AppointmentWithRelations = {
+[frontend]         |                   ^^^^^^^^^^^
+[frontend]     248 |               id: appointmentDoc.id,
+[frontend]     249 |               petId: rawData.petId,
+[frontend]     250 |               services: rawData.services,
+[frontend] 
+[frontend]  ERROR(TypeScript)  The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/pages/CustomersPage.tsx:51:47
+[frontend] 
+[frontend]     49 |         return date.toDate().toLocaleDateString();
+[frontend]     50 |       }
+[frontend]   > 51 |       if (date && typeof date === 'object' && date instanceof Timestamp) {
+[frontend]        |                                               ^^^^
+[frontend]     52 |         return date.toDate().toLocaleDateString();
+[frontend]     53 |       }
+[frontend]     54 |       return 'N/A';
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'toDate' does not exist on type 'never'.
+[frontend]  FILE  /home/runner/GroomITManager/client/src/pages/CustomersPage.tsx:52:21
+[frontend] 
+[frontend]     50 |       }
+[frontend]     51 |       if (date && typeof date === 'object' && date instanceof Timestamp) {
+[frontend]   > 52 |         return date.toDate().toLocaleDateString();
+[frontend]        |                     ^^^^^^
+[frontend]     53 |       }
+[frontend]     54 |       return 'N/A';
+[frontend]     55 |     } catch (error) {
+[frontend] 
+[frontend] [TypeScript] Found 3 errors. Watching for file changes.
