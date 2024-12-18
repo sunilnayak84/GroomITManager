@@ -114,6 +114,8 @@ export default function NewRegistrationPage() {
         lastName: formData.lastName,
         email: formData.email,
         phone: formData.phone,
+        address: null,
+        gender: null,
         firebaseId: userCredential.user.uid
       };
 

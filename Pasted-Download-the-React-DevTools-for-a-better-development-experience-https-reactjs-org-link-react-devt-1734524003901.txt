@@ -1,0 +1,67 @@
+Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:16 Checking Firebase environment variables...
+firebase.ts:41 FIREBASE_INIT: Initializing Firebase with config: ObjectauthDomain: "replit-5ac6a.firebaseapp.com"projectId: "replit-5ac6a"storageBucket: "replit-5ac6a.firebasestorage.app"[[Prototype]]: Object
+firebase.ts:49 FIREBASE_INIT: Firebase initialized successfully
+NewRegistrationPage.tsx:75 Input changed - firstName: H
+NewRegistrationPage.tsx:75 Input changed - firstName: He
+NewRegistrationPage.tsx:75 Input changed - firstName: Hel
+NewRegistrationPage.tsx:75 Input changed - firstName: Hell
+NewRegistrationPage.tsx:75 Input changed - firstName: Hello
+NewRegistrationPage.tsx:75 Input changed - firstName: Hellow
+NewRegistrationPage.tsx:75 Input changed - firstName: Hello
+NewRegistrationPage.tsx:75 Input changed - lastName: G
+NewRegistrationPage.tsx:75 Input changed - lastName: Gr
+NewRegistrationPage.tsx:75 Input changed - lastName: Gro
+NewRegistrationPage.tsx:75 Input changed - lastName: Groo
+NewRegistrationPage.tsx:75 Input changed - lastName: Groom
+NewRegistrationPage.tsx:75 Input changed - lastName: Groome
+NewRegistrationPage.tsx:75 Input changed - lastName: Groomer
+NewRegistrationPage.tsx:75 Input changed - lastName: Groomery
+NewRegistrationPage.tsx:75 Input changed - email: h
+NewRegistrationPage.tsx:75 Input changed - email: he
+NewRegistrationPage.tsx:75 Input changed - email: hel
+NewRegistrationPage.tsx:75 Input changed - email: hell
+NewRegistrationPage.tsx:75 Input changed - email: hello
+NewRegistrationPage.tsx:75 Input changed - email: hello@
+NewRegistrationPage.tsx:75 Input changed - email: hello@g
+NewRegistrationPage.tsx:75 Input changed - email: hello@gr
+NewRegistrationPage.tsx:75 Input changed - email: hello@gro
+NewRegistrationPage.tsx:75 Input changed - email: hello@groo
+NewRegistrationPage.tsx:75 Input changed - email: hello@groom
+NewRegistrationPage.tsx:75 Input changed - email: hello@groome
+NewRegistrationPage.tsx:75 Input changed - email: hello@groomer
+NewRegistrationPage.tsx:75 Input changed - email: hello@groomery
+NewRegistrationPage.tsx:75 Input changed - email: hello@groomery.
+NewRegistrationPage.tsx:75 Input changed - email: hello@groomery.i
+NewRegistrationPage.tsx:75 Input changed - email: hello@groomery.in
+NewRegistrationPage.tsx:75 Input changed - phone: 8
+NewRegistrationPage.tsx:75 Input changed - phone: 89
+NewRegistrationPage.tsx:75 Input changed - phone: 897
+NewRegistrationPage.tsx:75 Input changed - phone: 8975
+NewRegistrationPage.tsx:75 Input changed - phone: 89754
+NewRegistrationPage.tsx:75 Input changed - phone: 897547
+NewRegistrationPage.tsx:75 Input changed - phone: 8975478
+NewRegistrationPage.tsx:75 Input changed - phone: 89754787
+NewRegistrationPage.tsx:75 Input changed - phone: 897547874
+NewRegistrationPage.tsx:75 Input changed - phone: 8975478745
+NewRegistrationPage.tsx:75 Input changed - password: h
+NewRegistrationPage.tsx:75 Input changed - password: he
+NewRegistrationPage.tsx:75 Input changed - password: hel
+NewRegistrationPage.tsx:75 Input changed - password: hell
+NewRegistrationPage.tsx:75 Input changed - password: hello
+NewRegistrationPage.tsx:75 Input changed - password: hello1
+NewRegistrationPage.tsx:75 Input changed - password: hello12
+NewRegistrationPage.tsx:75 Input changed - password: hello123
+NewRegistrationPage.tsx:84 Form submission attempted
+NewRegistrationPage.tsx:101 Firebase Auth user created successfully
+NewRegistrationPage.tsx:108 User profile updated with display name
+NewRegistrationPage.tsx:120 Creating customer record: Objectemail: "hello@groomery.in"firebaseId: "y1EES64XfOayU9uuZqSz88Nsab83"firstName: "Hello"lastName: "Groomery"phone: "8975478745"[[Prototype]]: Object
+firestore.ts:101 FIRESTORE: Creating customer ObjectcustomerData: address: nullcreatedAt: "2024-12-18T12:10:23.178Z"email: "hello@groomery.in"firebaseId: nullfirstName: "Hello"gender: nullid: "2dk7xruivXuLLMcNGMRu"lastName: "Groomery"petCount: 0phone: "8975478745"updatedAt: null[[Prototype]]: Object[[Prototype]]: Object
+firestore.ts:106 FIRESTORE: Customer created successfully Objectid: "2dk7xruivXuLLMcNGMRu"[[Prototype]]: Object
+NewRegistrationPage.tsx:127 Customer record created successfully
+api/register:1 
+        
+        
+       Failed to load resource: the server responded with a status of 404 (Not Found)
+NewRegistrationPage.tsx:155 Registration error: Error: Failed to create user profile
+    at handleSubmit (NewRegistrationPage.tsx:147:15)

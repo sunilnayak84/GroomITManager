@@ -97,17 +97,17 @@ export function registerRoutes(app: Express) {
       const userRef = db.ref(`users/${userId}`);
       const roleRef = db.ref(`roles/${userId}`);
 
-      // Set default role as 'user'
+      // Set role as 'customer'
       const roleData = {
-        role: 'user',
-        permissions: DefaultPermissions.user || [],
+        role: 'customer',
+        permissions: DefaultPermissions.customer || [],
         updatedAt: Date.now()
       };
 
       // Update custom claims
       await auth.setCustomUserClaims(userId, {
-        role: 'user',
-        permissions: DefaultPermissions.user || []
+        role: 'customer',
+        permissions: DefaultPermissions.customer || []
       });
 
       // Set user data
