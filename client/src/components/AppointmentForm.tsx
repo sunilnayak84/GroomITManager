@@ -575,9 +575,9 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
                   <FormLabel>Services</FormLabel>
                   <div className="space-y-2">
                     {(services || []).map((service) => (
-                      <div key={service.service_id} className="flex items-center space-x-2">
+                      <div key={service?.service_id} className="flex items-center space-x-2">
                         <Checkbox
-                          checked={field.value.includes(String(service.service_id))}
+                          checked={Array.isArray(field.value) && field.value.includes(String(service?.service_id))}
                           onCheckedChange={(checked) => {
                             const serviceId = String(service.service_id);
                             const updatedServices = checked
