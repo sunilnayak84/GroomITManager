@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import * as z from "zod";
 import {
   Dialog,
@@ -44,15 +44,15 @@ export function ConsumablesModal({
   initialConsumables = [],
 }: ConsumablesModalProps) {
   const [consumables, setConsumables] = React.useState<ServiceConsumable[]>([]);
+  const [selectedConsumables, setSelectedConsumables] = useState<any[]>(initialConsumables || []);
   const { inventory } = useInventory();
 
-  // Update consumables state when initialConsumables changes or modal opens
-  React.useEffect(() => {
-    console.log('Initial consumables received:', initialConsumables);
-    if (open) {
-      setConsumables(initialConsumables || []);
+  useEffect(() => {
+    if (initialConsumables && initialConsumables.length > 0) {
+      setSelectedConsumables(initialConsumables);
     }
-  }, [initialConsumables, open]);
+  }, [initialConsumables]);
+
   
   const form = useForm<z.infer<typeof baseConsumableSchema>>({
     resolver: zodResolver(baseConsumableSchema),
