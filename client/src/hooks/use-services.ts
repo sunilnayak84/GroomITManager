@@ -171,13 +171,13 @@ export function useServices() {
       // Construct update payload
       const updatePayload: any = {
         ...updateData,
-        updated_at: timestamp.toISOString()
+        updated_at: timestamp.toISOString(),
+        required_categories: Array.isArray(updateData.required_categories) 
+          ? updateData.required_categories 
+          : []
       };
 
-      // Only include required_categories if it exists in updateData
-      if ('required_categories' in updateData) {
-        updatePayload.required_categories = updateData.required_categories;
-      }
+      console.log('Update payload with categories:', updatePayload.required_categories);
       
       // Log update payload for debugging
       console.log('Update payload with categories:', updatePayload.required_categories);
