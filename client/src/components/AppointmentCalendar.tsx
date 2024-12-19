@@ -129,6 +129,14 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
     const formattedDateStr = format(selectedStart, 'yyyy-MM-dd');
     const formattedTimeStr = format(selectedStart, 'HH:mm');
     
+    const dayOfWeek = selectedStart.getDay();
+    const daySchedule = workingHours?.find(schedule => schedule.dayOfWeek === dayOfWeek);
+    
+    if (!daySchedule?.isOpen) {
+      console.log('Selected day is not open for appointments');
+      return;
+    }
+
     setSelectedDate(selectedStart);
     setFormattedDate(formattedDateStr);
     setFormattedTime(formattedTimeStr);
@@ -142,7 +150,7 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
     // Open form with initial values
     setOpenNewForm(false);
     requestAnimationFrame(() => setOpenNewForm(true));
-  }, []);
+  }, [workingHours]);
 
   useEffect(() => {
     if (selectedDate) {

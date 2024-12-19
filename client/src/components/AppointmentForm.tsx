@@ -104,13 +104,27 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
 
   useEffect(() => {
     if (initialDate && initialTime) {
+      const selectedDate = new Date(initialDate);
+      const dayOfWeek = selectedDate.getDay();
+      const daySchedule = workingHours?.find(schedule => schedule.dayOfWeek === dayOfWeek);
+      
+      if (daySchedule?.isOpen) {
+        const slots = generateTimeSlots(
+          daySchedule.openingTime,
+          daySchedule.closingTime,
+          daySchedule.breakStart || null,
+          daySchedule.breakEnd || null
+        );
+        setAvailableTimeSlots(slots);
+      }
+
       form.reset({
         ...form.getValues(),
         date: initialDate,
         time: initialTime
       });
     }
-  }, [initialDate, initialTime]);
+  }, [initialDate, initialTime, workingHours]);
 
   // Helper function to generate time slots
   const generateTimeSlots = (
