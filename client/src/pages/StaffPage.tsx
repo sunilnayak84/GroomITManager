@@ -128,10 +128,12 @@ export default function StaffPage() {
           specialties: data.role === 'groomer' ? data.specialties || [] : [],
           petTypePreferences: data.role === 'groomer' ? data.petTypePreferences || [] : [],
           experienceYears: data.role === 'groomer' ? data.experienceYears || 0 : 0,
+          branchId: data.primaryBranchId || null,
         };
 
         console.log('Creating new staff with data:', newStaffData);
-        await addStaff(newStaffData);
+        const result = await addStaff(newStaffData);
+        console.log('Staff creation result:', result);
 
         toast({
           title: "Success",

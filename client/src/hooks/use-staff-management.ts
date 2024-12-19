@@ -62,10 +62,16 @@ export function useStaffManagement() {
       try {
         console.log('[STAFF] Starting staff creation with data:', data);
         
+        const token = await auth.currentUser?.getIdToken();
+        if (!token) {
+          throw new Error('No authentication token available');
+        }
+
         // First create the user in Firebase Auth
         const response = await fetch('/api/users/create', {
           method: 'POST',
           headers: {
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
@@ -75,10 +81,10 @@ export function useStaffManagement() {
             password: 'ChangeMe123!', // Default password
             isGroomer: data.role === 'groomer',
             phone: data.phone,
-            experienceYears: data.experienceYears,
-            maxDailyAppointments: data.maxDailyAppointments,
-            specialties: data.specialties,
-            petTypePreferences: data.petTypePreferences,
+            experienceYears: data.experienceYears || 0,
+            maxDailyAppointments: data.maxDailyAppointments || 8,
+            specialties: data.specialties || [],
+            petTypePreferences: data.petTypePreferences || [],
             isActive: true
           }),
         });
