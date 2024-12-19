@@ -168,12 +168,17 @@ export function useServices() {
       const serviceRef = doc(servicesCollection, service_id);
       const timestamp = new Date();
 
-      // Preserve required_categories from updateData
+      // Ensure required_categories are preserved
       const updatePayload: any = {
         ...updateData,
-        required_categories: updateData.required_categories || [],
+        required_categories: Array.isArray(updateData.required_categories) 
+          ? updateData.required_categories 
+          : (updateData.required_categories || []),
         updated_at: timestamp.toISOString()
       };
+      
+      // Log update payload for debugging
+      console.log('Update payload with categories:', updatePayload.required_categories);
       
       console.log('Update payload:', updatePayload);
 
