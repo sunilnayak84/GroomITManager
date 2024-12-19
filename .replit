@@ -8,7 +8,7 @@ channel = "stable-24_05"
 [deployment]
 deploymentTarget = "cloudrun"
 build = ["npm", "run", "build"]
-run = ["sh", "-c", "cd server && tsx watch --clear-screen=false index.ts"]
+run = ["sh", "-c", "npx concurrently \"cd server && tsx watch --clear-screen=false index.ts\" \"cd client && VITE_SERVER_PORT=3000 vite --host 0.0.0.0 --port 5174\""]
 
 [[ports]]
 localPort = 3000
@@ -48,14 +48,10 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Backend Server"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Frontend Server"
+args = "Development Servers"
 
 [[workflows.workflow]]
-name = "Backend Server"
+name = "Development Servers"
 author = "agent"
 
 [workflows.workflow.metadata]
@@ -66,20 +62,5 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd server && tsx watch --clear-screen=false index.ts"
+args = "npx concurrently \"cd server && tsx watch --clear-screen=false index.ts\" \"cd client && VITE_SERVER_PORT=3000 vite --host 0.0.0.0 --port 5174\""
 waitForPort = 3000
-
-[[workflows.workflow]]
-name = "Frontend Server"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "packager.installForAll"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd client && VITE_SERVER_PORT=3000 vite --host 0.0.0.0 --port 5174"
-waitForPort = 5174
