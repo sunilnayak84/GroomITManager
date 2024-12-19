@@ -27,11 +27,25 @@ export type GroomerSpecialty = typeof GROOMER_SPECIALTIES[number];
 export type PetTypePreference = typeof PET_TYPE_PREFERENCES[number];
 
 // Base schema for common staff fields
+export const STAFF_ROLES = [
+  'staff',
+  'groomer',
+  'walker',
+  'trainer',
+  'vet',
+  'boarder',
+  'manager',
+  'receptionist'
+] as const;
+
+export type StaffRole = typeof STAFF_ROLES[number];
+
 const baseStaffSchema = {
   id: z.string().optional(),
   email: z.string().email("Valid email is required"),
   name: z.string().min(1, "Name is required"),
   phone: z.string().optional(),
+  role: z.enum(STAFF_ROLES),
   isActive: z.boolean().default(true),
   branchId: z.string().nullable().default(null),
   managedBranchIds: z.array(z.string()).default([]),

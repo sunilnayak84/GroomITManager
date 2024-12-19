@@ -8,6 +8,11 @@ enum RoleTypes {
   admin = 'admin',
   manager = 'manager',
   staff = 'staff',
+  groomer = 'groomer',
+  walker = 'walker',
+  trainer = 'trainer',
+  vet = 'vet',
+  boarder = 'boarder',
   receptionist = 'receptionist',
   customer = 'customer'
 }

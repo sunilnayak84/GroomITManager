@@ -398,6 +398,12 @@ export default function StaffPage() {
                       <SelectContent>
                         <SelectItem value="staff">Staff Member</SelectItem>
                         <SelectItem value="groomer">Pet Groomer</SelectItem>
+                        <SelectItem value="walker">Pet Walker</SelectItem>
+                        <SelectItem value="trainer">Pet Trainer</SelectItem>
+                        <SelectItem value="vet">Veterinarian</SelectItem>
+                        <SelectItem value="boarder">Pet Boarder</SelectItem>
+                        <SelectItem value="manager">Manager</SelectItem>
+                        <SelectItem value="receptionist">Receptionist</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
