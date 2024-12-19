@@ -33,6 +33,7 @@ export const baseServiceSchema = {
   duration: z.number().min(15, "Duration must be at least 15 minutes"),
   price: z.number().min(0, "Price cannot be negative"),
   description: z.string().nullable().default(null),
+  required_categories: z.array(z.string()).default([]),
 };
 
 // Full service schema for database operations

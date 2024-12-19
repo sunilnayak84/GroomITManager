@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Plus } from "lucide-react";
 import { useServices } from "@/hooks/use-services";
+import { useCategories } from "@/hooks/use-categories";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -53,6 +55,7 @@ import {
 
 export default function ServicesPage() {
   const { services, isLoading, addService, updateService, deleteService } = useServices();
+  const { categories } = useCategories();
   const [showServiceDialog, setShowServiceDialog] = useState(false);
   const [showPackageDialog, setShowPackageDialog] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -589,17 +592,33 @@ export default function ServicesPage() {
                 )}
               />
 
-              <div className="flex justify-between items-center">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    console.log('Opening consumables modal with:', form.getValues("consumables"));
-                    setShowConsumablesModal(true);
-                  }}
-                >
-                  Manage Consumables ({form.getValues("consumables")?.length || 0})
-                </Button>
+              <FormField
+                control={form.control}
+                name="required_categories"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Required Inventory Categories</FormLabel>
+                    <div className="grid gap-4">
+                      {categories?.map((category) => (
+                        <div key={category.id} className="flex items-center space-x-2">
+                          <Checkbox
+                            checked={field.value?.includes(category.name)}
+                            onCheckedChange={(checked) => {
+                              const currentCategories = field.value || [];
+                              const updatedCategories = checked
+                                ? [...currentCategories, category.name]
+                                : currentCategories.filter((c) => c !== category.name);
+                              field.onChange(updatedCategories);
+                            }}
+                          />
+                          <span>{category.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
                 <div className="flex gap-2">
                   <Button
                     type="button"
