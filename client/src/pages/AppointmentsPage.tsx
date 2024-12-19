@@ -198,24 +198,37 @@ export default function AppointmentsPage() {
             <div className="font-medium">{pet.name}</div>
             <div className="text-sm text-muted-foreground">{pet.breed}</div>
           </div>
+          <Dialog open={showPetDetails} onOpenChange={setShowPetDetails}>
+            <DialogContent>
+              <PetDetails 
+                pet={{
+                  id: pet.id,
+                  name: pet.name,
+                  type: (pet.type as "dog" | "cat" | "bird" | "fish" | "other") || 'dog',
+                  breed: pet.breed,
+                  gender: (pet.gender as "male" | "female" | "other" | "unknown" | null) || 'unknown',
+                  age: pet.age || null,
+                  image: pet.image,
+                  dateOfBirth: pet.dateOfBirth || null,
+                  weight: pet.weight || null,
+                  weightUnit: (pet.weightUnit as "kg" | "lbs") || 'kg',
+                  notes: pet.notes || null,
+                  createdAt: pet.createdAt || new Date().toISOString(),
+                  updatedAt: pet.updatedAt || null,
+                  customerId: pet.customerId || 'unknown',
+                  firebaseId: pet.firebaseId || null,
+                  owner: pet.owner || {
+                    id: 'unknown',
+                    name: 'Unknown',
+                    email: null
+                  },
+                  submissionId: pet.submissionId
+                }}
+                formatDate={(date) => date ? new Date(date).toLocaleDateString() : 'Not specified'}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
-                    gender: (pet.gender as "male" | "female" | "other" | "unknown" | null) || 'unknown',
-                    age: pet.age || null,
-                    image: pet.image,
-                    dateOfBirth: pet.dateOfBirth || null,
-                    weight: pet.weight || null,
-                    weightUnit: (pet.weightUnit as "kg" | "lbs") || 'kg',
-                    notes: pet.notes || null,
-                    createdAt: pet.createdAt || new Date().toISOString(),
-                    updatedAt: pet.updatedAt || null,
-                    customerId: pet.customerId || 'unknown',
-                    firebaseId: pet.firebaseId || null,
-                    owner: pet.owner || {
-                      id: 'unknown',
-                      name: 'Unknown',
-                      email: null
-                    },
-                    submissionId: pet.submissionId
                   }}
                   formatDate={(date) => date ? new Date(date).toLocaleDateString() : 'Not specified'}
                 />
