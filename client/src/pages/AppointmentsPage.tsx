@@ -1,6 +1,8 @@
 import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Calendar, List, Trash2, Pencil } from "lucide-react";
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import { PetDetails } from "@/components/PetDetails";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useUser } from "@/hooks/use-user";
@@ -107,6 +109,7 @@ export default function AppointmentsPage() {
   const [showPetDetails, setShowPetDetails] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithRelations | null>(null);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+  const [selectedPet, setSelectedPet] = useState<any>(null);
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
   const [view, setView] = useState<'list' | 'calendar'>('list');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
@@ -195,40 +198,38 @@ export default function AppointmentsPage() {
             alt={pet.name}
             className="w-8 h-8 rounded-full"
           />
-          <div>
+          <div 
+            className="cursor-pointer"
+            onClick={() => {
+              const petDoc = doc(db, 'pets', pet.id);
+              getDoc(petDoc).then((docSnap) => {
+                if (docSnap.exists()) {
+                  const petData = docSnap.data();
+                  setSelectedPet({
+                    id: docSnap.id,
+                    ...petData,
+                    createdAt: petData.createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
+                    updatedAt: petData.updatedAt?.toDate?.()?.toISOString() || null,
+                    owner: pet.owner || null
+                  });
+                  setShowPetDetails(true);
+                }
+              });
+            }}
+          >
             <div className="font-medium">{pet.name}</div>
             <div className="text-sm text-muted-foreground">{pet.breed}</div>
           </div>
-          <Dialog open={showPetDetails} onOpenChange={setShowPetDetails}>
-            <DialogContent>
-              <PetDetails 
-                pet={{
-                  id: pet.id,
-                  name: pet.name,
-                  type: (pet.type as "dog" | "cat" | "bird" | "fish" | "other") || 'dog',
-                  breed: pet.breed,
-                  gender: (pet.gender as "male" | "female" | "other" | "unknown" | null) || 'unknown',
-                  age: pet.age || null,
-                  image: pet.image,
-                  dateOfBirth: pet.dateOfBirth || null,
-                  weight: pet.weight || null,
-                  weightUnit: (pet.weightUnit as "kg" | "lbs") || 'kg',
-                  notes: pet.notes || null,
-                  createdAt: pet.createdAt || new Date().toISOString(),
-                  updatedAt: pet.updatedAt || null,
-                  customerId: pet.customerId || 'unknown',
-                  firebaseId: pet.firebaseId || null,
-                  owner: pet.owner || {
-                    id: 'unknown',
-                    name: 'Unknown',
-                    email: null
-                  },
-                  submissionId: pet.submissionId
-                }}
-                formatDate={(date) => date ? new Date(date).toLocaleDateString() : 'Not specified'}
-              />
-            </DialogContent>
-          </Dialog>
+          {selectedPet && (
+            <Dialog open={showPetDetails} onOpenChange={setShowPetDetails}>
+              <DialogContent>
+                <PetDetails 
+                  pet={selectedPet}
+                  formatDate={(date) => date ? new Date(date).toLocaleDateString() : 'Not specified'}
+                />
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
       ),
     },
