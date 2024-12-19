@@ -604,11 +604,12 @@ export default function ServicesPage() {
                           <Checkbox
                             checked={field.value?.includes(category.name)}
                             onCheckedChange={(checked) => {
-                              const currentCategories = field.value || [];
+                              const currentCategories = Array.isArray(field.value) ? field.value : [];
                               const updatedCategories = checked
                                 ? [...currentCategories, category.name]
                                 : currentCategories.filter((c) => c !== category.name);
                               field.onChange(updatedCategories);
+                              console.log('Updated categories:', updatedCategories);
                             }}
                           />
                           <span>{category.name}</span>
