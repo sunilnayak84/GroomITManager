@@ -89,12 +89,14 @@ export default function ServicesPage() {
         duration: data.duration,
         price: data.price,
         discount_percentage: data.discount_percentage || 0,
-        required_categories: data.required_categories || [],
+        required_categories: Array.isArray(data.required_categories) ? data.required_categories : [],
         isActive: true,
         selectedServices: [],
         selectedAddons: [],
         consumables: data.consumables || []
       };
+
+      console.log('Submitting service with categories:', formattedData.required_categories);
 
       if (data.category === ServiceCategory.PACKAGE) {
         const selectedServices = form.getValues("selectedServices") || [];
