@@ -158,8 +158,8 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
           </DialogTrigger>
           <AppointmentForm 
             setOpen={setOpenNewForm}
-            initialDate={selectedDate?.toISOString().split('T')[0]}
-            initialTime={selectedDate?.toTimeString().slice(0,5)}
+            initialDate={selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined}
+            initialTime={selectedDate ? format(selectedDate, 'HH:mm') : undefined}
           />
         </Dialog>
       </div>
