@@ -187,33 +187,18 @@ export default function AppointmentsPage() {
     },
     {
       header: "Pet",
-      cell: ({ pet }: AppointmentWithRelations) => {
-        const [showPetDetails, setShowPetDetails] = useState(false);
-        return (
-          <>
-            <div className="flex items-center gap-2">
-              <img
-                src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
-                alt={pet.name}
-                className="w-8 h-8 rounded-full cursor-pointer hover:opacity-80 transition-opacity"
-                onClick={() => setShowPetDetails(true)}
-              />
-              <div>
-                <div className="font-medium">{pet.name}</div>
-                <div className="text-sm text-muted-foreground">{pet.breed}</div>
-              </div>
-            </div>
-            
-            <Dialog open={showPetDetails} onOpenChange={setShowPetDetails}>
-              <DialogContent className="sm:max-w-[625px]" aria-describedby="pet-details-description">
-                <DialogHeader>
-                  <DialogTitle>Pet Details</DialogTitle>
-                  <DialogDescription id="pet-details-description">
-                    View detailed information about {pet.name}
-                  </DialogDescription>
-                </DialogHeader>
-                <PetDetails 
-                  pet={{
+      cell: ({ pet }: AppointmentWithRelations) => (
+        <div className="flex items-center gap-2">
+          <img
+            src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
+            alt={pet.name}
+            className="w-8 h-8 rounded-full"
+          />
+          <div>
+            <div className="font-medium">{pet.name}</div>
+            <div className="text-sm text-muted-foreground">{pet.breed}</div>
+          </div>
+        </div>
                     id: pet.id,
                     name: pet.name,
                     type: (pet.type as "dog" | "cat" | "bird" | "fish" | "other") || 'dog',
