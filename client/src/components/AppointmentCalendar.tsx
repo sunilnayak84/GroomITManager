@@ -132,16 +132,16 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
     setSelectedDate(selectedStart);
     setFormattedDate(formattedDateStr);
     setFormattedTime(formattedTimeStr);
-    
-    // Reset form state before opening
-    setOpenNewForm(false);
-    setTimeout(() => setOpenNewForm(true), 0);
 
     // Ensure the calendar API is unselected
     if (calendarRef.current) {
       const calendar = calendarRef.current.getApi();
       calendar.unselect();
     }
+
+    // Open form with initial values
+    setOpenNewForm(false);
+    requestAnimationFrame(() => setOpenNewForm(true));
   }, []);
 
   useEffect(() => {

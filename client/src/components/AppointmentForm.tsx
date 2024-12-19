@@ -102,6 +102,16 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
     }
   });
 
+  useEffect(() => {
+    if (initialDate && initialTime) {
+      form.reset({
+        ...form.getValues(),
+        date: initialDate,
+        time: initialTime
+      });
+    }
+  }, [initialDate, initialTime]);
+
   // Helper function to generate time slots
   const generateTimeSlots = (
     openingTime: string,
