@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { RoleTypes } from "@/lib/role-types";
 import { Plus } from "lucide-react";
 import { useStaffManagement } from "@/hooks/use-staff-management";
 import {
