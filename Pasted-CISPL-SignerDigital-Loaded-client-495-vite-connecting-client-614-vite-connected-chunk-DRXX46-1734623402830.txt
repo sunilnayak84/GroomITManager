@@ -1,0 +1,27 @@
+CISPL SignerDigital Loaded
+client:495 [vite] connecting...
+client:614 [vite] connected.
+chunk-DRXX46FI.js?v=177750f0:21507 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+use-inventory.ts:101 FETCH_INVENTORY: Starting to fetch inventory items
+ConsumablesModal.tsx:51 Initial consumables received: []
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+ConsumablesModal.tsx:51 Initial consumables received: []
+firebase.ts:31 FIREBASE_INIT: Firebase initialized successfully
+use-inventory.ts:112 FETCH_INVENTORY: Processing item data: {id: 'IctkQ7zzpjxCQOHJAAOo', data: {…}}
+use-inventory.ts:148 FETCH_INVENTORY: Successfully parsed item: {id: 'IctkQ7zzpjxCQOHJAAOo', item: {…}}
+use-inventory.ts:156 FETCH_INVENTORY: Successfully fetched inventory {count: 1}
+use-services.ts:77 FETCH_SERVICES: Completed fetching services {count: 2, services: Array(2)}
+ConsumablesModal.tsx:51 Initial consumables received: []
+ServicesPage.tsx:322 Loading service with consumables: []
+ConsumablesModal.tsx:51 Initial consumables received: []
+ServicesPage.tsx:612 Updated categories: ['Shampoo']0: "Shampoo"length: 1[[Prototype]]: Array(0)
+use-services.ts:182 Update payload with categories: undefined
+use-services.ts:184 Update payload: {name: 'Service One', description: 'Service One Test', category: 'Service', duration: 30, price: 99, …}category: "Service"consumables: []description: "Service One Test"discount_percentage: 0duration: 30isActive: truename: "Service One"price: 99selectedAddons: []selectedServices: []updated_at: "2024-12-19T15:49:28.501Z"[[Prototype]]: Object
+use-services.ts:187 Processing consumables for update: []
+use-services.ts:203 Final processed update consumables: []
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+use-services.ts:77 FETCH_SERVICES: Completed fetching services {count: 2, services: Array(2)}
+ConsumablesModal.tsx:51 Initial consumables received: []
+ServicesPage.tsx:322 Loading service with consumables: []
+ConsumablesModal.tsx:51 Initial consumables received: []

@@ -1,0 +1,92 @@
+[FIREBASE] Initialization attempt 1/3
+[FIREBASE] Initializing Firebase Admin...
+[FIREBASE] Firebase Admin initialized successfully
+Role definitions: {
+  admin: {
+    createdAt: 1734152240235,
+    isSystem: true,
+    name: 'admin',
+    permissions: [
+      'manage_appointments',
+      'view_appointments',
+      'create_appointments',
+      'cancel_appointments',
+      'manage_customers',
+      'view_customers',
+      'create_customers',
+      'edit_customer_info',
+      'manage_services',
+      'view_services',
+      'create_services',
+      'edit_services',
+      'manage_inventory',
+      'view_inventory',
+      'update_stock',
+      'manage_consumables',
+      'manage_staff_schedule',
+      'view_staff_schedule',
+      'manage_own_schedule',
+      'view_analytics',
+      'view_reports',
+      'view_financial_reports',
+      'all'
+    ],
+    updatedAt: 1734152241959
+  },
+  customer: {
+    createdAt: 1734524572874,
+    description: 'Customer access for booking appointments and viewing services',
+    isSystem: true,
+    permissions: [ 'view_appointments', 'create_appointments', 'view_services' ],
+    updatedAt: 1734599615159
+  },
+  manager: {
+    createdAt: 1734152240235,
+    isSystem: true,
+    name: 'manager',
+    permissions: [
+      'view_appointments',
+      'create_appointments',
+      'cancel_appointments',
+      'view_customers',
+      'create_customers',
+      'edit_customer_info',
+      'view_services',
+      'view_inventory',
+      'update_stock',
+      'manage_staff_schedule',
+      'view_staff_schedule',
+      'manage_own_schedule',
+      'view_analytics'
+    ],
+    updatedAt: 1734152241959
+  },
+  receptionist: {
+    createdAt: 1734152240235,
+    isSystem: true,
+    name: 'receptionist',
+    permissions: [
+      'view_appointments',
+      'create_appointments',
+      'view_customers',
+      'create_customers',
+      'view_services'
+    ],
+    updatedAt: 1734152241959
+  },
+  staff: {
+    createdAt: 1734152240235,
+    isSystem: true,
+    name: 'staff',
+    permissions: [
+      'view_appointments',
+      'create_appointments',
+      'view_customers',
+      'create_customers',
+      'view_services',
+      'view_inventory',
+      'manage_own_schedule'
+    ],
+    updatedAt: 1734152241959
+  }
+}

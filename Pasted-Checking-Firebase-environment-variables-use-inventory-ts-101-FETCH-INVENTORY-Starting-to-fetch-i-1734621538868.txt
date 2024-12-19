@@ -1,0 +1,19 @@
+Checking Firebase environment variables...
+use-inventory.ts:101 FETCH_INVENTORY: Starting to fetch inventory items
+ConsumablesModal.tsx:51 Initial consumables received: []length: 0[[Prototype]]: Array(0)
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+ConsumablesModal.tsx:51 Initial consumables received: []length: 0[[Prototype]]: Array(0)
+firebase.ts:31 FIREBASE_INIT: Firebase initialized successfully
+use-inventory.ts:112 FETCH_INVENTORY: Processing item data: {id: 'IctkQ7zzpjxCQOHJAAOo', data: {…}}data: {cost_per_unit: 0, description: null, isActive: true, service_linked: false, updated_at: _Timestamp, …}id: "IctkQ7zzpjxCQOHJAAOo"[[Prototype]]: Object
+use-inventory.ts:148 FETCH_INVENTORY: Successfully parsed item: {id: 'IctkQ7zzpjxCQOHJAAOo', item: {…}}id: "IctkQ7zzpjxCQOHJAAOo"item: {item_id: 'IctkQ7zzpjxCQOHJAAOo', name: 'Hydra - Volumizing', description: null, quantity: 5000, minimum_quantity: 5, …}[[Prototype]]: Object
+use-inventory.ts:156 FETCH_INVENTORY: Successfully fetched inventory {count: 1}count: 1[[Prototype]]: Object
+use-services.ts:77 FETCH_SERVICES: Completed fetching services {count: 2, services: Array(2)}count: 2services: (2) [{…}, {…}][[Prototype]]: Object
+ConsumablesModal.tsx:51 Initial consumables received: []length: 0[[Prototype]]: Array(0)
+ServicesPage.tsx:322 Loading service with consumables: []length: 0[[Prototype]]: Array(0)
+ConsumablesModal.tsx:51 Initial consumables received: []length: 0[[Prototype]]: Array(0)
+use-services.ts:182 Update payload with categories: {name: 'Service One', description: 'Service One Test', category: 'Service', duration: 30, price: 99, …}category: "Service"consumables: Array(0)length: 0[[Prototype]]: Array(0)description: "Service One Test"discount_percentage: 0duration: 30isActive: truename: "Service One"price: 99required_categories: Array(0)length: 0[[Prototype]]: Array(0)selectedAddons: Array(0)length: 0[[Prototype]]: Array(0)selectedServices: Array(0)length: 0[[Prototype]]: Array(0)updated_at: "2024-12-19T15:18:08.659Z"[[Prototype]]: Object
+use-services.ts:188 Processing consumables for update: []length: 0[[Prototype]]: Array(0)
+use-services.ts:204 Final processed update consumables: []length: 0[[Prototype]]: Array(0)
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+use-services.ts:77 FETCH_SERVICES: Completed fetching services {count: 2, services: Array(2)}count: 2services: (2) [{…}, {…}][[Prototype]]: Object
+ConsumablesModal.tsx:51 Initial consumables received: []length: 0[[Prototype]]: Array(0)

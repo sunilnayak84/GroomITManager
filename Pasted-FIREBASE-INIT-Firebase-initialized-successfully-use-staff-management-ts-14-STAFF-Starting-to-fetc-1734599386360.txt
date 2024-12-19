@@ -1,0 +1,170 @@
+FIREBASE_INIT: Firebase initialized successfully
+use-staff-management.ts:14 [STAFF] Starting to fetch staff members
+2use-staff-management.ts:14 [STAFF] Starting to fetch staff members
+main.tsx:69 Global error: {message: 'Uncaught ReferenceError: RoleTypes is not defined', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-34…3dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx', lineno: 434, colno: 81, error: ReferenceError: RoleTypes is not defined
+    at Object.render (https://c2ee078f-4b26-4083-bd08-de31…}colno: 81error: ReferenceError: RoleTypes is not defined
+    at Object.render (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx:434:81)
+    at Controller (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-VYIIT4SD.js?v=f966ddc1:323:35)
+    at renderWithHooks (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:12151:26)
+    at mountIndeterminateComponent (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:14901:21)
+    at beginWork (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:15882:22)
+    at HTMLUnknownElement.callCallback2 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:3674:22)
+    at Object.invokeGuardedCallbackDev (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:3699:24)
+    at invokeGuardedCallback (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:3733:39)
+    at beginWork$1 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:19733:15)
+    at performUnitOfWork (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:19166:20)lineno: 434message: "Uncaught ReferenceError: RoleTypes is not defined"source: "https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx"[[Prototype]]: Object
+window.onerror @ main.tsx:69
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=f966ddc1:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=f966ddc1:3733
+beginWork$1 @ chunk-DRXX46FI.js?v=f966ddc1:19733
+performUnitOfWork @ chunk-DRXX46FI.js?v=f966ddc1:19166
+workLoopSync @ chunk-DRXX46FI.js?v=f966ddc1:19105
+renderRootSync @ chunk-DRXX46FI.js?v=f966ddc1:19084
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=f966ddc1:18842
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=f966ddc1:9119
+(anonymous) @ chunk-DRXX46FI.js?v=f966ddc1:18595
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:123Understand this errorAI
+StaffPage.tsx:272 Uncaught ReferenceError: RoleTypes is not defined
+    at Object.render (StaffPage.tsx:272:40)
+    at Controller (chunk-VYIIT4SD.js?v=f966ddc1:323:35)
+    at renderWithHooks (chunk-DRXX46FI.js?v=f966ddc1:12151:26)
+    at mountIndeterminateComponent (chunk-DRXX46FI.js?v=f966ddc1:14901:21)
+    at beginWork (chunk-DRXX46FI.js?v=f966ddc1:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-DRXX46FI.js?v=f966ddc1:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-DRXX46FI.js?v=f966ddc1:3699:24)
+    at invokeGuardedCallback (chunk-DRXX46FI.js?v=f966ddc1:3733:39)
+    at beginWork$1 (chunk-DRXX46FI.js?v=f966ddc1:19733:15)
+    at performUnitOfWork (chunk-DRXX46FI.js?v=f966ddc1:19166:20)
+render @ StaffPage.tsx:272
+Controller @ chunk-VYIIT4SD.js?v=f966ddc1:323
+renderWithHooks @ chunk-DRXX46FI.js?v=f966ddc1:12151
+mountIndeterminateComponent @ chunk-DRXX46FI.js?v=f966ddc1:14901
+beginWork @ chunk-DRXX46FI.js?v=f966ddc1:15882
+callCallback2 @ chunk-DRXX46FI.js?v=f966ddc1:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=f966ddc1:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=f966ddc1:3733
+beginWork$1 @ chunk-DRXX46FI.js?v=f966ddc1:19733
+performUnitOfWork @ chunk-DRXX46FI.js?v=f966ddc1:19166
+workLoopSync @ chunk-DRXX46FI.js?v=f966ddc1:19105
+renderRootSync @ chunk-DRXX46FI.js?v=f966ddc1:19084
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=f966ddc1:18842
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=f966ddc1:9119
+(anonymous) @ chunk-DRXX46FI.js?v=f966ddc1:18595Understand this errorAI
+main.tsx:69 Global error: {message: 'Uncaught ReferenceError: RoleTypes is not defined', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-34…3dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx', lineno: 434, colno: 81, error: ReferenceError: RoleTypes is not defined
+    at Object.render (https://c2ee078f-4b26-4083-bd08-de31…}colno: 81error: ReferenceError: RoleTypes is not defined
+    at Object.render (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx:434:81)
+    at Controller (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-VYIIT4SD.js?v=f966ddc1:323:35)
+    at renderWithHooks (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:12151:26)
+    at mountIndeterminateComponent (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:14901:21)
+    at beginWork (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:15882:22)
+    at HTMLUnknownElement.callCallback2 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:3674:22)
+    at Object.invokeGuardedCallbackDev (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:3699:24)
+    at invokeGuardedCallback (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:3733:39)
+    at beginWork$1 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:19733:15)
+    at performUnitOfWork (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:19166:20)message: "RoleTypes is not defined"stack: "ReferenceError: RoleTypes is not defined\n    at Object.render (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx:434:81)\n    at Controller (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-VYIIT4SD.js?v=f966ddc1:323:35)\n    at renderWithHooks (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:12151:26)\n    at mountIndeterminateComponent (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:14901:21)\n    at beginWork (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:15882:22)\n    at HTMLUnknownElement.callCallback2 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:3674:22)\n    at Object.invokeGuardedCallbackDev (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:3699:24)\n    at invokeGuardedCallback (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:3733:39)\n    at beginWork$1 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:19733:15)\n    at performUnitOfWork (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=f966ddc1:19166:20)"[[Prototype]]: Errorlineno: 434message: "Uncaught ReferenceError: RoleTypes is not defined"source: "https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx"[[Prototype]]: Object
+window.onerror @ main.tsx:69
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=f966ddc1:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=f966ddc1:3733
+beginWork$1 @ chunk-DRXX46FI.js?v=f966ddc1:19733
+performUnitOfWork @ chunk-DRXX46FI.js?v=f966ddc1:19166
+workLoopSync @ chunk-DRXX46FI.js?v=f966ddc1:19105
+renderRootSync @ chunk-DRXX46FI.js?v=f966ddc1:19084
+recoverFromConcurrentError @ chunk-DRXX46FI.js?v=f966ddc1:18704
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=f966ddc1:18847
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=f966ddc1:9119
+(anonymous) @ chunk-DRXX46FI.js?v=f966ddc1:18595
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:123Understand this errorAI
+StaffPage.tsx:272 Uncaught ReferenceError: RoleTypes is not defined
+    at Object.render (StaffPage.tsx:272:40)
+    at Controller (chunk-VYIIT4SD.js?v=f966ddc1:323:35)
+    at renderWithHooks (chunk-DRXX46FI.js?v=f966ddc1:12151:26)
+    at mountIndeterminateComponent (chunk-DRXX46FI.js?v=f966ddc1:14901:21)
+    at beginWork (chunk-DRXX46FI.js?v=f966ddc1:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-DRXX46FI.js?v=f966ddc1:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-DRXX46FI.js?v=f966ddc1:3699:24)
+    at invokeGuardedCallback (chunk-DRXX46FI.js?v=f966ddc1:3733:39)
+    at beginWork$1 (chunk-DRXX46FI.js?v=f966ddc1:19733:15)
+    at performUnitOfWork (chunk-DRXX46FI.js?v=f966ddc1:19166:20)
+render @ StaffPage.tsx:272
+Controller @ chunk-VYIIT4SD.js?v=f966ddc1:323
+renderWithHooks @ chunk-DRXX46FI.js?v=f966ddc1:12151
+mountIndeterminateComponent @ chunk-DRXX46FI.js?v=f966ddc1:14901
+beginWork @ chunk-DRXX46FI.js?v=f966ddc1:15882
+callCallback2 @ chunk-DRXX46FI.js?v=f966ddc1:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=f966ddc1:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=f966ddc1:3733
+beginWork$1 @ chunk-DRXX46FI.js?v=f966ddc1:19733
+performUnitOfWork @ chunk-DRXX46FI.js?v=f966ddc1:19166
+workLoopSync @ chunk-DRXX46FI.js?v=f966ddc1:19105
+renderRootSync @ chunk-DRXX46FI.js?v=f966ddc1:19084
+recoverFromConcurrentError @ chunk-DRXX46FI.js?v=f966ddc1:18704
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=f966ddc1:18847
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=f966ddc1:9119
+(anonymous) @ chunk-DRXX46FI.js?v=f966ddc1:18595Understand this errorAI
+chunk-DRXX46FI.js?v=f966ddc1:14016 The above error occurred in the <Controller> component:
+
+    at Controller (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-VYIIT4SD.js?v=f966ddc1:323:35)
+    at FormField (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/form.tsx:32:6)
+    at form
+    at FormProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-VYIIT4SD.js?v=f966ddc1:103:11)
+    at div
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=f966ddc1:253:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=f966ddc1:282:7
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=f966ddc1:539:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=f966ddc1:520:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=f966ddc1:617:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=f966ddc1:636:5
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=f966ddc1:1771:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=f966ddc1:1694:58
+    at Presence (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=f966ddc1:1011:11)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=f966ddc1:1685:64
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=f966ddc1:899:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=f966ddc1:880:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=f966ddc1:977:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=f966ddc1:993:22
+    at Presence (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=f966ddc1:1011:11)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-AD2NKST5.js?v=f966ddc1:38:15)
+    at DialogPortal (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=f966ddc1:1648:11)
+    at _c3 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/dialog.tsx:49:12)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-AD2NKST5.js?v=f966ddc1:38:15)
+    at Dialog (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=f966ddc1:1589:5)
+    at div
+    at StaffPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx:75:7)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=f966ddc1:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=f966ddc1:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=f966ddc1:18:5)
+    at div
+    at main
+    at main
+    at _c9 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:398:48)
+    at div
+    at div
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-AD2NKST5.js?v=f966ddc1:38:15)
+    at TooltipProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f966ddc1:290:5)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:54:7
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:28:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:136:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=f966ddc1:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=f966ddc1:18:5)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+logCapturedError @ chunk-DRXX46FI.js?v=f966ddc1:14016
+callback @ chunk-DRXX46FI.js?v=f966ddc1:14062
+callCallback @ chunk-DRXX46FI.js?v=f966ddc1:10491
+commitUpdateQueue @ chunk-DRXX46FI.js?v=f966ddc1:10508
+commitLayoutEffectOnFiber @ chunk-DRXX46FI.js?v=f966ddc1:17043
+commitLayoutMountEffects_complete @ chunk-DRXX46FI.js?v=f966ddc1:17948
+commitLayoutEffects_begin @ chunk-DRXX46FI.js?v=f966ddc1:17937
+commitLayoutEffects_begin @ chunk-DRXX46FI.js?v=f966ddc1:17918
+commitLayoutEffects @ chunk-DRXX46FI.js?v=f966ddc1:17888
+commitRootImpl @ chunk-DRXX46FI.js?v=f966ddc1:19321
+commitRoot @ chunk-DRXX46FI.js?v=f966ddc1:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=f966ddc1:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=f966ddc1:9119
+(anonymous) @ chunk-DRXX46FI.js?v=f966ddc1:18595Understand this errorAI

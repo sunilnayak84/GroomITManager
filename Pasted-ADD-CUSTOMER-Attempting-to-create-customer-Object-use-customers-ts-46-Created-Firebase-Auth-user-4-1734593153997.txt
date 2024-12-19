@@ -1,0 +1,140 @@
+ADD_CUSTOMER: Attempting to create customer Object
+use-customers.ts:46 Created Firebase Auth user: 44NkOuodSuR5FY5IbexZEcZHUY02
+use-customers.ts:95 ADD_CUSTOMER: Attempting to create customer {customer: {…}}
+firestore.ts:101 FIRESTORE: Creating customer {customerData: {…}}
+firestore.ts:106 FIRESTORE: Customer created successfully {id: 'Ur07lcoh7fbHM8MrkXcQ'}
+use-customers.ts:138 ADD_CUSTOMER: Error creating customer {error: ReferenceError: getDatabase is not defined
+    at Object.mutationFn (https://c2ee078f-4b26-4083-bd0…, errorMessage: 'getDatabase is not defined', customer: {…}}
+mutationFn @ use-customers.ts:138Understand this errorAI
+use-customers.ts:46 Created Firebase Auth user: El2f3K2E23bC2Vcs9l4bPJy9Z2a2
+use-customers.ts:95 ADD_CUSTOMER: Attempting to create customer {customer: {…}}
+firestore.ts:101 FIRESTORE: Creating customer {customerData: {…}}
+firestore.ts:106 FIRESTORE: Customer created successfully {id: 'vLxbmP9y6eY3FVEluh3F'}
+use-customers.ts:138 ADD_CUSTOMER: Error creating customer {error: ReferenceError: getDatabase is not defined
+    at Object.mutationFn (https://c2ee078f-4b26-4083-bd0…, errorMessage: 'getDatabase is not defined', customer: {…}}
+mutationFn @ use-customers.ts:138
+await in mutationFn
+fn @ @tanstack_react-query.js?v=bcdbbe4a:1188
+run @ @tanstack_react-query.js?v=bcdbbe4a:493
+(anonymous) @ @tanstack_react-query.js?v=bcdbbe4a:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=bcdbbe4a:514
+IndexedDB
+_deleteObject @ firebase_auth.js?v=bcdbbe4a:5712
+(anonymous) @ firebase_auth.js?v=bcdbbe4a:5871
+_withRetries @ firebase_auth.js?v=bcdbbe4a:5745
+await in _withRetries
+(anonymous) @ firebase_auth.js?v=bcdbbe4a:5871
+_withPendingWrite @ firebase_auth.js?v=bcdbbe4a:5852
+_remove @ firebase_auth.js?v=bcdbbe4a:5870
+removeCurrentUser @ firebase_auth.js?v=bcdbbe4a:1958
+directlySetCurrentUser @ firebase_auth.js?v=bcdbbe4a:2724
+(anonymous) @ firebase_auth.js?v=bcdbbe4a:2482
+Promise.then
+queue @ firebase_auth.js?v=bcdbbe4a:2728
+_updateCurrentUser @ firebase_auth.js?v=bcdbbe4a:2481
+signOut @ firebase_auth.js?v=bcdbbe4a:2494
+await in signOut
+delete @ firebase_auth.js?v=bcdbbe4a:1750
+await in delete
+deleteUser @ firebase_auth.js?v=bcdbbe4a:5060
+mutationFn @ use-customers.ts:120Understand this errorAI
+use-customers.ts:160 ADD_CUSTOMER: Mutation error {error: Error: getDatabase is not defined
+    at Object.mutationFn (https://c2ee078f-4b26-4083-bd08-de31e29…, message: 'getDatabase is not defined', stack: 'Error: getDatabase is not defined\n    at Object.mu…isko.replit.dev/src/hooks/use-customers.ts:96:15)'}
+onError @ use-customers.ts:160
+execute @ @tanstack_react-query.js?v=bcdbbe4a:1253
+IndexedDB
+_deleteObject @ firebase_auth.js?v=bcdbbe4a:5712
+(anonymous) @ firebase_auth.js?v=bcdbbe4a:5871
+_withRetries @ firebase_auth.js?v=bcdbbe4a:5745
+await in _withRetries
+(anonymous) @ firebase_auth.js?v=bcdbbe4a:5871
+_withPendingWrite @ firebase_auth.js?v=bcdbbe4a:5852
+_remove @ firebase_auth.js?v=bcdbbe4a:5870
+removeCurrentUser @ firebase_auth.js?v=bcdbbe4a:1958
+directlySetCurrentUser @ firebase_auth.js?v=bcdbbe4a:2724
+(anonymous) @ firebase_auth.js?v=bcdbbe4a:2482
+Promise.then
+queue @ firebase_auth.js?v=bcdbbe4a:2728
+_updateCurrentUser @ firebase_auth.js?v=bcdbbe4a:2481
+signOut @ firebase_auth.js?v=bcdbbe4a:2494
+await in signOut
+delete @ firebase_auth.js?v=bcdbbe4a:1750
+await in delete
+deleteUser @ firebase_auth.js?v=bcdbbe4a:5060
+mutationFn @ use-customers.ts:120
+await in mutationFn
+fn @ @tanstack_react-query.js?v=bcdbbe4a:1188
+run @ @tanstack_react-query.js?v=bcdbbe4a:493
+(anonymous) @ @tanstack_react-query.js?v=bcdbbe4a:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=bcdbbe4a:514
+IndexedDB
+_deleteObject @ firebase_auth.js?v=bcdbbe4a:5712
+(anonymous) @ firebase_auth.js?v=bcdbbe4a:5871
+_withRetries @ firebase_auth.js?v=bcdbbe4a:5745
+await in _withRetries
+(anonymous) @ firebase_auth.js?v=bcdbbe4a:5871
+_withPendingWrite @ firebase_auth.js?v=bcdbbe4a:5852
+_remove @ firebase_auth.js?v=bcdbbe4a:5870
+removeCurrentUser @ firebase_auth.js?v=bcdbbe4a:1958
+directlySetCurrentUser @ firebase_auth.js?v=bcdbbe4a:2724
+(anonymous) @ firebase_auth.js?v=bcdbbe4a:2482
+Promise.then
+queue @ firebase_auth.js?v=bcdbbe4a:2728
+_updateCurrentUser @ firebase_auth.js?v=bcdbbe4a:2481
+signOut @ firebase_auth.js?v=bcdbbe4a:2494
+await in signOut
+delete @ firebase_auth.js?v=bcdbbe4a:1750
+await in delete
+deleteUser @ firebase_auth.js?v=bcdbbe4a:5060
+mutationFn @ use-customers.ts:120Understand this errorAI
+CustomersPage.tsx:320 ADD_CUSTOMER: Error in onSubmit {error: Error: getDatabase is not defined
+    at Object.mutationFn (https://c2ee078f-4b26-4083-bd08-de31e29…, errorMessage: 'getDatabase is not defined', customerData: {…}}
+onSubmit @ CustomersPage.tsx:320
+IndexedDB
+_deleteObject @ firebase_auth.js?v=bcdbbe4a:5712
+(anonymous) @ firebase_auth.js?v=bcdbbe4a:5871
+_withRetries @ firebase_auth.js?v=bcdbbe4a:5745
+await in _withRetries
+(anonymous) @ firebase_auth.js?v=bcdbbe4a:5871
+_withPendingWrite @ firebase_auth.js?v=bcdbbe4a:5852
+_remove @ firebase_auth.js?v=bcdbbe4a:5870
+removeCurrentUser @ firebase_auth.js?v=bcdbbe4a:1958
+directlySetCurrentUser @ firebase_auth.js?v=bcdbbe4a:2724
+(anonymous) @ firebase_auth.js?v=bcdbbe4a:2482
+Promise.then
+queue @ firebase_auth.js?v=bcdbbe4a:2728
+_updateCurrentUser @ firebase_auth.js?v=bcdbbe4a:2481
+signOut @ firebase_auth.js?v=bcdbbe4a:2494
+await in signOut
+delete @ firebase_auth.js?v=bcdbbe4a:1750
+await in delete
+deleteUser @ firebase_auth.js?v=bcdbbe4a:5060
+mutationFn @ use-customers.ts:120
+await in mutationFn
+fn @ @tanstack_react-query.js?v=bcdbbe4a:1188
+run @ @tanstack_react-query.js?v=bcdbbe4a:493
+(anonymous) @ @tanstack_react-query.js?v=bcdbbe4a:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=bcdbbe4a:514
+IndexedDB
+_deleteObject @ firebase_auth.js?v=bcdbbe4a:5712
+(anonymous) @ firebase_auth.js?v=bcdbbe4a:5871
+_withRetries @ firebase_auth.js?v=bcdbbe4a:5745
+await in _withRetries
+(anonymous) @ firebase_auth.js?v=bcdbbe4a:5871
+_withPendingWrite @ firebase_auth.js?v=bcdbbe4a:5852
+_remove @ firebase_auth.js?v=bcdbbe4a:5870
+removeCurrentUser @ firebase_auth.js?v=bcdbbe4a:1958
+directlySetCurrentUser @ firebase_auth.js?v=bcdbbe4a:2724
+(anonymous) @ firebase_auth.js?v=bcdbbe4a:2482
+Promise.then
+queue @ firebase_auth.js?v=bcdbbe4a:2728
+_updateCurrentUser @ firebase_auth.js?v=bcdbbe4a:2481
+signOut @ firebase_auth.js?v=bcdbbe4a:2494
+await in signOut
+delete @ firebase_auth.js?v=bcdbbe4a:1750
+await in delete
+deleteUser @ firebase_auth.js?v=bcdbbe4a:5060
+mutationFn @ use-customers.ts:120Understand this errorAI

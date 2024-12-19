@@ -1,0 +1,17 @@
+FIREBASE_INIT: Firebase initialized successfully
+use-inventory.ts:112 FETCH_INVENTORY: Processing item data: {id: 'IctkQ7zzpjxCQOHJAAOo', data: {…}}data: {name: 'Hydra - Volumizing', created_at: _Timestamp, reorder_quantity: 10, cost_per_unit: 0, description: null, …}id: "IctkQ7zzpjxCQOHJAAOo"[[Prototype]]: Object
+use-inventory.ts:148 FETCH_INVENTORY: Successfully parsed item: {id: 'IctkQ7zzpjxCQOHJAAOo', item: {…}}id: "IctkQ7zzpjxCQOHJAAOo"item: {item_id: 'IctkQ7zzpjxCQOHJAAOo', name: 'Hydra - Volumizing', description: null, quantity: 5000, minimum_quantity: 5, …}[[Prototype]]: Object
+use-inventory.ts:156 FETCH_INVENTORY: Successfully fetched inventory {count: 1}count: 1[[Prototype]]: Object
+use-services.ts:77 FETCH_SERVICES: Completed fetching services {count: 2, services: Array(2)}count: 2services: Array(2)0: {service_id: '8sWdC28UWMGPd70awXQf', name: 'Service One', category: 'Service', duration: 30, price: 99, …}1: {service_id: 'qs4WniktDLLArQJQOOqi', name: 'Service Two', category: 'Service', duration: 30, price: 299, …}length: 2[[Prototype]]: Array(0)[[Prototype]]: Object
+ConsumablesModal.tsx:51 Initial consumables received: []length: 0[[Prototype]]: Array(0)
+ServicesPage.tsx:322 Loading service with consumables: []length: 0[[Prototype]]: Array(0)
+ConsumablesModal.tsx:51 Initial consumables received: []length: 0[[Prototype]]: Array(0)
+use-services.ts:178 Update payload with categories: {name: 'Service One', description: 'Service One Test', category: 'Service', duration: 30, price: 99, …}category: "Service"consumables: []description: "Service One Test"discount_percentage: 0duration: 30isActive: truename: "Service One"price: 99required_categories: []selectedAddons: []selectedServices: []updated_at: "2024-12-19T15:15:16.716Z"[[Prototype]]: Object
+use-services.ts:181 Service update payload: {name: 'Service One', description: 'Service One Test', category: 'Service', duration: 30, price: 99, …}category: "Service"consumables: []description: "Service One Test"discount_percentage: 0duration: 30isActive: truename: "Service One"price: 99required_categories: []selectedAddons: []selectedServices: []updated_at: "2024-12-19T15:15:16.716Z"[[Prototype]]: Object
+use-services.ts:184 Processing consumables for update: []length: 0[[Prototype]]: Array(0)
+use-services.ts:200 Final processed update consumables: []length: 0[[Prototype]]: Array(0)
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+use-services.ts:77 FETCH_SERVICES: Completed fetching services {count: 2, services: Array(2)}count: 2services: (2) [{…}, {…}][[Prototype]]: Object
+ConsumablesModal.tsx:51 Initial consumables received: []length: 0[[Prototype]]: Array(0)
+ServicesPage.tsx:322 Loading service with consumables: []length: 0[[Prototype]]: Array(0)
+ConsumablesModal.tsx:51 Initial consumables received: []length: 0[[Prototype]]: Array(0)

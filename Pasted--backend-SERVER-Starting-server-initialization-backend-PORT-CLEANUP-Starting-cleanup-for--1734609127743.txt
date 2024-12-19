@@ -1,0 +1,48 @@
+[backend] [SERVER] Starting server initialization...
+[backend] [PORT_CLEANUP] Starting cleanup for port 3000...
+[backend] [PORT_CHECK] Port 3000 is available
+[backend] [PORT_CLEANUP] Port 3000 is already available
+[backend] [SERVER] Initial port 3000 cleanup successful
+[backend] [SERVER] Startup attempt 1/3
+[backend] [SERVER] Initializing server...
+[backend] [FIREBASE] Initialization attempt 1/3
+[backend] [FIREBASE] Initializing Firebase Admin...
+[backend] [FIREBASE] Firebase Admin initialized successfully
+[backend] [SERVER] Firebase Admin initialized successfully
+[backend] [ROUTES] Starting route registration...
+[backend] [SERVER] Routes registered successfully
+[backend] [SERVER] Server is listening on port 3000
+[backend] [SERVER] Server started successfully
+[backend] [API] GET /api/stats
+[backend] [API] GET /api/stats
+[backend] [API] GET /api/stats
+[backend] [API] GET /api/stats
+[backend] [AUTH] Verifying token...
+[backend] [AUTH] Token verified for user admin@groomery.in
+[backend] [AUTH] Token verification failed: TypeError: firebaseApp.getOrInitService is not a function
+[backend]     at getDatabaseInstance (/home/runner/GroomITManager/node_modules/firebase-admin/lib/database/index.js:101:35)
+[backend]     at getDatabase (/home/runner/GroomITManager/node_modules/firebase-admin/lib/database/index.js:64:12)
+[backend]     at getUserRole (/home/runner/GroomITManager/server/firebase.ts:240:14)
+[backend]     at authenticateFirebase (/home/runner/GroomITManager/server/middleware/auth.ts:92:30)
+[backend]     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+[backend] GET /api/staff 401 637ms
+[backend] [API] GET /api/stats
+[backend] [API] GET /api/stats
+[backend] [AUTH] Verifying token...
+[backend] [AUTH] Token verified for user admin@groomery.in
+[backend] [AUTH] Token verification failed: TypeError: firebaseApp.getOrInitService is not a function
+[backend]     at getDatabaseInstance (/home/runner/GroomITManager/node_modules/firebase-admin/lib/database/index.js:101:35)
+[backend]     at getDatabase (/home/runner/GroomITManager/node_modules/firebase-admin/lib/database/index.js:64:12)
+[backend]     at getUserRole (/home/runner/GroomITManager/server/firebase.ts:240:14)
+[backend]     at authenticateFirebase (/home/runner/GroomITManager/server/middleware/auth.ts:92:30)
+[backend]     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+[backend] GET /api/staff 401 343ms
+[backend] [AUTH] Verifying token...
+[backend] [AUTH] Token verified for user admin@groomery.in
+[backend] [AUTH] Token verification failed: TypeError: firebaseApp.getOrInitService is not a function
+[backend]     at getDatabaseInstance (/home/runner/GroomITManager/node_modules/firebase-admin/lib/database/index.js:101:35)
+[backend]     at getDatabase (/home/runner/GroomITManager/node_modules/firebase-admin/lib/database/index.js:64:12)
+[backend]     at getUserRole (/home/runner/GroomITManager/server/firebase.ts:240:14)
+[backend]     at authenticateFirebase (/home/runner/GroomITManager/server/middleware/auth.ts:92:30)
+[backend]     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+[backend] GET /api/staff 401 288ms

@@ -1,0 +1,33 @@
+Checking Firebase environment variables...
+use-inventory.ts:101 FETCH_INVENTORY: Starting to fetch inventory items
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+firebase.ts:31 FIREBASE_INIT: Firebase initialized successfully
+use-inventory.ts:112 FETCH_INVENTORY: Processing item data: {id: 'IctkQ7zzpjxCQOHJAAOo', data: {…}}data: {description: null, updated_at: _Timestamp, quantity: 5000, name: 'Hydra - Volumizing', cost_per_unit: 0, …}id: "IctkQ7zzpjxCQOHJAAOo"[[Prototype]]: Object
+use-inventory.ts:148 FETCH_INVENTORY: Successfully parsed item: {id: 'IctkQ7zzpjxCQOHJAAOo', item: {…}}id: "IctkQ7zzpjxCQOHJAAOo"item: {item_id: 'IctkQ7zzpjxCQOHJAAOo', name: 'Hydra - Volumizing', description: null, quantity: 5000, minimum_quantity: 5, …}[[Prototype]]: Object
+use-inventory.ts:156 FETCH_INVENTORY: Successfully fetched inventory {count: 1}count: 1[[Prototype]]: Object
+use-services.ts:77 FETCH_SERVICES: Completed fetching services {count: 2, services: Array(2)}count: 2services: (2) [{…}, {…}][[Prototype]]: Object
+ServicesPage.tsx:307 Loading service with consumables: []length: 0[[Prototype]]: Array(0)
+ServicesPage.tsx:602 Current form data: {name: 'Service One', description: 'Service One Test', category: 'Service', duration: 30, price: 99, …}category: "Service"consumables: []description: "Service One Test"discount_percentage: 0duration: 30name: "Service One"price: 99required_categories: ['Shampoo']selectedAddons: []selectedServices: [][[Prototype]]: Object
+ServicesPage.tsx:604 Setting categories: ['Shampoo']0: "Shampoo"length: 1[[Prototype]]: Array(0)
+ServicesPage.tsx:605 Updated categories: ['Shampoo']0: "Shampoo"length: 1[[Prototype]]: Array(0)
+ServicesPage.tsx:258 Error processing service: TypeError: Cannot read properties of undefined (reading 'length')
+    at onSubmit (ServicesPage.tsx:215:41)
+    at chunk-VYIIT4SD.js?v=177750f0:1694:15
+onSubmit @ ServicesPage.tsx:258
+(anonymous) @ chunk-VYIIT4SD.js?v=177750f0:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=177750f0:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=177750f0:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=177750f0:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=177750f0:3736
+executeDispatch @ chunk-DRXX46FI.js?v=177750f0:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=177750f0:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=177750f0:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=177750f0:7051
+(anonymous) @ chunk-DRXX46FI.js?v=177750f0:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=177750f0:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=177750f0:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=177750f0:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=177750f0:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=177750f0:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=177750f0:5449Understand this errorAI

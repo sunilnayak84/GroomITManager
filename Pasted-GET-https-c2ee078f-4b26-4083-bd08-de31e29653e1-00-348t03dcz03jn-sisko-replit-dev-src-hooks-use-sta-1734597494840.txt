@@ -1,0 +1,73 @@
+GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/hooks/use-staff-management.ts net::ERR_ABORTED 500 (Internal Server Error)Understand this errorAI
+main.tsx:69 Global error: {message: 'Uncaught TypeError: Failed to fetch dynamically im…3dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-34…e_modules/.vite/deps/chunk-C4LRGUK4.js?v=bcdbbe4a', lineno: 903, colno: 13, error: TypeError: Failed to fetch dynamically imported module: https://c2ee078f-4b26-4083-bd08-de31e29653e…}
+window.onerror @ main.tsx:69
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=bcdbbe4a:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=bcdbbe4a:3733
+beginWork$1 @ chunk-DRXX46FI.js?v=bcdbbe4a:19733
+performUnitOfWork @ chunk-DRXX46FI.js?v=bcdbbe4a:19166
+workLoopConcurrent @ chunk-DRXX46FI.js?v=bcdbbe4a:19157
+renderRootConcurrent @ chunk-DRXX46FI.js?v=bcdbbe4a:19132
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=bcdbbe4a:18646
+workLoop @ chunk-DRXX46FI.js?v=bcdbbe4a:197
+flushWork @ chunk-DRXX46FI.js?v=bcdbbe4a:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=bcdbbe4a:384
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:123Understand this errorAI
+chunk-C4LRGUK4.js?v=bcdbbe4a:903 Uncaught TypeError: Failed to fetch dynamically imported module: https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsxUnderstand this errorAI
+main.tsx:69 Global error: {message: 'Uncaught TypeError: Failed to fetch dynamically im…3dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-34…e_modules/.vite/deps/chunk-C4LRGUK4.js?v=bcdbbe4a', lineno: 903, colno: 13, error: TypeError: Failed to fetch dynamically imported module: https://c2ee078f-4b26-4083-bd08-de31e29653e…}
+window.onerror @ main.tsx:69
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=bcdbbe4a:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=bcdbbe4a:3733
+beginWork$1 @ chunk-DRXX46FI.js?v=bcdbbe4a:19733
+performUnitOfWork @ chunk-DRXX46FI.js?v=bcdbbe4a:19166
+workLoopSync @ chunk-DRXX46FI.js?v=bcdbbe4a:19105
+renderRootSync @ chunk-DRXX46FI.js?v=bcdbbe4a:19084
+recoverFromConcurrentError @ chunk-DRXX46FI.js?v=bcdbbe4a:18704
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=bcdbbe4a:18652
+workLoop @ chunk-DRXX46FI.js?v=bcdbbe4a:197
+flushWork @ chunk-DRXX46FI.js?v=bcdbbe4a:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=bcdbbe4a:384
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:123Understand this errorAI
+chunk-C4LRGUK4.js?v=bcdbbe4a:903 Uncaught TypeError: Failed to fetch dynamically imported module: https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsxUnderstand this errorAI
+chunk-DRXX46FI.js?v=bcdbbe4a:14016 The above error occurred in one of your React components:
+
+    at Lazy
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=bcdbbe4a:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=bcdbbe4a:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=bcdbbe4a:18:5)
+    at div
+    at main
+    at main
+    at _c9 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:398:48)
+    at div
+    at div
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-AD2NKST5.js?v=bcdbbe4a:38:15)
+    at TooltipProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=bcdbbe4a:290:5)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:54:7
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:28:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:136:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=bcdbbe4a:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=bcdbbe4a:18:5)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+logCapturedError @ chunk-DRXX46FI.js?v=bcdbbe4a:14016
+callback @ chunk-DRXX46FI.js?v=bcdbbe4a:14062
+callCallback @ chunk-DRXX46FI.js?v=bcdbbe4a:10491
+commitUpdateQueue @ chunk-DRXX46FI.js?v=bcdbbe4a:10508
+commitLayoutEffectOnFiber @ chunk-DRXX46FI.js?v=bcdbbe4a:17043
+commitLayoutMountEffects_complete @ chunk-DRXX46FI.js?v=bcdbbe4a:17948
+commitLayoutEffects_begin @ chunk-DRXX46FI.js?v=bcdbbe4a:17937
+commitLayoutEffects_begin @ chunk-DRXX46FI.js?v=bcdbbe4a:17918
+commitLayoutEffects @ chunk-DRXX46FI.js?v=bcdbbe4a:17888
+commitRootImpl @ chunk-DRXX46FI.js?v=bcdbbe4a:19321
+commitRoot @ chunk-DRXX46FI.js?v=bcdbbe4a:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=bcdbbe4a:18728
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=bcdbbe4a:18686
+workLoop @ chunk-DRXX46FI.js?v=bcdbbe4a:197
+flushWork @ chunk-DRXX46FI.js?v=bcdbbe4a:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=bcdbbe4a:384Understand this errorAI

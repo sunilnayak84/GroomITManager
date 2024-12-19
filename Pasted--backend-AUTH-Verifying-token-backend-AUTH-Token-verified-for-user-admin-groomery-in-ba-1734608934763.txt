@@ -1,0 +1,27 @@
+[backend] [AUTH] Verifying token...
+[backend] [AUTH] Token verified for user admin@groomery.in
+[backend] [AUTH] Token verification failed: TypeError: firebaseApp.getOrInitService is not a function
+[backend]     at getDatabaseInstance (/home/runner/GroomITManager/node_modules/firebase-admin/lib/database/index.js:101:35)
+[backend]     at getDatabase (/home/runner/GroomITManager/node_modules/firebase-admin/lib/database/index.js:64:12)
+[backend]     at getUserRole (/home/runner/GroomITManager/server/firebase.ts:233:14)
+[backend]     at authenticateFirebase (/home/runner/GroomITManager/server/middleware/auth.ts:92:30)
+[backend]     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+[backend] GET /api/staff 401 652ms
+[backend] [AUTH] Verifying token...
+[backend] [AUTH] Token verified for user admin@groomery.in
+[backend] [AUTH] Token verification failed: TypeError: firebaseApp.getOrInitService is not a function
+[backend]     at getDatabaseInstance (/home/runner/GroomITManager/node_modules/firebase-admin/lib/database/index.js:101:35)
+[backend]     at getDatabase (/home/runner/GroomITManager/node_modules/firebase-admin/lib/database/index.js:64:12)
+[backend]     at getUserRole (/home/runner/GroomITManager/server/firebase.ts:233:14)
+[backend]     at authenticateFirebase (/home/runner/GroomITManager/server/middleware/auth.ts:92:30)
+[backend]     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+[backend] GET /api/staff 401 306ms
+[backend] [AUTH] Verifying token...
+[backend] [AUTH] Token verified for user admin@groomery.in
+[backend] [AUTH] Token verification failed: TypeError: firebaseApp.getOrInitService is not a function
+[backend]     at getDatabaseInstance (/home/runner/GroomITManager/node_modules/firebase-admin/lib/database/index.js:101:35)
+[backend]     at getDatabase (/home/runner/GroomITManager/node_modules/firebase-admin/lib/database/index.js:64:12)
+[backend]     at getUserRole (/home/runner/GroomITManager/server/firebase.ts:233:14)
+[backend]     at authenticateFirebase (/home/runner/GroomITManager/server/middleware/auth.ts:92:30)
+[backend]     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+[backend] GET /api/staff 401 313ms

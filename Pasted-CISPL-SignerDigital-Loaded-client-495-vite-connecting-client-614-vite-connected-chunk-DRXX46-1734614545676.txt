@@ -1,0 +1,65 @@
+CISPL SignerDigital Loaded
+client:495 [vite] connecting...
+client:614 [vite] connected.
+chunk-DRXX46FI.js?v=f966ddc1:21507 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+AppointmentForm.tsx:80 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:80 [APPOINTMENT] Available groomers: []
+use-appointments.ts:68 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:76 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:79 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+firebase.ts:31 FIREBASE_INIT: Firebase initialized successfully
+use-appointments.ts:88 FETCH_APPOINTMENTS: Found 3 active appointments
+use-appointments.ts:92 FETCH_APPOINTMENTS: Active appointment: 3qOfGw4OM09MGQVvKeR0 {updatedAt: null, deletedAt: null, branchId: '1', notes: null, createdAt: _Timestamp, …}
+use-appointments.ts:92 FETCH_APPOINTMENTS: Active appointment: kzUNAAUgQpWBSk3YSZlz {productsUsed: null, deletedAt: null, branchId: '1', updatedAt: _Timestamp, services: Array(1), …}
+use-appointments.ts:92 FETCH_APPOINTMENTS: Active appointment: lUP7FtF1qPz28fSZH5SO {notes: null, createdAt: _Timestamp, totalPrice: 222, totalDuration: 30, groomerId: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', …}
+use-appointments.ts:94 FETCH_APPOINTMENTS: Got snapshot with 3 active documents
+use-appointments.ts:107 FETCH_APPOINTMENTS: Processing appointment 3qOfGw4OM09MGQVvKeR0
+use-services.ts:77 FETCH_SERVICES: Completed fetching services {count: 4, services: Array(4)}
+AppointmentForm.tsx:80 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:80 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:80 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:80 [APPOINTMENT] Available groomers: []
+use-pets.ts:115 FETCH_PETS: Completed fetching pets {totalPets: 1, pets: Array(1)}
+AppointmentForm.tsx:80 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:80 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:80 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:80 [APPOINTMENT] Available groomers: []
+use-appointments.ts:221 FETCH_APPOINTMENTS: Fetching service data for ID: AQHbTzU3YledKBcjrVBI
+AppointmentForm.tsx:66 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:80 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:66 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:80 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:66 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:80 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:66 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:80 [APPOINTMENT] Available groomers: []
+use-appointments.ts:226 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(1), isActive: true, description: '222', duration: 30, discount_percentage: 0, …}
+use-appointments.ts:238 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:107 FETCH_APPOINTMENTS: Processing appointment kzUNAAUgQpWBSk3YSZlz
+use-appointments.ts:221 FETCH_APPOINTMENTS: Fetching service data for ID: AQHbTzU3YledKBcjrVBI
+use-appointments.ts:226 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(1), isActive: true, description: '222', duration: 30, discount_percentage: 0, …}
+use-appointments.ts:238 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:107 FETCH_APPOINTMENTS: Processing appointment lUP7FtF1qPz28fSZH5SO
+use-appointments.ts:221 FETCH_APPOINTMENTS: Fetching service data for ID: AQHbTzU3YledKBcjrVBI
+use-appointments.ts:226 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(1), isActive: true, description: '222', duration: 30, discount_percentage: 0, …}
+use-appointments.ts:238 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:283 FETCH_APPOINTMENTS: Processed 3 appointments. Success: 3, Errors: 0
+AppointmentForm.tsx:66 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:80 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:66 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:80 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:66 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:80 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:66 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:80 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:66 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:80 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:66 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:80 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:66 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:80 [APPOINTMENT] Available groomers: []
+AppointmentForm.tsx:66 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:80 [APPOINTMENT] Available groomers: []

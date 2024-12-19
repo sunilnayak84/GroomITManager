@@ -1,0 +1,171 @@
+[backend] [SERVER] Starting server initialization...
+[backend] [PORT_CLEANUP] Starting cleanup for port 3000...
+[backend] [PORT_CHECK] Port 3000 is available
+[backend] [PORT_CLEANUP] Port 3000 is already available
+[backend] [SERVER] Initial port 3000 cleanup successful
+[backend] [SERVER] Startup attempt 1/3
+[backend] [SERVER] Initializing server...
+[backend] [FIREBASE] Initialization attempt 1/3
+[backend] [FIREBASE] Initializing Firebase Admin...
+[backend] [FIREBASE] Firebase Admin initialized successfully
+[backend] [SERVER] Firebase Admin initialized successfully
+[backend] [ROUTES] Starting route registration...
+[backend] [SERVER] Routes registered successfully
+[backend] [SERVER] Server is listening on port 3000
+[backend] [SERVER] Server started successfully
+[backend] [API] GET /api/stats
+[backend] [API] GET /api/stats
+[backend] [API] GET /api/stats
+[backend] [API] GET /api/stats
+[backend] [API] GET /api/stats
+[backend] [API] GET /api/stats
+[backend] [AUTH] Verifying token...
+[backend] [AUTH] Token verified for user admin@groomery.in
+[backend] [AUTH] User role data: { role: 'admin', permissions: [ 'all' ] }
+[backend] [AUTH] Custom claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] User has admin claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] Ensured admin has all admin permissions: [
+[backend]   'manage_appointments',   'view_appointments',
+[backend]   'create_appointments',   'cancel_appointments',
+[backend]   'manage_customers',      'view_customers',
+[backend]   'create_customers',      'edit_customer_info',
+[backend]   'manage_services',       'view_services',
+[backend]   'create_services',       'edit_services',
+[backend]   'manage_inventory',      'view_inventory',
+[backend]   'update_stock',          'manage_consumables',
+[backend]   'manage_staff_schedule', 'view_staff_schedule',
+[backend]   'manage_own_schedule',   'view_analytics',
+[backend]   'view_reports',          'view_financial_reports',
+[backend]   'all',                   'manage_users',
+[backend]   'manage_roles'
+[backend] ]
+[backend] [AUTH] Verified admin role for user: admin@groomery.in
+[backend] [AUTH] Final role assignment: { role: 'admin', permissionsCount: 25, isAdmin: true }
+[backend] [AUTH] User authenticated: { email: 'admin@groomery.in', role: 'admin', permissions: 25 }
+[backend] [AUTH] Checking role access: {
+[backend]   userRole: 'admin',
+[backend]   allowedRoles: [ 'admin', 'manager' ],
+[backend]   path: '/api/staff'
+[backend] }
+[backend] [AUTH] Admin access granted: { path: '/api/staff', method: 'GET' }
+[backend] [STAFF] Fetching all staff members
+[backend] [STAFF] Error fetching staff: ReferenceError: getFirestore is not defined
+[backend]     at <anonymous> (/home/runner/GroomITManager/server/routes.ts:605:25)
+[backend]     at Layer.handle [as handle_request] (/home/runner/GroomITManager/node_modules/express/lib/router/layer.js:95:5)
+[backend]     at next (/home/runner/GroomITManager/node_modules/express/lib/router/route.js:149:13)
+[backend]     at <anonymous> (/home/runner/GroomITManager/server/middleware/auth.ts:210:14)
+[backend]     at Layer.handle [as handle_request] (/home/runner/GroomITManager/node_modules/express/lib/router/layer.js:95:5)
+[backend]     at next (/home/runner/GroomITManager/node_modules/express/lib/router/route.js:149:13)
+[backend]     at authenticateFirebase (/home/runner/GroomITManager/server/middleware/auth.ts:171:7)
+[backend]     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+[backend] GET /api/staff 500 943ms
+[backend] [AUTH] Verifying token...
+[backend] [AUTH] Token verified for user admin@groomery.in
+[backend] [AUTH] User role data: { role: 'admin', permissions: [ 'all' ] }
+[backend] [AUTH] Custom claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] User has admin claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] Ensured admin has all admin permissions: [
+[backend]   'manage_appointments',   'view_appointments',
+[backend]   'create_appointments',   'cancel_appointments',
+[backend]   'manage_customers',      'view_customers',
+[backend]   'create_customers',      'edit_customer_info',
+[backend]   'manage_services',       'view_services',
+[backend]   'create_services',       'edit_services',
+[backend]   'manage_inventory',      'view_inventory',
+[backend]   'update_stock',          'manage_consumables',
+[backend]   'manage_staff_schedule', 'view_staff_schedule',
+[backend]   'manage_own_schedule',   'view_analytics',
+[backend]   'view_reports',          'view_financial_reports',
+[backend]   'all',                   'manage_users',
+[backend]   'manage_roles'
+[backend] ]
+[backend] [AUTH] Verified admin role for user: admin@groomery.in
+[backend] [AUTH] Final role assignment: { role: 'admin', permissionsCount: 25, isAdmin: true }
+[backend] [AUTH] User authenticated: { email: 'admin@groomery.in', role: 'admin', permissions: 25 }
+[backend] [AUTH] Checking role access: {
+[backend]   userRole: 'admin',
+[backend]   allowedRoles: [ 'admin', 'manager' ],
+[backend]   path: '/api/staff'
+[backend] }
+[backend] [AUTH] Admin access granted: { path: '/api/staff', method: 'GET' }
+[backend] [STAFF] Fetching all staff members
+[backend] [STAFF] Error fetching staff: ReferenceError: getFirestore is not defined
+[backend]     at <anonymous> (/home/runner/GroomITManager/server/routes.ts:605:25)
+[backend]     at Layer.handle [as handle_request] (/home/runner/GroomITManager/node_modules/express/lib/router/layer.js:95:5)
+[backend]     at next (/home/runner/GroomITManager/node_modules/express/lib/router/route.js:149:13)
+[backend]     at <anonymous> (/home/runner/GroomITManager/server/middleware/auth.ts:210:14)
+[backend]     at Layer.handle [as handle_request] (/home/runner/GroomITManager/node_modules/express/lib/router/layer.js:95:5)
+[backend]     at next (/home/runner/GroomITManager/node_modules/express/lib/router/route.js:149:13)
+[backend]     at authenticateFirebase (/home/runner/GroomITManager/server/middleware/auth.ts:171:7)
+[backend]     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+[backend] GET /api/staff 500 368ms
+[backend] [AUTH] Verifying token...
+[backend] [AUTH] Token verified for user admin@groomery.in
+[backend] [AUTH] User role data: { role: 'admin', permissions: [ 'all' ] }
+[backend] [AUTH] Custom claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] User has admin claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] Ensured admin has all admin permissions: [
+[backend]   'manage_appointments',   'view_appointments',
+[backend]   'create_appointments',   'cancel_appointments',
+[backend]   'manage_customers',      'view_customers',
+[backend]   'create_customers',      'edit_customer_info',
+[backend]   'manage_services',       'view_services',
+[backend]   'create_services',       'edit_services',
+[backend]   'manage_inventory',      'view_inventory',
+[backend]   'update_stock',          'manage_consumables',
+[backend]   'manage_staff_schedule', 'view_staff_schedule',
+[backend]   'manage_own_schedule',   'view_analytics',
+[backend]   'view_reports',          'view_financial_reports',
+[backend]   'all',                   'manage_users',
+[backend]   'manage_roles'
+[backend] ]
+[backend] [AUTH] Verified admin role for user: admin@groomery.in
+[backend] [AUTH] Final role assignment: { role: 'admin', permissionsCount: 25, isAdmin: true }
+[backend] [AUTH] User authenticated: { email: 'admin@groomery.in', role: 'admin', permissions: 25 }
+[backend] [AUTH] Checking role access: {
+[backend]   userRole: 'admin',
+[backend]   allowedRoles: [ 'admin', 'manager' ],
+[backend]   path: '/api/staff'
+[backend] }
+[backend] [AUTH] Admin access granted: { path: '/api/staff', method: 'GET' }
+[backend] [STAFF] Fetching all staff members
+[backend] GET /api/staff 500 359ms
+[backend] [STAFF] Error fetching staff: ReferenceError: getFirestore is not defined
+[backend]     at <anonymous> (/home/runner/GroomITManager/server/routes.ts:605:25)
+[backend]     at Layer.handle [as handle_request] (/home/runner/GroomITManager/node_modules/express/lib/router/layer.js:95:5)
+[backend]     at next (/home/runner/GroomITManager/node_modules/express/lib/router/route.js:149:13)
+[backend]     at <anonymous> (/home/runner/GroomITManager/server/middleware/auth.ts:210:14)
+[backend]     at Layer.handle [as handle_request] (/home/runner/GroomITManager/node_modules/express/lib/router/layer.js:95:5)
+[backend]     at next (/home/runner/GroomITManager/node_modules/express/lib/router/route.js:149:13)
+[backend]     at authenticateFirebase (/home/runner/GroomITManager/server/middleware/auth.ts:171:7)
+[backend]     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)

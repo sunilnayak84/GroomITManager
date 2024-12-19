@@ -1,0 +1,21 @@
+FIREBASE_INIT: Firebase initialized successfully
+use-inventory.ts:112 FETCH_INVENTORY: Processing item data: {id: 'IctkQ7zzpjxCQOHJAAOo', data: {…}}
+use-inventory.ts:148 FETCH_INVENTORY: Successfully parsed item: {id: 'IctkQ7zzpjxCQOHJAAOo', item: {…}}
+use-inventory.ts:156 FETCH_INVENTORY: Successfully fetched inventory {count: 1}
+use-services.ts:77 FETCH_SERVICES: Completed fetching services {count: 2, services: Array(2)}
+ConsumablesModal.tsx:51 Initial consumables received: []
+ServicesPage.tsx:322 Loading service with consumables: []
+ConsumablesModal.tsx:51 Initial consumables received: []
+ServicesPage.tsx:617 Current form data: {name: 'Service One', description: 'Service One Test', category: 'Service', duration: 30, price: 99, …}
+ServicesPage.tsx:619 Setting categories: ['Shampoo']0: "Shampoo"length: 1[[Prototype]]: Array(0)
+ServicesPage.tsx:620 Updated categories: ['Shampoo']0: "Shampoo"length: 1[[Prototype]]: Array(0)
+ServicesPage.tsx:617 Current form data: {name: 'Service One', description: 'Service One Test', category: 'Service', duration: 30, price: 99, …}
+ServicesPage.tsx:619 Setting categories: (2) ['Shampoo', 'Conditioner']0: "Shampoo"1: "Conditioner"length: 2[[Prototype]]: Array(0)
+ServicesPage.tsx:620 Updated categories: (2) ['Shampoo', 'Conditioner']0: "Shampoo"1: "Conditioner"length: 2[[Prototype]]: Array(0)
+use-services.ts:179 Update payload with categories: []length: 0[[Prototype]]: Array(0)
+use-services.ts:181 Update payload: {name: 'Service One', description: 'Service One Test', category: 'Service', duration: 30, price: 99, …}category: "Service"consumables: []description: "Service One Test"discount_percentage: 0duration: 30isActive: truename: "Service One"price: 99required_categories: []selectedAddons: []selectedServices: []updated_at: "2024-12-19T16:11:32.072Z"[[Prototype]]: Object
+use-services.ts:184 Processing consumables for update: []
+use-services.ts:200 Final processed update consumables: []
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+use-services.ts:77 FETCH_SERVICES: Completed fetching services {count: 2, services: Array(2)}count: 2services: (2) [{…}, {…}][[Prototype]]: Object
+ConsumablesModal.tsx:51 Initial consumables received: []

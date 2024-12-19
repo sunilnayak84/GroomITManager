@@ -1,0 +1,54 @@
+[frontend] 
+[frontend] > groom-it-manager-client@0.1.0 dev
+[frontend] > vite --port 5174 --host 0.0.0.0
+[frontend] 
+[backend] 
+[backend] node:internal/modules/run_main:129
+[backend]     triggerUncaughtException(
+[backend]     ^
+[backend] Error [TransformError]: Transform failed with 1 error:
+[backend] /home/runner/GroomITManager/server/firebase.ts:266:0: ERROR: Expected "finally" but found "async"
+[backend]     at failureErrorWithLog (/home/runner/GroomITManager/node_modules/tsx/node_modules/esbuild/lib/main.js:1476:15)
+[backend]     at /home/runner/GroomITManager/node_modules/tsx/node_modules/esbuild/lib/main.js:755:50
+[backend]     at responseCallbacks.<computed> (/home/runner/GroomITManager/node_modules/tsx/node_modules/esbuild/lib/main.js:622:9)
+[backend]     at handleIncomingPacket (/home/runner/GroomITManager/node_modules/tsx/node_modules/esbuild/lib/main.js:677:12)
+[backend]     at Socket.readFromStdout (/home/runner/GroomITManager/node_modules/tsx/node_modules/esbuild/lib/main.js:600:7)
+[backend]     at Socket.emit (node:events:519:28)
+[backend]     at addChunk (node:internal/streams/readable:559:12)
+[backend]     at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+[backend]     at Readable.push (node:internal/streams/readable:390:5)
+[backend]     at Pipe.onStreamRead (node:internal/stream_base_commons:191:23)
+[backend] 
+[backend] Node.js v20.16.0
+[frontend] 
+[frontend]   VITE v5.4.11  ready in 287 ms
+[frontend] 
+[frontend]   ➜  Local:   http://localhost:5174/
+[frontend]   ➜  Network: http://172.31.196.64:5174/
+[frontend] 11:52:52 AM [vite] http proxy error: /api/stats
+[frontend] Error: connect ECONNREFUSED 0.0.0.0:3000
+[frontend]     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1607:16)
+[frontend] 11:52:52 AM [vite] http proxy error: /api/stats
+[frontend] Error: connect ECONNREFUSED 0.0.0.0:3000
+[frontend]     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1607:16)
+[frontend] 11:52:53 AM [vite] http proxy error: /api/stats
+[frontend] Error: connect ECONNREFUSED 0.0.0.0:3000
+[frontend]     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1607:16)
+[frontend] 11:52:53 AM [vite] http proxy error: /api/stats
+[frontend] Error: connect ECONNREFUSED 0.0.0.0:3000
+[frontend]     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1607:16)
+[frontend] 11:52:55 AM [vite] http proxy error: /api/stats
+[frontend] Error: connect ECONNREFUSED 0.0.0.0:3000
+[frontend]     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1607:16)
+[frontend] 11:52:55 AM [vite] http proxy error: /api/stats
+[frontend] Error: connect ECONNREFUSED 0.0.0.0:3000
+[frontend]     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1607:16)
+[frontend] 11:53:07 AM [vite] http proxy error: /api/staff
+[frontend] Error: connect ECONNREFUSED 0.0.0.0:3000
+[frontend]     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1607:16)
+[frontend] 11:53:09 AM [vite] http proxy error: /api/staff
+[frontend] Error: connect ECONNREFUSED 0.0.0.0:3000
+[frontend]     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1607:16)
+[frontend] 11:53:11 AM [vite] http proxy error: /api/staff
+[frontend] Error: connect ECONNREFUSED 0.0.0.0:3000
+[frontend]     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1607:16)

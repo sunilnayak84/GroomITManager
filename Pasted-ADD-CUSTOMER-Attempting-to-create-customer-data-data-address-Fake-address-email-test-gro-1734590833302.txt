@@ -1,0 +1,200 @@
+ADD_CUSTOMER: Attempting to create customer {data: {…}}data: address: "Fake address"email: "test@groomery.in"firstName: "test"gender: "male"lastName: "user"phone: "9966558877"[[Prototype]]: Object[[Prototype]]: Object
+use-customers.ts:31 
+        
+        
+       POST https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDbosAxUqVaKMAcwcMyjK_7mtk9s9LpJ9w 400 (Bad Request)
+(anonymous) @ firebase_auth.js?v=bcdbbe4a:1079
+await in (anonymous)
+_performFetchWithErrorHandling @ firebase_auth.js?v=bcdbbe4a:1088
+_performApiRequest @ firebase_auth.js?v=bcdbbe4a:1048
+_performSignInRequest @ firebase_auth.js?v=bcdbbe4a:1123
+signUp @ firebase_auth.js?v=bcdbbe4a:4389
+handleRecaptchaFlow @ firebase_auth.js?v=bcdbbe4a:3134
+createUserWithEmailAndPassword @ firebase_auth.js?v=bcdbbe4a:4772
+mutationFn @ use-customers.ts:31
+fn @ @tanstack_react-query.js?v=bcdbbe4a:1188
+run @ @tanstack_react-query.js?v=bcdbbe4a:493
+start @ @tanstack_react-query.js?v=bcdbbe4a:535
+execute @ @tanstack_react-query.js?v=bcdbbe4a:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=bcdbbe4a:2621
+onSubmit @ CustomersPage.tsx:304
+(anonymous) @ chunk-VYIIT4SD.js?v=bcdbbe4a:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=bcdbbe4a:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=bcdbbe4a:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=bcdbbe4a:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=bcdbbe4a:3736
+executeDispatch @ chunk-DRXX46FI.js?v=bcdbbe4a:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=bcdbbe4a:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=bcdbbe4a:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=bcdbbe4a:7051
+(anonymous) @ chunk-DRXX46FI.js?v=bcdbbe4a:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=bcdbbe4a:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=bcdbbe4a:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=bcdbbe4a:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=bcdbbe4a:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=bcdbbe4a:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=bcdbbe4a:5449Understand this errorAI
+use-customers.ts:42 Error creating Firebase Auth user: FirebaseError: Firebase: Error (auth/email-already-in-use).
+    at createErrorInternal (firebase_auth.js?v=bcdbbe4a:689:37)
+    at _createError (firebase_auth.js?v=bcdbbe4a:657:10)
+    at _makeTaggedError (firebase_auth.js?v=bcdbbe4a:1178:17)
+    at _performFetchWithErrorHandling (firebase_auth.js?v=bcdbbe4a:1104:15)
+    at async _performSignInRequest (firebase_auth.js?v=bcdbbe4a:1123:26)
+    at async createUserWithEmailAndPassword (firebase_auth.js?v=bcdbbe4a:4780:20)
+    at async Object.mutationFn (use-customers.ts:31:26)
+mutationFn @ use-customers.ts:42
+await in mutationFn
+fn @ @tanstack_react-query.js?v=bcdbbe4a:1188
+run @ @tanstack_react-query.js?v=bcdbbe4a:493
+start @ @tanstack_react-query.js?v=bcdbbe4a:535
+execute @ @tanstack_react-query.js?v=bcdbbe4a:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=bcdbbe4a:2621
+onSubmit @ CustomersPage.tsx:304
+(anonymous) @ chunk-VYIIT4SD.js?v=bcdbbe4a:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=bcdbbe4a:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=bcdbbe4a:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=bcdbbe4a:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=bcdbbe4a:3736
+executeDispatch @ chunk-DRXX46FI.js?v=bcdbbe4a:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=bcdbbe4a:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=bcdbbe4a:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=bcdbbe4a:7051
+(anonymous) @ chunk-DRXX46FI.js?v=bcdbbe4a:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=bcdbbe4a:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=bcdbbe4a:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=bcdbbe4a:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=bcdbbe4a:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=bcdbbe4a:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=bcdbbe4a:5449Understand this errorAI
+use-customers.ts:31 
+        
+        
+       POST https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDbosAxUqVaKMAcwcMyjK_7mtk9s9LpJ9w 400 (Bad Request)
+(anonymous) @ firebase_auth.js?v=bcdbbe4a:1079
+await in (anonymous)
+_performFetchWithErrorHandling @ firebase_auth.js?v=bcdbbe4a:1088
+_performApiRequest @ firebase_auth.js?v=bcdbbe4a:1048
+_performSignInRequest @ firebase_auth.js?v=bcdbbe4a:1123
+signUp @ firebase_auth.js?v=bcdbbe4a:4389
+handleRecaptchaFlow @ firebase_auth.js?v=bcdbbe4a:3134
+createUserWithEmailAndPassword @ firebase_auth.js?v=bcdbbe4a:4772
+mutationFn @ use-customers.ts:31
+fn @ @tanstack_react-query.js?v=bcdbbe4a:1188
+run @ @tanstack_react-query.js?v=bcdbbe4a:493
+(anonymous) @ @tanstack_react-query.js?v=bcdbbe4a:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=bcdbbe4a:514
+Promise.catch
+run @ @tanstack_react-query.js?v=bcdbbe4a:497
+start @ @tanstack_react-query.js?v=bcdbbe4a:535
+execute @ @tanstack_react-query.js?v=bcdbbe4a:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=bcdbbe4a:2621
+onSubmit @ CustomersPage.tsx:304
+(anonymous) @ chunk-VYIIT4SD.js?v=bcdbbe4a:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=bcdbbe4a:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=bcdbbe4a:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=bcdbbe4a:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=bcdbbe4a:3736
+executeDispatch @ chunk-DRXX46FI.js?v=bcdbbe4a:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=bcdbbe4a:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=bcdbbe4a:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=bcdbbe4a:7051
+(anonymous) @ chunk-DRXX46FI.js?v=bcdbbe4a:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=bcdbbe4a:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=bcdbbe4a:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=bcdbbe4a:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=bcdbbe4a:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=bcdbbe4a:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=bcdbbe4a:5449Understand this errorAI
+use-customers.ts:42 Error creating Firebase Auth user: FirebaseError: Firebase: Error (auth/email-already-in-use).
+    at createErrorInternal (firebase_auth.js?v=bcdbbe4a:689:37)
+    at _createError (firebase_auth.js?v=bcdbbe4a:657:10)
+    at _makeTaggedError (firebase_auth.js?v=bcdbbe4a:1178:17)
+    at _performFetchWithErrorHandling (firebase_auth.js?v=bcdbbe4a:1104:15)
+    at async _performSignInRequest (firebase_auth.js?v=bcdbbe4a:1123:26)
+    at async createUserWithEmailAndPassword (firebase_auth.js?v=bcdbbe4a:4780:20)
+    at async Object.mutationFn (use-customers.ts:31:26)
+mutationFn @ use-customers.ts:42
+await in mutationFn
+fn @ @tanstack_react-query.js?v=bcdbbe4a:1188
+run @ @tanstack_react-query.js?v=bcdbbe4a:493
+(anonymous) @ @tanstack_react-query.js?v=bcdbbe4a:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=bcdbbe4a:514
+Promise.catch
+run @ @tanstack_react-query.js?v=bcdbbe4a:497
+start @ @tanstack_react-query.js?v=bcdbbe4a:535
+execute @ @tanstack_react-query.js?v=bcdbbe4a:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=bcdbbe4a:2621
+onSubmit @ CustomersPage.tsx:304
+(anonymous) @ chunk-VYIIT4SD.js?v=bcdbbe4a:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=bcdbbe4a:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=bcdbbe4a:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=bcdbbe4a:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=bcdbbe4a:3736
+executeDispatch @ chunk-DRXX46FI.js?v=bcdbbe4a:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=bcdbbe4a:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=bcdbbe4a:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=bcdbbe4a:7051
+(anonymous) @ chunk-DRXX46FI.js?v=bcdbbe4a:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=bcdbbe4a:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=bcdbbe4a:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=bcdbbe4a:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=bcdbbe4a:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=bcdbbe4a:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=bcdbbe4a:5449Understand this errorAI
+use-customers.ts:143 ADD_CUSTOMER: Mutation error {error: Error: Failed to create user authentication
+    at Object.mutationFn (https://c2ee078f-4b26-4083-bd…, message: 'Failed to create user authentication', stack: 'Error: Failed to create user authentication\n    at…isko.replit.dev/src/hooks/use-customers.ts:26:15)'}error: Error: Failed to create user authentication
+    at Object.mutationFn (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/hooks/use-customers.ts:26:15)message: "Failed to create user authentication"stack: "Error: Failed to create user authentication\n    at Object.mutationFn (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/hooks/use-customers.ts:26:15)"[[Prototype]]: Object
+onError @ use-customers.ts:143
+execute @ @tanstack_react-query.js?v=bcdbbe4a:1253
+await in execute
+mutate @ @tanstack_react-query.js?v=bcdbbe4a:2621
+onSubmit @ CustomersPage.tsx:304
+(anonymous) @ chunk-VYIIT4SD.js?v=bcdbbe4a:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=bcdbbe4a:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=bcdbbe4a:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=bcdbbe4a:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=bcdbbe4a:3736
+executeDispatch @ chunk-DRXX46FI.js?v=bcdbbe4a:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=bcdbbe4a:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=bcdbbe4a:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=bcdbbe4a:7051
+(anonymous) @ chunk-DRXX46FI.js?v=bcdbbe4a:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=bcdbbe4a:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=bcdbbe4a:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=bcdbbe4a:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=bcdbbe4a:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=bcdbbe4a:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=bcdbbe4a:5449Understand this errorAI
+CustomersPage.tsx:320 ADD_CUSTOMER: Error in onSubmit {error: Error: Failed to create user authentication
+    at Object.mutationFn (https://c2ee078f-4b26-4083-bd…, errorMessage: 'Failed to create user authentication', customerData: {…}}customerData: {firstName: 'test', lastName: 'user', email: 'test@groomery.in', phone: '9966558877', address: 'Fake address', …}error: Error: Failed to create user authentication
+    at Object.mutationFn (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/hooks/use-customers.ts:26:15)errorMessage: "Failed to create user authentication"[[Prototype]]: Object
+onSubmit @ CustomersPage.tsx:320
+await in onSubmit
+(anonymous) @ chunk-VYIIT4SD.js?v=bcdbbe4a:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=bcdbbe4a:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=bcdbbe4a:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=bcdbbe4a:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=bcdbbe4a:3736
+executeDispatch @ chunk-DRXX46FI.js?v=bcdbbe4a:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=bcdbbe4a:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=bcdbbe4a:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=bcdbbe4a:7051
+(anonymous) @ chunk-DRXX46FI.js?v=bcdbbe4a:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=bcdbbe4a:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=bcdbbe4a:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=bcdbbe4a:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=bcdbbe4a:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=bcdbbe4a:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=bcdbbe4a:5449Understand this errorAI
