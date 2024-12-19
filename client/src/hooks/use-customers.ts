@@ -3,7 +3,7 @@ import { getDocs, onSnapshot, query, deleteDoc, doc, where, collection, Timestam
 import { customersCollection, createCustomer, updateCustomer as updateCustomerDoc, deleteCustomerAndRelated } from "../lib/firestore";
 import { useEffect } from "react";
 import { db, database } from "../lib/firebase";
-import { getAuth, createUserWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, sendPasswordResetEmail, fetchSignInMethodsForEmail, deleteUser } from "firebase/auth";
 import { ref, set, serverTimestamp } from "firebase/database";
 import { toast } from '@/components/ui/use-toast';
 import { 
