@@ -159,7 +159,7 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
     }
 
     // Initialize and verify database connection
-    const db = getDatabase(firebaseApp);
+    const db = admin.database();
     try {
       await db.ref('.info/connected').once('value');
       console.log('[FIREBASE] Database connection verified');

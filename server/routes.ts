@@ -175,8 +175,8 @@ export function registerRoutes(app: Express) {
       // Ensure content type is set to JSON
       res.setHeader('Content-Type', 'application/json');
       
-      const app = getFirebaseAdmin();
-      const db = getDatabase(app);
+      const app = await getFirebaseAdmin();
+      const db = admin.database();
       const roleFilter = req.query.role as string | undefined;
       
       console.log('[FIREBASE-USERS] Fetching users with role filter:', roleFilter);
