@@ -302,8 +302,8 @@ export default function AppointmentsPage() {
   ];
 
   return (
-    <div className="container mx-auto max-w-7xl space-y-6 px-6">
-      <div className="relative h-48 rounded-xl overflow-hidden">
+    <div className="container mx-auto max-w-7xl space-y-6 px-6 relative z-10">
+      <div className="relative h-48 rounded-xl overflow-hidden z-20">
         <img
           src="https://images.unsplash.com/photo-1516734212186-a967f81ad0d7"
           alt="Professional Pet Grooming Services"
@@ -401,7 +401,7 @@ export default function AppointmentsPage() {
       </div>
 
       {view === 'list' ? (
-        <div className="bg-white rounded-lg border shadow-sm">
+        <div className="bg-white rounded-lg border shadow-sm relative z-30">
           <DataTable
             columns={columns}
             data={filteredAndSortedAppointments as AppointmentWithRelations[]}
