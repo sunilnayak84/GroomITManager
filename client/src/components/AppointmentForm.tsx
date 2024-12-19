@@ -55,9 +55,12 @@ export default function AppointmentForm({ setOpen, initialDate }: AppointmentFor
   const { pets } = usePets();
   const { services } = useServices();
   const { toast } = useToast();
-  const { staffMembers } = useStaff();
-  console.log('[APPOINTMENT] All staff members:', staffMembers);
-  const availableGroomers = staffMembers.filter((staff: Staff) => {
+  const { staffMembers, isLoading: isStaffLoading } = useStaff();
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ['staff'] });
+  }, []);
+  
+  const availableGroomers = (staffMembers || []).filter((staff: Staff) => {
     console.log('[APPOINTMENT] Evaluating staff member:', {
       id: staff.id,
       name: staff.name,

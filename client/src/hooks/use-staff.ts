@@ -10,6 +10,8 @@ export function useStaff() {
   // Fetch staff members
   const { data: staffMembers = [], isLoading } = useQuery({
     queryKey: ['staff'],
+    staleTime: 5 * 60 * 1000, // Keep data fresh for 5 minutes
+    cacheTime: 30 * 60 * 1000, // Cache for 30 minutes
     queryFn: async () => {
       try {
         const token = await auth.currentUser?.getIdToken();
