@@ -7,11 +7,7 @@ import { Input } from "./ui/input";
 import { useForm } from "react-hook-form";
 import { useInventory } from "@/hooks/use-inventory";
 import { useToast } from "./ui/use-toast";
-
-interface ConsumableUsage {
-  itemId: string;
-  quantity: number;
-}
+import { useUser } from "@/hooks/use-user";
 
 interface AppointmentCompletionFormProps {
   isOpen: boolean;
@@ -29,33 +25,36 @@ export function AppointmentCompletionForm({
   onComplete,
 }: AppointmentCompletionFormProps) {
   const { inventory, recordUsage } = useInventory();
+  const { user } = useUser();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm({
     defaultValues: {
-      consumables: [] as ConsumableUsage[],
+      consumables: {} as Record<string, number>,
     },
   });
 
-  const handleSubmit = async (data: { consumables: ConsumableUsage[] }) => {
+  const handleSubmit = async (data: { consumables: Record<string, number> }) => {
     setIsSubmitting(true);
     try {
-      // Record usage for each consumable
+      // Record usage for each consumable with non-zero quantity
       await Promise.all(
-        data.consumables.map((usage) =>
-          recordUsage({
-            item_id: usage.itemId,
-            quantity_used: usage.quantity,
-            service_id: serviceId,
-            appointment_id: appointmentId,
-            notes: `Used in appointment ${appointmentId}`,
-          })
-        )
+        Object.entries(data.consumables)
+          .filter(([_, quantity]) => quantity > 0)
+          .map(([itemId, quantity]) =>
+            recordUsage({
+              item_id: itemId,
+              quantity_used: quantity,
+              service_id: serviceId,
+              appointment_id: appointmentId,
+              used_by: user?.uid || '',
+              notes: `Used in appointment ${appointmentId}`,
+            })
+          )
       );
       
       onComplete();
-      onClose();
       toast({
         title: "Success",
         description: "Appointment completed and inventory updated",
@@ -75,7 +74,7 @@ export function AppointmentCompletionForm({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Complete Appointment</DialogTitle>
+          <DialogTitle>Record Inventory Usage</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
@@ -93,18 +92,26 @@ export function AppointmentCompletionForm({
                         step="0.01"
                         placeholder={`Quantity used (${item.unit})`}
                         {...field}
-                        onChange={(e) =>
-                          field.onChange(Number(e.target.value))
-                        }
+                        onChange={(e) => field.onChange(Number(e.target.value))}
                       />
                     </FormControl>
                   </FormItem>
                 )}
               />
             ))}
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Completing..." : "Complete Appointment"}
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                disabled={isSubmitting}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isSubmitting} className="flex-1">
+                {isSubmitting ? "Recording..." : "Complete Appointment"}
+              </Button>
+            </div>
           </form>
         </Form>
       </DialogContent>
