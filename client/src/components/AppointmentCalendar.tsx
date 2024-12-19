@@ -130,6 +130,11 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
     }
   }, []);
 
+  const formattedInitialDate = selectedDate ? selectedDate.toISOString().split('T')[0] : '';
+  const formattedInitialTime = selectedDate ? 
+    `${String(selectedDate.getHours()).padStart(2, '0')}:${String(selectedDate.getMinutes()).padStart(2, '0')}` 
+    : '';
+
   // Format date and time for the form
   const formattedDate = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined;
   const formattedTime = selectedDate ? format(selectedDate, 'HH:mm') : undefined;
@@ -162,8 +167,8 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
           </DialogTrigger>
           <AppointmentForm 
             setOpen={setOpenNewForm}
-            initialDate={formattedDate}
-            initialTime={formattedTime}
+            initialDate={formattedInitialDate}
+            initialTime={formattedInitialTime}
           />
         </Dialog>
       </div>
