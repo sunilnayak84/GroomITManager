@@ -60,6 +60,8 @@ export function useStaffManagement() {
       console.log('[STAFF] Creating new staff member:', data);
       
       try {
+        console.log('[STAFF] Starting staff creation with data:', data);
+        
         // First create the user in Firebase Auth
         const response = await fetch('/api/users/create', {
           method: 'POST',
@@ -79,6 +81,12 @@ export function useStaffManagement() {
             petTypePreferences: data.petTypePreferences
           }),
         });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error('[STAFF] Error creating staff:', errorData);
+          throw new Error(errorData.message || 'Failed to create staff member');
+        }
 
         if (!response.ok) {
           throw new Error('Failed to create staff member');

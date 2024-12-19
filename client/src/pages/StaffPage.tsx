@@ -106,31 +106,33 @@ export default function StaffPage() {
 
   const onSubmit = async (data: InsertStaff) => {
     try {
-      // Always ensure isGroomer is set based on role
-      const isGroomer = data.role === 'groomer';
-      const staffData: InsertStaff = {
-        ...data,
-        isGroomer,
-        specialties: isGroomer ? data.specialties : [],
-        petTypePreferences: isGroomer ? data.petTypePreferences : [],
-        experienceYears: isGroomer ? data.experienceYears : 0,
-        maxDailyAppointments: data.maxDailyAppointments || 8
-      };
-
-      console.log('Submitting staff data:', staffData);
-
+      console.log('Submitting staff data:', data);
+      
       if (selectedStaff) {
         await updateStaff({
           id: selectedStaff.id,
-          ...staffData
+          ...data
         });
-
+        
         toast({
           title: "Success",
           description: "Staff member updated successfully",
         });
       } else {
-        await addStaff(staffData);
+        // For new staff creation
+        const newStaffData = {
+          ...data,
+          isGroomer: data.role === 'groomer',
+          maxDailyAppointments: data.maxDailyAppointments || 8,
+          isActive: true,
+          specialties: data.role === 'groomer' ? data.specialties || [] : [],
+          petTypePreferences: data.role === 'groomer' ? data.petTypePreferences || [] : [],
+          experienceYears: data.role === 'groomer' ? data.experienceYears || 0 : 0,
+        };
+
+        console.log('Creating new staff with data:', newStaffData);
+        await addStaff(newStaffData);
+
         toast({
           title: "Success",
           description: "Staff member added successfully",
