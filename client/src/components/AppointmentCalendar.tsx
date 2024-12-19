@@ -125,17 +125,11 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
     setSelectedDate(selectedStart);
     setOpenNewForm(true);
     
-    // Generate available time slots for the selected date
-    const dayOfWeek = selectedStart.getDay();
-    const daySchedule = workingHours?.find(
-      (schedule) => schedule.dayOfWeek === dayOfWeek
-    );
-    
     if (calendarRef.current) {
       const calendar = calendarRef.current.getApi();
       calendar.unselect();
     }
-  }, [workingHours]);
+  }, []);
 
   const getFormattedDateTime = (date: Date | null) => {
     if (!date) return { date: '', time: '' };
