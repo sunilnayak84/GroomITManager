@@ -20,11 +20,17 @@ export function useCustomers() {
 
   const addCustomerMutation = useMutation({
     mutationFn: async (customer: InsertCustomer) => {
-      // Create user in Firebase Auth first
       const auth = getAuth();
       let userCredential;
+      let customerId;
       
       try {
+        // First check if email exists
+        const methods = await fetchSignInMethodsForEmail(auth, customer.email);
+        if (methods.length > 0) {
+          throw new Error('Email already registered. Please use a different email.');
+        }
+
         // Generate a temporary password using phone number
         const tempPassword = `${customer.phone.slice(-6)}@${Date.now()}`;
         
@@ -91,19 +97,30 @@ export function useCustomers() {
         // Create timestamp for consistent date handling
         const timestamp = new Date().toISOString();
 
-        const id = await createCustomer({
-          ...customer,
-          firebaseId: userCredential.user.uid
-          // petCount will be initialized in createCustomer function
-        });
-        
-        // Set customer role in realtime database
-        const db = getDatabase();
-        await set(ref(db, `roles/${userCredential.user.uid}`), {
-          role: 'customer',
-          permissions: ['view_appointments', 'create_appointments', 'view_services'],
-          updatedAt: serverTimestamp()
-        });
+        try {
+          // Create customer in Firestore
+          customerId = await createCustomer({
+            ...customer,
+            firebaseId: userCredential.user.uid
+          });
+
+          // Set customer role in realtime database
+          const db = getDatabase();
+          await set(ref(db, `roles/${userCredential.user.uid}`), {
+            role: 'customer',
+            permissions: ['view_appointments', 'create_appointments', 'view_services'],
+            updatedAt: serverTimestamp()
+          });
+
+          // Send password reset email
+          await sendPasswordResetEmail(auth, customer.email);
+        } catch (error) {
+          // If something fails after Firebase Auth creation, delete the auth user
+          if (userCredential?.user) {
+            await deleteUser(userCredential.user);
+          }
+          throw error;
+        }
 
         // Log successful creation
         console.log('ADD_CUSTOMER: Customer created successfully', { id });
