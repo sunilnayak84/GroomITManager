@@ -63,9 +63,14 @@ export default function AppointmentForm({ setOpen, initialDate }: AppointmentFor
       name: staff.name,
       isActive: staff.isActive,
       role: staff.role,
-      isGroomer: staff.isGroomer
+      isGroomer: staff.isGroomer,
+      specialties: staff.specialties
     });
-    return staff.isActive && (staff.role === 'groomer' || staff.isGroomer === true);
+    return staff.isActive && (
+      staff.role === 'groomer' || 
+      staff.isGroomer === true || 
+      (staff.specialties && staff.specialties.includes('groomer'))
+    );
   });
   console.log('[APPOINTMENT] Available groomers:', availableGroomers);
   const { data: workingHours } = useWorkingHours();
