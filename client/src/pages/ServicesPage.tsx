@@ -81,9 +81,11 @@ export default function ServicesPage() {
 
   const onSubmit = async (data: InsertService) => {
     try {
+      console.log('Submitting form data:', data);
       const formattedData = {
         name: data.name,
         description: data.description || null,
+        required_categories: data.required_categories || [],
         category: data.category,
         duration: data.duration,
         price: data.price,
