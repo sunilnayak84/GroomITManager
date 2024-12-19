@@ -125,11 +125,17 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
   const handleSlotSelect = useCallback((selectionInfo: { start: Date; end: Date }) => {
     const selectedStart = new Date(selectionInfo.start);
     console.log('Selected date:', selectedStart);
-    setSelectedDate(selectedStart);
-    setFormattedDate(format(selectedStart, 'yyyy-MM-dd'));
-    setFormattedTime(format(selectedStart, 'HH:mm'));
-    setOpenNewForm(true);
     
+    // Format the date in the required format for the form
+    const formattedDateStr = format(selectedStart, 'yyyy-MM-dd');
+    const formattedTimeStr = format(selectedStart, 'HH:mm');
+    
+    setSelectedDate(selectedStart);
+    setFormattedDate(formattedDateStr);
+    setFormattedTime(formattedTimeStr);
+    setOpenNewForm(true);
+
+    // Ensure the calendar API is unselected
     if (calendarRef.current) {
       const calendar = calendarRef.current.getApi();
       calendar.unselect();
