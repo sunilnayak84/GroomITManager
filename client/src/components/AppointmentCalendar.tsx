@@ -122,6 +122,7 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
 
   const handleSlotSelect = useCallback((selectionInfo: { start: Date; end: Date }) => {
     const selectedStart = new Date(selectionInfo.start);
+    console.log('Selected date:', selectedStart);
     setSelectedDate(selectedStart);
     setOpenNewForm(true);
     
@@ -130,6 +131,14 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
       calendar.unselect();
     }
   }, []);
+
+  useEffect(() => {
+    if (selectedDate) {
+      console.log('Setting date:', selectedDate);
+      form.setValue('date', format(selectedDate, 'yyyy-MM-dd'));
+      form.setValue('time', format(selectedDate, 'HH:mm'));
+    }
+  }, [selectedDate]);
 
   const getFormattedDateTime = (date: Date | null) => {
     if (!date) return { date: '', time: '' };
@@ -176,8 +185,8 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
           </DialogTrigger>
           <AppointmentForm 
             setOpen={setOpenNewForm}
-            initialDate={selectedDate?.toISOString().split('T')[0]}
-            initialTime={selectedDate ? `${String(selectedDate.getHours()).padStart(2, '0')}:${String(selectedDate.getMinutes()).padStart(2, '0')}` : undefined}
+            initialDate={formattedDate}
+            initialTime={formattedTime}
           />
         </Dialog>
       </div>
