@@ -66,6 +66,7 @@ const AppointmentDetails = ({
   const { toast } = useToast();
   const [showCancellationForm, setShowCancellationForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [showCompletionForm, setShowCompletionForm] = useState(false); // Added state for completion form
   const queryClient = useQueryClient();
 
   const form = useForm<UpdateAppointmentForm>({
@@ -93,6 +94,7 @@ const AppointmentDetails = ({
     if (!open) {
       setShowCancellationForm(false);
       setIsUpdating(false);
+      setShowCompletionForm(false); // Reset completion form state
     }
   }, [open]);
 
@@ -143,6 +145,19 @@ const AppointmentDetails = ({
       setIsUpdating(false);
     }
   };
+
+  const handleStatusChange = async (newStatus: string) => {
+    // This is a placeholder, actual implementation depends on your backend
+    // and how you handle updates.  You'll need to make an API call to update
+    // the appointment status.
+    try {
+        await updateAppointment({id: appointment.id, status: newStatus})
+        toast({title: "Success", description: "Appointment status updated successfully"})
+        onOpenChange(false)
+    } catch (error) {
+        toast({variant: "destructive", title: "Error", description: `Failed to update status: ${error}`})
+    }
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -322,5 +337,19 @@ const AppointmentDetails = ({
     </Dialog>
   );
 };
+
+// Placeholder for AppointmentCompletionForm component.  Replace with your actual implementation.
+const AppointmentCompletionForm = ({ isOpen, onClose, appointmentId, serviceId, onComplete }: { isOpen: boolean; onClose: () => void; appointmentId: number; serviceId: number; onComplete: () => void; }) => {
+    return (
+        <Dialog open={isOpen} onOpenChange={onClose}>
+            <DialogContent>
+                {/* Add your inventory usage form here */}
+                <p>Inventory Usage Form (Placeholder)</p>
+                <Button onClick={onComplete}>Submit</Button>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
 
 export default AppointmentDetails;
