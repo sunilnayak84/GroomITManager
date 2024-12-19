@@ -119,10 +119,17 @@ export default function StaffPage() {
         });
       } else {
         const newStaffData = {
-          ...data,
+          email: data.email,
+          name: data.name,
+          role: data.role,
+          phone: data.phone || '',
+          password: 'ChangeMe123!', // Default password
           isGroomer: data.role === 'groomer',
-          isActive: true,
-          maxDailyAppointments: data.maxDailyAppointments || 8
+          experienceYears: data.role === 'groomer' ? data.experienceYears || 0 : 0,
+          maxDailyAppointments: data.maxDailyAppointments || 8,
+          specialties: data.role === 'groomer' ? data.specialties || [] : [],
+          petTypePreferences: data.role === 'groomer' ? data.petTypePreferences || [] : [],
+          isActive: true
         };
         await addStaff(newStaffData);
         toast({
