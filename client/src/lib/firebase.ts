@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, 
-  fetchSignInMethodsForEmail, sendPasswordResetEmail, deleteUser } from "firebase/auth";
+  fetchSignInMethodsForEmail, sendPasswordResetEmail, deleteUser, browserLocalPersistence } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getDatabase } from "firebase/database";
@@ -51,6 +51,7 @@ try {
   
   if (!getApps().length) {
     app = initializeApp(firebaseConfig);
+    getAuth(app).setPersistence(browserLocalPersistence); // Added persistence setting
     console.log('FIREBASE_INIT: Firebase initialized successfully');
   } else {
     app = getApp();

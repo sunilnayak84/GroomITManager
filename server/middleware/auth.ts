@@ -54,6 +54,10 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
     
     if (!firebaseApp) {
       console.error('[AUTH] Firebase Admin not initialized');
+      return res.status(500).json({ 
+        message: 'Authentication service unavailable',
+        code: 'AUTH_SERVICE_ERROR'
+      });
       if (process.env.NODE_ENV === 'development') {
         console.log('[AUTH] Development mode: Setting up admin privileges');
         // In development, set admin privileges with all required fields

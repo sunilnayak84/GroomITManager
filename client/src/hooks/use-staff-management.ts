@@ -11,7 +11,7 @@ export function useStaffManagement() {
     queryKey: ['staff'],
     queryFn: async () => {
       console.log('[STAFF] Starting to fetch staff members');
-      const token = await auth.currentUser?.getIdToken();
+      const token = await auth.currentUser?.getIdToken(true);
       
       if (!token) {
         throw new Error('No authentication token available');
@@ -21,8 +21,7 @@ export function useStaffManagement() {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-        },
-        credentials: 'include'
+        }
       });
 
       if (!response.ok) {
