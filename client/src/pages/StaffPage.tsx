@@ -113,11 +113,20 @@ export default function StaffPage() {
           id: selectedStaff.id,
           ...data
         });
+        toast({
+          title: "Success",
+          description: "Staff member updated successfully"
+        });
       } else {
-        await addStaff({
+        const newStaffData = {
           ...data,
           isActive: true,
           maxDailyAppointments: data.maxDailyAppointments || 8
+        };
+        await addStaff(newStaffData);
+        toast({
+          title: "Success",
+          description: "Staff member added successfully"
         });
       }
       setShowStaffDialog(false);
@@ -131,11 +140,7 @@ export default function StaffPage() {
         variant: "destructive"
       });
     }
-          description: "Staff member updated successfully",
-        });
-      } else {
-        // For new staff creation
-        const newStaffData = {
+  };
           ...data,
           isGroomer: data.role === 'groomer',
           maxDailyAppointments: data.maxDailyAppointments || 8,
