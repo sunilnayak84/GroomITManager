@@ -154,19 +154,21 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
       };
       
       firebaseApp = admin.initializeApp(config);
-      
-      // Initialize Realtime Database
-      const db = admin.database();
-      try {
-        await db.ref('.info/connected').once('value');
-      } catch (error) {
-        console.error('[FIREBASE] Database connection error:', error);
-      }
     } else {
       firebaseApp = admin.app();
     }
 
-    // Verify the initialization by making a test call
+    // Initialize and verify database connection
+    const db = getDatabase(firebaseApp);
+    try {
+      await db.ref('.info/connected').once('value');
+      console.log('[FIREBASE] Database connection verified');
+    } catch (error) {
+      console.error('[FIREBASE] Database connection error:', error);
+      throw error;
+    }
+
+    // Verify auth initialization
     const auth = getAuth(firebaseApp);
     await auth.listUsers(1);
     
