@@ -18,6 +18,29 @@ export function useCustomers() {
 
   const addCustomerMutation = useMutation({
     mutationFn: async (customer: InsertCustomer) => {
+      // Create user in Firebase Auth first
+      const auth = getAuth();
+      let userCredential;
+      
+      try {
+        // Generate a temporary password using phone number
+        const tempPassword = `${customer.phone.slice(-6)}@${Date.now()}`;
+        
+        userCredential = await createUserWithEmailAndPassword(
+          auth,
+          customer.email,
+          tempPassword
+        );
+        
+        // Send password reset email
+        await sendPasswordResetEmail(auth, customer.email);
+        
+        console.log('Created Firebase Auth user:', userCredential.user.uid);
+      } catch (error) {
+        console.error('Error creating Firebase Auth user:', error);
+        throw new Error('Failed to create user authentication');
+      }
+
       // Detailed validation and logging
       const validationErrors: string[] = [];
 
@@ -67,8 +90,17 @@ export function useCustomers() {
         const timestamp = new Date().toISOString();
 
         const id = await createCustomer({
-          ...customer
+          ...customer,
+          firebaseId: userCredential.user.uid
           // petCount will be initialized in createCustomer function
+        });
+        
+        // Set customer role in realtime database
+        const db = getDatabase();
+        await set(ref(db, `roles/${userCredential.user.uid}`), {
+          role: 'customer',
+          permissions: ['view_appointments', 'create_appointments', 'view_services'],
+          updatedAt: serverTimestamp()
         });
 
         // Log successful creation

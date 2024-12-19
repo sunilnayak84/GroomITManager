@@ -75,6 +75,27 @@ export function registerRoutes(app: Express) {
 
   // Firebase User Management endpoints - Admin only
   // User registration endpoint
+  // Setup phone auth for customer
+  app.post("/api/setup-phone-auth", authenticateFirebase, async (req, res) => {
+    try {
+      const { uid, phoneNumber } = req.body;
+      
+      const auth = getAuth();
+      await auth.updateUser(uid, {
+        phoneNumber,
+        emailVerified: true
+      });
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error setting up phone auth:', error);
+      res.status(500).json({
+        message: "Failed to setup phone authentication",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
   app.post("/api/register", authenticateFirebase, async (req, res) => {
     try {
       const { name, email } = req.body;
