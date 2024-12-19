@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { useStaffManagement } from "@/hooks/use-staff-management";
@@ -48,6 +47,20 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+
+// Assuming RoleTypes enum is defined elsewhere, e.g., in firebase.ts
+// enum RoleTypes {
+//   admin = 'admin',
+//   customer = 'customer',
+//   staff = 'staff',
+//   manager = 'manager',
+//   receptionist = 'receptionist',
+//   groomer = 'groomer',
+//   vet = 'vet',
+//   trainer = 'trainer',
+//   boarder = 'boarder',
+//   walker = 'walker'
+// }
 
 export default function StaffPage() {
   const { 
@@ -256,10 +269,13 @@ export default function StaffPage() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="staff">Staff</SelectItem>
-                        <SelectItem value="groomer">Groomer</SelectItem>
-                        <SelectItem value="manager">Manager</SelectItem>
-                        <SelectItem value="receptionist">Receptionist</SelectItem>
+                        {Object.values(RoleTypes)
+                          .filter(role => role !== 'admin' && role !== 'customer')
+                          .map(role => (
+                            <SelectItem key={role} value={role}>
+                              {role.charAt(0).toUpperCase() + role.slice(1)}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />

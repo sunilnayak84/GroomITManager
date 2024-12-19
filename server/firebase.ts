@@ -6,14 +6,14 @@ import { getFirestore } from 'firebase-admin/firestore';
 // Role Types
 enum RoleTypes {
   admin = 'admin',
-  manager = 'manager',
   staff = 'staff',
+  manager = 'manager',
+  receptionist = 'receptionist',
   groomer = 'groomer',
-  walker = 'walker',
   trainer = 'trainer',
   vet = 'vet',
   boarder = 'boarder',
-  receptionist = 'receptionist',
+  walker = 'walker',
   customer = 'customer'
 }
 
