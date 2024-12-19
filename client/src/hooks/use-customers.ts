@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getDocs, onSnapshot, query, deleteDoc, doc, where, collection, Timestamp } from "firebase/firestore";
 import { customersCollection, createCustomer, updateCustomer as updateCustomerDoc, deleteCustomerAndRelated } from "../lib/firestore";
 import { useEffect } from "react";
-import { db, database } from "../lib/firebase";
+import { db, database, getDatabase } from "../lib/firebase"; // Added getDatabase import
 import { getAuth, createUserWithEmailAndPassword, sendPasswordResetEmail, fetchSignInMethodsForEmail, deleteUser } from "firebase/auth";
 import { ref, set, serverTimestamp } from "firebase/database";
 import { toast } from '@/components/ui/use-toast';
@@ -105,8 +105,8 @@ export function useCustomers() {
           });
 
           // Set customer role in realtime database
-          const db = getDatabase();
-          await set(ref(db, `roles/${userCredential.user.uid}`), {
+          const database = getDatabase(); // Corrected import
+          await set(ref(database, `roles/${userCredential.user.uid}`), {
             role: 'customer',
             permissions: ['view_appointments', 'create_appointments', 'view_services'],
             updatedAt: serverTimestamp()
@@ -123,11 +123,11 @@ export function useCustomers() {
         }
 
         // Log successful creation
-        console.log('ADD_CUSTOMER: Customer created successfully', { id });
+        console.log('ADD_CUSTOMER: Customer created successfully', { customerId }); // Corrected variable name
 
         return {
-          id,
-          firebaseId: id,
+          id: customerId, // Corrected variable name
+          firebaseId: customerId, // Corrected variable name
           ...customer,
           petCount: 0,
           createdAt: timestamp,
