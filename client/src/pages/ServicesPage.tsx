@@ -85,7 +85,6 @@ export default function ServicesPage() {
       const formattedData = {
         name: data.name,
         description: data.description || null,
-        required_categories: data.required_categories || [],
         category: data.category,
         duration: data.duration,
         price: data.price,
@@ -93,7 +92,8 @@ export default function ServicesPage() {
         required_categories: data.required_categories || [],
         isActive: true,
         selectedServices: [],
-        selectedAddons: []
+        selectedAddons: [],
+        consumables: data.consumables || []
       };
 
       if (data.category === ServiceCategory.PACKAGE) {
