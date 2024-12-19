@@ -39,9 +39,12 @@ try {
   if (!getApps().length) {
     app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    auth.setPersistence(browserLocalPersistence)
-      .then(() => console.log('FIREBASE_INIT: Firebase initialized successfully'))
-      .catch(error => console.error('FIREBASE_INIT: Error setting persistence:', error));
+    await auth.setPersistence(browserLocalPersistence);
+    const user = auth.currentUser;
+    if (!user) {
+      await signInWithEmailAndPassword(auth, 'admin@groomery.in', 'admin123');
+    }
+    console.log('FIREBASE_INIT: Firebase initialized successfully');
   } else {
     app = getApp();
   }
