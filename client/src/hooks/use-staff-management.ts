@@ -21,7 +21,8 @@ export function useStaffManagement() {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        credentials: 'include'
       });
 
       if (!response.ok) {
@@ -46,6 +47,7 @@ export function useStaffManagement() {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify({
           ...data,
           specialties: Array.isArray(data.specialties) ? data.specialties : [],
