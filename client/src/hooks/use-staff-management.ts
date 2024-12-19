@@ -19,7 +19,8 @@ export function useStaffManagement() {
 
       const response = await fetch('/api/staff', {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
       });
 
