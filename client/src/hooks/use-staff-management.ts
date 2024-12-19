@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getAuth } from 'firebase/auth';
 import { toast } from '@/components/ui/use-toast';
@@ -49,16 +48,19 @@ export function useStaffManagement() {
         body: JSON.stringify({
           ...data,
           specialties: Array.isArray(data.specialties) ? data.specialties : [],
-          password: 'ChangeMe123!'
+          password: 'ChangeMe123!',
+          role: data.role || 'staff',
+          isGroomer: false
         })
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to create staff member');
+        const errorData = await response.text();
+        throw new Error(errorData || 'Failed to create staff member');
       }
 
-      return response.json();
+      const responseData = await response.text();
+      return responseData ? JSON.parse(responseData) : null;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['staff'] });
