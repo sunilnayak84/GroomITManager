@@ -19,6 +19,7 @@ import {
 } from "./firebase";
 import { getAuth } from "firebase-admin/auth";
 import { getDatabase } from "firebase-admin/database";
+import { getFirestore } from "firebase-admin/firestore";
 import admin from "firebase-admin";
 
 
@@ -602,7 +603,7 @@ export function registerRoutes(app: Express) {
   app.get("/api/staff", authenticateFirebase, requireRole([RoleTypes.admin, RoleTypes.manager]), async (req, res) => {
     try {
       console.log('[STAFF] Fetching all staff members');
-      const firestore = getFirestore();
+      const firestore = getFirestore(admin.app());
       
       // Query Firestore for staff members
       const staffQuery = firestore.collection('users')
