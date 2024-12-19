@@ -73,35 +73,6 @@ const DefaultPermissions: Record<RoleTypes, Permission[]> = {
   ]
 };
 
-interface BranchRole {
-  branchId: string;
-  role: string;
-  permissions: string[];
-  isActive?: boolean;
-  startDate?: number;
-  endDate?: number;
-}
-
-interface UserRoleMapping {
-  userId: string;
-  roles: BranchRole[];
-  defaultBranchId?: string;
-  isMultiBranchEnabled: boolean;
-  updatedAt: number;
-}
-
-interface Role {
-  name: string;
-  permissions: string[];
-  description?: string;
-  isSystem?: boolean;
-  createdAt?: number;
-  updatedAt?: number;
-  canEdit?: boolean;
-  allowMultiBranch?: boolean;
-  branchSpecificPermissions?: boolean;
-}
-
 // Cache role permissions for better performance
 const permissionsCache = new Map<RoleTypes, { permissions: Permission[], timestamp: number }>();
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
@@ -129,31 +100,19 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
 
   try {
     console.log('[FIREBASE] Initializing Firebase Admin...');
-    
-    // Initialize the app if it doesn't exist
-    if (!admin.apps.length) {
-      firebaseApp = admin.initializeApp({
-        credential: admin.credential.cert({
-          projectId: process.env.FIREBASE_PROJECT_ID,
-          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-          privateKey: privateKey
-        }),
-        databaseURL: process.env.VITE_FIREBASE_DATABASE_URL || 
-                    'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
-      });
-    } else {
-      firebaseApp = admin.apps[0]!;
-    }
+    firebaseApp = admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: privateKey
+      }),
+      databaseURL: process.env.VITE_FIREBASE_DATABASE_URL || 
+                  'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
+    });
 
-    // Initialize and verify services
-    const db = getDatabase();
-    const auth = getAuth();
-    
-    // Verify the initialization by making test calls
-    await Promise.all([
-      auth.listUsers(1),
-      db.ref('.info/connected').once('value')
-    ]);
+    // Verify the initialization by making a test call
+    const auth = getAuth(firebaseApp);
+    await auth.listUsers(1);
     
     console.log('[FIREBASE] Firebase Admin initialized successfully');
     return firebaseApp;
@@ -233,145 +192,66 @@ function validatePermissions(permissions: unknown[]): Permission[] {
 }
 
 // User management functions
-async function getUserRole(userId: string, branchId?: string): Promise<{ role: RoleTypes; permissions: Permission[]; branchId?: string }> {
-  const db = getDatabase();
-  const snapshot = await db.ref(`user-roles/${userId}`).once('value');
-  const userRoleMapping = snapshot.val() as UserRoleMapping | null;
+async function getUserRole(userId: string): Promise<{ role: RoleTypes; permissions: Permission[] }> {
+  const db = getDatabase(getFirebaseAdmin());
+  const snapshot = await db.ref(`roles/${userId}`).once('value');
+  const roleData = snapshot.val();
   
-  if (!userRoleMapping) {
+  if (!roleData) {
     return {
       role: RoleTypes.staff,
       permissions: DefaultPermissions[RoleTypes.staff]
     };
   }
   
-  // If branchId is provided, find the specific branch role
-  if (branchId) {
-    const branchRole = userRoleMapping.roles.find(r => r.branchId === branchId && r.isActive !== false);
-    if (branchRole) {
-      return {
-        role: branchRole.role as RoleTypes,
-        permissions: branchRole.permissions as Permission[],
-        branchId
-      };
-    }
-  }
-  
-  // If no branch specified or not found, use default branch role
-  const defaultBranch = userRoleMapping.defaultBranchId 
-    ? userRoleMapping.roles.find(r => r.branchId === userRoleMapping.defaultBranchId && r.isActive !== false)
-    : userRoleMapping.roles.find(r => r.isActive !== false);
-  
-  if (defaultBranch) {
-    return {
-      role: defaultBranch.role as RoleTypes,
-      permissions: defaultBranch.permissions as Permission[],
-      branchId: defaultBranch.branchId
-    };
-  }
-  
-  // Fallback to staff role if no valid roles found
   return {
-    role: RoleTypes.staff,
-    permissions: DefaultPermissions[RoleTypes.staff]
+    role: roleData.role as RoleTypes,
+    permissions: roleData.permissions as Permission[]
   };
 }
 
 async function updateUserRole(
   userId: string,
   role: RoleTypes,
-  options: {
-    branchId?: string;
-    customPermissions?: Permission[];
-    isMultiBranchEnabled?: boolean;
-    startDate?: number;
-    endDate?: number;
-  } = {}
-): Promise<{ success: boolean; role: RoleTypes; permissions: Permission[]; branchId?: string }> {
+  customPermissions?: Permission[]
+): Promise<{ success: boolean; role: RoleTypes; permissions: Permission[] }> {
   const app = getFirebaseAdmin();
   const db = getDatabase(app);
   const auth = getAuth(app);
   const timestamp = Date.now();
   
-  // Verify user exists
-  const userRecord = await auth.getUser(userId);
+  await auth.getUser(userId);
   
-  // Get role definition to check multi-branch capabilities
-  const roleDefinitions = await getRoleDefinitions();
-  const roleDefinition = roleDefinitions[role];
-  
-  if (!roleDefinition) {
-    throw new Error(`Role ${role} not found in definitions`);
-  }
-  
-  const permissions = options.customPermissions || DefaultPermissions[role];
-  
-  // Get current user roles
-  const userRolesSnapshot = await db.ref(`user-roles/${userId}`).once('value');
-  const currentUserRoles = userRolesSnapshot.val() as UserRoleMapping | null;
-  
-  // Prepare new role data
-  const newBranchRole: BranchRole = {
-    branchId: options.branchId || 'default',
-    role,
-    permissions,
-    isActive: true,
-    startDate: options.startDate || timestamp,
-    endDate: options.endDate
-  };
-  
-  // Initialize or update user roles
-  const updatedUserRoles: UserRoleMapping = {
-    userId,
-    roles: [],
-    isMultiBranchEnabled: options.isMultiBranchEnabled ?? roleDefinition.allowMultiBranch ?? false,
-    updatedAt: timestamp,
-    defaultBranchId: options.branchId || currentUserRoles?.defaultBranchId || 'default'
-  };
-  
-  if (currentUserRoles) {
-    // Update existing roles
-    updatedUserRoles.roles = currentUserRoles.roles.map(existingRole => 
-      existingRole.branchId === newBranchRole.branchId ? 
-        { ...existingRole, isActive: false } : // Deactivate old role for this branch
-        existingRole
-    );
-  }
-  
-  // Add new role
-  updatedUserRoles.roles.push(newBranchRole);
+  const permissions = customPermissions || DefaultPermissions[role];
   
   // Save to role history
   const historyRef = db.ref(`role-history/${userId}`);
   await historyRef.push({
     action: 'role_update',
-    previousRole: currentUserRoles?.roles.find(r => r.branchId === options.branchId)?.role || null,
+    previousRole: DefaultPermissions[role],
     newRole: role,
-    branchId: options.branchId,
-    previousPermissions: currentUserRoles?.roles.find(r => r.branchId === options.branchId)?.permissions || [],
-    newPermissions: permissions,
-    timestamp,
-    type: 'role_change',
-    isMultiBranchEnabled: updatedUserRoles.isMultiBranchEnabled
+    previousPermissions: customPermissions || [],
+    newPermissions: permissions || [],
+    timestamp: Date.now(),
+    type: 'role_change'
   });
 
-  // Update user roles in database
-  await db.ref(`user-roles/${userId}`).set(updatedUserRoles);
+  await db.ref(`roles/${userId}`).set({
+    role,
+    permissions,
+    updatedAt: timestamp
+  });
   
-  // Update custom claims with current active role
   await auth.setCustomUserClaims(userId, {
     role,
     permissions,
-    branchId: options.branchId,
-    updatedAt: timestamp,
-    isMultiBranchEnabled: updatedUserRoles.isMultiBranchEnabled
+    updatedAt: timestamp
   });
   
   return {
     success: true,
     role,
-    permissions,
-    branchId: options.branchId
+    permissions
   };
 }
 
@@ -466,45 +346,35 @@ const InitialRoleConfigs = {
     description: 'Full system access with all permissions',
     isSystem: true,
     createdAt: Date.now(),
-    updatedAt: Date.now(),
-    allowMultiBranch: true,
-    branchSpecificPermissions: false
+    updatedAt: Date.now()
   },
   [RoleTypes.manager]: {
     permissions: DefaultPermissions[RoleTypes.manager],
     description: 'Manages daily operations and staff',
     isSystem: true,
     createdAt: Date.now(),
-    updatedAt: Date.now(),
-    allowMultiBranch: true,
-    branchSpecificPermissions: true
+    updatedAt: Date.now()
   },
   [RoleTypes.staff]: {
     permissions: DefaultPermissions[RoleTypes.staff],
     description: 'Regular staff member access',
     isSystem: true,
     createdAt: Date.now(),
-    updatedAt: Date.now(),
-    allowMultiBranch: true,
-    branchSpecificPermissions: true
+    updatedAt: Date.now()
   },
   [RoleTypes.receptionist]: {
     permissions: DefaultPermissions[RoleTypes.receptionist],
     description: 'Front desk and customer service access',
     isSystem: true,
     createdAt: Date.now(),
-    updatedAt: Date.now(),
-    allowMultiBranch: true,
-    branchSpecificPermissions: true
+    updatedAt: Date.now()
   },
   [RoleTypes.customer]: {
     permissions: DefaultPermissions[RoleTypes.customer],
     description: 'Customer access for booking appointments and viewing services',
     isSystem: true,
     createdAt: Date.now(),
-    updatedAt: Date.now(),
-    allowMultiBranch: false,
-    branchSpecificPermissions: false
+    updatedAt: Date.now()
   }
 };
 
@@ -570,7 +440,5 @@ export {
   getUserRole,
   ALL_PERMISSIONS,
   getRoleDefinitions,
-  updateRoleDefinition,
-  BranchRole,
-  UserRoleMapping
+  updateRoleDefinition
 };

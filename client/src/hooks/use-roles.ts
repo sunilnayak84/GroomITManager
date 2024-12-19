@@ -300,31 +300,9 @@ export function useRoles() {
   });
 
   const updateUserRoleMutation = useMutation({
-    mutationFn: async ({ 
-      userId, 
-      role, 
-      branchId,
-      permissions,
-      isMultiBranchEnabled,
-      startDate,
-      endDate 
-    }: { 
-      userId: string; 
-      role: string; 
-      branchId?: string;
-      permissions?: string[];
-      isMultiBranchEnabled?: boolean;
-      startDate?: number;
-      endDate?: number;
-    }) => {
-      console.log('[ROLES] Updating user role:', { userId, role, branchId, permissions, isMultiBranchEnabled });
-      await updateUserRole(userId, role, {
-        branchId,
-        customPermissions: permissions,
-        isMultiBranchEnabled,
-        startDate,
-        endDate
-      });
+    mutationFn: async ({ userId, role, permissions }: { userId: string; role: string; permissions?: string[] }) => {
+      console.log('[ROLES] Updating user role:', { userId, role, permissions });
+      await updateUserRole(userId, role);
       // Force token refresh after role update
       const auth = getAuth();
       if (auth.currentUser && auth.currentUser.uid === userId) {
