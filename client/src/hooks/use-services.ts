@@ -1,275 +1,68 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, query } from 'firebase/firestore';
-import { db } from "../lib/firebase";
-import { toast } from "@/components/ui/use-toast";
-import {
-  Service,
-  InsertService,
-  UpdateService,
-  serviceSchema,
-  ServiceCategory,
-  serviceConsumableSchema
-} from "@/lib/service-types";
 
-const servicesCollection = collection(db, 'services');
+import { useCallback, useState } from "react";
+import { db } from "@/lib/firebase";
+import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
 
 export function useServices() {
-  const queryClient = useQueryClient();
+  const [services, setServices] = useState([]);
 
-  const { data: services = [], isLoading, ...rest } = useQuery<Service[]>({
-    queryKey: ['services'],
-    queryFn: async () => {
-      try {
-        console.log('FETCH_SERVICES: Starting to fetch services');
-        const q = query(servicesCollection);
-        const querySnapshot = await getDocs(q);
-        
-        if (querySnapshot.empty) {
-          console.log('FETCH_SERVICES: No services found');
-          return [];
-        }
-
-        const fetchedServices = querySnapshot.docs.map((doc) => {
-          const data = doc.data();
-          try {
-            const parsedData = serviceSchema.parse({
-              service_id: doc.id,
-              name: data.name,
-              description: data.description || null,
-              category: data.category || ServiceCategory.SERVICE,
-              duration: data.duration,
-              price: data.price || 0,
-              discount_percentage: data.discount_percentage || 0,
-              consumables: data.consumables || [],
-              isActive: data.isActive ?? true,
-              created_at: data.created_at || new Date(),
-              updated_at: data.updated_at || new Date(),
-              selectedServices: data.selectedServices || [],
-              selectedAddons: data.selectedAddons || []
-            });
-
-            if (parsedData.category === ServiceCategory.PACKAGE) {
-              const selectedItems = [
-                ...(parsedData.selectedServices || []),
-                ...(parsedData.selectedAddons || [])
-              ];
-              const totalOriginalPrice = selectedItems.reduce((sum, item) => {
-                return sum + (item.price || 0);
-              }, 0);
-              
-              const discountPercentage = parsedData.discount_percentage || 0;
-              const finalPrice = Math.round(totalOriginalPrice * (1 - discountPercentage));
-              
-              return {
-                ...parsedData,
-                price: finalPrice,
-                discount_percentage: discountPercentage
-              };
-            }
-
-            return parsedData;
-          } catch (error) {
-            console.error('Error parsing service data:', error);
-            throw error;
-          }
-        });
-
-        console.log('FETCH_SERVICES: Completed fetching services', {
-          count: fetchedServices.length,
-          services: fetchedServices
-        });
-
-        return fetchedServices;
-      } catch (error) {
-        console.error('FETCH_SERVICES: Error fetching services:', error);
-        throw error;
-      }
-    },
-    staleTime: 1000 * 60 * 5
-  });
-
-  const addService = async (serviceData: InsertService) => {
+  const fetchServices = useCallback(async () => {
     try {
-      console.log('Adding service with data:', serviceData);
-      const docRef = doc(servicesCollection);
-      const timestamp = new Date();
-
-      // Process consumables with detailed validation and logging
-      const processedConsumables = serviceData.consumables?.map(consumable => {
-        try {
-          console.log('Processing consumable:', consumable);
-          return {
-            item_id: consumable.item_id,
-            item_name: consumable.item_name,
-            quantity_used: Number(consumable.quantity_used)
-          };
-        } catch (error) {
-          console.error('Invalid consumable:', consumable, error);
-          throw new Error(`Invalid consumable data: ${error instanceof Error ? error.message : 'Unknown error'}`);
-        }
-      }) || [];
-      
-      console.log('Final processed consumables:', processedConsumables);
-
-      // Prepare data for Firestore
-      const firestoreData = {
-        name: serviceData.name,
-        description: serviceData.description,
-        category: serviceData.category,
-        duration: serviceData.duration,
-        price: serviceData.price,
-        discount_percentage: serviceData.discount_percentage || 0,
-        consumables: processedConsumables,
-        isActive: true,
-        created_at: timestamp.toISOString(),
-        updated_at: timestamp.toISOString(),
-        selectedServices: serviceData.selectedServices?.map(service => ({
-          service_id: service.service_id,
-          name: service.name,
-          duration: service.duration,
-          price: service.price,
-          category: service.category
-        })) || [],
-        selectedAddons: serviceData.selectedAddons?.map(addon => ({
-          service_id: addon.service_id,
-          name: addon.name,
-          duration: addon.duration,
-          price: addon.price,
-          category: addon.category
-        })) || []
-      };
-
-      await setDoc(docRef, firestoreData);
-      await queryClient.invalidateQueries({ queryKey: ['services'] });
-      
-      toast({
-        title: "Success",
-        description: "Service added successfully",
-        variant: "default"
-      });
-
-      return {
-        service_id: docRef.id,
-        ...firestoreData
-      };
+      console.log("FETCH_SERVICES: Starting to fetch services");
+      const servicesRef = collection(db, "services");
+      const snapshot = await getDocs(servicesRef);
+      const fetchedServices = snapshot.docs.map(doc => ({
+        service_id: doc.id,
+        ...doc.data()
+      }));
+      setServices(fetchedServices);
+      console.log("FETCH_SERVICES: Completed fetching services", { count: fetchedServices.length, services: fetchedServices });
+      return fetchedServices;
     } catch (error) {
-      console.error('ADD_SERVICE: Error adding service:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : 'Failed to add service',
-        variant: "destructive"
-      });
+      console.error("FETCH_SERVICES: Error fetching services:", error);
       throw error;
     }
-  };
+  }, []);
 
-  const updateService = async (service_id: string, updateData: UpdateService) => {
+  const addService = useCallback(async (serviceData) => {
     try {
-      const serviceRef = doc(servicesCollection, service_id);
-      const timestamp = new Date();
-
-      // Construct update payload
-      // Ensure required_categories is properly preserved
-      const updatePayload: any = {
-        ...updateData,
-        updated_at: timestamp.toISOString(),
-        required_categories: updateData.required_categories || []
-      };
-      
-      console.log('Update payload with categories:', updatePayload.required_categories);
-      
-      console.log('Update payload:', updatePayload);
-
-      // Always include consumables in the update payload
-      console.log('Processing consumables for update:', updateData.consumables || []);
-      updatePayload.consumables = (updateData.consumables || []).map(consumable => {
-        try {
-          const validated = serviceConsumableSchema.parse({
-            item_id: consumable.item_id,
-            item_name: consumable.item_name,
-            quantity_used: Number(consumable.quantity_used)
-          });
-
-          console.log('Validated update consumable:', validated);
-          return validated;
-        } catch (error) {
-          console.error('Error validating consumable during update:', consumable, error);
-          throw error;
-        }
-      });
-      console.log('Final processed update consumables:', updatePayload.consumables);
-
-      if (updateData.selectedServices) {
-        updatePayload.selectedServices = updateData.selectedServices.map(service => ({
-          service_id: service.service_id,
-          name: service.name,
-          duration: service.duration,
-          price: service.price,
-          category: service.category
-        }));
-      }
-
-      if (updateData.selectedAddons) {
-        updatePayload.selectedAddons = updateData.selectedAddons.map(addon => ({
-          service_id: addon.service_id,
-          name: addon.name,
-          duration: addon.duration,
-          price: addon.price,
-          category: addon.category
-        }));
-      }
-
-      await updateDoc(serviceRef, updatePayload);
-      await queryClient.invalidateQueries({ queryKey: ['services'] });
-      
-      toast({
-        title: "Success",
-        description: "Service updated successfully",
-        variant: "default"
-      });
-      
-      return true;
+      const servicesRef = collection(db, "services");
+      const docRef = await addDoc(servicesRef, serviceData);
+      await fetchServices();
+      return docRef.id;
     } catch (error) {
-      console.error('UPDATE_SERVICE: Error updating service:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : 'Failed to update service',
-        variant: "destructive"
-      });
+      console.error("ADD_SERVICE: Error adding service:", error);
       throw error;
     }
-  };
+  }, [fetchServices]);
 
-  const deleteService = async (id: string) => {
+  const updateService = useCallback(async (serviceId, updateData) => {
     try {
-      const serviceRef = doc(servicesCollection, id);
+      const serviceRef = doc(db, "services", serviceId);
+      await updateDoc(serviceRef, updateData);
+      await fetchServices();
+    } catch (error) {
+      console.error("UPDATE_SERVICE: Error updating service:", error);
+      throw error;
+    }
+  }, [fetchServices]);
+
+  const deleteService = useCallback(async (serviceId) => {
+    try {
+      const serviceRef = doc(db, "services", serviceId);
       await deleteDoc(serviceRef);
-      await queryClient.invalidateQueries({ queryKey: ['services'] });
-      
-      toast({
-        title: "Success",
-        description: "Service deleted successfully",
-        variant: "default"
-      });
-      
-      return true;
+      await fetchServices();
     } catch (error) {
-      console.error('DELETE_SERVICE: Error deleting service:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : 'Failed to delete service',
-        variant: "destructive"
-      });
+      console.error("DELETE_SERVICE: Error deleting service:", error);
       throw error;
     }
-  };
+  }, [fetchServices]);
 
   return {
     services,
-    isLoading,
+    fetchServices,
     addService,
     updateService,
     deleteService,
-    ...rest
   };
 }
