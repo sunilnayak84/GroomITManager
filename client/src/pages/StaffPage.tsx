@@ -120,6 +120,7 @@ export default function StaffPage() {
       } else {
         const newStaffData = {
           ...data,
+          isGroomer: data.role === 'groomer',
           isActive: true,
           maxDailyAppointments: data.maxDailyAppointments || 8
         };
@@ -138,38 +139,6 @@ export default function StaffPage() {
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to save staff member",
         variant: "destructive"
-      });
-    }
-  };
-          ...data,
-          isGroomer: data.role === 'groomer',
-          maxDailyAppointments: data.maxDailyAppointments || 8,
-          isActive: true,
-          specialties: data.role === 'groomer' ? data.specialties || [] : [],
-          petTypePreferences: data.role === 'groomer' ? data.petTypePreferences || [] : [],
-          experienceYears: data.role === 'groomer' ? data.experienceYears || 0 : 0,
-          branchId: data.primaryBranchId || null,
-        };
-
-        console.log('Creating new staff with data:', newStaffData);
-        const result = await addStaff(newStaffData);
-        console.log('Staff creation result:', result);
-
-        toast({
-          title: "Success",
-          description: "Staff member added successfully",
-        });
-      }
-      
-      setShowStaffDialog(false);
-      form.reset();
-      setSelectedStaff(null);
-    } catch (error) {
-      console.error('Error saving staff:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to save staff member",
-        variant: "destructive",
       });
     }
   };
