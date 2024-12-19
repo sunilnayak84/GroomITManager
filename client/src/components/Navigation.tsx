@@ -33,8 +33,7 @@ export default function Navigation() {
     { href: "/settings/inventory-categories", icon: Package, label: "Inventory Categories" },
     { href: "/settings/pet-breeds", icon: PawPrint, label: "Pet Breeds" },
     ...(user?.role === 'admin' || user?.role === 'manager' ? [
-      { href: "/settings/roles", icon: Shield, label: "Role Management" },
-      { href: "/settings/user-management", icon: Users, label: "User Management" }
+      { href: "/settings/roles", icon: Shield, label: "Role Management" }
     ] : []),
   ];
 
