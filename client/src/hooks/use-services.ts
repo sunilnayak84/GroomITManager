@@ -41,6 +41,7 @@ export function useServices() {
               price: data.price || 0,
               discount_percentage: data.discount_percentage || 0,
               consumables: data.consumables || [],
+              required_categories: Array.isArray(data.required_categories) ? data.required_categories : [],
               isActive: data.isActive ?? true,
               created_at: data.created_at || new Date(),
               updated_at: data.updated_at || new Date(),
