@@ -136,10 +136,8 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
 
   useEffect(() => {
     if (selectedDate) {
-      const formattedDate = format(selectedDate, 'yyyy-MM-dd');
-      const formattedTime = format(selectedDate, 'HH:mm');
-      setFormattedDate(formattedDate);
-      setFormattedTime(formattedTime);
+      setFormattedDate(format(selectedDate, 'yyyy-MM-dd'));
+      setFormattedTime(format(selectedDate, 'HH:mm'));
     }
   }, [selectedDate]);
 
@@ -151,10 +149,6 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
     };
   };
 
-  const formattedInitialDate = selectedDate ? selectedDate.toISOString().split('T')[0] : '';
-  const formattedInitialTime = selectedDate ? 
-    `${String(selectedDate.getHours()).padStart(2, '0')}:${String(selectedDate.getMinutes()).padStart(2, '0')}` 
-    : '';
 
   return (
     <div className="space-y-4">
