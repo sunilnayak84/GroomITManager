@@ -77,7 +77,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       staff.role === 'groomer' || 
       staff.role === 'staff' ||
       staff.isGroomer === true || 
-      (staff.specialties && staff.specialties.includes('groomer'))
+      (Array.isArray(staff.specialties) && staff.specialties.includes('groomer'))
     );
   });
   console.log('[APPOINTMENT] Available groomers:', availableGroomers);
