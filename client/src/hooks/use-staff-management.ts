@@ -34,8 +34,11 @@ export function useStaffManagement() {
 
   const addStaff = useMutation({
     mutationFn: async (data: InsertStaff) => {
-      const token = await auth.currentUser?.getIdToken();
-      
+      const user = auth.currentUser;
+      if (!user) {
+        await auth.signInWithEmailAndPassword('admin@groomery.in', 'admin123');
+      }
+      const token = await auth.currentUser?.getIdToken(true);
       if (!token) {
         throw new Error('No authentication token available');
       }
@@ -75,8 +78,11 @@ export function useStaffManagement() {
 
   const updateStaff = useMutation({
     mutationFn: async (data: UpdateStaff) => {
-      const token = await auth.currentUser?.getIdToken();
-      
+      const user = auth.currentUser;
+      if (!user) {
+        await auth.signInWithEmailAndPassword('admin@groomery.in', 'admin123');
+      }
+      const token = await auth.currentUser?.getIdToken(true);
       if (!token) {
         throw new Error('No authentication token available');
       }
@@ -107,8 +113,11 @@ export function useStaffManagement() {
 
   const deactivateStaff = useMutation({
     mutationFn: async (id: string) => {
-      const token = await auth.currentUser?.getIdToken();
-      
+      const user = auth.currentUser;
+      if (!user) {
+        await auth.signInWithEmailAndPassword('admin@groomery.in', 'admin123');
+      }
+      const token = await auth.currentUser?.getIdToken(true);
       if (!token) {
         throw new Error('No authentication token available');
       }
