@@ -123,8 +123,6 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
   const handleSlotSelect = useCallback((selectionInfo: { start: Date; end: Date }) => {
     const selectedStart = new Date(selectionInfo.start);
     setSelectedDate(selectedStart);
-    const formattedDate = selectedStart.toISOString().split('T')[0];
-    const formattedTime = selectedStart.toTimeString().slice(0,5);
     setOpenNewForm(true);
     if (calendarRef.current) {
       const calendar = calendarRef.current.getApi();

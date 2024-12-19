@@ -49,7 +49,7 @@ interface AppointmentFormProps {
   initialTime?: string;
 }
 
-export default function AppointmentForm({ setOpen, initialDate }: AppointmentFormProps) {
+export default function AppointmentForm({ setOpen, initialDate, initialTime }: AppointmentFormProps) {
   const queryClient = useQueryClient();
   const { user } = useUser();
   const { createNotification } = useNotifications(user?.id || '');
