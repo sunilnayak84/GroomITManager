@@ -208,22 +208,7 @@ export function registerRoutes(app: Express) {
           return ['staff', 'groomer'].includes(user.role) || user.isGroomer;
         }
         return !roleFilter || user.role === roleFilter || (roleFilter === 'groomer' && user.isGroomer);
-          role: userData.role || 'staff',
-          isGroomer: userData.isGroomer || userData.role === 'groomer',
-          permissions: userData.permissions || [],
-          disabled: userData.disabled || false,
-          lastSignInTime: userData.lastSignInTime,
-          creationTime: userData.createdAt,
-          branch: userData.branch,
-          isActive: !userData.disabled
-        }))
-        .filter(user => {
-          if (roleFilter === 'all') {
-            // For 'all', include staff and groomers
-            return ['staff', 'groomer'].includes(user.role) || user.isGroomer;
-          }
-          return !roleFilter || user.role === roleFilter || (roleFilter === 'groomer' && user.isGroomer);
-        });
+      });
 
       console.log('[FIREBASE-USERS] Filtered users:', users);
       
