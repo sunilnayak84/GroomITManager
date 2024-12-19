@@ -192,31 +192,35 @@ export function registerRoutes(app: Express) {
       }
 
       const snapshot = await query.get();
-      const users = snapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-          uid: doc.id,
-          email: data.email,
-          displayName: data.name,
-          role: data.role || 'staff',
-          isGroomer: data.isGroomer || data.role === 'groomer',
-          permissions: data.permissions || [],
-          disabled: data.disabled || false,
-          lastSignInTime: data.lastSignInTime,
-          creationTime: data.createdAt,
-          branch: data.branch,
-          isActive: !data.disabled,
-          phone: data.phone,
-          specialties: data.specialties || [],
-          experienceYears: data.experienceYears || 0,
-          maxDailyAppointments: data.maxDailyAppointments || 8
-        };
-      }).filter(user => {
-        if (roleFilter === 'all') {
-          return ['staff', 'groomer'].includes(user.role) || user.isGroomer;
-        }
-        return !roleFilter || user.role === roleFilter || (roleFilter === 'groomer' && user.isGroomer);
-      });
+      const allUsers = snapshot.docs.map(doc => ({
+        uid: doc.id,
+        ...doc.data()
+      }));
+      
+      console.log('[FIREBASE-USERS] Raw users data:', allUsers);
+      
+      // Convert users object to array and filter by role if specified
+      const users = Object.entries(allUsers)
+        .map(([uid, userData]: [string, any]) => ({
+          uid,
+          email: userData.email,
+          displayName: userData.name,
+          role: userData.role || 'staff',
+          isGroomer: userData.isGroomer || userData.role === 'groomer',
+          permissions: userData.permissions || [],
+          disabled: userData.disabled || false,
+          lastSignInTime: userData.lastSignInTime,
+          creationTime: userData.createdAt,
+          branch: userData.branch,
+          isActive: !userData.disabled
+        }))
+        .filter(user => {
+          if (roleFilter === 'all') {
+            // For 'all', include staff and groomers
+            return ['staff', 'groomer'].includes(user.role) || user.isGroomer;
+          }
+          return !roleFilter || user.role === roleFilter || (roleFilter === 'groomer' && user.isGroomer);
+        });
 
       console.log('[FIREBASE-USERS] Filtered users:', users);
       
