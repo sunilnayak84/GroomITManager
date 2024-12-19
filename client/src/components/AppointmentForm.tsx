@@ -44,8 +44,9 @@ import type { Staff } from '@/lib/staff-types';
 
 interface AppointmentFormProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  open: boolean;
+  open?: boolean;
   initialDate?: string;
+  initialTime?: string;
 }
 
 export default function AppointmentForm({ setOpen, initialDate }: AppointmentFormProps) {
@@ -92,7 +93,7 @@ export default function AppointmentForm({ setOpen, initialDate }: AppointmentFor
       groomerId: "",
       branchId: "1",
       date: initialDate || "",
-      time: "",
+      time: initialTime || "",
       status: "pending" as const,
       notes: null,
       productsUsed: null,
