@@ -113,7 +113,7 @@ export function registerRoutes(app: Express) {
 
       // Get Firebase Admin instance
       const app = getFirebaseAdmin();
-      const db = admin.database();
+      const db = getDatabase(app);
       const auth = getAuth(app);
 
       // Create user profile in Realtime Database
@@ -176,7 +176,7 @@ export function registerRoutes(app: Express) {
       res.setHeader('Content-Type', 'application/json');
       
       const app = getFirebaseAdmin();
-      const db = admin.database();
+      const db = getDatabase(app);
       const roleFilter = req.query.role as string | undefined;
       
       console.log('[FIREBASE-USERS] Fetching users with role filter:', roleFilter);
