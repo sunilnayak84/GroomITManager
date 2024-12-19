@@ -113,27 +113,24 @@ export default function StaffPage() {
           id: selectedStaff.id,
           ...data
         });
-        toast({
-          title: "Success",
-          description: "Staff member updated successfully",
-        });
       } else {
         await addStaff({
           ...data,
           isActive: true,
           maxDailyAppointments: data.maxDailyAppointments || 8
         });
-        toast({
-          title: "Success", 
-          description: "Staff member added successfully"
-        });
       }
       setShowStaffDialog(false);
       form.reset();
       setSelectedStaff(null);
-        
-        toast({
-          title: "Success",
+    } catch (error) {
+      console.error('Error saving staff:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to save staff member",
+        variant: "destructive"
+      });
+    }
           description: "Staff member updated successfully",
         });
       } else {
