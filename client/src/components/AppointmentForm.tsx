@@ -44,6 +44,7 @@ import type { Staff } from '@/lib/staff-types';
 
 interface AppointmentFormProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  open: boolean;
   initialDate?: string;
 }
 
@@ -415,6 +416,16 @@ export default function AppointmentForm({ setOpen, initialDate }: AppointmentFor
       setIsSubmitting(false);
     }
   }
+
+  useEffect(() => {
+    if (!open) {
+      form.reset();
+      form.clearErrors();
+      setValidationError(null);
+      setSelectedService(null);
+      setAvailableTimeSlots([]);
+    }
+  }, [open]);
 
   return (
     <DialogContent>

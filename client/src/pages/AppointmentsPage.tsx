@@ -396,7 +396,7 @@ export default function AppointmentsPage() {
               New Appointment
             </Button>
           </DialogTrigger>
-          <AppointmentForm setOpen={setOpenNewForm} />
+          <AppointmentForm setOpen={setOpenNewForm} open={openNewForm} />
         </Dialog>
       </div>
 
