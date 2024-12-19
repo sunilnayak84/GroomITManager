@@ -1,3 +1,4 @@
+
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, 
   fetchSignInMethodsForEmail, sendPasswordResetEmail, deleteUser, browserLocalPersistence } from "firebase/auth";
@@ -31,33 +32,18 @@ const firebaseConfig = {
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
   databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
-  experimentalForceLongPolling: true, // Add this for better connection stability
-  experimentalAutoDetectLongPolling: true // Enable auto-detection of long polling needs
 };
 
 let app;
 try {
-  // Validate required config
-  if (!firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId || !firebaseConfig.databaseURL) {
-    throw new Error('Missing required Firebase configuration');
-  }
-
-  console.log('FIREBASE_INIT: Initializing Firebase with config:', {
-    authDomain: firebaseConfig.authDomain,
-    projectId: firebaseConfig.projectId,
-    storageBucket: firebaseConfig.storageBucket,
-    databaseURL: firebaseConfig.databaseURL
-  });
-  
   if (!getApps().length) {
     app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    await auth.setPersistence(browserLocalPersistence);
-    await auth.signInWithEmailAndPassword('admin@groomery.in', 'admin123');
-    console.log('FIREBASE_INIT: Firebase initialized successfully');
+    auth.setPersistence(browserLocalPersistence)
+      .then(() => console.log('FIREBASE_INIT: Firebase initialized successfully'))
+      .catch(error => console.error('FIREBASE_INIT: Error setting persistence:', error));
   } else {
     app = getApp();
-    console.log('FIREBASE_INIT: Using existing Firebase app');
   }
 } catch (error) {
   console.error('FIREBASE_INIT: Error initializing Firebase:', error);
@@ -68,7 +54,5 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 export const database = getDatabase(app);
-export { getDatabase };  // Add this line to export the function
 
-// Export the app instance for use in other parts of the application
 export default app;
