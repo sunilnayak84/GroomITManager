@@ -38,6 +38,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox"; // Import Checkbox component
 import {
   AlertDialog,
   AlertDialogAction,
@@ -63,6 +64,10 @@ import {
 //   walker = 'walker'
 // }
 
+const STAFF_ROLES = Object.values(RoleTypes).filter(role => role !== 'admin' && role !== 'customer');
+const STAFF_SPECIALTIES = ['groomer', 'walker', 'vet', 'boarder', 'trainer'];
+
+
 export default function StaffPage() {
   const { 
     staffMembers, 
@@ -84,7 +89,8 @@ export default function StaffPage() {
       role: "staff",
       isActive: true,
       maxDailyAppointments: 8,
-      branchId: null
+      branchId: null,
+      specialties: [] // Add default value for specialties
     }
   });
 
@@ -115,7 +121,8 @@ export default function StaffPage() {
       role: staff.role,
       isActive: staff.isActive,
       maxDailyAppointments: staff.maxDailyAppointments,
-      branchId: staff.branchId
+      branchId: staff.branchId,
+      specialties: staff.specialties || [] // Include specialties in reset
     });
     setShowStaffDialog(true);
   };
@@ -125,6 +132,7 @@ export default function StaffPage() {
     { header: "Role", cell: (staff: Staff) => staff.role },
     { header: "Email", cell: (staff: Staff) => staff.email },
     { header: "Phone", cell: (staff: Staff) => staff.phone || "N/A" },
+    { header: "Specialties", cell: (staff: Staff) => staff.specialties.join(', ') || 'N/A' }, //Added Specialties column
     {
       header: "Active",
       cell: (staff: Staff) => (
@@ -266,19 +274,46 @@ export default function StaffPage() {
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select role" />
+                          <SelectValue placeholder="Select a role" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Object.values(RoleTypes)
-                          .filter(role => role !== 'admin' && role !== 'customer')
-                          .map(role => (
-                            <SelectItem key={role} value={role}>
-                              {role.charAt(0).toUpperCase() + role.slice(1)}
-                            </SelectItem>
-                          ))}
+                        {STAFF_ROLES.map((role) => (
+                          <SelectItem key={role} value={role}>
+                            {role.charAt(0).toUpperCase() + role.slice(1)}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="specialties"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Specialties</FormLabel>
+                    <FormControl>
+                      <div className="flex flex-wrap gap-2">
+                        {STAFF_SPECIALTIES.map((specialty) => (
+                          <label key={specialty} className="flex items-center space-x-2">
+                            <Checkbox
+                              checked={field.value?.includes(specialty)}
+                              onCheckedChange={(checked) => {
+                                const newValue = checked
+                                  ? [...(field.value || []), specialty]
+                                  : field.value?.filter((s) => s !== specialty) || [];
+                                field.onChange(newValue);
+                              }}
+                            />
+                            <span>{specialty.charAt(0).toUpperCase() + specialty.slice(1)}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
