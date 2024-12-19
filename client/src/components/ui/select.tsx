@@ -88,6 +88,11 @@ const SelectContent = React.forwardRef<
           position === "popper" &&
             "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]"
         )}
+        onWheel={(e) => {
+          e.stopPropagation();
+          const viewport = e.currentTarget;
+          viewport.scrollTop += e.deltaY;
+        }}
       >
         {children}
       </SelectPrimitive.Viewport>
