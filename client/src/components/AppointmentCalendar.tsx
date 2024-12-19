@@ -36,6 +36,8 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
   );
   const [openNewForm, setOpenNewForm] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [formattedDate, setFormattedDate] = useState<string>('');
+  const [formattedTime, setFormattedTime] = useState<string>('');
   const calendarRef = useRef<FullCalendar | null>(null);
 
   const { data: appointments } = useAppointments();
