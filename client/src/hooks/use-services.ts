@@ -171,9 +171,7 @@ export function useServices() {
       // Preserve required_categories from updateData
       const updatePayload: any = {
         ...updateData,
-        required_categories: Array.isArray(updateData.required_categories) 
-          ? updateData.required_categories 
-          : (updateData.required_categories || []),
+        required_categories: updateData.required_categories || [],
         updated_at: timestamp.toISOString()
       };
       
