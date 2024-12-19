@@ -613,6 +613,8 @@ export default function ServicesPage() {
                                 shouldDirty: true,
                                 shouldTouch: true
                               });
+                              const formData = form.getValues();
+                              console.log('Current form data:', formData);
                               form.trigger('required_categories');
                               console.log('Setting categories:', updatedCategories);
                               console.log('Updated categories:', updatedCategories);
