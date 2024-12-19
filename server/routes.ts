@@ -188,12 +188,22 @@ export function registerRoutes(app: Express) {
       }
 
       const snapshot = await query.get();
-      
-      console.log('[FIREBASE-USERS] Raw users data:', allUsers);
-      
-      // Convert users object to array and filter by role if specified
-      const users = Object.entries(allUsers)
-        .map(([uid, userData]: [string, any]) => ({
+      const users = snapshot.docs.map(doc => {
+        const userData = doc.data();
+        return {
+          uid: doc.id,
+          email: userData.email,
+          displayName: userData.name,
+          role: userData.role || 'staff',
+          isGroomer: userData.isGroomer || userData.role === 'groomer',
+          permissions: userData.permissions || [],
+          disabled: userData.disabled || false,
+          lastSignInTime: userData.lastSignInTime,
+          creationTime: userData.createdAt,
+          branch: userData.branch,
+          isActive: !userData.disabled
+        };
+      }).filter(user => {
           uid,
           email: userData.email,
           displayName: userData.name,
