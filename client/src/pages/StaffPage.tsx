@@ -324,7 +324,7 @@ export default function StaffPage() {
       </div>
 
       <Dialog open={showStaffDialog} onOpenChange={setShowStaffDialog}>
-        <DialogContent>
+        <DialogContent onInteractOutside={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>
               {selectedStaff ? "Edit Staff Member" : "Add Staff Member"}
