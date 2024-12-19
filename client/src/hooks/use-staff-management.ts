@@ -78,24 +78,28 @@ export function useStaffManagement() {
             experienceYears: data.experienceYears,
             maxDailyAppointments: data.maxDailyAppointments,
             specialties: data.specialties,
-            petTypePreferences: data.petTypePreferences
+            petTypePreferences: data.petTypePreferences,
+            isActive: true
           }),
         });
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          console.error('[STAFF] Error creating staff:', errorData);
-          throw new Error(errorData.message || 'Failed to create staff member');
-        }
+        console.log('[STAFF] API Response status:', response.status);
+        
+        const responseData = await response.json();
+        console.log('[STAFF] API Response data:', responseData);
 
         if (!response.ok) {
-          throw new Error('Failed to create staff member');
+          throw new Error(responseData.message || 'Failed to create staff member');
         }
 
-        const result = await response.json();
-        return result.user;
+        return responseData.user;
       } catch (error) {
         console.error('[STAFF] Error creating staff:', error);
+        toast({
+          title: "Error",
+          description: error instanceof Error ? error.message : "Failed to create staff member",
+          variant: "destructive"
+        });
         throw error;
       }
     },
