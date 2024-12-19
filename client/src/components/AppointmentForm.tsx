@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { insertAppointmentSchema, type InsertAppointment } from "@/lib/schema";
@@ -47,6 +48,7 @@ interface AppointmentFormProps {
 }
 
 export default function AppointmentForm({ setOpen, initialDate }: AppointmentFormProps) {
+  const queryClient = useQueryClient();
   const { user } = useUser();
   const { createNotification } = useNotifications(user?.id || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
