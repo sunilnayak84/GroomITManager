@@ -89,20 +89,16 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
     resolver: zodResolver(insertAppointmentSchema),
     defaultValues: {
       petId: "",
-      services: [],
+      services: [] as string[],
       groomerId: "",
       branchId: "1",
       date: initialDate || format(new Date(), 'yyyy-MM-dd'),
       time: initialTime || format(new Date(), 'HH:mm'),
       status: "pending" as const,
-      notes: null,
+      notes: "",
       productsUsed: null,
       totalPrice: 0,
       totalDuration: 0
-    },
-    values: {
-      date: initialDate,
-      time: initialTime
     }
   });
 
@@ -578,7 +574,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
                       service && (
                         <div key={service?.service_id || ''} className="flex items-center space-x-2">
                           <Checkbox
-                            checked={Array.isArray(field.value) && field.value?.includes(String(service?.service_id))}
+                            checked={Array.isArray(field.value) && field.value ? field.value.includes(String(service?.service_id)) : false}
                             onCheckedChange={(checked) => {
                               const serviceId = String(service?.service_id || '');
                               const currentValue = Array.isArray(field.value) ? field.value : [];
