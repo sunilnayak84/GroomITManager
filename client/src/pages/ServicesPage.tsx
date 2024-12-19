@@ -290,6 +290,9 @@ export default function ServicesPage() {
         price: currentService?.price || item.price
       };
     });
+
+    // Ensure required_categories is properly loaded
+    const required_categories = Array.isArray(service.required_categories) ? service.required_categories : [];
     
     const updatedSelectedAddons = (service.selectedAddons || []).map(item => {
       const currentService = services.find(s => s.service_id === item.service_id);
@@ -315,6 +318,7 @@ export default function ServicesPage() {
       duration: service.duration,
       price: service.price,
       discount_percentage: service.discount_percentage || 0,
+      required_categories: required_categories,
       consumables: formattedConsumables,
       selectedServices: updatedSelectedServices,
       selectedAddons: updatedSelectedAddons
