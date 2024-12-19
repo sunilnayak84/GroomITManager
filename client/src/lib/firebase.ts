@@ -38,16 +38,16 @@ let app;
 try {
   if (!getApps().length) {
     app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    await auth.setPersistence(browserLocalPersistence);
-    const user = auth.currentUser;
-    if (!user) {
-      await signInWithEmailAndPassword(auth, 'admin@groomery.in', 'admin123');
-    }
-    console.log('FIREBASE_INIT: Firebase initialized successfully');
   } else {
     app = getApp();
   }
+  const auth = getAuth(app);
+  await auth.setPersistence(browserLocalPersistence);
+  if (!auth.currentUser) {
+    console.log('FIREBASE_INIT: No user found, signing in as admin...');
+    await signInWithEmailAndPassword(auth, 'admin@groomery.in', 'admin123');
+  }
+  console.log('FIREBASE_INIT: Firebase initialized successfully');
 } catch (error) {
   console.error('FIREBASE_INIT: Error initializing Firebase:', error);
   throw new Error(`Failed to initialize Firebase: ${error instanceof Error ? error.message : 'Unknown error'}`);

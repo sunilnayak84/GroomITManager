@@ -133,15 +133,19 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
 
   try {
     console.log('[FIREBASE] Initializing Firebase Admin...');
-    firebaseApp = admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: privateKey
-      }),
-      databaseURL: process.env.VITE_FIREBASE_DATABASE_URL || 
-                  'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
-    });
+    if (admin.apps.length === 0) {
+      firebaseApp = admin.initializeApp({
+        credential: admin.credential.cert({
+          projectId: process.env.FIREBASE_PROJECT_ID,
+          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+          privateKey: privateKey
+        }),
+        databaseURL: process.env.VITE_FIREBASE_DATABASE_URL || 
+                    'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
+      });
+    } else {
+      firebaseApp = admin.app();
+    }
 
     // Verify the initialization by making a test call
     const auth = getAuth(firebaseApp);
