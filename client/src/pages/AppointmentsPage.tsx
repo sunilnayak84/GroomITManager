@@ -229,11 +229,6 @@ export default function AppointmentsPage() {
             </DialogContent>
           </Dialog>
         </div>
-                  }}
-                  formatDate={(date) => date ? new Date(date).toLocaleDateString() : 'Not specified'}
-                />
-              </DialogContent>
-            </Dialog>
           </>
         );
       },
