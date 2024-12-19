@@ -168,23 +168,18 @@ export function useServices() {
       const serviceRef = doc(servicesCollection, service_id);
       const timestamp = new Date();
 
+      // Prepare the categories array
+      const required_categories = updateData.required_categories || [];
+      
       // Ensure required_categories is included in the update payload
       const updatePayload: any = {
         ...updateData,
-        required_categories: Array.isArray(updateData.required_categories) 
-          ? updateData.required_categories 
-          : updateData.required_categories === undefined 
-            ? []
-            : [updateData.required_categories],
+        required_categories,
         updated_at: timestamp.toISOString()
       };
       
-      console.log('Service update with categories:', updatePayload.required_categories);
-
-      console.log('Update payload with categories:', {
-        ...updatePayload,
-        required_categories: updatePayload.required_categories
-      });
+      console.log('Service update with categories:', required_categories);
+      console.log('Update payload:', updatePayload);
 
       if (updateData.consumables) {
         console.log('Processing consumables for update:', updateData.consumables);
