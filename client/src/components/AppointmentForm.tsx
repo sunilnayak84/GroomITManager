@@ -536,7 +536,7 @@ export default function AppointmentForm({ setOpen, initialDate }: AppointmentFor
                         <SelectValue placeholder="Select a time" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                    <SelectContent className="max-h-[200px] overflow-y-auto">
                       {availableTimeSlots.map((timeSlot) => (
                         <SelectItem key={timeSlot} value={timeSlot}>
                           {timeSlot}
