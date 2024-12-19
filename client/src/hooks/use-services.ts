@@ -168,56 +168,13 @@ export function useServices() {
       const serviceRef = doc(servicesCollection, service_id);
       const timestamp = new Date();
 
-      // Construct update payload
-      // Ensure required_categories is properly preserved
-      const updatePayload: any = {
+      const updatePayload = {
         ...updateData,
         updated_at: timestamp.toISOString(),
         required_categories: updateData.required_categories || []
       };
       
-      console.log('Update payload with categories:', updatePayload.required_categories);
-      
       console.log('Update payload:', updatePayload);
-
-      // Always include consumables in the update payload
-      console.log('Processing consumables for update:', updateData.consumables || []);
-      updatePayload.consumables = (updateData.consumables || []).map(consumable => {
-        try {
-          const validated = serviceConsumableSchema.parse({
-            item_id: consumable.item_id,
-            item_name: consumable.item_name,
-            quantity_used: Number(consumable.quantity_used)
-          });
-
-          console.log('Validated update consumable:', validated);
-          return validated;
-        } catch (error) {
-          console.error('Error validating consumable during update:', consumable, error);
-          throw error;
-        }
-      });
-      console.log('Final processed update consumables:', updatePayload.consumables);
-
-      if (updateData.selectedServices) {
-        updatePayload.selectedServices = updateData.selectedServices.map(service => ({
-          service_id: service.service_id,
-          name: service.name,
-          duration: service.duration,
-          price: service.price,
-          category: service.category
-        }));
-      }
-
-      if (updateData.selectedAddons) {
-        updatePayload.selectedAddons = updateData.selectedAddons.map(addon => ({
-          service_id: addon.service_id,
-          name: addon.name,
-          duration: addon.duration,
-          price: addon.price,
-          category: addon.category
-        }));
-      }
 
       await updateDoc(serviceRef, updatePayload);
       await queryClient.invalidateQueries({ queryKey: ['services'] });
