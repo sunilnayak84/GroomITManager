@@ -41,6 +41,7 @@ export const serviceSchema = z.object({
   ...baseServiceSchema,
   discount_percentage: z.number().min(0).max(100).optional().default(0),
   consumables: z.array(serviceConsumableSchema).optional().default([]),
+  required_categories: z.array(z.string()).default([]), // Added required_categories field
   isActive: z.boolean().default(true),
   created_at: z.date().or(z.string()).transform(val => 
     typeof val === 'string' ? new Date(val) : val
@@ -69,6 +70,7 @@ export const insertServiceSchema = z.object({
   ...baseServiceSchema,
   discount_percentage: z.number().min(0).max(100).optional().default(0),
   consumables: z.array(serviceConsumableSchema).optional().default([]),
+  required_categories: z.array(z.string()).default([]), // Added required_categories field
   isActive: z.boolean().default(true),
   selectedServices: z.array(z.object({
     service_id: z.string(),
