@@ -127,6 +127,10 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
       privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----`;
     }
   }
+
+  // Initialize Realtime Database URL
+  const databaseURL = process.env.FIREBASE_DATABASE_URL || 
+    `https://${process.env.FIREBASE_PROJECT_ID}-default-rtdb.firebaseio.com`;
   
   if (!privateKey || !process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL) {
     console.error('[FIREBASE] Missing required credentials:',
@@ -146,17 +150,18 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
           clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
           privateKey: privateKey
         }),
-        databaseURL: process.env.FIREBASE_DATABASE_URL || 
-                    `https://${process.env.FIREBASE_PROJECT_ID}-default-rtdb.asia-southeast1.firebasedatabase.app`,
-        databaseAuthVariableOverride: {
-          uid: 'server'
-        }
+        databaseURL: databaseURL
       };
+      
       firebaseApp = admin.initializeApp(config);
       
       // Initialize Realtime Database
-      const db = admin.database(firebaseApp);
-      await db.ref('.info/connected').once('value');
+      const db = admin.database();
+      try {
+        await db.ref('.info/connected').once('value');
+      } catch (error) {
+        console.error('[FIREBASE] Database connection error:', error);
+      }
     } else {
       firebaseApp = admin.app();
     }
@@ -201,7 +206,8 @@ async function initializeFirebaseAdmin(): Promise<admin.app.App> {
 
 // Role and permission management functions
 async function getRolePermissions(role: RoleTypes): Promise<Permission[]> {
-  const db = getDatabase(getFirebaseAdmin());
+  const app = await getFirebaseAdmin();
+  const db = admin.database();
   const snapshot = await db.ref(`role-definitions/${role}`).once('value');
   const roleData = snapshot.val();
   
