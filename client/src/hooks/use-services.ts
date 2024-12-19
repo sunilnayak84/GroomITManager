@@ -168,15 +168,10 @@ export function useServices() {
       const serviceRef = doc(servicesCollection, service_id);
       const timestamp = new Date();
 
-      // Prepare the categories array
-      const required_categories = updateData.required_categories || [];
-      
       // Ensure required_categories is included in the update payload
       const updatePayload: any = {
         ...updateData,
-        required_categories: Array.isArray(updateData.required_categories) 
-          ? updateData.required_categories 
-          : [],
+        required_categories: updateData.required_categories || [],
         updated_at: timestamp.toISOString()
       };
       
