@@ -53,7 +53,14 @@ interface AppointmentEditFormProps {
 export default function AppointmentEditForm({ appointment, setOpen, open }: AppointmentEditFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { staffMembers } = useStaff();
-  const availableGroomers = staffMembers?.filter((staff: StaffMember) => staff.role === 'groomer' && staff.isActive) || [];
+  const availableGroomers = staffMembers?.filter((staff: StaffMember) => 
+    staff.isActive && (
+      staff.role === 'groomer' || 
+      staff.role === 'staff' ||
+      staff.isGroomer === true || 
+      (staff.specialties && staff.specialties.includes('groomer'))
+    )
+  ) || [];
   const { updateAppointment } = useAppointments();
   const { toast } = useToast();
   const { services } = useServices();
