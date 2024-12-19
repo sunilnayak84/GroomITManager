@@ -171,9 +171,11 @@ export function useServices() {
       // Ensure required_categories is included in the update payload
       const updatePayload: any = {
         ...updateData,
-        required_categories: Array.isArray(updateData.required_categories) ? updateData.required_categories : [],
+        required_categories: updateData.required_categories ?? [], // Only override if undefined
         updated_at: timestamp.toISOString()
       };
+
+      console.log('Update payload with categories:', updatePayload);
 
       // Log the update payload for debugging
       console.log('Service update payload:', updatePayload);
