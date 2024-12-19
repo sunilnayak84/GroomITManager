@@ -17,7 +17,7 @@ export function useStaffManagement() {
         throw new Error('No authentication token available');
       }
 
-      const response = await fetch('/api/staff', {
+      const response = await fetch('http://0.0.0.0:3000/api/staff', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -39,7 +39,7 @@ export function useStaffManagement() {
         throw new Error('No authentication token available');
       }
 
-      const response = await fetch('/api/users/create', {
+      const response = await fetch('http://0.0.0.0:3000/api/users/create', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
