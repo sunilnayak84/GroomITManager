@@ -246,8 +246,12 @@ const AppointmentDetails = ({
                   <FormLabel>Status</FormLabel>
                   <Select
                     onValueChange={(value) => {
-                      field.onChange(value);
-                      setShowCancellationForm(value === 'cancelled');
+                      if (value === 'completed') {
+                        setShowCompletionForm(true);
+                      } else {
+                        field.onChange(value);
+                        setShowCancellationForm(value === 'cancelled');
+                      }
                     }}
                     value={field.value}
                   >
@@ -306,6 +310,20 @@ const AppointmentDetails = ({
                 </FormItem>
               )}
             />
+
+            {showCompletionForm && (
+                <AppointmentCompletionForm
+                  isOpen={showCompletionForm}
+                  onClose={() => setShowCompletionForm(false)}
+                  appointmentId={appointment.id}
+                  serviceId={appointment.services[0]}
+                  onComplete={() => {
+                    form.setValue('status', 'completed');
+                    setShowCompletionForm(false);
+                    form.handleSubmit(onSubmit)();
+                  }}
+                />
+              )}
 
             <div className="flex justify-end space-x-2">
               <Button
