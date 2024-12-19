@@ -92,14 +92,18 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       services: [],
       groomerId: "",
       branchId: "1",
-      date: initialDate || "",
-      time: initialTime || "",
+      date: initialDate || format(new Date(), 'yyyy-MM-dd'),
+      time: initialTime || format(new Date(), 'HH:mm'),
       status: "pending" as const,
       notes: null,
       productsUsed: null,
       totalPrice: 0,
       totalDuration: 0
     },
+    values: {
+      date: initialDate,
+      time: initialTime
+    }
   });
 
   // Helper function to generate time slots

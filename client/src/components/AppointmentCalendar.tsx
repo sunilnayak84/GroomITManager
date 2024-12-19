@@ -126,14 +126,16 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
     const selectedStart = new Date(selectionInfo.start);
     console.log('Selected date:', selectedStart);
     
-    // Format the date in the required format for the form
     const formattedDateStr = format(selectedStart, 'yyyy-MM-dd');
     const formattedTimeStr = format(selectedStart, 'HH:mm');
     
     setSelectedDate(selectedStart);
     setFormattedDate(formattedDateStr);
     setFormattedTime(formattedTimeStr);
-    setOpenNewForm(true);
+    
+    // Reset form state before opening
+    setOpenNewForm(false);
+    setTimeout(() => setOpenNewForm(true), 0);
 
     // Ensure the calendar API is unselected
     if (calendarRef.current) {
