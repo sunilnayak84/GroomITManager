@@ -665,13 +665,27 @@ export default function AppointmentForm({ setOpen, initialDate }: AppointmentFor
             )}
           />
           {/* Customer ID is now handled in form's defaultValues */}
-          <Button 
-            type="submit" 
-            className="w-full"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Scheduling..." : "Schedule Appointment"}
-          </Button>
+          <div className="flex gap-4">
+            <Button 
+              type="button"
+              variant="outline"
+              onClick={() => {
+                form.reset();
+                setValidationError(null);
+                setSelectedService(null);
+                setAvailableTimeSlots([]);
+              }}
+            >
+              Clear Form
+            </Button>
+            <Button 
+              type="submit" 
+              className="flex-1"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Scheduling..." : "Schedule Appointment"}
+            </Button>
+          </div>
         </form>
       </Form>
     </DialogContent>
