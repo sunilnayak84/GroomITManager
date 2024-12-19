@@ -460,14 +460,14 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {(pets || []).map((pet) => (
+                    {Array.isArray(pets) ? pets.map((pet) => (
                       <SelectItem 
-                        key={String(pet.id)} 
-                        value={String(pet.id)}
+                        key={String(pet?.id || '')} 
+                        value={String(pet?.id || '')}
                       >
-                        {pet.name} - {pet.breed}
+                        {pet?.name || 'Unknown'} - {pet?.breed || 'Unknown'}
                       </SelectItem>
-                    ))}
+                    )) : null}
                   </SelectContent>
                 </Select>
                 <FormMessage />
