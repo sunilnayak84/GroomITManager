@@ -170,6 +170,7 @@ export function useServices() {
 
       const updatePayload: any = {
         ...updateData,
+        required_categories: updateData.required_categories || [],
         updated_at: timestamp.toISOString()
       };
 
