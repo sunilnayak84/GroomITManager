@@ -113,6 +113,24 @@ export default function StaffPage() {
           id: selectedStaff.id,
           ...data
         });
+        toast({
+          title: "Success",
+          description: "Staff member updated successfully",
+        });
+      } else {
+        await addStaff({
+          ...data,
+          isActive: true,
+          maxDailyAppointments: data.maxDailyAppointments || 8
+        });
+        toast({
+          title: "Success", 
+          description: "Staff member added successfully"
+        });
+      }
+      setShowStaffDialog(false);
+      form.reset();
+      setSelectedStaff(null);
         
         toast({
           title: "Success",
