@@ -120,7 +120,13 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
     return firebaseApp;
   }
 
-  const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+  let privateKey = process.env.FIREBASE_PRIVATE_KEY;
+  if (privateKey) {
+    privateKey = privateKey.replace(/\\n/g, '\n');
+    if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
+      privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----`;
+    }
+  }
   
   if (!privateKey || !process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL) {
     console.error('[FIREBASE] Missing required credentials:',
@@ -128,21 +134,22 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
       !process.env.FIREBASE_PROJECT_ID ? 'FIREBASE_PROJECT_ID' : '',
       !process.env.FIREBASE_CLIENT_EMAIL ? 'FIREBASE_CLIENT_EMAIL' : ''
     );
-    throw new Error('Missing Firebase credentials. Please check environment variables.');
+    throw new Error('Missing Firebase credentials. Check environment variables.');
   }
 
   try {
     console.log('[FIREBASE] Initializing Firebase Admin...');
     if (admin.apps.length === 0) {
-      firebaseApp = admin.initializeApp({
+      const config = {
         credential: admin.credential.cert({
           projectId: process.env.FIREBASE_PROJECT_ID,
           clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
           privateKey: privateKey
         }),
-        databaseURL: process.env.VITE_FIREBASE_DATABASE_URL || 
-                    'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
-      });
+        databaseURL: process.env.FIREBASE_DATABASE_URL || 
+                    `https://${process.env.FIREBASE_PROJECT_ID}-default-rtdb.asia-southeast1.firebasedatabase.app`
+      };
+      firebaseApp = admin.initializeApp(config);
     } else {
       firebaseApp = admin.app();
     }
