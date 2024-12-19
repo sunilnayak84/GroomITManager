@@ -585,32 +585,87 @@ export function registerRoutes(app: Express) {
       
       // Query Firestore for staff members
       const staffQuery = firestore.collection('users')
-        .where('role', 'in', ['staff', 'groomer'])
-        .where('isActive', '==', true);
+        .where('role', 'in', ['staff', 'groomer']);
       
       const snapshot = await staffQuery.get();
+      console.log('[STAFF] Found', snapshot.size, 'staff members in Firestore');
       
+      // Transform Firestore data
       const users = snapshot.docs.map(doc => {
         const data = doc.data();
         return {
           id: doc.id,
-          ...data,
-          createdAt: data.createdAt?.toDate?.() || null,
-          updatedAt: data.updatedAt?.toDate?.() || null
+          firebaseId: doc.id,
+          email: data.email,
+          name: data.name,
+          role: data.role,
+          isGroomer: Boolean(data.isGroomer),
+          phone: data.phone || null,
+          experienceYears: Number(data.experienceYears) || 0,
+          maxDailyAppointments: Number(data.maxDailyAppointments) || 8,
+          specialties: Array.isArray(data.specialties) ? data.specialties : [],
+          petTypePreferences: Array.isArray(data.petTypePreferences) ? data.petTypePreferences : [],
+          isActive: data.isActive !== false, // Default to true if not set
+          disabled: Boolean(data.disabled),
+          branch: data.branch || null,
+          schedule: data.schedule || {},
+          createdAt: data.createdAt?.toDate?.() || new Date(),
+          updatedAt: data.updatedAt?.toDate?.() || new Date(),
+          metadata: {
+            lastLogin: data.metadata?.lastLogin || null,
+            deviceTokens: Array.isArray(data.metadata?.deviceTokens) ? data.metadata.deviceTokens : [],
+            notificationPreferences: {
+              email: data.metadata?.notificationPreferences?.email !== false,
+              push: data.metadata?.notificationPreferences?.push !== false,
+              sms: Boolean(data.metadata?.notificationPreferences?.sms)
+            }
+          }
         };
       });
 
-      // Fetch role permissions from Realtime Database
-      const realtimeDb = getDatabase();
+      // Fetch role data from Realtime Database
+      const realtimeDb = admin.database();
       const rolePromises = users.map(async user => {
-        const roleSnapshot = await realtimeDb.ref(`roles/${user.id}`).once('value');
-        return {
-          ...user,
-          permissions: roleSnapshot.val()?.permissions || []
-        };
+        try {
+          const [roleSnapshot, historySnapshot] = await Promise.all([
+            realtimeDb.ref(`roles/${user.id}`).once('value'),
+            realtimeDb.ref(`role-history/${user.id}`).limitToLast(1).once('value')
+          ]);
+
+          const roleData = roleSnapshot.val() || {};
+          const lastHistoryEntry = Object.values(historySnapshot.val() || {})[0] || {};
+          
+          return {
+            ...user,
+            permissions: roleData.permissions || [],
+            roleUpdatedAt: roleData.updatedAt || user.updatedAt,
+            lastRoleChange: {
+              action: lastHistoryEntry.action || 'unknown',
+              timestamp: lastHistoryEntry.timestamp || user.createdAt,
+              changedBy: lastHistoryEntry.createdBy || 'system'
+            }
+          };
+        } catch (error) {
+          console.error(`[STAFF] Error fetching role data for user ${user.id}:`, error);
+          return {
+            ...user,
+            permissions: [],
+            roleUpdatedAt: user.updatedAt,
+            lastRoleChange: {
+              action: 'unknown',
+              timestamp: user.createdAt,
+              changedBy: 'system'
+            }
+          };
+        }
       });
 
       const staffWithPermissions = await Promise.all(rolePromises);
+      
+      // Filter inactive staff if requested
+      const finalStaff = req.query.activeOnly === 'true' 
+        ? staffWithPermissions.filter(staff => staff.isActive && !staff.disabled)
+        : staffWithPermissions;
 
       console.log(`[STAFF] Successfully fetched ${staffWithPermissions.length} staff members`);
       res.json(staffWithPermissions);
@@ -694,25 +749,27 @@ export function registerRoutes(app: Express) {
       await admin.auth().setCustomUserClaims(userRecord.uid, customClaims);
 
       // Step 4: Create user document in Firestore
-      const firestore = getFirestore();
+      const firestore = admin.firestore();
       const timestamp = admin.firestore.FieldValue.serverTimestamp();
       
       const staffData = {
         id: userRecord.uid,
+        firebaseId: userRecord.uid, // Consistent with customer schema
         email,
         name,
         role,
         phone: phone || null,
         isGroomer,
-        experienceYears,
-        maxDailyAppointments,
-        specialties,
-        petTypePreferences,
+        experienceYears: Number(experienceYears) || 0,
+        maxDailyAppointments: Number(maxDailyAppointments) || 8,
+        specialties: Array.isArray(specialties) ? specialties : [],
+        petTypePreferences: Array.isArray(petTypePreferences) ? petTypePreferences : [],
         isActive: true,
+        disabled: false,
+        branch: null,
+        schedule: {},
         createdAt: timestamp,
         updatedAt: timestamp,
-        branch: null, // Will be set when branch management is implemented
-        schedule: {}, // Will be populated when scheduling is implemented
         metadata: {
           lastLogin: null,
           deviceTokens: [],
@@ -724,27 +781,53 @@ export function registerRoutes(app: Express) {
         }
       };
       
-      await firestore.collection('users').doc(userRecord.uid).set(staffData);
-      console.log('[STAFF-CREATE] Staff data stored in Firestore');
+      try {
+        await firestore.collection('users').doc(userRecord.uid).set(staffData);
+        console.log('[STAFF-CREATE] Staff data stored in Firestore');
+      } catch (error) {
+        console.error('[STAFF-CREATE] Error storing staff data in Firestore:', error);
+        // Cleanup: Delete the Firebase Auth user if Firestore fails
+        await admin.auth().deleteUser(userRecord.uid);
+        throw error;
+      }
 
       // Step 5: Store role information in Realtime Database
-      const realtimeDb = getDatabase();
-      const roleData = {
-        role,
-        permissions,
-        updatedAt: Date.now()
-      };
+      const realtimeDb = admin.database();
+      const timestamp_ms = Date.now();
       
-      await realtimeDb.ref(`roles/${userRecord.uid}`).set(roleData);
+      try {
+        // Store current role data
+        const roleData = {
+          role,
+          permissions,
+          updatedAt: timestamp_ms
+        };
+        await realtimeDb.ref(`roles/${userRecord.uid}`).set(roleData);
 
-      // Create role history entry
-      await realtimeDb.ref(`role-history/${userRecord.uid}`).push({
-        action: 'create',
-        role,
-        permissions,
-        timestamp: Date.now(),
-        createdBy: req.user?.uid
-      });
+        // Create role history entry
+        const historyEntry = {
+          action: 'create',
+          role,
+          permissions,
+          timestamp: timestamp_ms,
+          createdBy: req.user?.uid || 'system',
+          metadata: {
+            isGroomer,
+            experienceYears: Number(experienceYears) || 0
+          }
+        };
+        await realtimeDb.ref(`role-history/${userRecord.uid}`).push(historyEntry);
+        
+        console.log('[STAFF-CREATE] Role data stored in Realtime Database');
+      } catch (error) {
+        console.error('[STAFF-CREATE] Error storing role data:', error);
+        // Cleanup: Delete the Firebase Auth user and Firestore document if role storage fails
+        await Promise.all([
+          admin.auth().deleteUser(userRecord.uid),
+          firestore.collection('users').doc(userRecord.uid).delete()
+        ]);
+        throw error;
+      }
 
       console.log('[STAFF-CREATE] Staff member created successfully');
 

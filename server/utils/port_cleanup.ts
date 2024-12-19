@@ -11,19 +11,26 @@ const TERMINATION_DELAY = 1000;
 
 async function isPortInUse(port: number): Promise<boolean> {
   return new Promise((resolve) => {
-    const server = net.createServer()
-      .once('error', (err: any) => {
-        if (err.code === 'EADDRINUSE') {
-          resolve(true);
-        } else {
-          resolve(false);
-        }
-      })
-      .once('listening', () => {
-        server.close();
+    const server = net.createServer();
+    
+    server.once('error', (err: any) => {
+      server.close();
+      if (err.code === 'EADDRINUSE') {
+        console.log(`[PORT_CHECK] Port ${port} is in use`);
+        resolve(true);
+      } else {
+        console.log(`[PORT_CHECK] Error checking port ${port}:`, err);
         resolve(false);
-      })
-      .listen(port, '0.0.0.0');
+      }
+    });
+
+    server.once('listening', () => {
+      server.close();
+      console.log(`[PORT_CHECK] Port ${port} is available`);
+      resolve(false);
+    });
+
+    server.listen(port, '0.0.0.0');
   });
 }
 
@@ -63,24 +70,48 @@ async function killProcessOnPort(port: number, attempt: number = 1): Promise<boo
     // Verify port is now available
     return !(await isPortInUse(port));
   } catch (unixError) {
-    console.log(`[PORT_CLEANUP] Unix method failed, trying Windows method...`);
+    console.log(`[PORT_CLEANUP] Unix method failed:`, unixError instanceof Error ? unixError.message : 'Unknown error');
+    console.log(`[PORT_CLEANUP] Trying Windows method...`);
     
     try {
-      const { stdout: netstatOutput } = await execAsync(`netstat -ano | findstr :${port}`);
-      const pidMatches = netstatOutput.match(/\s+(\d+)\s*$/gm);
+      // Try simple port check first
+      const testServer = net.createServer();
+      await new Promise<void>((resolve, reject) => {
+        testServer.once('error', (err: any) => {
+          if (err.code === 'EADDRINUSE') {
+            reject(new Error('Port still in use'));
+          } else {
+            resolve();
+          }
+        });
+        testServer.once('listening', () => {
+          testServer.close();
+          resolve();
+        });
+        testServer.listen(port, '0.0.0.0');
+      });
       
-      if (pidMatches && pidMatches.length > 0) {
-        for (const pidMatch of pidMatches) {
-          const pid = pidMatch.trim();
-          try {
-            await execAsync(`taskkill /F /PID ${pid}`);
-            console.log(`[PORT_CLEANUP] Terminated Windows process ${pid}`);
-            await wait(TERMINATION_DELAY);
-          } catch (killError) {
-            console.error(`[PORT_CLEANUP] Failed to terminate Windows process ${pid}:`, killError);
+      return true; // Port is now available
+    } catch {
+      // If port is still in use, try Windows method
+      try {
+        const { stdout: netstatOutput } = await execAsync(`netstat -ano | findstr :${port}`);
+        const pidMatches = netstatOutput.match(/\s+(\d+)\s*$/gm);
+        
+        if (pidMatches && pidMatches.length > 0) {
+          console.log(`[PORT_CLEANUP] Found ${pidMatches.length} processes using port ${port}`);
+          for (const pidMatch of pidMatches) {
+            const pid = pidMatch.trim();
+            try {
+              await execAsync(`taskkill /F /PID ${pid}`);
+              console.log(`[PORT_CLEANUP] Terminated Windows process ${pid}`);
+              await wait(TERMINATION_DELAY);
+            } catch (killError) {
+              console.error(`[PORT_CLEANUP] Failed to terminate Windows process ${pid}:`, 
+                killError instanceof Error ? killError.message : 'Unknown error');
+            }
           }
         }
-      }
       
       // Verify port is now available
       return !(await isPortInUse(port));

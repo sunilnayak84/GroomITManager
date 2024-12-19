@@ -86,16 +86,25 @@ async function startServer(port: number): Promise<Server> {
       next();
     });
 
-    // Start server with proper error handling
+    // Start server with proper error handling and port cleanup
     return new Promise((resolve, reject) => {
       if (!server) {
         return reject(new Error('Server was not properly initialized'));
       }
 
-      const onError = (error: any) => {
+      const onError = async (error: any) => {
         if (error.code === 'EADDRINUSE') {
           console.error(`[SERVER] Port ${port} is already in use`);
-          reject(new Error(`Port ${port} is already in use`));
+          try {
+            console.log(`[SERVER] Attempting to clean up port ${port}...`);
+            await terminateProcessOnPort(port);
+            // Retry starting the server after cleanup
+            server!.listen(port, '0.0.0.0');
+          } catch (cleanupError) {
+            const errorMessage = cleanupError instanceof Error ? cleanupError.message : 'Unknown error';
+            console.error(`[SERVER] Failed to clean up port ${port}:`, errorMessage);
+            reject(new Error(`Failed to clean up port ${port}: ${errorMessage}`));
+          }
         } else {
           console.error('[SERVER] Server error:', error);
           reject(error);
@@ -127,35 +136,61 @@ const STARTUP_RETRY_DELAY = 2000;
 async function main() {
   const PORT = parseInt(process.env.PORT || '3000', 10);
   let startupAttempt = 1;
+  
+  console.log('[SERVER] Starting server initialization...');
+
+  // Initial port cleanup before any attempts
+  try {
+    await terminateProcessOnPort(PORT);
+    console.log(`[SERVER] Initial port ${PORT} cleanup successful`);
+  } catch (error) {
+    console.warn(`[SERVER] Initial port cleanup warning:`, error);
+  }
 
   while (startupAttempt <= MAX_STARTUP_RETRIES) {
     try {
       console.log(`[SERVER] Startup attempt ${startupAttempt}/${MAX_STARTUP_RETRIES}`);
       
-      // Clean up port
-      await terminateProcessOnPort(PORT);
-      console.log(`[SERVER] Port ${PORT} is available`);
-      
-      // Add delay to ensure port is fully released
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
       // Attempt to start server
       server = await startServer(PORT);
       console.log('[SERVER] Server started successfully');
-      break;
+      
+      // Verify server is actually listening
+      const addr = server.address();
+      if (!addr) {
+        throw new Error('Server failed to bind to address');
+      }
+      
+      return; // Success - exit the loop
+      
     } catch (error) {
       console.error(`[SERVER] Startup attempt ${startupAttempt} failed:`, error);
+      
+      if (server) {
+        try {
+          await new Promise<void>((resolve) => {
+            server!.close(() => resolve());
+          });
+          server = null;
+        } catch (closeError) {
+          console.warn('[SERVER] Error while closing server:', closeError);
+        }
+      }
       
       if (startupAttempt === MAX_STARTUP_RETRIES) {
         console.error('[SERVER] Maximum retry attempts reached, exiting');
         process.exit(1);
       }
       
-      console.log(`[SERVER] Retrying in ${STARTUP_RETRY_DELAY}ms...`);
-      await new Promise(resolve => setTimeout(resolve, STARTUP_RETRY_DELAY));
+      const delay = STARTUP_RETRY_DELAY * startupAttempt; // Exponential backoff
+      console.log(`[SERVER] Retrying in ${delay}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
       startupAttempt++;
     }
   }
+  
+  // Should never reach here due to return or process.exit above
+  throw new Error('Server failed to start after all retry attempts');
 }
 
 // Handle process signals
