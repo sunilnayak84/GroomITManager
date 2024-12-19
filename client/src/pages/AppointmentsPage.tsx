@@ -104,6 +104,7 @@ export default function AppointmentsPage() {
   const [openNewForm, setOpenNewForm] = useState(false);
   const [openDetails, setOpenDetails] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
+  const [showPetDetails, setShowPetDetails] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithRelations | null>(null);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
