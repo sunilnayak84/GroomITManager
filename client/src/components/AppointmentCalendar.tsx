@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import type { CalendarApi } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -134,9 +134,10 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
 
   useEffect(() => {
     if (selectedDate) {
-      console.log('Setting date:', selectedDate);
-      form.setValue('date', format(selectedDate, 'yyyy-MM-dd'));
-      form.setValue('time', format(selectedDate, 'HH:mm'));
+      const formattedDate = format(selectedDate, 'yyyy-MM-dd');
+      const formattedTime = format(selectedDate, 'HH:mm');
+      setFormattedDate(formattedDate);
+      setFormattedTime(formattedTime);
     }
   }, [selectedDate]);
 
