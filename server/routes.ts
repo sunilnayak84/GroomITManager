@@ -204,9 +204,10 @@ export function registerRoutes(app: Express) {
           isActive: !userData.disabled
         };
       }).filter(user => {
-          uid,
-          email: userData.email,
-          displayName: userData.name,
+        if (roleFilter === 'all') {
+          return ['staff', 'groomer'].includes(user.role) || user.isGroomer;
+        }
+        return !roleFilter || user.role === roleFilter || (roleFilter === 'groomer' && user.isGroomer);
           role: userData.role || 'staff',
           isGroomer: userData.isGroomer || userData.role === 'groomer',
           permissions: userData.permissions || [],
