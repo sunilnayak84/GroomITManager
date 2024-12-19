@@ -124,11 +124,18 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
     const selectedStart = new Date(selectionInfo.start);
     setSelectedDate(selectedStart);
     setOpenNewForm(true);
+    
+    // Generate available time slots for the selected date
+    const dayOfWeek = selectedStart.getDay();
+    const daySchedule = workingHours?.find(
+      (schedule) => schedule.dayOfWeek === dayOfWeek
+    );
+    
     if (calendarRef.current) {
       const calendar = calendarRef.current.getApi();
       calendar.unselect();
     }
-  }, []);
+  }, [workingHours]);
 
   const getFormattedDateTime = (date: Date | null) => {
     if (!date) return { date: '', time: '' };
@@ -175,8 +182,8 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
           </DialogTrigger>
           <AppointmentForm 
             setOpen={setOpenNewForm}
-            initialDate={getFormattedDateTime(selectedDate).date}
-            initialTime={getFormattedDateTime(selectedDate).time}
+            initialDate={selectedDate?.toISOString().split('T')[0]}
+            initialTime={selectedDate ? `${String(selectedDate.getHours()).padStart(2, '0')}:${String(selectedDate.getMinutes()).padStart(2, '0')}` : undefined}
           />
         </Dialog>
       </div>
