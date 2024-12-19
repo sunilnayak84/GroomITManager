@@ -111,10 +111,26 @@ export default function AppointmentsPage() {
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [selectedPet, setSelectedPet] = useState<any>(null);
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
-  const [view, setView] = useState<'list' | 'calendar'>('list');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [dateRange, setDateRange] = useState<'day' | 'week' | 'month'>('day');
+  const [view, setView] = useState<'list' | 'calendar'>(() => 
+    localStorage.getItem('appointmentView') as 'list' | 'calendar' || 'list'
+  );
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>(() =>
+    localStorage.getItem('appointmentSortOrder') as 'asc' | 'desc' || 'asc'
+  );
+  const [statusFilter, setStatusFilter] = useState<string>(() =>
+    localStorage.getItem('appointmentStatusFilter') || 'all'
+  );
+  const [dateRange, setDateRange] = useState<'day' | 'week' | 'month'>(() =>
+    localStorage.getItem('appointmentDateRange') as 'day' | 'week' | 'month' || 'day'
+  );
+
+  // Save preferences when they change
+  useEffect(() => {
+    localStorage.setItem('appointmentView', view);
+    localStorage.setItem('appointmentSortOrder', sortOrder);
+    localStorage.setItem('appointmentStatusFilter', statusFilter);
+    localStorage.setItem('appointmentDateRange', dateRange);
+  }, [view, sortOrder, statusFilter, dateRange]);
   const { data: appointments, isLoading, error } = useAppointments();
   
   // Handle route parameter for appointment ID
