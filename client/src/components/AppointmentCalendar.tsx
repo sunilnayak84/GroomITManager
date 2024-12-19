@@ -126,6 +126,8 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
     const selectedStart = new Date(selectionInfo.start);
     console.log('Selected date:', selectedStart);
     setSelectedDate(selectedStart);
+    setFormattedDate(format(selectedStart, 'yyyy-MM-dd'));
+    setFormattedTime(format(selectedStart, 'HH:mm'));
     setOpenNewForm(true);
     
     if (calendarRef.current) {
