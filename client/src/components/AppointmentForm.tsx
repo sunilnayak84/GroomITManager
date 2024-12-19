@@ -516,13 +516,31 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
                           return;
                         }
                         
+                        // Generate time slots with default duration if no service selected
+                        const duration = selectedService?.duration || 30;
                         const slots = generateTimeSlots(
                           daySchedule.openingTime,
                           daySchedule.closingTime,
                           daySchedule.breakStart || null,
                           daySchedule.breakEnd || null,
-                          selectedService?.duration || 30
+                          duration
                         );
+                        
+                        // Filter slots based on current time if it's today
+                        const today = new Date();
+                        const selectedDateObj = new Date(e.target.value);
+                        if (selectedDateObj.toDateString() === today.toDateString()) {
+                          const currentHour = today.getHours();
+                          const currentMinute = today.getMinutes();
+                          const filteredSlots = slots.filter(slot => {
+                            const [slotHour, slotMinute] = slot.split(':').map(Number);
+                            return (slotHour > currentHour) || 
+                                   (slotHour === currentHour && slotMinute > currentMinute);
+                          });
+                          setAvailableTimeSlots(filteredSlots);
+                        } else {
+                          setAvailableTimeSlots(slots);
+                        }
                         
                         setAvailableTimeSlots(slots);
                       }}
