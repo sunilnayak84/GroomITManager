@@ -131,6 +131,10 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
   }, []);
 
   // Format date and time for the form
+  const formattedDate = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined;
+  const formattedTime = selectedDate ? format(selectedDate, 'HH:mm') : undefined;
+
+  // Format date and time for the form
   const formattedDate = selectedDate ? selectedDate.toISOString().split('T')[0] : undefined;
   const formattedTime = selectedDate ? 
     `${String(selectedDate.getHours()).padStart(2, '0')}:${String(selectedDate.getMinutes()).padStart(2, '0')}` 
