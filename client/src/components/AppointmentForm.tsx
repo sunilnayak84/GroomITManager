@@ -529,6 +529,11 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
                         // Filter slots based on current time if it's today
                         const today = new Date();
                         const selectedDateObj = new Date(e.target.value);
+                        
+                        // Format and set the date
+                        const formattedDate = format(selectedDateObj, 'yyyy-MM-dd');
+                        field.onChange(formattedDate);
+                        
                         if (selectedDateObj.toDateString() === today.toDateString()) {
                           const currentHour = today.getHours();
                           const currentMinute = today.getMinutes();
@@ -542,7 +547,10 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
                           setAvailableTimeSlots(slots);
                         }
                         
-                        setAvailableTimeSlots(slots);
+                        // Set initial time slot if available
+                        if (slots.length > 0) {
+                          form.setValue('time', slots[0]);
+                        }
                       }}
                     />
                   </FormControl>
