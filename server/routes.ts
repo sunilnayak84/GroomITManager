@@ -181,10 +181,13 @@ export function registerRoutes(app: Express) {
       
       console.log('[FIREBASE-USERS] Fetching users with role filter:', roleFilter);
 
-      // Query users from Realtime Database
-      const usersRef = db.ref('users');
-      const snapshot = await usersRef.once('value');
-      const allUsers = snapshot.val() || {};
+      // Build the query
+      let query = db.collection('users');
+      if (roleFilter && roleFilter !== 'all') {
+        query = query.where('role', '==', roleFilter);
+      }
+
+      const snapshot = await query.get();
       
       console.log('[FIREBASE-USERS] Raw users data:', allUsers);
       
