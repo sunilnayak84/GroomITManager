@@ -43,14 +43,14 @@ export function ConsumablesModal({
   onSave,
   initialConsumables = [],
 }: ConsumablesModalProps) {
-  const [consumables, setConsumables] = React.useState<ServiceConsumable[]>(initialConsumables || []);
+  const [consumables, setConsumables] = React.useState<ServiceConsumable[]>([]);
   const { inventory } = useInventory();
 
   // Update consumables state when initialConsumables changes or modal opens
   React.useEffect(() => {
     console.log('Initial consumables received:', initialConsumables);
-    if (open && initialConsumables) {
-      setConsumables(initialConsumables);
+    if (open) {
+      setConsumables(initialConsumables || []);
     }
   }, [initialConsumables, open]);
   
