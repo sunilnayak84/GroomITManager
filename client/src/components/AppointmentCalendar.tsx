@@ -130,6 +130,12 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
     }
   }, []);
 
+  // Format date and time for the form
+  const formattedDate = selectedDate ? selectedDate.toISOString().split('T')[0] : undefined;
+  const formattedTime = selectedDate ? 
+    `${String(selectedDate.getHours()).padStart(2, '0')}:${String(selectedDate.getMinutes()).padStart(2, '0')}` 
+    : undefined;
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -158,8 +164,8 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
           </DialogTrigger>
           <AppointmentForm 
             setOpen={setOpenNewForm}
-            initialDate={selectedDate ? selectedDate.toISOString().split('T')[0] : undefined}
-            initialTime={selectedDate ? selectedDate.toLocaleTimeString('en-US', { hour12: false }).slice(0, 5) : undefined}
+            initialDate={formattedDate}
+            initialTime={formattedTime}
           />
         </Dialog>
       </div>
