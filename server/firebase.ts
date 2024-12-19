@@ -159,9 +159,9 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
     }
 
     // Initialize and verify database connection
-    const db = admin.database();
+    const db = getFirestore();
     try {
-      await db.ref('.info/connected').once('value');
+      await db.collection('users').limit(1).get();
       console.log('[FIREBASE] Database connection verified');
     } catch (error) {
       console.error('[FIREBASE] Database connection error:', error);
