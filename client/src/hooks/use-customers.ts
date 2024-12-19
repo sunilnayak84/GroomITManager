@@ -2,7 +2,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getDocs, onSnapshot, query, deleteDoc, doc, where, collection, Timestamp } from "firebase/firestore";
 import { customersCollection, createCustomer, updateCustomer as updateCustomerDoc, deleteCustomerAndRelated } from "../lib/firestore";
 import { useEffect } from "react";
-import { db, database, getDatabase } from "../lib/firebase"; // Added getDatabase import
+import { db, database } from "../lib/firebase";
+import { getDatabase } from "firebase/database"; // Added getDatabase import
 import { getAuth, createUserWithEmailAndPassword, sendPasswordResetEmail, fetchSignInMethodsForEmail, deleteUser } from "firebase/auth";
 import { ref, set, serverTimestamp } from "firebase/database";
 import { toast } from '@/components/ui/use-toast';
