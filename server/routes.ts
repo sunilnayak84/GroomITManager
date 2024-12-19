@@ -581,26 +581,39 @@ export function registerRoutes(app: Express) {
   app.get("/api/staff", authenticateFirebase, requireRole([RoleTypes.admin, RoleTypes.manager]), async (req, res) => {
     try {
       console.log('[STAFF] Fetching all staff members');
-      const db = getDatabase();
-      const snapshot = await db.ref('users')
-        .orderByChild('role')
-        .startAt('staff')
-        .endAt('staff\uf8ff')
-        .once('value');
+      const firestore = getFirestore();
       
-      const users: Array<{id: string} & Record<string, any>> = [];
-      snapshot.forEach((childSnapshot) => {
-        const userData = childSnapshot.val();
-        if (['staff', 'groomer'].includes(userData.role)) {
-          users.push({
-            id: childSnapshot.key as string,
-            ...userData
-          });
-        }
+      // Query Firestore for staff members
+      const staffQuery = firestore.collection('users')
+        .where('role', 'in', ['staff', 'groomer'])
+        .where('isActive', '==', true);
+      
+      const snapshot = await staffQuery.get();
+      
+      const users = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt?.toDate?.() || null,
+          updatedAt: data.updatedAt?.toDate?.() || null
+        };
       });
 
-      console.log(`[STAFF] Successfully fetched ${users.length} staff members`);
-      res.json(users);
+      // Fetch role permissions from Realtime Database
+      const realtimeDb = getDatabase();
+      const rolePromises = users.map(async user => {
+        const roleSnapshot = await realtimeDb.ref(`roles/${user.id}`).once('value');
+        return {
+          ...user,
+          permissions: roleSnapshot.val()?.permissions || []
+        };
+      });
+
+      const staffWithPermissions = await Promise.all(rolePromises);
+
+      console.log(`[STAFF] Successfully fetched ${staffWithPermissions.length} staff members`);
+      res.json(staffWithPermissions);
     } catch (error) {
       console.error('[STAFF] Error fetching staff:', error);
       res.status(500).json({
@@ -615,27 +628,6 @@ export function registerRoutes(app: Express) {
     try {
       console.log('[STAFF-CREATE] Starting staff creation process');
       console.log('[STAFF-CREATE] Request body:', req.body);
-      
-      // Add test groomer if in development and no users exist
-      if (process.env.NODE_ENV === 'development') {
-        const db = getDatabase();
-        const usersRef = db.ref('users');
-        const snapshot = await usersRef.once('value');
-        if (!snapshot.exists()) {
-          console.log('[STAFF-CREATE] Adding test groomer in development mode');
-          await usersRef.child('test-groomer').set({
-            email: 'groomer@groomery.in',
-            name: 'Test Groomer',
-            role: 'groomer',
-            isGroomer: true,
-            isActive: true,
-            disabled: false,
-            permissions: ['manage_appointments', 'view_appointments'],
-            createdAt: Date.now(),
-            updatedAt: Date.now()
-          });
-        }
-      }
       
       const { 
         email, 
@@ -679,7 +671,7 @@ export function registerRoutes(app: Express) {
         // User does not exist, proceed with creation
       }
 
-      // Create user in Firebase Auth
+      // Step 1: Create user in Firebase Auth
       const userRecord = await admin.auth().createUser({
         email,
         emailVerified: false,
@@ -689,10 +681,10 @@ export function registerRoutes(app: Express) {
 
       console.log('[STAFF-CREATE] User created in Firebase Auth:', userRecord.uid);
 
-      // Get role permissions from database
+      // Step 2: Get role permissions from database
       const permissions = await getDefaultPermissions(role as RoleTypes);
       
-      // Set custom claims based on role
+      // Step 3: Set custom claims based on role
       const customClaims = {
         role,
         permissions,
@@ -701,9 +693,11 @@ export function registerRoutes(app: Express) {
 
       await admin.auth().setCustomUserClaims(userRecord.uid, customClaims);
 
-      // Create user entry in Realtime Database
-      const db = getDatabase();
-      const userData = {
+      // Step 4: Create user document in Firestore
+      const firestore = getFirestore();
+      const timestamp = admin.firestore.FieldValue.serverTimestamp();
+      
+      const staffData = {
         id: userRecord.uid,
         email,
         name,
@@ -714,19 +708,40 @@ export function registerRoutes(app: Express) {
         maxDailyAppointments,
         specialties,
         petTypePreferences,
-        permissions: await getDefaultPermissions(role as RoleTypes),
         isActive: true,
-        createdAt: Date.now(),
+        createdAt: timestamp,
+        updatedAt: timestamp,
+        branch: null, // Will be set when branch management is implemented
+        schedule: {}, // Will be populated when scheduling is implemented
+        metadata: {
+          lastLogin: null,
+          deviceTokens: [],
+          notificationPreferences: {
+            email: true,
+            push: true,
+            sms: false
+          }
+        }
+      };
+      
+      await firestore.collection('users').doc(userRecord.uid).set(staffData);
+      console.log('[STAFF-CREATE] Staff data stored in Firestore');
+
+      // Step 5: Store role information in Realtime Database
+      const realtimeDb = getDatabase();
+      const roleData = {
+        role,
+        permissions,
         updatedAt: Date.now()
       };
       
-      await db.ref(`users/${userRecord.uid}`).set(userData);
+      await realtimeDb.ref(`roles/${userRecord.uid}`).set(roleData);
 
       // Create role history entry
-      await db.ref(`role-history/${userRecord.uid}`).push({
+      await realtimeDb.ref(`role-history/${userRecord.uid}`).push({
         action: 'create',
         role,
-        permissions: await getDefaultPermissions(role as RoleTypes),
+        permissions,
         timestamp: Date.now(),
         createdBy: req.user?.uid
       });
@@ -736,7 +751,10 @@ export function registerRoutes(app: Express) {
       res.json({ 
         message: "Staff member created successfully",
         uid: userRecord.uid,
-        user: userData
+        user: {
+          ...staffData,
+          permissions
+        }
       });
     } catch (error) {
       console.error('[STAFF-CREATE] Error creating staff:', error);

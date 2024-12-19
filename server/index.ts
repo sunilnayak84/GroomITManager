@@ -1,10 +1,8 @@
 import express, { type Request, type Response, type NextFunction } from "express";
 import { registerRoutes } from "./routes.js";
-import { createServer } from "http";
+import { createServer, type Server } from "http";
 import { terminateProcessOnPort } from "./utils/port_cleanup.js";
 import { initializeFirebaseAdmin } from "./firebase.js";
-import path from "path";
-import fs from "fs";
 
 // Configure Express app
 const app = express();
@@ -39,64 +37,142 @@ app.use((req, res, next) => {
 
 // Global error handling
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-  console.error('Error:', err.message);
+  console.error('[ERROR]', err.message);
   const status = err.status || err.statusCode || 500;
   const message = err.message || "Internal Server Error";
   res.status(status).json({ message });
 });
 
-async function startServer(port: number) {
+let server: Server | null = null;
+
+async function gracefulShutdown() {
+  console.log('[SERVER] Initiating graceful shutdown...');
+  if (server) {
+    return new Promise<void>((resolve) => {
+      server!.close(() => {
+        console.log('[SERVER] Closed out remaining connections.');
+        resolve();
+      });
+
+      // Force close after timeout
+      setTimeout(() => {
+        console.log('[SERVER] Could not close connections in time, forcefully shutting down');
+        resolve();
+      }, 10000);
+    });
+  }
+}
+
+async function startServer(port: number): Promise<Server> {
   try {
-    // Initialize Firebase
+    console.log('[SERVER] Initializing server...');
+    
+    // Initialize Firebase first
     await initializeFirebaseAdmin();
-    console.log('Firebase Admin initialized successfully');
+    console.log('[SERVER] Firebase Admin initialized successfully');
 
     // Create HTTP server
-    const server = createServer(app);
+    server = createServer(app);
 
-    // Register routes first
+    // Register routes
     registerRoutes(app);
+    console.log('[SERVER] Routes registered successfully');
 
-    // Register any remaining API endpoints
+    // Add API request logging
     app.use((req, res, next) => {
       if (req.path.startsWith('/api/')) {
-        console.log(`[API] Handling request: ${req.method} ${req.path}`);
+        console.log(`[API] ${req.method} ${req.path}`);
       }
       next();
     });
 
-    // API endpoints will be registered by registerRoutes
-    console.log('Server routes registered successfully');
+    // Start server with proper error handling
+    return new Promise((resolve, reject) => {
+      if (!server) {
+        return reject(new Error('Server was not properly initialized'));
+      }
 
-    // Start server
-    server.listen(port, '0.0.0.0', () => {
-      console.log(`Server started on port ${port}`);
+      const onError = (error: any) => {
+        if (error.code === 'EADDRINUSE') {
+          console.error(`[SERVER] Port ${port} is already in use`);
+          reject(new Error(`Port ${port} is already in use`));
+        } else {
+          console.error('[SERVER] Server error:', error);
+          reject(error);
+        }
+      };
+
+      const onListening = () => {
+        const addr = server!.address();
+        const bind = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr?.port}`;
+        console.log(`[SERVER] Server is listening on ${bind}`);
+        resolve(server!);
+      };
+
+      server
+        .once('error', onError)
+        .once('listening', onListening)
+        .listen(port, '0.0.0.0');
     });
 
   } catch (error) {
-    console.error('Server startup error:', error);
-    process.exit(1);
+    console.error('[SERVER] Startup error:', error);
+    throw error;
   }
 }
 
-// Start the server
-const PORT = parseInt(process.env.PORT || '3000', 10);
+const MAX_STARTUP_RETRIES = 3;
+const STARTUP_RETRY_DELAY = 2000;
 
-// Clean up port before starting
-await terminateProcessOnPort(PORT).catch(error => {
-  console.warn('Port cleanup warning:', error.message);
-});
+async function main() {
+  const PORT = parseInt(process.env.PORT || '3000', 10);
+  let startupAttempt = 1;
 
-// Start server
-startServer(PORT);
+  while (startupAttempt <= MAX_STARTUP_RETRIES) {
+    try {
+      console.log(`[SERVER] Startup attempt ${startupAttempt}/${MAX_STARTUP_RETRIES}`);
+      
+      // Clean up port
+      await terminateProcessOnPort(PORT);
+      console.log(`[SERVER] Port ${PORT} is available`);
+      
+      // Add delay to ensure port is fully released
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Attempt to start server
+      server = await startServer(PORT);
+      console.log('[SERVER] Server started successfully');
+      break;
+    } catch (error) {
+      console.error(`[SERVER] Startup attempt ${startupAttempt} failed:`, error);
+      
+      if (startupAttempt === MAX_STARTUP_RETRIES) {
+        console.error('[SERVER] Maximum retry attempts reached, exiting');
+        process.exit(1);
+      }
+      
+      console.log(`[SERVER] Retrying in ${STARTUP_RETRY_DELAY}ms...`);
+      await new Promise(resolve => setTimeout(resolve, STARTUP_RETRY_DELAY));
+      startupAttempt++;
+    }
+  }
+}
 
 // Handle process signals
-process.on('SIGTERM', () => {
-  console.log('Received SIGTERM signal, shutting down gracefully');
+process.on('SIGTERM', async () => {
+  console.log('[SERVER] Received SIGTERM signal');
+  await gracefulShutdown();
   process.exit(0);
 });
 
-process.on('SIGINT', () => {
-  console.log('Received SIGINT signal, shutting down gracefully');
+process.on('SIGINT', async () => {
+  console.log('[SERVER] Received SIGINT signal');
+  await gracefulShutdown();
   process.exit(0);
+});
+
+// Start the server
+main().catch(error => {
+  console.error('[SERVER] Fatal error:', error);
+  process.exit(1);
 });

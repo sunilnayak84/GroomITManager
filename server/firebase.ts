@@ -1,6 +1,7 @@
 import admin from 'firebase-admin';
 import { getAuth } from 'firebase-admin/auth';
 import { getDatabase } from 'firebase-admin/database';
+import { getFirestore } from 'firebase-admin/firestore';
 
 // Role Types
 enum RoleTypes {
@@ -77,9 +78,11 @@ const permissionsCache = new Map<RoleTypes, { permissions: Permission[], timesta
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 let firebaseApp: admin.app.App | null = null;
+const MAX_INIT_RETRIES = 3;
+const INIT_RETRY_DELAY = 2000;
 
 // Firebase Admin initialization
-function getFirebaseAdmin(): admin.app.App {
+async function getFirebaseAdmin(): Promise<admin.app.App> {
   if (firebaseApp) {
     return firebaseApp;
   }
@@ -87,26 +90,62 @@ function getFirebaseAdmin(): admin.app.App {
   const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
   
   if (!privateKey || !process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL) {
-    throw new Error('Missing Firebase credentials');
+    console.error('[FIREBASE] Missing required credentials:',
+      !privateKey ? 'FIREBASE_PRIVATE_KEY' : '',
+      !process.env.FIREBASE_PROJECT_ID ? 'FIREBASE_PROJECT_ID' : '',
+      !process.env.FIREBASE_CLIENT_EMAIL ? 'FIREBASE_CLIENT_EMAIL' : ''
+    );
+    throw new Error('Missing Firebase credentials. Please check environment variables.');
   }
 
-  firebaseApp = admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: privateKey
-    }),
-    databaseURL: 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
-  });
+  try {
+    console.log('[FIREBASE] Initializing Firebase Admin...');
+    firebaseApp = admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: privateKey
+      }),
+      databaseURL: process.env.VITE_FIREBASE_DATABASE_URL || 
+                  'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
+    });
 
-  return firebaseApp;
+    // Verify the initialization by making a test call
+    const auth = getAuth(firebaseApp);
+    await auth.listUsers(1);
+    
+    console.log('[FIREBASE] Firebase Admin initialized successfully');
+    return firebaseApp;
+  } catch (error) {
+    console.error('[FIREBASE] Failed to initialize Firebase Admin:', error);
+    firebaseApp = null;
+    throw error;
+  }
 }
 
 async function initializeFirebaseAdmin(): Promise<admin.app.App> {
-  if (firebaseApp) {
-    return firebaseApp;
+  let attempt = 1;
+  let lastError: Error | null = null;
+
+  while (attempt <= MAX_INIT_RETRIES) {
+    try {
+      console.log(`[FIREBASE] Initialization attempt ${attempt}/${MAX_INIT_RETRIES}`);
+      return await getFirebaseAdmin();
+    } catch (error) {
+      console.error(`[FIREBASE] Attempt ${attempt} failed:`, error);
+      lastError = error instanceof Error ? error : new Error(String(error));
+      
+      if (attempt === MAX_INIT_RETRIES) {
+        console.error('[FIREBASE] Maximum retry attempts reached');
+        throw lastError;
+      }
+
+      await new Promise(resolve => setTimeout(resolve, INIT_RETRY_DELAY));
+      attempt++;
+    }
   }
-  return getFirebaseAdmin();
+
+  throw lastError || new Error('Failed to initialize Firebase Admin');
 }
 
 // Role and permission management functions
