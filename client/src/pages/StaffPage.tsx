@@ -106,7 +106,7 @@ export default function StaffPage() {
 
   const onSubmit = async (data: InsertStaff) => {
     try {
-      console.log('Submitting staff data:', data);
+      console.log('[STAFF] Submitting staff data:', data);
       
       if (selectedStaff) {
         await updateStaff({

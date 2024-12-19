@@ -700,7 +700,8 @@ export function registerRoutes(app: Express) {
   });
 
   // Create new staff member
-  app.post("/api/users/create", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
+  app.post("/api/users/create", authenticateFirebase, requireRole([RoleTypes.admin, RoleTypes.manager]), async (req, res) => {
+  console.log('[STAFF-CREATE] Received request:', req.body);
     try {
       console.log('[STAFF-CREATE] Starting staff creation process');
       console.log('[STAFF-CREATE] Request body:', req.body);

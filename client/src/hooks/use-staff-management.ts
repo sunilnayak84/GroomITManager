@@ -60,6 +60,13 @@ export function useStaffManagement() {
       console.log('[STAFF] Creating new staff member:', data);
       
       try {
+        const auth = getAuth();
+        const token = await auth.currentUser?.getIdToken();
+        
+        if (!token) {
+          throw new Error('Not authenticated');
+        }
+
         console.log('[STAFF] Starting staff creation with data:', data);
         
         const token = await auth.currentUser?.getIdToken();
