@@ -199,10 +199,6 @@ export default function AppointmentsPage() {
             <div className="text-sm text-muted-foreground">{pet.breed}</div>
           </div>
         </div>
-                    id: pet.id,
-                    name: pet.name,
-                    type: (pet.type as "dog" | "cat" | "bird" | "fish" | "other") || 'dog',
-                    breed: pet.breed,
                     gender: (pet.gender as "male" | "female" | "other" | "unknown" | null) || 'unknown',
                     age: pet.age || null,
                     image: pet.image,
