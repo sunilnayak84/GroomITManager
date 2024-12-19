@@ -2,7 +2,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getDocs, onSnapshot, query, deleteDoc, doc, where, collection, Timestamp } from "firebase/firestore";
 import { customersCollection, createCustomer, updateCustomer as updateCustomerDoc, deleteCustomerAndRelated } from "../lib/firestore";
 import { useEffect } from "react";
-import { db } from "../lib/firebase";
+import { db, database } from "../lib/firebase";
+import { getAuth, createUserWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
+import { ref, set, serverTimestamp } from "firebase/database";
 import { toast } from '@/components/ui/use-toast';
 import { 
   type Customer as CustomerType, 
@@ -138,7 +140,11 @@ export function useCustomers() {
       });
     },
     onError: (error) => {
-      console.error('ADD_CUSTOMER: Mutation error', { error });
+      console.error('ADD_CUSTOMER: Mutation error', { 
+        error,
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined
+      });
       toast({
         variant: "destructive",
         title: "Error",
