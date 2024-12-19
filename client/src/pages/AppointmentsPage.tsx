@@ -229,9 +229,7 @@ export default function AppointmentsPage() {
             </DialogContent>
           </Dialog>
         </div>
-          </>
-        );
-      },
+      ),
     },
     {
       header: "Customer",
