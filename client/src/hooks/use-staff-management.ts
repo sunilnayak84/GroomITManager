@@ -58,22 +58,38 @@ export function useStaffManagement() {
   const addStaff = useMutation({
     mutationFn: async (data: InsertStaff) => {
       console.log('[STAFF] Creating new staff member:', data);
-      const usersCollection = collection(db, 'users');
-      const docRef = doc(usersCollection);
       
-      const now = Timestamp.now();
-      // Ensure isGroomer is set based on role
-      const isGroomer = data.role === 'groomer';
-      const staffData = {
-        ...data,
-        id: docRef.id,
-        isGroomer,
-        createdAt: now,
-        updatedAt: now
-      };
+      try {
+        // First create the user in Firebase Auth
+        const response = await fetch('/api/users/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: data.email,
+            name: data.name,
+            role: data.role,
+            password: 'ChangeMe123!', // Default password
+            isGroomer: data.role === 'groomer',
+            phone: data.phone,
+            experienceYears: data.experienceYears,
+            maxDailyAppointments: data.maxDailyAppointments,
+            specialties: data.specialties,
+            petTypePreferences: data.petTypePreferences
+          }),
+        });
 
-      await setDoc(docRef, staffData);
-      return staffData;
+        if (!response.ok) {
+          throw new Error('Failed to create staff member');
+        }
+
+        const result = await response.json();
+        return result.user;
+      } catch (error) {
+        console.error('[STAFF] Error creating staff:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['staff-members'] });

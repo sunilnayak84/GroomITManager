@@ -58,9 +58,37 @@ const DefaultPermissions: Record<RoleTypes, Permission[]> = {
     'manage_customers',
     'view_customers',
     'manage_inventory',
-    'view_inventory'
+    'view_inventory',
+    'manage_staff_schedule'
   ],
   [RoleTypes.staff]: [
+    'view_appointments',
+    'manage_own_schedule',
+    'view_customers'
+  ],
+  [RoleTypes.groomer]: [
+    'view_appointments',
+    'manage_own_schedule',
+    'view_customers',
+    'create_appointments'
+  ],
+  [RoleTypes.walker]: [
+    'view_appointments',
+    'manage_own_schedule',
+    'view_customers'
+  ],
+  [RoleTypes.trainer]: [
+    'view_appointments',
+    'manage_own_schedule',
+    'view_customers'
+  ],
+  [RoleTypes.vet]: [
+    'view_appointments',
+    'manage_own_schedule',
+    'view_customers',
+    'create_appointments'
+  ],
+  [RoleTypes.boarder]: [
     'view_appointments',
     'manage_own_schedule',
     'view_customers'
