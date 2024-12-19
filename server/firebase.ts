@@ -130,7 +130,7 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
 
   // Initialize Realtime Database URL
   const databaseURL = process.env.FIREBASE_DATABASE_URL || 
-    `https://${process.env.FIREBASE_PROJECT_ID}-default-rtdb.firebaseio.com`;
+    `https://${process.env.FIREBASE_PROJECT_ID}-default-rtdb.asia-southeast1.firebasedatabase.app`;
   
   if (!privateKey || !process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL) {
     console.error('[FIREBASE] Missing required credentials:',

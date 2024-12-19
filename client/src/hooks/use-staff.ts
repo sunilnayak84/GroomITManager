@@ -50,6 +50,10 @@ export function useStaff() {
         }
 
         const data = await response.json();
+        if (!response.ok) {
+          console.error('FETCH_STAFF: API Error:', data);
+          throw new Error(data.message || 'Failed to fetch staff members');
+        }
         console.log('FETCH_STAFF: Retrieved data:', {
           totalUsers: data.users?.length || 0,
           users: data.users,
