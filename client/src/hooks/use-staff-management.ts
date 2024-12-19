@@ -69,10 +69,6 @@ export function useStaffManagement() {
 
         console.log('[STAFF] Starting staff creation with data:', data);
         
-        const token = await auth.currentUser?.getIdToken();
-        if (!token) {
-          throw new Error('No authentication token available');
-        }
 
         // First create the user in Firebase Auth
         const response = await fetch('/api/users/create', {
