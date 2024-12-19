@@ -76,7 +76,7 @@ async function startServer(port: number): Promise<Server> {
     registerRoutes(app);
     console.log('[SERVER] Routes registered successfully');
 
-    // Add API request logging
+    // Add API request logging (This section was already present in the original code)
     app.use((req, res, next) => {
       if (req.path.startsWith('/api/')) {
         console.log(`[API] ${req.method} ${req.path}`);

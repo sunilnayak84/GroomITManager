@@ -257,10 +257,17 @@ async function getUserRole(userId: string): Promise<{ role: RoleTypes; permissio
       };
     }
   
-  return {
-    role: roleData.role as RoleTypes,
-    permissions: roleData.permissions as Permission[]
-  };
+    return {
+      role: roleData.role as RoleTypes,
+      permissions: roleData.permissions || DefaultPermissions[roleData.role as RoleTypes]
+    };
+  } catch (error) {
+    console.error('[FIREBASE] Error getting user role:', error);
+    return {
+      role: RoleTypes.staff,
+      permissions: DefaultPermissions[RoleTypes.staff]
+    };
+  }
 }
 
 async function updateUserRole(
