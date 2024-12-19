@@ -147,9 +147,16 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
           privateKey: privateKey
         }),
         databaseURL: process.env.FIREBASE_DATABASE_URL || 
-                    `https://${process.env.FIREBASE_PROJECT_ID}-default-rtdb.asia-southeast1.firebasedatabase.app`
+                    `https://${process.env.FIREBASE_PROJECT_ID}-default-rtdb.asia-southeast1.firebasedatabase.app`,
+        databaseAuthVariableOverride: {
+          uid: 'server'
+        }
       };
       firebaseApp = admin.initializeApp(config);
+      
+      // Initialize Realtime Database
+      const db = admin.database(firebaseApp);
+      await db.ref('.info/connected').once('value');
     } else {
       firebaseApp = admin.app();
     }
@@ -237,16 +244,18 @@ function validatePermissions(permissions: unknown[]): Permission[] {
 
 // User management functions
 async function getUserRole(userId: string): Promise<{ role: RoleTypes; permissions: Permission[] }> {
-  const db = getDatabase(getFirebaseAdmin());
-  const snapshot = await db.ref(`roles/${userId}`).once('value');
-  const roleData = snapshot.val();
-  
-  if (!roleData) {
-    return {
-      role: RoleTypes.staff,
-      permissions: DefaultPermissions[RoleTypes.staff]
-    };
-  }
+  try {
+    const app = await getFirebaseAdmin();
+    const db = admin.database(app);
+    const snapshot = await db.ref(`roles/${userId}`).once('value');
+    const roleData = snapshot.val();
+    
+    if (!roleData) {
+      return {
+        role: RoleTypes.staff,
+        permissions: DefaultPermissions[RoleTypes.staff]
+      };
+    }
   
   return {
     role: roleData.role as RoleTypes,
