@@ -170,12 +170,10 @@ export function useServices() {
 
       // Construct update payload
       // Ensure required_categories is properly preserved
-      const required_categories = updateData.required_categories || [];
-      
       const updatePayload: any = {
         ...updateData,
         updated_at: timestamp.toISOString(),
-        required_categories: Array.isArray(updateData.required_categories) ? updateData.required_categories : []
+        required_categories: updateData.required_categories
       };
       
       console.log('Update payload with categories:', updatePayload.required_categories);

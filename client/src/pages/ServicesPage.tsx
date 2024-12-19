@@ -604,7 +604,7 @@ export default function ServicesPage() {
                           <Checkbox
                             checked={field.value?.includes(category.name)}
                             onCheckedChange={(checked) => {
-                              const currentCategories = Array.isArray(field.value) ? field.value : [];
+                              const currentCategories = field.value || [];
                               const updatedCategories = checked
                                 ? [...currentCategories, category.name]
                                 : currentCategories.filter((c) => c !== category.name);
@@ -613,6 +613,7 @@ export default function ServicesPage() {
                                 shouldDirty: true,
                                 shouldTouch: true
                               });
+                              form.trigger('required_categories');
                               console.log('Setting categories:', updatedCategories);
                               console.log('Updated categories:', updatedCategories);
                             }}
