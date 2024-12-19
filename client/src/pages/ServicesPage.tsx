@@ -635,7 +635,6 @@ export default function ServicesPage() {
                     {selectedService ? "Update Service" : "Add Service"}
                   </Button>
                 </div>
-              </div>
             </form>
           </Form>
         </DialogContent>
