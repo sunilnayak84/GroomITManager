@@ -169,13 +169,16 @@ export function useServices() {
       const timestamp = new Date();
 
       // Construct update payload
+      // Ensure required_categories is properly preserved
+      const required_categories = updateData.required_categories || [];
+      
       const updatePayload: any = {
         ...updateData,
         updated_at: timestamp.toISOString(),
-        required_categories: updateData.required_categories || []
+        required_categories: required_categories
       };
       
-      console.log('Update payload with categories:', updatePayload.required_categories);
+      console.log('Update payload with categories:', required_categories);
       
       console.log('Update payload:', updatePayload);
 
