@@ -172,12 +172,8 @@ export function useServices() {
       const updatePayload: any = {
         ...updateData,
         updated_at: timestamp.toISOString(),
+        required_categories: updateData.required_categories || []
       };
-
-      // Only update required_categories if it's provided in updateData
-      if (updateData.required_categories) {
-        updatePayload.required_categories = updateData.required_categories;
-      }
       
       console.log('Update payload with categories:', updatePayload.required_categories);
       
