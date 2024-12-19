@@ -182,25 +182,24 @@ export function useServices() {
       
       console.log('Update payload:', updatePayload);
 
-      if (updateData.consumables) {
-        console.log('Processing consumables for update:', updateData.consumables);
-        updatePayload.consumables = updateData.consumables.map(consumable => {
-          try {
-            const validated = serviceConsumableSchema.parse({
-              item_id: consumable.item_id,
-              item_name: consumable.item_name,
-              quantity_used: Number(consumable.quantity_used)
-            });
+      // Always include consumables in the update payload
+      console.log('Processing consumables for update:', updateData.consumables || []);
+      updatePayload.consumables = (updateData.consumables || []).map(consumable => {
+        try {
+          const validated = serviceConsumableSchema.parse({
+            item_id: consumable.item_id,
+            item_name: consumable.item_name,
+            quantity_used: Number(consumable.quantity_used)
+          });
 
-            console.log('Validated update consumable:', validated);
-            return validated;
-          } catch (error) {
-            console.error('Error validating consumable during update:', consumable, error);
-            throw error;
-          }
-        });
-        console.log('Final processed update consumables:', updatePayload.consumables);
-      }
+          console.log('Validated update consumable:', validated);
+          return validated;
+        } catch (error) {
+          console.error('Error validating consumable during update:', consumable, error);
+          throw error;
+        }
+      });
+      console.log('Final processed update consumables:', updatePayload.consumables);
 
       if (updateData.selectedServices) {
         updatePayload.selectedServices = updateData.selectedServices.map(service => ({
