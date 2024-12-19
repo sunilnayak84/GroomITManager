@@ -485,8 +485,12 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
                       min={new Date().toISOString().split('T')[0]}
                       onChange={(e) => {
                         field.onChange(e.target.value);
-                        const selectedDate = new Date(e.target.value);
+                        // Create date object and set it to start of day to avoid timezone issues
+                        const selectedDate = new Date(e.target.value + 'T00:00:00');
                         const dayOfWeek = selectedDate.getDay();
+                        
+                        // Update form field with ISO date string
+                        field.onChange(e.target.value);
                         
                         const daySchedule = workingHours?.find(
                           (schedule) => schedule.dayOfWeek === dayOfWeek
@@ -530,9 +534,8 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
                         const today = new Date();
                         const selectedDateObj = new Date(e.target.value);
                         
-                        // Format and set the date
-                        const formattedDate = format(selectedDateObj, 'yyyy-MM-dd');
-                        field.onChange(formattedDate);
+                        // Date is already formatted correctly from the input
+                        field.onChange(e.target.value);
                         
                         if (selectedDateObj.toDateString() === today.toDateString()) {
                           const currentHour = today.getHours();
