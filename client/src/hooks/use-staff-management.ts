@@ -18,7 +18,7 @@ export function useStaffManagement() {
         throw new Error('No authentication token available');
       }
 
-      const response = await fetch('http://0.0.0.0:3000/api/staff', {
+      const response = await fetch('/api/staff', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -46,7 +46,11 @@ export function useStaffManagement() {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify({
+          ...data,
+          specialties: Array.isArray(data.specialties) ? data.specialties : [],
+          password: 'ChangeMe123!'
+        })
       });
 
       if (!response.ok) {

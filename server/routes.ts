@@ -716,7 +716,8 @@ export function registerRoutes(app: Express) {
         experienceYears = 0, 
         maxDailyAppointments = 8,
         specialties = [],
-        petTypePreferences = []
+        petTypePreferences = [],
+        isActive = true
       } = req.body;
       
       // Validate required fields
