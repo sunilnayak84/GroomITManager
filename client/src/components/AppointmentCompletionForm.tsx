@@ -109,6 +109,18 @@ export function AppointmentCompletionForm({
           });
         }
       }
+      // Save observations and recommendations to the appointment
+      await fetch(`/api/appointments/${appointmentId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          observations: data.observations,
+          recommendations: data.recommendations,
+        }),
+      });
+      
       onComplete();
       onClose();
     } catch (error) {
@@ -198,7 +210,7 @@ export function AppointmentCompletionForm({
                 </Button>
               </div>
               {form.watch('additionalItems').map((_, index) => (
-                <div key={`additional-${index}`} className="grid grid-cols-[1fr_1fr_auto] gap-4 items-end">
+                <div key={`additional-${index}`} className="grid grid-cols-[1fr_1fr_1fr_auto] gap-4 items-end">
                   <FormField
                     name={`additionalItems.${index}.categoryId`}
                     render={({ field }) => (
@@ -245,6 +257,23 @@ export function AppointmentCompletionForm({
                             ))}
                           </SelectContent>
                         </Select>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    name={`additionalItems.${index}.quantity`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Quantity Used</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            {...field}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                          />
+                        </FormControl>
                       </FormItem>
                     )}
                   />
