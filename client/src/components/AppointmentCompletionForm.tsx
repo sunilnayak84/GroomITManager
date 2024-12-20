@@ -3,17 +3,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useInventory } from "@/hooks/use-inventory";
 import { useServices } from "@/hooks/use-services"; 
-import { useUser } from "@/hooks/use-user";
-import { useToast } from "./ui/use-toast";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
 import {
   Dialog,
   DialogContent,
@@ -29,7 +18,15 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
-import { Plus } from "lucide-react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 interface AppointmentCompletionFormProps {
   isOpen: boolean;
@@ -37,7 +34,7 @@ interface AppointmentCompletionFormProps {
   appointmentId: string;
   serviceId: string;
   service: {
-    required_categories: string[];
+    consumables: { category: string; quantity: number }[];
     name: string;
   };
   onComplete: () => void;
@@ -57,16 +54,8 @@ export function AppointmentCompletionForm({
   service,
   onComplete,
 }: AppointmentCompletionFormProps) {
-  const { inventory, recordUsage } = useInventory();
-  const { user } = useUser();
-  const { toast } = useToast();
-  const [additionalItems, setAdditionalItems] = useState<string[]>([]);
-
-  const form = useForm({
-    defaultValues: {
-      items: [] as UsageItem[],
-    },
-  });
+  const { inventory } = useInventory();
+  const [usageItems, setUsageItems] = useState<UsageItem[]>([]);
 
   // Group inventory by categories
   const inventoryByCategory = inventory.reduce((acc, item) => {
@@ -77,55 +66,36 @@ export function AppointmentCompletionForm({
     return acc;
   }, {} as Record<string, typeof inventory>);
 
-  const handleAddAdditionalItem = () => {
-    const newId = `additional-${additionalItems.length}`;
-    setAdditionalItems([...additionalItems, newId]);
-  };
+  const form = useForm({
+    defaultValues: {
+      items: service.consumables.map(c => ({
+        categoryId: c.category,
+        itemId: '',
+        quantity: c.quantity
+      }))
+    }
+  });
 
-  const handleSubmit = async (data: { items: UsageItem[] }) => {
+  const onSubmit = async (data: { items: UsageItem[] }) => {
     try {
-      await Promise.all(
-        data.items
-          .filter(item => item.itemId && item.quantity > 0)
-          .map(item =>
-            recordUsage({
-              item_id: item.itemId,
-              quantity_used: item.quantity,
-              service_id: serviceId,
-              appointment_id: appointmentId,
-              used_by: user?.uid || '',
-              notes: `Used in appointment ${appointmentId}`,
-            })
-          )
-      );
-      
+      setUsageItems(data.items);
       onComplete();
-      toast({
-        title: "Success",
-        description: "Appointment completed and inventory updated",
-      });
-      onClose();
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to record inventory usage",
-        variant: "destructive",
-      });
+      console.error('Error recording usage:', error);
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Complete {service.name}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            {/* Required Categories */}
-            {service.required_categories.map((category, index) => (
-              <div key={`required-${category}`} className="space-y-2">
-                <h3 className="font-medium">{category} (Required)</h3>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {service.consumables.map((consumable, index) => (
+              <div key={`${consumable.category}-${index}`} className="space-y-2">
+                <h3 className="font-medium">{consumable.category}</h3>
                 <div className="grid gap-4">
                   <FormField
                     name={`items.${index}.itemId`}
@@ -140,7 +110,7 @@ export function AppointmentCompletionForm({
                             <SelectValue placeholder="Select product" />
                           </SelectTrigger>
                           <SelectContent>
-                            {inventoryByCategory[category]?.map((item) => (
+                            {inventoryByCategory[consumable.category]?.map((item) => (
                               <SelectItem key={item.item_id} value={item.item_id}>
                                 {item.name} ({item.quantity} {item.unit} available)
                               </SelectItem>
@@ -170,97 +140,8 @@ export function AppointmentCompletionForm({
                 </div>
               </div>
             ))}
-
-            {/* Additional Items */}
-            {additionalItems.map((id, index) => (
-              <div key={id} className="space-y-2 border-t pt-4">
-                <FormField
-                  name={`items.${service.required_categories.length + index}.categoryId`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Category</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.keys(inventoryByCategory).map((category) => (
-                            <SelectItem key={category} value={category}>
-                              {category}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormItem>
-                  )}
-                />
-                {form.watch(`items.${service.required_categories.length + index}.categoryId`) && (
-                  <>
-                    <FormField
-                      name={`items.${service.required_categories.length + index}.itemId`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Select Product</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            value={field.value}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select product" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {inventoryByCategory[form.watch(`items.${service.required_categories.length + index}.categoryId`)]?.map((item) => (
-                                <SelectItem key={item.item_id} value={item.item_id}>
-                                  {item.name} ({item.quantity} {item.unit} available)
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      name={`items.${service.required_categories.length + index}.quantity`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Quantity Used</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              min="0"
-                              step="0.01"
-                              {...field}
-                              onChange={(e) => field.onChange(Number(e.target.value))}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </>
-                )}
-              </div>
-            ))}
-
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleAddAdditionalItem}
-              className="w-full"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Add Additional Item
-            </Button>
-
             <DialogFooter>
-              <Button variant="outline" onClick={onClose}>
-                Cancel
-              </Button>
-              <Button type="submit">
-                Complete Appointment
-              </Button>
+              <Button type="submit">Record Usage & Complete</Button>
             </DialogFooter>
           </form>
         </Form>
