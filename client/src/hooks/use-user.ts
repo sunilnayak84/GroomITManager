@@ -140,8 +140,6 @@ export function useUser() {
   const logoutMutation = useMutation({
     mutationFn: async () => {
       await signOut(auth);
-      // Clear Firebase auth persistence
-      await auth.setPersistence('none');
       return Promise.resolve();
     },
     onSuccess: () => {
