@@ -413,18 +413,11 @@ export function useAppointments() {
           throw new Error('Appointment not found');
         }
         
-        const currentData = appointmentSnap.data();
+        const currentData = appointmentSnap.data() as FirestoreAppointmentData;
         if (currentData.status === 'completed' || currentData.status === 'cancelled') {
           throw new Error('Completed or cancelled appointments cannot be modified');
         }
-        
-        // Get current appointment data
-        const appointmentSnap = await getDoc(appointmentRef);
-        if (!appointmentSnap.exists()) {
-          throw new Error('Appointment not found');
-        }
 
-        const currentData = appointmentSnap.data() as FirestoreAppointmentData;
         const updateData = {
           ...currentData,
           status: data.status || currentData.status,
