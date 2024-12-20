@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { usePets } from "@/hooks/use-pets";
 import { useCustomers } from "@/hooks/use-customers";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { PetForm } from "@/components/PetForm";
 import {
