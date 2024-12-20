@@ -32,6 +32,7 @@ export default function Navigation() {
     { href: "/settings/working-hours", icon: Calendar, label: "Working Hours" },
     { href: "/settings/inventory-categories", icon: Package, label: "Inventory Categories" },
     { href: "/settings/pet-breeds", icon: PawPrint, label: "Pet Breeds" },
+    { href: "/settings/loyalty", icon: PawPrint, label: "Loyalty Program" }, // Added Loyalty Program link
     ...(user?.role === 'admin' || user?.role === 'manager' ? [
       { href: "/settings/roles", icon: Shield, label: "Role Management" }
     ] : []),
