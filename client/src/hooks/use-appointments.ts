@@ -414,8 +414,15 @@ export function useAppointments() {
         }
         
         const currentData = appointmentSnap.data() as FirestoreAppointmentData;
+        
+        // Validate status transitions
         if (currentData.status === 'completed' || currentData.status === 'cancelled') {
           throw new Error('Completed or cancelled appointments cannot be modified');
+        }
+        
+        if (currentData.status === 'in_progress' && 
+            (data.status === 'pending' || data.status === 'confirmed')) {
+          throw new Error('Appointments in progress cannot go back to pending or confirmed status');
         }
 
         const updateData = {
