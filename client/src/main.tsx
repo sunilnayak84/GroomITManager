@@ -85,12 +85,9 @@ function Router() {
   }
 
   if (!user) {
-    const currentPath = window.location.pathname;
-    if (currentPath === '/register') {
-      return <NewRegistrationPage />;
-    }
     return (
       <Switch>
+        <Route path="/register" component={NewRegistrationPage} />
         <Route path="/login" component={AuthPage} />
         <Route path="/" component={AuthPage} />
       </Switch>
