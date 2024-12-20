@@ -100,6 +100,14 @@ const AppointmentDetails = ({
 
   const onSubmit = async (data: UpdateAppointmentForm) => {
     try {
+      if (appointment.status === 'completed' || appointment.status === 'cancelled') {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Completed or cancelled appointments cannot be modified"
+        });
+        return;
+      }
       setIsUpdating(true);
     
       // Store the previous data for rollback
