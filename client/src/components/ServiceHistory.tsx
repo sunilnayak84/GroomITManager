@@ -35,10 +35,14 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
         );
 
         const snapshot = await getDocs(historyQuery);
-        const historyData = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
+        const historyData = snapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            date: data.date?.toDate?.()?.toISOString() || null
+          };
+        });
         
         setHistory(historyData);
       } catch (error) {
@@ -66,7 +70,7 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
         {history.map((record) => (
           <AccordionItem key={record.id} value={record.id}>
             <AccordionTrigger>
-              Service on {format(new Date(record.date), 'PPP')}
+              Service on {record.date ? format(new Date(record.date), 'PPP') : 'Unknown Date'}
             </AccordionTrigger>
             <AccordionContent>
               <div className="space-y-4">
