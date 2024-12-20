@@ -22,20 +22,25 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
     async function fetchHistory() {
       const historyRef = collection(db, 'service_history');
       try {
-      const historyQuery = query(
-        historyRef,
-        where('petId', '==', petId),
-        orderBy('createdAt', 'desc')
-      );
+        const historyQuery = query(
+          historyRef,
+          where('petId', '==', petId),
+          orderBy('createdAt', 'desc')
+        );
 
-      const snapshot = await getDocs(historyQuery);
-      const historyData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      
-      setHistory(historyData);
-      setIsLoading(false);
+        const snapshot = await getDocs(historyQuery);
+        const historyData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        
+        setHistory(historyData);
+      } catch (error) {
+        console.error('Error fetching service history:', error);
+        setHistory([]);
+      } finally {
+        setIsLoading(false);
+      }
     }
 
     fetchHistory();
