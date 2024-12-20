@@ -1,17 +1,50 @@
 
-<old_str>
-const AppointmentCompletionForm = ({ isOpen, onClose, appointmentId, serviceId, onComplete }: { isOpen: boolean; onClose: () => void; appointmentId: number; serviceId: number; onComplete: () => void; }) => {
-    return (
-        <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent>
-                {/* Add your inventory usage form here */}
-                <p>Inventory Usage Form (Placeholder)</p>
-                <Button onClick={onComplete}>Submit</Button>
-            </DialogContent>
-        </Dialog>
-    );
-}
-</old_str>
-<new_str>
 import { AppointmentCompletionForm } from "./AppointmentCompletionForm";
-</new_str>
+import { Dialog, DialogContent } from "./ui/dialog";
+import { Button } from "./ui/button";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { Form, FormControl, FormField, FormItem } from "./ui/form";
+
+// ... rest of your imports
+
+const AppointmentDetails = ({ appointment, form, onStatusChange }) => {
+  return (
+    <FormField
+      name="status"
+      control={form.control}
+      render={({ field }) => (
+        <FormItem>
+          <Select
+            onValueChange={(value) => {
+              field.onChange(value);
+              onStatusChange(value);
+            }}
+            value={field.value}
+            disabled={appointment.status === 'completed' || appointment.status === 'cancelled'}
+          >
+            <FormControl>
+              <SelectTrigger>
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="confirmed">Confirmed</SelectItem>
+              <SelectItem value="in_progress">In Progress</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="cancelled">Cancelled</SelectItem>
+            </SelectContent>
+          </Select>
+        </FormItem>
+      )}
+    />
+  );
+};
+
+export default AppointmentDetails;
