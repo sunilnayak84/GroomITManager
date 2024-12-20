@@ -21,6 +21,7 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
   useEffect(() => {
     async function fetchHistory() {
       const historyRef = collection(db, 'service_history');
+      try {
       const historyQuery = query(
         historyRef,
         where('petId', '==', petId),
