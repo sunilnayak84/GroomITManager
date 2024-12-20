@@ -117,20 +117,20 @@ const AppointmentDetails = ({
         );
       }
 
+      console.log('Updating appointment status:', {
+        id: appointment.id,
+        status: data.status
+      });
+      
       await updateAppointment({
         id: appointment.id,
         status: data.status,
         cancellationReason: data.status === 'cancelled' ? data.cancellationReason : undefined,
-        notes: data.notes,
-        statusHistory: [
-          ...(appointment.statusHistory || []),
-          {
-            status: data.status,
-            timestamp: new Date().toISOString(),
-            updatedBy: auth.currentUser?.uid || 'unknown'
-          }
-        ]
+        notes: data.notes || '',
       });
+
+      // Only close the form after successful update
+      onOpenChange(false);
       
       toast({
         title: "Success",
