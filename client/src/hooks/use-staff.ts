@@ -52,7 +52,7 @@ export function useStaff() {
           name: user.displayName || user.name,
           phone: user.phoneNumber || user.phone,
           role: user.role || 'staff',
-          isGroomer: user.role === 'groomer' || user.isGroomer === true,
+          isGroomer: user.role === 'groomer' || user.isGroomer === true || (Array.isArray(user.specialties) && user.specialties.includes('groomer')),
           isActive: typeof user.disabled === 'boolean' ? !user.disabled : true,
           specialties: Array.isArray(user.specialties) ? user.specialties : [],
           branchId: user.branchId || null,
