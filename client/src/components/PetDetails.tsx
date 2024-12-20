@@ -1,6 +1,7 @@
-import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import type { Pet } from "@/lib/schema";
 import { ServiceHistory } from "@/components/ServiceHistory";
 
@@ -21,6 +22,10 @@ interface PetDetailsProps {
 export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProps) {
   return (
     <div className="space-y-6 p-6">
+      <DialogTitle>Pet Details</DialogTitle>
+      <DialogDescription>
+        View and manage pet information
+      </DialogDescription>
       <Tabs defaultValue="details">
         <TabsList>
           <TabsTrigger value="details">Details</TabsTrigger>
