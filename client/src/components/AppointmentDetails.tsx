@@ -313,7 +313,11 @@ const AppointmentDetails = ({
                 <FormItem>
                   <FormLabel>Notes</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value || ''} />
+                    <Input 
+                      {...field} 
+                      value={field.value || ''} 
+                      disabled={appointment.status === 'completed' || appointment.status === 'cancelled'}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
