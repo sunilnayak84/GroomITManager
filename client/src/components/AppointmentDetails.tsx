@@ -270,6 +270,7 @@ const AppointmentDetails = ({
                       }
                     }}
                     value={field.value}
+                    disabled={appointment.status === 'completed' || appointment.status === 'cancelled'}
                   >
                     <FormControl>
                       <SelectTrigger>
