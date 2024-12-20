@@ -78,26 +78,28 @@ export function useStaffManagement() {
 
   const updateStaff = useMutation({
     mutationFn: async (data: UpdateStaff) => {
-      const user = auth.currentUser;
-      if (!user) {
-        await auth.signInWithEmailAndPassword('admin@groomery.in', 'admin123');
-      }
-      const token = await auth.currentUser?.getIdToken(true);
-      if (!token) {
-        throw new Error('No authentication token available');
-      }
+      const token = await auth.currentUser?.getIdToken();
+      if (!token) throw new Error('No authentication token available');
 
+      // Add isGroomer flag based on specialties
+      const isGroomer = data.specialties?.includes('groomer') || false;
+      
       const response = await fetch(`/api/staff/${data.id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify({
+          ...data,
+          isGroomer,
+          updatedAt: Date.now()
+        })
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update staff member');
+        const error = await response.text();
+        throw new Error(error || 'Failed to update staff member');
       }
 
       return response.json();

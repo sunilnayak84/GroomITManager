@@ -879,12 +879,12 @@ export function registerRoutes(app: Express) {
       
       console.log('[STAFF-UPDATE] Updating staff member:', { id, updates });
       
-      const db = getDatabase();
-      const userRef = db.ref(`users/${id}`);
+      const firestore = getFirestore();
+      const userRef = firestore.collection('users').doc(id);
       
       // Verify user exists
-      const snapshot = await userRef.once('value');
-      if (!snapshot.exists()) {
+      const doc = await userRef.get();
+      if (!doc.exists) {
         return res.status(404).json({
           message: "Staff member not found",
           code: "NOT_FOUND"
@@ -894,7 +894,7 @@ export function registerRoutes(app: Express) {
       // Update user data
       const updateData = {
         ...updates,
-        updatedAt: Date.now()
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
       };
       
       await userRef.update(updateData);
