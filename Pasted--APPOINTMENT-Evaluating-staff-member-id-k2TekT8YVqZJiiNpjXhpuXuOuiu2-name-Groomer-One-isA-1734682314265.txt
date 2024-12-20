@@ -1,0 +1,97 @@
+[APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falsename: "Groomer One"role: "staff"specialties: [][[Prototype]]: Object
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]0: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', email: 'groomer@groomery.in', name: 'Groomer One', phone: undefined, role: 'staff', …}length: 1[[Prototype]]: Array(0)
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falsename: "Groomer One"role: "staff"specialties: [][[Prototype]]: Object
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]0: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', email: 'groomer@groomery.in', name: 'Groomer One', phone: undefined, role: 'staff', …}length: 1[[Prototype]]: Array(0)
+@radix-ui_react-dialog.js?v=b521b680:1875 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ @radix-ui_react-dialog.js?v=b521b680:1875
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=b521b680:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=b521b680:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=b521b680:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=b521b680:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=b521b680:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=b521b680:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=b521b680:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=b521b680:19384
+commitRoot @ chunk-DRXX46FI.js?v=b521b680:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=b521b680:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=b521b680:9119
+(anonymous) @ chunk-DRXX46FI.js?v=b521b680:18595Understand this warningAI
+@radix-ui_react-dialog.js?v=b521b680:1875 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ @radix-ui_react-dialog.js?v=b521b680:1875
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=b521b680:16883
+invokePassiveEffectMountInDEV @ chunk-DRXX46FI.js?v=b521b680:18292
+invokeEffectsInDev @ chunk-DRXX46FI.js?v=b521b680:19669
+commitDoubleInvokeEffectsInDEV @ chunk-DRXX46FI.js?v=b521b680:19654
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=b521b680:19471
+flushPassiveEffects @ chunk-DRXX46FI.js?v=b521b680:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=b521b680:19384
+commitRoot @ chunk-DRXX46FI.js?v=b521b680:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=b521b680:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=b521b680:9119
+(anonymous) @ chunk-DRXX46FI.js?v=b521b680:18595Understand this warningAI
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falsename: "Groomer One"role: "staff"specialties: [][[Prototype]]: Object
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]0: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', email: 'groomer@groomery.in', name: 'Groomer One', phone: undefined, role: 'staff', …}length: 1[[Prototype]]: Array(0)
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falsename: "Groomer One"role: "staff"specialties: [][[Prototype]]: Object
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]0: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', email: 'groomer@groomery.in', name: 'Groomer One', phone: undefined, role: 'staff', …}length: 1[[Prototype]]: Array(0)
+@radix-ui_react-dialog.js?v=b521b680:1861 `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog
+(anonymous) @ @radix-ui_react-dialog.js?v=b521b680:1861
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=b521b680:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=b521b680:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=b521b680:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=b521b680:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=b521b680:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=b521b680:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=b521b680:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=b521b680:19384
+commitRoot @ chunk-DRXX46FI.js?v=b521b680:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=b521b680:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=b521b680:9119
+(anonymous) @ chunk-DRXX46FI.js?v=b521b680:18595Understand this errorAI
+@radix-ui_react-dialog.js?v=b521b680:1875 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ @radix-ui_react-dialog.js?v=b521b680:1875
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=b521b680:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=b521b680:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=b521b680:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=b521b680:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=b521b680:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=b521b680:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=b521b680:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=b521b680:19384
+commitRoot @ chunk-DRXX46FI.js?v=b521b680:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=b521b680:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=b521b680:9119
+(anonymous) @ chunk-DRXX46FI.js?v=b521b680:18595Understand this warningAI
+@radix-ui_react-dialog.js?v=b521b680:1861 `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog
+(anonymous) @ @radix-ui_react-dialog.js?v=b521b680:1861
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=b521b680:16883
+invokePassiveEffectMountInDEV @ chunk-DRXX46FI.js?v=b521b680:18292
+invokeEffectsInDev @ chunk-DRXX46FI.js?v=b521b680:19669
+commitDoubleInvokeEffectsInDEV @ chunk-DRXX46FI.js?v=b521b680:19654
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=b521b680:19471
+flushPassiveEffects @ chunk-DRXX46FI.js?v=b521b680:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=b521b680:19384
+commitRoot @ chunk-DRXX46FI.js?v=b521b680:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=b521b680:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=b521b680:9119
+(anonymous) @ chunk-DRXX46FI.js?v=b521b680:18595Understand this errorAI
+@radix-ui_react-dialog.js?v=b521b680:1875 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ @radix-ui_react-dialog.js?v=b521b680:1875
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=b521b680:16883
+invokePassiveEffectMountInDEV @ chunk-DRXX46FI.js?v=b521b680:18292
+invokeEffectsInDev @ chunk-DRXX46FI.js?v=b521b680:19669
+commitDoubleInvokeEffectsInDEV @ chunk-DRXX46FI.js?v=b521b680:19654
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=b521b680:19471
+flushPassiveEffects @ chunk-DRXX46FI.js?v=b521b680:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=b521b680:19384
+commitRoot @ chunk-DRXX46FI.js?v=b521b680:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=b521b680:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=b521b680:9119
+(anonymous) @ chunk-DRXX46FI.js?v=b521b680:18595Understand this warningAI

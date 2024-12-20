@@ -1,0 +1,148 @@
+[APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+@radix-ui_react-dialog.js?v=b521b680:1875 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ @radix-ui_react-dialog.js?v=b521b680:1875
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=b521b680:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=b521b680:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=b521b680:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=b521b680:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=b521b680:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=b521b680:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=b521b680:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=b521b680:19384
+commitRoot @ chunk-DRXX46FI.js?v=b521b680:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=b521b680:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=b521b680:9119
+(anonymous) @ chunk-DRXX46FI.js?v=b521b680:18595Understand this warningAI
+@radix-ui_react-dialog.js?v=b521b680:1875 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ @radix-ui_react-dialog.js?v=b521b680:1875
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=b521b680:16883
+invokePassiveEffectMountInDEV @ chunk-DRXX46FI.js?v=b521b680:18292
+invokeEffectsInDev @ chunk-DRXX46FI.js?v=b521b680:19669
+commitDoubleInvokeEffectsInDEV @ chunk-DRXX46FI.js?v=b521b680:19654
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=b521b680:19471
+flushPassiveEffects @ chunk-DRXX46FI.js?v=b521b680:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=b521b680:19384
+commitRoot @ chunk-DRXX46FI.js?v=b521b680:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=b521b680:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=b521b680:9119
+(anonymous) @ chunk-DRXX46FI.js?v=b521b680:18595Understand this warningAI
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+use-inventory.ts:101 FETCH_INVENTORY: Starting to fetch inventory items
+@radix-ui_react-dialog.js?v=b521b680:1875 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ @radix-ui_react-dialog.js?v=b521b680:1875
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=b521b680:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=b521b680:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=b521b680:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=b521b680:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=b521b680:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=b521b680:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=b521b680:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=b521b680:19384
+commitRoot @ chunk-DRXX46FI.js?v=b521b680:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=b521b680:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=b521b680:9119
+(anonymous) @ chunk-DRXX46FI.js?v=b521b680:18595Understand this warningAI
+@radix-ui_react-dialog.js?v=b521b680:1875 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ @radix-ui_react-dialog.js?v=b521b680:1875
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=b521b680:16883
+invokePassiveEffectMountInDEV @ chunk-DRXX46FI.js?v=b521b680:18292
+invokeEffectsInDev @ chunk-DRXX46FI.js?v=b521b680:19669
+commitDoubleInvokeEffectsInDEV @ chunk-DRXX46FI.js?v=b521b680:19654
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=b521b680:19471
+flushPassiveEffects @ chunk-DRXX46FI.js?v=b521b680:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=b521b680:19384
+commitRoot @ chunk-DRXX46FI.js?v=b521b680:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=b521b680:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=b521b680:9119
+(anonymous) @ chunk-DRXX46FI.js?v=b521b680:18595Understand this warningAI
+use-inventory.ts:112 FETCH_INVENTORY: Processing item data: {id: 'IctkQ7zzpjxCQOHJAAOo', data: {…}}
+use-inventory.ts:148 FETCH_INVENTORY: Successfully parsed item: {id: 'IctkQ7zzpjxCQOHJAAOo', item: {…}}
+use-inventory.ts:112 FETCH_INVENTORY: Processing item data: {id: 'MQi1SkpPh24rshGBvNmn', data: {…}}
+use-inventory.ts:148 FETCH_INVENTORY: Successfully parsed item: {id: 'MQi1SkpPh24rshGBvNmn', item: {…}}
+use-inventory.ts:112 FETCH_INVENTORY: Processing item data: {id: 'onJwWC0j8rH1rMA1fP1d', data: {…}}
+use-inventory.ts:148 FETCH_INVENTORY: Successfully parsed item: {id: 'onJwWC0j8rH1rMA1fP1d', item: {…}}
+use-inventory.ts:112 FETCH_INVENTORY: Processing item data: {id: 'uVNWcTeIO76b6V8eC7CU', data: {…}}
+use-inventory.ts:148 FETCH_INVENTORY: Successfully parsed item: {id: 'uVNWcTeIO76b6V8eC7CU', item: {…}}
+use-inventory.ts:112 FETCH_INVENTORY: Processing item data: {id: 'wxRzDdBN1HaHGbZHZvOV', data: {…}}
+use-inventory.ts:148 FETCH_INVENTORY: Successfully parsed item: {id: 'wxRzDdBN1HaHGbZHZvOV', item: {…}}
+use-inventory.ts:156 FETCH_INVENTORY: Successfully fetched inventory {count: 5}
+use-inventory.ts:310 RECORD_USAGE: Starting usage recording: {item_id: 'uVNWcTeIO76b6V8eC7CU', quantity_used: 1, service_id: 'qs4WniktDLLArQJQOOqi', appointment_id: 'KJB70FQfFgf97ajGac6C', notes: 'Used in service: Service Two'}
+AppointmentDetails.tsx:128 Updating appointment status: {id: 'KJB70FQfFgf97ajGac6C', status: 'pending'}
+use-appointments.ts:407 Updating appointment: {id: 'KJB70FQfFgf97ajGac6C', status: 'pending', cancellationReason: undefined, notes: ''}
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+use-inventory.ts:332 RECORD_USAGE: Item details: {currentQuantity: 470, minimumQuantity: 200, reorderPoint: 300, isTracked: true, autoDeduct: true}
+use-inventory.ts:363 RECORD_USAGE: Recording usage: {usage_id: 'STvfqp80WhB1d7EdxxMd', item_id: 'uVNWcTeIO76b6V8eC7CU', quantity_used: 1, service_id: 'qs4WniktDLLArQJQOOqi', appointment_id: 'KJB70FQfFgf97ajGac6C', …}
+use-appointments.ts:450 Appointment updated successfully
+use-appointments.ts:70 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:78 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:81 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+use-inventory.ts:377 RECORD_USAGE: Updating inventory: {quantity: 469, updated_at: ___PRIVATE_ServerTimestampFieldValueImpl, last_used: Fri Dec 20 2024 14:21:22 GMT+0530 (India Standard Time), service_linked: true}
+use-appointments.ts:90 FETCH_APPOINTMENTS: Found 3 active appointments
+use-appointments.ts:94 FETCH_APPOINTMENTS: Active appointment: 6oOAFWMUfSYJKOAVCkXP {statusHistory: Array(3), status: 'completed', cancellationReason: null, services: Array(1), petId: 'eo7yEF7BKT5V9SLAo8WE', …}
+use-appointments.ts:94 FETCH_APPOINTMENTS: Active appointment: KJB70FQfFgf97ajGac6C {notes: '', createdAt: _Timestamp, statusHistory: Array(4), deletedAt: null, updatedAt: _Timestamp, …}
+use-appointments.ts:94 FETCH_APPOINTMENTS: Active appointment: UiMLuUKDPI2JvjnVELjn {notes: '', updatedAt: _Timestamp, services: Array(1), statusHistory: Array(1), totalPrice: 299, …}
+use-appointments.ts:96 FETCH_APPOINTMENTS: Got snapshot with 3 active documents
+use-appointments.ts:109 FETCH_APPOINTMENTS: Processing appointment 6oOAFWMUfSYJKOAVCkXP
+use-inventory.ts:310 RECORD_USAGE: Starting usage recording: {item_id: 'IctkQ7zzpjxCQOHJAAOo', quantity_used: 1, service_id: 'qs4WniktDLLArQJQOOqi', appointment_id: 'KJB70FQfFgf97ajGac6C', notes: 'Used in service: Service Two'}
+use-inventory.ts:332 RECORD_USAGE: Item details: {currentQuantity: 4900, minimumQuantity: 5, reorderPoint: 5, isTracked: true, autoDeduct: true}
+use-inventory.ts:363 RECORD_USAGE: Recording usage: {usage_id: 'NjUJXHOHF3lATrxDR4ti', item_id: 'IctkQ7zzpjxCQOHJAAOo', quantity_used: 1, service_id: 'qs4WniktDLLArQJQOOqi', appointment_id: 'KJB70FQfFgf97ajGac6C', …}
+use-inventory.ts:377 RECORD_USAGE: Updating inventory: {quantity: 4899, updated_at: ___PRIVATE_ServerTimestampFieldValueImpl, last_used: Fri Dec 20 2024 14:21:22 GMT+0530 (India Standard Time), service_linked: true}
+use-appointments.ts:223 FETCH_APPOINTMENTS: Fetching service data for ID: 8sWdC28UWMGPd70awXQf
+AppointmentCompletionForm.tsx:125 Error recording usage: ReferenceError: doc is not defined
+    at onSubmit (AppointmentCompletionForm.tsx:114:30)
+    at async chunk-VYIIT4SD.js?v=b521b680:1694:9
+onSubmit @ AppointmentCompletionForm.tsx:125
+await in onSubmit
+(anonymous) @ chunk-VYIIT4SD.js?v=b521b680:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=b521b680:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=b521b680:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=b521b680:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=b521b680:3736
+executeDispatch @ chunk-DRXX46FI.js?v=b521b680:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=b521b680:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=b521b680:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=b521b680:7051
+(anonymous) @ chunk-DRXX46FI.js?v=b521b680:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=b521b680:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=b521b680:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=b521b680:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=b521b680:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=b521b680:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=b521b680:5449Understand this errorAI
+use-appointments.ts:228 FETCH_APPOINTMENTS: Raw service data: {description: 'Service One Test', selectedServices: Array(0), consumables: Array(0), price: 99, category: 'Service', …}
+use-appointments.ts:240 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:109 FETCH_APPOINTMENTS: Processing appointment KJB70FQfFgf97ajGac6C
+use-appointments.ts:223 FETCH_APPOINTMENTS: Fetching service data for ID: qs4WniktDLLArQJQOOqi
+use-appointments.ts:228 FETCH_APPOINTMENTS: Raw service data: {duration: 30, created_at: '2024-12-19T15:03:37.507Z', discount_percentage: 0, selectedAddons: Array(0), isActive: true, …}
+use-appointments.ts:240 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:109 FETCH_APPOINTMENTS: Processing appointment UiMLuUKDPI2JvjnVELjn
+use-appointments.ts:223 FETCH_APPOINTMENTS: Fetching service data for ID: qs4WniktDLLArQJQOOqi
+use-appointments.ts:228 FETCH_APPOINTMENTS: Raw service data: {duration: 30, created_at: '2024-12-19T15:03:37.507Z', discount_percentage: 0, selectedAddons: Array(0), isActive: true, …}
+use-appointments.ts:240 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:285 FETCH_APPOINTMENTS: Processed 3 appointments. Success: 3, Errors: 0
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]

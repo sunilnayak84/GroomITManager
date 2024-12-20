@@ -1,0 +1,91 @@
+FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:76 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:79 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falsename: "Groomer One"role: "staff"specialties: [][[Prototype]]: Object
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]0: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', email: 'groomer@groomery.in', name: 'Groomer One', phone: undefined, role: 'staff', …}length: 1[[Prototype]]: Array(0)
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falsename: "Groomer One"role: "staff"specialties: [][[Prototype]]: Object
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]0: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', email: 'groomer@groomery.in', name: 'Groomer One', phone: undefined, role: 'staff', …}length: 1[[Prototype]]: Array(0)
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falsename: "Groomer One"role: "staff"specialties: [][[Prototype]]: Object
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]0: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', email: 'groomer@groomery.in', name: 'Groomer One', phone: undefined, role: 'staff', …}length: 1[[Prototype]]: Array(0)
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falsename: "Groomer One"role: "staff"specialties: [][[Prototype]]: Object
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]0: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', email: 'groomer@groomery.in', name: 'Groomer One', phone: undefined, role: 'staff', …}length: 1[[Prototype]]: Array(0)
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falsename: "Groomer One"role: "staff"specialties: [][[Prototype]]: Object
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]0: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', email: 'groomer@groomery.in', name: 'Groomer One', phone: undefined, role: 'staff', …}length: 1[[Prototype]]: Array(0)
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falsename: "Groomer One"role: "staff"specialties: [][[Prototype]]: Object
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falsename: "Groomer One"role: "staff"specialties: [][[Prototype]]: Object
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]0: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', email: 'groomer@groomery.in', name: 'Groomer One', phone: undefined, role: 'staff', …}length: 1[[Prototype]]: Array(0)
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falsename: "Groomer One"role: "staff"specialties: [][[Prototype]]: Object
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+use-appointments.ts:88 FETCH_APPOINTMENTS: Found 4 active appointments
+use-appointments.ts:92 FETCH_APPOINTMENTS: Active appointment: 5nl7sH8pEn3BFy3BpwW4 {services: Array(2), notes: '', petId: 'eo7yEF7BKT5V9SLAo8WE', totalDuration: 60, totalPrice: 398, …}branchId: "1"cancellationReason: nullcreatedAt: _Timestamp {seconds: 1734628104, nanoseconds: 997000000}date: _Timestamp {seconds: 1734678000, nanoseconds: 0}deletedAt: nullgroomerId: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"notes: ""petId: "eo7yEF7BKT5V9SLAo8WE"productsUsed: nullservices: (2) ['8sWdC28UWMGPd70awXQf', 'qs4WniktDLLArQJQOOqi']status: "confirmed"totalDuration: 60totalPrice: 398updatedAt: _Timestamp {seconds: 1734628162, nanoseconds: 619000000}[[Prototype]]: Object
+use-appointments.ts:92 FETCH_APPOINTMENTS: Active appointment: Nj7spkcxuHgitRKqmVL3 {createdAt: _Timestamp, petId: 'eo7yEF7BKT5V9SLAo8WE', totalPrice: 99, totalDuration: 30, date: _Timestamp, …}branchId: "1"createdAt: _Timestamp {seconds: 1734676485, nanoseconds: 473000000}date: _Timestamp {seconds: 1734681600, nanoseconds: 0}deletedAt: nullgroomerId: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"notes: ""petId: "eo7yEF7BKT5V9SLAo8WE"productsUsed: nullservices: ['8sWdC28UWMGPd70awXQf']status: "pending"totalDuration: 30totalPrice: 99updatedAt: null[[Prototype]]: Object
+use-appointments.ts:92 FETCH_APPOINTMENTS: Active appointment: aKZu94yNuSCObAsesvSS {productsUsed: null, status: 'pending', notes: null, groomerId: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', branchId: '1', …}branchId: "1"createdAt: _Timestamp {seconds: 1734615675, nanoseconds: 218000000}date: _Timestamp {seconds: 1737532800, nanoseconds: 0}deletedAt: nullgroomerId: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"notes: nullpetId: "eo7yEF7BKT5V9SLAo8WE"productsUsed: nullservices: ['AQHbTzU3YledKBcjrVBI']status: "pending"totalDuration: 30totalPrice: 222updatedAt: null[[Prototype]]: Object
+use-appointments.ts:92 FETCH_APPOINTMENTS: Active appointment: lDGdyne1zxRUHUUtdTvq {status: 'pending', branchId: '1', totalPrice: 99, updatedAt: null, petId: 'eo7yEF7BKT5V9SLAo8WE', …}branchId: "1"createdAt: _Timestamp {seconds: 1734634984, nanoseconds: 484000000}date: _Timestamp {seconds: 1734683400, nanoseconds: 0}deletedAt: nullgroomerId: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"notes: ""petId: "eo7yEF7BKT5V9SLAo8WE"productsUsed: nullservices: ['8sWdC28UWMGPd70awXQf']status: "pending"totalDuration: 30totalPrice: 99updatedAt: null[[Prototype]]: Object
+use-appointments.ts:94 FETCH_APPOINTMENTS: Got snapshot with 4 active documents
+use-appointments.ts:107 FETCH_APPOINTMENTS: Processing appointment 5nl7sH8pEn3BFy3BpwW4
+use-appointments.ts:221 FETCH_APPOINTMENTS: Fetching service data for ID: 8sWdC28UWMGPd70awXQf
+use-appointments.ts:226 FETCH_APPOINTMENTS: Raw service data: {isActive: true, category: 'Service', consumables: Array(0), selectedServices: Array(0), description: 'Service One Test', …}category: "Service"consumables: []created_at: "2024-12-19T14:59:23.140Z"description: "Service One Test"discount_percentage: 0duration: 30isActive: truename: "Service One"price: 99required_categories: ['Shampoo']selectedAddons: []selectedServices: []updated_at: "2024-12-20T06:35:36.477Z"[[Prototype]]: Object
+use-appointments.ts:238 FETCH_APPOINTMENTS: Processed service data: [{…}]0: {name: 'Service One', duration: 30, price: 99, description: 'Service One Test', category: 'Service', …}1: {name: 'Service Two', duration: 30, price: 299, description: 'Service Two Test', category: 'Service', …}length: 2[[Prototype]]: Array(0)
+use-appointments.ts:221 FETCH_APPOINTMENTS: Fetching service data for ID: qs4WniktDLLArQJQOOqi
+use-appointments.ts:226 FETCH_APPOINTMENTS: Raw service data: {selectedAddons: Array(0), isActive: true, created_at: '2024-12-19T15:03:37.507Z', price: 299, updated_at: '2024-12-19T17:07:40.123Z', …}category: "Service"consumables: []created_at: "2024-12-19T15:03:37.507Z"description: "Service Two Test"discount_percentage: 0duration: 30isActive: truename: "Service Two"price: 299required_categories: (2) ['Conditioner', 'Shampoo']selectedAddons: []selectedServices: []updated_at: "2024-12-19T17:07:40.123Z"[[Prototype]]: Object
+use-appointments.ts:238 FETCH_APPOINTMENTS: Processed service data: (2) [{…}, {…}]
+use-appointments.ts:107 FETCH_APPOINTMENTS: Processing appointment Nj7spkcxuHgitRKqmVL3
+use-appointments.ts:221 FETCH_APPOINTMENTS: Fetching service data for ID: 8sWdC28UWMGPd70awXQf
+use-appointments.ts:226 FETCH_APPOINTMENTS: Raw service data: {isActive: true, category: 'Service', consumables: Array(0), selectedServices: Array(0), description: 'Service One Test', …}category: "Service"consumables: []created_at: "2024-12-19T14:59:23.140Z"description: "Service One Test"discount_percentage: 0duration: 30isActive: truename: "Service One"price: 99required_categories: ['Shampoo']selectedAddons: []selectedServices: []updated_at: "2024-12-20T06:35:36.477Z"[[Prototype]]: Object
+use-appointments.ts:238 FETCH_APPOINTMENTS: Processed service data: [{…}]0: {name: 'Service One', duration: 30, price: 99, description: 'Service One Test', category: 'Service', …}length: 1[[Prototype]]: Array(0)
+use-appointments.ts:107 FETCH_APPOINTMENTS: Processing appointment aKZu94yNuSCObAsesvSS
+use-appointments.ts:221 FETCH_APPOINTMENTS: Fetching service data for ID: AQHbTzU3YledKBcjrVBI
+use-appointments.ts:240 FETCH_APPOINTMENTS: Service not found for ID: AQHbTzU3YledKBcjrVBI
+queryFn @ use-appointments.ts:240
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=b521b680:839
+run @ @tanstack_react-query.js?v=b521b680:493
+start @ @tanstack_react-query.js?v=b521b680:535
+fetch @ @tanstack_react-query.js?v=b521b680:925
+(anonymous) @ @tanstack_react-query.js?v=b521b680:1726
+(anonymous) @ @tanstack_react-query.js?v=b521b680:1725
+batch @ @tanstack_react-query.js?v=b521b680:582
+refetchQueries @ @tanstack_react-query.js?v=b521b680:1724
+(anonymous) @ @tanstack_react-query.js?v=b521b680:1716
+batch @ @tanstack_react-query.js?v=b521b680:582
+invalidateQueries @ @tanstack_react-query.js?v=b521b680:1705
+onSubmit @ AppointmentDetails.tsx:143
+(anonymous) @ chunk-VYIIT4SD.js?v=b521b680:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=b521b680:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=b521b680:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=b521b680:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=b521b680:3736
+executeDispatch @ chunk-DRXX46FI.js?v=b521b680:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=b521b680:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=b521b680:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=b521b680:7051
+(anonymous) @ chunk-DRXX46FI.js?v=b521b680:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=b521b680:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=b521b680:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=b521b680:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=b521b680:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=b521b680:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=b521b680:5449Understand this errorAI
+use-appointments.ts:107 FETCH_APPOINTMENTS: Processing appointment lDGdyne1zxRUHUUtdTvq
+use-appointments.ts:221 FETCH_APPOINTMENTS: Fetching service data for ID: 8sWdC28UWMGPd70awXQf
+use-appointments.ts:226 FETCH_APPOINTMENTS: Raw service data: {isActive: true, category: 'Service', consumables: Array(0), selectedServices: Array(0), description: 'Service One Test', …}category: "Service"consumables: []created_at: "2024-12-19T14:59:23.140Z"description: "Service One Test"discount_percentage: 0duration: 30isActive: truename: "Service One"price: 99required_categories: ['Shampoo']selectedAddons: []selectedServices: []updated_at: "2024-12-20T06:35:36.477Z"[[Prototype]]: Object
+use-appointments.ts:238 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:283 FETCH_APPOINTMENTS: Processed 4 appointments. Success: 4, Errors: 0
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falsename: "Groomer One"role: "staff"specialties: [][[Prototype]]: Object
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]0: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', email: 'groomer@groomery.in', name: 'Groomer One', phone: undefined, role: 'staff', …}length: 1[[Prototype]]: Array(0)
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falsename: "Groomer One"role: "staff"specialties: [][[Prototype]]: Object
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]0: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', email: 'groomer@groomery.in', name: 'Groomer One', phone: undefined, role: 'staff', …}length: 1[[Prototype]]: Array(0)
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falsename: "Groomer One"role: "staff"specialties: [][[Prototype]]: Object
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]0: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', email: 'groomer@groomery.in', name: 'Groomer One', phone: undefined, role: 'staff', …}length: 1[[Prototype]]: Array(0)
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falsename: "Groomer One"role: "staff"specialties: [][[Prototype]]: Object
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]0: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', email: 'groomer@groomery.in', name: 'Groomer One', phone: undefined, role: 'staff', …}length: 1[[Prototype]]: Array(0)
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falsename: "Groomer One"role: "staff"specialties: [][[Prototype]]: Object
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]0: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', email: 'groomer@groomery.in', name: 'Groomer One', phone: undefined, role: 'staff', …}length: 1[[Prototype]]: Array(0)
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falsename: "Groomer One"role: "staff"specialties: [][[Prototype]]: Object
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]0: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', email: 'groomer@groomery.in', name: 'Groomer One', phone: undefined, role: 'staff', …}length: 1[[Prototype]]: Array(0)
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falsename: "Groomer One"role: "staff"specialties: [][[Prototype]]: Object
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]0: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', email: 'groomer@groomery.in', name: 'Groomer One', phone: undefined, role: 'staff', …}length: 1[[Prototype]]: Array(0)
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falsename: "Groomer One"role: "staff"specialties: [][[Prototype]]: Object
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]0: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', email: 'groomer@groomery.in', name: 'Groomer One', phone: undefined, role: 'staff', …}length: 1[[Prototype]]: Array(0)

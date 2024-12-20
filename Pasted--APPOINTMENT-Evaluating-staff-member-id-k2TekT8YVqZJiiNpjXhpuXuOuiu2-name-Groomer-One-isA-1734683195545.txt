@@ -1,0 +1,209 @@
+[APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+@radix-ui_react-dialog.js?v=b521b680:1875 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ @radix-ui_react-dialog.js?v=b521b680:1875
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=b521b680:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=b521b680:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=b521b680:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=b521b680:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=b521b680:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=b521b680:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=b521b680:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=b521b680:19384
+commitRoot @ chunk-DRXX46FI.js?v=b521b680:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=b521b680:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=b521b680:9119
+(anonymous) @ chunk-DRXX46FI.js?v=b521b680:18595Understand this warningAI
+@radix-ui_react-dialog.js?v=b521b680:1875 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ @radix-ui_react-dialog.js?v=b521b680:1875
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=b521b680:16883
+invokePassiveEffectMountInDEV @ chunk-DRXX46FI.js?v=b521b680:18292
+invokeEffectsInDev @ chunk-DRXX46FI.js?v=b521b680:19669
+commitDoubleInvokeEffectsInDEV @ chunk-DRXX46FI.js?v=b521b680:19654
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=b521b680:19471
+flushPassiveEffects @ chunk-DRXX46FI.js?v=b521b680:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=b521b680:19384
+commitRoot @ chunk-DRXX46FI.js?v=b521b680:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=b521b680:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=b521b680:9119
+(anonymous) @ chunk-DRXX46FI.js?v=b521b680:18595Understand this warningAI
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+use-inventory.ts:101 FETCH_INVENTORY: Starting to fetch inventory items
+main.tsx:69 Global error: {message: 'Uncaught ReferenceError: consumable is not defined', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-34….dev/src/components/AppointmentCompletionForm.tsx', lineno: 184, colno: 97, error: ReferenceError: consumable is not defined
+    at Object.render (https://c2ee078f-4b26-4083-bd08-de3…}
+window.onerror @ main.tsx:69
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=b521b680:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=b521b680:3733
+beginWork$1 @ chunk-DRXX46FI.js?v=b521b680:19733
+performUnitOfWork @ chunk-DRXX46FI.js?v=b521b680:19166
+workLoopSync @ chunk-DRXX46FI.js?v=b521b680:19105
+renderRootSync @ chunk-DRXX46FI.js?v=b521b680:19084
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=b521b680:18842
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=b521b680:9119
+(anonymous) @ chunk-DRXX46FI.js?v=b521b680:18595Understand this errorAI
+AppointmentCompletionForm.tsx:161 Uncaught ReferenceError: consumable is not defined
+    at Object.render (AppointmentCompletionForm.tsx:161:52)
+    at Controller (chunk-VYIIT4SD.js?v=b521b680:323:35)
+    at renderWithHooks (chunk-DRXX46FI.js?v=b521b680:12151:26)
+    at mountIndeterminateComponent (chunk-DRXX46FI.js?v=b521b680:14901:21)
+    at beginWork (chunk-DRXX46FI.js?v=b521b680:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-DRXX46FI.js?v=b521b680:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-DRXX46FI.js?v=b521b680:3699:24)
+    at invokeGuardedCallback (chunk-DRXX46FI.js?v=b521b680:3733:39)
+    at beginWork$1 (chunk-DRXX46FI.js?v=b521b680:19733:15)
+    at performUnitOfWork (chunk-DRXX46FI.js?v=b521b680:19166:20)
+render @ AppointmentCompletionForm.tsx:161
+Controller @ chunk-VYIIT4SD.js?v=b521b680:323
+renderWithHooks @ chunk-DRXX46FI.js?v=b521b680:12151
+mountIndeterminateComponent @ chunk-DRXX46FI.js?v=b521b680:14901
+beginWork @ chunk-DRXX46FI.js?v=b521b680:15882
+callCallback2 @ chunk-DRXX46FI.js?v=b521b680:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=b521b680:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=b521b680:3733
+beginWork$1 @ chunk-DRXX46FI.js?v=b521b680:19733
+performUnitOfWork @ chunk-DRXX46FI.js?v=b521b680:19166
+workLoopSync @ chunk-DRXX46FI.js?v=b521b680:19105
+renderRootSync @ chunk-DRXX46FI.js?v=b521b680:19084
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=b521b680:18842
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=b521b680:9119
+(anonymous) @ chunk-DRXX46FI.js?v=b521b680:18595Understand this errorAI
+main.tsx:69 Global error: {message: 'Uncaught ReferenceError: consumable is not defined', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-34….dev/src/components/AppointmentCompletionForm.tsx', lineno: 184, colno: 97, error: ReferenceError: consumable is not defined
+    at Object.render (https://c2ee078f-4b26-4083-bd08-de3…}
+window.onerror @ main.tsx:69
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=b521b680:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=b521b680:3733
+beginWork$1 @ chunk-DRXX46FI.js?v=b521b680:19733
+performUnitOfWork @ chunk-DRXX46FI.js?v=b521b680:19166
+workLoopSync @ chunk-DRXX46FI.js?v=b521b680:19105
+renderRootSync @ chunk-DRXX46FI.js?v=b521b680:19084
+recoverFromConcurrentError @ chunk-DRXX46FI.js?v=b521b680:18704
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=b521b680:18847
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=b521b680:9119
+(anonymous) @ chunk-DRXX46FI.js?v=b521b680:18595Understand this errorAI
+AppointmentCompletionForm.tsx:161 Uncaught ReferenceError: consumable is not defined
+    at Object.render (AppointmentCompletionForm.tsx:161:52)
+    at Controller (chunk-VYIIT4SD.js?v=b521b680:323:35)
+    at renderWithHooks (chunk-DRXX46FI.js?v=b521b680:12151:26)
+    at mountIndeterminateComponent (chunk-DRXX46FI.js?v=b521b680:14901:21)
+    at beginWork (chunk-DRXX46FI.js?v=b521b680:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-DRXX46FI.js?v=b521b680:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-DRXX46FI.js?v=b521b680:3699:24)
+    at invokeGuardedCallback (chunk-DRXX46FI.js?v=b521b680:3733:39)
+    at beginWork$1 (chunk-DRXX46FI.js?v=b521b680:19733:15)
+    at performUnitOfWork (chunk-DRXX46FI.js?v=b521b680:19166:20)
+render @ AppointmentCompletionForm.tsx:161
+Controller @ chunk-VYIIT4SD.js?v=b521b680:323
+renderWithHooks @ chunk-DRXX46FI.js?v=b521b680:12151
+mountIndeterminateComponent @ chunk-DRXX46FI.js?v=b521b680:14901
+beginWork @ chunk-DRXX46FI.js?v=b521b680:15882
+callCallback2 @ chunk-DRXX46FI.js?v=b521b680:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=b521b680:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=b521b680:3733
+beginWork$1 @ chunk-DRXX46FI.js?v=b521b680:19733
+performUnitOfWork @ chunk-DRXX46FI.js?v=b521b680:19166
+workLoopSync @ chunk-DRXX46FI.js?v=b521b680:19105
+renderRootSync @ chunk-DRXX46FI.js?v=b521b680:19084
+recoverFromConcurrentError @ chunk-DRXX46FI.js?v=b521b680:18704
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=b521b680:18847
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=b521b680:9119
+(anonymous) @ chunk-DRXX46FI.js?v=b521b680:18595Understand this errorAI
+chunk-DRXX46FI.js?v=b521b680:14016 The above error occurred in the <Controller> component:
+
+    at Controller (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-VYIIT4SD.js?v=b521b680:323:35)
+    at FormField (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/form.tsx:32:6)
+    at div
+    at div
+    at div
+    at form
+    at FormProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-VYIIT4SD.js?v=b521b680:103:11)
+    at div
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:253:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:282:7
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:539:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:520:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:617:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:636:5
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:1771:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:1694:58
+    at Presence (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:1011:11)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:1685:64
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:899:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:880:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:977:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:993:22
+    at Presence (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:1011:11)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-PYPT7BFL.js?v=b521b680:38:15)
+    at DialogPortal (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:1648:11)
+    at _c3 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/dialog.tsx:49:12)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-PYPT7BFL.js?v=b521b680:38:15)
+    at Dialog (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:1589:5)
+    at AppointmentCompletionForm (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/AppointmentCompletionForm.tsx:63:3)
+    at AppointmentCompletionForm (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/AppointmentDetails.tsx:683:38)
+    at form
+    at FormProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-VYIIT4SD.js?v=b521b680:103:11)
+    at div
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:253:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:282:7
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:539:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:520:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:617:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:636:5
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:1771:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:1694:58
+    at Presence (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:1011:11)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:1685:64
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:899:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:880:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:977:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:993:22
+    at Presence (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:1011:11)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-PYPT7BFL.js?v=b521b680:38:15)
+    at DialogPortal (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:1648:11)
+    at _c3 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/dialog.tsx:49:12)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-PYPT7BFL.js?v=b521b680:38:15)
+    at Dialog (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b521b680:1589:5)
+    at AppointmentDetails (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/AppointmentDetails.tsx:60:3)
+    at div
+    at AppointmentsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/AppointmentsPage.tsx:154:41)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=b521b680:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=b521b680:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=b521b680:18:5)
+    at div
+    at main
+    at main
+    at _c9 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:398:48)
+    at div
+    at div
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-PYPT7BFL.js?v=b521b680:38:15)
+    at TooltipProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=b521b680:290:5)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:54:7
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:28:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:136:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=b521b680:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=b521b680:18:5)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+logCapturedError @ chunk-DRXX46FI.js?v=b521b680:14016
+callback @ chunk-DRXX46FI.js?v=b521b680:14062
+callCallback @ chunk-DRXX46FI.js?v=b521b680:10491
+commitUpdateQueue @ chunk-DRXX46FI.js?v=b521b680:10508
+commitLayoutEffectOnFiber @ chunk-DRXX46FI.js?v=b521b680:17043
+commitLayoutMountEffects_complete @ chunk-DRXX46FI.js?v=b521b680:17948
+commitLayoutEffects_begin @ chunk-DRXX46FI.js?v=b521b680:17937
+commitLayoutEffects_begin @ chunk-DRXX46FI.js?v=b521b680:17918
+commitLayoutEffects @ chunk-DRXX46FI.js?v=b521b680:17888
+commitRootImpl @ chunk-DRXX46FI.js?v=b521b680:19321
+commitRoot @ chunk-DRXX46FI.js?v=b521b680:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=b521b680:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=b521b680:9119
+(anonymous) @ chunk-DRXX46FI.js?v=b521b680:18595Understand this errorAI
+use-inventory.ts:112 FETCH_INVENTORY: Processing item data: {id: 'IctkQ7zzpjxCQOHJAAOo', data: {…}}
+use-inventory.ts:148 FETCH_INVENTORY: Successfully parsed item: {id: 'IctkQ7zzpjxCQOHJAAOo', item: {…}}
+use-inventory.ts:156 FETCH_INVENTORY: Successfully fetched inventory {count: 1}
