@@ -141,6 +141,7 @@ export function useUser() {
     mutationFn: () => signOut(auth),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
+      window.location.href = '/login';
     },
   });
 
