@@ -8,7 +8,12 @@ export default function HomePage() {
   const { data: stats } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: async () => {
-      const res = await fetch("/api/stats");
+      const token = await auth.currentUser?.getIdToken();
+      const res = await fetch("/api/stats", {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       if (!res.ok) throw new Error("Failed to fetch stats");
       return res.json();
     }
