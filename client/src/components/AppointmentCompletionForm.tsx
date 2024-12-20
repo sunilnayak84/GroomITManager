@@ -109,17 +109,15 @@ export function AppointmentCompletionForm({
           });
         }
       }
-      // Save observations and recommendations to the appointment
-      await fetch(`/api/appointments/${appointmentId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          observations: data.observations,
-          recommendations: data.recommendations,
-        }),
-      });
+      
+      // Save observations and recommendations to Firestore
+      const appointmentRef = doc(db, 'appointments', appointmentId);
+      await setDoc(appointmentRef, {
+        observations: data.observations || null,
+        recommendations: data.recommendations || null,
+        status: 'completed',
+        updatedAt: new Date().toISOString()
+      }, { merge: true });
       
       onComplete();
       onClose();
