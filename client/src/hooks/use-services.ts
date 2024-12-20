@@ -58,13 +58,26 @@ export function useServices() {
                 return sum + (item.price || 0);
               }, 0);
               
+              // Aggregate required categories from all services in the package
+              const allRequiredCategories = new Set<string>();
+              selectedItems.forEach(item => {
+                const serviceDoc = querySnapshot.docs.find(doc => doc.id === item.service_id);
+                if (serviceDoc) {
+                  const serviceData = serviceDoc.data();
+                  if (Array.isArray(serviceData.required_categories)) {
+                    serviceData.required_categories.forEach(cat => allRequiredCategories.add(cat));
+                  }
+                }
+              });
+              
               const discountPercentage = parsedData.discount_percentage || 0;
               const finalPrice = Math.round(totalOriginalPrice * (1 - discountPercentage));
               
               return {
                 ...parsedData,
                 price: finalPrice,
-                discount_percentage: discountPercentage
+                discount_percentage: discountPercentage,
+                required_categories: Array.from(allRequiredCategories)
               };
             }
 
