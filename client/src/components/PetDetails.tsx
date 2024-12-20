@@ -27,10 +27,10 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
         <DialogDescription>View and manage pet information</DialogDescription>
       </DialogHeader>
       
-      <Tabs defaultValue="details" className="w-full">
-        <TabsList className="w-full">
-          <TabsTrigger className="flex-1" value="details">Details</TabsTrigger>
-          <TabsTrigger className="flex-1" value="history">Service History</TabsTrigger>
+      <Tabs defaultValue="details" className="w-full space-y-4">
+        <TabsList className="w-full grid grid-cols-2">
+          <TabsTrigger value="details">Details</TabsTrigger>
+          <TabsTrigger value="history">Service History</TabsTrigger>
         </TabsList>
         
         <TabsContent value="details" className="mt-4">

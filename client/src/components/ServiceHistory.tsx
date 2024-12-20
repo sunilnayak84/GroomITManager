@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { format } from 'date-fns';
 import {
@@ -25,8 +25,8 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
         return;
       }
       
-      const historyRef = collection(db, 'appointments');
       try {
+        const historyRef = collection(db, 'appointments');
         const historyQuery = query(
           historyRef,
           where('petId', '==', petId),
@@ -35,19 +35,27 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
         );
 
         const snapshot = await getDocs(historyQuery);
-        const historyData = snapshot.docs.map(doc => {
+        const historyData = await Promise.all(snapshot.docs.map(async doc => {
           const data = doc.data();
+          
+          // Fetch service details
+          const services = await Promise.all((data.services || []).map(async (serviceId: string) => {
+            const serviceDoc = await getDocs(collection(db, 'services'));
+            const service = serviceDoc.docs.find(doc => doc.id === serviceId);
+            return service ? service.data().name : 'Unknown Service';
+          }));
+          
           return {
             id: doc.id,
             ...data,
+            services,
             date: data.date?.toDate?.()?.toISOString() || null
           };
-        });
+        }));
         
         setHistory(historyData);
       } catch (error) {
         console.error('Error fetching service history:', error);
-        setHistory([]);
       } finally {
         setIsLoading(false);
       }
@@ -73,19 +81,27 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
               Service on {record.date ? format(new Date(record.date), 'PPP') : 'Unknown Date'}
             </AccordionTrigger>
             <AccordionContent>
-              <div className="space-y-4">
+              <div className="space-y-4 p-4">
                 <div>
-                  <h4 className="font-semibold">Services</h4>
+                  <h4 className="font-semibold mb-2">Services</h4>
                   <ul className="list-disc pl-4">
-                    {record.services?.map((service: any, index: number) => (
-                      <li key={index}>{service.name}</li>
+                    {record.services?.map((service: string, index: number) => (
+                      <li key={index}>{service}</li>
                     ))}
                   </ul>
                 </div>
-                {record.notes && (
+                
+                {record.observations && (
                   <div>
-                    <h4 className="font-semibold">Notes</h4>
-                    <p className="text-sm text-muted-foreground">{record.notes}</p>
+                    <h4 className="font-semibold mb-2">Observations</h4>
+                    <p className="text-sm text-muted-foreground">{record.observations}</p>
+                  </div>
+                )}
+                
+                {record.recommendations && (
+                  <div>
+                    <h4 className="font-semibold mb-2">Recommendations</h4>
+                    <p className="text-sm text-muted-foreground">{record.recommendations}</p>
                   </div>
                 )}
               </div>
