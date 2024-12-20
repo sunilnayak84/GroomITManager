@@ -239,16 +239,30 @@ export default function PetsPage() {
                   </span>
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button
-                    variant="outline"
-                    className="hover:bg-purple-50 hover:text-purple-600"
-                    onClick={() => {
-                      setSelectedPet(pet);
-                      setShowPetModal(true);
-                    }}
-                  >
-                    View Details
-                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="hover:bg-purple-50 hover:text-purple-600"
+                      >
+                        View Details
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[625px]">
+                      <PetDetails 
+                        pet={pet}
+                        formatDate={formatDate}
+                        onEdit={() => {
+                          setSelectedPet(pet);
+                          setShowEditModal(true);
+                        }}
+                        onDelete={() => {
+                          setSelectedPet(pet);
+                          setShowDeleteConfirm(true);
+                        }}
+                      />
+                    </DialogContent>
+                  </Dialog>
                 </TableCell>
               </TableRow>
             ))}
