@@ -113,18 +113,40 @@ export function AppointmentCompletionForm({
       }
       
       // Save observations and recommendations to Firestore
+      const batch = writeBatch(db);
       const appointmentRef = doc(db, 'appointments', appointmentId);
-      await setDoc(appointmentRef, {
-        observations: data.observations || null,
-        recommendations: data.recommendations || null,
+      const historyRef = doc(collection(db, 'service_history'));
+      
+      // Update appointment
+      batch.update(appointmentRef, {
         status: 'completed',
         updatedAt: new Date().toISOString(),
-        statusHistory: [{
+        statusHistory: arrayUnion({
           status: 'completed',
           timestamp: new Date(),
           updatedBy: 'system'
-        }]
-      }, { merge: true });
+        })
+      });
+
+      // Create service history record
+      batch.set(historyRef, {
+        appointmentId,
+        petId,
+        serviceId,
+        observations: data.observations || null,
+        recommendations: data.recommendations || null,
+        createdAt: new Date().toISOString(),
+        createdBy: auth.currentUser?.uid,
+        usedItems: [...data.serviceItems, ...data.additionalItems]
+          .filter(item => item.quantity > 0)
+          .map(item => ({
+            itemId: item.itemId,
+            quantity: item.quantity,
+            categoryId: item.categoryId
+          }))
+      });
+
+      await batch.commit();
       
       onComplete();
       onClose();
