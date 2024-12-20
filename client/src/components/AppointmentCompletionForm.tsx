@@ -141,9 +141,9 @@ export function AppointmentCompletionForm({
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-4">
               <h3 className="font-semibold">Service Required Items</h3>
-              {service?.consumables?.map((consumable, index) => (
-                <div key={`${consumable.category}-${index}`} className="space-y-2">
-                  <h4 className="text-sm font-medium">{consumable.category}</h4>
+              {service?.required_categories?.map((category, index) => (
+                <div key={`${category}-${index}`} className="space-y-2">
+                  <h4 className="text-sm font-medium">{category}</h4>
                   <div className="grid grid-cols-2 gap-4">
                     <FormField
                       name={`serviceItems.${index}.itemId`}
