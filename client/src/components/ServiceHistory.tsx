@@ -47,30 +47,36 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
   }, [petId]);
 
   if (isLoading) {
-    return <div>Loading history...</div>;
+    return <div className="p-4">Loading history...</div>;
+  }
+
+  if (history.length === 0) {
+    return <div className="p-4">No service history found.</div>;
   }
 
   return (
-    <Accordion type="single" collapsible className="w-full">
-      {history.map((record) => (
-        <AccordionItem key={record.id} value={record.id}>
-          <AccordionTrigger>
-            Service on {format(new Date(record.createdAt), 'PPP')}
-          </AccordionTrigger>
-          <AccordionContent>
-            <div className="space-y-2 p-4">
-              <div>
-                <h4 className="font-semibold">Observations</h4>
-                <p>{record.observations || 'No observations recorded'}</p>
+    <div className="space-y-4 p-4">
+      <Accordion type="single" collapsible className="w-full">
+        {history.map((record) => (
+          <AccordionItem key={record.id} value={record.id}>
+            <AccordionTrigger>
+              Service on {format(new Date(record.createdAt), 'PPP')}
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="space-y-2">
+                <div>
+                  <h4 className="font-semibold">Observations</h4>
+                  <p>{record.observations || 'No observations recorded'}</p>
+                </div>
+                <div>
+                  <h4 className="font-semibold">Recommendations</h4>
+                  <p>{record.recommendations || 'No recommendations recorded'}</p>
+                </div>
               </div>
-              <div>
-                <h4 className="font-semibold">Recommendations</h4>
-                <p>{record.recommendations || 'No recommendations recorded'}</p>
-              </div>
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-      ))}
-    </Accordion>
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+    </div>
   );
 }
