@@ -140,7 +140,9 @@ export function useUser() {
   const logoutMutation = useMutation({
     mutationFn: () => signOut(auth),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user'] });
+      queryClient.clear();
+      queryClient.invalidateQueries();
+      localStorage.clear();
       window.location.href = '/login';
     },
   });
