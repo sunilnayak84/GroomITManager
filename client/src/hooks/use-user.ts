@@ -138,12 +138,19 @@ export function useUser() {
   });
 
   const logoutMutation = useMutation({
-    mutationFn: () => signOut(auth),
+    mutationFn: async () => {
+      await signOut(auth);
+      // Clear Firebase auth persistence
+      await auth.setPersistence('none');
+      return Promise.resolve();
+    },
     onSuccess: () => {
       queryClient.clear();
       queryClient.invalidateQueries();
       localStorage.clear();
-      window.location.href = '/login';
+      sessionStorage.clear();
+      // Use replace to prevent back navigation
+      window.location.replace('/login');
     },
   });
 
