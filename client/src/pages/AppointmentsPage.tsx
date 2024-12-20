@@ -239,6 +239,10 @@ export default function AppointmentsPage() {
           {selectedPet && (
             <Dialog open={showPetDetails} onOpenChange={setShowPetDetails}>
               <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Pet Details</DialogTitle>
+                  <DialogDescription>View detailed information about the pet</DialogDescription>
+                </DialogHeader>
                 <PetDetails 
                   pet={selectedPet}
                   formatDate={(date) => date ? new Date(date).toLocaleDateString() : 'Not specified'}
