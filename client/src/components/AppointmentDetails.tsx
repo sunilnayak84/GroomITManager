@@ -49,7 +49,7 @@ interface AppointmentDetailsProps {
 }
 
 const updateAppointmentSchema = z.object({
-  status: z.enum(['pending', 'confirmed', 'completed', 'cancelled']),
+  status: z.enum(['pending', 'confirmed', 'in_progress', 'completed', 'cancelled']),
   cancellationReason: z.enum(['no_show', 'rescheduled', 'other']).optional(),
   notes: z.string().optional(),
 });
