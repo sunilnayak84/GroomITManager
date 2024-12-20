@@ -5,7 +5,7 @@ import * as z from "zod";
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import { PawPrint } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
