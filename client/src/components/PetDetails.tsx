@@ -22,10 +22,7 @@ interface PetDetailsProps {
 export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProps) {
   return (
     <div className="space-y-6">
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold">Pet Details</h2>
-        <p className="text-sm text-muted-foreground">View and manage pet information</p>
-      </div>
+      
       
       <Tabs defaultValue="details" className="w-full space-y-4">
         <TabsList className="w-full grid grid-cols-2">

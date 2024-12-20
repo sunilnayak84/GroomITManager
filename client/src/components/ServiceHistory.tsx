@@ -73,8 +73,8 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
   }
 
   return (
-    <div className="space-y-4">
-      <Accordion type="single" collapsible className="w-full">
+    <div className="space-y-4 mt-4">
+      <Accordion type="single" collapsible className="w-full space-y-2">
         {history.map((record) => (
           <AccordionItem key={record.id} value={record.id}>
             <AccordionTrigger>
