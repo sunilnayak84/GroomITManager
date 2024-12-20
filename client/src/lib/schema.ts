@@ -370,3 +370,13 @@ export const inventoryUsageSchema = z.object({
 
 export type InventoryUsage = z.infer<typeof inventoryUsageSchema>;
 export type InsertInventoryUsage = Omit<InventoryUsage, "usage_id" | "used_at">;
+// Loyalty Program Schema
+export const loyaltyConfigSchema = z.object({
+  pointsPerRupee: z.number().min(0.01),
+  redemptionRatePerPoint: z.number().min(0.01),
+  minimumPointsForRedemption: z.number().min(1),
+  maximumRedemptionPercentage: z.number().min(1).max(100),
+  expiryDays: z.number().min(0),
+});
+
+export type LoyaltyConfig = z.infer<typeof loyaltyConfigSchema>;
