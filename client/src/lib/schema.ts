@@ -13,6 +13,14 @@ export const customerSchema = z.object({
   address: z.string().nullable(),
   gender: z.enum(["male", "female", "other"]).nullable(),
   petCount: z.number().default(0),
+  loyaltyPoints: z.number().default(0),
+  pointsHistory: z.array(z.object({
+    points: z.number(),
+    type: z.enum(["earned", "redeemed", "expired"]),
+    appointmentId: z.string().optional(),
+    timestamp: z.string(),
+    description: z.string()
+  })).default([]),
   createdAt: z.union([
     z.string(),
     z.custom<FirestoreTimestamp>((data) => data instanceof Timestamp),
