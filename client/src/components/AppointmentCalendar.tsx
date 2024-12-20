@@ -58,6 +58,7 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
       switch (appointment.status) {
         case 'pending': return '#fbbf24'; // Yellow
         case 'confirmed': return '#60a5fa'; // Blue
+        case 'in_progress': return '#8b5cf6'; // Purple
         case 'completed': return '#34d399'; // Green
         case 'cancelled': return '#ef4444'; // Red
         default: return '#6b7280'; // Gray
