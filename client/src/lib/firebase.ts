@@ -20,13 +20,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// Set persistence and sign in
+// Only set persistence without auto-login
 auth.setPersistence(browserLocalPersistence)
-  .then(() => {
-    if (!auth.currentUser) {
-      return signInWithEmailAndPassword(auth, 'admin@groomery.in', 'admin123');
-    }
-  })
   .then(() => {
     console.log('FIREBASE_INIT: Firebase initialized successfully');
   })
