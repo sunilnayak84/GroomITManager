@@ -116,6 +116,11 @@ export const appointmentSchema = z.object({
   productsUsed: z.string().nullable(),
   totalPrice: z.number(),
   totalDuration: z.number(),
+  statusHistory: z.array(z.object({
+    status: z.enum(["pending", "confirmed", "in_progress", "completed", "cancelled"]),
+    timestamp: z.string(),
+    updatedBy: z.string()
+  })).default([]),
   createdAt: z.string(),
   updatedAt: z.string().nullable(),
 });

@@ -122,6 +122,14 @@ const AppointmentDetails = ({
         status: data.status,
         cancellationReason: data.status === 'cancelled' ? data.cancellationReason : undefined,
         notes: data.notes,
+        statusHistory: [
+          ...(appointment.statusHistory || []),
+          {
+            status: data.status,
+            timestamp: new Date().toISOString(),
+            updatedBy: auth.currentUser?.uid || 'unknown'
+          }
+        ]
       });
       
       toast({
