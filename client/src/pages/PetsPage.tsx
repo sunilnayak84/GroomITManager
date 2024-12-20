@@ -3,6 +3,7 @@ import { usePets } from "@/hooks/use-pets";
 import { useCustomers } from "@/hooks/use-customers";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { PetDetails } from "@/components/PetDetails";
 import { useToast } from "@/hooks/use-toast";
 import { PetForm } from "@/components/PetForm";
 import {
