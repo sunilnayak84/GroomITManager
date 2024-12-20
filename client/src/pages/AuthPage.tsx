@@ -66,7 +66,7 @@ export default function AuthPage() {
         title: "Success",
         description: "Logged in successfully",
       });
-      window.location.reload();
+      window.location.href = '/';
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to login";
       toast({
