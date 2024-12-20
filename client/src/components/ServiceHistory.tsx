@@ -20,14 +20,18 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
 
   useEffect(() => {
     async function fetchHistory() {
-      if (!petId) return;
+      if (!petId) {
+        setIsLoading(false);
+        return;
+      }
       
-      const historyRef = collection(db, 'service_history');
+      const historyRef = collection(db, 'appointments');
       try {
         const historyQuery = query(
           historyRef,
           where('petId', '==', petId),
-          orderBy('createdAt', 'desc')
+          where('status', '==', 'completed'),
+          orderBy('date', 'desc')
         );
 
         const snapshot = await getDocs(historyQuery);
@@ -53,7 +57,7 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
   }
 
   if (history.length === 0) {
-    return <div className="p-4">No service history found.</div>;
+    return <div className="p-4 text-muted-foreground">No service history found.</div>;
   }
 
   return (
@@ -62,18 +66,24 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
         {history.map((record) => (
           <AccordionItem key={record.id} value={record.id}>
             <AccordionTrigger>
-              Service on {format(new Date(record.createdAt), 'PPP')}
+              Service on {format(new Date(record.date), 'PPP')}
             </AccordionTrigger>
             <AccordionContent>
-              <div className="space-y-2">
+              <div className="space-y-4">
                 <div>
-                  <h4 className="font-semibold">Observations</h4>
-                  <p>{record.observations || 'No observations recorded'}</p>
+                  <h4 className="font-semibold">Services</h4>
+                  <ul className="list-disc pl-4">
+                    {record.services?.map((service: any, index: number) => (
+                      <li key={index}>{service.name}</li>
+                    ))}
+                  </ul>
                 </div>
-                <div>
-                  <h4 className="font-semibold">Recommendations</h4>
-                  <p>{record.recommendations || 'No recommendations recorded'}</p>
-                </div>
+                {record.notes && (
+                  <div>
+                    <h4 className="font-semibold">Notes</h4>
+                    <p className="text-sm text-muted-foreground">{record.notes}</p>
+                  </div>
+                )}
               </div>
             </AccordionContent>
           </AccordionItem>

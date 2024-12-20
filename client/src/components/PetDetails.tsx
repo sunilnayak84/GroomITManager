@@ -29,8 +29,8 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
       
       <Tabs defaultValue="details" className="w-full">
         <TabsList className="w-full">
-          <TabsTrigger value="details" className="flex-1">Details</TabsTrigger>
-          <TabsTrigger value="history" className="flex-1">Service History</TabsTrigger>
+          <TabsTrigger className="flex-1" value="details">Details</TabsTrigger>
+          <TabsTrigger className="flex-1" value="history">Service History</TabsTrigger>
         </TabsList>
         
         <TabsContent value="details" className="mt-4">
