@@ -248,6 +248,10 @@ export default function PetsPage() {
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[625px]">
+                      <DialogHeader>
+                        <DialogTitle>Pet Details</DialogTitle>
+                        <DialogDescription>View and manage pet information</DialogDescription>
+                      </DialogHeader>
                       <PetDetails 
                         pet={pet}
                         formatDate={formatDate}
