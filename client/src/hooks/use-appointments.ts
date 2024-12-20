@@ -8,6 +8,7 @@ import {
 } from 'firebase/firestore';
 import { db } from "../lib/firebase";
 import { timestampToString } from "../lib/types";
+import { auth } from "../lib/firebase"; // Assuming auth object is available
 
 interface FirestoreAppointmentData {
   petId: string;
@@ -15,7 +16,7 @@ interface FirestoreAppointmentData {
   groomerId: string;
   branchId: string;
   date: Timestamp;
-  status: "pending" | "confirmed" | "completed" | "cancelled";
+  status: "pending" | "confirmed" | "completed" | "cancelled" | "in_progress";
   notes: string | null;
   productsUsed: string | null;
   totalPrice: number;
@@ -23,6 +24,7 @@ interface FirestoreAppointmentData {
   createdAt: Timestamp;
   updatedAt: Timestamp | null;
   deletedAt: Timestamp | null;
+  statusHistory?: { status: string; timestamp: Timestamp; updatedBy: string }[];
 }
 
 const timestampToISOString = (timestamp: Timestamp | null | undefined): string => {
@@ -411,13 +413,21 @@ export function useAppointments() {
           throw new Error('Appointment not found');
         }
 
-        const currentData = appointmentSnap.data();
+        const currentData = appointmentSnap.data() as FirestoreAppointmentData;
         const updateData = {
           ...currentData,
           status: data.status || currentData.status,
           updatedAt: Timestamp.fromDate(new Date()),
           notes: data.notes !== undefined ? data.notes : currentData.notes,
           cancellationReason: data.status === 'cancelled' ? data.cancellationReason : null,
+          statusHistory: [
+            ...(currentData.statusHistory || []),
+            {
+              status: data.status,
+              timestamp: Timestamp.fromDate(new Date()),
+              updatedBy: auth.currentUser?.uid || 'unknown'
+            }
+          ],
           services: data.services || currentData.services,
           groomerId: data.groomerId || currentData.groomerId,
           date: data.date ? Timestamp.fromDate(data.date) : currentData.date,
