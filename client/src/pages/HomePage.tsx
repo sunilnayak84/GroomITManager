@@ -77,6 +77,10 @@ export default function HomePage() {
 
       <div className="bg-white rounded-xl border shadow-sm p-4">
         <DashboardStats />
+<div className="mt-8">
+  <h2 className="text-2xl font-bold mb-4">Analytics Overview</h2>
+  <AnalyticsDashboard />
+</div>
       </div>
     </div>
   );
