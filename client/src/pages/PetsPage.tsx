@@ -318,9 +318,6 @@ export default function PetsPage() {
           }}
         >
           <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Pet Details</DialogTitle>
-            </DialogHeader>
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 {selectedPet.image ? (

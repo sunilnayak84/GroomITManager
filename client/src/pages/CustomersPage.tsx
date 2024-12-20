@@ -949,10 +949,6 @@ export default function CustomersPage() {
       {/* Pet Details Dialog */}
       <Dialog open={showPetDetails} onOpenChange={setShowPetDetails}>
         <DialogContent className="sm:max-w-[625px]">
-          <DialogHeader>
-            <DialogTitle>Pet Details</DialogTitle>
-            <DialogDescription>View and manage pet information</DialogDescription>
-          </DialogHeader>
           {selectedPet && (
             <div className="space-y-6">
               <PetDetails 
