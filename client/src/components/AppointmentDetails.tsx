@@ -387,15 +387,17 @@ const AppointmentDetails = ({
 };
 
 // Placeholder for AppointmentCompletionForm component.  Replace with your actual implementation.
-const AppointmentCompletionForm = ({ isOpen, onClose, appointmentId, serviceId, onComplete }: { isOpen: boolean; onClose: () => void; appointmentId: number; serviceId: number; onComplete: () => void; }) => {
+import { AppointmentCompletionForm as InventoryUsageForm } from "./AppointmentCompletionForm";
+
+const AppointmentCompletionForm = ({ isOpen, onClose, appointmentId, serviceId, onComplete }: { isOpen: boolean; onClose: () => void; appointmentId: string; serviceId: string; onComplete: () => void; }) => {
     return (
-        <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent>
-                {/* Add your inventory usage form here */}
-                <p>Inventory Usage Form (Placeholder)</p>
-                <Button onClick={onComplete}>Submit</Button>
-            </DialogContent>
-        </Dialog>
+        <InventoryUsageForm 
+            isOpen={isOpen}
+            onClose={onClose}
+            appointmentId={appointmentId}
+            serviceId={serviceId}
+            onComplete={onComplete}
+        />
     );
 }
 
