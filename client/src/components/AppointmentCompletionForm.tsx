@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Plus, X } from "lucide-react";
+import { useServices } from "@/hooks/use-services";
 
 const completionFormSchema = z.object({
   serviceItems: z.array(z.object({
@@ -52,10 +53,6 @@ interface AppointmentCompletionFormProps {
   onClose: () => void;
   appointmentId: string;
   serviceId: string;
-  service: {
-    consumables: { category: string; quantity: number }[];
-    name: string;
-  };
   onComplete: () => void;
 }
 
@@ -64,10 +61,10 @@ export function AppointmentCompletionForm({
   onClose,
   appointmentId,
   serviceId,
-  service,
   onComplete,
 }: AppointmentCompletionFormProps) {
-  const { inventory } = useInventory();
+  const { inventory, recordUsage } = useInventory();
+  const { services } = useServices();
   const [additionalItems, setAdditionalItems] = useState<number>(0);
 
   // Group inventory by categories
@@ -79,13 +76,15 @@ export function AppointmentCompletionForm({
     return acc;
   }, {} as Record<string, typeof inventory>);
 
+  const service = services.find(s => s.service_id === serviceId);
+
   const form = useForm<CompletionFormValues>({
     defaultValues: {
-      serviceItems: service.consumables.map(c => ({
+      serviceItems: service?.consumables?.map(c => ({
         categoryId: c.category,
         itemId: '',
-        quantity: c.quantity
-      })),
+        quantity: c.quantity_used
+      })) || [],
       additionalItems: [],
       observations: '',
       recommendations: ''
@@ -102,7 +101,7 @@ export function AppointmentCompletionForm({
             quantity_used: item.quantity,
             service_id: serviceId,
             appointment_id: appointmentId,
-            notes: `Used in service: ${service.name}`
+            notes: `Used in service: ${service?.name || 'Unknown Service'}`
           });
         }
       }
@@ -132,13 +131,13 @@ export function AppointmentCompletionForm({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Complete {service.name}</DialogTitle>
+          <DialogTitle>Complete Service: {service?.name}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-4">
               <h3 className="font-semibold">Service Required Items</h3>
-              {service.consumables.map((consumable, index) => (
+              {service?.consumables?.map((consumable, index) => (
                 <div key={`${consumable.category}-${index}`} className="space-y-2">
                   <h4 className="text-sm font-medium">{consumable.category}</h4>
                   <div className="grid grid-cols-2 gap-4">
