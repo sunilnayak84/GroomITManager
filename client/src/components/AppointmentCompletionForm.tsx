@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useInventory } from "@/hooks/use-inventory";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import { z } from "zod";
 import {
   Dialog,
@@ -116,7 +118,12 @@ export function AppointmentCompletionForm({
         observations: data.observations || null,
         recommendations: data.recommendations || null,
         status: 'completed',
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
+        statusHistory: [{
+          status: 'completed',
+          timestamp: new Date(),
+          updatedBy: 'system'
+        }]
       }, { merge: true });
       
       onComplete();
