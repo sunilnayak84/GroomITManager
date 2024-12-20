@@ -77,14 +77,18 @@ export function AppointmentCompletionForm({
   }, {} as Record<string, typeof inventory>);
 
   const service = services.find(s => s.service_id === serviceId);
+  
+  // Map required categories to form fields
+  const requiredCategories = service?.required_categories || [];
+  const initialServiceItems = requiredCategories.map(category => ({
+    categoryId: category,
+    itemId: '',
+    quantity: 0
+  }));
 
   const form = useForm<CompletionFormValues>({
     defaultValues: {
-      serviceItems: service?.consumables?.map(c => ({
-        categoryId: c.category,
-        itemId: '',
-        quantity: c.quantity_used
-      })) || [],
+      serviceItems: initialServiceItems,
       additionalItems: [],
       observations: '',
       recommendations: ''
