@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, DollarSign, Users, Scissors } from "lucide-react";
 import DashboardStats from "../components/DashboardStats";
+import { AnalyticsDashboard } from "../components/AnalyticsDashboard";
 import { useQuery } from "@tanstack/react-query";
 
 export default function HomePage() {
