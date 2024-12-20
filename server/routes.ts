@@ -169,6 +169,9 @@ export function registerRoutes(app: Express) {
   });
 
   app.get("/api/firebase-users", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 10;
+  const skip = (page - 1) * limit;
     try {
       console.log('[FIREBASE-USERS] Starting user fetch request');
       
