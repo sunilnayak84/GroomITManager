@@ -2,13 +2,13 @@
 import { useEffect, useState } from 'react';
 import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { format } from 'date-fns';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { format } from 'date-fns';
 
 interface ServiceHistoryProps {
   petId: string;
@@ -43,7 +43,9 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
       }
     }
 
-    fetchHistory();
+    if (petId) {
+      fetchHistory();
+    }
   }, [petId]);
 
   if (isLoading) {
