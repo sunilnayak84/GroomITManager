@@ -136,6 +136,15 @@ export default function AppointmentEditForm({ appointment, setOpen, open }: Appo
         return;
       }
 
+      if (appointment.status === 'completed' || appointment.status === 'cancelled') {
+        toast({
+          variant: "destructive",
+          title: "Cannot Update Appointment",
+          description: "Appointments with 'completed' or 'cancelled' status cannot be updated.",
+        });
+        return;
+      }
+
       await updateAppointment({
         id: appointment.id,
         status: data.status,
@@ -205,7 +214,11 @@ export default function AppointmentEditForm({ appointment, setOpen, open }: Appo
                 <FormItem>
                   <FormLabel>Date</FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} />
+                    <Input 
+                      type="date" 
+                      {...field} 
+                      disabled={appointment.status === 'completed' || appointment.status === 'cancelled'}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -218,7 +231,7 @@ export default function AppointmentEditForm({ appointment, setOpen, open }: Appo
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Time</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value} disabled={appointment.status === 'completed' || appointment.status === 'cancelled'}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a time" />
@@ -262,7 +275,7 @@ export default function AppointmentEditForm({ appointment, setOpen, open }: Appo
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Groomer</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select onValueChange={field.onChange} value={field.value} disabled={appointment.status === 'completed' || appointment.status === 'cancelled'}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a groomer" />
@@ -301,6 +314,7 @@ export default function AppointmentEditForm({ appointment, setOpen, open }: Appo
                             : field.value.filter((id) => id !== service.service_id);
                           field.onChange(updatedServices);
                         }}
+                        disabled={appointment.status === 'completed' || appointment.status === 'cancelled'}
                       />
                       <div className="flex-1">
                         <div className="font-medium">{service.name}</div>
@@ -336,7 +350,7 @@ export default function AppointmentEditForm({ appointment, setOpen, open }: Appo
               <FormItem>
                 <FormLabel>Notes</FormLabel>
                 <FormControl>
-                  <Input {...field} value={field.value || ''} />
+                  <Input {...field} value={field.value || ''} disabled={appointment.status === 'completed' || appointment.status === 'cancelled'}/>
                 </FormControl>
                 <FormMessage />
               </FormItem>
