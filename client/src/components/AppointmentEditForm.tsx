@@ -34,7 +34,7 @@ import { z } from "zod";
 import { useServices } from "@/hooks/use-services";
 
 const editAppointmentSchema = z.object({
-  status: z.enum(['pending', 'confirmed', 'completed', 'cancelled']),
+  status: z.enum(['pending', 'confirmed', 'in_progress', 'completed', 'cancelled']),
   notes: z.string().optional(),
   appointmentDate: z.string(),
   appointmentTime: z.string(),
