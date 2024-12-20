@@ -1,7 +1,7 @@
+
 import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import type { Pet } from "@/lib/schema";
 import { ServiceHistory } from "@/components/ServiceHistory";
 
@@ -21,18 +21,20 @@ interface PetDetailsProps {
 
 export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProps) {
   return (
-    <div className="space-y-6 p-6">
-      <DialogTitle>Pet Details</DialogTitle>
-      <DialogDescription>
-        View and manage pet information
-      </DialogDescription>
-      <Tabs defaultValue="details">
-        <TabsList>
-          <TabsTrigger value="details">Details</TabsTrigger>
-          <TabsTrigger value="history">Service History</TabsTrigger>
+    <div className="space-y-6">
+      <DialogHeader>
+        <DialogTitle>Pet Details</DialogTitle>
+        <DialogDescription>View and manage pet information</DialogDescription>
+      </DialogHeader>
+      
+      <Tabs defaultValue="details" className="w-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="details" className="flex-1">Details</TabsTrigger>
+          <TabsTrigger value="history" className="flex-1">Service History</TabsTrigger>
         </TabsList>
-        <TabsContent value="details">
-          <div className="space-y-6 p-6">
+        
+        <TabsContent value="details" className="mt-4">
+          <div className="space-y-6">
             <div className="flex items-start gap-4 mb-6">
               {pet.image ? (
                 <img
@@ -86,17 +88,14 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
 
             {onEdit && onDelete && (
               <div className="flex justify-end gap-2 mt-6 pt-4 border-t">
-                <Button variant="outline" onClick={onDelete}>
-                  Delete
-                </Button>
-                <Button onClick={onEdit}>
-                  Edit
-                </Button>
+                <Button variant="outline" onClick={onDelete}>Delete</Button>
+                <Button onClick={onEdit}>Edit</Button>
               </div>
             )}
           </div>
         </TabsContent>
-        <TabsContent value="history">
+        
+        <TabsContent value="history" className="mt-4">
           <ServiceHistory petId={pet.id} />
         </TabsContent>
       </Tabs>

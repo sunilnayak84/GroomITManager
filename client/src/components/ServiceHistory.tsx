@@ -20,6 +20,8 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
 
   useEffect(() => {
     async function fetchHistory() {
+      if (!petId) return;
+      
       const historyRef = collection(db, 'service_history');
       try {
         const historyQuery = query(
@@ -43,9 +45,7 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
       }
     }
 
-    if (petId) {
-      fetchHistory();
-    }
+    fetchHistory();
   }, [petId]);
 
   if (isLoading) {
@@ -57,7 +57,7 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
   }
 
   return (
-    <div className="space-y-4 p-4">
+    <div className="space-y-4">
       <Accordion type="single" collapsible className="w-full">
         {history.map((record) => (
           <AccordionItem key={record.id} value={record.id}>
