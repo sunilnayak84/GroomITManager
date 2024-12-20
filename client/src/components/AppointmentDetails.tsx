@@ -29,6 +29,10 @@ const AppointmentDetails = ({ appointment, open, onOpenChange, onEdit }: Appoint
     }
   });
 
+  if (!form.control) {
+    return null;
+  }
+
   const onStatusChange = (value: string) => {
     setStatus(value);
   };
