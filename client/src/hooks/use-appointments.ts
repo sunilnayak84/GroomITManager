@@ -392,7 +392,7 @@ export function useAppointments() {
   const updateAppointmentMutation = useMutation({
     mutationFn: async (data: {
       id: string;
-      status?: "pending" | "confirmed" | "completed" | "cancelled";
+      status?: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
       cancellationReason?: string;
       notes?: string;
       services?: string[];
