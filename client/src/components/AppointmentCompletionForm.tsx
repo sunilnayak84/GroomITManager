@@ -158,7 +158,7 @@ export function AppointmentCompletionForm({
                               <SelectValue placeholder="Select product" />
                             </SelectTrigger>
                             <SelectContent>
-                              {inventoryByCategory[consumable.category]?.map((item) => (
+                              {inventoryByCategory[category]?.map((item) => (
                                 <SelectItem key={item.item_id} value={item.item_id}>
                                   {item.name} ({item.quantity} {item.unit} available)
                                 </SelectItem>
