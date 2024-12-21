@@ -1,0 +1,112 @@
+CISPL SignerDigital Loaded
+client:495 [vite] connecting...
+client:614 [vite] connected.
+chunk-DRXX46FI.js?v=a7abcf71:21507 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+use-customers.ts:356 FETCH_CUSTOMERS: Starting customer fetch
+firebase.ts:26 FIREBASE_INIT: Firebase initialized successfully
+use-customers.ts:382 FETCH_CUSTOMERS: Processed customer: {id: 'CA6Bd09SzND7J1UEfLRo', firebaseId: 'CA6Bd09SzND7J1UEfLRo', name: 'test user'}
+use-customers.ts:390 USE CUSTOMERS: Fetched customers {customerCount: 1, customerIds: Array(1), customerNames: Array(1)}
+use-pets.ts:116 FETCH_PETS: Completed fetching pets {totalPets: 1, pets: Array(1)}
+chunk-DRXX46FI.js?v=a7abcf71:18593 [Violation] 'setTimeout' handler took 106ms
+main.tsx:69 Global error: {message: 'ResizeObserver loop completed with undelivered notifications.', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/pets', lineno: 0, colno: 0, error: null}
+window.onerror @ main.tsx:69
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:124Understand this errorAI
+main.tsx:69 Global error: {message: 'ResizeObserver loop completed with undelivered notifications.', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/pets', lineno: 0, colno: 0, error: null}colno: 0error: nulllineno: 0message: "ResizeObserver loop completed with undelivered notifications."source: "https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/pets"[[Prototype]]: Object
+window.onerror @ main.tsx:69
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:124Understand this errorAI
+main.tsx:69 Global error: {message: 'ResizeObserver loop completed with undelivered notifications.', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/pets', lineno: 0, colno: 0, error: null}
+window.onerror @ main.tsx:69
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:124Understand this errorAI
+main.tsx:69 Global error: {message: 'ResizeObserver loop completed with undelivered notifications.', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/pets', lineno: 0, colno: 0, error: null}
+window.onerror @ main.tsx:69
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:124Understand this errorAI
+main.tsx:69 Global error: {message: 'ResizeObserver loop completed with undelivered notifications.', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/pets', lineno: 0, colno: 0, error: null}
+window.onerror @ main.tsx:69
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:124Understand this errorAI
+main.tsx:69 Global error: {message: 'ResizeObserver loop completed with undelivered notifications.', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/pets', lineno: 0, colno: 0, error: null}
+window.onerror @ main.tsx:69
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:124Understand this errorAI
+main.tsx:69 Global error: {message: 'ResizeObserver loop completed with undelivered notifications.', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/pets', lineno: 0, colno: 0, error: null}
+window.onerror @ main.tsx:69
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:124Understand this errorAI
+main.tsx:69 Global error: {message: 'ResizeObserver loop completed with undelivered notifications.', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/pets', lineno: 0, colno: 0, error: null}
+window.onerror @ main.tsx:69
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:124Understand this errorAI
+main.tsx:69 Global error: {message: 'ResizeObserver loop completed with undelivered notifications.', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/pets', lineno: 0, colno: 0, error: null}
+window.onerror @ main.tsx:69
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:124Understand this errorAI
+main.tsx:69 Global error: {message: 'ResizeObserver loop completed with undelivered notifications.', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/pets', lineno: 0, colno: 0, error: null}
+window.onerror @ main.tsx:69
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:124Understand this errorAI
+main.tsx:69 Global error: {message: 'ResizeObserver loop completed with undelivered notifications.', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/pets', lineno: 0, colno: 0, error: null}
+window.onerror @ main.tsx:69
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:124Understand this errorAI
+main.tsx:69 Global error: {message: 'ResizeObserver loop completed with undelivered notifications.', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/pets', lineno: 0, colno: 0, error: null}
+window.onerror @ main.tsx:69
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:124Understand this errorAI
+main.tsx:69 Global error: {message: 'ResizeObserver loop completed with undelivered notifications.', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/pets', lineno: 0, colno: 0, error: null}
+window.onerror @ main.tsx:69
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:124Understand this errorAI
+main.tsx:69 Global error: {message: 'ResizeObserver loop completed with undelivered notifications.', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/pets', lineno: 0, colno: 0, error: null}
+window.onerror @ main.tsx:69
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:124Understand this errorAI
+main.tsx:69 Global error: {message: 'ResizeObserver loop completed with undelivered notifications.', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/pets', lineno: 0, colno: 0, error: null}
+window.onerror @ main.tsx:69
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:124Understand this errorAI
+main.tsx:69 Global error: {message: 'ResizeObserver loop completed with undelivered notifications.', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/pets', lineno: 0, colno: 0, error: null}
+window.onerror @ main.tsx:69
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:124Understand this errorAI
+main.tsx:69 Global error: {message: 'ResizeObserver loop completed with undelivered notifications.', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/pets', lineno: 0, colno: 0, error: null}
+window.onerror @ main.tsx:69
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:124Understand this errorAI
+main.tsx:69 Global error: {message: 'ResizeObserver loop completed with undelivered notifications.', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/pets', lineno: 0, colno: 0, error: null}
+window.onerror @ main.tsx:69
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:124Understand this errorAI
+main.tsx:69 Global error: {message: 'ResizeObserver loop completed with undelivered notifications.', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/pets', lineno: 0, colno: 0, error: null}
+window.onerror @ main.tsx:69
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:124Understand this errorAI
+main.tsx:69 Global error: {message: 'ResizeObserver loop completed with undelivered notifications.', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/pets', lineno: 0, colno: 0, error: null}
+window.onerror @ main.tsx:69
+error
+setupErrorHandlers @ main.tsx:68
+(anonymous) @ main.tsx:124Understand this errorAI
