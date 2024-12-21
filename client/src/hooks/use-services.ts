@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, query } from 'firebase/firestore';
+import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, query, limit } from 'firebase/firestore';
 import { db } from "../lib/firebase";
 import { toast } from "@/components/ui/use-toast";
 import {
@@ -21,7 +21,8 @@ export function useServices() {
     queryFn: async () => {
       try {
         console.log('FETCH_SERVICES: Starting to fetch services');
-        const q = query(servicesCollection);
+        const batchSize = 10;
+        const q = query(servicesCollection, limit(batchSize));
         const querySnapshot = await getDocs(q);
         
         if (querySnapshot.empty) {
@@ -99,7 +100,10 @@ export function useServices() {
         throw error;
       }
     },
-    staleTime: 1000 * 60 * 5
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    cacheTime: 1000 * 60 * 30, // 30 minutes
+    refetchOnWindowFocus: false,
+    retry: 2
   });
 
   const addService = async (serviceData: InsertService) => {
