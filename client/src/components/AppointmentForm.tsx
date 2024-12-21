@@ -435,14 +435,13 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         }
       }
 
-      setOpen(false);
-      
       toast({
         title: "Success",
         description: "Appointment scheduled successfully",
       });
       
       form.reset();
+      setOpen(false);
     } catch (error) {
       console.error('Failed to schedule appointment:', error);
       const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
