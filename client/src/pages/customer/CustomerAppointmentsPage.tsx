@@ -12,7 +12,7 @@ export default function CustomerAppointmentsPage() {
   const { data: appointments } = useAppointments();
   
   const customerAppointments = appointments?.filter(
-    (appointment) => appointment.pet.owner?.id === user?.uid
+    (appointment) => appointment.pet.owner?.email === user?.email
   );
 
   return (
