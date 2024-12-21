@@ -4,7 +4,7 @@ import {
   addDoc, serverTimestamp, query, updateDoc, deleteDoc, 
   getDoc, where, Timestamp, FieldValue,
   DocumentData, serverTimestamp as firestoreServerTimestamp,
-  type WithFieldValue
+  type WithFieldValue, limit
 } from 'firebase/firestore';
 import { db } from "../lib/firebase";
 import { petsCollection, customersCollection } from "../lib/firestore";
