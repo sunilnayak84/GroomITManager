@@ -7,7 +7,7 @@ import {
   type User as FirebaseUser
 } from 'firebase/auth';
 
-export type UserRole = 'admin' | 'manager' | 'staff' | 'receptionist';
+export type UserRole = 'admin' | 'manager' | 'staff' | 'receptionist' | 'customer';
 
 // Define permissions for each role
 export const RolePermissions = {
@@ -106,12 +106,8 @@ function useFirebaseUser() {
           if (user) {
             // Get custom claims from Firebase user
             user.getIdTokenResult().then(tokenResult => {
-              if (!tokenResult.claims.role) {
-                console.error('No role claim found in token');
-                reject(new Error('No role claim found'));
-                return;
-              }
-              const role = tokenResult.claims.role as UserRole;
+              // Default to customer role if no role claim found
+              const role = tokenResult.claims.role as UserRole || 'customer';
               const permissions = tokenResult.claims.permissions as string[] || [];
               resolve({
                 id: user.uid,

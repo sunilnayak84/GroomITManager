@@ -124,11 +124,11 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
         role = userRole.role;
         permissions = userRole.permissions;
       }
-      // Default to staff role
+      // Default to customer role
       else {
-        console.warn(`[AUTH] No role found for user ${user.email}, using default staff role`);
-        role = 'staff';
-        permissions = await getDefaultPermissions(RoleTypes.staff);
+        console.warn(`[AUTH] No role found for user ${user.email}, using default customer role`);
+        role = 'customer';
+        permissions = ['view_own_appointments', 'book_appointments', 'manage_own_pets'];
       }
 
       // For admin users, ensure they have all admin permissions
