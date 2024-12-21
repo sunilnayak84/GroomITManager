@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useQueryClient } from "@tanstack/react-query";
 import { useInventory } from "@/hooks/use-inventory";
 import { doc, collection, arrayUnion, writeBatch, getDoc } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase";
@@ -66,6 +67,7 @@ export function AppointmentCompletionForm({
 }: AppointmentCompletionFormProps) {
   const { inventory, recordUsage } = useInventory();
   const { services } = useServices();
+  const queryClient = useQueryClient();
   const [additionalItems, setAdditionalItems] = useState<number>(0);
 
   // Group inventory by categories
@@ -150,6 +152,9 @@ export function AppointmentCompletionForm({
       });
 
       await batch.commit();
+      
+      // Invalidate appointments query to trigger refresh
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
       
       onComplete();
       onClose();
