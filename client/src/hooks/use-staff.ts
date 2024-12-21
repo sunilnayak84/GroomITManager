@@ -2,7 +2,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getAuth } from 'firebase/auth';
 import { User, InsertUser } from '@/lib/user-types';
-
 import { useUser } from './use-user';
 
 export function useStaff() {
@@ -10,7 +9,6 @@ export function useStaff() {
   const auth = getAuth();
   const { user } = useUser();
 
-  // Fetch staff members only for admin users
   const { data: staffMembers = [], isLoading } = useQuery({
     queryKey: ['staff'],
     staleTime: 5 * 60 * 1000,
@@ -24,7 +22,6 @@ export function useStaff() {
         }
 
         const port = import.meta.env.VITE_SERVER_PORT || '3000';
-        // Only fetch groomers for non-admin users
         const url = `${window.location.protocol}//${window.location.hostname}:${port}/api/groomers`;
         
         const response = await fetch(url, {
@@ -36,42 +33,31 @@ export function useStaff() {
         });
 
         if (!response.ok) {
-          let errorMessage = 'Failed to fetch staff members';
-          try {
-            const errorData = await response.json();
-            errorMessage = errorData.message || errorMessage;
-          } catch (e) {
-            console.error('Error parsing error response:', e);
-          }
-          throw new Error(errorMessage);
+          throw new Error('Failed to fetch staff members');
         }
 
         const data = await response.json();
+        
         if (!data.groomers || !Array.isArray(data.groomers)) {
-          console.error('Server response:', data);
           throw new Error('Invalid response format from server');
         }
 
-        const groomers = data.groomers
-          .filter(user => !user.disabled)
-          .map(user => ({
-            id: user.uid || user.id,
-            email: user.email,
-            name: user.displayName || user.name,
-            role: user.role || 'staff',
-            isGroomer: true,
-            isActive: true,
-            phone: user.phoneNumber || user.phone,
-            specialties: Array.isArray(user.specialties) ? user.specialties : [],
-            branchId: user.branchId || null,
-            managedBranchIds: Array.isArray(user.managedBranchIds) ? user.managedBranchIds : [],
-            isMultiBranchEnabled: user.isMultiBranchEnabled || false,
-            primaryBranchId: user.primaryBranchId || null,
-            createdAt: user.createdAt || Date.now(),
-            updatedAt: user.updatedAt || null
-          }));
-        
-        return groomers;
+        return data.groomers.map(user => ({
+          id: user.uid || user.id,
+          email: user.email,
+          name: user.displayName || user.name,
+          role: user.role || 'staff',
+          isGroomer: true,
+          isActive: true,
+          phone: user.phoneNumber || user.phone,
+          specialties: Array.isArray(user.specialties) ? user.specialties : [],
+          branchId: user.branchId || null,
+          managedBranchIds: Array.isArray(user.managedBranchIds) ? user.managedBranchIds : [],
+          isMultiBranchEnabled: user.isMultiBranchEnabled || false,
+          primaryBranchId: user.primaryBranchId || null,
+          createdAt: user.createdAt || Date.now(),
+          updatedAt: user.updatedAt || null
+        }));
       } catch (error) {
         console.error('Error fetching staff:', error);
         throw error;
@@ -79,7 +65,6 @@ export function useStaff() {
     }
   });
 
-  // Add new staff member
   const addStaffMember = useMutation({
     mutationFn: async (data: InsertUser) => {
       const token = await auth.currentUser?.getIdToken();
