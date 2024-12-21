@@ -168,6 +168,34 @@ export function registerRoutes(app: Express) {
     }
   });
 
+  app.get("/api/groomers", authenticateFirebase, async (req, res) => {
+    try {
+      const app = await getFirebaseAdmin();
+      const db = getFirestore();
+      
+      const query = db.collection('users').where('role', '==', 'groomer');
+      const snapshot = await query.get();
+      
+      const groomers = snapshot.docs.map(doc => {
+        const userData = doc.data();
+        return {
+          id: doc.id,
+          name: userData.name,
+          isGroomer: true,
+          isActive: !userData.disabled
+        };
+      }).filter(user => user.isActive);
+
+      res.json({ groomers });
+    } catch (error) {
+      console.error('[GROOMERS] Error fetching groomers:', error);
+      res.status(500).json({ 
+        message: "Failed to fetch groomers",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
   app.get("/api/firebase-users", authenticateFirebase, requireRole([RoleTypes.admin]), async (req, res) => {
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 10;
