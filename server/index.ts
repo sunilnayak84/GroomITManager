@@ -1,11 +1,20 @@
 import express, { type Request, type Response, type NextFunction } from "express";
 import { registerRoutes } from "./routes.js";
 import { createServer, type Server } from "http";
+
+import cors from 'cors';
+
 import { terminateProcessOnPort } from "./utils/port_cleanup.js";
 import { initializeFirebaseAdmin } from "./firebase.js";
 
 // Configure Express app
 const app = express();
+app.use(cors({
+  origin: true,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set('trust proxy', 1);

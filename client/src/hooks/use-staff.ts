@@ -20,8 +20,7 @@ export function useStaff() {
           throw new Error('No authentication token available');
         }
 
-        const port = import.meta.env.VITE_SERVER_PORT || '3000';
-        const url = `${window.location.protocol}//${window.location.hostname}:${port}/api/groomers`;
+        const url = '/api/groomers';
         
         const response = await fetch(url, {
           headers: {
