@@ -18,6 +18,11 @@ import { useUser } from "./hooks/use-user";
 import Layout from "./components/Layout";
 import { ErrorBoundary } from "react-error-boundary";
 import { Button } from "@/components/ui/button";
+import CustomerDashboardPage from './pages/CustomerDashboardPage';
+import CustomerLayout from './components/CustomerLayout';
+// Added import for ProtectedRoute.  This component needs to be defined elsewhere.
+import ProtectedRoute from './components/ProtectedRoute';
+
 
 // Loading component for suspense fallback
 function LoadingSpinner() {
@@ -113,6 +118,14 @@ function Router() {
             <Route path="/settings/loyalty" component={lazy(() => import('./pages/settings/loyalty'))} />
             <Route path="/settings/roles" component={lazy(() => import('./pages/RoleManagementPage'))} />
             <Route path="/settings/user-management" component={lazy(() => import('./pages/settings/user-management'))} />
+            {/* Customer Routes */}
+            <Route path="/customer" element={
+              <ProtectedRoute allowedRoles={['customer']}>
+                <CustomerLayout>
+                  <CustomerDashboardPage />
+                </CustomerLayout>
+              </ProtectedRoute>
+            } />
             <Route>404 Page Not Found</Route>
           </Switch>
         </Suspense>
