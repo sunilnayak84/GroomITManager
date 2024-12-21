@@ -1,0 +1,78 @@
+Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ["staff"]
+onSuccess @ @tanstack_react-query.js?v=0cf51c99:888
+resolve @ @tanstack_react-query.js?v=0cf51c99:455
+Promise.then
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+setData @ @tanstack_react-query.js?v=0cf51c99:695
+onSuccess @ @tanstack_react-query.js?v=0cf51c99:896
+resolve @ @tanstack_react-query.js?v=0cf51c99:455
+Promise.then
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+AppointmentForm.tsx:447 Failed to schedule appointment: Error: No groomers found in the system
+    at onSubmit (AppointmentForm.tsx:318:17)
+    at chunk-VYIIT4SD.js?v=0cf51c99:1694:15
+onSubmit @ AppointmentForm.tsx:447
+(anonymous) @ chunk-VYIIT4SD.js?v=0cf51c99:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=0cf51c99:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=0cf51c99:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=0cf51c99:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=0cf51c99:3736
+executeDispatch @ chunk-DRXX46FI.js?v=0cf51c99:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=0cf51c99:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=0cf51c99:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=0cf51c99:7051
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=0cf51c99:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=0cf51c99:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=0cf51c99:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=0cf51c99:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=0cf51c99:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=0cf51c99:5449Understand this errorAI
