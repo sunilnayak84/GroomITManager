@@ -24,7 +24,8 @@ export function useStaff() {
         }
 
         const port = import.meta.env.VITE_SERVER_PORT || '3000';
-        const url = `${window.location.protocol}//${window.location.hostname}:${port}/api/firebase-users?role=all`;
+        // Only fetch groomers for non-admin users
+        const url = `${window.location.protocol}//${window.location.hostname}:${port}/api/firebase-users?role=groomer`;
         
         const response = await fetch(url, {
           headers: {
