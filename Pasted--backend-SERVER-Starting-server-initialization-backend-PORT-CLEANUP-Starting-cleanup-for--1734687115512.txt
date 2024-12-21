@@ -1,0 +1,587 @@
+[backend] [SERVER] Starting server initialization...
+[backend] [PORT_CLEANUP] Starting cleanup for port 3000...
+[backend] [PORT_CHECK] Port 3000 is available
+[backend] [PORT_CLEANUP] Port 3000 is already available
+[backend] [SERVER] Initial port 3000 cleanup successful
+[backend] [SERVER] Startup attempt 1/3
+[backend] [SERVER] Initializing server...
+[backend] [FIREBASE] Initialization attempt 1/3
+[backend] [FIREBASE] Initializing Firebase Admin...
+[backend] [FIREBASE] Database connection verified
+[backend] [FIREBASE] Firebase Admin initialized successfully
+[backend] [SERVER] Firebase Admin initialized successfully
+[backend] [ROUTES] Starting route registration...
+[backend] [SERVER] Routes registered successfully
+[backend] [SERVER] Server is listening on port 3000
+[backend] [SERVER] Server started successfully
+[backend] [API] GET /api/stats
+[backend] [API] GET /api/stats
+[backend] [API] GET /api/stats
+[backend] [API] GET /api/stats
+[backend] [API] GET /api/stats
+[backend] [API] GET /api/stats
+[backend] [API] GET /api/stats
+[backend] [API] GET /api/stats
+[backend] [API] GET /api/stats
+[backend] [AUTH] Verifying token...
+[backend] [AUTH] Token verified for user admin@groomery.in
+[backend] [AUTH] User role data: { role: 'admin', permissions: [ 'all' ] }
+[backend] [AUTH] Custom claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] User has admin claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] Ensured admin has all admin permissions: [
+[backend]   'manage_appointments',   'view_appointments',
+[backend]   'create_appointments',   'cancel_appointments',
+[backend]   'manage_customers',      'view_customers',
+[backend]   'create_customers',      'edit_customer_info',
+[backend]   'manage_services',       'view_services',
+[backend]   'create_services',       'edit_services',
+[backend]   'manage_inventory',      'view_inventory',
+[backend]   'update_stock',          'manage_consumables',
+[backend]   'manage_staff_schedule', 'view_staff_schedule',
+[backend]   'manage_own_schedule',   'view_analytics',
+[backend]   'view_reports',          'view_financial_reports',
+[backend]   'all',                   'manage_users',
+[backend]   'manage_roles'
+[backend] ]
+[backend] [AUTH] Verified admin role for user: admin@groomery.in
+[backend] [AUTH] Final role assignment: { role: 'admin', permissionsCount: 25, isAdmin: true }
+[backend] [AUTH] User authenticated: { email: 'admin@groomery.in', role: 'admin', permissions: 25 }
+[backend] [AUTH] Checking role access: {
+[backend]   userRole: 'admin',
+[backend]   allowedRoles: [ 'admin' ],
+[backend]   path: '/api/firebase-users'
+[backend] }
+[backend] [AUTH] Admin access granted: { path: '/api/firebase-users', method: 'GET' }
+[backend] [FIREBASE-USERS] Starting user fetch request
+[backend] [FIREBASE-USERS] Fetching users with role filter: all
+[backend] [FIREBASE-USERS] Filtered users: [
+[backend]   {
+[backend]     uid: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2',
+[backend]     email: 'groomer@groomery.in',
+[backend]     displayName: 'Groomer One',
+[backend]     role: 'staff',
+[backend]     isGroomer: false,
+[backend]     permissions: [],
+[backend]     disabled: false,
+[backend]     lastSignInTime: undefined,
+[backend]     creationTime: Timestamp { _seconds: 1734609850, _nanoseconds: 944000000 },
+[backend]     branch: null,
+[backend]     isActive: true
+[backend]   }
+[backend] ]
+[backend] [FIREBASE-USERS] Successfully fetched users: 1
+[backend] GET /api/firebase-users 304 858ms
+[backend] [AUTH] Verifying token...
+[backend] [AUTH] Token verified for user admin@groomery.in
+[backend] [AUTH] User role data: { role: 'admin', permissions: [ 'all' ] }
+[backend] [AUTH] Custom claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] User has admin claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] Ensured admin has all admin permissions: [
+[backend]   'manage_appointments',   'view_appointments',
+[backend]   'create_appointments',   'cancel_appointments',
+[backend]   'manage_customers',      'view_customers',
+[backend]   'create_customers',      'edit_customer_info',
+[backend]   'manage_services',       'view_services',
+[backend]   'create_services',       'edit_services',
+[backend]   'manage_inventory',      'view_inventory',
+[backend]   'update_stock',          'manage_consumables',
+[backend]   'manage_staff_schedule', 'view_staff_schedule',
+[backend]   'manage_own_schedule',   'view_analytics',
+[backend]   'view_reports',          'view_financial_reports',
+[backend]   'all',                   'manage_users',
+[backend]   'manage_roles'
+[backend] ]
+[backend] [AUTH] Verified admin role for user: admin@groomery.in
+[backend] [AUTH] Final role assignment: { role: 'admin', permissionsCount: 25, isAdmin: true }
+[backend] [AUTH] User authenticated: { email: 'admin@groomery.in', role: 'admin', permissions: 25 }
+[backend] [AUTH] Checking role access: {
+[backend]   userRole: 'admin',
+[backend]   allowedRoles: [ 'admin' ],
+[backend]   path: '/api/firebase-users'
+[backend] }
+[backend] [AUTH] Admin access granted: { path: '/api/firebase-users', method: 'GET' }
+[backend] [FIREBASE-USERS] Starting user fetch request
+[backend] [FIREBASE-USERS] Fetching users with role filter: all
+[backend] [FIREBASE-USERS] Filtered users: [
+[backend]   {
+[backend]     uid: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2',
+[backend]     email: 'groomer@groomery.in',
+[backend]     displayName: 'Groomer One',
+[backend]     role: 'staff',
+[backend]     isGroomer: false,
+[backend]     permissions: [],
+[backend]     disabled: false,
+[backend]     lastSignInTime: undefined,
+[backend]     creationTime: Timestamp { _seconds: 1734609850, _nanoseconds: 944000000 },
+[backend]     branch: null,
+[backend]     isActive: true
+[backend]   }
+[backend] ]
+[backend] [FIREBASE-USERS] Successfully fetched users: 1
+[backend] GET /api/firebase-users 304 552ms
+[backend] [AUTH] Verifying token...
+[backend] [AUTH] Token verified for user admin@groomery.in
+[backend] [AUTH] User role data: { role: 'admin', permissions: [ 'all' ] }
+[backend] [AUTH] Custom claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] User has admin claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] Ensured admin has all admin permissions: [
+[backend]   'manage_appointments',   'view_appointments',
+[backend]   'create_appointments',   'cancel_appointments',
+[backend]   'manage_customers',      'view_customers',
+[backend]   'create_customers',      'edit_customer_info',
+[backend]   'manage_services',       'view_services',
+[backend]   'create_services',       'edit_services',
+[backend]   'manage_inventory',      'view_inventory',
+[backend]   'update_stock',          'manage_consumables',
+[backend]   'manage_staff_schedule', 'view_staff_schedule',
+[backend]   'manage_own_schedule',   'view_analytics',
+[backend]   'view_reports',          'view_financial_reports',
+[backend]   'all',                   'manage_users',
+[backend]   'manage_roles'
+[backend] ]
+[backend] [AUTH] Verified admin role for user: admin@groomery.in
+[backend] [AUTH] Final role assignment: { role: 'admin', permissionsCount: 25, isAdmin: true }
+[backend] [AUTH] User authenticated: { email: 'admin@groomery.in', role: 'admin', permissions: 25 }
+[backend] [AUTH] Checking role access: {
+[backend]   userRole: 'admin',
+[backend]   allowedRoles: [ 'admin' ],
+[backend]   path: '/api/staff/k2TekT8YVqZJiiNpjXhpuXuOuiu2'
+[backend] }
+[backend] [AUTH] Admin access granted: { path: '/api/staff/k2TekT8YVqZJiiNpjXhpuXuOuiu2', method: 'PUT' }
+[backend] [STAFF-UPDATE] Updating staff member: {
+[backend]   id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2',
+[backend]   updates: {
+[backend]     id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2',
+[backend]     email: 'groomer@groomery.in',
+[backend]     name: 'Groomer One',
+[backend]     role: 'staff',
+[backend]     specialties: [ 'groomer' ],
+[backend]     isActive: true,
+[backend]     maxDailyAppointments: 8,
+[backend]     branchId: null,
+[backend]     createdAt: 1734687041052,
+[backend]     updatedAt: null
+[backend]   }
+[backend] }
+[backend] PUT /api/staff/k2TekT8YVqZJiiNpjXhpuXuOuiu2 404 565ms
+[backend] [AUTH] Verifying token...
+[backend] [AUTH] Token verified for user admin@groomery.in
+[backend] [AUTH] User role data: { role: 'admin', permissions: [ 'all' ] }
+[backend] [AUTH] Custom claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] User has admin claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] Ensured admin has all admin permissions: [
+[backend]   'manage_appointments',   'view_appointments',
+[backend]   'create_appointments',   'cancel_appointments',
+[backend]   'manage_customers',      'view_customers',
+[backend]   'create_customers',      'edit_customer_info',
+[backend]   'manage_services',       'view_services',
+[backend]   'create_services',       'edit_services',
+[backend]   'manage_inventory',      'view_inventory',
+[backend]   'update_stock',          'manage_consumables',
+[backend]   'manage_staff_schedule', 'view_staff_schedule',
+[backend]   'manage_own_schedule',   'view_analytics',
+[backend]   'view_reports',          'view_financial_reports',
+[backend]   'all',                   'manage_users',
+[backend]   'manage_roles'
+[backend] ]
+[backend] [AUTH] Verified admin role for user: admin@groomery.in
+[backend] [AUTH] Final role assignment: { role: 'admin', permissionsCount: 25, isAdmin: true }
+[backend] [AUTH] User authenticated: { email: 'admin@groomery.in', role: 'admin', permissions: 25 }
+[backend] [AUTH] Checking role access: {
+[backend]   userRole: 'admin',
+[backend]   allowedRoles: [ 'admin' ],
+[backend]   path: '/api/staff/k2TekT8YVqZJiiNpjXhpuXuOuiu2'
+[backend] }
+[backend] [AUTH] Admin access granted: { path: '/api/staff/k2TekT8YVqZJiiNpjXhpuXuOuiu2', method: 'PUT' }
+[backend] [STAFF-UPDATE] Updating staff member: {
+[backend]   id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2',
+[backend]   updates: {
+[backend]     id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2',
+[backend]     email: 'groomer@groomery.in',
+[backend]     name: 'Groomer One',
+[backend]     role: 'staff',
+[backend]     specialties: [ 'groomer' ],
+[backend]     isActive: true,
+[backend]     maxDailyAppointments: 8,
+[backend]     branchId: null,
+[backend]     createdAt: 1734687041052,
+[backend]     updatedAt: null
+[backend]   }
+[backend] }
+[backend] PUT /api/staff/k2TekT8YVqZJiiNpjXhpuXuOuiu2 404 413ms
+[backend] [AUTH] Verifying token...
+[backend] [AUTH] Token verified for user admin@groomery.in
+[backend] [AUTH] User role data: { role: 'admin', permissions: [ 'all' ] }
+[backend] [AUTH] Custom claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] User has admin claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] Ensured admin has all admin permissions: [
+[backend]   'manage_appointments',   'view_appointments',
+[backend]   'create_appointments',   'cancel_appointments',
+[backend]   'manage_customers',      'view_customers',
+[backend]   'create_customers',      'edit_customer_info',
+[backend]   'manage_services',       'view_services',
+[backend]   'create_services',       'edit_services',
+[backend]   'manage_inventory',      'view_inventory',
+[backend]   'update_stock',          'manage_consumables',
+[backend]   'manage_staff_schedule', 'view_staff_schedule',
+[backend]   'manage_own_schedule',   'view_analytics',
+[backend]   'view_reports',          'view_financial_reports',
+[backend]   'all',                   'manage_users',
+[backend]   'manage_roles'
+[backend] ]
+[backend] [AUTH] Verified admin role for user: admin@groomery.in
+[backend] [AUTH] Final role assignment: { role: 'admin', permissionsCount: 25, isAdmin: true }
+[backend] [AUTH] User authenticated: { email: 'admin@groomery.in', role: 'admin', permissions: 25 }
+[backend] [AUTH] Checking role access: {
+[backend]   userRole: 'admin',
+[backend]   allowedRoles: [ 'admin' ],
+[backend]   path: '/api/staff/k2TekT8YVqZJiiNpjXhpuXuOuiu2'
+[backend] }
+[backend] [AUTH] Admin access granted: { path: '/api/staff/k2TekT8YVqZJiiNpjXhpuXuOuiu2', method: 'PUT' }
+[backend] [STAFF-UPDATE] Updating staff member: {
+[backend]   id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2',
+[backend]   updates: {
+[backend]     id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2',
+[backend]     email: 'groomer@groomery.in',
+[backend]     name: 'Groomer One',
+[backend]     role: 'staff',
+[backend]     specialties: [ 'groomer' ],
+[backend]     isActive: true,
+[backend]     maxDailyAppointments: 8,
+[backend]     branchId: null,
+[backend]     createdAt: 1734687044251,
+[backend]     updatedAt: null
+[backend]   }
+[backend] }
+[backend] PUT /api/staff/k2TekT8YVqZJiiNpjXhpuXuOuiu2 404 433ms
+[backend] [AUTH] Verifying token...
+[backend] [AUTH] Token verified for user admin@groomery.in
+[backend] [AUTH] User role data: { role: 'admin', permissions: [ 'all' ] }
+[backend] [AUTH] Custom claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] User has admin claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] Ensured admin has all admin permissions: [
+[backend]   'manage_appointments',   'view_appointments',
+[backend]   'create_appointments',   'cancel_appointments',
+[backend]   'manage_customers',      'view_customers',
+[backend]   'create_customers',      'edit_customer_info',
+[backend]   'manage_services',       'view_services',
+[backend]   'create_services',       'edit_services',
+[backend]   'manage_inventory',      'view_inventory',
+[backend]   'update_stock',          'manage_consumables',
+[backend]   'manage_staff_schedule', 'view_staff_schedule',
+[backend]   'manage_own_schedule',   'view_analytics',
+[backend]   'view_reports',          'view_financial_reports',
+[backend]   'all',                   'manage_users',
+[backend]   'manage_roles'
+[backend] ]
+[backend] [AUTH] Verified admin role for user: admin@groomery.in
+[backend] [AUTH] Final role assignment: { role: 'admin', permissionsCount: 25, isAdmin: true }
+[backend] [AUTH] User authenticated: { email: 'admin@groomery.in', role: 'admin', permissions: 25 }
+[backend] [AUTH] Checking role access: {
+[backend]   userRole: 'admin',
+[backend]   allowedRoles: [ 'admin' ],
+[backend]   path: '/api/staff/k2TekT8YVqZJiiNpjXhpuXuOuiu2'
+[backend] }
+[backend] [AUTH] Admin access granted: { path: '/api/staff/k2TekT8YVqZJiiNpjXhpuXuOuiu2', method: 'PUT' }
+[backend] [STAFF-UPDATE] Updating staff member: {
+[backend]   id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2',
+[backend]   updates: {
+[backend]     id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2',
+[backend]     email: 'groomer@groomery.in',
+[backend]     name: 'Groomer One',
+[backend]     role: 'staff',
+[backend]     specialties: [ 'groomer' ],
+[backend]     isActive: true,
+[backend]     maxDailyAppointments: 8,
+[backend]     branchId: null,
+[backend]     createdAt: 1734687044251,
+[backend]     updatedAt: null
+[backend]   }
+[backend] }
+[backend] PUT /api/staff/k2TekT8YVqZJiiNpjXhpuXuOuiu2 404 437ms
+[backend] [AUTH] Verifying token...
+[backend] [AUTH] Token verified for user admin@groomery.in
+[backend] [AUTH] User role data: { role: 'admin', permissions: [ 'all' ] }
+[backend] [AUTH] Custom claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] User has admin claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] Ensured admin has all admin permissions: [
+[backend]   'manage_appointments',   'view_appointments',
+[backend]   'create_appointments',   'cancel_appointments',
+[backend]   'manage_customers',      'view_customers',
+[backend]   'create_customers',      'edit_customer_info',
+[backend]   'manage_services',       'view_services',
+[backend]   'create_services',       'edit_services',
+[backend]   'manage_inventory',      'view_inventory',
+[backend]   'update_stock',          'manage_consumables',
+[backend]   'manage_staff_schedule', 'view_staff_schedule',
+[backend]   'manage_own_schedule',   'view_analytics',
+[backend]   'view_reports',          'view_financial_reports',
+[backend]   'all',                   'manage_users',
+[backend]   'manage_roles'
+[backend] ]
+[backend] [AUTH] Verified admin role for user: admin@groomery.in
+[backend] [AUTH] Final role assignment: { role: 'admin', permissionsCount: 25, isAdmin: true }
+[backend] [AUTH] User authenticated: { email: 'admin@groomery.in', role: 'admin', permissions: 25 }
+[backend] [AUTH] Checking role access: {
+[backend]   userRole: 'admin',
+[backend]   allowedRoles: [ 'admin' ],
+[backend]   path: '/api/staff/k2TekT8YVqZJiiNpjXhpuXuOuiu2'
+[backend] }
+[backend] [AUTH] Admin access granted: { path: '/api/staff/k2TekT8YVqZJiiNpjXhpuXuOuiu2', method: 'PUT' }
+[backend] [STAFF-UPDATE] Updating staff member: {
+[backend]   id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2',
+[backend]   updates: {
+[backend]     id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2',
+[backend]     email: 'groomer@groomery.in',
+[backend]     name: 'Groomer One',
+[backend]     role: 'staff',
+[backend]     specialties: [ 'groomer' ],
+[backend]     isActive: true,
+[backend]     maxDailyAppointments: 8,
+[backend]     branchId: null,
+[backend]     createdAt: 1734687049587,
+[backend]     updatedAt: null
+[backend]   }
+[backend] }
+[backend] PUT /api/staff/k2TekT8YVqZJiiNpjXhpuXuOuiu2 404 430ms
+[backend] [AUTH] Verifying token...
+[backend] [AUTH] Token verified for user admin@groomery.in
+[backend] [AUTH] User role data: { role: 'admin', permissions: [ 'all' ] }
+[backend] [AUTH] Custom claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] User has admin claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] Ensured admin has all admin permissions: [
+[backend]   'manage_appointments',   'view_appointments',
+[backend]   'create_appointments',   'cancel_appointments',
+[backend]   'manage_customers',      'view_customers',
+[backend]   'create_customers',      'edit_customer_info',
+[backend]   'manage_services',       'view_services',
+[backend]   'create_services',       'edit_services',
+[backend]   'manage_inventory',      'view_inventory',
+[backend]   'update_stock',          'manage_consumables',
+[backend]   'manage_staff_schedule', 'view_staff_schedule',
+[backend]   'manage_own_schedule',   'view_analytics',
+[backend]   'view_reports',          'view_financial_reports',
+[backend]   'all',                   'manage_users',
+[backend]   'manage_roles'
+[backend] ]
+[backend] [AUTH] Verified admin role for user: admin@groomery.in
+[backend] [AUTH] Final role assignment: { role: 'admin', permissionsCount: 25, isAdmin: true }
+[backend] [AUTH] User authenticated: { email: 'admin@groomery.in', role: 'admin', permissions: 25 }
+[backend] [AUTH] Checking role access: {
+[backend]   userRole: 'admin',
+[backend]   allowedRoles: [ 'admin' ],
+[backend]   path: '/api/staff/k2TekT8YVqZJiiNpjXhpuXuOuiu2'
+[backend] }
+[backend] [AUTH] Admin access granted: { path: '/api/staff/k2TekT8YVqZJiiNpjXhpuXuOuiu2', method: 'PUT' }
+[backend] [STAFF-UPDATE] Updating staff member: {
+[backend]   id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2',
+[backend]   updates: {
+[backend]     id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2',
+[backend]     email: 'groomer@groomery.in',
+[backend]     name: 'Groomer One',
+[backend]     role: 'staff',
+[backend]     specialties: [ 'groomer' ],
+[backend]     isActive: true,
+[backend]     maxDailyAppointments: 8,
+[backend]     branchId: null,
+[backend]     createdAt: 1734687049587,
+[backend]     updatedAt: null
+[backend]   }
+[backend] }
+[backend] PUT /api/staff/k2TekT8YVqZJiiNpjXhpuXuOuiu2 404 441ms
+[backend] [AUTH] Verifying token...
+[backend] [AUTH] Token verified for user admin@groomery.in
+[backend] [AUTH] User role data: { role: 'admin', permissions: [ 'all' ] }
+[backend] [AUTH] Custom claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] User has admin claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] Ensured admin has all admin permissions: [
+[backend]   'manage_appointments',   'view_appointments',
+[backend]   'create_appointments',   'cancel_appointments',
+[backend]   'manage_customers',      'view_customers',
+[backend]   'create_customers',      'edit_customer_info',
+[backend]   'manage_services',       'view_services',
+[backend]   'create_services',       'edit_services',
+[backend]   'manage_inventory',      'view_inventory',
+[backend]   'update_stock',          'manage_consumables',
+[backend]   'manage_staff_schedule', 'view_staff_schedule',
+[backend]   'manage_own_schedule',   'view_analytics',
+[backend]   'view_reports',          'view_financial_reports',
+[backend]   'all',                   'manage_users',
+[backend]   'manage_roles'
+[backend] ]
+[backend] [AUTH] Verified admin role for user: admin@groomery.in
+[backend] [AUTH] Final role assignment: { role: 'admin', permissionsCount: 25, isAdmin: true }
+[backend] [AUTH] User authenticated: { email: 'admin@groomery.in', role: 'admin', permissions: 25 }
+[backend] [AUTH] Checking role access: {
+[backend]   userRole: 'admin',
+[backend]   allowedRoles: [ 'admin' ],
+[backend]   path: '/api/firebase-users'
+[backend] }
+[backend] [AUTH] Admin access granted: { path: '/api/firebase-users', method: 'GET' }
+[backend] [FIREBASE-USERS] Starting user fetch request
+[backend] [FIREBASE-USERS] Fetching users with role filter: all
+[backend] [FIREBASE-USERS] Filtered users: [
+[backend]   {
+[backend]     uid: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2',
+[backend]     email: 'groomer@groomery.in',
+[backend]     displayName: 'Groomer One',
+[backend]     role: 'staff',
+[backend]     isGroomer: false,
+[backend]     permissions: [],
+[backend]     disabled: false,
+[backend]     lastSignInTime: undefined,
+[backend]     creationTime: Timestamp { _seconds: 1734609850, _nanoseconds: 944000000 },
+[backend]     branch: null,
+[backend]     isActive: true
+[backend]   }
+[backend] ]
+[backend] [FIREBASE-USERS] Successfully fetched users: 1
+[backend] GET /api/firebase-users 304 428ms
+[backend] [AUTH] Verifying token...
+[backend] [AUTH] Token verified for user admin@groomery.in
+[backend] [AUTH] User role data: { role: 'admin', permissions: [ 'all' ] }
+[backend] [AUTH] Custom claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] User has admin claims: {
+[backend]   role: 'admin',
+[backend]   permissions: [ 'all' ],
+[backend]   isAdmin: true,
+[backend]   updatedAt: 1734599614867
+[backend] }
+[backend] [AUTH] Ensured admin has all admin permissions: [
+[backend]   'manage_appointments',   'view_appointments',
+[backend]   'create_appointments',   'cancel_appointments',
+[backend]   'manage_customers',      'view_customers',
+[backend]   'create_customers',      'edit_customer_info',
+[backend]   'manage_services',       'view_services',
+[backend]   'create_services',       'edit_services',
+[backend]   'manage_inventory',      'view_inventory',
+[backend]   'update_stock',          'manage_consumables',
+[backend]   'manage_staff_schedule', 'view_staff_schedule',
+[backend]   'manage_own_schedule',   'view_analytics',
+[backend]   'view_reports',          'view_financial_reports',
+[backend]   'all',                   'manage_users',
+[backend]   'manage_roles'
+[backend] ]
+[backend] [AUTH] Verified admin role for user: admin@groomery.in
+[backend] [AUTH] Final role assignment: { role: 'admin', permissionsCount: 25, isAdmin: true }
+[backend] [AUTH] User authenticated: { email: 'admin@groomery.in', role: 'admin', permissions: 25 }
+[backend] [AUTH] Checking role access: {
+[backend]   userRole: 'admin',
+[backend]   allowedRoles: [ 'admin' ],
+[backend]   path: '/api/firebase-users'
+[backend] }
+[backend] [AUTH] Admin access granted: { path: '/api/firebase-users', method: 'GET' }
+[backend] [FIREBASE-USERS] Starting user fetch request
+[backend] [FIREBASE-USERS] Fetching users with role filter: all
+[backend] [FIREBASE-USERS] Filtered users: [
+[backend]   {
+[backend]     uid: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2',
+[backend]     email: 'groomer@groomery.in',
+[backend]     displayName: 'Groomer One',
+[backend]     role: 'staff',
+[backend]     isGroomer: false,
+[backend]     permissions: [],
+[backend]     disabled: false,
+[backend]     lastSignInTime: undefined,
+[backend]     creationTime: Timestamp { _seconds: 1734609850, _nanoseconds: 944000000 },
+[backend]     branch: null,
+[backend]     isActive: true
+[backend]   }
+[backend] ]
+[backend] [FIREBASE-USERS] Successfully fetched users: 1
+[backend] GET /api/firebase-users 304 395ms

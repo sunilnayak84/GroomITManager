@@ -1,0 +1,35 @@
+[APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falsename: "Groomer One"role: "staff"specialties: [][[Prototype]]: Object
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]0: branchId: nullcreatedAt: 1734686907257email: "groomer@groomery.in"id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falseisMultiBranchEnabled: falsemanagedBranchIds: []name: "Groomer One"phone: undefinedprimaryBranchId: nullrole: "staff"specialties: []updatedAt: null[[Prototype]]: Objectlength: 1[[Prototype]]: Array(0)
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: false, …}id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falsename: "Groomer One"role: "staff"specialties: [][[Prototype]]: Object
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]0: branchId: nullcreatedAt: 1734686907257email: "groomer@groomery.in"id: "k2TekT8YVqZJiiNpjXhpuXuOuiu2"isActive: trueisGroomer: falseisMultiBranchEnabled: falsemanagedBranchIds: []name: "Groomer One"phone: undefinedprimaryBranchId: nullrole: "staff"specialties: []updatedAt: null[[Prototype]]: Objectlength: 1[[Prototype]]: Array(0)
+ServiceHistory.tsx:45 Error fetching service history: FirebaseError: The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/replit-5ac6a/firestore/indexes?create_composite=ClFwcm9qZWN0cy9yZXBsaXQtNWFjNmEvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2FwcG9pbnRtZW50cy9pbmRleGVzL18QARoJCgVwZXRJZBABGgoKBnN0YXR1cxABGggKBGRhdGUQAhoMCghfX25hbWVfXxAC
+fetchHistory @ ServiceHistory.tsx:45
+await in fetchHistory
+(anonymous) @ ServiceHistory.tsx:52
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=a7abcf71:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=a7abcf71:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=a7abcf71:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=a7abcf71:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=a7abcf71:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=a7abcf71:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=a7abcf71:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=a7abcf71:19384
+commitRoot @ chunk-DRXX46FI.js?v=a7abcf71:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=a7abcf71:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=a7abcf71:9119
+(anonymous) @ chunk-DRXX46FI.js?v=a7abcf71:18595Understand this errorAI
+ServiceHistory.tsx:45 Error fetching service history: FirebaseError: The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/replit-5ac6a/firestore/indexes?create_composite=ClFwcm9qZWN0cy9yZXBsaXQtNWFjNmEvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2FwcG9pbnRtZW50cy9pbmRleGVzL18QARoJCgVwZXRJZBABGgoKBnN0YXR1cxABGggKBGRhdGUQAhoMCghfX25hbWVfXxAC
+fetchHistory @ ServiceHistory.tsx:45
+await in fetchHistory
+(anonymous) @ ServiceHistory.tsx:52
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=a7abcf71:16883
+invokePassiveEffectMountInDEV @ chunk-DRXX46FI.js?v=a7abcf71:18292
+invokeEffectsInDev @ chunk-DRXX46FI.js?v=a7abcf71:19669
+commitDoubleInvokeEffectsInDEV @ chunk-DRXX46FI.js?v=a7abcf71:19654
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=a7abcf71:19471
+flushPassiveEffects @ chunk-DRXX46FI.js?v=a7abcf71:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=a7abcf71:19384
+commitRoot @ chunk-DRXX46FI.js?v=a7abcf71:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=a7abcf71:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=a7abcf71:9119
+(anonymous) @ chunk-DRXX46FI.js?v=a7abcf71:18595Understand this errorAI

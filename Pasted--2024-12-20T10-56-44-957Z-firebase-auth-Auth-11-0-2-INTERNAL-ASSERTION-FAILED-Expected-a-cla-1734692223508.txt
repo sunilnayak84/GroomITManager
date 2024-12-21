@@ -1,0 +1,124 @@
+[2024-12-20T10:56:44.957Z]  @firebase/auth: Auth (11.0.2): INTERNAL ASSERTION FAILED: Expected a class definition
+defaultLogHandler @ chunk-2LIWWRRO.js?v=a7abcf71:1378
+error @ chunk-2LIWWRRO.js?v=a7abcf71:1446
+_logError @ firebase_auth.js?v=a7abcf71:650
+debugFail @ firebase_auth.js?v=a7abcf71:700
+debugAssert @ firebase_auth.js?v=a7abcf71:705
+_getInstance @ firebase_auth.js?v=a7abcf71:1899
+(anonymous) @ firebase_auth.js?v=a7abcf71:2505
+Promise.then
+queue @ firebase_auth.js?v=a7abcf71:2728
+setPersistence @ firebase_auth.js?v=a7abcf71:2504
+mutationFn @ use-user.ts:144
+await in mutationFn
+fn @ @tanstack_react-query.js?v=a7abcf71:1188
+run @ @tanstack_react-query.js?v=a7abcf71:493
+start @ @tanstack_react-query.js?v=a7abcf71:535
+execute @ @tanstack_react-query.js?v=a7abcf71:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=a7abcf71:2621
+onClick @ Navigation.tsx:107
+callCallback2 @ chunk-DRXX46FI.js?v=a7abcf71:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=a7abcf71:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=a7abcf71:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=a7abcf71:3736
+executeDispatch @ chunk-DRXX46FI.js?v=a7abcf71:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=a7abcf71:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=a7abcf71:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=a7abcf71:7051
+(anonymous) @ chunk-DRXX46FI.js?v=a7abcf71:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=a7abcf71:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=a7abcf71:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=a7abcf71:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=a7abcf71:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=a7abcf71:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=a7abcf71:5449Understand this errorAI
+use-user.ts:144 [2024-12-20T10:56:45.963Z]  @firebase/auth: Auth (11.0.2): INTERNAL ASSERTION FAILED: Expected a class definition
+defaultLogHandler @ chunk-2LIWWRRO.js?v=a7abcf71:1378
+error @ chunk-2LIWWRRO.js?v=a7abcf71:1446
+_logError @ firebase_auth.js?v=a7abcf71:650
+debugFail @ firebase_auth.js?v=a7abcf71:700
+debugAssert @ firebase_auth.js?v=a7abcf71:705
+_getInstance @ firebase_auth.js?v=a7abcf71:1899
+(anonymous) @ firebase_auth.js?v=a7abcf71:2505
+Promise.then
+queue @ firebase_auth.js?v=a7abcf71:2728
+setPersistence @ firebase_auth.js?v=a7abcf71:2504
+mutationFn @ use-user.ts:144
+await in mutationFn
+fn @ @tanstack_react-query.js?v=a7abcf71:1188
+run @ @tanstack_react-query.js?v=a7abcf71:493
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:514
+Promise.catch
+run @ @tanstack_react-query.js?v=a7abcf71:497
+start @ @tanstack_react-query.js?v=a7abcf71:535
+execute @ @tanstack_react-query.js?v=a7abcf71:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=a7abcf71:2621
+onClick @ Navigation.tsx:107
+callCallback2 @ chunk-DRXX46FI.js?v=a7abcf71:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=a7abcf71:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=a7abcf71:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=a7abcf71:3736
+executeDispatch @ chunk-DRXX46FI.js?v=a7abcf71:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=a7abcf71:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=a7abcf71:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=a7abcf71:7051
+(anonymous) @ chunk-DRXX46FI.js?v=a7abcf71:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=a7abcf71:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=a7abcf71:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=a7abcf71:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=a7abcf71:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=a7abcf71:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=a7abcf71:5449Understand this errorAI
+main.tsx:74 Unhandled promise rejection: Error: INTERNAL ASSERTION FAILED: Expected a class definition
+    at debugFail (firebase_auth.js?v=a7abcf71:701:9)
+    at debugAssert (firebase_auth.js?v=a7abcf71:705:5)
+    at _getInstance (firebase_auth.js?v=a7abcf71:1899:3)
+    at firebase_auth.js?v=a7abcf71:2505:53
+    at async Object.mutationFn (use-user.ts:144:7)
+window.onunhandledrejection @ main.tsx:74Understand this errorAI
+firebase_auth.js?v=a7abcf71:701 Uncaught (in promise) Error: INTERNAL ASSERTION FAILED: Expected a class definition
+    at debugFail (firebase_auth.js?v=a7abcf71:701:9)
+    at debugAssert (firebase_auth.js?v=a7abcf71:705:5)
+    at _getInstance (firebase_auth.js?v=a7abcf71:1899:3)
+    at firebase_auth.js?v=a7abcf71:2505:53
+    at async Object.mutationFn (use-user.ts:144:7)
+debugFail @ firebase_auth.js?v=a7abcf71:701
+debugAssert @ firebase_auth.js?v=a7abcf71:705
+_getInstance @ firebase_auth.js?v=a7abcf71:1899
+(anonymous) @ firebase_auth.js?v=a7abcf71:2505
+Promise.then
+queue @ firebase_auth.js?v=a7abcf71:2728
+setPersistence @ firebase_auth.js?v=a7abcf71:2504
+mutationFn @ use-user.ts:144
+await in mutationFn
+fn @ @tanstack_react-query.js?v=a7abcf71:1188
+run @ @tanstack_react-query.js?v=a7abcf71:493
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:514
+Promise.catch
+run @ @tanstack_react-query.js?v=a7abcf71:497
+start @ @tanstack_react-query.js?v=a7abcf71:535
+execute @ @tanstack_react-query.js?v=a7abcf71:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=a7abcf71:2621
+onClick @ Navigation.tsx:107
+callCallback2 @ chunk-DRXX46FI.js?v=a7abcf71:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=a7abcf71:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=a7abcf71:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=a7abcf71:3736
+executeDispatch @ chunk-DRXX46FI.js?v=a7abcf71:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=a7abcf71:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=a7abcf71:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=a7abcf71:7051
+(anonymous) @ chunk-DRXX46FI.js?v=a7abcf71:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=a7abcf71:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=a7abcf71:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=a7abcf71:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=a7abcf71:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=a7abcf71:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=a7abcf71:5449Understand this errorAI

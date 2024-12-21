@@ -1,0 +1,237 @@
+[APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+@radix-ui_react-dialog.js?v=a7abcf71:1875 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ @radix-ui_react-dialog.js?v=a7abcf71:1875
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=a7abcf71:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=a7abcf71:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=a7abcf71:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=a7abcf71:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=a7abcf71:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=a7abcf71:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=a7abcf71:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=a7abcf71:19384
+commitRoot @ chunk-DRXX46FI.js?v=a7abcf71:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=a7abcf71:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=a7abcf71:9119
+(anonymous) @ chunk-DRXX46FI.js?v=a7abcf71:18595Understand this warningAI
+@radix-ui_react-dialog.js?v=a7abcf71:1875 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ @radix-ui_react-dialog.js?v=a7abcf71:1875
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=a7abcf71:16883
+invokePassiveEffectMountInDEV @ chunk-DRXX46FI.js?v=a7abcf71:18292
+invokeEffectsInDev @ chunk-DRXX46FI.js?v=a7abcf71:19669
+commitDoubleInvokeEffectsInDEV @ chunk-DRXX46FI.js?v=a7abcf71:19654
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=a7abcf71:19471
+flushPassiveEffects @ chunk-DRXX46FI.js?v=a7abcf71:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=a7abcf71:19384
+commitRoot @ chunk-DRXX46FI.js?v=a7abcf71:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=a7abcf71:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=a7abcf71:9119
+(anonymous) @ chunk-DRXX46FI.js?v=a7abcf71:18595Understand this warningAI
+@radix-ui_react-dialog.js?v=a7abcf71:1875 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ @radix-ui_react-dialog.js?v=a7abcf71:1875
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=a7abcf71:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=a7abcf71:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=a7abcf71:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=a7abcf71:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=a7abcf71:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=a7abcf71:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=a7abcf71:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=a7abcf71:19384
+commitRoot @ chunk-DRXX46FI.js?v=a7abcf71:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=a7abcf71:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=a7abcf71:9119
+(anonymous) @ chunk-DRXX46FI.js?v=a7abcf71:18595Understand this warningAI
+@radix-ui_react-dialog.js?v=a7abcf71:1875 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ @radix-ui_react-dialog.js?v=a7abcf71:1875
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=a7abcf71:16883
+invokePassiveEffectMountInDEV @ chunk-DRXX46FI.js?v=a7abcf71:18292
+invokeEffectsInDev @ chunk-DRXX46FI.js?v=a7abcf71:19669
+commitDoubleInvokeEffectsInDEV @ chunk-DRXX46FI.js?v=a7abcf71:19654
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=a7abcf71:19471
+flushPassiveEffects @ chunk-DRXX46FI.js?v=a7abcf71:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=a7abcf71:19384
+commitRoot @ chunk-DRXX46FI.js?v=a7abcf71:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=a7abcf71:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=a7abcf71:9119
+(anonymous) @ chunk-DRXX46FI.js?v=a7abcf71:18595Understand this warningAI
+use-inventory.ts:310 RECORD_USAGE: Starting usage recording: {item_id: 'IctkQ7zzpjxCQOHJAAOo', quantity_used: 1, service_id: '8sWdC28UWMGPd70awXQf', appointment_id: 'DKl2HGO0BXtlRX96Lgl3', notes: 'Used in service: Service One'}
+AppointmentDetails.tsx:128 Updating appointment status: {id: 'DKl2HGO0BXtlRX96Lgl3', status: 'in_progress'}
+use-appointments.ts:407 Updating appointment: {id: 'DKl2HGO0BXtlRX96Lgl3', status: 'in_progress', cancellationReason: undefined, notes: ''}
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+use-inventory.ts:332 RECORD_USAGE: Item details: {currentQuantity: 4869, minimumQuantity: 5, reorderPoint: 5, isTracked: true, autoDeduct: true}
+use-inventory.ts:363 RECORD_USAGE: Recording usage: {usage_id: 'ylFULCbEvnraklkuzd5n', item_id: 'IctkQ7zzpjxCQOHJAAOo', quantity_used: 1, service_id: '8sWdC28UWMGPd70awXQf', appointment_id: 'DKl2HGO0BXtlRX96Lgl3', …}
+use-appointments.ts:450 Appointment updated successfully
+use-appointments.ts:70 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:78 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:81 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+use-inventory.ts:377 RECORD_USAGE: Updating inventory: {quantity: 4868, updated_at: ___PRIVATE_ServerTimestampFieldValueImpl, last_used: Sat Dec 21 2024 11:42:46 GMT+0530 (India Standard Time), service_linked: true}
+use-appointments.ts:90 FETCH_APPOINTMENTS: Found 6 active appointments
+use-appointments.ts:94 FETCH_APPOINTMENTS: Active appointment: 6oOAFWMUfSYJKOAVCkXP {totalDuration: 30, petId: 'eo7yEF7BKT5V9SLAo8WE', services: Array(1), updatedAt: _Timestamp, status: 'completed', …}
+use-appointments.ts:94 FETCH_APPOINTMENTS: Active appointment: DKl2HGO0BXtlRX96Lgl3 {updatedAt: _Timestamp, cancellationReason: null, totalDuration: 30, services: Array(1), statusHistory: Array(5), …}
+use-appointments.ts:94 FETCH_APPOINTMENTS: Active appointment: G4jPJkojzVfulnnexbO5 {updatedAt: '2024-12-20T08:58:57.225Z', totalPrice: 358, productsUsed: null, notes: '', cancellationReason: null, …}
+use-appointments.ts:94 FETCH_APPOINTMENTS: Active appointment: KJB70FQfFgf97ajGac6C {deletedAt: null, updatedAt: '2024-12-20T08:54:08.811Z', createdAt: _Timestamp, observations: 'kjknkln', petId: 'eo7yEF7BKT5V9SLAo8WE', …}
+use-appointments.ts:94 FETCH_APPOINTMENTS: Active appointment: UiMLuUKDPI2JvjnVELjn {totalPrice: 299, date: _Timestamp, createdAt: _Timestamp, services: Array(1), updatedAt: _Timestamp, …}
+use-appointments.ts:94 FETCH_APPOINTMENTS: Active appointment: h3TbwfAYuJbVBxAD26PF {date: _Timestamp, createdAt: _Timestamp, productsUsed: null, totalPrice: 358, status: 'pending', …}
+use-appointments.ts:96 FETCH_APPOINTMENTS: Got snapshot with 6 active documents
+use-appointments.ts:109 FETCH_APPOINTMENTS: Processing appointment 6oOAFWMUfSYJKOAVCkXP
+AppointmentCompletionForm.tsx:154 Error recording usage: ReferenceError: writeBatch is not defined
+    at onSubmit (AppointmentCompletionForm.tsx:116:21)
+    at async chunk-VYIIT4SD.js?v=a7abcf71:1694:9
+onSubmit @ AppointmentCompletionForm.tsx:154
+await in onSubmit
+(anonymous) @ chunk-VYIIT4SD.js?v=a7abcf71:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=a7abcf71:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=a7abcf71:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=a7abcf71:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=a7abcf71:3736
+executeDispatch @ chunk-DRXX46FI.js?v=a7abcf71:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=a7abcf71:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=a7abcf71:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=a7abcf71:7051
+(anonymous) @ chunk-DRXX46FI.js?v=a7abcf71:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=a7abcf71:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=a7abcf71:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=a7abcf71:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=a7abcf71:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=a7abcf71:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=a7abcf71:5449Understand this errorAI
+use-appointments.ts:223 FETCH_APPOINTMENTS: Fetching service data for ID: 8sWdC28UWMGPd70awXQf
+use-appointments.ts:228 FETCH_APPOINTMENTS: Raw service data: {category: 'Service', description: 'Service One Test', created_at: '2024-12-19T14:59:23.140Z', discount_percentage: 0, required_categories: Array(1), …}
+use-appointments.ts:240 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:109 FETCH_APPOINTMENTS: Processing appointment DKl2HGO0BXtlRX96Lgl3
+use-appointments.ts:223 FETCH_APPOINTMENTS: Fetching service data for ID: 8sWdC28UWMGPd70awXQf
+use-appointments.ts:228 FETCH_APPOINTMENTS: Raw service data: {category: 'Service', description: 'Service One Test', created_at: '2024-12-19T14:59:23.140Z', discount_percentage: 0, required_categories: Array(1), …}
+use-appointments.ts:240 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:109 FETCH_APPOINTMENTS: Processing appointment G4jPJkojzVfulnnexbO5
+use-appointments.ts:223 FETCH_APPOINTMENTS: Fetching service data for ID: udoipAkeRVOxYnPnKu0g
+use-appointments.ts:228 FETCH_APPOINTMENTS: Raw service data: {selectedAddons: Array(0), consumables: Array(0), selectedServices: Array(2), updated_at: '2024-12-20T06:37:27.647Z', discount_percentage: 0.1, …}
+use-appointments.ts:240 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:35 Error converting timestamp: TypeError: timestamp.toDate is not a function
+    at timestampToISOString (use-appointments.ts:33:22)
+    at queryFn (use-appointments.ts:262:26)
+timestampToISOString @ use-appointments.ts:35
+queryFn @ use-appointments.ts:262
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=a7abcf71:839
+run @ @tanstack_react-query.js?v=a7abcf71:493
+start @ @tanstack_react-query.js?v=a7abcf71:535
+fetch @ @tanstack_react-query.js?v=a7abcf71:925
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:1726
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:1725
+batch @ @tanstack_react-query.js?v=a7abcf71:582
+refetchQueries @ @tanstack_react-query.js?v=a7abcf71:1724
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:1716
+batch @ @tanstack_react-query.js?v=a7abcf71:582
+invalidateQueries @ @tanstack_react-query.js?v=a7abcf71:1705
+onSuccess @ use-appointments.ts:458
+execute @ @tanstack_react-query.js?v=a7abcf71:1232
+await in execute
+mutate @ @tanstack_react-query.js?v=a7abcf71:2621
+onSubmit @ AppointmentDetails.tsx:133
+(anonymous) @ chunk-VYIIT4SD.js?v=a7abcf71:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=a7abcf71:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=a7abcf71:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=a7abcf71:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=a7abcf71:3736
+executeDispatch @ chunk-DRXX46FI.js?v=a7abcf71:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=a7abcf71:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=a7abcf71:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=a7abcf71:7051
+(anonymous) @ chunk-DRXX46FI.js?v=a7abcf71:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=a7abcf71:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=a7abcf71:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=a7abcf71:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=a7abcf71:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=a7abcf71:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=a7abcf71:5449Understand this errorAI
+use-appointments.ts:109 FETCH_APPOINTMENTS: Processing appointment KJB70FQfFgf97ajGac6C
+use-appointments.ts:223 FETCH_APPOINTMENTS: Fetching service data for ID: qs4WniktDLLArQJQOOqi
+use-appointments.ts:228 FETCH_APPOINTMENTS: Raw service data: {isActive: true, updated_at: '2024-12-20T09:02:52.367Z', discount_percentage: 0, price: 299, selectedServices: Array(0), …}
+use-appointments.ts:240 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:35 Error converting timestamp: TypeError: timestamp.toDate is not a function
+    at timestampToISOString (use-appointments.ts:33:22)
+    at queryFn (use-appointments.ts:262:26)
+timestampToISOString @ use-appointments.ts:35
+queryFn @ use-appointments.ts:262
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=a7abcf71:839
+run @ @tanstack_react-query.js?v=a7abcf71:493
+start @ @tanstack_react-query.js?v=a7abcf71:535
+fetch @ @tanstack_react-query.js?v=a7abcf71:925
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:1726
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:1725
+batch @ @tanstack_react-query.js?v=a7abcf71:582
+refetchQueries @ @tanstack_react-query.js?v=a7abcf71:1724
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:1716
+batch @ @tanstack_react-query.js?v=a7abcf71:582
+invalidateQueries @ @tanstack_react-query.js?v=a7abcf71:1705
+onSuccess @ use-appointments.ts:458
+execute @ @tanstack_react-query.js?v=a7abcf71:1232
+await in execute
+mutate @ @tanstack_react-query.js?v=a7abcf71:2621
+onSubmit @ AppointmentDetails.tsx:133
+(anonymous) @ chunk-VYIIT4SD.js?v=a7abcf71:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=a7abcf71:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=a7abcf71:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=a7abcf71:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=a7abcf71:3736
+executeDispatch @ chunk-DRXX46FI.js?v=a7abcf71:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=a7abcf71:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=a7abcf71:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=a7abcf71:7051
+(anonymous) @ chunk-DRXX46FI.js?v=a7abcf71:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=a7abcf71:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=a7abcf71:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=a7abcf71:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=a7abcf71:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=a7abcf71:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=a7abcf71:5449Understand this errorAI
+use-appointments.ts:109 FETCH_APPOINTMENTS: Processing appointment UiMLuUKDPI2JvjnVELjn
+use-appointments.ts:223 FETCH_APPOINTMENTS: Fetching service data for ID: qs4WniktDLLArQJQOOqi
+use-appointments.ts:228 FETCH_APPOINTMENTS: Raw service data: {isActive: true, updated_at: '2024-12-20T09:02:52.367Z', discount_percentage: 0, price: 299, selectedServices: Array(0), …}
+use-appointments.ts:240 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:109 FETCH_APPOINTMENTS: Processing appointment h3TbwfAYuJbVBxAD26PF
+use-appointments.ts:223 FETCH_APPOINTMENTS: Fetching service data for ID: udoipAkeRVOxYnPnKu0g
+use-appointments.ts:228 FETCH_APPOINTMENTS: Raw service data: {selectedAddons: Array(0), consumables: Array(0), selectedServices: Array(2), updated_at: '2024-12-20T06:37:27.647Z', discount_percentage: 0.1, …}
+use-appointments.ts:240 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:285 FETCH_APPOINTMENTS: Processed 6 appointments. Success: 6, Errors: 0
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]

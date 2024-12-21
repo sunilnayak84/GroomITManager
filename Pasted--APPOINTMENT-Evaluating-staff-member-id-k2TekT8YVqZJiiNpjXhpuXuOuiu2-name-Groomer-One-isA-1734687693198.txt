@@ -1,0 +1,157 @@
+[APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+main.tsx:69 Global error: {message: 'Uncaught RangeError: Invalid time value', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-34…e_modules/.vite/deps/chunk-MINZTFPE.js?v=a7abcf71', lineno: 2295, colno: 11, error: RangeError: Invalid time value
+    at format (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t0…}
+window.onerror @ main.tsx:69
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=a7abcf71:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=a7abcf71:3733
+beginWork$1 @ chunk-DRXX46FI.js?v=a7abcf71:19733
+performUnitOfWork @ chunk-DRXX46FI.js?v=a7abcf71:19166
+workLoopSync @ chunk-DRXX46FI.js?v=a7abcf71:19105
+renderRootSync @ chunk-DRXX46FI.js?v=a7abcf71:19084
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=a7abcf71:18646
+workLoop @ chunk-DRXX46FI.js?v=a7abcf71:197
+flushWork @ chunk-DRXX46FI.js?v=a7abcf71:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=a7abcf71:384Understand this errorAI
+chunk-MINZTFPE.js?v=a7abcf71:2295 Uncaught RangeError: Invalid time value
+    at format (chunk-MINZTFPE.js?v=a7abcf71:2295:11)
+    at ServiceHistory.tsx:69:27
+    at Array.map (<anonymous>)
+    at ServiceHistory (ServiceHistory.tsx:66:18)
+    at renderWithHooks (chunk-DRXX46FI.js?v=a7abcf71:12151:26)
+    at updateFunctionComponent (chunk-DRXX46FI.js?v=a7abcf71:14557:28)
+    at beginWork (chunk-DRXX46FI.js?v=a7abcf71:15892:22)
+    at HTMLUnknownElement.callCallback2 (chunk-DRXX46FI.js?v=a7abcf71:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-DRXX46FI.js?v=a7abcf71:3699:24)
+    at invokeGuardedCallback (chunk-DRXX46FI.js?v=a7abcf71:3733:39)
+format @ chunk-MINZTFPE.js?v=a7abcf71:2295
+(anonymous) @ ServiceHistory.tsx:69
+ServiceHistory @ ServiceHistory.tsx:66
+renderWithHooks @ chunk-DRXX46FI.js?v=a7abcf71:12151
+updateFunctionComponent @ chunk-DRXX46FI.js?v=a7abcf71:14557
+beginWork @ chunk-DRXX46FI.js?v=a7abcf71:15892
+callCallback2 @ chunk-DRXX46FI.js?v=a7abcf71:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=a7abcf71:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=a7abcf71:3733
+beginWork$1 @ chunk-DRXX46FI.js?v=a7abcf71:19733
+performUnitOfWork @ chunk-DRXX46FI.js?v=a7abcf71:19166
+workLoopSync @ chunk-DRXX46FI.js?v=a7abcf71:19105
+renderRootSync @ chunk-DRXX46FI.js?v=a7abcf71:19084
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=a7abcf71:18646
+workLoop @ chunk-DRXX46FI.js?v=a7abcf71:197
+flushWork @ chunk-DRXX46FI.js?v=a7abcf71:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=a7abcf71:384Understand this errorAI
+main.tsx:69 Global error: {message: 'Uncaught RangeError: Invalid time value', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-34…e_modules/.vite/deps/chunk-MINZTFPE.js?v=a7abcf71', lineno: 2295, colno: 11, error: RangeError: Invalid time value
+    at format (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t0…}
+window.onerror @ main.tsx:69
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=a7abcf71:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=a7abcf71:3733
+beginWork$1 @ chunk-DRXX46FI.js?v=a7abcf71:19733
+performUnitOfWork @ chunk-DRXX46FI.js?v=a7abcf71:19166
+workLoopSync @ chunk-DRXX46FI.js?v=a7abcf71:19105
+renderRootSync @ chunk-DRXX46FI.js?v=a7abcf71:19084
+recoverFromConcurrentError @ chunk-DRXX46FI.js?v=a7abcf71:18704
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=a7abcf71:18652
+workLoop @ chunk-DRXX46FI.js?v=a7abcf71:197
+flushWork @ chunk-DRXX46FI.js?v=a7abcf71:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=a7abcf71:384Understand this errorAI
+chunk-MINZTFPE.js?v=a7abcf71:2295 Uncaught RangeError: Invalid time value
+    at format (chunk-MINZTFPE.js?v=a7abcf71:2295:11)
+    at ServiceHistory.tsx:69:27
+    at Array.map (<anonymous>)
+    at ServiceHistory (ServiceHistory.tsx:66:18)
+    at renderWithHooks (chunk-DRXX46FI.js?v=a7abcf71:12151:26)
+    at updateFunctionComponent (chunk-DRXX46FI.js?v=a7abcf71:14557:28)
+    at beginWork (chunk-DRXX46FI.js?v=a7abcf71:15892:22)
+    at HTMLUnknownElement.callCallback2 (chunk-DRXX46FI.js?v=a7abcf71:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-DRXX46FI.js?v=a7abcf71:3699:24)
+    at invokeGuardedCallback (chunk-DRXX46FI.js?v=a7abcf71:3733:39)
+format @ chunk-MINZTFPE.js?v=a7abcf71:2295
+(anonymous) @ ServiceHistory.tsx:69
+ServiceHistory @ ServiceHistory.tsx:66
+renderWithHooks @ chunk-DRXX46FI.js?v=a7abcf71:12151
+updateFunctionComponent @ chunk-DRXX46FI.js?v=a7abcf71:14557
+beginWork @ chunk-DRXX46FI.js?v=a7abcf71:15892
+callCallback2 @ chunk-DRXX46FI.js?v=a7abcf71:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=a7abcf71:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=a7abcf71:3733
+beginWork$1 @ chunk-DRXX46FI.js?v=a7abcf71:19733
+performUnitOfWork @ chunk-DRXX46FI.js?v=a7abcf71:19166
+workLoopSync @ chunk-DRXX46FI.js?v=a7abcf71:19105
+renderRootSync @ chunk-DRXX46FI.js?v=a7abcf71:19084
+recoverFromConcurrentError @ chunk-DRXX46FI.js?v=a7abcf71:18704
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=a7abcf71:18652
+workLoop @ chunk-DRXX46FI.js?v=a7abcf71:197
+flushWork @ chunk-DRXX46FI.js?v=a7abcf71:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=a7abcf71:384Understand this errorAI
+chunk-DRXX46FI.js?v=a7abcf71:14016 The above error occurred in the <ServiceHistory> component:
+
+    at ServiceHistory (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ServiceHistory.tsx:28:34)
+    at div
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-FNYJPYYE.js?v=a7abcf71:41:13
+    at Presence (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-HOVBLT6Y.js?v=a7abcf71:24:11)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=a7abcf71:175:13
+    at _c5 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/tabs.tsx:68:12)
+    at div
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-FNYJPYYE.js?v=a7abcf71:41:13
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-AD2NKST5.js?v=a7abcf71:38:15)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=a7abcf71:53:7
+    at div
+    at PetDetails (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/PetDetails.tsx:21:30)
+    at div
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=a7abcf71:253:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=a7abcf71:282:7
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=a7abcf71:539:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=a7abcf71:520:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=a7abcf71:617:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=a7abcf71:636:5
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=a7abcf71:1771:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=a7abcf71:1694:58
+    at Presence (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=a7abcf71:1011:11)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=a7abcf71:1685:64
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=a7abcf71:899:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=a7abcf71:880:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=a7abcf71:977:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=a7abcf71:993:22
+    at Presence (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=a7abcf71:1011:11)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-AD2NKST5.js?v=a7abcf71:38:15)
+    at DialogPortal (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=a7abcf71:1648:11)
+    at _c3 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/dialog.tsx:49:12)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-AD2NKST5.js?v=a7abcf71:38:15)
+    at Dialog (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=a7abcf71:1589:5)
+    at div
+    at td
+    at _c13 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/table.tsx:142:13)
+    at tr
+    at _c9 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/table.tsx:96:12)
+    at tbody
+    at _c5 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/table.tsx:53:12)
+    at table
+    at div
+    at _c (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/table.tsx:20:11)
+    at DataTable (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/data-table.tsx:26:29)
+    at div
+    at div
+    at AppointmentsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/AppointmentsPage.tsx:154:41)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=a7abcf71:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=a7abcf71:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=a7abcf71:18:5)
+    at div
+    at main
+    at main
+    at _c9 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:398:48)
+    at div
+    at div
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-AD2NKST5.js?v=a7abcf71:38:15)
+    at TooltipProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=a7abcf71:290:5)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:54:7
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:28:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:136:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=a7abcf71:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=a7abcf71:18:5)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
