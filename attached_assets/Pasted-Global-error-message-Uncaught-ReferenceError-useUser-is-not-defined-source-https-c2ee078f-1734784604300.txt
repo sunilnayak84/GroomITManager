@@ -1,0 +1,128 @@
+Global error: {message: 'Uncaught ReferenceError: useUser is not defined', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-34…03dcz03jn.sisko.replit.dev/src/hooks/use-staff.ts', lineno: 6, colno: 20, error: ReferenceError: useUser is not defined
+    at useStaff (https://c2ee078f-4b26-4083-bd08-de31e29653e…}
+window.onerror @ main.tsx:77
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=0cf51c99:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=0cf51c99:3733
+beginWork$1 @ chunk-DRXX46FI.js?v=0cf51c99:19733
+performUnitOfWork @ chunk-DRXX46FI.js?v=0cf51c99:19166
+workLoopSync @ chunk-DRXX46FI.js?v=0cf51c99:19105
+renderRootSync @ chunk-DRXX46FI.js?v=0cf51c99:19084
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18842
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+error
+setupErrorHandlers @ main.tsx:75
+(anonymous) @ main.tsx:177Understand this errorAI
+use-staff.ts:9 Uncaught ReferenceError: useUser is not defined
+    at useStaff (use-staff.ts:9:20)
+    at AppointmentForm (AppointmentForm.tsx:62:55)
+    at renderWithHooks (chunk-DRXX46FI.js?v=0cf51c99:12151:26)
+    at mountIndeterminateComponent (chunk-DRXX46FI.js?v=0cf51c99:14901:21)
+    at beginWork (chunk-DRXX46FI.js?v=0cf51c99:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-DRXX46FI.js?v=0cf51c99:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-DRXX46FI.js?v=0cf51c99:3699:24)
+    at invokeGuardedCallback (chunk-DRXX46FI.js?v=0cf51c99:3733:39)
+    at beginWork$1 (chunk-DRXX46FI.js?v=0cf51c99:19733:15)
+    at performUnitOfWork (chunk-DRXX46FI.js?v=0cf51c99:19166:20)
+useStaff @ use-staff.ts:9
+AppointmentForm @ AppointmentForm.tsx:62
+renderWithHooks @ chunk-DRXX46FI.js?v=0cf51c99:12151
+mountIndeterminateComponent @ chunk-DRXX46FI.js?v=0cf51c99:14901
+beginWork @ chunk-DRXX46FI.js?v=0cf51c99:15882
+callCallback2 @ chunk-DRXX46FI.js?v=0cf51c99:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=0cf51c99:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=0cf51c99:3733
+beginWork$1 @ chunk-DRXX46FI.js?v=0cf51c99:19733
+performUnitOfWork @ chunk-DRXX46FI.js?v=0cf51c99:19166
+workLoopSync @ chunk-DRXX46FI.js?v=0cf51c99:19105
+renderRootSync @ chunk-DRXX46FI.js?v=0cf51c99:19084
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18842
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595Understand this errorAI
+main.tsx:77 Global error: {message: 'Uncaught ReferenceError: useUser is not defined', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-34…03dcz03jn.sisko.replit.dev/src/hooks/use-staff.ts', lineno: 6, colno: 20, error: ReferenceError: useUser is not defined
+    at useStaff (https://c2ee078f-4b26-4083-bd08-de31e29653e…}colno: 20error: ReferenceError: useUser is not defined
+    at useStaff (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/hooks/use-staff.ts:6:20)
+    at AppointmentForm (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/AppointmentForm.tsx:68:55)
+    at renderWithHooks (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=0cf51c99:12151:26)
+    at mountIndeterminateComponent (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=0cf51c99:14901:21)
+    at beginWork (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=0cf51c99:15882:22)
+    at HTMLUnknownElement.callCallback2 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=0cf51c99:3674:22)
+    at Object.invokeGuardedCallbackDev (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=0cf51c99:3699:24)
+    at invokeGuardedCallback (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=0cf51c99:3733:39)
+    at beginWork$1 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=0cf51c99:19733:15)
+    at performUnitOfWork (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=0cf51c99:19166:20)lineno: 6message: "Uncaught ReferenceError: useUser is not defined"source: "https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/hooks/use-staff.ts"[[Prototype]]: Object
+window.onerror @ main.tsx:77
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=0cf51c99:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=0cf51c99:3733
+beginWork$1 @ chunk-DRXX46FI.js?v=0cf51c99:19733
+performUnitOfWork @ chunk-DRXX46FI.js?v=0cf51c99:19166
+workLoopSync @ chunk-DRXX46FI.js?v=0cf51c99:19105
+renderRootSync @ chunk-DRXX46FI.js?v=0cf51c99:19084
+recoverFromConcurrentError @ chunk-DRXX46FI.js?v=0cf51c99:18704
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18847
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+error
+setupErrorHandlers @ main.tsx:75
+(anonymous) @ main.tsx:177Understand this errorAI
+use-staff.ts:9 Uncaught ReferenceError: useUser is not defined
+    at useStaff (use-staff.ts:9:20)
+    at AppointmentForm (AppointmentForm.tsx:62:55)
+    at renderWithHooks (chunk-DRXX46FI.js?v=0cf51c99:12151:26)
+    at mountIndeterminateComponent (chunk-DRXX46FI.js?v=0cf51c99:14901:21)
+    at beginWork (chunk-DRXX46FI.js?v=0cf51c99:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-DRXX46FI.js?v=0cf51c99:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-DRXX46FI.js?v=0cf51c99:3699:24)
+    at invokeGuardedCallback (chunk-DRXX46FI.js?v=0cf51c99:3733:39)
+    at beginWork$1 (chunk-DRXX46FI.js?v=0cf51c99:19733:15)
+    at performUnitOfWork (chunk-DRXX46FI.js?v=0cf51c99:19166:20)
+useStaff @ use-staff.ts:9
+AppointmentForm @ AppointmentForm.tsx:62
+renderWithHooks @ chunk-DRXX46FI.js?v=0cf51c99:12151
+mountIndeterminateComponent @ chunk-DRXX46FI.js?v=0cf51c99:14901
+beginWork @ chunk-DRXX46FI.js?v=0cf51c99:15882
+callCallback2 @ chunk-DRXX46FI.js?v=0cf51c99:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=0cf51c99:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=0cf51c99:3733
+beginWork$1 @ chunk-DRXX46FI.js?v=0cf51c99:19733
+performUnitOfWork @ chunk-DRXX46FI.js?v=0cf51c99:19166
+workLoopSync @ chunk-DRXX46FI.js?v=0cf51c99:19105
+renderRootSync @ chunk-DRXX46FI.js?v=0cf51c99:19084
+recoverFromConcurrentError @ chunk-DRXX46FI.js?v=0cf51c99:18704
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18847
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595Understand this errorAI
+chunk-DRXX46FI.js?v=0cf51c99:14016 The above error occurred in the <AppointmentForm> component:
+
+    at AppointmentForm (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/AppointmentForm.tsx:57:43)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-PYPT7BFL.js?v=0cf51c99:38:15)
+    at Dialog (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=0cf51c99:1589:5)
+    at div
+    at div
+    at CustomerAppointmentsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/customer/CustomerAppointmentsPage.tsx:28:20)
+    at main
+    at div
+    at div
+    at div
+    at CustomerLayout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/CustomerLayout.tsx:22:42)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=0cf51c99:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=0cf51c99:379:17)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:142:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=0cf51c99:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=0cf51c99:18:5)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+logCapturedError @ chunk-DRXX46FI.js?v=0cf51c99:14016
+callback @ chunk-DRXX46FI.js?v=0cf51c99:14062
+callCallback @ chunk-DRXX46FI.js?v=0cf51c99:10491
+commitUpdateQueue @ chunk-DRXX46FI.js?v=0cf51c99:10508
+commitLayoutEffectOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:17043
+commitLayoutMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:17948
+commitLayoutEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:17937
+commitLayoutEffects @ chunk-DRXX46FI.js?v=0cf51c99:17888
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19321
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595Understand this errorAI
