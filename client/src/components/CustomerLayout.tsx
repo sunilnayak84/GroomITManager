@@ -2,7 +2,7 @@
 import { useUser } from "@/hooks/use-user";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, Home, LogOut, Pet, Settings, User } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "wouter";
 
 export default function CustomerLayout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useUser();
