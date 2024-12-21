@@ -100,7 +100,7 @@ function useFirebaseUser() {
   return useQuery({
     queryKey: ['user'],
     queryFn: () => {
-      return new Promise<AuthUser | null>((resolve) => {
+      return new Promise<AuthUser | null>((resolve, reject) => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
           unsubscribe();
           if (user) {
