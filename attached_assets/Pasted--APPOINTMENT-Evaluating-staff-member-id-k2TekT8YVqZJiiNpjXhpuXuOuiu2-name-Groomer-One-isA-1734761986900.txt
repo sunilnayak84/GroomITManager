@@ -1,0 +1,123 @@
+[APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+use-inventory.ts:310 RECORD_USAGE: Starting usage recording: {item_id: 'IctkQ7zzpjxCQOHJAAOo', quantity_used: 1, service_id: '8sWdC28UWMGPd70awXQf', appointment_id: '5bnanIGUzawX8xCSDxNg', notes: 'Used in service: Service One'}
+AppointmentDetails.tsx:128 Updating appointment status: {id: '5bnanIGUzawX8xCSDxNg', status: 'in_progress'}
+use-appointments.ts:408 Updating appointment: {id: '5bnanIGUzawX8xCSDxNg', status: 'in_progress', cancellationReason: undefined, notes: ''}
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+use-inventory.ts:332 RECORD_USAGE: Item details: {currentQuantity: 4862, minimumQuantity: 5, reorderPoint: 5, isTracked: true, autoDeduct: true}
+use-inventory.ts:363 RECORD_USAGE: Recording usage: {usage_id: 'ngSuSxU0wmkNSfXKnkbU', item_id: 'IctkQ7zzpjxCQOHJAAOo', quantity_used: 1, service_id: '8sWdC28UWMGPd70awXQf', appointment_id: '5bnanIGUzawX8xCSDxNg', …}
+use-appointments.ts:451 Appointment updated successfully
+use-appointments.ts:71 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:79 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:82 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+use-inventory.ts:377 RECORD_USAGE: Updating inventory: {quantity: 4861, updated_at: ___PRIVATE_ServerTimestampFieldValueImpl, last_used: Sat Dec 21 2024 11:49:10 GMT+0530 (India Standard Time), service_linked: true}
+AppointmentCompletionForm.tsx:153 Error recording usage: ReferenceError: petId is not defined
+    at onSubmit (AppointmentCompletionForm.tsx:133:9)
+    at async chunk-VYIIT4SD.js?v=a7abcf71:1694:9
+onSubmit @ AppointmentCompletionForm.tsx:153
+await in onSubmit
+(anonymous) @ chunk-VYIIT4SD.js?v=a7abcf71:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=a7abcf71:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=a7abcf71:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=a7abcf71:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=a7abcf71:3736
+executeDispatch @ chunk-DRXX46FI.js?v=a7abcf71:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=a7abcf71:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=a7abcf71:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=a7abcf71:7051
+(anonymous) @ chunk-DRXX46FI.js?v=a7abcf71:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=a7abcf71:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=a7abcf71:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=a7abcf71:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=a7abcf71:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=a7abcf71:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=a7abcf71:5449Understand this errorAI
+use-appointments.ts:91 FETCH_APPOINTMENTS: Found 8 active appointments
+use-appointments.ts:95 FETCH_APPOINTMENTS: Active appointment: 5bnanIGUzawX8xCSDxNg {date: _Timestamp, branchId: '1', totalPrice: 99, petId: 'eo7yEF7BKT5V9SLAo8WE', productsUsed: null, …}
+use-appointments.ts:95 FETCH_APPOINTMENTS: Active appointment: 6oOAFWMUfSYJKOAVCkXP {updatedAt: _Timestamp, totalDuration: 30, totalPrice: 99, status: 'completed', date: _Timestamp, …}
+use-appointments.ts:95 FETCH_APPOINTMENTS: Active appointment: 7WfuFRFIAwhBIDTNZ87k {branchId: '1', statusHistory: Array(3), productsUsed: null, groomerId: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', petId: 'eo7yEF7BKT5V9SLAo8WE', …}
+use-appointments.ts:95 FETCH_APPOINTMENTS: Active appointment: DKl2HGO0BXtlRX96Lgl3 {branchId: '1', groomerId: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', updatedAt: _Timestamp, deletedAt: null, createdAt: _Timestamp, …}
+use-appointments.ts:95 FETCH_APPOINTMENTS: Active appointment: G4jPJkojzVfulnnexbO5 {services: Array(1), totalPrice: 358, status: 'completed', branchId: '1', petId: 'eo7yEF7BKT5V9SLAo8WE', …}
+use-appointments.ts:95 FETCH_APPOINTMENTS: Active appointment: KJB70FQfFgf97ajGac6C {status: 'completed', petId: 'eo7yEF7BKT5V9SLAo8WE', totalPrice: 299, statusHistory: Array(1), updatedAt: '2024-12-20T08:54:08.811Z', …}
+use-appointments.ts:95 FETCH_APPOINTMENTS: Active appointment: UiMLuUKDPI2JvjnVELjn {deletedAt: null, totalPrice: 299, status: 'cancelled', date: _Timestamp, branchId: '1', …}
+use-appointments.ts:95 FETCH_APPOINTMENTS: Active appointment: h3TbwfAYuJbVBxAD26PF {notes: '', groomerId: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', totalDuration: 60, productsUsed: null, date: _Timestamp, …}
+use-appointments.ts:97 FETCH_APPOINTMENTS: Got snapshot with 8 active documents
+use-appointments.ts:110 FETCH_APPOINTMENTS: Processing appointment 5bnanIGUzawX8xCSDxNg
+use-appointments.ts:224 FETCH_APPOINTMENTS: Fetching service data for ID: 8sWdC28UWMGPd70awXQf
+use-appointments.ts:229 FETCH_APPOINTMENTS: Raw service data: {selectedServices: Array(0), consumables: Array(0), description: 'Service One Test', created_at: '2024-12-19T14:59:23.140Z', category: 'Service', …}
+use-appointments.ts:241 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:110 FETCH_APPOINTMENTS: Processing appointment 6oOAFWMUfSYJKOAVCkXP
+use-appointments.ts:224 FETCH_APPOINTMENTS: Fetching service data for ID: 8sWdC28UWMGPd70awXQf
+use-appointments.ts:229 FETCH_APPOINTMENTS: Raw service data: {selectedServices: Array(0), consumables: Array(0), description: 'Service One Test', created_at: '2024-12-19T14:59:23.140Z', category: 'Service', …}
+use-appointments.ts:241 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:110 FETCH_APPOINTMENTS: Processing appointment 7WfuFRFIAwhBIDTNZ87k
+use-appointments.ts:224 FETCH_APPOINTMENTS: Fetching service data for ID: 8sWdC28UWMGPd70awXQf
+use-appointments.ts:229 FETCH_APPOINTMENTS: Raw service data: {selectedServices: Array(0), consumables: Array(0), description: 'Service One Test', created_at: '2024-12-19T14:59:23.140Z', category: 'Service', …}
+use-appointments.ts:241 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:110 FETCH_APPOINTMENTS: Processing appointment DKl2HGO0BXtlRX96Lgl3
+use-appointments.ts:224 FETCH_APPOINTMENTS: Fetching service data for ID: 8sWdC28UWMGPd70awXQf
+use-appointments.ts:229 FETCH_APPOINTMENTS: Raw service data: {selectedServices: Array(0), consumables: Array(0), description: 'Service One Test', created_at: '2024-12-19T14:59:23.140Z', category: 'Service', …}
+use-appointments.ts:241 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:110 FETCH_APPOINTMENTS: Processing appointment G4jPJkojzVfulnnexbO5
+use-appointments.ts:224 FETCH_APPOINTMENTS: Fetching service data for ID: udoipAkeRVOxYnPnKu0g
+use-appointments.ts:229 FETCH_APPOINTMENTS: Raw service data: {category: 'Package', name: 'Pack One', duration: 60, created_at: '2024-12-20T06:37:07.041Z', required_categories: Array(0), …}
+use-appointments.ts:241 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:110 FETCH_APPOINTMENTS: Processing appointment KJB70FQfFgf97ajGac6C
+use-appointments.ts:224 FETCH_APPOINTMENTS: Fetching service data for ID: qs4WniktDLLArQJQOOqi
+use-appointments.ts:229 FETCH_APPOINTMENTS: Raw service data: {description: 'Service Two Test', category: 'Service', isActive: true, duration: 30, consumables: Array(0), …}
+use-appointments.ts:241 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:110 FETCH_APPOINTMENTS: Processing appointment UiMLuUKDPI2JvjnVELjn
+use-appointments.ts:224 FETCH_APPOINTMENTS: Fetching service data for ID: qs4WniktDLLArQJQOOqi
+use-appointments.ts:229 FETCH_APPOINTMENTS: Raw service data: {description: 'Service Two Test', category: 'Service', isActive: true, duration: 30, consumables: Array(0), …}
+use-appointments.ts:241 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:110 FETCH_APPOINTMENTS: Processing appointment h3TbwfAYuJbVBxAD26PF
+use-appointments.ts:224 FETCH_APPOINTMENTS: Fetching service data for ID: udoipAkeRVOxYnPnKu0g
+use-appointments.ts:229 FETCH_APPOINTMENTS: Raw service data: {category: 'Package', name: 'Pack One', duration: 60, created_at: '2024-12-20T06:37:07.041Z', required_categories: Array(0), …}
+use-appointments.ts:241 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:286 FETCH_APPOINTMENTS: Processed 8 appointments. Success: 8, Errors: 0
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
+AppointmentForm.tsx:68 [APPOINTMENT] Evaluating staff member: {id: 'k2TekT8YVqZJiiNpjXhpuXuOuiu2', name: 'Groomer One', isActive: true, role: 'staff', isGroomer: true, …}
+AppointmentForm.tsx:83 [APPOINTMENT] Available groomers: [{…}]
