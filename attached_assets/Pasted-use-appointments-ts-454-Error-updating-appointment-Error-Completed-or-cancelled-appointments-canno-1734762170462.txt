@@ -1,0 +1,71 @@
+use-appointments.ts:454 Error updating appointment: Error: Completed or cancelled appointments cannot be modified
+    at Object.mutationFn (use-appointments.ts:421:17)
+mutationFn @ use-appointments.ts:454
+await in mutationFn
+fn @ @tanstack_react-query.js?v=a7abcf71:1188
+run @ @tanstack_react-query.js?v=a7abcf71:493
+start @ @tanstack_react-query.js?v=a7abcf71:535
+execute @ @tanstack_react-query.js?v=a7abcf71:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=a7abcf71:2621
+onSubmit @ AppointmentDetails.tsx:133
+(anonymous) @ chunk-VYIIT4SD.js?v=a7abcf71:1694
+await in (anonymous)
+onComplete @ AppointmentDetails.tsx:353
+onSubmit @ AppointmentCompletionForm.tsx:154
+await in onSubmit
+(anonymous) @ chunk-VYIIT4SD.js?v=a7abcf71:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=a7abcf71:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=a7abcf71:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=a7abcf71:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=a7abcf71:3736
+executeDispatch @ chunk-DRXX46FI.js?v=a7abcf71:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=a7abcf71:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=a7abcf71:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=a7abcf71:7051
+(anonymous) @ chunk-DRXX46FI.js?v=a7abcf71:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=a7abcf71:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=a7abcf71:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=a7abcf71:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=a7abcf71:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=a7abcf71:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=a7abcf71:5449Understand this errorAI
+use-appointments.ts:454 Error updating appointment: Error: Completed or cancelled appointments cannot be modified
+    at Object.mutationFn (use-appointments.ts:421:17)
+mutationFn @ use-appointments.ts:454
+await in mutationFn
+fn @ @tanstack_react-query.js?v=a7abcf71:1188
+run @ @tanstack_react-query.js?v=a7abcf71:493
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:514
+Promise.catch
+run @ @tanstack_react-query.js?v=a7abcf71:497
+start @ @tanstack_react-query.js?v=a7abcf71:535
+execute @ @tanstack_react-query.js?v=a7abcf71:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=a7abcf71:2621
+onSubmit @ AppointmentDetails.tsx:133
+(anonymous) @ chunk-VYIIT4SD.js?v=a7abcf71:1694
+await in (anonymous)
+onComplete @ AppointmentDetails.tsx:353
+onSubmit @ AppointmentCompletionForm.tsx:154
+await in onSubmit
+(anonymous) @ chunk-VYIIT4SD.js?v=a7abcf71:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=a7abcf71:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=a7abcf71:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=a7abcf71:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=a7abcf71:3736
+executeDispatch @ chunk-DRXX46FI.js?v=a7abcf71:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=a7abcf71:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=a7abcf71:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=a7abcf71:7051
+(anonymous) @ chunk-DRXX46FI.js?v=a7abcf71:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=a7abcf71:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=a7abcf71:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=a7abcf71:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=a7abcf71:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=a7abcf71:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=a7abcf71:5449Understand this errorAI
