@@ -1,0 +1,24 @@
+Blocked aria-hidden on an element because its descendant retained focus. The focus must not be hidden from assistive technology users. Avoid using aria-hidden on a focused element or its ancestor. Consider using the inert attribute instead, which will also prevent focus. For more details, see the aria-hidden section of the WAI-ARIA specification at https://w3c.github.io/aria/#aria-hidden.
+Element with focus: button
+Ancestor with aria-hidden:  <div role=​"dialog" id=​"radix-:​r3:​" aria-describedby=​"dialog-description" aria-labelledby=​"radix-:​r4:​" data-state=​"open" class=​"fixed left-[50%]​ top-[50%]​ z-50 grid w-full max-w-lg -translate-x-1/​2 -translate-y-1/​2 gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]​:​animate-in data-[state=closed]​:​animate-out data-[state=closed]​:​fade-out-0 data-[state=open]​:​fade-in-0 data-[state=closed]​:​zoom-out-95 data-[state=open]​:​zoom-in-95 data-[state=closed]​:​slide-out-to-left-1/​2 data-[state=closed]​:​slide-out-to-top-[48%]​ data-[state=open]​:​slide-in-from-left-1/​2 data-[state=open]​:​slide-in-from-top-[48%]​ rounded-lg overflow-y-auto max-h-[90vh]​" tabindex=​"-1" style=​"pointer-events:​ auto;​" data-aria-hidden=​"true" aria-hidden=​"true">​…​</div>​gridscrollUnderstand this errorAI
+AppointmentForm.tsx:430 Failed to schedule appointment: Error: No groomers available for the selected time slot
+    at onSubmit (AppointmentForm.tsx:321:15)
+    at chunk-VYIIT4SD.js?v=0cf51c99:1694:15
+onSubmit @ AppointmentForm.tsx:430
+(anonymous) @ chunk-VYIIT4SD.js?v=0cf51c99:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=0cf51c99:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=0cf51c99:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=0cf51c99:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=0cf51c99:3736
+executeDispatch @ chunk-DRXX46FI.js?v=0cf51c99:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=0cf51c99:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=0cf51c99:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=0cf51c99:7051
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=0cf51c99:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=0cf51c99:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=0cf51c99:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=0cf51c99:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=0cf51c99:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=0cf51c99:5449Understand this errorAI
