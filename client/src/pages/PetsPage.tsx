@@ -59,10 +59,13 @@ export default function PetsPage() {
 
   useEffect(() => {
     if (pets) {
-      const mergedPets = pets.map(pet => optimisticPets[pet.id] || pet);
+      const mergedPets = pets.map(pet => ({
+        ...pet,
+        ...(optimisticPets[pet.id] || {})
+      }));
       setData(mergedPets);
     }
-  }, [pets, optimisticPets]);
+  }, [pets]);
 
   const handleUpdatePet = async (formData: InsertPet) => {
     if (!selectedPet) {
