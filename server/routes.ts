@@ -191,15 +191,6 @@ export function registerRoutes(app: Express) {
         });
 
       res.json({ groomers: activeGroomers });
-        return {
-          id: doc.id,
-          name: userData.name || 'Unknown',
-          isGroomer: true,
-          isActive: true
-        };
-      });
-
-      res.json({ groomers });
     } catch (error) {
       console.error('[GROOMERS] Error fetching groomers:', error);
       res.status(500).json({ 
