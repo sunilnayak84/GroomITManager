@@ -314,9 +314,14 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
 
       // For customers, auto-assign an available groomer
       if (user?.role === 'customer') {
-        const availableGroomer = availableGroomers.find(groomer => 
-          isTimeSlotAvailable(appointmentDateTime, groomer.id, selectedService?.duration || 30)
-        );
+        const formDate = form.getValues('date');
+        const formTime = form.getValues('time');
+        const appointmentDateTime = new Date(`${formDate}T${formTime}`);
+        
+        const availableGroomer = availableGroomers.find(groomer => {
+          const duration = selectedService?.duration || 30;
+          return isTimeSlotAvailable(appointmentDateTime, groomer.id, duration);
+        });
         
         if (!availableGroomer) {
           throw new Error("No groomers available for the selected time slot");
