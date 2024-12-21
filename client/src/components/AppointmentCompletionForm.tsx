@@ -1,9 +1,8 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useInventory } from "@/hooks/use-inventory";
-import { doc, setDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { doc, collection, arrayUnion, writeBatch } from "firebase/firestore";
+import { db, auth } from "@/lib/firebase";
 import { z } from "zod";
 import {
   Dialog,

@@ -27,8 +27,9 @@ interface FirestoreAppointmentData {
   statusHistory?: { status: string; timestamp: Timestamp; updatedBy: string }[];
 }
 
-const timestampToISOString = (timestamp: Timestamp | null | undefined): string => {
+const timestampToISOString = (timestamp: Timestamp | string | null | undefined): string => {
   if (!timestamp) return new Date().toISOString();
+  if (typeof timestamp === 'string') return new Date(timestamp).toISOString();
   try {
     return timestamp.toDate().toISOString();
   } catch (error) {
