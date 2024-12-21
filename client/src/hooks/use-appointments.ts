@@ -97,16 +97,16 @@ export function useAppointments() {
         let successCount = 0;
         let errorCount = 0;
 
-        const processedAppointments = await Promise.all(
+        await Promise.all(
           appointmentsSnapshot.docs.map(async (appointmentDoc) => {
             try {
               const rawData = appointmentDoc.data() as FirestoreAppointmentData;
               
               if (!rawData.petId || !rawData.groomerId) {
-              console.error('FETCH_APPOINTMENTS: Missing required fields in appointment:', appointmentDoc.id);
-              errorCount++;
-              continue;
-            }
+                console.error('FETCH_APPOINTMENTS: Missing required fields in appointment:', appointmentDoc.id);
+                errorCount++;
+                return;
+              }
 
             // Get pet data
             const petDocRef = doc(db, 'pets', rawData.petId);
@@ -261,13 +261,14 @@ export function useAppointments() {
 
             appointments.push(appointment);
             successCount++;
-
+            return appointment;
           } catch (error) {
             console.error('FETCH_APPOINTMENTS: Error processing appointment:', appointmentDoc.id, error);
             errorCount++;
-            continue;
+            return null;
           }
-        });
+        })
+        );
 
         console.log(`FETCH_APPOINTMENTS: Processed ${appointmentsSnapshot.size} appointments. Success: ${successCount}, Errors: ${errorCount}`);
         return appointments;
