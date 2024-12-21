@@ -105,9 +105,23 @@ function Router() {
     return (
       <Switch>
         <Route path="/customer">
-          {(params) => (
+          {() => (
             <CustomerLayout>
               <CustomerDashboardPage />
+            </CustomerLayout>
+          )}
+        </Route>
+        <Route path="/customer/appointments">
+          {() => (
+            <CustomerLayout>
+              <CustomerAppointmentsPage />
+            </CustomerLayout>
+          )}
+        </Route>
+        <Route path="/customer/pets">
+          {() => (
+            <CustomerLayout>
+              <CustomerPetsPage />
             </CustomerLayout>
           )}
         </Route>
