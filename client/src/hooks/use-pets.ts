@@ -63,7 +63,8 @@ export function usePets() {
   const fetchPets = async () => {
     try {
       console.log('FETCH_PETS: Starting to fetch pets');
-      const q = query(petsCollection);
+      const batchSize = 10;
+      const q = query(petsCollection, limit(batchSize));
       const querySnapshot = await getDocs(q);
       
       if (querySnapshot.empty) {
