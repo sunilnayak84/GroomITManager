@@ -1,0 +1,201 @@
+use-pets.ts:123 FETCH_PETS: Error fetching pets: ReferenceError: limit is not defined
+    at fetchPets (use-pets.ts:67:23)
+    at Object.fetchFn [as fn] (@tanstack_react-query.js?v=a7abcf71:839:14)
+    at run (@tanstack_react-query.js?v=a7abcf71:493:49)
+    at Object.start (@tanstack_react-query.js?v=a7abcf71:535:9)
+    at _a4.fetch (@tanstack_react-query.js?v=a7abcf71:925:41)
+    at _a9.executeFetch_fn (@tanstack_react-query.js?v=a7abcf71:2211:51)
+    at _a9.onSubscribe (@tanstack_react-query.js?v=a7abcf71:1898:74)
+    at _a9.subscribe (@tanstack_react-query.js?v=a7abcf71:24:10)
+    at @tanstack_react-query.js?v=a7abcf71:3013:60
+    at subscribeToStore (chunk-DRXX46FI.js?v=a7abcf71:12587:18)
+fetchPets @ use-pets.ts:123
+fetchFn @ @tanstack_react-query.js?v=a7abcf71:839
+run @ @tanstack_react-query.js?v=a7abcf71:493
+start @ @tanstack_react-query.js?v=a7abcf71:535
+fetch @ @tanstack_react-query.js?v=a7abcf71:925
+executeFetch_fn @ @tanstack_react-query.js?v=a7abcf71:2211
+onSubscribe @ @tanstack_react-query.js?v=a7abcf71:1898
+subscribe @ @tanstack_react-query.js?v=a7abcf71:24
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=a7abcf71:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=a7abcf71:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=a7abcf71:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=a7abcf71:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=a7abcf71:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=a7abcf71:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=a7abcf71:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=a7abcf71:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=a7abcf71:19384
+commitRoot @ chunk-DRXX46FI.js?v=a7abcf71:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=a7abcf71:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=a7abcf71:9119
+(anonymous) @ chunk-DRXX46FI.js?v=a7abcf71:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=a7abcf71:554
+flush @ @tanstack_react-query.js?v=a7abcf71:568
+batch @ @tanstack_react-query.js?v=a7abcf71:586
+dispatch_fn @ @tanstack_react-query.js?v=a7abcf71:995
+setData @ @tanstack_react-query.js?v=a7abcf71:695
+onSuccess @ @tanstack_react-query.js?v=a7abcf71:896
+resolve @ @tanstack_react-query.js?v=a7abcf71:455
+Promise.then
+run @ @tanstack_react-query.js?v=a7abcf71:497
+start @ @tanstack_react-query.js?v=a7abcf71:535
+fetch @ @tanstack_react-query.js?v=a7abcf71:925
+executeFetch_fn @ @tanstack_react-query.js?v=a7abcf71:2211
+onSubscribe @ @tanstack_react-query.js?v=a7abcf71:1898
+subscribe @ @tanstack_react-query.js?v=a7abcf71:24
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=a7abcf71:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=a7abcf71:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=a7abcf71:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=a7abcf71:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=a7abcf71:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=a7abcf71:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=a7abcf71:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=a7abcf71:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=a7abcf71:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=a7abcf71:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=a7abcf71:19400
+commitRoot @ chunk-DRXX46FI.js?v=a7abcf71:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=a7abcf71:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=a7abcf71:18686
+workLoop @ chunk-DRXX46FI.js?v=a7abcf71:197
+flushWork @ chunk-DRXX46FI.js?v=a7abcf71:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=a7abcf71:384Understand this errorAI
+use-pets.ts:123 FETCH_PETS: Error fetching pets: ReferenceError: limit is not defined
+    at fetchPets (use-pets.ts:67:23)
+    at Object.fetchFn [as fn] (@tanstack_react-query.js?v=a7abcf71:839:14)
+    at run (@tanstack_react-query.js?v=a7abcf71:493:49)
+    at @tanstack_react-query.js?v=a7abcf71:518:11
+fetchPets @ use-pets.ts:123
+fetchFn @ @tanstack_react-query.js?v=a7abcf71:839
+run @ @tanstack_react-query.js?v=a7abcf71:493
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:514
+Promise.catch
+run @ @tanstack_react-query.js?v=a7abcf71:497
+start @ @tanstack_react-query.js?v=a7abcf71:535
+fetch @ @tanstack_react-query.js?v=a7abcf71:925
+executeFetch_fn @ @tanstack_react-query.js?v=a7abcf71:2211
+onSubscribe @ @tanstack_react-query.js?v=a7abcf71:1898
+subscribe @ @tanstack_react-query.js?v=a7abcf71:24
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=a7abcf71:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=a7abcf71:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=a7abcf71:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=a7abcf71:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=a7abcf71:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=a7abcf71:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=a7abcf71:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=a7abcf71:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=a7abcf71:19384
+commitRoot @ chunk-DRXX46FI.js?v=a7abcf71:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=a7abcf71:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=a7abcf71:9119
+(anonymous) @ chunk-DRXX46FI.js?v=a7abcf71:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=a7abcf71:554
+flush @ @tanstack_react-query.js?v=a7abcf71:568
+batch @ @tanstack_react-query.js?v=a7abcf71:586
+dispatch_fn @ @tanstack_react-query.js?v=a7abcf71:995
+setData @ @tanstack_react-query.js?v=a7abcf71:695
+onSuccess @ @tanstack_react-query.js?v=a7abcf71:896
+resolve @ @tanstack_react-query.js?v=a7abcf71:455
+Promise.then
+run @ @tanstack_react-query.js?v=a7abcf71:497
+start @ @tanstack_react-query.js?v=a7abcf71:535
+fetch @ @tanstack_react-query.js?v=a7abcf71:925
+executeFetch_fn @ @tanstack_react-query.js?v=a7abcf71:2211
+onSubscribe @ @tanstack_react-query.js?v=a7abcf71:1898
+subscribe @ @tanstack_react-query.js?v=a7abcf71:24
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=a7abcf71:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=a7abcf71:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=a7abcf71:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=a7abcf71:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=a7abcf71:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=a7abcf71:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=a7abcf71:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=a7abcf71:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=a7abcf71:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=a7abcf71:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=a7abcf71:19400
+commitRoot @ chunk-DRXX46FI.js?v=a7abcf71:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=a7abcf71:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=a7abcf71:18686
+workLoop @ chunk-DRXX46FI.js?v=a7abcf71:197
+flushWork @ chunk-DRXX46FI.js?v=a7abcf71:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=a7abcf71:384Understand this errorAI
+use-pets.ts:123 FETCH_PETS: Error fetching pets: ReferenceError: limit is not defined
+    at fetchPets (use-pets.ts:67:23)
+    at Object.fetchFn [as fn] (@tanstack_react-query.js?v=a7abcf71:839:14)
+    at run (@tanstack_react-query.js?v=a7abcf71:493:49)
+    at @tanstack_react-query.js?v=a7abcf71:518:11
+fetchPets @ use-pets.ts:123
+fetchFn @ @tanstack_react-query.js?v=a7abcf71:839
+run @ @tanstack_react-query.js?v=a7abcf71:493
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:514
+Promise.catch
+run @ @tanstack_react-query.js?v=a7abcf71:497
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:514
+Promise.catch
+run @ @tanstack_react-query.js?v=a7abcf71:497
+start @ @tanstack_react-query.js?v=a7abcf71:535
+fetch @ @tanstack_react-query.js?v=a7abcf71:925
+executeFetch_fn @ @tanstack_react-query.js?v=a7abcf71:2211
+onSubscribe @ @tanstack_react-query.js?v=a7abcf71:1898
+subscribe @ @tanstack_react-query.js?v=a7abcf71:24
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=a7abcf71:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=a7abcf71:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=a7abcf71:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=a7abcf71:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=a7abcf71:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=a7abcf71:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=a7abcf71:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=a7abcf71:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=a7abcf71:19384
+commitRoot @ chunk-DRXX46FI.js?v=a7abcf71:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=a7abcf71:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=a7abcf71:9119
+(anonymous) @ chunk-DRXX46FI.js?v=a7abcf71:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=a7abcf71:554
+flush @ @tanstack_react-query.js?v=a7abcf71:568
+batch @ @tanstack_react-query.js?v=a7abcf71:586
+dispatch_fn @ @tanstack_react-query.js?v=a7abcf71:995
+setData @ @tanstack_react-query.js?v=a7abcf71:695
+onSuccess @ @tanstack_react-query.js?v=a7abcf71:896
+resolve @ @tanstack_react-query.js?v=a7abcf71:455
+Promise.then
+run @ @tanstack_react-query.js?v=a7abcf71:497
+start @ @tanstack_react-query.js?v=a7abcf71:535
+fetch @ @tanstack_react-query.js?v=a7abcf71:925
+executeFetch_fn @ @tanstack_react-query.js?v=a7abcf71:2211
+onSubscribe @ @tanstack_react-query.js?v=a7abcf71:1898
+subscribe @ @tanstack_react-query.js?v=a7abcf71:24
+(anonymous) @ @tanstack_react-query.js?v=a7abcf71:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=a7abcf71:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=a7abcf71:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=a7abcf71:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=a7abcf71:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=a7abcf71:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=a7abcf71:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=a7abcf71:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=a7abcf71:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=a7abcf71:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=a7abcf71:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=a7abcf71:19400
+commitRoot @ chunk-DRXX46FI.js?v=a7abcf71:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=a7abcf71:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=a7abcf71:18686
+workLoop @ chunk-DRXX46FI.js?v=a7abcf71:197
+flushWork @ chunk-DRXX46FI.js?v=a7abcf71:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=a7abcf71:384Understand this errorAI
