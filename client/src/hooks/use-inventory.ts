@@ -98,7 +98,8 @@ export function useInventory() {
     refetchOnWindowFocus: false,
     queryFn: async () => {
       try {
-        console.log('FETCH_INVENTORY: Starting to fetch inventory items');
+        const startTime = performance.now();
+        console.log('FETCH_INVENTORY: Starting fetch operation');
         const q = query(inventoryCollection);
         const querySnapshot = await getDocs(q);
         
@@ -109,7 +110,6 @@ export function useInventory() {
 
         const items = querySnapshot.docs.map((doc) => {
           const data = doc.data();
-          console.log('FETCH_INVENTORY: Processing item data:', { id: doc.id, data });
           try {
             const parsedData = {
               item_id: doc.id,
@@ -145,7 +145,6 @@ export function useInventory() {
                 ) : null,
             };
             const validatedItem = inventoryItemSchema.parse(parsedData);
-            console.log('FETCH_INVENTORY: Successfully parsed item:', { id: doc.id, item: validatedItem });
             return validatedItem;
           } catch (parseError) {
             console.error('FETCH_INVENTORY: Error parsing item:', { id: doc.id, error: parseError });
@@ -153,8 +152,12 @@ export function useInventory() {
           }
         }).filter((item): item is InventoryItem => item !== null);
 
-        console.log('FETCH_INVENTORY: Successfully fetched inventory', {
-          count: items.length
+        const endTime = performance.now();
+        console.log('FETCH_INVENTORY: Operation completed', {
+          totalItems: items.length,
+          successfullyParsed: items.length,
+          failedToParse: querySnapshot.docs.length - items.length,
+          processingTimeMs: Math.round(endTime - startTime)
         });
 
         return items;
