@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
 import { PlusCircle } from "lucide-react";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import AppointmentForm from "@/components/AppointmentForm";
 
 export default function CustomerDashboardPage() {
   const { user } = useUser();
@@ -24,10 +26,15 @@ export default function CustomerDashboardPage() {
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Welcome, {user?.name}</h1>
-        <Button className="gap-2">
-          <PlusCircle className="h-4 w-4" />
-          Book Appointment
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="gap-2">
+              <PlusCircle className="h-4 w-4" />
+              Book Appointment
+            </Button>
+          </DialogTrigger>
+          <AppointmentForm setOpen={(open) => {}} />
+        </Dialog>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
