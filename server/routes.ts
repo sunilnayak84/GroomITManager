@@ -173,18 +173,20 @@ export function registerRoutes(app: Express) {
       const app = await getFirebaseAdmin();
       const db = getFirestore();
       
-      const query = db.collection('users').where('role', '==', 'groomer');
+      const query = db.collection('users')
+        .where('role', '==', 'groomer')
+        .where('disabled', '!=', true);
       const snapshot = await query.get();
       
       const groomers = snapshot.docs.map(doc => {
         const userData = doc.data();
         return {
           id: doc.id,
-          name: userData.name,
+          name: userData.name || 'Unknown',
           isGroomer: true,
-          isActive: !userData.disabled
+          isActive: true
         };
-      }).filter(user => user.isActive);
+      });
 
       res.json({ groomers });
     } catch (error) {
