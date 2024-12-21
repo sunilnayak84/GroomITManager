@@ -47,11 +47,11 @@ export function useStaff() {
         }
 
         const data = await response.json();
-        if (!data.users || !Array.isArray(data.users)) {
+        if (!data.groomers || !Array.isArray(data.groomers)) {
           throw new Error('Invalid response format from server');
         }
         
-        return data.users.map(user => ({
+        return data.groomers.map(user => ({
           id: user.uid || user.id,
           email: user.email,
           name: user.displayName || user.name,
