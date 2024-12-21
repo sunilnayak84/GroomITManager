@@ -6,12 +6,14 @@ import { User, InsertUser } from '@/lib/user-types';
 export function useStaff() {
   const queryClient = useQueryClient();
   const auth = getAuth();
+  const { user } = useUser();
 
-  // Fetch staff members
+  // Fetch staff members only for admin users
   const { data: staffMembers = [], isLoading } = useQuery({
     queryKey: ['staff'],
-    staleTime: 5 * 60 * 1000, // Keep data fresh for 5 minutes
-    cacheTime: 30 * 60 * 1000, // Cache for 30 minutes
+    staleTime: 5 * 60 * 1000,
+    cacheTime: 30 * 60 * 1000,
+    enabled: user?.role === 'admin',
     queryFn: async () => {
       try {
         const token = await auth.currentUser?.getIdToken();
