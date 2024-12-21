@@ -267,9 +267,9 @@ export function useAppointments() {
             errorCount++;
             continue;
           }
-        }
+        });
 
-        console.log(`FETCH_APPOINTMENTS: Processed ${querySnapshot.size} appointments. Success: ${successCount}, Errors: ${errorCount}`);
+        console.log(`FETCH_APPOINTMENTS: Processed ${appointmentsSnapshot.size} appointments. Success: ${successCount}, Errors: ${errorCount}`);
         return appointments;
       } catch (error) {
         console.error('Error fetching appointments:', error);
