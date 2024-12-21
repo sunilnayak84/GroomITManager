@@ -1,10 +1,10 @@
 
 import { useUser } from "@/hooks/use-user";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { CalendarDays, Dog } from "lucide-react";
 import { Link } from "wouter";
 
+// Customer dashboard only shows relevant customer actions
 export default function CustomerDashboardPage() {
   const { user } = useUser();
 
