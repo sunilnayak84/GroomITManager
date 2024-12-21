@@ -121,6 +121,7 @@ export function AppointmentCompletionForm({
       // Update appointment
       batch.update(appointmentRef, {
         status: 'completed',
+        notes: data.recommendations || null,
         updatedAt: new Date().toISOString(),
         statusHistory: arrayUnion({
           status: 'completed',
