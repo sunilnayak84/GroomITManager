@@ -100,6 +100,27 @@ function Router() {
     );
   }
 
+  // Redirect customers to customer portal
+  if (user.role === 'customer') {
+    return (
+      <Switch>
+        <Route path="/customer">
+          {(params) => (
+            <CustomerLayout>
+              <CustomerDashboardPage />
+            </CustomerLayout>
+          )}
+        </Route>
+        <Route>
+          {() => {
+            window.location.href = '/customer';
+            return null;
+          }}
+        </Route>
+      </Switch>
+    );
+  }
+
   return (
     <Layout>
       <ErrorBoundary FallbackComponent={ErrorFallback}>
