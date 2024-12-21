@@ -119,13 +119,15 @@ function Router() {
             <Route path="/settings/roles" component={lazy(() => import('./pages/RoleManagementPage'))} />
             <Route path="/settings/user-management" component={lazy(() => import('./pages/settings/user-management'))} />
             {/* Customer Routes */}
-            <Route path="/customer" element={
-              <ProtectedRoute allowedRoles={['customer']}>
-                <CustomerLayout>
-                  <CustomerDashboardPage />
-                </CustomerLayout>
-              </ProtectedRoute>
-            } />
+            <Route path="/customer">
+              {(params) => (
+                <ProtectedRoute allowedRoles={['customer']}>
+                  <CustomerLayout>
+                    <CustomerDashboardPage />
+                  </CustomerLayout>
+                </ProtectedRoute>
+              )}
+            </Route>
             <Route>404 Page Not Found</Route>
           </Switch>
         </Suspense>
