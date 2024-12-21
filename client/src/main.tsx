@@ -66,6 +66,7 @@ function ErrorFallback({ error, resetErrorBoundary }: { error: Error; resetError
 function setupErrorHandlers() {
   if (typeof window !== 'undefined') {
     window.onerror = (message, source, lineno, colno, error) => {
+      if (message.toString().includes('ResizeObserver')) return;
       console.error('Global error:', { message, source, lineno, colno, error });
       // You could also send this to an error tracking service
     };

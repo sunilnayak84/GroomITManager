@@ -50,10 +50,12 @@ export default function PetsPage() {
 
   const data = useMemo(() => {
     if (!pets) return [];
-    return pets.map(pet => ({
-      ...pet,
-      ...(optimisticPets[pet.id] || {})
-    }));
+    requestAnimationFrame(() => {
+      return pets.map(pet => ({
+        ...pet,
+        ...(optimisticPets[pet.id] || {})
+      }));
+    });
   }, [pets, optimisticPets]);
 
   const filteredPets = useMemo(() => {
