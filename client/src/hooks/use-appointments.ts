@@ -90,14 +90,7 @@ export function useAppointments() {
         const querySnapshot = await getDocs(appointmentsQuery);
         console.log('FETCH_APPOINTMENTS: Found', querySnapshot.size, 'active appointments');
         
-        // Debug: Log all appointments
-        querySnapshot.forEach(doc => {
-          console.log('FETCH_APPOINTMENTS: Active appointment:', doc.id, doc.data());
-        });
-        console.log('FETCH_APPOINTMENTS: Got snapshot with', querySnapshot.size, 'active documents');
-
         if (querySnapshot.empty) {
-          console.log('FETCH_APPOINTMENTS: No appointments found');
           return [];
         }
 
@@ -216,33 +209,27 @@ export function useAppointments() {
               }
             }
 
-            // Get service data
+            // Get service data efficiently
             let serviceData = [];
 
-            if (rawData.services) {
-              for (const serviceId of rawData.services) {
-                console.log('FETCH_APPOINTMENTS: Fetching service data for ID:', serviceId);
-                const serviceDoc = await getDoc(doc(db, 'services', serviceId));
-                
-                if (serviceDoc.exists()) {
-                  const rawServiceData = serviceDoc.data();
-                  console.log('FETCH_APPOINTMENTS: Raw service data:', rawServiceData);
-                  
-                  // Map all required service fields
-                  serviceData.push({
-                    name: rawServiceData.name || 'Unknown Service',
-                    duration: rawServiceData.duration || 30,
-                    price: rawServiceData.price || 0,
-                    description: rawServiceData.description || null,
-                    category: rawServiceData.category || 'Service',
-                    discount_percentage: rawServiceData.discount_percentage || 0,
-                    consumables: rawServiceData.consumables || []
-                  });
-                  console.log('FETCH_APPOINTMENTS: Processed service data:', serviceData);
-                } else {
-                  console.error('FETCH_APPOINTMENTS: Service not found for ID:', serviceId);
-                }
-              }
+            if (rawData.services && rawData.services.length > 0) {
+              const serviceRefs = rawData.services.map(id => doc(db, 'services', id));
+              const serviceDocs = await Promise.all(serviceRefs.map(ref => getDoc(ref)));
+              
+              serviceData = serviceDocs
+                .filter(doc => doc.exists())
+                .map(doc => {
+                  const data = doc.data();
+                  return {
+                    name: data.name || 'Unknown Service',
+                    duration: data.duration || 30,
+                    price: data.price || 0,
+                    description: data.description || null,
+                    category: data.category || 'Service',
+                    discount_percentage: data.discount_percentage || 0,
+                    consumables: data.consumables || []
+                  };
+                });
             } else {
               console.log('FETCH_APPOINTMENTS: No serviceId provided for appointment');
             }

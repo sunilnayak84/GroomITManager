@@ -64,23 +64,16 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
     queryClient.invalidateQueries({ queryKey: ['staff'] });
   }, []);
   
-  const availableGroomers = (staffMembers || []).filter((staff: Staff) => {
-    console.log('[APPOINTMENT] Evaluating staff member:', {
-      id: staff.id,
-      name: staff.name,
-      isActive: staff.isActive,
-      role: staff.role,
-      isGroomer: staff.isGroomer,
-      specialties: staff.specialties
-    });
-    return staff.isActive && (
-      staff.role === 'groomer' || 
-      staff.role === 'staff' ||
-      staff.isGroomer === true || 
-      (Array.isArray(staff.specialties) && staff.specialties.includes('groomer'))
+  const availableGroomers = useMemo(() => {
+    return (staffMembers || []).filter((staff: Staff) => 
+      staff.isActive && (
+        staff.role === 'groomer' || 
+        staff.role === 'staff' ||
+        staff.isGroomer === true || 
+        (Array.isArray(staff.specialties) && staff.specialties.includes('groomer'))
+      )
     );
-  });
-  console.log('[APPOINTMENT] Available groomers:', availableGroomers);
+  }, [staffMembers]);
   const { data: workingHours } = useWorkingHours();
   const [selectedService, setSelectedService] = useState<{ duration: number } | null>(null);
   const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
