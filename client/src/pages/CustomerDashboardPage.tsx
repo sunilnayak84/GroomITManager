@@ -75,6 +75,12 @@ export default function CustomerDashboardPage() {
                     </div>
                     <div className="text-sm text-muted-foreground">
                       {appointment.pet.name} · {appointment.service[0]?.name}
+                      {appointment.notes && (
+                        <div className="mt-1 text-xs text-muted-foreground">
+                          <span className="font-medium">Recommendations: </span>
+                          {appointment.notes}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="text-sm font-medium">

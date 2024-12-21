@@ -42,7 +42,7 @@ export default function CustomerAppointmentsPage() {
               {appointment.notes && (
                 <div className="mt-2 pt-2 border-t">
                   <p className="font-medium">Recommendations:</p>
-                  <p className="text-sm text-muted-foreground">{appointment.notes}</p>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{appointment.notes}</p>
                 </div>
               )}
             </CardContent>
