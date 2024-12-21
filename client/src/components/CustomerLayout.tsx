@@ -1,7 +1,7 @@
 
 import { useUser } from "@/hooks/use-user";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, Home, LogOut, Pet, Settings, User } from "lucide-react";
+import { CalendarDays, Home, LogOut, Dog, Settings, User } from "lucide-react";
 import { Link, useLocation } from "wouter";
 
 export default function CustomerLayout({ children }: { children: React.ReactNode }) {
@@ -11,7 +11,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
   const navigation = [
     { name: 'Dashboard', href: '/customer', icon: Home },
     { name: 'Appointments', href: '/customer/appointments', icon: CalendarDays },
-    { name: 'My Pets', href: '/customer/pets', icon: Pet },
+    { name: 'My Pets', href: '/customer/pets', icon: Dog },
     { name: 'Profile', href: '/customer/profile', icon: User },
     { name: 'Settings', href: '/customer/settings', icon: Settings },
   ];
