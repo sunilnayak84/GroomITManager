@@ -174,21 +174,26 @@ export function registerRoutes(app: Express) {
       const db = getFirestore();
       
       const query = db.collection('users')
-        .where('role', '==', 'groomer');
+        .where('isGroomer', '==', true)
+        .where('disabled', '==', false);
       const snapshot = await query.get();
       
-      // Filter disabled users after fetching
-      const activeGroomers = snapshot.docs
-        .filter(doc => !doc.data().disabled)
-        .map(doc => {
-          const userData = doc.data();
-          return {
-            id: doc.id,
-            name: userData.name || 'Unknown',
-            isGroomer: true,
-            isActive: true
-          };
-        });
+      const activeGroomers = snapshot.docs.map(doc => {
+        const userData = doc.data();
+        return {
+          id: doc.id,
+          name: userData.name || 'Unknown',
+          isGroomer: true,
+          isActive: true,
+          maxDailyAppointments: userData.maxDailyAppointments || 8
+        };
+      });
+
+      if (activeGroomers.length === 0) {
+        console.log('[GROOMERS] No active groomers found');
+      } else {
+        console.log('[GROOMERS] Found active groomers:', activeGroomers);
+      }
 
       res.json({ groomers: activeGroomers });
     } catch (error) {
