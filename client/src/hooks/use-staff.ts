@@ -1,4 +1,3 @@
-
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getAuth } from 'firebase/auth';
 import { User, InsertUser } from '@/lib/user-types';
@@ -38,16 +37,20 @@ export function useStaff() {
 
         const data = await response.json();
         
-        if (!data.groomers || !Array.isArray(data.groomers)) {
-          throw new Error('Invalid response format from server');
+        if (!data || !Array.isArray(data.groomers)) {
+          console.warn('Invalid groomers response:', data);
+          return [];
         }
 
-        const groomers = data.groomers.map(user => ({
-          id: user.id,
-          name: user.name,
-          isGroomer: true,
-          isActive: user.isActive
-        })).filter(groomer => groomer.isActive);
+        const groomers = data.groomers
+          .filter(user => user && (user.role === 'staff' || user.isGroomer === true))
+          .map(user => ({
+            id: user.uid || user.id,
+            name: user.displayName || user.name,
+            isGroomer: true,
+            isActive: user.disabled !== true
+          }))
+          .filter(groomer => groomer.isActive);
 
         if (!groomers.length) {
           console.warn('No active groomers found in response:', data.groomers);
