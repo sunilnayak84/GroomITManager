@@ -39,6 +39,12 @@ export default function CustomerAppointmentsPage() {
               <p>Pet: {appointment.pet.name}</p>
               <p>Services: {appointment.service?.map(s => s.name).join(', ') || 'No services'}</p>
               <p>Status: {appointment.status}</p>
+              {appointment.notes && (
+                <div className="mt-2 pt-2 border-t">
+                  <p className="font-medium">Recommendations:</p>
+                  <p className="text-sm text-muted-foreground">{appointment.notes}</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         ))}
