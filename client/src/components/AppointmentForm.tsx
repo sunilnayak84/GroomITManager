@@ -314,20 +314,26 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
 
       // For customers, auto-assign an available groomer
       if (user?.role === 'customer') {
+        if (!availableGroomers || availableGroomers.length === 0) {
+          throw new Error("No groomers found in the system");
+        }
+
         const formDate = form.getValues('date');
         const formTime = form.getValues('time');
         const appointmentDateTime = new Date(`${formDate}T${formTime}`);
+        const duration = form.getValues('totalDuration') || 30;
         
-        const availableGroomer = availableGroomers.find(groomer => {
-          const duration = selectedService?.duration || 30;
-          return isTimeSlotAvailable(appointmentDateTime, groomer.id, duration);
-        });
-        
-        if (!availableGroomer) {
-          throw new Error("No groomers available for the selected time slot");
+        // Try to find an available groomer
+        for (const groomer of availableGroomers) {
+          if (isTimeSlotAvailable(appointmentDateTime, groomer.id, duration)) {
+            data.groomerId = groomer.id;
+            break;
+          }
         }
         
-        data.groomerId = availableGroomer.id;
+        if (!data.groomerId) {
+          throw new Error("No groomers available for the selected time slot");
+        }
       } else if (!data.groomerId) {
         throw new Error("Please select a groomer");
       }
