@@ -101,8 +101,10 @@ const DefaultPermissions: Record<RoleTypes, Permission[]> = {
   ],
   [RoleTypes.customer]: [
     'view_appointments',
-    'create_appointments',
-    'view_services'
+    'create_appointments', 
+    'view_services',
+    'view_groomers',
+    'view_own_appointments'
   ]
 };
 
