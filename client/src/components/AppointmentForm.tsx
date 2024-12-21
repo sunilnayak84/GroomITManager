@@ -441,7 +441,9 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         }
 
         await Promise.all(notificationPromises);
-        
+      } catch (error) {
+        console.error('Error creating notifications:', error);
+      } finally {
         // Reset form state
         form.reset();
         setValidationError(null);
@@ -455,8 +457,6 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         });
         
         setOpen(false);
-      } catch (error) {
-        console.error('Error creating notifications:', error);
       }
     } catch (error) {
       console.error('Failed to schedule appointment:', error);
