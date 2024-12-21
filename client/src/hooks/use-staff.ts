@@ -15,7 +15,7 @@ export function useStaff() {
     queryKey: ['staff'],
     staleTime: 5 * 60 * 1000,
     cacheTime: 30 * 60 * 1000,
-    enabled: user?.role === 'admin',
+    enabled: true,
     queryFn: async () => {
       try {
         const token = await auth.currentUser?.getIdToken();
