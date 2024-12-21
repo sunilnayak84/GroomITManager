@@ -1,0 +1,2020 @@
+CISPL SignerDigital Loaded
+chunk-DRXX46FI.js?v=0cf51c99:21507 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+use-user.ts:110 No role claim found in token
+(anonymous) @ use-user.ts:110
+Promise.then
+(anonymous) @ use-user.ts:108
+(anonymous) @ firebase_auth.js?v=0cf51c99:2692
+Promise.then
+registerStateListener @ firebase_auth.js?v=0cf51c99:2688
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:2548
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:5044
+(anonymous) @ use-user.ts:104
+queryFn @ use-user.ts:103
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+firebase.ts:26 FIREBASE_INIT: Firebase initialized successfully
+use-user.ts:110 No role claim found in token
+(anonymous) @ use-user.ts:110
+Promise.then
+(anonymous) @ use-user.ts:108
+(anonymous) @ firebase_auth.js?v=0cf51c99:2692
+Promise.then
+registerStateListener @ firebase_auth.js?v=0cf51c99:2688
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:2548
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:5044
+(anonymous) @ use-user.ts:104
+queryFn @ use-user.ts:103
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+use-user.ts:110 No role claim found in token
+(anonymous) @ use-user.ts:110
+Promise.then
+(anonymous) @ use-user.ts:108
+(anonymous) @ firebase_auth.js?v=0cf51c99:2692
+Promise.then
+registerStateListener @ firebase_auth.js?v=0cf51c99:2688
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:2548
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:5044
+(anonymous) @ use-user.ts:104
+queryFn @ use-user.ts:103
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+use-user.ts:110 No role claim found in token
+(anonymous) @ use-user.ts:110
+Promise.then
+(anonymous) @ use-user.ts:108
+(anonymous) @ firebase_auth.js?v=0cf51c99:2692
+Promise.then
+registerStateListener @ firebase_auth.js?v=0cf51c99:2688
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:2548
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:5044
+(anonymous) @ use-user.ts:104
+queryFn @ use-user.ts:103
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+use-user.ts:110 No role claim found in token
+(anonymous) @ use-user.ts:110
+Promise.then
+(anonymous) @ use-user.ts:108
+(anonymous) @ firebase_auth.js?v=0cf51c99:2692
+Promise.then
+registerStateListener @ firebase_auth.js?v=0cf51c99:2688
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:2548
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:5044
+(anonymous) @ use-user.ts:104
+queryFn @ use-user.ts:103
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+use-user.ts:110 No role claim found in token
+(anonymous) @ use-user.ts:110
+Promise.then
+(anonymous) @ use-user.ts:108
+(anonymous) @ firebase_auth.js?v=0cf51c99:2692
+Promise.then
+registerStateListener @ firebase_auth.js?v=0cf51c99:2688
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:2548
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:5044
+(anonymous) @ use-user.ts:104
+queryFn @ use-user.ts:103
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+use-user.ts:110 No role claim found in token
+(anonymous) @ use-user.ts:110
+Promise.then
+(anonymous) @ use-user.ts:108
+(anonymous) @ firebase_auth.js?v=0cf51c99:2692
+Promise.then
+registerStateListener @ firebase_auth.js?v=0cf51c99:2688
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:2548
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:5044
+(anonymous) @ use-user.ts:104
+queryFn @ use-user.ts:103
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+use-user.ts:110 No role claim found in token
+(anonymous) @ use-user.ts:110
+Promise.then
+(anonymous) @ use-user.ts:108
+(anonymous) @ firebase_auth.js?v=0cf51c99:2692
+Promise.then
+registerStateListener @ firebase_auth.js?v=0cf51c99:2688
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:2548
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:5044
+(anonymous) @ use-user.ts:104
+queryFn @ use-user.ts:103
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+use-user.ts:110 No role claim found in token
+(anonymous) @ use-user.ts:110
+Promise.then
+(anonymous) @ use-user.ts:108
+(anonymous) @ firebase_auth.js?v=0cf51c99:2692
+Promise.then
+registerStateListener @ firebase_auth.js?v=0cf51c99:2688
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:2548
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:5044
+(anonymous) @ use-user.ts:104
+queryFn @ use-user.ts:103
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+use-user.ts:110 No role claim found in token
+(anonymous) @ use-user.ts:110
+Promise.then
+(anonymous) @ use-user.ts:108
+(anonymous) @ firebase_auth.js?v=0cf51c99:2692
+Promise.then
+registerStateListener @ firebase_auth.js?v=0cf51c99:2688
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:2548
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:5044
+(anonymous) @ use-user.ts:104
+queryFn @ use-user.ts:103
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+use-user.ts:110 No role claim found in token
+(anonymous) @ use-user.ts:110
+Promise.then
+(anonymous) @ use-user.ts:108
+(anonymous) @ firebase_auth.js?v=0cf51c99:2692
+Promise.then
+registerStateListener @ firebase_auth.js?v=0cf51c99:2688
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:2548
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:5044
+(anonymous) @ use-user.ts:104
+queryFn @ use-user.ts:103
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+use-user.ts:110 No role claim found in token
+(anonymous) @ use-user.ts:110
+Promise.then
+(anonymous) @ use-user.ts:108
+(anonymous) @ firebase_auth.js?v=0cf51c99:2692
+Promise.then
+registerStateListener @ firebase_auth.js?v=0cf51c99:2688
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:2548
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:5044
+(anonymous) @ use-user.ts:104
+queryFn @ use-user.ts:103
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+use-user.ts:110 No role claim found in token
+(anonymous) @ use-user.ts:110
+Promise.then
+(anonymous) @ use-user.ts:108
+(anonymous) @ firebase_auth.js?v=0cf51c99:2692
+Promise.then
+registerStateListener @ firebase_auth.js?v=0cf51c99:2688
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:2548
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:5044
+(anonymous) @ use-user.ts:104
+queryFn @ use-user.ts:103
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+use-user.ts:110 No role claim found in token
+(anonymous) @ use-user.ts:110
+Promise.then
+(anonymous) @ use-user.ts:108
+(anonymous) @ firebase_auth.js?v=0cf51c99:2692
+Promise.then
+registerStateListener @ firebase_auth.js?v=0cf51c99:2688
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:2548
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:5044
+(anonymous) @ use-user.ts:104
+queryFn @ use-user.ts:103
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+use-user.ts:110 No role claim found in token
+(anonymous) @ use-user.ts:110
+Promise.then
+(anonymous) @ use-user.ts:108
+(anonymous) @ firebase_auth.js?v=0cf51c99:2692
+Promise.then
+registerStateListener @ firebase_auth.js?v=0cf51c99:2688
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:2548
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:5044
+(anonymous) @ use-user.ts:104
+queryFn @ use-user.ts:103
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+use-user.ts:110 No role claim found in token
+(anonymous) @ use-user.ts:110
+Promise.then
+(anonymous) @ use-user.ts:108
+(anonymous) @ firebase_auth.js?v=0cf51c99:2692
+Promise.then
+registerStateListener @ firebase_auth.js?v=0cf51c99:2688
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:2548
+onAuthStateChanged @ firebase_auth.js?v=0cf51c99:5044
+(anonymous) @ use-user.ts:104
+queryFn @ use-user.ts:103
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+onError @ @tanstack_react-query.js?v=0cf51c99:860
+reject @ @tanstack_react-query.js?v=0cf51c99:464
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:507
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
