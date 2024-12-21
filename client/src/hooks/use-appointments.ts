@@ -68,39 +68,33 @@ export function useAppointments() {
     queryKey: ["appointments"],
     queryFn: async () => {
       try {
-        console.log('FETCH_APPOINTMENTS: Starting appointment fetch');
-        
         if (!db) {
-          console.error('FETCH_APPOINTMENTS: Firebase not initialized');
           throw new Error('Firebase not initialized');
         }
 
         const appointmentsRef = collection(db, 'appointments');
-        console.log('FETCH_APPOINTMENTS: Created collection reference');
-
-        // Only fetch non-deleted appointments
-        console.log('FETCH_APPOINTMENTS: Creating query for non-deleted appointments');
-        // Create query for active (non-deleted) appointments
         const appointmentsQuery = query(
           appointmentsRef,
           where("deletedAt", "==", null)
         );
 
-        // Get all active appointments
-        const querySnapshot = await getDocs(appointmentsQuery);
-        console.log('FETCH_APPOINTMENTS: Found', querySnapshot.size, 'active appointments');
+        // Fetch appointments, pets, and services in parallel
+        const [appointmentsSnapshot, petsSnapshot, servicesSnapshot] = await Promise.all([
+          getDocs(appointmentsQuery),
+          getDocs(collection(db, 'pets')),
+          getDocs(collection(db, 'services'))
+        ]);
+
+        // Create lookup maps for faster access
+        const petsMap = new Map(petsSnapshot.docs.map(doc => [doc.id, doc.data()]));
+        const servicesMap = new Map(servicesSnapshot.docs.map(doc => [doc.id, doc.data()]));
         
-        if (querySnapshot.empty) {
+        if (appointmentsSnapshot.empty) {
           return [];
         }
 
         const appointments: AppointmentWithRelations[] = [];
-        let successCount = 0;
-        let errorCount = 0;
-
-        for (const appointmentDoc of querySnapshot.docs) {
-          try {
-            console.log('FETCH_APPOINTMENTS: Processing appointment', appointmentDoc.id);
+        const processedAppointments = await Promise.all(appointmentsSnapshot.docs.map(async (appointmentDoc) => {
             const rawData = appointmentDoc.data() as FirestoreAppointmentData;
             
             if (!rawData.petId || !rawData.groomerId) {
