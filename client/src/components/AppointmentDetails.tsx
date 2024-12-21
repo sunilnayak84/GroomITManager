@@ -348,9 +348,7 @@ const AppointmentDetails = ({
                   appointmentId={appointment.id}
                   serviceId={appointment.services[0]}
                   onComplete={() => {
-                    form.setValue('status', 'completed');
                     setShowCompletionForm(false);
-                    form.handleSubmit(onSubmit)();
                   }}
                 />
               )}
