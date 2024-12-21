@@ -127,10 +127,14 @@ export function AppointmentCompletionForm({
         })
       });
 
+      // Get appointment to retrieve petId
+      const appointmentDoc = await getDoc(doc(db, 'appointments', appointmentId));
+      const appointmentData = appointmentDoc.data();
+
       // Create service history record
       batch.set(historyRef, {
         appointmentId,
-        petId,
+        petId: appointmentData?.petId,
         serviceId,
         observations: data.observations || null,
         recommendations: data.recommendations || null,
