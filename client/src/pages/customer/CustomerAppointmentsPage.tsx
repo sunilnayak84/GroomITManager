@@ -40,9 +40,9 @@ export default function CustomerAppointmentsPage() {
               <p>Services: {appointment.service?.map(s => s.name).join(', ') || 'No services'}</p>
               <p>Status: {appointment.status}</p>
               {appointment.notes && (
-                <div className="mt-2 pt-2 border-t">
-                  <p className="font-medium">Recommendations:</p>
-                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{appointment.notes}</p>
+                <div className="mt-2 pt-2 border-t border-primary/20">
+                  <p className="font-medium text-primary">Recommendations:</p>
+                  <p className="text-sm text-foreground whitespace-pre-wrap mt-1">{appointment.notes}</p>
                 </div>
               )}
             </CardContent>
