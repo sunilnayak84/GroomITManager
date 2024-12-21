@@ -57,12 +57,9 @@ export function useStaff() {
           email: user.email,
           name: user.displayName || user.name,
           role: user.role || 'staff',
-          isGroomer: true,
-          isActive: user.disabled !== true,
-          phone: user.phoneNumber || user.phone,
-          role: user.role || 'staff',
           isGroomer: user.role === 'groomer' || user.isGroomer === true || (Array.isArray(user.specialties) && user.specialties.includes('groomer')),
           isActive: typeof user.disabled === 'boolean' ? !user.disabled : true,
+          phone: user.phoneNumber || user.phone,
           specialties: Array.isArray(user.specialties) ? user.specialties : [],
           branchId: user.branchId || null,
           managedBranchIds: Array.isArray(user.managedBranchIds) ? user.managedBranchIds : [],
@@ -71,6 +68,8 @@ export function useStaff() {
           createdAt: user.createdAt || Date.now(),
           updatedAt: user.updatedAt || null
         }));
+        
+        return groomers;
       } catch (error) {
         console.error('Error fetching staff:', error);
         throw error;
