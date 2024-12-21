@@ -106,7 +106,12 @@ function useFirebaseUser() {
           if (user) {
             // Get custom claims from Firebase user
             user.getIdTokenResult().then(tokenResult => {
-              const role = (tokenResult.claims.role as UserRole) || 'staff';
+              if (!tokenResult.claims.role) {
+                console.error('No role claim found in token');
+                reject(new Error('No role claim found'));
+                return;
+              }
+              const role = tokenResult.claims.role as UserRole;
               const permissions = tokenResult.claims.permissions as string[] || [];
               resolve({
                 id: user.uid,
