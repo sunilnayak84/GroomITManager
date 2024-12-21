@@ -191,10 +191,6 @@ export function registerRoutes(app: Express) {
         });
 
       res.json({ groomers: activeGroomers });
-      return;
-      
-      const groomers = snapshot.docs.map(doc => {
-        const userData = doc.data();
         return {
           id: doc.id,
           name: userData.name || 'Unknown',
