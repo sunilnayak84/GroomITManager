@@ -94,10 +94,15 @@ export function useAppointments() {
         }
 
         const appointments: AppointmentWithRelations[] = [];
-        const processedAppointments = await Promise.all(appointmentsSnapshot.docs.map(async (appointmentDoc) => {
-            const rawData = appointmentDoc.data() as FirestoreAppointmentData;
-            
-            if (!rawData.petId || !rawData.groomerId) {
+        let successCount = 0;
+        let errorCount = 0;
+
+        const processedAppointments = await Promise.all(
+          appointmentsSnapshot.docs.map(async (appointmentDoc) => {
+            try {
+              const rawData = appointmentDoc.data() as FirestoreAppointmentData;
+              
+              if (!rawData.petId || !rawData.groomerId) {
               console.error('FETCH_APPOINTMENTS: Missing required fields in appointment:', appointmentDoc.id);
               errorCount++;
               continue;
