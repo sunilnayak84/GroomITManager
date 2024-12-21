@@ -312,8 +312,13 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         throw new Error("Please select both pet and at least one service");
       }
 
+      // For customers, auto-assign the first available groomer
+      if (!data.groomerId && availableGroomers.length > 0) {
+        data.groomerId = availableGroomers[0].id;
+      }
+
       if (!data.groomerId) {
-        throw new Error("Please select a groomer");
+        throw new Error("No groomers available for the selected time slot");
       }
 
       const formDate = form.getValues('date');
