@@ -1,0 +1,26 @@
+content.js:1 CISPL SignerDigital Loaded
+client:495 [vite] connecting...
+client:614 [vite] connected.
+chunk-DRXX46FI.js?v=a7abcf71:21507 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+use-appointments.ts:71 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:79 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:82 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+chunk-DRXX46FI.js?v=a7abcf71:18593 [Violation] 'setTimeout' handler took 55ms
+firebase.ts:26 FIREBASE_INIT: Firebase initialized successfully
+use-appointments.ts:91 FETCH_APPOINTMENTS: Found 10 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Processing appointment 5bnanIGUzawX8xCSDxNg
+use-services.ts:91 FETCH_SERVICES: Completed fetching services {count: 3, services: Array(3)}
+use-pets.ts:115 FETCH_PETS: Completed fetching pets {totalPets: 1, pets: Array(1)}
+use-appointments.ts:103 FETCH_APPOINTMENTS: Processing appointment 6oOAFWMUfSYJKOAVCkXP
+use-appointments.ts:103 FETCH_APPOINTMENTS: Processing appointment 7WfuFRFIAwhBIDTNZ87k
+use-appointments.ts:103 FETCH_APPOINTMENTS: Processing appointment DKl2HGO0BXtlRX96Lgl3
+use-appointments.ts:103 FETCH_APPOINTMENTS: Processing appointment G4jPJkojzVfulnnexbO5
+use-appointments.ts:103 FETCH_APPOINTMENTS: Processing appointment KJB70FQfFgf97ajGac6C
+use-appointments.ts:103 FETCH_APPOINTMENTS: Processing appointment UiMLuUKDPI2JvjnVELjn
+use-appointments.ts:103 FETCH_APPOINTMENTS: Processing appointment VrRk4jwsy2d5JKJMdx9h
+use-appointments.ts:103 FETCH_APPOINTMENTS: Processing appointment W0YDfOUmZNn2aFeeuGln
+use-appointments.ts:103 FETCH_APPOINTMENTS: Processing appointment h3TbwfAYuJbVBxAD26PF
+use-appointments.ts:273 FETCH_APPOINTMENTS: Processed 10 appointments. Success: 10, Errors: 0
