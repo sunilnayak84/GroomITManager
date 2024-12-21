@@ -174,9 +174,24 @@ export function registerRoutes(app: Express) {
       const db = getFirestore();
       
       const query = db.collection('users')
-        .where('role', '==', 'groomer')
-        .where('disabled', '!=', true);
+        .where('role', '==', 'groomer');
       const snapshot = await query.get();
+      
+      // Filter disabled users after fetching
+      const activeGroomers = snapshot.docs
+        .filter(doc => !doc.data().disabled)
+        .map(doc => {
+          const userData = doc.data();
+          return {
+            id: doc.id,
+            name: userData.name || 'Unknown',
+            isGroomer: true,
+            isActive: true
+          };
+        });
+
+      res.json({ groomers: activeGroomers });
+      return;
       
       const groomers = snapshot.docs.map(doc => {
         const userData = doc.data();
