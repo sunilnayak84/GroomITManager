@@ -37,7 +37,7 @@ export default function CustomerAppointmentsPage() {
             </CardHeader>
             <CardContent>
               <p>Pet: {appointment.pet.name}</p>
-              <p>Services: {appointment.services.join(', ')}</p>
+              <p>Services: {appointment.service?.map(s => s.name).join(', ') || 'No services'}</p>
               <p>Status: {appointment.status}</p>
             </CardContent>
           </Card>
