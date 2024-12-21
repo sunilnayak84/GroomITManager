@@ -48,13 +48,17 @@ export function useStaff() {
 
         const data = await response.json();
         if (!data.groomers || !Array.isArray(data.groomers)) {
+          console.error('Server response:', data);
           throw new Error('Invalid response format from server');
         }
-        
-        return data.groomers.map(user => ({
+
+        const groomers = data.groomers.map(user => ({
           id: user.uid || user.id,
           email: user.email,
           name: user.displayName || user.name,
+          role: user.role || 'staff',
+          isGroomer: true,
+          isActive: user.disabled !== true,
           phone: user.phoneNumber || user.phone,
           role: user.role || 'staff',
           isGroomer: user.role === 'groomer' || user.isGroomer === true || (Array.isArray(user.specialties) && user.specialties.includes('groomer')),
