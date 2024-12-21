@@ -1,0 +1,398 @@
+CISPL SignerDigital Loaded
+client:495 [vite] connecting...
+client:614 [vite] connected.
+chunk-DRXX46FI.js?v=0cf51c99:21507 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+firebase.ts:26 FIREBASE_INIT: Firebase initialized successfully
+appointments:1 Access to fetch at 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/groomers' from origin 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.Understand this errorAI
+use-staff.ts:26 
+        
+        
+       GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/groomers net::ERR_FAILED
+queryFn @ use-staff.ts:26
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+setData @ @tanstack_react-query.js?v=0cf51c99:695
+onSuccess @ @tanstack_react-query.js?v=0cf51c99:896
+resolve @ @tanstack_react-query.js?v=0cf51c99:455
+Promise.then
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+use-staff.ts:61 Error fetching staff: TypeError: Failed to fetch
+    at queryFn (use-staff.ts:26:32)
+queryFn @ use-staff.ts:61
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+setData @ @tanstack_react-query.js?v=0cf51c99:695
+onSuccess @ @tanstack_react-query.js?v=0cf51c99:896
+resolve @ @tanstack_react-query.js?v=0cf51c99:455
+Promise.then
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+use-services.ts:92 FETCH_SERVICES: Completed fetching services {count: 3, services: Array(3)}
+use-pets.ts:116 FETCH_PETS: Completed fetching pets {totalPets: 1, pets: Array(1)}
+use-appointments.ts:273 FETCH_APPOINTMENTS: Processed 2 appointments. Success: 2, Errors: 0
+appointments:1 Access to fetch at 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/groomers' from origin 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.Understand this errorAI
+use-staff.ts:26 
+        
+        
+       GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/groomers net::ERR_FAILED
+queryFn @ use-staff.ts:26
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+setData @ @tanstack_react-query.js?v=0cf51c99:695
+onSuccess @ @tanstack_react-query.js?v=0cf51c99:896
+resolve @ @tanstack_react-query.js?v=0cf51c99:455
+Promise.then
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+use-staff.ts:61 Error fetching staff: TypeError: Failed to fetch
+    at queryFn (use-staff.ts:26:32)
+queryFn @ use-staff.ts:61
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+setData @ @tanstack_react-query.js?v=0cf51c99:695
+onSuccess @ @tanstack_react-query.js?v=0cf51c99:896
+resolve @ @tanstack_react-query.js?v=0cf51c99:455
+Promise.then
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+appointments:1 Access to fetch at 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/groomers' from origin 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.Understand this errorAI
+use-staff.ts:26 
+        
+        
+       GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/groomers net::ERR_FAILED
+queryFn @ use-staff.ts:26
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+setData @ @tanstack_react-query.js?v=0cf51c99:695
+onSuccess @ @tanstack_react-query.js?v=0cf51c99:896
+resolve @ @tanstack_react-query.js?v=0cf51c99:455
+Promise.then
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+use-staff.ts:61 Error fetching staff: TypeError: Failed to fetch
+    at queryFn (use-staff.ts:26:32)
+queryFn @ use-staff.ts:61
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+setData @ @tanstack_react-query.js?v=0cf51c99:695
+onSuccess @ @tanstack_react-query.js?v=0cf51c99:896
+resolve @ @tanstack_react-query.js?v=0cf51c99:455
+Promise.then
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
