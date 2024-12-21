@@ -52,22 +52,24 @@ export function useStaff() {
           throw new Error('Invalid response format from server');
         }
 
-        const groomers = data.groomers.map(user => ({
-          id: user.uid || user.id,
-          email: user.email,
-          name: user.displayName || user.name,
-          role: user.role || 'staff',
-          isGroomer: user.role === 'groomer' || user.isGroomer === true || (Array.isArray(user.specialties) && user.specialties.includes('groomer')),
-          isActive: typeof user.disabled === 'boolean' ? !user.disabled : true,
-          phone: user.phoneNumber || user.phone,
-          specialties: Array.isArray(user.specialties) ? user.specialties : [],
-          branchId: user.branchId || null,
-          managedBranchIds: Array.isArray(user.managedBranchIds) ? user.managedBranchIds : [],
-          isMultiBranchEnabled: user.isMultiBranchEnabled || false,
-          primaryBranchId: user.primaryBranchId || null,
-          createdAt: user.createdAt || Date.now(),
-          updatedAt: user.updatedAt || null
-        }));
+        const groomers = data.groomers
+          .filter(user => !user.disabled)
+          .map(user => ({
+            id: user.uid || user.id,
+            email: user.email,
+            name: user.displayName || user.name,
+            role: user.role || 'staff',
+            isGroomer: true,
+            isActive: true,
+            phone: user.phoneNumber || user.phone,
+            specialties: Array.isArray(user.specialties) ? user.specialties : [],
+            branchId: user.branchId || null,
+            managedBranchIds: Array.isArray(user.managedBranchIds) ? user.managedBranchIds : [],
+            isMultiBranchEnabled: user.isMultiBranchEnabled || false,
+            primaryBranchId: user.primaryBranchId || null,
+            createdAt: user.createdAt || Date.now(),
+            updatedAt: user.updatedAt || null
+          }));
         
         return groomers;
       } catch (error) {
