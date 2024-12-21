@@ -37,8 +37,8 @@ async function initializeRoles() {
       // Ensure customer role is properly set
       [RoleTypes.customer]: {
         ...InitialRoleConfigs[RoleTypes.customer],
-        ...currentRoles[RoleTypes.customer],
-        permissions: DefaultPermissions[RoleTypes.customer],
+        permissions: ['view_appointments', 'create_appointments', 'view_services', 'view_groomers', 'view_own_appointments'],
+        description: 'Customer access for booking appointments and viewing services',
         isSystem: true,
         updatedAt: Date.now()
       }
