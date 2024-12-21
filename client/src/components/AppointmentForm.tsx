@@ -672,33 +672,35 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
             />
           </div>
 
-          <FormField
-            control={form.control}
-            name="groomerId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Groomer</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a groomer" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {availableGroomers.map((groomer: Staff) => (
-                      <SelectItem 
-                        key={groomer.id || ''} 
-                        value={groomer.id || ''}
-                      >
-                        {groomer.name || 'Unknown Groomer'}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {user?.role !== 'customer' && (
+            <FormField
+              control={form.control}
+              name="groomerId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Groomer</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a groomer" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {availableGroomers.map((groomer: Staff) => (
+                        <SelectItem 
+                          key={groomer.id || ''} 
+                          value={groomer.id || ''}
+                        >
+                          {groomer.name || 'Unknown Groomer'}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           <FormField
             control={form.control}
