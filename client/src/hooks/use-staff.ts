@@ -42,22 +42,18 @@ export function useStaff() {
           throw new Error('Invalid response format from server');
         }
 
-        return data.groomers.map(user => ({
-          id: user.uid || user.id,
-          email: user.email,
-          name: user.displayName || user.name,
-          role: user.role || 'staff',
+        const groomers = data.groomers.map(user => ({
+          id: user.id,
+          name: user.name,
           isGroomer: true,
-          isActive: true,
-          phone: user.phoneNumber || user.phone,
-          specialties: Array.isArray(user.specialties) ? user.specialties : [],
-          branchId: user.branchId || null,
-          managedBranchIds: Array.isArray(user.managedBranchIds) ? user.managedBranchIds : [],
-          isMultiBranchEnabled: user.isMultiBranchEnabled || false,
-          primaryBranchId: user.primaryBranchId || null,
-          createdAt: user.createdAt || Date.now(),
-          updatedAt: user.updatedAt || null
-        }));
+          isActive: user.isActive
+        })).filter(groomer => groomer.isActive);
+
+        if (!groomers.length) {
+          console.warn('No active groomers found in response:', data.groomers);
+        }
+
+        return groomers;
       } catch (error) {
         console.error('Error fetching staff:', error);
         throw error;
