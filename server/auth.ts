@@ -428,8 +428,21 @@ export async function setupAuth(app: Express) {
         // Get role and permissions from Firebase Realtime Database
         const db = admin.database();
         const userRoleSnapshot = await db.ref(`roles/${decodedToken.uid}`).once('value');
+        const roleData = userRoleSnapshot.val();
+
+        // If roles exist in DB but not in claims, update claims
+        if (roleData && (!decodedToken.role || decodedToken.role !== roleData.role)) {
+          await admin.auth().setCustomUserClaims(decodedToken.uid, {
+            role: roleData.role,
+            permissions: roleData.permissions || [],
+            updatedAt: Date.now()
+          });
+          // Force token refresh
+          await admin.auth().revokeRefreshTokens(decodedToken.uid);
+        }
+
         const defaultCustomerPermissions = await getDefaultPermissions(RoleTypes.customer);
-        const userRole = userRoleSnapshot.val() || { role: RoleTypes.customer, permissions: defaultCustomerPermissions };
+        const userRole = roleData || { role: RoleTypes.customer, permissions: defaultCustomerPermissions };
 
         // Get user from Firebase database or create if doesn't exist
         const dbRef = admin.database();
