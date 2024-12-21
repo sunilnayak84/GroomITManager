@@ -44,10 +44,17 @@ export default function PetsPage() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
-  const [data, setData] = useState<Pet[]>([]);
   const [optimisticPets, setOptimisticPets] = useState<{ [key: string]: Pet }>({});
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
+
+  const data = useMemo(() => {
+    if (!pets) return [];
+    return pets.map(pet => ({
+      ...pet,
+      ...(optimisticPets[pet.id] || {})
+    }));
+  }, [pets, optimisticPets]);
 
   const filteredPets = useMemo(() => {
     return data?.filter(pet => 
@@ -57,15 +64,6 @@ export default function PetsPage() {
     );
   }, [data, searchQuery]);
 
-  useEffect(() => {
-    if (pets) {
-      const mergedPets = pets.map(pet => ({
-        ...pet,
-        ...(optimisticPets[pet.id] || {})
-      }));
-      setData(mergedPets);
-    }
-  }, [pets]);
 
   const handleUpdatePet = async (formData: InsertPet) => {
     if (!selectedPet) {
