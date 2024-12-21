@@ -1,0 +1,48 @@
+CISPL SignerDigital Loaded
+client:495 [vite] connecting...
+client:614 [vite] connected.
+chunk-DRXX46FI.js?v=a7abcf71:21507 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+use-customers.ts:356 FETCH_CUSTOMERS: Starting customer fetch
+firebase.ts:26 FIREBASE_INIT: Firebase initialized successfully
+11PetsPage.tsx:63 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at PetsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/PetsPage.tsx:56:7)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=a7abcf71:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=a7abcf71:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=a7abcf71:18:5)
+    at div
+    at main
+    at main
+    at _c9 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:398:48)
+    at div
+    at div
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-AD2NKST5.js?v=a7abcf71:38:15)
+    at TooltipProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=a7abcf71:290:5)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:54:7
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:28:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:136:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=a7abcf71:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=a7abcf71:18:5)
+printWarning @ chunk-DRXX46FI.js?v=a7abcf71:521
+error @ chunk-DRXX46FI.js?v=a7abcf71:505
+checkForNestedUpdates @ chunk-DRXX46FI.js?v=a7abcf71:19633
+scheduleUpdateOnFiber @ chunk-DRXX46FI.js?v=a7abcf71:18501
+dispatchSetState @ chunk-DRXX46FI.js?v=a7abcf71:13006
+(anonymous) @ PetsPage.tsx:63
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=a7abcf71:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=a7abcf71:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=a7abcf71:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=a7abcf71:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=a7abcf71:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=a7abcf71:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=a7abcf71:19415
+(anonymous) @ chunk-DRXX46FI.js?v=a7abcf71:19296
+workLoop @ chunk-DRXX46FI.js?v=a7abcf71:197
+flushWork @ chunk-DRXX46FI.js?v=a7abcf71:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=a7abcf71:384Understand this errorAI
+use-customers.ts:382 FETCH_CUSTOMERS: Processed customer: {id: 'CA6Bd09SzND7J1UEfLRo', firebaseId: 'CA6Bd09SzND7J1UEfLRo', name: 'test user'}
+use-customers.ts:390 USE CUSTOMERS: Fetched customers {customerCount: 1, customerIds: Array(1), customerNames: Array(1)}
+use-pets.ts:116 FETCH_PETS: Completed fetching pets {totalPets: 1, pets: Array(1)}
