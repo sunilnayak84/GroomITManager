@@ -8,20 +8,26 @@ import { Plus, Pencil } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { PetForm } from "@/components/PetForm";
 import { Pet } from "@/lib/types";
+import { Badge } from "@/components/ui/badge";
 
 export default function CustomerPetsPage() {
   const { user, isLoading: userLoading } = useUser();
   const { pets, addPet, updatePet } = usePets();
   const [showPetModal, setShowPetModal] = useState(false);
-
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
 
   if (userLoading) {
-    return <div>Loading...</div>;
+    return <div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+    </div>;
   }
 
   if (!user) {
-    return <div>Please log in to view your pets.</div>;
+    return <div className="flex items-center justify-center min-h-screen">
+      <div className="text-center">
+        <h2 className="text-2xl font-semibold">Please log in to view your pets.</h2>
+      </div>
+    </div>;
   }
   
   const customerPets = pets.filter((pet) => 
@@ -51,23 +57,41 @@ export default function CustomerPetsPage() {
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="container mx-auto p-6 max-w-4xl">
+      <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">My Pets</h1>
-        <Button onClick={() => {
-          setSelectedPet(null);
-          setShowPetModal(true);
-        }} className="gap-2">
+        <Button 
+          onClick={() => {
+            setSelectedPet(null);
+            setShowPetModal(true);
+          }} 
+          className="gap-2 bg-primary hover:bg-primary/90"
+        >
           <Plus className="h-4 w-4" />
           Add Pet
         </Button>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid md:grid-cols-2 gap-6">
         {customerPets.map((pet) => (
-          <Card key={pet.id} className="hover:shadow-lg transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>{pet.name}</CardTitle>
+          <Card key={pet.id} className="hover:shadow-lg transition-all duration-300 group">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <div className="flex items-center gap-3">
+                {pet.image ? (
+                  <img 
+                    src={pet.image} 
+                    alt={pet.name} 
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <span className="text-lg font-semibold text-primary">
+                      {pet.name?.substring(0, 2).toUpperCase()}
+                    </span>
+                  </div>
+                )}
+                <CardTitle className="text-xl">{pet.name}</CardTitle>
+              </div>
               <Button
                 variant="ghost"
                 size="icon"
@@ -75,20 +99,27 @@ export default function CustomerPetsPage() {
                   setSelectedPet(pet);
                   setShowPetModal(true);
                 }}
+                className="opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 <Pencil className="h-4 w-4" />
               </Button>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
-                <p><strong>Type:</strong> {pet.type}</p>
-                <p><strong>Breed:</strong> {pet.breed}</p>
-                {pet.age && <p><strong>Age:</strong> {pet.age} years</p>}
-                {pet.weight && (
-                  <p>
-                    <strong>Weight:</strong> {pet.weight} {pet.weightUnit}
-                  </p>
-                )}
+              <div className="space-y-3">
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="secondary" className="capitalize">{pet.type}</Badge>
+                  <Badge variant="outline" className="capitalize">{pet.breed}</Badge>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div>
+                    <span className="text-muted-foreground">Age:</span>
+                    <span className="ml-2">{pet.age} years</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Weight:</span>
+                    <span className="ml-2">{pet.weight} {pet.weightUnit}</span>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
