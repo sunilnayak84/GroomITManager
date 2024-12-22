@@ -10,9 +10,17 @@ import { PetForm } from "@/components/PetForm";
 import { Pet } from "@/lib/types";
 
 export default function CustomerPetsPage() {
-  const { user } = useUser();
+  const { user, isLoading: userLoading } = useUser();
   const { pets, addPet, updatePet } = usePets();
   const [showPetModal, setShowPetModal] = useState(false);
+
+  if (userLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    return <div>Please log in to view your pets.</div>;
+  }
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   
   const customerPets = pets.filter((pet) => {
