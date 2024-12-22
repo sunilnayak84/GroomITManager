@@ -519,29 +519,27 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
                           (schedule) => schedule.dayOfWeek === dayOfWeek
                         );
                         
-                        if (!daySchedule) {
-                          toast({
-                            title: "Invalid Day Selected",
-                            description: "Working hours haven't been configured for this day. Please select another date.",
-                            variant: "destructive"
-                          });
+                        if (!daySchedule || !daySchedule.isOpen) {
                           setAvailableTimeSlots([]);
-                          field.onChange('');
                           form.setValue('time', '');
+                          if (!daySchedule) {
+                            toast({
+                              title: "Invalid Day Selected",
+                              description: "Working hours haven't been configured for this day. Please select another date.",
+                              variant: "destructive"
+                            });
+                          } else {
+                            toast({
+                              title: "Business Closed",
+                              description: `Sorry, we're closed on ${selectedDate.toLocaleDateString('en-US', { weekday: 'long' })}s. Please select another date.`,
+                              variant: "destructive"
+                            });
+                          }
                           return;
                         }
                         
-                        if (!daySchedule.isOpen) {
-                          toast({
-                            title: "Business Closed",
-                            description: `Sorry, we're closed on ${selectedDate.toLocaleDateString('en-US', { weekday: 'long' })}s. Please select another date.`,
-                            variant: "destructive"
-                          });
-                          setAvailableTimeSlots([]);
-                          field.onChange('');
-                          form.setValue('time', '');
-                          return;
-                        }
+                        // Update form field with ISO date string if validation passes
+                        field.onChange(e.target.value);
                         
                         // Generate time slots with default duration if no service selected
                         const duration = selectedService?.duration || 30;
