@@ -390,12 +390,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
           description: "Appointment scheduled successfully",
         });
         
-        // Close form immediately after successful appointment creation
-        form.reset();
-        setValidationError(null);
-        setSelectedService(null);
-        setAvailableTimeSlots([]);
-        setOpen(false);
+        closeDialog();
       } catch (error) {
         console.error('Failed to schedule appointment:', error);
         const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
@@ -432,8 +427,17 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
     }
   }, [open]);
 
+  const closeDialog = () => {
+    form.reset();
+    setValidationError(null);
+    setSelectedService(null);
+    setAvailableTimeSlots([]);
+    setIsSubmitting(false);
+    setOpen(false);
+  };
+
   return (
-    <DialogContent className="sm:max-w-[600px]" onEscapeKeyDown={() => setOpen(false)} onInteractOutside={() => setOpen(false)}>
+    <DialogContent className="sm:max-w-[600px]">
       <DialogHeader>
         <DialogTitle>Schedule Appointment</DialogTitle>
         <DialogDescription>
