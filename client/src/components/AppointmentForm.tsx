@@ -384,6 +384,8 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       };
 
       const appointmentId = await addAppointment(appointmentData);
+      const appointmentTime = new Date(appointmentData.date);
+      const formattedTime = format(appointmentTime, 'PPp');
       
       // Create reminder notifications
       try {
@@ -422,8 +424,6 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       } catch (error) {
         console.error('Error creating notifications:', error);
       }
-      const appointmentTime = new Date(appointmentData.date);
-      const formattedTime = format(appointmentTime, 'PPp');
       
       try {
         if (user?.id) {
