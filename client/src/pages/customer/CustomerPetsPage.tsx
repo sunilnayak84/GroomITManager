@@ -35,10 +35,15 @@ export default function CustomerPetsPage() {
     pet.owner?.email === user.email
   );
 
+  const { hasPermission } = useRole();
   const handleAddPet = async (formData: any) => {
     try {
       if (!user?.uid || !user?.email) {
         throw new Error('User not authenticated');
+      }
+
+      if (!hasPermission('manage_own_pets')) {
+        throw new Error('You do not have permission to add pets');
       }
       
       const petData = {
@@ -54,7 +59,8 @@ export default function CustomerPetsPage() {
       console.log('Submitting pet with data:', petData);
       const result = await addPet(petData);
       
-      if (result && result.success) {
+      if (result) {
+        console.log('Pet added successfully:', result);
         toast({
           title: "Success",
           description: "Pet added successfully"
