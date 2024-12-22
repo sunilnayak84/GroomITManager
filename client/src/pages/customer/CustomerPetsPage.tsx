@@ -24,17 +24,7 @@ export default function CustomerPetsPage() {
     return <div>Please log in to view your pets.</div>;
   }
   
-  const customerPets = pets.filter((pet) => {
-    const isOwner = pet.customerId === user.uid || pet.owner?.id === user.uid;
-    console.log('Pet filtering debug:', {
-      petId: pet.id,
-      petCustomerId: pet.customerId,
-      userUid: user.uid,
-      ownerUid: pet.owner?.id,
-      isMatch: isOwner
-    });
-    return isOwner;
-  });
+  const customerPets = pets.filter((pet) => pet.customerId === user.uid);
 
   const handleAddPet = async (formData: any) => {
     try {
