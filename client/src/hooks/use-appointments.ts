@@ -117,14 +117,13 @@ export function useAppointments() {
                 return null;
               }
 
-              try {
-                const petDocRef = doc(db, 'pets', petId);
-                const petDoc = await getDoc(petDocRef);
-                if (!petDoc.exists()) {
-                  console.error('FETCH_APPOINTMENTS: Pet not found for appointment:', appointmentDoc.id);
-                  errorCount++;
-                  return null;
-                }
+              const petDocRef = doc(db, 'pets', petId);
+              const petDoc = await getDoc(petDocRef);
+              if (!petDoc.exists()) {
+                console.error('FETCH_APPOINTMENTS: Pet not found for appointment:', appointmentDoc.id);
+                errorCount++;
+                return null;
+              }
 
 
             // Get pet data
