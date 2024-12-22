@@ -102,11 +102,20 @@ export function useAppointments() {
             try {
               const rawData = appointmentDoc.data() as FirestoreAppointmentData;
               
-              if (!rawData.petId) {
-                console.error('FETCH_APPOINTMENTS: Missing required fields in appointment:', appointmentDoc.id);
+              try {
+                if (!rawData || !rawData.petId) {
+                  throw new Error('Missing required fields in appointment');
+                }
+
+                // Get pet data
+                const petDocRef = doc(db, 'pets', String(rawData.petId));
+                const petDoc = await getDoc(petDocRef);
+              } catch (error) {
+                console.error('FETCH_APPOINTMENTS: Error processing appointment:', appointmentDoc.id, error);
                 errorCount++;
-                return;
+                return null;
               }
+
 
             // Get pet data
             let petData = null;
