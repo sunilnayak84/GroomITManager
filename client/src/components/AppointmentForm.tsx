@@ -385,14 +385,43 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
 
       const appointmentId = await addAppointment(appointmentData);
       
-      // Reset form and close immediately after successful creation
-      form.reset();
-      setValidationError(null);
-      setSelectedService(null);
-      setAvailableTimeSlots([]);
-      setOpen(false);
+      // Create reminder notifications
+      try {
+        if (user?.id) {
+          await createNotification({
+            userId: user.id,
+            appointmentId,
+            type: 'reminder',
+            title: 'Upcoming Appointment Reminder',
+            message: `You have a grooming appointment scheduled for ${formattedTime}. Please arrive 10 minutes before your scheduled time.`
+          });
+        }
 
-      // Create reminder notifications after form is closed
+        if (data.groomerId) {
+          await createNotification({
+            userId: data.groomerId,
+            appointmentId,
+            type: 'reminder',
+            title: 'New Appointment Scheduled',
+            message: `You have a new grooming appointment scheduled for ${formattedTime}.`
+          });
+        }
+
+        // Reset form and close after everything is done
+        form.reset();
+        setValidationError(null);
+        setSelectedService(null);
+        setAvailableTimeSlots([]);
+        setOpen(false);
+
+        // Show success message
+        toast({
+          title: "Success",
+          description: "Appointment scheduled successfully",
+        });
+      } catch (error) {
+        console.error('Error creating notifications:', error);
+      }
       const appointmentTime = new Date(appointmentData.date);
       const formattedTime = format(appointmentTime, 'PPp');
       
