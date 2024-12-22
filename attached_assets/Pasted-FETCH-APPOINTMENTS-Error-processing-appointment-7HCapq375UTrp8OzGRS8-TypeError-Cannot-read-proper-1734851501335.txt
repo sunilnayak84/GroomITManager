@@ -1,0 +1,320 @@
+FETCH_APPOINTMENTS: Error processing appointment: 7HCapq375UTrp8OzGRS8 TypeError: Cannot read properties of null (reading 'indexOf')
+    at _ResourcePath.fromString (firebase_firestore.js?v=0cf51c99:3224:13)
+    at doc (firebase_firestore.js?v=0cf51c99:15481:28)
+    at use-appointments.ts:197:45
+    at async Promise.all (index 0)
+    at async queryFn (use-appointments.ts:100:9)
+(anonymous) @ use-appointments.ts:291
+await in (anonymous)
+queryFn @ use-appointments.ts:101
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+setData @ @tanstack_react-query.js?v=0cf51c99:695
+onSuccess @ @tanstack_react-query.js?v=0cf51c99:896
+resolve @ @tanstack_react-query.js?v=0cf51c99:455
+Promise.then
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+use-appointments.ts:291 FETCH_APPOINTMENTS: Error processing appointment: BSDH7byGKrmdLOCBJOPW TypeError: Cannot read properties of null (reading 'indexOf')
+    at _ResourcePath.fromString (firebase_firestore.js?v=0cf51c99:3224:13)
+    at doc (firebase_firestore.js?v=0cf51c99:15481:28)
+    at use-appointments.ts:197:45
+    at async Promise.all (index 1)
+    at async queryFn (use-appointments.ts:100:9)
+(anonymous) @ use-appointments.ts:291
+await in (anonymous)
+queryFn @ use-appointments.ts:101
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+setData @ @tanstack_react-query.js?v=0cf51c99:695
+onSuccess @ @tanstack_react-query.js?v=0cf51c99:896
+resolve @ @tanstack_react-query.js?v=0cf51c99:455
+Promise.then
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+use-appointments.ts:291 FETCH_APPOINTMENTS: Error processing appointment: OsV18q4VjqGZhsKtwsdV TypeError: Cannot read properties of null (reading 'indexOf')
+    at _ResourcePath.fromString (firebase_firestore.js?v=0cf51c99:3224:13)
+    at doc (firebase_firestore.js?v=0cf51c99:15481:28)
+    at use-appointments.ts:197:45
+    at async Promise.all (index 2)
+    at async queryFn (use-appointments.ts:100:9)
+(anonymous) @ use-appointments.ts:291
+await in (anonymous)
+queryFn @ use-appointments.ts:101
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+setData @ @tanstack_react-query.js?v=0cf51c99:695
+onSuccess @ @tanstack_react-query.js?v=0cf51c99:896
+resolve @ @tanstack_react-query.js?v=0cf51c99:455
+Promise.then
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+use-appointments.ts:291 FETCH_APPOINTMENTS: Error processing appointment: jbQefbLbUGGQf0QKlWFA TypeError: Cannot read properties of null (reading 'indexOf')
+    at _ResourcePath.fromString (firebase_firestore.js?v=0cf51c99:3224:13)
+    at doc (firebase_firestore.js?v=0cf51c99:15481:28)
+    at use-appointments.ts:197:45
+    at async Promise.all (index 3)
+    at async queryFn (use-appointments.ts:100:9)
+(anonymous) @ use-appointments.ts:291
+await in (anonymous)
+queryFn @ use-appointments.ts:101
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+setData @ @tanstack_react-query.js?v=0cf51c99:695
+onSuccess @ @tanstack_react-query.js?v=0cf51c99:896
+resolve @ @tanstack_react-query.js?v=0cf51c99:455
+Promise.then
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+use-appointments.ts:291 FETCH_APPOINTMENTS: Error processing appointment: p8fXrZbL1FqPLXujxeSf TypeError: Cannot read properties of null (reading 'indexOf')
+    at _ResourcePath.fromString (firebase_firestore.js?v=0cf51c99:3224:13)
+    at doc (firebase_firestore.js?v=0cf51c99:15481:28)
+    at use-appointments.ts:197:45
+    at async Promise.all (index 4)
+    at async queryFn (use-appointments.ts:100:9)
+(anonymous) @ use-appointments.ts:291
+await in (anonymous)
+queryFn @ use-appointments.ts:101
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+setData @ @tanstack_react-query.js?v=0cf51c99:695
+onSuccess @ @tanstack_react-query.js?v=0cf51c99:896
+resolve @ @tanstack_react-query.js?v=0cf51c99:455
+Promise.then
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
