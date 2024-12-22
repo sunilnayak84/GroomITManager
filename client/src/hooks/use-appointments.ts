@@ -102,19 +102,29 @@ export function useAppointments() {
             try {
               const rawData = appointmentDoc.data() as FirestoreAppointmentData;
               
-              try {
-                if (!rawData || !rawData.petId) {
-                  throw new Error('Missing required fields in appointment');
-                }
-
-                // Get pet data
-                const petDocRef = doc(db, 'pets', String(rawData.petId));
-                const petDoc = await getDoc(petDocRef);
-              } catch (error) {
-                console.error('FETCH_APPOINTMENTS: Error processing appointment:', appointmentDoc.id, error);
+              // Validate required fields
+              if (!rawData) {
+                console.error('FETCH_APPOINTMENTS: Missing raw data for appointment:', appointmentDoc.id);
                 errorCount++;
                 return null;
               }
+
+              // Ensure petId exists and is a string
+              const petId = rawData.petId ? String(rawData.petId) : null;
+              if (!petId) {
+                console.error('FETCH_APPOINTMENTS: Invalid petId for appointment:', appointmentDoc.id);
+                errorCount++;
+                return null;
+              }
+
+              try {
+                const petDocRef = doc(db, 'pets', petId);
+                const petDoc = await getDoc(petDocRef);
+                if (!petDoc.exists()) {
+                  console.error('FETCH_APPOINTMENTS: Pet not found for appointment:', appointmentDoc.id);
+                  errorCount++;
+                  return null;
+                }
 
 
             // Get pet data
@@ -205,7 +215,8 @@ export function useAppointments() {
               name: 'Unknown Groomer'
             };
 
-            const groomerDoc = await getDoc(doc(db, 'users', rawData.groomerId));
+            const groomerId = rawData.groomerId ? String(rawData.groomerId) : null;
+            const groomerDoc = groomerId ? await getDoc(doc(db, 'users', groomerId)) : null;
             if (groomerDoc.exists()) {
               const rawGroomerData = groomerDoc.data();
               groomerData = {
