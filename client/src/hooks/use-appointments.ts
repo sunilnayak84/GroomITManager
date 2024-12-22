@@ -215,14 +215,16 @@ export function useAppointments() {
             };
 
             const groomerId = rawData.groomerId ? String(rawData.groomerId) : null;
-            const groomerDoc = groomerId ? await getDoc(doc(db, 'users', groomerId)) : null;
-            if (groomerDoc.exists()) {
-              const rawGroomerData = groomerDoc.data();
-              groomerData = {
-                name: rawGroomerData.name || 'Unknown Groomer'
-              };
-            } else {
-              console.error('Groomer not found for ID:', rawData.groomerId);
+            try {
+              const groomerDoc = groomerId ? await getDoc(doc(db, 'users', groomerId)) : null;
+              if (groomerDoc && groomerDoc.exists()) {
+                const rawGroomerData = groomerDoc.data();
+                groomerData = {
+                  name: rawGroomerData.name || 'Unknown Groomer'
+                };
+              }
+            } catch (error) {
+              console.error('Error fetching groomer data:', error);
             }
 
             // Get customer data
