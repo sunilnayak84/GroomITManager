@@ -12,9 +12,9 @@ export default function CustomerAppointmentsPage() {
   const { user } = useUser();
   const { data: appointments } = useAppointments();
   
-  const customerAppointments = appointments?.filter(
-    (appointment) => appointment.pet.owner?.email === user?.email
-  );
+  const customerAppointments = appointments
+    ?.filter((appointment) => appointment.pet.owner?.email === user?.email)
+    ?.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
     <div className="container mx-auto p-6 space-y-6">

@@ -387,6 +387,13 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       const appointmentTime = new Date(appointmentData.date);
       const formattedTime = format(appointmentTime, 'PPp');
       
+      // Reset form and close dialog first
+      form.reset();
+      setValidationError(null);
+      setSelectedService(null);
+      setAvailableTimeSlots([]);
+      setOpen(false);
+      
       // Create reminder notifications
       try {
         if (user?.id) {
