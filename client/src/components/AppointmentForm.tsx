@@ -390,41 +390,27 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       const formattedTime = format(appointmentTime, 'PPp');
       
       try {
-        const notificationPromises = [];
-        
-        // Add customer notification if user exists
         if (user?.id) {
-          notificationPromises.push(
-            createNotification({
-              userId: user.id,
-              appointmentId,
-              type: 'reminder',
-              title: 'Upcoming Appointment Reminder',
-              message: `You have a grooming appointment scheduled for ${formattedTime}. Please arrive 10 minutes before your scheduled time.`
-            }).catch(error => {
-              console.error('Error creating customer notification:', error);
-              return null;
-            })
-          );
-        }
-        
-        // Add groomer notification if groomer exists
-        if (data.groomerId) {
-          notificationPromises.push(
-            createNotification({
-              userId: data.groomerId,
-              appointmentId,
-              type: 'reminder',
-              title: 'New Appointment Scheduled',
-              message: `You have a new grooming appointment scheduled for ${formattedTime}.`
-            }).catch(error => {
-              console.error('Error creating groomer notification:', error);
-              return null;
-            })
-          );
+          // Create customer notification
+          await createNotification({
+            userId: user.id,
+            appointmentId,
+            type: 'reminder',
+            title: 'Upcoming Appointment Reminder',
+            message: `You have a grooming appointment scheduled for ${formattedTime}. Please arrive 10 minutes before your scheduled time.`
+          });
         }
 
-        await Promise.all(notificationPromises);
+        // Only create groomer notification if groomer is assigned
+        if (data.groomerId) {
+          await createNotification({
+            userId: data.groomerId,
+            appointmentId,
+            type: 'reminder',
+            title: 'New Appointment Scheduled',
+            message: `You have a new grooming appointment scheduled for ${formattedTime}.`
+          });
+        }
       } catch (error) {
         console.error('Error creating notifications:', error);
       } finally {

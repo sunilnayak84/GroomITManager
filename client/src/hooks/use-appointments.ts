@@ -102,7 +102,7 @@ export function useAppointments() {
             try {
               const rawData = appointmentDoc.data() as FirestoreAppointmentData;
               
-              if (!rawData.petId || !rawData.groomerId) {
+              if (!rawData.petId) {
                 console.error('FETCH_APPOINTMENTS: Missing required fields in appointment:', appointmentDoc.id);
                 errorCount++;
                 return;
