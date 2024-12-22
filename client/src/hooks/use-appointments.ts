@@ -125,10 +125,16 @@ export function useAppointments() {
                 throw new Error('Invalid pet ID');
               }
               
-              const petDocRef = doc(db, 'pets', rawData.petId);
-              const petDoc = await getDoc(petDocRef);
-              
-              if (petDoc.exists()) {
+              if (!rawData.petId) {
+                console.error('Missing petId for appointment:', appointmentDoc.id);
+                return null;
+              }
+
+              try {
+                const petDocRef = doc(db, 'pets', String(rawData.petId));
+                const petDoc = await getDoc(petDocRef);
+                
+                if (petDoc.exists()) {
                 const rawPetData = petDoc.data() as any;
                 let customerData = null;
                 
@@ -166,6 +172,11 @@ export function useAppointments() {
               }
             } catch (error) {
               console.error('Error fetching pet doc:', error);
+              return null;
+            }
+          } catch (error) {
+            console.error('Error processing pet data:', error);
+            return null;
             }
 
             if (!petData) {
