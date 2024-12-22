@@ -63,9 +63,15 @@ export function usePets() {
   const fetchPets = async () => {
     try {
       console.log('FETCH_PETS: Starting to fetch pets');
-      const batchSize = 10;
-      const q = query(petsCollection, limit(batchSize));
+      const batchSize = 50; // Increased to ensure we get all pets
+      const q = query(petsCollection);
       const querySnapshot = await getDocs(q);
+      
+      // Debug log
+      console.log('FETCH_PETS: Raw pets data:', querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })));
       
       if (querySnapshot.empty) {
         console.log('FETCH_PETS: No pets found in collection');

@@ -15,9 +15,17 @@ export default function CustomerPetsPage() {
   const [showPetModal, setShowPetModal] = useState(false);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   
-  const customerPets = pets.filter(
-    (pet) => pet.customerId === user?.uid || pet.owner?.id === user?.uid
-  );
+  const customerPets = pets.filter((pet) => {
+    const isOwner = pet.customerId === user?.uid || pet.owner?.id === user?.uid;
+    console.log('Pet filtering debug:', {
+      petId: pet.id,
+      petCustomerId: pet.customerId,
+      userUid: user?.uid,
+      ownerUid: pet.owner?.id,
+      isMatch: isOwner
+    });
+    return isOwner;
+  });
 
   const handleAddPet = async (formData: any) => {
     try {
