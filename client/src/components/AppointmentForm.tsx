@@ -433,7 +433,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
   }, [open]);
 
   return (
-    <DialogContent>
+    <DialogContent className="sm:max-w-[600px]" onEscapeKeyDown={() => setOpen(false)} onInteractOutside={() => setOpen(false)}>
       <DialogHeader>
         <DialogTitle>Schedule Appointment</DialogTitle>
         <DialogDescription>
