@@ -40,13 +40,8 @@ export default function CustomerPetsPage() {
       if (!user?.uid || !user?.email) {
         throw new Error('User not authenticated');
       }
-
-      console.log('Submitting pet with data:', {
-        ...formData,
-        customerId: user.uid
-      });
       
-      const result = await addPet({
+      const petData = {
         ...formData,
         customerId: user.uid,
         owner: {
@@ -54,9 +49,16 @@ export default function CustomerPetsPage() {
           name: user.displayName || user.email.split('@')[0],
           email: user.email
         }
-      });
-
-      if (result && !('isDuplicate' in result)) {
+      };
+      
+      console.log('Submitting pet with data:', petData);
+      const result = await addPet(petData);
+      
+      if (result && result.success) {
+        toast({
+          title: "Success",
+          description: "Pet added successfully"
+        });
         setShowPetModal(false);
         setSelectedPet(null);
       }
