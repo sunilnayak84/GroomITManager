@@ -384,6 +384,14 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       };
 
       const appointmentId = await addAppointment(appointmentData);
+      
+      // Close form immediately after successful appointment creation
+      form.reset();
+      setValidationError(null);
+      setSelectedService(null);
+      setAvailableTimeSlots([]);
+      setOpen(false);
+
       const appointmentTime = new Date(appointmentData.date);
       const formattedTime = format(appointmentTime, 'PPp');
       
@@ -415,13 +423,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
           description: "Appointment scheduled successfully",
         });
 
-        // Reset form and close dialog only after everything is done
-        form.reset();
-        setValidationError(null);
-        setSelectedService(null);
-        setAvailableTimeSlots([]);
-        setOpen(false);
-      } catch (error) {
+        } catch (error) {
         console.error('Error creating notifications:', error);
         toast({
           variant: "destructive",
