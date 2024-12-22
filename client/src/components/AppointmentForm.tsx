@@ -383,50 +383,63 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         status: "pending" as const,
       };
 
-      const appointmentId = await addAppointment(appointmentData);
-      const appointmentTime = new Date(appointmentData.date);
-      const formattedTime = format(appointmentTime, 'PPp');
-      
       try {
-        // Create reminder notifications
-        if (user?.id) {
-          await createNotification({
-            userId: user.id,
-            appointmentId,
-            type: 'reminder',
-            title: 'Upcoming Appointment Reminder',
-            message: `You have a grooming appointment scheduled for ${formattedTime}. Please arrive 10 minutes before your scheduled time.`
-          });
-        }
+        const appointmentId = await addAppointment(appointmentData);
+        const appointmentTime = new Date(appointmentData.date);
+        const formattedTime = format(appointmentTime, 'PPp');
+        
+        try {
+          // Create reminder notifications
+          if (user?.id) {
+            await createNotification({
+              userId: user.id,
+              appointmentId,
+              type: 'reminder',
+              title: 'Upcoming Appointment Reminder',
+              message: `You have a grooming appointment scheduled for ${formattedTime}. Please arrive 10 minutes before your scheduled time.`
+            });
+          }
 
-        if (data.groomerId) {
-          await createNotification({
-            userId: data.groomerId,
-            appointmentId,
-            type: 'reminder',
-            title: 'New Appointment Scheduled',
-            message: `You have a new grooming appointment scheduled for ${formattedTime}.`
-          });
-        }
+          if (data.groomerId) {
+            await createNotification({
+              userId: data.groomerId,
+              appointmentId,
+              type: 'reminder',
+              title: 'New Appointment Scheduled',
+              message: `You have a new grooming appointment scheduled for ${formattedTime}.`
+            });
+          }
 
-        toast({
-          title: "Success",
-          description: "Appointment scheduled successfully",
-        });
+          toast({
+            title: "Success",
+            description: "Appointment scheduled successfully",
+          });
+        } catch (error) {
+          console.error('Error creating notifications:', error);
+          toast({
+            variant: "destructive",
+            title: "Warning",
+            description: "Appointment created but failed to send notifications",
+          });
+        } finally {
+          // Always close the form after appointment creation
+          form.reset();
+          setValidationError(null);
+          setSelectedService(null);
+          setAvailableTimeSlots([]);
+          setOpen(false);
+        }
       } catch (error) {
-        console.error('Error creating notifications:', error);
+        console.error('Failed to schedule appointment:', error);
+        const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
+        setValidationError(errorMessage);
         toast({
           variant: "destructive",
-          title: "Warning",
-          description: "Appointment created but failed to send notifications",
+          title: "Error",
+          description: errorMessage,
         });
       } finally {
-        // Always close the form after appointment creation
-        form.reset();
-        setValidationError(null);
-        setSelectedService(null);
-        setAvailableTimeSlots([]);
-        setOpen(false);
+        setIsSubmitting(false);
       }
     } catch (error) {
       console.error('Failed to schedule appointment:', error);
