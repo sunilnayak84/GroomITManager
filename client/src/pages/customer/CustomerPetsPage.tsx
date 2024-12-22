@@ -24,7 +24,10 @@ export default function CustomerPetsPage() {
     return <div>Please log in to view your pets.</div>;
   }
   
-  const customerPets = pets.filter((pet) => pet.customerId === user.uid);
+  const customerPets = pets.filter((pet) => 
+    pet.customerId === user.uid || 
+    pet.owner?.email === user.email
+  );
 
   const handleAddPet = async (formData: any) => {
     try {
