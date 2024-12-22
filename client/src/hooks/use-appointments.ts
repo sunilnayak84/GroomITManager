@@ -109,12 +109,17 @@ export function useAppointments() {
               }
 
             // Get pet data
-            const petDocRef = doc(db, 'pets', rawData.petId);
-            const petDoc = await getDoc(petDocRef);
-            
             let petData = null;
-
-            if (petDoc.exists()) {
+            
+            try {
+              if (!rawData.petId) {
+                throw new Error('Invalid pet ID');
+              }
+              
+              const petDocRef = doc(db, 'pets', rawData.petId);
+              const petDoc = await getDoc(petDocRef);
+              
+              if (petDoc.exists()) {
               const rawPetData = petDoc.data() as any;
               let customerData = null;
               if (rawPetData.customerId) {
@@ -122,8 +127,9 @@ export function useAppointments() {
                 customerData = customerDoc.exists() ? customerDoc.data() : null;
               }
 
-              petData = {
-                id: rawPetData.id || rawData.petId,
+              try {
+                petData = {
+                  id: rawPetData.id || rawData.petId,
                 firebaseId: rawPetData.firebaseId,
                 name: rawPetData.name,
                 type: rawPetData.type || 'dog',
@@ -144,6 +150,11 @@ export function useAppointments() {
                   email: customerData.email
                 } : null
               };
+            } catch (error) {
+                console.error('Error processing pet data:', error);
+              }
+            } catch (error) {
+              console.error('Error fetching pet doc:', error);
             }
 
             if (!petData) {
