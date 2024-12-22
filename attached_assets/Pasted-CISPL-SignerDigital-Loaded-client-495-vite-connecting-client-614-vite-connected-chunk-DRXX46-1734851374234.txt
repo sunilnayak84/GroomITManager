@@ -1,0 +1,77 @@
+CISPL SignerDigital Loaded
+client:495 [vite] connecting...
+client:614 [vite] connected.
+chunk-DRXX46FI.js?v=0cf51c99:21507 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+firebase.ts:26 FIREBASE_INIT: Firebase initialized successfully
+use-services.ts:92 FETCH_SERVICES: Completed fetching services Object
+use-pets.ts:116 FETCH_PETS: Completed fetching pets Objectpets: Array(1)0: {id: 'eo7yEF7BKT5V9SLAo8WE', firebaseId: null, name: 'TestPet', type: 'dog', breed: 'Beagle', …}length: 1[[Prototype]]: Array(0)totalPets: 1[[Prototype]]: Objectconstructor: ƒ Object()hasOwnProperty: ƒ hasOwnProperty()isPrototypeOf: ƒ isPrototypeOf()propertyIsEnumerable: ƒ propertyIsEnumerable()toLocaleString: ƒ toLocaleString()toString: ƒ toString()valueOf: ƒ valueOf()__defineGetter__: ƒ __defineGetter__()__defineSetter__: ƒ __defineSetter__()__lookupGetter__: ƒ __lookupGetter__()__lookupSetter__: ƒ __lookupSetter__()__proto__: (...)get __proto__: ƒ __proto__()set __proto__: ƒ __proto__()
+use-appointments.ts:282 FETCH_APPOINTMENTS: Error processing appointment: 7HCapq375UTrp8OzGRS8 TypeError: Cannot read properties of null (reading 'indexOf')
+    at _ResourcePath.fromString (firebase_firestore.js?v=0cf51c99:3224:13)
+    at doc (firebase_firestore.js?v=0cf51c99:15481:28)
+    at use-appointments.ts:188:45
+    at async Promise.all (index 0)
+    at async queryFn (use-appointments.ts:100:9)
+(anonymous) @ use-appointments.ts:282Understand this errorAI
+use-appointments.ts:282 FETCH_APPOINTMENTS: Error processing appointment: BSDH7byGKrmdLOCBJOPW TypeError: Cannot read properties of null (reading 'indexOf')
+    at _ResourcePath.fromString (firebase_firestore.js?v=0cf51c99:3224:13)
+    at doc (firebase_firestore.js?v=0cf51c99:15481:28)
+    at use-appointments.ts:188:45
+    at async Promise.all (index 1)
+    at async queryFn (use-appointments.ts:100:9)
+(anonymous) @ use-appointments.ts:282Understand this errorAI
+use-appointments.ts:282 FETCH_APPOINTMENTS: Error processing appointment: OsV18q4VjqGZhsKtwsdV TypeError: Cannot read properties of null (reading 'indexOf')
+    at _ResourcePath.fromString (firebase_firestore.js?v=0cf51c99:3224:13)
+    at doc (firebase_firestore.js?v=0cf51c99:15481:28)
+    at use-appointments.ts:188:45
+    at async Promise.all (index 2)
+    at async queryFn (use-appointments.ts:100:9)
+(anonymous) @ use-appointments.ts:282Understand this errorAI
+use-appointments.ts:282 FETCH_APPOINTMENTS: Error processing appointment: jbQefbLbUGGQf0QKlWFA TypeError: Cannot read properties of null (reading 'indexOf')
+    at _ResourcePath.fromString (firebase_firestore.js?v=0cf51c99:3224:13)
+    at doc (firebase_firestore.js?v=0cf51c99:15481:28)
+    at use-appointments.ts:188:45
+    at async Promise.all (index 3)
+    at async queryFn (use-appointments.ts:100:9)
+(anonymous) @ use-appointments.ts:282Understand this errorAI
+use-appointments.ts:289 FETCH_APPOINTMENTS: Processed 5 appointments. Success: 1, Errors: 4
+use-appointments.ts:301 Adding appointment with data: ObjectbranchId: "1"date: "2024-12-23T05:30:00.000Z"groomerId: nullnotes: ""petId: "eo7yEF7BKT5V9SLAo8WE"productsUsed: nullservices: Array(1)0: "qs4WniktDLLArQJQOOqi"length: 1[[Prototype]]: Array(0)status: "pending"time: "11:00"totalDuration: 30totalPrice: 299[[Prototype]]: Objectconstructor: ƒ Object()hasOwnProperty: ƒ hasOwnProperty()isPrototypeOf: ƒ isPrototypeOf()propertyIsEnumerable: ƒ propertyIsEnumerable()toLocaleString: ƒ toLocaleString()toString: ƒ toString()valueOf: ƒ valueOf()__defineGetter__: ƒ __defineGetter__()__defineSetter__: ƒ __defineSetter__()__lookupGetter__: ƒ __lookupGetter__()__lookupSetter__: ƒ __lookupSetter__()__proto__: (...)get __proto__: ƒ __proto__()set __proto__: ƒ __proto__()
+use-notifications.ts:46 Notification created: VvZN3KzOp0ZeaGA9DnYs
+use-appointments.ts:282 FETCH_APPOINTMENTS: Error processing appointment: 7HCapq375UTrp8OzGRS8 TypeError: Cannot read properties of null (reading 'indexOf')
+    at _ResourcePath.fromString (firebase_firestore.js?v=0cf51c99:3224:13)
+    at doc (firebase_firestore.js?v=0cf51c99:15481:28)
+    at use-appointments.ts:188:45
+    at async Promise.all (index 0)
+    at async queryFn (use-appointments.ts:100:9)
+(anonymous) @ use-appointments.ts:282Understand this errorAI
+use-appointments.ts:282 FETCH_APPOINTMENTS: Error processing appointment: BSDH7byGKrmdLOCBJOPW TypeError: Cannot read properties of null (reading 'indexOf')
+    at _ResourcePath.fromString (firebase_firestore.js?v=0cf51c99:3224:13)
+    at doc (firebase_firestore.js?v=0cf51c99:15481:28)
+    at use-appointments.ts:188:45
+    at async Promise.all (index 1)
+    at async queryFn (use-appointments.ts:100:9)
+(anonymous) @ use-appointments.ts:282Understand this errorAI
+use-appointments.ts:282 FETCH_APPOINTMENTS: Error processing appointment: OsV18q4VjqGZhsKtwsdV TypeError: Cannot read properties of null (reading 'indexOf')
+    at _ResourcePath.fromString (firebase_firestore.js?v=0cf51c99:3224:13)
+    at doc (firebase_firestore.js?v=0cf51c99:15481:28)
+    at use-appointments.ts:188:45
+    at async Promise.all (index 2)
+    at async queryFn (use-appointments.ts:100:9)
+(anonymous) @ use-appointments.ts:282Understand this errorAI
+use-appointments.ts:282 FETCH_APPOINTMENTS: Error processing appointment: jbQefbLbUGGQf0QKlWFA TypeError: Cannot read properties of null (reading 'indexOf')
+    at _ResourcePath.fromString (firebase_firestore.js?v=0cf51c99:3224:13)
+    at doc (firebase_firestore.js?v=0cf51c99:15481:28)
+    at use-appointments.ts:188:45
+    at async Promise.all (index 3)
+    at async queryFn (use-appointments.ts:100:9)
+(anonymous) @ use-appointments.ts:282Understand this errorAI
+use-appointments.ts:282 FETCH_APPOINTMENTS: Error processing appointment: p8fXrZbL1FqPLXujxeSf TypeError: Cannot read properties of null (reading 'indexOf')
+    at _ResourcePath.fromString (firebase_firestore.js?v=0cf51c99:3224:13)
+    at doc (firebase_firestore.js?v=0cf51c99:15481:28)
+    at use-appointments.ts:188:45
+    at async Promise.all (index 4)
+    at async queryFn (use-appointments.ts:100:9)
+(anonymous) @ use-appointments.ts:282Understand this errorAI
+use-appointments.ts:289 FETCH_APPOINTMENTS: Processed 6 appointments. Success: 1, Errors: 5
