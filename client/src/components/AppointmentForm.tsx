@@ -413,21 +413,21 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         }
       } catch (error) {
         console.error('Error creating notifications:', error);
-      } finally {
-        // Reset form state
-        form.reset();
-        setValidationError(null);
-        setSelectedService(null);
-        setAvailableTimeSlots([]);
-        
-        // Show success message and close form
-        toast({
-          title: "Success",
-          description: "Appointment scheduled successfully",
-        });
-        
-        setOpen(false);
       }
+
+      // Reset form state
+      form.reset();
+      setValidationError(null);
+      setSelectedService(null);
+      setAvailableTimeSlots([]);
+      
+      // Show success message and close form
+      toast({
+        title: "Success",
+        description: "Appointment scheduled successfully",
+      });
+      
+      setOpen(false);
     } catch (error) {
       console.error('Failed to schedule appointment:', error);
       const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
