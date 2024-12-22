@@ -312,30 +312,14 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         throw new Error("Please select both pet and at least one service");
       }
 
-      // For customers, auto-assign an available groomer
-      if (user?.role === 'customer') {
-        if (!availableGroomers || availableGroomers.length === 0) {
-          throw new Error("No groomers found in the system");
-        }
-
-        const formDate = form.getValues('date');
-        const formTime = form.getValues('time');
-        const appointmentDateTime = new Date(`${formDate}T${formTime}`);
-        const duration = form.getValues('totalDuration') || 30;
-        
-        // Try to find an available groomer
-        for (const groomer of availableGroomers) {
-          if (isTimeSlotAvailable(appointmentDateTime, groomer.id, duration)) {
-            data.groomerId = groomer.id;
-            break;
-          }
-        }
-        
-        if (!data.groomerId) {
-          throw new Error("No groomers available for the selected time slot");
-        }
-      } else if (!data.groomerId) {
+      // For staff members, groomer selection is required
+      if (user?.role !== 'customer' && !data.groomerId) {
         throw new Error("Please select a groomer");
+      }
+
+      // For customers, groomer is optional
+      if (user?.role === 'customer') {
+        data.groomerId = null; // Make it explicitly null for customer bookings
       }
 
       const formDate = form.getValues('date');

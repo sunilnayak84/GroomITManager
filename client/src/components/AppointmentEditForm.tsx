@@ -275,7 +275,11 @@ export default function AppointmentEditForm({ appointment, setOpen, open }: Appo
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Groomer</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value} disabled={appointment.status === 'completed' || appointment.status === 'cancelled'}>
+                <Select 
+                  onValueChange={field.onChange} 
+                  value={field.value} 
+                  disabled={appointment.status === 'completed' || appointment.status === 'cancelled'}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a groomer" />

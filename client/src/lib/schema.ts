@@ -140,7 +140,7 @@ export type FirestoreAppointment = z.infer<typeof appointmentSchema>;
 export const insertAppointmentSchema = z.object({
   petId: z.string().min(1, "Pet must be selected"),
   services: z.array(z.string()).min(1, "At least one service must be selected"),
-  groomerId: z.string().optional(),
+  groomerId: z.string().optional().nullable(),
   branchId: z.string().min(1, "Branch must be selected"),
   date: z.string().min(1, "Date must be selected"),
   time: z.string().refine(

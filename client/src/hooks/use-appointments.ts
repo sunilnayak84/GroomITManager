@@ -298,7 +298,7 @@ export function useAppointments() {
     }
   });
 
-  const isTimeSlotAvailable = (date: Date, groomerId: string, duration: number = 30, currentAppointmentId?: string): boolean => {
+  const isTimeSlotAvailable = (date: Date, groomerId?: string, duration: number = 30, currentAppointmentId?: string): boolean => {
     if (!appointments) return true;
     
     // Convert input date to start of 15-min slot
@@ -315,8 +315,8 @@ export function useAppointments() {
       // Skip if this is the appointment being edited or if appointment is cancelled
       if (
         (currentAppointmentId && appointment.id === currentAppointmentId) || 
-        appointment.groomerId !== groomerId || 
-        appointment.status === 'cancelled'
+        appointment.status === 'cancelled' ||
+        (groomerId && appointment.groomerId !== groomerId) // Only check groomer conflicts if a groomer is specified
       ) return false;
       
       const appointmentStart = new Date(appointment.date);
