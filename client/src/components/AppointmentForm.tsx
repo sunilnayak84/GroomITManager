@@ -384,14 +384,6 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       };
 
       const appointmentId = await addAppointment(appointmentData);
-      
-      // Close form immediately after successful appointment creation
-      form.reset();
-      setValidationError(null);
-      setSelectedService(null);
-      setAvailableTimeSlots([]);
-      setOpen(false);
-
       const appointmentTime = new Date(appointmentData.date);
       const formattedTime = format(appointmentTime, 'PPp');
       
@@ -417,52 +409,25 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
           });
         }
 
-        // Show success message
         toast({
           title: "Success",
           description: "Appointment scheduled successfully",
         });
-
-        } catch (error) {
+      } catch (error) {
         console.error('Error creating notifications:', error);
         toast({
           variant: "destructive",
           title: "Warning",
           description: "Appointment created but failed to send notifications",
         });
+      } finally {
+        // Always close the form after appointment creation
+        form.reset();
+        setValidationError(null);
+        setSelectedService(null);
+        setAvailableTimeSlots([]);
+        setOpen(false);
       }
-      
-      try {
-        if (user?.id) {
-          // Create customer notification
-          await createNotification({
-            userId: user.id,
-            appointmentId,
-            type: 'reminder',
-            title: 'Upcoming Appointment Reminder',
-            message: `You have a grooming appointment scheduled for ${formattedTime}. Please arrive 10 minutes before your scheduled time.`
-          });
-        }
-
-        // Only create groomer notification if groomer is assigned
-        if (data.groomerId) {
-          await createNotification({
-            userId: data.groomerId,
-            appointmentId,
-            type: 'reminder',
-            title: 'New Appointment Scheduled',
-            message: `You have a new grooming appointment scheduled for ${formattedTime}.`
-          });
-        }
-      } catch (error) {
-        console.error('Error creating notifications:', error);
-      }
-
-      // Show success message
-      toast({
-        title: "Success",
-        description: "Appointment scheduled successfully",
-      });
     } catch (error) {
       console.error('Failed to schedule appointment:', error);
       const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
