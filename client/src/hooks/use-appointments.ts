@@ -120,38 +120,40 @@ export function useAppointments() {
               const petDoc = await getDoc(petDocRef);
               
               if (petDoc.exists()) {
-              const rawPetData = petDoc.data() as any;
-              let customerData = null;
-              if (rawPetData.customerId) {
-                const customerDoc = await getDoc(doc(db, 'customers', rawPetData.customerId));
-                customerData = customerDoc.exists() ? customerDoc.data() : null;
-              }
+                const rawPetData = petDoc.data() as any;
+                let customerData = null;
+                
+                try {
+                  if (rawPetData.customerId) {
+                    const customerDoc = await getDoc(doc(db, 'customers', rawPetData.customerId));
+                    customerData = customerDoc.exists() ? customerDoc.data() : null;
+                  }
 
-              try {
-                petData = {
-                  id: rawPetData.id || rawData.petId,
-                firebaseId: rawPetData.firebaseId,
-                name: rawPetData.name,
-                type: rawPetData.type || 'dog',
-                breed: rawPetData.breed,
-                customerId: rawPetData.customerId,
-                dateOfBirth: rawPetData.dateOfBirth,
-                age: rawPetData.age,
-                gender: rawPetData.gender,
-                weight: rawPetData.weight,
-                weightUnit: rawPetData.weightUnit || 'kg',
-                notes: rawPetData.notes,
-                image: rawPetData.image,
-                createdAt: timestampToString(rawPetData.createdAt),
-                updatedAt: timestampToString(rawPetData.updatedAt),
-                owner: customerData ? {
-                  id: rawPetData.customerId,
-                  name: `${customerData.firstName} ${customerData.lastName}`,
-                  email: customerData.email
-                } : null
-              };
-            } catch (error) {
-                console.error('Error processing pet data:', error);
+                  petData = {
+                    id: rawPetData.id || rawData.petId,
+                    firebaseId: rawPetData.firebaseId,
+                    name: rawPetData.name,
+                    type: rawPetData.type || 'dog',
+                    breed: rawPetData.breed,
+                    customerId: rawPetData.customerId,
+                    dateOfBirth: rawPetData.dateOfBirth,
+                    age: rawPetData.age,
+                    gender: rawPetData.gender,
+                    weight: rawPetData.weight,
+                    weightUnit: rawPetData.weightUnit || 'kg',
+                    notes: rawPetData.notes,
+                    image: rawPetData.image,
+                    createdAt: timestampToString(rawPetData.createdAt),
+                    updatedAt: timestampToString(rawPetData.updatedAt),
+                    owner: customerData ? {
+                      id: rawPetData.customerId,
+                      name: `${customerData.firstName} ${customerData.lastName}`,
+                      email: customerData.email
+                    } : null
+                  };
+                } catch (error) {
+                  console.error('Error processing pet data:', error);
+                }
               }
             } catch (error) {
               console.error('Error fetching pet doc:', error);
