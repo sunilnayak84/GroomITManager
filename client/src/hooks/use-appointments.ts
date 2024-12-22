@@ -116,8 +116,11 @@ export function useAppointments() {
 
             if (petDoc.exists()) {
               const rawPetData = petDoc.data() as any;
-              const customerDoc = await getDoc(doc(db, 'customers', rawPetData.customerId));
-              const customerData = customerDoc.exists() ? customerDoc.data() : null;
+              let customerData = null;
+              if (rawPetData.customerId) {
+                const customerDoc = await getDoc(doc(db, 'customers', rawPetData.customerId));
+                customerData = customerDoc.exists() ? customerDoc.data() : null;
+              }
 
               petData = {
                 id: rawPetData.id || rawData.petId,
