@@ -14,6 +14,8 @@ export default function CustomerPetsPage() {
   const { pets, addPet, updatePet } = usePets();
   const [showPetModal, setShowPetModal] = useState(false);
 
+  const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+
   if (userLoading) {
     return <div>Loading...</div>;
   }
@@ -21,14 +23,13 @@ export default function CustomerPetsPage() {
   if (!user) {
     return <div>Please log in to view your pets.</div>;
   }
-  const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   
   const customerPets = pets.filter((pet) => {
-    const isOwner = pet.customerId === user?.uid || pet.owner?.id === user?.uid;
+    const isOwner = pet.customerId === user.uid || pet.owner?.id === user.uid;
     console.log('Pet filtering debug:', {
       petId: pet.id,
       petCustomerId: pet.customerId,
-      userUid: user?.uid,
+      userUid: user.uid,
       ownerUid: pet.owner?.id,
       isMatch: isOwner
     });
