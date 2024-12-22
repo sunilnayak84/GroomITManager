@@ -387,15 +387,8 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       const appointmentTime = new Date(appointmentData.date);
       const formattedTime = format(appointmentTime, 'PPp');
       
-      // Reset form and close dialog first
-      form.reset();
-      setValidationError(null);
-      setSelectedService(null);
-      setAvailableTimeSlots([]);
-      setOpen(false);
-      
-      // Create reminder notifications
       try {
+        // Create reminder notifications
         if (user?.id) {
           await createNotification({
             userId: user.id,
@@ -416,20 +409,25 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
           });
         }
 
-        // Reset form and close after everything is done
-        form.reset();
-        setValidationError(null);
-        setSelectedService(null);
-        setAvailableTimeSlots([]);
-        setOpen(false);
-
         // Show success message
         toast({
           title: "Success",
           description: "Appointment scheduled successfully",
         });
+
+        // Reset form and close dialog only after everything is done
+        form.reset();
+        setValidationError(null);
+        setSelectedService(null);
+        setAvailableTimeSlots([]);
+        setOpen(false);
       } catch (error) {
         console.error('Error creating notifications:', error);
+        toast({
+          variant: "destructive",
+          title: "Warning",
+          description: "Appointment created but failed to send notifications",
+        });
       }
       
       try {
