@@ -385,7 +385,21 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
 
       const appointmentId = await addAppointment(appointmentData);
       
-      // Create reminder notifications
+      // Reset form and close immediately after successful creation
+      form.reset();
+      setValidationError(null);
+      setSelectedService(null);
+      setAvailableTimeSlots([]);
+      
+      // Show success message and close form
+      toast({
+        title: "Success",
+        description: "Appointment scheduled successfully",
+      });
+      
+      setOpen(false);
+
+      // Create reminder notifications after form is closed
       const appointmentTime = new Date(appointmentData.date);
       const formattedTime = format(appointmentTime, 'PPp');
       
@@ -414,20 +428,6 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       } catch (error) {
         console.error('Error creating notifications:', error);
       }
-
-      // Reset form state
-      form.reset();
-      setValidationError(null);
-      setSelectedService(null);
-      setAvailableTimeSlots([]);
-      
-      // Show success message and close form
-      toast({
-        title: "Success",
-        description: "Appointment scheduled successfully",
-      });
-      
-      setOpen(false);
     } catch (error) {
       console.error('Failed to schedule appointment:', error);
       const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
