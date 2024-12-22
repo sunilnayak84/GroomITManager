@@ -37,7 +37,16 @@ export default function CustomerPetsPage() {
 
   const handleAddPet = async (formData: any) => {
     try {
-      await addPet(formData);
+      const petData = {
+        ...formData,
+        customerId: user.uid,
+        owner: {
+          id: user.uid,
+          name: user.displayName || 'Unknown',
+          email: user.email
+        }
+      };
+      await addPet(petData);
       setShowPetModal(false);
       setSelectedPet(null);
     } catch (error) {
