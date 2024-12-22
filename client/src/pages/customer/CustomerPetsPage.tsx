@@ -37,27 +37,36 @@ export default function CustomerPetsPage() {
 
   const handleAddPet = async (formData: any) => {
     try {
-      if (!user?.uid) {
+      if (!user?.uid || !user?.email) {
         throw new Error('User not authenticated');
       }
+
+      console.log('Submitting pet with data:', {
+        ...formData,
+        customerId: user.uid
+      });
       
-      const petData = {
+      const result = await addPet({
         ...formData,
         customerId: user.uid,
         owner: {
           id: user.uid,
-          name: user.displayName || 'Unknown',
-          email: user.email || null
+          name: user.displayName || user.email.split('@')[0],
+          email: user.email
         }
-      };
-      
-      const result = await addPet(petData);
-      if (result) {
+      });
+
+      if (result && !('isDuplicate' in result)) {
         setShowPetModal(false);
         setSelectedPet(null);
       }
     } catch (error) {
       console.error('Error adding pet:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to add pet",
+        variant: "destructive",
+      });
     }
   };
 
