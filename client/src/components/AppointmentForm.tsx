@@ -390,13 +390,6 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       setValidationError(null);
       setSelectedService(null);
       setAvailableTimeSlots([]);
-      
-      // Show success message and close form
-      toast({
-        title: "Success",
-        description: "Appointment scheduled successfully",
-      });
-      
       setOpen(false);
 
       // Create reminder notifications after form is closed
@@ -428,6 +421,12 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       } catch (error) {
         console.error('Error creating notifications:', error);
       }
+
+      // Show success message
+      toast({
+        title: "Success",
+        description: "Appointment scheduled successfully",
+      });
     } catch (error) {
       console.error('Failed to schedule appointment:', error);
       const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
