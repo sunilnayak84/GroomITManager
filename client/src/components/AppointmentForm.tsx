@@ -390,7 +390,14 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
           description: "Appointment scheduled successfully",
         });
         
-        closeDialog();
+        // Force dialog closure
+        form.reset();
+        setValidationError(null);
+        setSelectedService(null);
+        setAvailableTimeSlots([]);
+        setIsSubmitting(false);
+        setOpen(false);
+        window.location.reload(); // Force a full page refresh
       } catch (error) {
         console.error('Failed to schedule appointment:', error);
         const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
