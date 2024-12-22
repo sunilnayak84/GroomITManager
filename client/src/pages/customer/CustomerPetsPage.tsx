@@ -37,18 +37,25 @@ export default function CustomerPetsPage() {
 
   const handleAddPet = async (formData: any) => {
     try {
+      if (!user?.uid) {
+        throw new Error('User not authenticated');
+      }
+      
       const petData = {
         ...formData,
         customerId: user.uid,
         owner: {
           id: user.uid,
           name: user.displayName || 'Unknown',
-          email: user.email
+          email: user.email || null
         }
       };
-      await addPet(petData);
-      setShowPetModal(false);
-      setSelectedPet(null);
+      
+      const result = await addPet(petData);
+      if (result) {
+        setShowPetModal(false);
+        setSelectedPet(null);
+      }
     } catch (error) {
       console.error('Error adding pet:', error);
     }
