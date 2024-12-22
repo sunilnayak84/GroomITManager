@@ -16,7 +16,7 @@ export default function CustomerPetsPage() {
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   
   const customerPets = pets.filter(
-    (pet) => pet.owner?.id === user?.uid
+    (pet) => pet.customerId === user?.uid || pet.owner?.id === user?.uid
   );
 
   const handleAddPet = async (formData: any) => {
