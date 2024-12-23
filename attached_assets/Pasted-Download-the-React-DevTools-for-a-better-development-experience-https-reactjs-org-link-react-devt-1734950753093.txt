@@ -1,0 +1,29 @@
+Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+use-customers.ts:356 FETCH_CUSTOMERS: Starting customer fetch
+firebase.ts:26 FIREBASE_INIT: Firebase initialized successfully
+use-pets.ts:71 FETCH_PETS: Raw pets data: [{…}]
+use-customers.ts:382 FETCH_CUSTOMERS: Processed customer: {id: 'CA6Bd09SzND7J1UEfLRo', firebaseId: 'CA6Bd09SzND7J1UEfLRo', name: 'test user'}firebaseId: "CA6Bd09SzND7J1UEfLRo"id: "CA6Bd09SzND7J1UEfLRo"name: "test user"[[Prototype]]: Object
+use-customers.ts:390 USE CUSTOMERS: Fetched customers {customerCount: 1, customerIds: Array(1), customerNames: Array(1)}
+use-pets.ts:122 FETCH_PETS: Completed fetching pets {totalPets: 1, pets: Array(1)}
+PetForm.tsx:144 PetForm: Starting form submission {formData: {…}}
+PetForm.tsx:164 PetForm: Submitting pet data: {name: 'test', type: 'dog', breed: 'Tibetan Mastiff', customerId: 'Ao3zeFv07gY3cQaRNsMRH42eYEn2', dateOfBirth: '2020-12-27', …}age: 5breed: "Tibetan Mastiff"customerId: "Ao3zeFv07gY3cQaRNsMRH42eYEn2"dateOfBirth: "2020-12-27"gender: "female"image: "https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/pets%2FCA6Bd09SzND7J1UEfLRo%2F1734950534073_images.jpg?alt=media&token=9fd22f01-7c30-4890-a060-6555d0ae9020"name: "test"notes: nullowner: {id: 'CA6Bd09SzND7J1UEfLRo', name: 'test user', email: 'test@groomery.in'}submissionId: "1734950590057-n2zbw38nn"type: "dog"weight: 21weightUnit: "kg"[[Prototype]]: Object
+CustomerPetsPage.tsx:132 [UPDATE_PET] Starting update for pet: Qk2LqOtXLnzTYhFo7InK
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+use-pets.ts:71 FETCH_PETS: Raw pets data: [{…}]
+use-pets.ts:122 FETCH_PETS: Completed fetching pets {totalPets: 1, pets: Array(1)}pets: Array(1)0: {id: 'Qk2LqOtXLnzTYhFo7InK', firebaseId: null, name: 'test', type: 'dog', breed: 'Tibetan Mastiff', …}length: 1[[Prototype]]: Array(0)totalPets: 1[[Prototype]]: Object
+CustomerPetsPage.tsx:139 [UPDATE_PET] Pet updated successfully
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+use-pets.ts:71 FETCH_PETS: Raw pets data: [{…}]
+use-pets.ts:122 FETCH_PETS: Completed fetching pets {totalPets: 1, pets: Array(1)}pets: [{…}]totalPets: 1[[Prototype]]: Object
+PetForm.tsx:144 PetForm: Starting form submission {formData: {…}}formData: age: 5breed: "Tibetan Mastiff"customerId: "Ao3zeFv07gY3cQaRNsMRH42eYEn2"dateOfBirth: "2020-12-27"gender: "female"image: "https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/pets%2FCA6Bd09SzND7J1UEfLRo%2F1734950534073_images.jpg?alt=media&token=9fd22f01-7c30-4890-a060-6555d0ae9020"name: "test"notes: "My pet"submissionId: undefinedtype: "dog"weight: 21weightUnit: "kg"[[Prototype]]: Object[[Prototype]]: Object
+PetForm.tsx:164 PetForm: Submitting pet data: {name: 'test', type: 'dog', breed: 'Tibetan Mastiff', customerId: 'Ao3zeFv07gY3cQaRNsMRH42eYEn2', dateOfBirth: '2020-12-27', …}age: 5breed: "Tibetan Mastiff"customerId: "Ao3zeFv07gY3cQaRNsMRH42eYEn2"dateOfBirth: "2020-12-27"gender: "female"image: "https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/pets%2FCA6Bd09SzND7J1UEfLRo%2F1734950534073_images.jpg?alt=media&token=9fd22f01-7c30-4890-a060-6555d0ae9020"name: "test"notes: "My pet"owner: nullsubmissionId: "1734950622127-paxx9ggqj"type: "dog"weight: 21weightUnit: "kg"[[Prototype]]: Object
+CustomerPetsPage.tsx:132 [UPDATE_PET] Starting update for pet: Qk2LqOtXLnzTYhFo7InK
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+use-pets.ts:71 FETCH_PETS: Raw pets data: [{…}]
+use-pets.ts:122 FETCH_PETS: Completed fetching pets {totalPets: 1, pets: Array(1)}pets: Array(1)0: {id: 'Qk2LqOtXLnzTYhFo7InK', firebaseId: null, name: 'test', type: 'dog', breed: 'Tibetan Mastiff', …}length: 1[[Prototype]]: Array(0)totalPets: 1[[Prototype]]: Object
+CustomerPetsPage.tsx:139 [UPDATE_PET] Pet updated successfully
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+use-pets.ts:71 FETCH_PETS: Raw pets data: [{…}]
+use-pets.ts:122 FETCH_PETS: Completed fetching pets {totalPets: 1, pets: Array(1)}pets: Array(1)0: {id: 'Qk2LqOtXLnzTYhFo7InK', firebaseId: null, name: 'test', type: 'dog', breed: 'Tibetan Mastiff', …}length: 1[[Prototype]]: Array(0)totalPets: 1[[Prototype]]: Object
