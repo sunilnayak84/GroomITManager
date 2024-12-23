@@ -56,7 +56,7 @@ export default function CustomerPetsPage() {
         customerId: user.id,
         owner: {
           id: user.id,
-          name: user.name || 'Unknown',
+          name: user.name || user.email,
           email: user.email
         }
       };
