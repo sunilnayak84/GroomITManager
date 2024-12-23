@@ -1,0 +1,68 @@
+Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+firebase.ts:26 FIREBASE_INIT: Firebase initialized successfully
+use-pets.ts:71 FETCH_PETS: Raw pets data: (3) [{…}, {…}, {…}]0: age: 3breed: "Boxer"createdAt: _Timestamp {seconds: 1734937040, nanoseconds: 208000000}customerId: "CA6Bd09SzND7J1UEfLRo"dateOfBirth: "2021-02-02"firebaseId: nullgender: "male"id: "HjFI01ATe1JiEH0rqfA3"image: "https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/pets%2FCA6Bd09SzND7J1UEfLRo%2F1734937038477_images.jpg?alt=media&token=e4fec059-f734-4774-9a1a-49d36582202a"name: "testtesttest"notes: nullowner: nullsubmissionId: "1734937038400-jx0afc7i9"type: "dog"updatedAt: nullweight: 21weightUnit: "kg"[[Prototype]]: Object1: age: 2breed: "Belgian Malinois"createdAt: _Timestamp {seconds: 1734863821, nanoseconds: 144000000}customerId: "CA6Bd09SzND7J1UEfLRo"dateOfBirth: "2023-06-07"firebaseId: nullgender: "female"id: "JRjpo4QshmdYg8iHIji3"image: "https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/pets%2FCA6Bd09SzND7J1UEfLRo%2F1734863817884_dog_phone.jpg?alt=media&token=00d2907c-8998-42ad-83f6-0c2c739a10f9"name: "testpet2"notes: nullowner: nullsubmissionId: "1734863817844-rtzinh27n"type: "dog"updatedAt: nullweight: 16weightUnit: "kg"[[Prototype]]: Object2: age: 2breed: "Beagle"createdAt: _Timestamp {seconds: 1734593554, nanoseconds: 784000000}customerId: "CA6Bd09SzND7J1UEfLRo"dateOfBirth: "2023-01-01"firebaseId: nullgender: "male"id: "eo7yEF7BKT5V9SLAo8WE"image: "https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/pets%2FCA6Bd09SzND7J1UEfLRo%2F1734593551912_crop.jpg?alt=media&token=64406191-5161-4f8d-9189-95e5ea63ba94"name: "TestPet"notes: "Good pet, gentle behavior"owner: nullsubmissionId: "1734593551853-iijigtepj"type: "dog"updatedAt: _Timestamp {seconds: 1734690651, nanoseconds: 133000000}weight: 6weightUnit: "kg"[[Prototype]]: Objectlength: 3[[Prototype]]: Array(0)
+use-pets.ts:122 FETCH_PETS: Completed fetching pets {totalPets: 3, pets: Array(3)}pets: Array(3)0: age: 3breed: "Boxer"createdAt: "2024-12-23T06:57:20.208Z"customerId: "CA6Bd09SzND7J1UEfLRo"dateOfBirth: "2021-02-02"firebaseId: nullgender: "male"id: "HjFI01ATe1JiEH0rqfA3"image: "https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/pets%2FCA6Bd09SzND7J1UEfLRo%2F1734937038477_images.jpg?alt=media&token=e4fec059-f734-4774-9a1a-49d36582202a"name: "testtesttest"notes: nullowner: {id: 'CA6Bd09SzND7J1UEfLRo', name: 'test user', email: 'test@groomery.in'}type: "dog"updatedAt: nullweight: 21weightUnit: "kg"[[Prototype]]: Object1: age: 2breed: "Belgian Malinois"createdAt: "2024-12-22T10:37:01.144Z"customerId: "CA6Bd09SzND7J1UEfLRo"dateOfBirth: "2023-06-07"firebaseId: nullgender: "female"id: "JRjpo4QshmdYg8iHIji3"image: "https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/pets%2FCA6Bd09SzND7J1UEfLRo%2F1734863817884_dog_phone.jpg?alt=media&token=00d2907c-8998-42ad-83f6-0c2c739a10f9"name: "testpet2"notes: nullowner: {id: 'CA6Bd09SzND7J1UEfLRo', name: 'test user', email: 'test@groomery.in'}type: "dog"updatedAt: nullweight: 16weightUnit: "kg"[[Prototype]]: Object2: age: 2breed: "Beagle"createdAt: "2024-12-19T07:32:34.784Z"customerId: "CA6Bd09SzND7J1UEfLRo"dateOfBirth: "2023-01-01"firebaseId: nullgender: "male"id: "eo7yEF7BKT5V9SLAo8WE"image: "https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/pets%2FCA6Bd09SzND7J1UEfLRo%2F1734593551912_crop.jpg?alt=media&token=64406191-5161-4f8d-9189-95e5ea63ba94"name: "TestPet"notes: "Good pet, gentle behavior"owner: {id: 'CA6Bd09SzND7J1UEfLRo', name: 'test user', email: 'test@groomery.in'}type: "dog"updatedAt: "2024-12-20T10:30:51.133Z"weight: 6weightUnit: "kg"[[Prototype]]: Objectlength: 3[[Prototype]]: Array(0)totalPets: 3[[Prototype]]: Object
+Dialog.tsx:517  `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog
+(anonymous) @ Dialog.tsx:517
+commitHookEffectListMount @ react-dom.development.js:23150
+commitPassiveMountOnFiber @ react-dom.development.js:24926
+commitPassiveMountEffects_complete @ react-dom.development.js:24891
+commitPassiveMountEffects_begin @ react-dom.development.js:24878
+commitPassiveMountEffects @ react-dom.development.js:24866
+flushPassiveEffectsImpl @ react-dom.development.js:27039
+flushPassiveEffects @ react-dom.development.js:26984
+commitRootImpl @ react-dom.development.js:26935
+commitRoot @ react-dom.development.js:26682
+performSyncWorkOnRoot @ react-dom.development.js:26117
+flushSyncCallbacks @ react-dom.development.js:12042
+(anonymous) @ react-dom.development.js:25651
+Dialog.tsx:540  Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ Dialog.tsx:540
+commitHookEffectListMount @ react-dom.development.js:23150
+commitPassiveMountOnFiber @ react-dom.development.js:24926
+commitPassiveMountEffects_complete @ react-dom.development.js:24891
+commitPassiveMountEffects_begin @ react-dom.development.js:24878
+commitPassiveMountEffects @ react-dom.development.js:24866
+flushPassiveEffectsImpl @ react-dom.development.js:27039
+flushPassiveEffects @ react-dom.development.js:26984
+commitRootImpl @ react-dom.development.js:26935
+commitRoot @ react-dom.development.js:26682
+performSyncWorkOnRoot @ react-dom.development.js:26117
+flushSyncCallbacks @ react-dom.development.js:12042
+(anonymous) @ react-dom.development.js:25651
+Dialog.tsx:517  `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog
+(anonymous) @ Dialog.tsx:517
+commitHookEffectListMount @ react-dom.development.js:23150
+invokePassiveEffectMountInDEV @ react-dom.development.js:25154
+invokeEffectsInDev @ react-dom.development.js:27351
+commitDoubleInvokeEffectsInDEV @ react-dom.development.js:27330
+flushPassiveEffectsImpl @ react-dom.development.js:27056
+flushPassiveEffects @ react-dom.development.js:26984
+commitRootImpl @ react-dom.development.js:26935
+commitRoot @ react-dom.development.js:26682
+performSyncWorkOnRoot @ react-dom.development.js:26117
+flushSyncCallbacks @ react-dom.development.js:12042
+(anonymous) @ react-dom.development.js:25651
+Dialog.tsx:540  Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ Dialog.tsx:540
+commitHookEffectListMount @ react-dom.development.js:23150
+invokePassiveEffectMountInDEV @ react-dom.development.js:25154
+invokeEffectsInDev @ react-dom.development.js:27351
+commitDoubleInvokeEffectsInDEV @ react-dom.development.js:27330
+flushPassiveEffectsImpl @ react-dom.development.js:27056
+flushPassiveEffects @ react-dom.development.js:26984
+commitRootImpl @ react-dom.development.js:26935
+commitRoot @ react-dom.development.js:26682
+performSyncWorkOnRoot @ react-dom.development.js:26117
+flushSyncCallbacks @ react-dom.development.js:12042
+(anonymous) @ react-dom.development.js:25651
