@@ -3,6 +3,7 @@ import { useState } from "react";
 import { usePets } from "@/hooks/use-pets";
 import { useUser } from "@/hooks/use-user";
 import { useRole } from "@/hooks/use-role";
+import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Pencil } from "lucide-react";
@@ -37,6 +38,7 @@ export default function CustomerPetsPage() {
   );
 
   const { hasPermission } = useRole();
+  const { toast } = useToast();
   const handleAddPet = async (formData: any) => {
     try {
       if (!user?.uid || !user?.email) {
@@ -60,7 +62,7 @@ export default function CustomerPetsPage() {
       console.log('Submitting pet with data:', petData);
       const result = await addPet(petData);
       
-      if (result) {
+      if (result && result.success) {
         console.log('Pet added successfully:', result);
         toast({
           title: "Success",
@@ -68,6 +70,12 @@ export default function CustomerPetsPage() {
         });
         setShowPetModal(false);
         setSelectedPet(null);
+      } else if (result && 'isDuplicate' in result) {
+        toast({
+          title: "Warning",
+          description: "This pet was already added",
+          variant: "destructive"
+        });
       }
     } catch (error) {
       console.error('Error adding pet:', error);
