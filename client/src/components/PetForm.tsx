@@ -141,9 +141,7 @@ export function PetForm({
     console.log('PetForm: Starting submission process', { submitForm, data });
 
     try {
-      console.log('PetForm: Calling submitForm with data:', data);
-      const result = await submitForm(data);
-      console.log('PetForm: Submit result:', result);
+      console.log('PetForm: Preparing pet data');
       const petData: InsertPet = {
         name: data.name,
         type: data.type,
