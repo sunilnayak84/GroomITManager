@@ -64,10 +64,12 @@ export default function CustomerPetsPage() {
 
       toast({
         title: "Success",
-        description: "Pet added successfully"
+        description: "Pet added successfully",
+        variant: "success"
       });
       
       setShowAddPetDialog(false);
+      setShowPetModal(false);
       return true;
     } catch (error: any) {
       console.error('Error adding pet:', error);
@@ -76,7 +78,7 @@ export default function CustomerPetsPage() {
         description: error.message || "An unexpected error occurred",
         variant: "destructive"
       });
-      return false;
+      throw error; // Re-throw to prevent form from closing
     }
   };
 
