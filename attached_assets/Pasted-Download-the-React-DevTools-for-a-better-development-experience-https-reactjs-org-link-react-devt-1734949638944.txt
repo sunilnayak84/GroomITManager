@@ -1,0 +1,400 @@
+Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+firebase.ts:26 FIREBASE_INIT: Firebase initialized successfully
+use-pets.ts:71 FETCH_PETS: Raw pets data: Array(1)
+use-pets.ts:122 FETCH_PETS: Completed fetching pets Objectpets: [{…}]totalPets: 1[[Prototype]]: Object
+PetForm.tsx:144 PetForm: Starting form submission {formData: {…}}formData: {name: 'test2', type: 'dog', breed: 'Belgian Malinois', customerId: 'Ao3zeFv07gY3cQaRNsMRH42eYEn2', dateOfBirth: null, …}[[Prototype]]: Object
+PetForm.tsx:164 PetForm: Submitting pet data: {name: 'test2', type: 'dog', breed: 'Belgian Malinois', customerId: 'Ao3zeFv07gY3cQaRNsMRH42eYEn2', dateOfBirth: null, …}age: nullbreed: "Belgian Malinois"customerId: "Ao3zeFv07gY3cQaRNsMRH42eYEn2"dateOfBirth: nullgender: "unknown"image: File {name: 'images.jpg', lastModified: 1733228760205, lastModifiedDate: Tue Dec 03 2024 17:56:00 GMT+0530 (India Standard Time), webkitRelativePath: '', size: 7199, …}name: "test2"notes: nullowner: undefinedsubmissionId: "1734949353150-799kwni9a"type: "dog"weight: nullweightUnit: "kg"[[Prototype]]: Object
+CustomerPetsPage.tsx:53 [ADD_PET] Starting submission with form data: {name: 'test2', type: 'dog', breed: 'Belgian Malinois', customerId: 'Ao3zeFv07gY3cQaRNsMRH42eYEn2', dateOfBirth: null, …}age: nullbreed: "Belgian Malinois"customerId: "Ao3zeFv07gY3cQaRNsMRH42eYEn2"dateOfBirth: nullgender: "unknown"image: File {name: 'images.jpg', lastModified: 1733228760205, lastModifiedDate: Tue Dec 03 2024 17:56:00 GMT+0530 (India Standard Time), webkitRelativePath: '', size: 7199, …}name: "test2"notes: nullowner: undefinedsubmissionId: "1734949353150-799kwni9a"type: "dog"weight: nullweightUnit: "kg"[[Prototype]]: Object
+CustomerPetsPage.tsx:73 [ADD_PET] Prepared pet data: {name: 'test2', type: 'dog', breed: 'Belgian Malinois', customerId: 'Ao3zeFv07gY3cQaRNsMRH42eYEn2', dateOfBirth: null, …}age: nullbreed: "Belgian Malinois"customerId: "Ao3zeFv07gY3cQaRNsMRH42eYEn2"dateOfBirth: nullgender: "unknown"image: File {name: 'images.jpg', lastModified: 1733228760205, lastModifiedDate: Tue Dec 03 2024 17:56:00 GMT+0530 (India Standard Time), webkitRelativePath: '', size: 7199, …}name: "test2"notes: nullowner: {id: 'Ao3zeFv07gY3cQaRNsMRH42eYEn2', name: 'test@groomery.in', email: 'test@groomery.in'}submissionId: "1734949353150-8m2b8ouwb"type: "dog"weight: nullweightUnit: "kg"[[Prototype]]: Object
+use-pets.ts:147 ADD_PET: Starting mutation {petData: {…}, timestamp: '2024-12-23T10:22:33.195Z'}petData: {name: 'test2', type: 'dog', breed: 'Belgian Malinois', customerId: 'Ao3zeFv07gY3cQaRNsMRH42eYEn2', dateOfBirth: null, …}timestamp: "2024-12-23T10:22:33.195Z"[[Prototype]]: Object
+use-pets.ts:152 ADD_PET: Validating input data {hasName: true, hasType: true, hasBreed: true}hasBreed: truehasName: truehasType: true[[Prototype]]: Object
+storage.ts:11 File uploaded successfully: {metadata: {…}, ref: _Reference}metadata: {type: 'file', bucket: 'replit-5ac6a.firebasestorage.app', generation: '1734949355321910', metageneration: '1', fullPath: 'pets/Ao3zeFv07gY3cQaRNsMRH42eYEn2/1734949353315_images.jpg', …}ref: _Reference {_service: FirebaseStorageImpl, _location: _Location}[[Prototype]]: Object
+storage.ts:15 File download URL: https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/pets%2FAo3zeFv07gY3cQaRNsMRH42eYEn2%2F1734949353315_images.jpg?alt=media&token=4bf547de-e383-4bee-aee0-e972b413a16d
+use-pets.ts:183 ADD_PET: Image uploaded successfully: https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/pets%2FAo3zeFv07gY3cQaRNsMRH42eYEn2%2F1734949353315_images.jpg?alt=media&token=4bf547de-e383-4bee-aee0-e972b413a16d
+use-pets.ts:232 ADD_PET: Created new pet document with ID: e2pwOb2jwfdiJGk7NXlw
+use-pets.ts:251  ADD_PET: Error in mutation: FirebaseError: No document to update: projects/replit-5ac6a/databases/(default)/documents/customers/Ao3zeFv07gY3cQaRNsMRH42eYEn2
+mutationFn @ use-pets.ts:251
+await in mutationFn
+fn @ mutation.ts:170
+run @ retryer.ts:153
+start @ retryer.ts:218
+execute @ mutation.ts:208
+await in execute
+mutate @ mutationObserver.ts:125
+handleAddPet @ CustomerPetsPage.tsx:74
+(anonymous) @ PetForm.tsx:165
+(anonymous) @ createFormControl.ts:1193
+await in (anonymous)
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26140
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+dispatchDiscreteEvent @ react-dom.development.js:6430
+use-pets.ts:231 
+        
+        
+        POST https://firestore.googleapis.com/google.firestore.v1.Firestore/Write/channel?VER=8&database=projects%2Freplit-5ac6a%2Fdatabases%2F(default)&gsessionid=z3mxT9BQmlHikgYxjZCmPbYpzjg-bKgXrCXkbeZtstU&SID=-R5dZ7crCUjvTE-K6yIJRg&RID=36270&TYPE=terminate&zx=yynwom5jspx0 400 (Bad Request)
+gc @ webchannel_blob_es2018.js:69
+Y2.close @ webchannel_blob_es2018.js:82
+(anonymous) @ webchannel_connection.ts:385
+(anonymous) @ webchannel_connection.ts:294
+ab @ webchannel_blob_es2018.js:25
+F2 @ webchannel_blob_es2018.js:23
+Z2.ta @ webchannel_blob_es2018.js:84
+Rb @ webchannel_blob_es2018.js:39
+M2.Y @ webchannel_blob_es2018.js:33
+M2.ca @ webchannel_blob_es2018.js:30
+ab @ webchannel_blob_es2018.js:25
+F2 @ webchannel_blob_es2018.js:23
+Wc @ webchannel_blob_es2018.js:62
+h.bb @ webchannel_blob_es2018.js:61
+h.Ea @ webchannel_blob_es2018.js:61
+Lc @ webchannel_blob_es2018.js:57
+h.Pa @ webchannel_blob_es2018.js:55
+Promise.then
+Nc @ webchannel_blob_es2018.js:55
+h.Pa @ webchannel_blob_es2018.js:55
+Promise.then
+Nc @ webchannel_blob_es2018.js:55
+h.Pa @ webchannel_blob_es2018.js:55
+Promise.then
+Nc @ webchannel_blob_es2018.js:55
+h.Sa @ webchannel_blob_es2018.js:55
+Promise.then
+h.send @ webchannel_blob_es2018.js:52
+h.ea @ webchannel_blob_es2018.js:60
+Jb @ webchannel_blob_es2018.js:30
+fd @ webchannel_blob_es2018.js:76
+h.Fa @ webchannel_blob_es2018.js:75
+Da @ webchannel_blob_es2018.js:14
+Promise.then
+x2 @ webchannel_blob_es2018.js:14
+ec @ webchannel_blob_es2018.js:74
+Rb @ webchannel_blob_es2018.js:39
+M2.Y @ webchannel_blob_es2018.js:33
+M2.ca @ webchannel_blob_es2018.js:30
+ab @ webchannel_blob_es2018.js:25
+F2 @ webchannel_blob_es2018.js:23
+Wc @ webchannel_blob_es2018.js:62
+h.bb @ webchannel_blob_es2018.js:61
+h.Ea @ webchannel_blob_es2018.js:61
+Lc @ webchannel_blob_es2018.js:57
+h.Pa @ webchannel_blob_es2018.js:55
+Promise.then
+Nc @ webchannel_blob_es2018.js:55
+h.Sa @ webchannel_blob_es2018.js:55
+Promise.then
+h.send @ webchannel_blob_es2018.js:52
+h.ea @ webchannel_blob_es2018.js:60
+Jb @ webchannel_blob_es2018.js:29
+Hb @ webchannel_blob_es2018.js:28
+h.Ga @ webchannel_blob_es2018.js:72
+Da @ webchannel_blob_es2018.js:14
+Promise.then
+x2 @ webchannel_blob_es2018.js:14
+fc @ webchannel_blob_es2018.js:70
+h.connect @ webchannel_blob_es2018.js:68
+Y2.m @ webchannel_blob_es2018.js:82
+Eo @ webchannel_connection.ts:260
+send @ stream_bridge.ts:70
+c_ @ persistent_stream.ts:322
+w_ @ persistent_stream.ts:861
+__PRIVATE_onWriteStreamOpen @ remote_store.ts:762
+(anonymous) @ persistent_stream.ts:528
+(anonymous) @ persistent_stream.ts:595
+(anonymous) @ async_queue_impl.ts:136
+(anonymous) @ async_queue_impl.ts:187
+Promise.then
+yu @ async_queue_impl.ts:185
+enqueue @ async_queue_impl.ts:130
+enqueueAndForget @ async_queue_impl.ts:94
+(anonymous) @ persistent_stream.ts:593
+(anonymous) @ persistent_stream.ts:508
+bo @ stream_bridge.ts:86
+(anonymous) @ webchannel_connection.ts:417
+setTimeout
+qo @ webchannel_connection.ts:412
+d_ @ persistent_stream.ts:801
+I_ @ persistent_stream.ts:503
+(anonymous) @ persistent_stream.ts:477
+Promise.then
+auth @ persistent_stream.ts:467
+start @ persistent_stream.ts:264
+start @ persistent_stream.ts:788
+__PRIVATE_startWriteStream @ remote_store.ts:756
+__PRIVATE_fillWritePipeline @ remote_store.ts:702
+await in __PRIVATE_fillWritePipeline
+__PRIVATE_syncEngineWrite @ sync_engine_impl.ts:542
+await in __PRIVATE_syncEngineWrite
+(anonymous) @ firestore_client.ts:559
+await in (anonymous)
+(anonymous) @ async_queue_impl.ts:136
+(anonymous) @ async_queue_impl.ts:187
+Promise.then
+yu @ async_queue_impl.ts:185
+enqueue @ async_queue_impl.ts:130
+enqueueAndForget @ async_queue_impl.ts:94
+__PRIVATE_firestoreClientWrite @ firestore_client.ts:557
+executeWrite @ reference_impl.ts:834
+addDoc @ reference_impl.ts:471
+mutationFn @ use-pets.ts:231
+await in mutationFn
+fn @ mutation.ts:170
+run @ retryer.ts:153
+start @ retryer.ts:218
+execute @ mutation.ts:208
+await in execute
+mutate @ mutationObserver.ts:125
+handleAddPet @ CustomerPetsPage.tsx:74
+(anonymous) @ PetForm.tsx:165
+(anonymous) @ createFormControl.ts:1193
+await in (anonymous)
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26140
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+dispatchDiscreteEvent @ react-dom.development.js:6430
+use-pets.ts:147 ADD_PET: Starting mutation {petData: {…}, timestamp: '2024-12-23T10:22:36.117Z'}petData: {name: 'test2', type: 'dog', breed: 'Belgian Malinois', customerId: 'Ao3zeFv07gY3cQaRNsMRH42eYEn2', dateOfBirth: null, …}timestamp: "2024-12-23T10:22:36.117Z"[[Prototype]]: Object
+use-pets.ts:152 ADD_PET: Validating input data {hasName: true, hasType: true, hasBreed: true}hasBreed: truehasName: truehasType: true[[Prototype]]: Object
+storage.ts:11 File uploaded successfully: {metadata: {…}, ref: _Reference}metadata: {type: 'file', bucket: 'replit-5ac6a.firebasestorage.app', generation: '1734949358099149', metageneration: '1', fullPath: 'pets/Ao3zeFv07gY3cQaRNsMRH42eYEn2/1734949356231_images.jpg', …}ref: _Reference {_service: FirebaseStorageImpl, _location: _Location}[[Prototype]]: Object
+storage.ts:15 File download URL: https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/pets%2FAo3zeFv07gY3cQaRNsMRH42eYEn2%2F1734949356231_images.jpg?alt=media&token=dbeefb3c-e9dd-4a1f-948b-eee88430c87d
+use-pets.ts:183 ADD_PET: Image uploaded successfully: https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/pets%2FAo3zeFv07gY3cQaRNsMRH42eYEn2%2F1734949356231_images.jpg?alt=media&token=dbeefb3c-e9dd-4a1f-948b-eee88430c87d
+use-pets.ts:232 ADD_PET: Created new pet document with ID: okP6YMeld1LZCm6smgqw
+use-pets.ts:251  ADD_PET: Error in mutation: FirebaseError: No document to update: projects/replit-5ac6a/databases/(default)/documents/customers/Ao3zeFv07gY3cQaRNsMRH42eYEn2
+mutationFn @ use-pets.ts:251
+await in mutationFn
+fn @ mutation.ts:170
+run @ retryer.ts:153
+(anonymous) @ retryer.ts:199
+Promise.then
+(anonymous) @ retryer.ts:195
+Promise.catch
+run @ retryer.ts:160
+start @ retryer.ts:218
+execute @ mutation.ts:208
+await in execute
+mutate @ mutationObserver.ts:125
+handleAddPet @ CustomerPetsPage.tsx:74
+(anonymous) @ PetForm.tsx:165
+(anonymous) @ createFormControl.ts:1193
+await in (anonymous)
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26140
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+dispatchDiscreteEvent @ react-dom.development.js:6430
+CustomerPetsPage.tsx:91  [ADD_PET] Error: FirebaseError: No document to update: projects/replit-5ac6a/databases/(default)/documents/customers/Ao3zeFv07gY3cQaRNsMRH42eYEn2
+handleAddPet @ CustomerPetsPage.tsx:91
+await in handleAddPet
+(anonymous) @ PetForm.tsx:165
+(anonymous) @ createFormControl.ts:1193
+await in (anonymous)
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26140
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+dispatchDiscreteEvent @ react-dom.development.js:6430
+PetForm.tsx:178  PetForm: Submit error details: {error: Error: Failed to save pet
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisk…, errorMessage: 'Failed to save pet', formData: {…}}error: Error: Failed to save pet
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/PetForm.tsx:162:19
+    at async https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-VYIIT4SD.js?v=0cf51c99:1694:9errorMessage: "Failed to save pet"formData: {name: 'test2', type: 'dog', breed: 'Belgian Malinois', customerId: 'Ao3zeFv07gY3cQaRNsMRH42eYEn2', dateOfBirth: null, …}[[Prototype]]: Object
+(anonymous) @ PetForm.tsx:178
+await in (anonymous)
+(anonymous) @ createFormControl.ts:1193
+await in (anonymous)
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26140
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+dispatchDiscreteEvent @ react-dom.development.js:6430
+use-pets.ts:231 
+        
+        
+        POST https://firestore.googleapis.com/google.firestore.v1.Firestore/Write/channel?VER=8&database=projects%2Freplit-5ac6a%2Fdatabases%2F(default)&gsessionid=U-GlaYVzh0LB2_jUuUbZIQ-zqcbmSL7i6aRRACimJgs&SID=p6l_896KDyDtqefWmqJBGA&RID=80107&TYPE=terminate&zx=u97xxgaffr6g 400 (Bad Request)
+gc @ webchannel_blob_es2018.js:69
+Y2.close @ webchannel_blob_es2018.js:82
+(anonymous) @ webchannel_connection.ts:385
+(anonymous) @ webchannel_connection.ts:294
+ab @ webchannel_blob_es2018.js:25
+F2 @ webchannel_blob_es2018.js:23
+Z2.ta @ webchannel_blob_es2018.js:84
+Rb @ webchannel_blob_es2018.js:39
+M2.Y @ webchannel_blob_es2018.js:33
+M2.ca @ webchannel_blob_es2018.js:30
+ab @ webchannel_blob_es2018.js:25
+F2 @ webchannel_blob_es2018.js:23
+Wc @ webchannel_blob_es2018.js:62
+h.bb @ webchannel_blob_es2018.js:61
+h.Ea @ webchannel_blob_es2018.js:61
+Lc @ webchannel_blob_es2018.js:57
+h.Pa @ webchannel_blob_es2018.js:55
+Promise.then
+Nc @ webchannel_blob_es2018.js:55
+h.Pa @ webchannel_blob_es2018.js:55
+Promise.then
+Nc @ webchannel_blob_es2018.js:55
+h.Pa @ webchannel_blob_es2018.js:55
+Promise.then
+Nc @ webchannel_blob_es2018.js:55
+h.Sa @ webchannel_blob_es2018.js:55
+Promise.then
+h.send @ webchannel_blob_es2018.js:52
+h.ea @ webchannel_blob_es2018.js:60
+Jb @ webchannel_blob_es2018.js:30
+fd @ webchannel_blob_es2018.js:76
+h.Fa @ webchannel_blob_es2018.js:75
+Da @ webchannel_blob_es2018.js:14
+Promise.then
+x2 @ webchannel_blob_es2018.js:14
+ec @ webchannel_blob_es2018.js:74
+Rb @ webchannel_blob_es2018.js:39
+M2.Y @ webchannel_blob_es2018.js:33
+M2.ca @ webchannel_blob_es2018.js:30
+ab @ webchannel_blob_es2018.js:25
+F2 @ webchannel_blob_es2018.js:23
+Wc @ webchannel_blob_es2018.js:62
+h.bb @ webchannel_blob_es2018.js:61
+h.Ea @ webchannel_blob_es2018.js:61
+Lc @ webchannel_blob_es2018.js:57
+h.Pa @ webchannel_blob_es2018.js:55
+Promise.then
+Nc @ webchannel_blob_es2018.js:55
+h.Sa @ webchannel_blob_es2018.js:55
+Promise.then
+h.send @ webchannel_blob_es2018.js:52
+h.ea @ webchannel_blob_es2018.js:60
+Jb @ webchannel_blob_es2018.js:29
+Hb @ webchannel_blob_es2018.js:28
+h.Ga @ webchannel_blob_es2018.js:72
+Da @ webchannel_blob_es2018.js:14
+Promise.then
+x2 @ webchannel_blob_es2018.js:14
+fc @ webchannel_blob_es2018.js:70
+h.connect @ webchannel_blob_es2018.js:68
+Y2.m @ webchannel_blob_es2018.js:82
+Eo @ webchannel_connection.ts:260
+send @ stream_bridge.ts:70
+c_ @ persistent_stream.ts:322
+w_ @ persistent_stream.ts:861
+__PRIVATE_onWriteStreamOpen @ remote_store.ts:762
+(anonymous) @ persistent_stream.ts:528
+(anonymous) @ persistent_stream.ts:595
+(anonymous) @ async_queue_impl.ts:136
+(anonymous) @ async_queue_impl.ts:187
+Promise.then
+yu @ async_queue_impl.ts:185
+enqueue @ async_queue_impl.ts:130
+enqueueAndForget @ async_queue_impl.ts:94
+(anonymous) @ persistent_stream.ts:593
+(anonymous) @ persistent_stream.ts:508
+bo @ stream_bridge.ts:86
+(anonymous) @ webchannel_connection.ts:417
+setTimeout
+qo @ webchannel_connection.ts:412
+d_ @ persistent_stream.ts:801
+I_ @ persistent_stream.ts:503
+(anonymous) @ persistent_stream.ts:477
+Promise.then
+auth @ persistent_stream.ts:467
+start @ persistent_stream.ts:264
+start @ persistent_stream.ts:788
+__PRIVATE_startWriteStream @ remote_store.ts:756
+__PRIVATE_fillWritePipeline @ remote_store.ts:702
+await in __PRIVATE_fillWritePipeline
+__PRIVATE_syncEngineWrite @ sync_engine_impl.ts:542
+await in __PRIVATE_syncEngineWrite
+(anonymous) @ firestore_client.ts:559
+await in (anonymous)
+(anonymous) @ async_queue_impl.ts:136
+(anonymous) @ async_queue_impl.ts:187
+Promise.then
+yu @ async_queue_impl.ts:185
+enqueue @ async_queue_impl.ts:130
+enqueueAndForget @ async_queue_impl.ts:94
+__PRIVATE_firestoreClientWrite @ firestore_client.ts:557
+executeWrite @ reference_impl.ts:834
+addDoc @ reference_impl.ts:471
+mutationFn @ use-pets.ts:231
+await in mutationFn
+fn @ mutation.ts:170
+run @ retryer.ts:153
+(anonymous) @ retryer.ts:199
+Promise.then
+(anonymous) @ retryer.ts:195
+Promise.catch
+run @ retryer.ts:160
+start @ retryer.ts:218
+execute @ mutation.ts:208
+await in execute
+mutate @ mutationObserver.ts:125
+handleAddPet @ CustomerPetsPage.tsx:74
+(anonymous) @ PetForm.tsx:165
+(anonymous) @ createFormControl.ts:1193
+await in (anonymous)
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26140
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+dispatchDiscreteEvent @ react-dom.development.js:6430
