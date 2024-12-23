@@ -40,8 +40,11 @@ const DialogContent = React.forwardRef<
         className
       )}
       {...props}
-      aria-describedby={props['aria-describedby'] || "dialog-description"}
+      aria-describedby="dialog-description"
     >
+      <DialogPrimitive.Description id="dialog-description" className="sr-only">
+        Dialog content
+      </DialogPrimitive.Description>
       {!props['aria-describedby'] && (
         <DialogPrimitive.Description id="dialog-description" className="sr-only">
           Dialog content

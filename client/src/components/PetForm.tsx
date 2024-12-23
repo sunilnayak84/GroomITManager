@@ -202,16 +202,14 @@ export function PetForm({
   return (
     <Form {...form}>
       <form 
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
+          e.preventDefault();
           console.log('PetForm: Form submit event triggered');
-          e.preventDefault(); // Prevent default form submission
-          if (isSubmitting) {
-            console.log('PetForm: Already submitting, returning');
-            return;
+          try {
+            await form.handleSubmit(onSubmit)(e);
+          } catch (error) {
+            console.error('PetForm: Submit error:', error);
           }
-          
-          setIsSubmitting(true);
-          form.handleSubmit(onSubmit)(e);
         }} 
         className="space-y-4"
       >
