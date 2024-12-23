@@ -41,12 +41,6 @@ export default function CustomerPetsPage() {
   const { toast } = useToast();
   const handleAddPet = async (formData: any) => {
     try {
-      console.log('Starting pet submission...', {
-        userRole: user?.role,
-        userPermissions: user?.permissions,
-        formData
-      });
-
       if (!user?.uid || !user?.email) {
         throw new Error('User not authenticated');
       }
@@ -61,22 +55,26 @@ export default function CustomerPetsPage() {
         }
       };
 
+      console.log('Submitting pet data:', petData);
       const result = await addPet(petData);
-      if (result?.success || result?.pet) {
-        toast({
-          title: "Success",
-          description: "Pet added successfully"
-        });
-        setShowAddPetDialog(false); //Added to close the dialog
-        return true;
-      } else {
-        throw new Error('Failed to add pet');
+      
+      if (!result) {
+        throw new Error('No response from server');
       }
+
+      toast({
+        title: "Success",
+        description: "Pet added successfully"
+      });
+      
+      setShowAddPetDialog(false);
+      return true;
     } catch (error: any) {
       console.error('Error adding pet:', error);
       toast({
         title: "Error",
-        description: error.message || "An unexpected error occurred."
+        description: error.message || "An unexpected error occurred",
+        variant: "destructive"
       });
       return false;
     }

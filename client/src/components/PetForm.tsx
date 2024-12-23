@@ -134,35 +134,14 @@ export function PetForm({
     if (isSubmitting) return;
     
     setIsSubmitting(true);
+    console.log('Form submission started with data:', data);
 
     try {
-      // Get the selected customer with proper type checking
-      const selectedCustomer = hideCustomerField && customerId
-        ? { id: customerId, firstName: '', lastName: '', email: null }
-        : customers.find(c => 
-            (c.firebaseId && c.firebaseId === data.customerId) || 
-            (c.id && c.id.toString() === data.customerId)
-          );
-      
-      if (!selectedCustomer?.id) {
-        throw new Error("Selected customer not found or invalid customer ID");
-      }
-
-      const effectiveCustomerId = selectedCustomer.id.toString();
-      
-      const ownerData = hideCustomerField
-        ? (defaultValues?.owner ?? null)
-        : {
-            id: effectiveCustomerId,
-            name: `${selectedCustomer.firstName || ''} ${selectedCustomer.lastName || ''}`.trim() || 'Unknown',
-            email: selectedCustomer.email ?? null
-          };
-      
       const petData: InsertPet = {
         name: data.name,
         type: data.type,
         breed: data.breed,
-        customerId: effectiveCustomerId,
+        customerId: customerId || data.customerId,
         dateOfBirth: data.dateOfBirth || null,
         age: data.age !== null ? Number(data.age) : null,
         gender: (data.gender as "male" | "female" | "unknown" | null) || null,
@@ -170,22 +149,19 @@ export function PetForm({
         weightUnit: data.weightUnit,
         notes: data.notes || null,
         image: data.image,
-        owner: ownerData
+        owner: hideCustomerField ? defaultValues?.owner : null
       };
 
+      console.log('Submitting pet data:', petData);
       const result = await submitForm(petData);
 
       if (result) {
         setImagePreview(null);
         form.reset();
-        
-        toast({
-          title: "Success",
-          description: isEditing ? "Pet updated successfully" : "Pet added successfully",
-        });
-        
         onSuccess?.(petData);
+        return true;
       }
+      return false;
     } catch (error) {
       console.error('Error submitting pet form:', error);
       if (error instanceof Error) {
@@ -196,10 +172,11 @@ export function PetForm({
         description: error instanceof Error ? error.message : "Failed to save pet",
         variant: "destructive",
       });
+      return false;
     } finally {
       setIsSubmitting(false);
     }
-  }, [isSubmitting, customers, submitForm, form, onSuccess, toast, isEditing, hideCustomerField, customerId, defaultValues?.owner, onError]);
+  }, [isSubmitting, submitForm, form, customerId, hideCustomerField, defaultValues?.owner, onSuccess, onError, toast]);
 
   if (!hideCustomerField && customers.length === 0) {
     return (
