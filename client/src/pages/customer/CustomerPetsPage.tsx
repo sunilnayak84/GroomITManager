@@ -2,6 +2,7 @@ import { useState } from "react";
 import { usePets } from "@/hooks/use-pets";
 import { useUser } from "@/hooks/use-user";
 import { useRole } from "@/hooks/use-role";
+import { useCustomers } from "@/hooks/use-customers";
 import { useToast } from "@/components/ui/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
