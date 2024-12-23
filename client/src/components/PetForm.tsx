@@ -204,9 +204,9 @@ export function PetForm({
   return (
     <Form {...form}>
       <form 
-        onSubmit={form.handleSubmit(async (data) => {
+        onSubmit={form.handleSubmit((data) => {
           console.log('PetForm: Form submit event triggered');
-          return await onSubmit(data);
+          onSubmit(data);
         })} 
         className="space-y-4"
       >
