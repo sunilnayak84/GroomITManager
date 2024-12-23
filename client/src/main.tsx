@@ -24,6 +24,7 @@ import CustomerPetsPage from './pages/customer/CustomerPetsPage';
 import CustomerAppointmentsPage from './pages/customer/CustomerAppointmentsPage';
 // Added import for ProtectedRoute.  This component needs to be defined elsewhere.
 import ProtectedRoute from './components/ProtectedRoute';
+import CustomerProfilePage from './pages/customer/CustomerProfilePage'; // Import the new component
 
 
 // Loading component for suspense fallback
@@ -124,6 +125,13 @@ function Router() {
           {() => (
             <CustomerLayout>
               <CustomerPetsPage />
+            </CustomerLayout>
+          )}
+        </Route>
+        <Route path="/customer/profile">
+          {() => (
+            <CustomerLayout>
+              <CustomerProfilePage />
             </CustomerLayout>
           )}
         </Route>
