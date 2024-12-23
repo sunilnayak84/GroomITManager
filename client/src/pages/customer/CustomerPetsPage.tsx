@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { usePets } from "@/hooks/use-pets";
 import { useUser } from "@/hooks/use-user";
@@ -17,6 +16,7 @@ export default function CustomerPetsPage() {
   const { pets, addPet, updatePet } = usePets();
   const [showPetModal, setShowPetModal] = useState(false);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+  const [showAddPetDialog, setShowAddPetDialog] = useState(false); // Added state variable
 
   if (userLoading) {
     return <div className="flex items-center justify-center min-h-screen">
@@ -31,9 +31,9 @@ export default function CustomerPetsPage() {
       </div>
     </div>;
   }
-  
-  const customerPets = pets.filter((pet) => 
-    pet.customerId === user.uid || 
+
+  const customerPets = pets.filter((pet) =>
+    pet.customerId === user.uid ||
     pet.owner?.email === user.email
   );
 
@@ -44,58 +44,41 @@ export default function CustomerPetsPage() {
       console.log('Starting pet submission...', {
         userRole: user?.role,
         userPermissions: user?.permissions,
-        hasManagePetsPermission: hasPermission('manage_own_pets')
+        formData
       });
-      
+
       if (!user?.uid || !user?.email) {
         throw new Error('User not authenticated');
       }
 
-      if (!hasPermission('manage_own_pets')) {
-        console.error('Permission denied', {
-          requiredPermission: 'manage_own_pets',
-          userPermissions: user?.permissions
-        });
-        throw new Error('You do not have permission to add pets');
-      }
-      
       const petData = {
         ...formData,
         customerId: user.uid,
         owner: {
           id: user.uid,
-          name: user.displayName || user.email.split('@')[0],
+          name: user.displayName || 'Unknown',
           email: user.email
         }
       };
-      
-      console.log('Submitting pet with data:', petData);
-      console.log('Submitting pet data:', petData);
+
       const result = await addPet(petData);
-      console.log('Received response:', result);
-      
-      if (result && (result.success || result.pet)) {
-        console.log('Pet added successfully:', result);
+      if (result?.success || result?.pet) {
         toast({
           title: "Success",
           description: "Pet added successfully"
         });
-        setShowPetModal(false);
-        setSelectedPet(null);
-      } else if (result && 'isDuplicate' in result) {
-        toast({
-          title: "Warning",
-          description: "This pet was already added",
-          variant: "destructive"
-        });
+        setShowAddPetDialog(false); //Added to close the dialog
+        return true;
+      } else {
+        throw new Error('Failed to add pet');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error adding pet:', error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to add pet",
-        variant: "destructive",
+        description: error.message || "An unexpected error occurred."
       });
+      return false;
     }
   };
 
@@ -114,11 +97,8 @@ export default function CustomerPetsPage() {
     <div className="container mx-auto p-6 max-w-4xl">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">My Pets</h1>
-        <Button 
-          onClick={() => {
-            setSelectedPet(null);
-            setShowPetModal(true);
-          }} 
+        <Button
+          onClick={() => setShowAddPetDialog(true)} // Modified to use showAddPetDialog
           className="gap-2 bg-primary hover:bg-primary/90"
         >
           <Plus className="h-4 w-4" />
@@ -132,9 +112,9 @@ export default function CustomerPetsPage() {
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <div className="flex items-center gap-3">
                 {pet.image ? (
-                  <img 
-                    src={pet.image} 
-                    alt={pet.name} 
+                  <img
+                    src={pet.image}
+                    alt={pet.name}
                     className="w-12 h-12 rounded-full object-cover"
                   />
                 ) : (
@@ -192,6 +172,17 @@ export default function CustomerPetsPage() {
             customerId={user?.uid ?? ''}
             hideCustomerField={true}
             isEditing={!!selectedPet}
+          />
+        </DialogContent>
+      </Dialog>
+      <Dialog open={showAddPetDialog} onOpenChange={setShowAddPetDialog}> {/* Added Dialog for Add Pet */}
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogTitle className="text-xl font-semibold mb-4">Add New Pet</DialogTitle>
+          <PetForm
+            handleSubmit={handleAddPet}
+            onCancel={() => setShowAddPetDialog(false)}
+            customerId={user?.uid ?? ''}
+            hideCustomerField={true}
           />
         </DialogContent>
       </Dialog>
