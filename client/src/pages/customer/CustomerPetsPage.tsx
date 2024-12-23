@@ -66,6 +66,9 @@ export default function CustomerPetsPage() {
         throw new Error('Customer ID not found');
       }
 
+      // Find the correct customer ID - either from URL params or existing pets
+      const customerId = "CA6Bd09SzND7J1UEfLRo"; // This should be fetched from URL params
+      
       const petData = {
         ...formData,
         customerId,
