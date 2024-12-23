@@ -41,6 +41,8 @@ export default function CustomerPetsPage() {
   const { toast } = useToast();
   const handleAddPet = async (formData: any) => {
     try {
+      console.log('Starting pet submission...');
+      
       if (!user?.uid || !user?.email) {
         throw new Error('User not authenticated');
       }
@@ -60,9 +62,11 @@ export default function CustomerPetsPage() {
       };
       
       console.log('Submitting pet with data:', petData);
+      console.log('Submitting pet data:', petData);
       const result = await addPet(petData);
+      console.log('Received response:', result);
       
-      if (result && result.success) {
+      if (result && (result.success || result.pet)) {
         console.log('Pet added successfully:', result);
         toast({
           title: "Success",
@@ -170,6 +174,9 @@ export default function CustomerPetsPage() {
 
       <Dialog open={showPetModal} onOpenChange={setShowPetModal}>
         <DialogContent className="sm:max-w-[600px]">
+          <DialogTitle className="text-xl font-semibold mb-4">
+            {selectedPet ? 'Edit Pet' : 'Add New Pet'}
+          </DialogTitle>
           <PetForm
             handleSubmit={selectedPet ? handleUpdatePet : handleAddPet}
             onCancel={() => setShowPetModal(false)}
