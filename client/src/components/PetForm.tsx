@@ -140,6 +140,9 @@ export function PetForm({
     setIsSubmitting(true);
 
     try {
+      if (!submitForm) {
+        throw new Error('Submit function is not available');
+      }
       console.log('PetForm: Preparing pet data');
       const petData: InsertPet = {
         name: data.name,
@@ -156,15 +159,19 @@ export function PetForm({
         owner: hideCustomerField ? defaultValues?.owner : null
       };
 
-      console.log('Submitting pet data:', petData);
-      await submitForm(petData);
-      console.log('PetForm: Submission successful');
+      console.log('PetForm: Submitting pet data:', petData);
+      const result = await submitForm(petData);
+      console.log('PetForm: Submission result:', result);
+      if (!result) {
+        throw new Error('Failed to save pet');
+      }
       setImagePreview(null);
       form.reset();
       onSuccess?.(petData);
       return true;
     } catch (error) {
-      console.error('Error submitting pet form:', error);
+      console.error('PetForm: Error submitting form:', error);
+      setIsSubmitting(false);
       if (error instanceof Error) {
         onError?.(error);
         toast({
