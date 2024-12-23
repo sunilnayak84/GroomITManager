@@ -23,16 +23,16 @@ export default function CustomerProfilePage() {
   const customerData = customers.find(c => c.email === user?.email);
 
   // Initialize form data when customer data is loaded
-  useState(() => {
+  useEffect(() => {
     if (customerData) {
       setFormData({
-        firstName: customerData.firstName,
-        lastName: customerData.lastName,
-        phone: customerData.phone,
+        firstName: customerData.firstName || "",
+        lastName: customerData.lastName || "",
+        phone: customerData.phone || "",
         address: customerData.address || ""
       });
     }
-  });
+  }, [customerData]);
 
   const handleUpdate = async () => {
     if (!customerData?.id) {
