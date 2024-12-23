@@ -88,8 +88,8 @@ export function PetForm({
     if (!hideCustomerField && customers.length > 0) {
       let selectedCustomer;
       if (customerId) {
-        selectedCustomer = customers.find(c => 
-          (c.firebaseId && c.firebaseId === customerId) || 
+        selectedCustomer = customers.find(c =>
+          (c.firebaseId && c.firebaseId === customerId) ||
           c.id.toString() === customerId
         );
       }
@@ -130,82 +130,18 @@ export function PetForm({
     }
   };
 
-  const onSubmit = useCallback(async (data: FormData) => {
-    console.log('PetForm: Submit button clicked', { data });
-    if (isSubmitting) {
-      console.log('PetForm: Already submitting, returning');
-      return false;
-    }
-    
-    setIsSubmitting(true);
-
-    try {
-      if (!submitForm) {
-        throw new Error('Submit function is not available');
-      }
-      console.log('PetForm: Preparing pet data');
-      const petData: InsertPet = {
-        name: data.name,
-        type: data.type,
-        breed: data.breed,
-        customerId: customerId || data.customerId,
-        dateOfBirth: data.dateOfBirth || null,
-        age: data.age !== null ? Number(data.age) : null,
-        gender: (data.gender as "male" | "female" | "unknown" | null) || null,
-        weight: data.weight ? Number(data.weight) : null,
-        weightUnit: data.weightUnit,
-        notes: data.notes || null,
-        image: data.image,
-        owner: hideCustomerField ? defaultValues?.owner : null
-      };
-
-      console.log('PetForm: Submitting pet data:', petData);
-      const result = await submitForm(petData);
-      console.log('PetForm: Submission result:', result);
-      if (!result) {
-        throw new Error('Failed to save pet');
-      }
-      setImagePreview(null);
-      form.reset();
-      setIsSubmitting(false);
-      onSuccess?.(petData);
-      return true;
-    } catch (error) {
-      console.error('PetForm: Error submitting form:', error);
-      setIsSubmitting(false);
-      if (error instanceof Error) {
-        onError?.(error);
-        toast({
-          title: "Error",
-          description: error.message || "Failed to save pet",
-          variant: "destructive",
-        });
-      }
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to save pet",
-        variant: "destructive",
-      });
-      return false;
-      return false;
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [isSubmitting, submitForm, form, customerId, hideCustomerField, defaultValues?.owner, onSuccess, onError, toast]);
-
-  if (!hideCustomerField && customers.length === 0) {
-    return (
-      <div className="p-4 text-center">
-        <p className="text-red-500">Please add at least one customer before adding a pet.</p>
-      </div>
-    );
-  }
-
   return (
     <Form {...form}>
-      <form 
+      <form
         onSubmit={form.handleSubmit(async (data) => {
+          if (isSubmitting) {
+            console.log('PetForm: Already submitting, skipping');
+            return;
+          }
+
           console.log('PetForm: Starting form submission', { formData: data });
+          setIsSubmitting(true);
+
           try {
             const petData = {
               name: data.name,
@@ -218,16 +154,17 @@ export function PetForm({
               weight: data.weight,
               weightUnit: data.weightUnit,
               image: data.image,
-              notes: data.notes
+              notes: data.notes,
+              owner: hideCustomerField ? defaultValues?.owner : null
             };
-            
+
             console.log('PetForm: Submitting pet data:', petData);
             const result = await submitForm(petData);
-            
+
             if (!result) {
               throw new Error('Failed to save pet');
             }
-            
+
             form.reset();
             toast({
               title: "Success",
@@ -245,8 +182,11 @@ export function PetForm({
               description: error instanceof Error ? error.message : "Failed to save pet",
               variant: "destructive"
             });
+            onError?.(error instanceof Error ? error : new Error('Unknown error'));
+          } finally {
+            setIsSubmitting(false);
           }
-        })} 
+        })}
         className="space-y-4"
       >
         <div className="space-y-4">
@@ -295,8 +235,8 @@ export function PetForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Owner*</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
+                  <Select
+                    onValueChange={field.onChange}
                     value={field.value}
                     defaultValue={field.value}
                   >
@@ -309,8 +249,8 @@ export function PetForm({
                       {customers.map((customer) => {
                         const value = customer.firebaseId || customer.id.toString();
                         return (
-                          <SelectItem 
-                            key={value} 
+                          <SelectItem
+                            key={value}
                             value={value}
                           >
                             {customer.firstName} {customer.lastName}
@@ -343,7 +283,7 @@ export function PetForm({
             render={({ field }) => {
               const { breeds } = useBreeds();
               const uniqueTypes = [...new Set(breeds?.map(breed => breed.type) || [])].sort();
-              
+
               return (
                 <FormItem>
                   <FormLabel>Pet Type*</FormLabel>
@@ -373,7 +313,7 @@ export function PetForm({
               const { breeds } = useBreeds();
               const filteredBreeds = breeds?.filter(breed => breed.type === form.watch('type'))
                 .sort((a, b) => a.name.localeCompare(b.name)) || [];
-              
+
               return (
                 <FormItem>
                   <FormLabel>Breed*</FormLabel>
@@ -403,7 +343,7 @@ export function PetForm({
               <FormItem>
                 <FormLabel>Date of Birth</FormLabel>
                 <FormControl>
-                  <Input 
+                  <Input
                     type="date"
                     {...field}
                     value={field.value ?? ''}
@@ -421,7 +361,7 @@ export function PetForm({
               <FormItem>
                 <FormLabel>Age</FormLabel>
                 <FormControl>
-                  <Input 
+                  <Input
                     type="number"
                     {...field}
                     value={field.value ?? ''}
@@ -462,7 +402,7 @@ export function PetForm({
                 <FormItem className="flex-1">
                   <FormLabel>Weight</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
                       step="0.01"
                       {...field}
@@ -515,16 +455,21 @@ export function PetForm({
 
         <div className="sticky bottom-0 bg-white pt-4 pb-2 flex justify-end gap-4">
           {onCancel && (
-            <Button type="button" variant="outline" onClick={onCancel}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              disabled={isSubmitting}
+            >
               Cancel
             </Button>
           )}
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             disabled={isSubmitting}
             className={isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}
           >
-            {isSubmitting ? "Saving..." : "Save Pet"}
+            {isSubmitting ? "Saving..." : isEditing ? "Update Pet" : "Save Pet"}
           </Button>
         </div>
       </form>
