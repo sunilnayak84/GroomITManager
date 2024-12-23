@@ -144,8 +144,16 @@ export function usePets() {
 
   const addPetMutation = useMutation({
     mutationFn: async (petData: PetInput) => {
+      console.log('ADD_PET: Starting mutation', {
+        petData,
+        timestamp: new Date().toISOString()
+      });
       try {
-        console.log('ADD_PET: Starting to add pet', { petData });
+        console.log('ADD_PET: Validating input data', { 
+          hasName: !!petData.name,
+          hasType: !!petData.type,
+          hasBreed: !!petData.breed
+        });
         if (!petData.name || !petData.type || !petData.breed) {
           throw new Error('Required pet information is missing');
         }

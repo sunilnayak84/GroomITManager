@@ -205,20 +205,31 @@ export function PetForm({
     <Form {...form}>
       <form 
         onSubmit={form.handleSubmit(async (data) => {
-          console.log('PetForm: Form submit event triggered', data);
+          console.log('PetForm: Starting form submission', { formData: data });
           try {
+            console.log('PetForm: Calling submitForm function');
             const result = await submitForm(data);
-            console.log('PetForm: Submission result:', result);
-            if (result) {
-              toast({
-                title: "Success",
-                description: "Pet saved successfully"
-              });
-              form.reset();
-              onSuccess?.(data);
+            console.log('PetForm: Raw submission result:', result);
+            
+            if (!result) {
+              console.error('PetForm: Submit function returned null/undefined');
+              throw new Error('Failed to save pet - no result returned');
             }
+
+            console.log('PetForm: Submission successful, resetting form');
+            form.reset();
+            onSuccess?.(data);
+            
+            toast({
+              title: "Success", 
+              description: "Pet saved successfully"
+            });
           } catch (error) {
-            console.error('PetForm: Submit error:', error);
+            console.error('PetForm: Submit error details:', {
+              error,
+              errorMessage: error instanceof Error ? error.message : 'Unknown error',
+              formData: data
+            });
             toast({
               title: "Error",
               description: error instanceof Error ? error.message : "Failed to save pet",
