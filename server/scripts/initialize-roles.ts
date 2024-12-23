@@ -37,8 +37,25 @@ async function initializeRoles() {
       // Ensure customer role is properly set
       [RoleTypes.customer]: {
         ...InitialRoleConfigs[RoleTypes.customer],
-        permissions: ['view_appointments', 'create_appointments', 'view_services', 'view_groomers', 'view_own_appointments'],
-        description: 'Customer access for booking appointments and viewing services',
+        permissions: [
+          'view_appointments',
+          'create_appointments',
+          'view_services',
+          'view_groomers',
+          'view_own_appointments',
+          'manage_own_pets',
+          'create_pets',
+          'edit_own_pets',
+          'delete_own_pets',
+          'view_own_pets',
+          'cancel_own_appointments',
+          'reschedule_own_appointments',
+          'view_own_profile',
+          'edit_own_profile',
+          'view_service_history',
+          'view_loyalty_points'
+        ],
+        description: 'Customer access for managing pets, appointments and profile',
         isSystem: true,
         updatedAt: Date.now()
       }
