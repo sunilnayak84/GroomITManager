@@ -146,6 +146,9 @@ export function usePets() {
     mutationFn: async (petData: PetInput) => {
       try {
         console.log('ADD_PET: Starting to add pet', { petData });
+        if (!petData.name || !petData.type || !petData.breed) {
+          throw new Error('Required pet information is missing');
+        }
 
         // Generate submission ID
         const submissionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
