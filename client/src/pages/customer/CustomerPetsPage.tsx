@@ -131,9 +131,16 @@ export default function CustomerPetsPage() {
       setIsSubmitting(true);
       console.log('[UPDATE_PET] Starting update for pet:', selectedPet.id);
 
+      // Preserve the original customerId and owner
+      const updateData = {
+        ...formData,
+        customerId: selectedPet.customerId,
+        owner: selectedPet.owner
+      };
+
       await updatePet({ 
         petId: selectedPet.id, 
-        updateData: formData 
+        updateData 
       });
 
       console.log('[UPDATE_PET] Pet updated successfully');
