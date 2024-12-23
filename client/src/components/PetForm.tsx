@@ -207,23 +207,33 @@ export function PetForm({
         onSubmit={form.handleSubmit(async (data) => {
           console.log('PetForm: Starting form submission', { formData: data });
           try {
-            console.log('PetForm: Calling submitForm function');
-            const result = await submitForm(data);
-            console.log('PetForm: Raw submission result:', result);
+            const petData = {
+              name: data.name,
+              type: data.type,
+              breed: data.breed,
+              customerId: customerId || data.customerId,
+              dateOfBirth: data.dateOfBirth,
+              age: data.age,
+              gender: data.gender,
+              weight: data.weight,
+              weightUnit: data.weightUnit,
+              image: data.image,
+              notes: data.notes
+            };
+            
+            console.log('PetForm: Submitting pet data:', petData);
+            const result = await submitForm(petData);
             
             if (!result) {
-              console.error('PetForm: Submit function returned null/undefined');
-              throw new Error('Failed to save pet - no result returned');
+              throw new Error('Failed to save pet');
             }
-
-            console.log('PetForm: Submission successful, resetting form');
-            form.reset();
-            onSuccess?.(data);
             
+            form.reset();
             toast({
-              title: "Success", 
+              title: "Success",
               description: "Pet saved successfully"
             });
+            onSuccess?.(petData);
           } catch (error) {
             console.error('PetForm: Submit error details:', {
               error,
