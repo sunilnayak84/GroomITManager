@@ -86,17 +86,35 @@ export default function CustomerPetsPage() {
     console.log('UPDATE_PET: Starting pet update', { formData });
     if (!selectedPet) {
       console.error('UPDATE_PET: No pet selected for update');
+      toast({
+        title: "Error",
+        description: "No pet selected for update",
+        variant: "destructive"
+      });
       return false;
     }
     try {
       console.log('UPDATE_PET: Updating pet', { petId: selectedPet.id, formData });
-      await updatePet(selectedPet.id, formData);
-      console.log('UPDATE_PET: Pet updated successfully');
+      await updatePet({
+        petId: selectedPet.id,
+        updateData: formData
+      });
+      toast({
+        title: "Success",
+        description: "Pet updated successfully",
+        variant: "success"
+      });
       setShowPetModal(false);
       setSelectedPet(null);
       return true;
     } catch (error: any) {
       console.error('UPDATE_PET: Failed to update pet', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update pet",
+        variant: "destructive"
+      });
+      return false;
     }
   };
 
