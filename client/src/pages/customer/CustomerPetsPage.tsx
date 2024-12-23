@@ -16,7 +16,6 @@ export default function CustomerPetsPage() {
   const { pets, addPet, updatePet } = usePets();
   const [showPetModal, setShowPetModal] = useState(false);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
-  const [showAddPetDialog, setShowAddPetDialog] = useState(false); // Added state variable
 
   if (userLoading) {
     return <div className="flex items-center justify-center min-h-screen">
@@ -98,7 +97,10 @@ export default function CustomerPetsPage() {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">My Pets</h1>
         <Button
-          onClick={() => setShowAddPetDialog(true)} // Modified to use showAddPetDialog
+          onClick={() => {
+            setSelectedPet(null);
+            setShowPetModal(true);
+          }}
           className="gap-2 bg-primary hover:bg-primary/90"
         >
           <Plus className="h-4 w-4" />
@@ -175,17 +177,7 @@ export default function CustomerPetsPage() {
           />
         </DialogContent>
       </Dialog>
-      <Dialog open={showAddPetDialog} onOpenChange={setShowAddPetDialog}> {/* Added Dialog for Add Pet */}
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogTitle className="text-xl font-semibold mb-4">Add New Pet</DialogTitle>
-          <PetForm
-            handleSubmit={handleAddPet}
-            onCancel={() => setShowAddPetDialog(false)}
-            customerId={user?.uid ?? ''}
-            hideCustomerField={true}
-          />
-        </DialogContent>
-      </Dialog>
+      
     </div>
   );
 }
