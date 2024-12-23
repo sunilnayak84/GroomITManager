@@ -83,8 +83,8 @@ export default function CustomerPetsPage() {
   };
 
   const handleUpdatePet = async (formData: any) => {
-    console.log('UPDATE_PET: Starting pet update', { formData });
-    if (!selectedPet) {
+    console.log('UPDATE_PET: Starting pet update', { formData, selectedPet });
+    if (!selectedPet?.id) {
       console.error('UPDATE_PET: No pet selected for update');
       toast({
         title: "Error",
@@ -94,11 +94,8 @@ export default function CustomerPetsPage() {
       return false;
     }
     try {
-      console.log('UPDATE_PET: Updating pet', { petId: selectedPet.id, formData });
-      await updatePet({
-        petId: selectedPet.id,
-        updateData: formData
-      });
+      await updatePet(selectedPet.id, formData);
+      console.log('UPDATE_PET: Pet updated successfully');
       toast({
         title: "Success",
         description: "Pet updated successfully",
