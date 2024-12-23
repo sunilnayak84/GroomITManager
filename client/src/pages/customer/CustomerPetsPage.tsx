@@ -42,6 +42,7 @@ export default function CustomerPetsPage() {
   const { hasPermission } = useRole();
   const { toast } = useToast();
 
+  const { customers } = useCustomers();
   const handleAddPet = async (formData: any) => {
     if (isSubmitting) {
       console.log('[ADD_PET] Submission already in progress, skipping');
@@ -60,7 +61,6 @@ export default function CustomerPetsPage() {
       const submissionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
       // Find customer ID based on the authenticated user's email
-      const { customers } = useCustomers();
       const customerData = customers.find(c => c.email === user.email);
       
       if (!customerData?.id) {
