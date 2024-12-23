@@ -134,7 +134,7 @@ export function PetForm({
     console.log('PetForm: Submit button clicked', { data });
     if (isSubmitting) {
       console.log('PetForm: Already submitting, returning');
-      return;
+      return false;
     }
     
     setIsSubmitting(true);
@@ -167,6 +167,7 @@ export function PetForm({
       }
       setImagePreview(null);
       form.reset();
+      setIsSubmitting(false);
       onSuccess?.(petData);
       return true;
     } catch (error) {
@@ -180,6 +181,7 @@ export function PetForm({
           variant: "destructive",
         });
       }
+      return false;
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to save pet",
