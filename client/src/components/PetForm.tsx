@@ -204,9 +204,27 @@ export function PetForm({
   return (
     <Form {...form}>
       <form 
-        onSubmit={form.handleSubmit((data) => {
-          console.log('PetForm: Form submit event triggered');
-          onSubmit(data);
+        onSubmit={form.handleSubmit(async (data) => {
+          console.log('PetForm: Form submit event triggered', data);
+          try {
+            const result = await submitForm(data);
+            console.log('PetForm: Submission result:', result);
+            if (result) {
+              toast({
+                title: "Success",
+                description: "Pet saved successfully"
+              });
+              form.reset();
+              onSuccess?.(data);
+            }
+          } catch (error) {
+            console.error('PetForm: Submit error:', error);
+            toast({
+              title: "Error",
+              description: error instanceof Error ? error.message : "Failed to save pet",
+              variant: "destructive"
+            });
+          }
         })} 
         className="space-y-4"
       >
