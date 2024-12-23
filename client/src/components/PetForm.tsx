@@ -138,13 +138,6 @@ export function PetForm({
     }
     
     setIsSubmitting(true);
-    console.log('PetForm: Starting submission process', { submitForm, data });
-
-    if (!submitForm) {
-      console.error('PetForm: submitForm function is undefined');
-      setIsSubmitting(false);
-      return;
-    }
 
     try {
       console.log('PetForm: Preparing pet data');
@@ -164,15 +157,12 @@ export function PetForm({
       };
 
       console.log('Submitting pet data:', petData);
-      const result = await submitForm(petData);
-
-      if (result) {
-        setImagePreview(null);
-        form.reset();
-        onSuccess?.(petData);
-        return true;
-      }
-      return false;
+      await submitForm(petData);
+      console.log('PetForm: Submission successful');
+      setImagePreview(null);
+      form.reset();
+      onSuccess?.(petData);
+      return true;
     } catch (error) {
       console.error('Error submitting pet form:', error);
       if (error instanceof Error) {
