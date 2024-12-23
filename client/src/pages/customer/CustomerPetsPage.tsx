@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { usePets } from "@/hooks/use-pets";
 import { useUser } from "@/hooks/use-user";
@@ -7,117 +6,165 @@ import { useCustomers } from "@/hooks/use-customers";
 import { useToast } from "@/components/ui/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, PackagePlus } from "lucide-react";
+import { Plus, Pencil } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { PetForm } from "@/components/PetForm";
 import { Pet } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 
 export default function CustomerPetsPage() {
   const { user, isLoading: userLoading } = useUser();
-  const { pets, addPet, updatePet, isLoading: petsLoading } = usePets();
+  const { pets, addPet, updatePet } = usePets();
   const [showPetModal, setShowPetModal] = useState(false);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (userLoading || petsLoading) {
-    return (
-      <div className="container mx-auto p-6 max-w-4xl">
-        <div className="flex justify-between items-center mb-8">
-          <Skeleton className="h-10 w-32" />
-          <Skeleton className="h-10 w-24" />
-        </div>
-        <div className="grid md:grid-cols-2 gap-6">
-          {[1, 2].map((i) => (
-            <Card key={i} className="hover:shadow-lg transition-all duration-300">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <div className="flex items-center gap-3">
-                  <Skeleton className="w-12 h-12 rounded-full" />
-                  <Skeleton className="h-6 w-32" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex flex-wrap gap-2">
-                    <Skeleton className="h-5 w-20" />
-                    <Skeleton className="h-5 w-24" />
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Skeleton className="h-4 w-24" />
-                    <Skeleton className="h-4 w-24" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
+  if (userLoading) {
+    return <div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+    </div>;
   }
 
   if (!user) {
-    return (
-      <div className="flex items-center justify-center min-h-[80vh]">
-        <div className="text-center space-y-4">
-          <h2 className="text-2xl font-semibold">Please log in to view your pets</h2>
-          <p className="text-muted-foreground">You need to be logged in to access this page</p>
-        </div>
+    return <div className="flex items-center justify-center min-h-screen">
+      <div className="text-center">
+        <h2 className="text-2xl font-semibold">Please log in to view your pets.</h2>
       </div>
-    );
+    </div>;
   }
 
+  // Updated to use correct user identifier and handle both ID formats
   const customerPets = pets.filter((pet) =>
     pet.customerId === user.id || 
     pet.customerId === user.uid ||
     pet.owner?.email === user.email
   );
 
-  if (customerPets.length === 0) {
-    return (
-      <div className="container mx-auto p-6 max-w-4xl">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">My Pets</h1>
-          <Button
-            onClick={() => setShowPetModal(true)}
-            className="gap-2 bg-primary hover:bg-primary/90"
-          >
-            <Plus className="h-4 w-4" />
-            Add Pet
-          </Button>
-        </div>
-        
-        <Card className="flex flex-col items-center justify-center p-12 text-center">
-          <PackagePlus className="h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">No pets added yet</h3>
-          <p className="text-muted-foreground mb-6">Add your first pet to start booking appointments</p>
-          <Button onClick={() => setShowPetModal(true)} className="gap-2">
-            <Plus className="h-4 w-4" />
-            Add Your First Pet
-          </Button>
-        </Card>
-
-        <Dialog open={showPetModal} onOpenChange={setShowPetModal}>
-          <DialogContent className="sm:max-w-[600px]">
-            <DialogTitle>Add New Pet</DialogTitle>
-            <PetForm
-              handleSubmit={handleAddPet}
-              onCancel={() => setShowPetModal(false)}
-              customerId={user.id}
-              hideCustomerField={true}
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
-    );
-  }
-
   const { hasPermission } = useRole();
   const { toast } = useToast();
-  const { customers } = useCustomers();
 
-  // Rest of the existing handleAddPet and handleUpdatePet functions...
-  [Previous implementation of handleAddPet and handleUpdatePet remains the same]
+  const { customers } = useCustomers();
+  const handleAddPet = async (formData: any) => {
+    if (isSubmitting) {
+      console.log('[ADD_PET] Submission already in progress, skipping');
+      return false;
+    }
+
+    try {
+      setIsSubmitting(true);
+      console.log('[ADD_PET] Starting submission with form data:', formData);
+
+      if (!user?.email) {
+        throw new Error('User not authenticated');
+      }
+
+      // Generate a unique submission ID
+      const submissionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+      // Find customer ID based on the authenticated user's email
+      const customerData = customers.find(c => c.email === user.email);
+      
+      if (!customerData?.id) {
+        throw new Error('Customer record not found');
+      }
+
+      const customerId = customerData.id;
+      
+      const petData = {
+        ...formData,
+        customerId,
+        owner: {
+          id: customerId,
+          name: user.name || user.email,
+          email: user.email
+        },
+        submissionId
+      };
+
+      console.log('[ADD_PET] Prepared pet data:', petData);
+      const result = await addPet(petData);
+
+      if (!result) {
+        throw new Error('Failed to add pet');
+      }
+
+      console.log('[ADD_PET] Pet created successfully:', result);
+
+      toast({
+        title: "Success",
+        description: "Pet added successfully",
+        variant: "default"
+      });
+
+      setShowPetModal(false);
+      return true;
+    } catch (error: any) {
+      console.error('[ADD_PET] Error:', error);
+      toast({
+        title: "Error",
+        description: error.message || "An unexpected error occurred",
+        variant: "destructive"
+      });
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleUpdatePet = async (formData: any) => {
+    if (isSubmitting) {
+      console.log('[UPDATE_PET] Submission already in progress, skipping');
+      return false;
+    }
+
+    if (!selectedPet?.id) {
+      console.error('[UPDATE_PET] No pet selected for update');
+      toast({
+        title: "Error",
+        description: "No pet selected for update",
+        variant: "destructive"
+      });
+      return false;
+    }
+
+    try {
+      setIsSubmitting(true);
+      console.log('[UPDATE_PET] Starting update for pet:', selectedPet.id);
+
+      // Preserve the original customerId and owner
+      const updateData = {
+        ...formData,
+        customerId: selectedPet.customerId,
+        owner: selectedPet.owner
+      };
+
+      await updatePet({ 
+        petId: selectedPet.id, 
+        updateData 
+      });
+
+      console.log('[UPDATE_PET] Pet updated successfully');
+      toast({
+        title: "Success",
+        description: "Pet updated successfully",
+        variant: "default"
+      });
+
+      setShowPetModal(false);
+      setSelectedPet(null);
+      return true;
+    } catch (error: any) {
+      console.error('[UPDATE_PET] Failed to update pet:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update pet",
+        variant: "destructive"
+      });
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="container mx-auto p-6 max-w-4xl">
