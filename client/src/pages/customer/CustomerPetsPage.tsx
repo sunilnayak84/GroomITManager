@@ -52,8 +52,14 @@ export default function CustomerPetsPage() {
       setIsSubmitting(true);
       console.log('[ADD_PET] Starting submission with form data:', formData);
 
-      if (!user?.id || !user?.email) {
+      if (!user?.email) {
         throw new Error('User not authenticated');
+      }
+
+      // Find the correct customer document for the logged-in user
+      const customerPet = customerPets[0];
+      if (!customerPet?.owner?.id) {
+        throw new Error('Customer ID not found');
       }
 
       // Generate a unique submission ID
@@ -61,9 +67,9 @@ export default function CustomerPetsPage() {
 
       const petData = {
         ...formData,
-        customerId: user.id,
+        customerId: customerPet.owner.id,
         owner: {
-          id: user.id,
+          id: customerPet.owner.id,
           name: user.name || user.email,
           email: user.email
         },
