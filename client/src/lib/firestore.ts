@@ -353,7 +353,7 @@ export async function deleteCustomerAndRelated(id: string) {
 
 export async function updatePet({ petId, updateData }: { petId: string; updateData: Partial<Pet> }) {
   try {
-    console.log('FIRESTORE: Starting pet update', { id, updateData: data });
+    console.log('FIRESTORE: Starting pet update', { petId, updateData });
     
     const petRef = doc(petsCollection, petId);
     const petDoc = await getDoc(petRef);
