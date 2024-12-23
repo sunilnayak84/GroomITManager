@@ -59,15 +59,12 @@ export default function CustomerPetsPage() {
       // Generate a unique submission ID
       const submissionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-      // Use existing customer pet if available, otherwise use current user ID
-      const customerId = customerPets[0]?.owner?.id || user.id;
+      const urlParams = new URLSearchParams(window.location.search);
+      const customerId = urlParams.get('id');
       
       if (!customerId) {
-        throw new Error('Customer ID not found');
+        throw new Error('Customer ID not found in URL parameters');
       }
-
-      // Find the correct customer ID - either from URL params or existing pets
-      const customerId = "CA6Bd09SzND7J1UEfLRo"; // This should be fetched from URL params
       
       const petData = {
         ...formData,
