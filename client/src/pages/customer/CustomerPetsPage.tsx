@@ -2,7 +2,7 @@ import { useState } from "react";
 import { usePets } from "@/hooks/use-pets";
 import { useUser } from "@/hooks/use-user";
 import { useRole } from "@/hooks/use-role";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Pencil } from "lucide-react";
@@ -16,7 +16,7 @@ export default function CustomerPetsPage() {
   const { pets, addPet, updatePet } = usePets();
   const [showPetModal, setShowPetModal] = useState(false);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
-  const [showAddPetDialog, setShowAddPetDialog] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (userLoading) {
     return <div className="flex items-center justify-center min-h-screen">
@@ -42,7 +42,11 @@ export default function CustomerPetsPage() {
   const { toast } = useToast();
 
   const handleAddPet = async (formData: any) => {
+    if (isSubmitting) return false;
+
     try {
+      setIsSubmitting(true);
+
       if (!user?.id || !user?.email) {
         throw new Error('User not authenticated');
       }
@@ -57,12 +61,14 @@ export default function CustomerPetsPage() {
         }
       };
 
-      console.log('Submitting pet data:', petData);
+      console.log('[ADD_PET] Starting pet creation:', petData);
       const result = await addPet(petData);
 
       if (!result) {
-        throw new Error('No response from server');
+        throw new Error('Failed to add pet');
       }
+
+      console.log('[ADD_PET] Pet created successfully:', result);
 
       toast({
         title: "Success",
@@ -70,24 +76,27 @@ export default function CustomerPetsPage() {
         variant: "default"
       });
 
-      setShowAddPetDialog(false);
       setShowPetModal(false);
       return true;
     } catch (error: any) {
-      console.error('Error adding pet:', error);
+      console.error('[ADD_PET] Error:', error);
       toast({
         title: "Error",
         description: error.message || "An unexpected error occurred",
         variant: "destructive"
       });
-      throw error;
+      return false;
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleUpdatePet = async (formData: any) => {
-    console.log('UPDATE_PET: Starting pet update', { formData, selectedPet });
+    if (isSubmitting) return false;
+
+    console.log('[UPDATE_PET] Starting pet update', { formData, selectedPet });
     if (!selectedPet?.id) {
-      console.error('UPDATE_PET: No pet selected for update');
+      console.error('[UPDATE_PET] No pet selected for update');
       toast({
         title: "Error",
         description: "No pet selected for update",
@@ -95,28 +104,35 @@ export default function CustomerPetsPage() {
       });
       return false;
     }
+
     try {
+      setIsSubmitting(true);
+
       await updatePet({ 
         petId: selectedPet.id, 
         updateData: formData 
       });
-      console.log('UPDATE_PET: Pet updated successfully');
+
+      console.log('[UPDATE_PET] Pet updated successfully');
       toast({
         title: "Success",
         description: "Pet updated successfully",
         variant: "default"
       });
+
       setShowPetModal(false);
       setSelectedPet(null);
       return true;
     } catch (error: any) {
-      console.error('UPDATE_PET: Failed to update pet', error);
+      console.error('[UPDATE_PET] Failed to update pet', error);
       toast({
         title: "Error",
         description: error.message || "Failed to update pet",
         variant: "destructive"
       });
       return false;
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -130,6 +146,7 @@ export default function CustomerPetsPage() {
             setShowPetModal(true);
           }}
           className="gap-2 bg-primary hover:bg-primary/90"
+          disabled={isSubmitting}
         >
           <Plus className="h-4 w-4" />
           Add Pet
@@ -164,6 +181,7 @@ export default function CustomerPetsPage() {
                   setShowPetModal(true);
                 }}
                 className="opacity-0 group-hover:opacity-100 transition-opacity"
+                disabled={isSubmitting}
               >
                 <Pencil className="h-4 w-4" />
               </Button>
@@ -190,14 +208,24 @@ export default function CustomerPetsPage() {
         ))}
       </div>
 
-      <Dialog open={showPetModal} onOpenChange={setShowPetModal}>
+      <Dialog 
+        open={showPetModal} 
+        onOpenChange={(open) => {
+          if (!isSubmitting) {
+            setShowPetModal(open);
+            if (!open) {
+              setSelectedPet(null);
+            }
+          }
+        }}
+      >
         <DialogContent className="sm:max-w-[600px]">
           <DialogTitle className="text-xl font-semibold mb-4">
             {selectedPet ? 'Edit Pet' : 'Add New Pet'}
           </DialogTitle>
           <PetForm
             handleSubmit={selectedPet ? handleUpdatePet : handleAddPet}
-            onCancel={() => setShowPetModal(false)}
+            onCancel={() => !isSubmitting && setShowPetModal(false)}
             defaultValues={selectedPet ?? undefined}
             customerId={user?.id ?? ''}
             hideCustomerField={true}
