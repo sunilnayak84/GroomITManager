@@ -181,12 +181,12 @@ export function PetForm({
           variant: "destructive",
         });
       }
-      return false;
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to save pet",
         variant: "destructive",
       });
+      return false;
       return false;
     } finally {
       setIsSubmitting(false);
@@ -204,15 +204,10 @@ export function PetForm({
   return (
     <Form {...form}>
       <form 
-        onSubmit={async (e) => {
-          e.preventDefault();
+        onSubmit={form.handleSubmit(async (data) => {
           console.log('PetForm: Form submit event triggered');
-          try {
-            await form.handleSubmit(onSubmit)(e);
-          } catch (error) {
-            console.error('PetForm: Submit error:', error);
-          }
-        }} 
+          return await onSubmit(data);
+        })} 
         className="space-y-4"
       >
         <div className="space-y-4">
