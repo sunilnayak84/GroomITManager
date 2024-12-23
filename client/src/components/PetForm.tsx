@@ -140,6 +140,12 @@ export function PetForm({
     setIsSubmitting(true);
     console.log('PetForm: Starting submission process', { submitForm, data });
 
+    if (!submitForm) {
+      console.error('PetForm: submitForm function is undefined');
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       console.log('PetForm: Preparing pet data');
       const petData: InsertPet = {
@@ -171,6 +177,11 @@ export function PetForm({
       console.error('Error submitting pet form:', error);
       if (error instanceof Error) {
         onError?.(error);
+        toast({
+          title: "Error",
+          description: error.message || "Failed to save pet",
+          variant: "destructive",
+        });
       }
       toast({
         title: "Error",
