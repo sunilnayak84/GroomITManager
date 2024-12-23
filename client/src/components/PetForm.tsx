@@ -7,8 +7,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import React, { useState, useEffect, useCallback } from "react";
+import { useToast } from "@/components/ui/use-toast";
+import React, { useState, useEffect } from "react";
 import { Upload } from "lucide-react";
 
 const petSchema = z.object({
@@ -33,6 +33,7 @@ const petSchema = z.object({
   }).default("kg"),
   image: z.union([z.string(), z.instanceof(File), z.null()]).nullable(),
   notes: z.string().nullable(),
+  submissionId: z.string().optional()
 });
 
 type FormData = z.infer<typeof petSchema>;
@@ -80,6 +81,7 @@ export function PetForm({
       weightUnit: defaultValues?.weightUnit ?? "kg",
       image: defaultValues?.image ?? null,
       notes: defaultValues?.notes ?? null,
+      submissionId: undefined // Initialize submissionId to undefined
     },
   });
 
@@ -155,7 +157,8 @@ export function PetForm({
               weightUnit: data.weightUnit,
               image: data.image,
               notes: data.notes,
-              owner: hideCustomerField ? defaultValues?.owner : null
+              owner: hideCustomerField ? defaultValues?.owner : null,
+              submissionId: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
             };
 
             console.log('PetForm: Submitting pet data:', petData);
@@ -212,11 +215,13 @@ export function PetForm({
                         onChange={handleImageChange}
                         className="hidden"
                         id="pet-image"
+                        disabled={isSubmitting}
                       />
                       <Button
                         type="button"
                         variant="outline"
                         onClick={() => document.getElementById('pet-image')?.click()}
+                        disabled={isSubmitting}
                       >
                         <Upload className="w-4 h-4 mr-2" />
                         Upload Image
@@ -239,6 +244,7 @@ export function PetForm({
                     onValueChange={field.onChange}
                     value={field.value}
                     defaultValue={field.value}
+                    disabled={isSubmitting}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -271,7 +277,7 @@ export function PetForm({
               <FormItem>
                 <FormLabel>Pet Name*</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={isSubmitting} />
                 </FormControl>
               </FormItem>
             )}
@@ -287,7 +293,7 @@ export function PetForm({
               return (
                 <FormItem>
                   <FormLabel>Pet Type*</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value} disabled={isSubmitting}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select pet type" />
@@ -317,7 +323,7 @@ export function PetForm({
               return (
                 <FormItem>
                   <FormLabel>Breed*</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value} disabled={isSubmitting}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select breed" />
@@ -348,6 +354,7 @@ export function PetForm({
                     {...field}
                     value={field.value ?? ''}
                     onChange={(e) => field.onChange(e.target.value || null)}
+                    disabled={isSubmitting}
                   />
                 </FormControl>
               </FormItem>
@@ -366,6 +373,7 @@ export function PetForm({
                     {...field}
                     value={field.value ?? ''}
                     onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+                    disabled={isSubmitting}
                   />
                 </FormControl>
               </FormItem>
@@ -378,7 +386,7 @@ export function PetForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Gender</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value ?? ''}>
+                <Select onValueChange={field.onChange} value={field.value ?? ''} disabled={isSubmitting}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select gender" />
@@ -411,6 +419,7 @@ export function PetForm({
                         const value = e.target.value;
                         field.onChange(value || null);
                       }}
+                      disabled={isSubmitting}
                     />
                   </FormControl>
                 </FormItem>
@@ -423,7 +432,7 @@ export function PetForm({
               render={({ field }) => (
                 <FormItem className="w-24">
                   <FormLabel>Unit</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value} disabled={isSubmitting}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue />
@@ -446,7 +455,7 @@ export function PetForm({
               <FormItem>
                 <FormLabel>Additional Notes</FormLabel>
                 <FormControl>
-                  <Input {...field} value={field.value ?? ''} />
+                  <Input {...field} value={field.value ?? ''} disabled={isSubmitting} />
                 </FormControl>
               </FormItem>
             )}

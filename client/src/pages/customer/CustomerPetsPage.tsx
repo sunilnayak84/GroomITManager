@@ -56,6 +56,9 @@ export default function CustomerPetsPage() {
         throw new Error('User not authenticated');
       }
 
+      // Generate a unique submission ID
+      const submissionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
       const petData = {
         ...formData,
         customerId: user.id,
@@ -63,7 +66,8 @@ export default function CustomerPetsPage() {
           id: user.id,
           name: user.name || user.email,
           email: user.email
-        }
+        },
+        submissionId
       };
 
       console.log('[ADD_PET] Prepared pet data:', petData);
