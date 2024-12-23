@@ -351,21 +351,21 @@ export async function deleteCustomerAndRelated(id: string) {
   }
 }
 
-export async function updatePet(id: string, data: Partial<Pet>) {
+export async function updatePet({ petId, updateData }: { petId: string; updateData: Partial<Pet> }) {
   try {
     console.log('FIRESTORE: Starting pet update', { id, updateData: data });
     
-    const petRef = doc(petsCollection, id);
+    const petRef = doc(petsCollection, petId);
     const petDoc = await getDoc(petRef);
     
     if (!petDoc.exists()) {
-      throw new Error(`Pet with ID ${id} not found`);
+      throw new Error(`Pet with ID ${petId} not found`);
     }
 
     const timestamp = new Date().toISOString();
     
     // Create a type-safe version of the update data
-    const cleanedData = Object.entries(data).reduce<Record<string, unknown>>((acc, [key, value]) => {
+    const cleanedData = Object.entries(updateData).reduce<Record<string, unknown>>((acc, [key, value]) => {
       if (value !== undefined) {
         if (value instanceof Date) {
           acc[key] = value.toISOString();
