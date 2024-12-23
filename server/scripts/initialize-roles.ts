@@ -45,7 +45,7 @@ async function initializeRoles() {
           'view_own_appointments',
           'manage_own_pets',
           'create_pets',
-          'edit_own_pets',
+          'edit_own_pets', 
           'delete_own_pets',
           'view_own_pets',
           'cancel_own_appointments',
