@@ -94,7 +94,10 @@ export default function CustomerPetsPage() {
       return false;
     }
     try {
-      await updatePet(selectedPet.id, formData);
+      await updatePet({ 
+        petId: selectedPet.id, 
+        updateData: formData 
+      });
       console.log('UPDATE_PET: Pet updated successfully');
       toast({
         title: "Success",
