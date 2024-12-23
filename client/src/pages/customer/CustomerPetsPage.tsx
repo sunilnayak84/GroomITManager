@@ -16,7 +16,7 @@ export default function CustomerPetsPage() {
   const { pets, addPet, updatePet } = usePets();
   const [showPetModal, setShowPetModal] = useState(false);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
-  const [showAddPetDialog, setShowAddPetDialog] = useState(false); // Added state for Add Pet Dialog
+  const [showAddPetDialog, setShowAddPetDialog] = useState(false);
 
   if (userLoading) {
     return <div className="flex items-center justify-center min-h-screen">
@@ -32,32 +32,34 @@ export default function CustomerPetsPage() {
     </div>;
   }
 
+  // Updated to use correct user identifier
   const customerPets = pets.filter((pet) =>
-    pet.customerId === user.uid ||
+    pet.customerId === user.id ||
     pet.owner?.email === user.email
   );
 
   const { hasPermission } = useRole();
   const { toast } = useToast();
+
   const handleAddPet = async (formData: any) => {
     try {
-      if (!user?.uid || !user?.email) {
+      if (!user?.id || !user?.email) {
         throw new Error('User not authenticated');
       }
 
       const petData = {
         ...formData,
-        customerId: user.uid,
+        customerId: user.id,
         owner: {
-          id: user.uid,
-          name: user.displayName || 'Unknown',
+          id: user.id,
+          name: user.name || 'Unknown',
           email: user.email
         }
       };
 
       console.log('Submitting pet data:', petData);
       const result = await addPet(petData);
-      
+
       if (!result) {
         throw new Error('No response from server');
       }
@@ -65,9 +67,9 @@ export default function CustomerPetsPage() {
       toast({
         title: "Success",
         description: "Pet added successfully",
-        variant: "success"
+        variant: "default"
       });
-      
+
       setShowAddPetDialog(false);
       setShowPetModal(false);
       return true;
@@ -78,7 +80,7 @@ export default function CustomerPetsPage() {
         description: error.message || "An unexpected error occurred",
         variant: "destructive"
       });
-      throw error; // Re-throw to prevent form from closing
+      throw error;
     }
   };
 
@@ -102,7 +104,7 @@ export default function CustomerPetsPage() {
       toast({
         title: "Success",
         description: "Pet updated successfully",
-        variant: "success"
+        variant: "default"
       });
       setShowPetModal(false);
       setSelectedPet(null);
@@ -197,13 +199,12 @@ export default function CustomerPetsPage() {
             handleSubmit={selectedPet ? handleUpdatePet : handleAddPet}
             onCancel={() => setShowPetModal(false)}
             defaultValues={selectedPet ?? undefined}
-            customerId={user?.uid ?? ''}
+            customerId={user?.id ?? ''}
             hideCustomerField={true}
             isEditing={!!selectedPet}
           />
         </DialogContent>
       </Dialog>
-      
     </div>
   );
 }
