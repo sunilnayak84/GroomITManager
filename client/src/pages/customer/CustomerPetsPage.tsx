@@ -56,20 +56,21 @@ export default function CustomerPetsPage() {
         throw new Error('User not authenticated');
       }
 
-      // Find the correct customer document for the logged-in user
-      const customerPet = customerPets[0];
-      if (!customerPet?.owner?.id) {
-        throw new Error('Customer ID not found');
-      }
-
       // Generate a unique submission ID
       const submissionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
+      // Use existing customer pet if available, otherwise use current user ID
+      const customerId = customerPets[0]?.owner?.id || user.id;
+      
+      if (!customerId) {
+        throw new Error('Customer ID not found');
+      }
+
       const petData = {
         ...formData,
-        customerId: customerPet.owner.id,
+        customerId,
         owner: {
-          id: customerPet.owner.id,
+          id: customerId,
           name: user.name || user.email,
           email: user.email
         },
