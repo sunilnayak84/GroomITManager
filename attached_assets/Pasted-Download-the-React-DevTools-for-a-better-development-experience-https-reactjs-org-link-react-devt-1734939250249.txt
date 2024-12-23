@@ -1,0 +1,34 @@
+Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+firebase.ts:26 FIREBASE_INIT: Firebase initialized successfully
+use-pets.ts:71 FETCH_PETS: Raw pets data: (3) [{…}, {…}, {…}]0: {id: 'HjFI01ATe1JiEH0rqfA3', submissionId: '1734937038400-jx0afc7i9', weightUnit: 'kg', updatedAt: null, notes: null, …}1: {id: 'JRjpo4QshmdYg8iHIji3', name: 'testpet2', breed: 'Belgian Malinois', gender: 'female', customerId: 'CA6Bd09SzND7J1UEfLRo', …}2: {id: 'eo7yEF7BKT5V9SLAo8WE', weight: 6, type: 'dog', createdAt: _Timestamp, notes: 'Good pet, gentle behavior', …}length: 3[[Prototype]]: Array(0)
+use-pets.ts:122 FETCH_PETS: Completed fetching pets {totalPets: 3, pets: Array(3)}pets: (3) [{…}, {…}, {…}]totalPets: 3[[Prototype]]: Object
+Dialog.tsx:540  Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ Dialog.tsx:540
+commitHookEffectListMount @ react-dom.development.js:23150
+commitPassiveMountOnFiber @ react-dom.development.js:24926
+commitPassiveMountEffects_complete @ react-dom.development.js:24891
+commitPassiveMountEffects_begin @ react-dom.development.js:24878
+commitPassiveMountEffects @ react-dom.development.js:24866
+flushPassiveEffectsImpl @ react-dom.development.js:27039
+flushPassiveEffects @ react-dom.development.js:26984
+commitRootImpl @ react-dom.development.js:26935
+commitRoot @ react-dom.development.js:26682
+performSyncWorkOnRoot @ react-dom.development.js:26117
+flushSyncCallbacks @ react-dom.development.js:12042
+(anonymous) @ react-dom.development.js:25651
+Dialog.tsx:540  Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ Dialog.tsx:540
+commitHookEffectListMount @ react-dom.development.js:23150
+invokePassiveEffectMountInDEV @ react-dom.development.js:25154
+invokeEffectsInDev @ react-dom.development.js:27351
+commitDoubleInvokeEffectsInDEV @ react-dom.development.js:27330
+flushPassiveEffectsImpl @ react-dom.development.js:27056
+flushPassiveEffects @ react-dom.development.js:26984
+commitRootImpl @ react-dom.development.js:26935
+commitRoot @ react-dom.development.js:26682
+performSyncWorkOnRoot @ react-dom.development.js:26117
+flushSyncCallbacks @ react-dom.development.js:12042
+(anonymous) @ react-dom.development.js:25651
+PetForm.tsx:198 PetForm: Form submit event triggered
