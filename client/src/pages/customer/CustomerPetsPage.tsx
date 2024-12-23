@@ -41,13 +41,21 @@ export default function CustomerPetsPage() {
   const { toast } = useToast();
   const handleAddPet = async (formData: any) => {
     try {
-      console.log('Starting pet submission...');
+      console.log('Starting pet submission...', {
+        userRole: user?.role,
+        userPermissions: user?.permissions,
+        hasManagePetsPermission: hasPermission('manage_own_pets')
+      });
       
       if (!user?.uid || !user?.email) {
         throw new Error('User not authenticated');
       }
 
       if (!hasPermission('manage_own_pets')) {
+        console.error('Permission denied', {
+          requiredPermission: 'manage_own_pets',
+          userPermissions: user?.permissions
+        });
         throw new Error('You do not have permission to add pets');
       }
       
