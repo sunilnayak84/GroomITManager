@@ -16,6 +16,7 @@ export default function CustomerPetsPage() {
   const { pets, addPet, updatePet } = usePets();
   const [showPetModal, setShowPetModal] = useState(false);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+  const [showAddPetDialog, setShowAddPetDialog] = useState(false); // Added state for Add Pet Dialog
 
   if (userLoading) {
     return <div className="flex items-center justify-center min-h-screen">
@@ -82,13 +83,20 @@ export default function CustomerPetsPage() {
   };
 
   const handleUpdatePet = async (formData: any) => {
-    if (!selectedPet) return;
+    console.log('UPDATE_PET: Starting pet update', { formData });
+    if (!selectedPet) {
+      console.error('UPDATE_PET: No pet selected for update');
+      return false;
+    }
     try {
+      console.log('UPDATE_PET: Updating pet', { petId: selectedPet.id, formData });
       await updatePet(selectedPet.id, formData);
+      console.log('UPDATE_PET: Pet updated successfully');
       setShowPetModal(false);
       setSelectedPet(null);
-    } catch (error) {
-      console.error('Error updating pet:', error);
+      return true;
+    } catch (error: any) {
+      console.error('UPDATE_PET: Failed to update pet', error);
     }
   };
 
