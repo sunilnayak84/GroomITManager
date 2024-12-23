@@ -131,9 +131,14 @@ export function PetForm({
   };
 
   const onSubmit = useCallback(async (data: FormData) => {
-    if (isSubmitting) return;
+    console.log('PetForm: Submit button clicked', { data });
+    if (isSubmitting) {
+      console.log('PetForm: Already submitting, returning');
+      return;
+    }
     
     setIsSubmitting(true);
+    console.log('PetForm: Starting submission process');
     console.log('Form submission started with data:', data);
 
     try {
@@ -188,7 +193,13 @@ export function PetForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form 
+        onSubmit={(e) => {
+          console.log('PetForm: Form submit event triggered');
+          form.handleSubmit(onSubmit)(e);
+        }} 
+        className="space-y-4"
+      >
         <div className="space-y-4">
           <FormField
             control={form.control}
