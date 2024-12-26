@@ -470,14 +470,10 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         return; // Exit early on error
       }
 
-      // Only proceed if no errors
+      // Only runs on success
       setIsSubmitting(false);
-      setValidationError(null);
-      setSelectedService(null);
-      setAvailableTimeSlots([]);
-      form.reset();
       setOpen(false);
-
+      
       // Show success toast after dialog closes
       setTimeout(() => {
         toast({
@@ -485,7 +481,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
           description: "Appointment scheduled successfully",
           duration: 3000,
         });
-      }, 100);
+      }, 300);
 
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
     } catch (error) {
@@ -494,11 +490,12 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       setValidationError(errorMessage);
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Scheduling Error",
         description: errorMessage,
+        duration: 3000,
       });
-    } finally {
       setIsSubmitting(false);
+      return;
     }
   }
 
