@@ -2,8 +2,7 @@ import { useState } from "react";
 import { usePets } from "@/hooks/use-pets";
 import { useUser } from "@/hooks/use-user";
 import { useRole } from "@/hooks/use-role";
-import { useCustomers } from "@/hooks/use-customers";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Pencil } from "lucide-react";
@@ -17,7 +16,7 @@ export default function CustomerPetsPage() {
   const { pets, addPet, updatePet } = usePets();
   const [showPetModal, setShowPetModal] = useState(false);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showAddPetDialog, setShowAddPetDialog] = useState(false); // Added state for Add Pet Dialog
 
   if (userLoading) {
     return <div className="flex items-center justify-center min-h-screen">
@@ -33,92 +32,60 @@ export default function CustomerPetsPage() {
     </div>;
   }
 
-  // Updated to use correct user identifier and handle both ID formats
   const customerPets = pets.filter((pet) =>
-    pet.customerId === user.id || 
     pet.customerId === user.uid ||
     pet.owner?.email === user.email
   );
 
   const { hasPermission } = useRole();
   const { toast } = useToast();
-
-  const { customers } = useCustomers();
   const handleAddPet = async (formData: any) => {
-    if (isSubmitting) {
-      console.log('[ADD_PET] Submission already in progress, skipping');
-      return false;
-    }
-
     try {
-      setIsSubmitting(true);
-      console.log('[ADD_PET] Starting submission with form data:', formData);
-
-      if (!user?.email) {
+      if (!user?.uid || !user?.email) {
         throw new Error('User not authenticated');
       }
 
-      // Generate a unique submission ID
-      const submissionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-
-      // Find customer ID based on the authenticated user's email
-      const customerData = customers.find(c => c.email === user.email);
-      
-      if (!customerData?.id) {
-        throw new Error('Customer record not found');
-      }
-
-      const customerId = customerData.id;
-      
       const petData = {
         ...formData,
-        customerId,
+        customerId: user.uid,
         owner: {
-          id: customerId,
-          name: user.name || user.email,
+          id: user.uid,
+          name: user.displayName || 'Unknown',
           email: user.email
-        },
-        submissionId
+        }
       };
 
-      console.log('[ADD_PET] Prepared pet data:', petData);
+      console.log('Submitting pet data:', petData);
       const result = await addPet(petData);
-
+      
       if (!result) {
-        throw new Error('Failed to add pet');
+        throw new Error('No response from server');
       }
-
-      console.log('[ADD_PET] Pet created successfully:', result);
 
       toast({
         title: "Success",
         description: "Pet added successfully",
-        variant: "default"
+        variant: "success"
       });
-
+      
+      setShowAddPetDialog(false);
       setShowPetModal(false);
       return true;
     } catch (error: any) {
-      console.error('[ADD_PET] Error:', error);
+      console.error('Error adding pet:', error);
       toast({
         title: "Error",
         description: error.message || "An unexpected error occurred",
         variant: "destructive"
       });
-      return false;
-    } finally {
-      setIsSubmitting(false);
+      throw error; // Re-throw to prevent form from closing
     }
   };
 
   const handleUpdatePet = async (formData: any) => {
-    if (isSubmitting) {
-      console.log('[UPDATE_PET] Submission already in progress, skipping');
-      return false;
-    }
-
+    console.log('UPDATE_PET: Starting pet update', { formData, selectedPet });
     if (!selectedPet?.id) {
-      console.error('[UPDATE_PET] No pet selected for update');
+      console.error('UPDATE_PET: No pet selected for update');
       toast({
         title: "Error",
         description: "No pet selected for update",
@@ -126,43 +93,28 @@ export default function CustomerPetsPage() {
       });
       return false;
     }
-
     try {
-      setIsSubmitting(true);
-      console.log('[UPDATE_PET] Starting update for pet:', selectedPet.id);
-
-      // Preserve the original customerId and owner
-      const updateData = {
-        ...formData,
-        customerId: selectedPet.customerId,
-        owner: selectedPet.owner
-      };
-
       await updatePet({ 
         petId: selectedPet.id, 
-        updateData 
+        updateData: formData 
       });
-
-      console.log('[UPDATE_PET] Pet updated successfully');
+      console.log('UPDATE_PET: Pet updated successfully');
       toast({
         title: "Success",
         description: "Pet updated successfully",
-        variant: "default"
+        variant: "success"
       });
-
       setShowPetModal(false);
       setSelectedPet(null);
       return true;
     } catch (error: any) {
-      console.error('[UPDATE_PET] Failed to update pet:', error);
+      console.error('UPDATE_PET: Failed to update pet', error);
       toast({
         title: "Error",
         description: error.message || "Failed to update pet",
         variant: "destructive"
       });
       return false;
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -172,13 +124,10 @@ export default function CustomerPetsPage() {
         <h1 className="text-3xl font-bold">My Pets</h1>
         <Button
           onClick={() => {
-            if (!isSubmitting) {
-              setSelectedPet(null);
-              setShowPetModal(true);
-            }
+            setSelectedPet(null);
+            setShowPetModal(true);
           }}
           className="gap-2 bg-primary hover:bg-primary/90"
-          disabled={isSubmitting}
         >
           <Plus className="h-4 w-4" />
           Add Pet
@@ -209,13 +158,10 @@ export default function CustomerPetsPage() {
                 variant="ghost"
                 size="icon"
                 onClick={() => {
-                  if (!isSubmitting) {
-                    setSelectedPet(pet);
-                    setShowPetModal(true);
-                  }
+                  setSelectedPet(pet);
+                  setShowPetModal(true);
                 }}
                 className="opacity-0 group-hover:opacity-100 transition-opacity"
-                disabled={isSubmitting}
               >
                 <Pencil className="h-4 w-4" />
               </Button>
@@ -242,31 +188,22 @@ export default function CustomerPetsPage() {
         ))}
       </div>
 
-      <Dialog 
-        open={showPetModal} 
-        onOpenChange={(open) => {
-          if (!isSubmitting) {
-            setShowPetModal(open);
-            if (!open) {
-              setSelectedPet(null);
-            }
-          }
-        }}
-      >
+      <Dialog open={showPetModal} onOpenChange={setShowPetModal}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogTitle className="text-xl font-semibold mb-4">
             {selectedPet ? 'Edit Pet' : 'Add New Pet'}
           </DialogTitle>
           <PetForm
             handleSubmit={selectedPet ? handleUpdatePet : handleAddPet}
-            onCancel={() => !isSubmitting && setShowPetModal(false)}
+            onCancel={() => setShowPetModal(false)}
             defaultValues={selectedPet ?? undefined}
-            customerId={user?.id ?? ''}
+            customerId={user?.uid ?? ''}
             hideCustomerField={true}
             isEditing={!!selectedPet}
           />
         </DialogContent>
       </Dialog>
+      
     </div>
   );
 }

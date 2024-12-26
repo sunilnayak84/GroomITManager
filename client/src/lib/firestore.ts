@@ -142,10 +142,16 @@ export async function createPet(pet: Omit<Pet, 'id' | 'createdAt' | 'updatedAt' 
     // Use a transaction to create pet and update customer count atomically
     const result = await runTransaction(db, async (transaction) => {
       try {
-        // Check for duplicate submission first
+        // Verify customer exists within transaction
+        const customerDoc = await transaction.get(customerRef);
+        if (!customerDoc.exists()) {
+          throw new Error(`Customer with ID ${pet.customerId} does not exist`);
+        }
+
+        // Check for duplicate submission
         const duplicateQuery = query(petsCollection, where('submissionId', '==', submissionId));
         const duplicateSnapshot = await getDocs(duplicateQuery);
-
+        
         if (!duplicateSnapshot.empty) {
           console.log('FIRESTORE: Duplicate submission detected', {
             submissionId
@@ -161,40 +167,11 @@ export async function createPet(pet: Omit<Pet, 'id' | 'createdAt' | 'updatedAt' 
           };
         }
 
-        // Verify customer exists or create it
-        const customerDoc = await transaction.get(customerRef);
-        if (!customerDoc.exists() && pet.owner) {
-          console.log('FIRESTORE: Creating missing customer document', { 
-            customerId: pet.customerId,
-            owner: pet.owner
-          });
-
-          const timestamp = new Date().toISOString();
-          const [firstName, ...lastNameParts] = pet.owner.name.split(' ');
-          const lastName = lastNameParts.join(' ') || 'Unknown';
-
-          const customerData = {
-            id: pet.customerId,
-            firebaseId: pet.customerId,
-            firstName,
-            lastName,
-            email: pet.owner.email,
-            phone: '',  // Required field but we don't have it yet
-            address: null,
-            gender: null,
-            petCount: 0,
-            createdAt: timestamp,
-            updatedAt: null
-          };
-
-          transaction.set(customerRef, customerData);
-        }
-
         // Query existing pets for accurate count
         const petsQuery = query(petsCollection, where('customerId', '==', pet.customerId));
         const petsSnapshot = await getDocs(petsQuery);
         const actualPetCount = petsSnapshot.size;
-
+        
         const timestamp = new Date().toISOString();
         const petData: WithFieldValue<Pet> = {
           id: petRef.id,
