@@ -377,19 +377,17 @@ export function useAppointments() {
         appointment.deletedAt ||
         (currentAppointmentId && appointment.id === currentAppointmentId) || 
         appointment.status === 'cancelled' ||
-        (groomerId && appointment.groomerId !== groomerId) 
+        (groomerId && appointment.groomerId !== groomerId) ||
+        !appointment.date // Skip if appointment has no date
       ) return false;
       
       const appointmentStart = new Date(appointment.date);
       const appointmentEnd = new Date(appointmentStart);
       appointmentEnd.setMinutes(appointmentEnd.getMinutes() + (appointment.totalDuration || 30));
 
-      // Check for overlap
-      const overlaps = (
-        (slotStart >= appointmentStart && slotStart < appointmentEnd) ||
-        (slotEnd > appointmentStart && slotEnd <= appointmentEnd) ||
-        (slotStart <= appointmentStart && slotEnd >= appointmentEnd) ||
-        (appointmentStart <= slotStart && appointmentEnd >= slotEnd)
+      // Comprehensive overlap check
+      return (
+        (slotStart < appointmentEnd && slotEnd > appointmentStart)
       );
       if (overlaps) {
         console.log('Appointment overlap detected:', {
