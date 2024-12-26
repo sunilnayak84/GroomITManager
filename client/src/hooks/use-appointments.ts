@@ -341,9 +341,10 @@ export function useAppointments() {
         appointmentData.date = appointmentDateTime.toISOString();
         
         // Get groomer data before saving
-        const groomerDoc = await getDoc(doc(db, 'users', appointmentData.groomerId));
-        const groomerData = groomerDoc.data();
-        const groomerName = groomerData?.name || 'Unknown Groomer';
+        //For customers, don't set groomerId - let backend handle auto-assignment
+        if (auth.currentUser?.role === 'customer') {
+          appointmentData.groomerId = null;
+        }
 
         const dataToSave = createFirestoreAppointmentData(appointmentData);
         await setDoc(newAppointmentRef, dataToSave);
