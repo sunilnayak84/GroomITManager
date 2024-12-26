@@ -129,7 +129,15 @@ export const RolePermissions: Record<string, string[]> = {
     'view_revenue_reports',
     'manage_discounts'
   ],
-  staff: ['all'],  // Temporary solution: giving staff full admin permissions
+  staff: [
+    'manage_appointments',
+    'view_appointments',
+    'manage_own_schedule',
+    'view_customers',
+    'view_inventory',
+    'view_pets',
+    'update_stock'
+  ],
   receptionist: [
     'view_appointments',
     'create_appointments',
