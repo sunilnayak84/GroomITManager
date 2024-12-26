@@ -333,6 +333,13 @@ export function useAppointments() {
         console.log('Adding appointment with data:', appointmentData);
         const appointmentsRef = collection(db, 'appointments');
         const newAppointmentRef = doc(appointmentsRef);
+        
+        // Combine date and time properly
+        const [year, month, day] = appointmentData.date.split('-').map(Number);
+        const [hours, minutes] = appointmentData.time.split(':').map(Number);
+        const appointmentDateTime = new Date(year, month - 1, day, hours, minutes, 0, 0);
+        appointmentData.date = appointmentDateTime.toISOString();
+        
         // Get groomer data before saving
         const groomerDoc = await getDoc(doc(db, 'users', appointmentData.groomerId));
         const groomerData = groomerDoc.data();
