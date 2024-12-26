@@ -385,14 +385,17 @@ export function useAppointments() {
       const appointmentEnd = new Date(appointmentStart);
       appointmentEnd.setMinutes(appointmentEnd.getMinutes() + (appointment.totalDuration || 30));
 
-      // Only check appointments for the requested groomer
-      if (groomerId && appointment.groomerId === groomerId) {
+      // For manual groomer selection, check specific groomer availability
+      // For auto-assignment, server handles groomer selection
+      if (!groomerId || (groomerId && appointment.groomerId === groomerId)) {
         const overlaps = (slotStart < appointmentEnd && slotEnd > appointmentStart);
         if (overlaps) {
           console.log('Appointment overlap detected:', {
             newAppointment: { start: slotStart, end: slotEnd, groomer: groomerId },
-          existingAppointment: { id: appointment.id, start: appointmentStart, end: appointmentEnd, groomer: appointment.groomerId }
-        });
+            existingAppointment: { id: appointment.id, start: appointmentStart, end: appointmentEnd, groomer: appointment.groomerId }
+          });
+          return overlaps;
+        }
       }
       return overlaps;
     });
