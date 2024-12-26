@@ -168,7 +168,6 @@ export const userSchema = z.object({
   role: z.enum(["admin", "manager", "staff", "groomer", "receptionist"]),
   isActive: z.boolean().default(true),
   branchId: z.string().nullable(),
-  isGroomer: z.boolean().default(false),
   specialties: z.array(z.string()).default([]),
   petTypePreferences: z.array(z.string()).default([]),
   experienceYears: z.number().nullable(),

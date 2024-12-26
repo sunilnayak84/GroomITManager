@@ -79,7 +79,7 @@ export function useStaff() {
         body: JSON.stringify({
           ...data,
           password: data.password || Math.random().toString(36).slice(-8),
-          isGroomer: data.role === 'groomer'
+          specialties: data.role === 'groomer' ? ['groomer'] : []
         })
       });
 
