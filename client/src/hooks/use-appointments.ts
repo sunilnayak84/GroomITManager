@@ -339,11 +339,19 @@ export function useAppointments() {
         const [hours, minutes] = appointmentData.time.split(':').map(Number);
         const appointmentDateTime = new Date(year, month - 1, day, hours, minutes, 0, 0);
         appointmentData.date = appointmentDateTime.toISOString();
-        
-        // Get groomer data before saving
-        //For customers, don't set groomerId - let backend handle auto-assignment
+
+        // For customers, get auto-assigned groomer from backend
         if (auth.currentUser?.role === 'customer') {
-          appointmentData.groomerId = null;
+          const response = await fetch('/api/groomers', {
+            headers: { Authorization: `Bearer ${await auth.currentUser.getIdToken()}` }
+          });
+          const data = await response.json();
+          
+          if (!data.autoAssignedGroomer) {
+            throw new Error('No groomers available for this time slot');
+          }
+          
+          appointmentData.groomerId = data.autoAssignedGroomer.id;
         }
 
         const dataToSave = createFirestoreAppointmentData(appointmentData);
