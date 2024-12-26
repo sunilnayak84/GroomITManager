@@ -344,17 +344,16 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
           };
           try {
             await addAppointment(appointmentData);
-            // Reset all state first
-            form.reset();
-            setValidationError(null);
-            setSelectedService(null);
-            setAvailableTimeSlots([]);
-            setIsSubmitting(false);
+            setOpen(false); // Close dialog immediately after successful appointment
             
-            // Close dialog using a slight delay to ensure state is reset
-            setTimeout(() => {
-              setOpen(false);
-            }, 100);
+            // Reset form state after dialog is closed
+            requestAnimationFrame(() => {
+              form.reset();
+              setValidationError(null);
+              setSelectedService(null);
+              setAvailableTimeSlots([]);
+              setIsSubmitting(false);
+            });
           } catch (error) {
             console.error('Failed to create appointment:', error);
             setValidationError('Failed to create appointment');
