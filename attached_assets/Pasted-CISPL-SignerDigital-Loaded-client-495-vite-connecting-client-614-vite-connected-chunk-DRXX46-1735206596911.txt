@@ -1,0 +1,133 @@
+CISPL SignerDigital Loaded
+client:495 [vite] connecting...
+client:614 [vite] connected.
+chunk-DRXX46FI.js?v=0cf51c99:21507 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+firebase.ts:26 FIREBASE_INIT: Firebase initialized successfully
+use-pets.ts:71 FETCH_PETS: Raw pets data: (3) [{…}, {…}, {…}]
+use-services.ts:92 FETCH_SERVICES: Completed fetching services {count: 3, services: Array(3)}count: 3services: (3) [{…}, {…}, {…}][[Prototype]]: Object
+use-pets.ts:122 FETCH_PETS: Completed fetching pets {totalPets: 3, pets: Array(3)}pets: Array(3)0: {id: 'Qk2LqOtXLnzTYhFo7InK', firebaseId: null, name: 'PetTest', type: 'dog', breed: 'Tibetan Mastiff', …}1: {id: 'ho3chzn2qWibcB7fqR2l', firebaseId: null, name: 'Newtest', type: 'dog', breed: 'English Mastiff', …}2: {id: 'iK1lVmJXXA1Y9kV4n5iM', firebaseId: null, name: 'NewPetTest', type: 'dog', breed: 'Lhasa Apso', …}length: 3[[Prototype]]: Array(0)totalPets: 3[[Prototype]]: Object
+use-appointments.ts:321 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
+AppointmentForm.tsx:347 Error auto-assigning groomer: ReferenceError: auth is not defined
+    at onSubmit (AppointmentForm.tsx:323:48)
+    at chunk-VYIIT4SD.js?v=0cf51c99:1694:15
+onSubmit @ AppointmentForm.tsx:347
+(anonymous) @ chunk-VYIIT4SD.js?v=0cf51c99:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=0cf51c99:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=0cf51c99:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=0cf51c99:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=0cf51c99:3736
+executeDispatch @ chunk-DRXX46FI.js?v=0cf51c99:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=0cf51c99:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=0cf51c99:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=0cf51c99:7051
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=0cf51c99:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=0cf51c99:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=0cf51c99:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=0cf51c99:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=0cf51c99:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=0cf51c99:5449Understand this errorAI
+use-appointments.ts:333 Adding appointment with data: {petId: 'Qk2LqOtXLnzTYhFo7InK', services: Array(1), groomerId: null, branchId: '1', date: '2024-12-27T05:30:00.000Z', …}branchId: "1"date: "2024-12-27T05:30:00.000Z"groomerId: nullnotes: ""petId: "Qk2LqOtXLnzTYhFo7InK"productsUsed: nullservices: ['8sWdC28UWMGPd70awXQf']status: "pending"time: "11:00"totalDuration: 30totalPrice: 99[[Prototype]]: Object
+use-appointments.ts:351 Error adding appointment: TypeError: Cannot read properties of null (reading 'indexOf')
+    at _ResourcePath.fromString (firebase_firestore.js?v=0cf51c99:3224:13)
+    at doc (firebase_firestore.js?v=0cf51c99:15481:28)
+    at Object.mutationFn (use-appointments.ts:337:41)
+    at Object.fn (@tanstack_react-query.js?v=0cf51c99:1188:29)
+    at run (@tanstack_react-query.js?v=0cf51c99:493:49)
+    at Object.start (@tanstack_react-query.js?v=0cf51c99:535:9)
+    at _a6.execute (@tanstack_react-query.js?v=0cf51c99:1224:56)
+    at async onSubmit (AppointmentForm.tsx:414:9)
+    at async chunk-VYIIT4SD.js?v=0cf51c99:1694:9
+mutationFn @ use-appointments.ts:351
+fn @ @tanstack_react-query.js?v=0cf51c99:1188
+run @ @tanstack_react-query.js?v=0cf51c99:493
+start @ @tanstack_react-query.js?v=0cf51c99:535
+execute @ @tanstack_react-query.js?v=0cf51c99:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=0cf51c99:2621
+onSubmit @ AppointmentForm.tsx:414
+(anonymous) @ chunk-VYIIT4SD.js?v=0cf51c99:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=0cf51c99:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=0cf51c99:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=0cf51c99:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=0cf51c99:3736
+executeDispatch @ chunk-DRXX46FI.js?v=0cf51c99:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=0cf51c99:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=0cf51c99:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=0cf51c99:7051
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=0cf51c99:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=0cf51c99:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=0cf51c99:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=0cf51c99:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=0cf51c99:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=0cf51c99:5449Understand this errorAI
+use-appointments.ts:333 Adding appointment with data: {petId: 'Qk2LqOtXLnzTYhFo7InK', services: Array(1), groomerId: null, branchId: '1', date: '2024-12-27T05:30:00.000Z', …}branchId: "1"date: "2024-12-27T05:30:00.000Z"groomerId: nullnotes: ""petId: "Qk2LqOtXLnzTYhFo7InK"productsUsed: nullservices: Array(1)0: "8sWdC28UWMGPd70awXQf"length: 1[[Prototype]]: Array(0)status: "pending"time: "11:00"totalDuration: 30totalPrice: 99[[Prototype]]: Object
+use-appointments.ts:351 Error adding appointment: TypeError: Cannot read properties of null (reading 'indexOf')
+    at _ResourcePath.fromString (firebase_firestore.js?v=0cf51c99:3224:13)
+    at doc (firebase_firestore.js?v=0cf51c99:15481:28)
+    at Object.mutationFn (use-appointments.ts:337:41)
+    at Object.fn (@tanstack_react-query.js?v=0cf51c99:1188:29)
+    at run (@tanstack_react-query.js?v=0cf51c99:493:49)
+    at @tanstack_react-query.js?v=0cf51c99:518:11
+mutationFn @ use-appointments.ts:351
+fn @ @tanstack_react-query.js?v=0cf51c99:1188
+run @ @tanstack_react-query.js?v=0cf51c99:493
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:514
+Promise.catch
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+execute @ @tanstack_react-query.js?v=0cf51c99:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=0cf51c99:2621
+onSubmit @ AppointmentForm.tsx:414
+(anonymous) @ chunk-VYIIT4SD.js?v=0cf51c99:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=0cf51c99:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=0cf51c99:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=0cf51c99:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=0cf51c99:3736
+executeDispatch @ chunk-DRXX46FI.js?v=0cf51c99:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=0cf51c99:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=0cf51c99:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=0cf51c99:7051
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=0cf51c99:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=0cf51c99:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=0cf51c99:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=0cf51c99:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=0cf51c99:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=0cf51c99:5449Understand this errorAI
+AppointmentForm.tsx:429 Failed to schedule appointment: TypeError: Cannot read properties of null (reading 'indexOf')
+    at _ResourcePath.fromString (firebase_firestore.js?v=0cf51c99:3224:13)
+    at doc (firebase_firestore.js?v=0cf51c99:15481:28)
+    at Object.mutationFn (use-appointments.ts:337:41)
+    at Object.fn (@tanstack_react-query.js?v=0cf51c99:1188:29)
+    at run (@tanstack_react-query.js?v=0cf51c99:493:49)
+    at @tanstack_react-query.js?v=0cf51c99:518:11
+onSubmit @ AppointmentForm.tsx:429
+await in onSubmit
+(anonymous) @ chunk-VYIIT4SD.js?v=0cf51c99:1694
+await in (anonymous)
+callCallback2 @ chunk-DRXX46FI.js?v=0cf51c99:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=0cf51c99:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=0cf51c99:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=0cf51c99:3736
+executeDispatch @ chunk-DRXX46FI.js?v=0cf51c99:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=0cf51c99:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=0cf51c99:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=0cf51c99:7051
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=0cf51c99:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=0cf51c99:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=0cf51c99:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=0cf51c99:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=0cf51c99:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=0cf51c99:5449Understand this errorAI
