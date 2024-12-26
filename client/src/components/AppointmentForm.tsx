@@ -464,13 +464,26 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
 
   useEffect(() => {
     if (!open) {
-      form.reset();
+      form.reset({
+        petId: "",
+        services: [],
+        groomerId: "",
+        branchId: "1",
+        date: format(new Date(), 'yyyy-MM-dd'),
+        time: format(new Date(), 'HH:mm'),
+        status: "pending",
+        notes: "",
+        productsUsed: null,
+        totalPrice: 0,
+        totalDuration: 0
+      });
       form.clearErrors();
       setValidationError(null);
       setSelectedService(null);
       setAvailableTimeSlots([]);
+      setIsSubmitting(false);
     }
-  }, [open]);
+  }, [open, form]);
 
   const closeDialog = () => {
     form.reset();
