@@ -330,6 +330,16 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
             if (!data.groomerId) {
               throw new Error('No groomer ID received from auto-assignment');
             }
+            // Add groomer info to appointment data
+            const appointmentData = {
+              ...data,
+              groomer: {
+                id: groomersData.autoAssignedGroomer.id,
+                name: groomersData.autoAssignedGroomer.name
+              }
+            };
+            await addAppointment(appointmentData);
+            return;
           } else {
             throw new Error('No groomer available for auto-assignment');
           }
