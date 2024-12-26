@@ -462,8 +462,8 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         setValidationError(errorMessage);
         toast({
           variant: "destructive",
-          title: "Error",
-          description: errorMessage,
+          title: "Scheduling Error",
+          description: errorMessage || "Failed to schedule appointment",
           duration: 3000,
         });
         setIsSubmitting(false);
