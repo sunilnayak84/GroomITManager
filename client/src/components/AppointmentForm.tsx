@@ -487,12 +487,13 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
     } catch (error) {
       console.error('Failed to schedule appointment:', error);
       const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
-      setValidationError(errorMessage);
+      const errorToDisplay = errorMessage || "This time slot is already booked. Please select a different time.";
+      setValidationError(errorToDisplay);
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: errorMessage,
-        duration: 3000,
+        variant: "destructive", 
+        title: "Scheduling Error",
+        description: errorToDisplay,
+        duration: 5000,
       });
       setIsSubmitting(false);
       return;
