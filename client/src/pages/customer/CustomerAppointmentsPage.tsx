@@ -28,12 +28,9 @@ export default function CustomerAppointmentsPage() {
             </Button>
           </DialogTrigger>
           <AppointmentForm setOpen={(open) => {
-            const dialog = document.querySelector('[role="dialog"]');
-            if (dialog) {
-              const closeButton = dialog.querySelector('[data-button="close"]');
-              if (closeButton && closeButton instanceof HTMLButtonElement) {
-                closeButton.click();
-              }
+            const dialog = document.querySelector('div[role="dialog"]');
+            if (!open && dialog) {
+              dialog.remove();
             }
           }} />
         </Dialog>
