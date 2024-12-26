@@ -353,10 +353,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
           } catch (error) {
             console.error('Failed to create appointment:', error);
             setValidationError('Failed to create appointment');
-              title: "Error",
-              description: "Failed to create appointment",
-              variant: "destructive",
-            });
+            setOpen(false);
           }
           return;
         } else {
