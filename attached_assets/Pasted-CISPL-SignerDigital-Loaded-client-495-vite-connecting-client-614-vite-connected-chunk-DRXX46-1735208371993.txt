@@ -1,0 +1,14 @@
+CISPL SignerDigital Loaded
+client:495 [vite] connecting...
+client:614 [vite] connected.
+chunk-DRXX46FI.js?v=0cf51c99:21507 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+firebase.ts:26 FIREBASE_INIT: Firebase initialized successfully
+use-pets.ts:71 FETCH_PETS: Raw pets data: (3) [{…}, {…}, {…}]0: {id: 'Qk2LqOtXLnzTYhFo7InK', notes: 'My pet', type: 'dog', weight: 21, createdAt: _Timestamp, …}1: {id: 'ho3chzn2qWibcB7fqR2l', image: 'https://firebasestorage.googleapis.com/v0/b/replit…=media&token=9ab59b6d-84f0-4fb4-af5c-d41f66bdc0a5', submissionId: '1734950902858-z5deje2gk', breed: 'English Mastiff', owner: null, …}2: {id: 'iK1lVmJXXA1Y9kV4n5iM', weight: 8, dateOfBirth: '2020-01-01', firebaseId: null, image: 'https://firebasestorage.googleapis.com/v0/b/replit…=media&token=1f011b79-19a2-4832-82fc-af0fddafea6b', …}length: 3[[Prototype]]: Array(0)
+use-services.ts:92 FETCH_SERVICES: Completed fetching services {count: 3, services: Array(3)}count: 3services: (3) [{…}, {…}, {…}][[Prototype]]: Object
+use-pets.ts:122 FETCH_PETS: Completed fetching pets {totalPets: 3, pets: Array(3)}pets: (3) [{…}, {…}, {…}]totalPets: 3[[Prototype]]: Object
+use-appointments.ts:321 FETCH_APPOINTMENTS: Processed 2 appointments. Success: 2, Errors: 0
+use-appointments.ts:333 Adding appointment with data: {petId: 'iK1lVmJXXA1Y9kV4n5iM', services: Array(1), groomerId: 'zjMezeDkskSz772Lxn7dHqkxuLV2', branchId: '1', date: '2024-12-27', …}branchId: "1"date: "2024-12-27T05:30:00.000Z"groomer: id: "zjMezeDkskSz772Lxn7dHqkxuLV2"name: "Groomer Two"[[Prototype]]: ObjectgroomerId: "zjMezeDkskSz772Lxn7dHqkxuLV2"notes: ""petId: "iK1lVmJXXA1Y9kV4n5iM"productsUsed: nullservices: Array(1)0: "8sWdC28UWMGPd70awXQf"length: 1[[Prototype]]: Array(0)status: "pending"time: "11:00"totalDuration: 30totalPrice: 99[[Prototype]]: Object
+use-appointments.ts:321 FETCH_APPOINTMENTS: Processed 3 appointments. Success: 3, Errors: 0
