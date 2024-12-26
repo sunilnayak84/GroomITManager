@@ -310,10 +310,12 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
   async function onSubmit(data: z.infer<typeof insertAppointmentSchema>) {
     if (isSubmitting) return;
     setIsSubmitting(true);
-    try {
-      if (!data.petId || !data.services || data.services.length === 0) {
-        throw new Error("Please select both pet and at least one service");
-      }
+    
+    if (!data.petId || !data.services || data.services.length === 0) {
+      setIsSubmitting(false);
+      setValidationError("Please select both pet and at least one service");
+      return;
+    }
 
       const appointmentDateTime = new Date(data.date + 'T' + data.time);
       if (!isTimeSlotAvailable(appointmentDateTime, null, data.totalDuration || 30)) {
