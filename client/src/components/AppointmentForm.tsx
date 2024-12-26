@@ -262,10 +262,6 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         }
       }
 
-      // Check for overlapping appointments
-      const appointmentEndTime = new Date(appointmentStartTime);
-      appointmentEndTime.setMinutes(appointmentEndTime.getMinutes() + (selectedService?.duration || 30));
-
       // Find any conflicting appointments for the groomer
       const conflictingAppointment = appointments?.find(a => {
         if (a.groomerId !== groomerId) return false;
