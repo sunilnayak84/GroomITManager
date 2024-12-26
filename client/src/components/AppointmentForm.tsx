@@ -344,18 +344,23 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
           };
           try {
             await addAppointment(appointmentData);
-            const toastPromise = new Promise<void>(resolve => {
-              toast({
-                title: "Success",
-                description: "Appointment scheduled successfully",
-                duration: 2000,
-              });
-              setTimeout(resolve, 100);
+            toast({
+              title: "Success", 
+              description: "Appointment scheduled successfully",
+              duration: 2000,
             });
             
-            await toastPromise;
+            // First cleanup form state
             form.reset();
-            setOpen(false);
+            setValidationError(null);
+            setSelectedService(null);
+            setAvailableTimeSlots([]);
+            setIsSubmitting(false);
+            
+            // Close dialog after a brief delay
+            requestAnimationFrame(() => {
+              setOpen(false);
+            });
           } catch (error) {
             console.error('Failed to create appointment:', error);
             toast({
@@ -462,12 +467,12 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
   }
 
   useEffect(() => {
-    if (!open) {
+    const cleanup = () => {
       form.reset({
         petId: "",
         services: [],
         groomerId: "",
-        branchId: "1",
+        branchId: "1", 
         date: format(new Date(), 'yyyy-MM-dd'),
         time: format(new Date(), 'HH:mm'),
         status: "pending",
@@ -481,8 +486,18 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       setSelectedService(null);
       setAvailableTimeSlots([]);
       setIsSubmitting(false);
+    };
+
+    if (!open) {
+      requestAnimationFrame(cleanup);
     }
-  }, [open, form]);
+
+    return () => {
+      if (!open) {
+        cleanup();
+      }
+    };
+  }, [open]);
 
   const closeDialog = async () => {
     await new Promise(resolve => setTimeout(resolve, 100));
