@@ -202,6 +202,7 @@ export function registerRoutes(app: Express) {
       }
 
       if (activeGroomers.length > 1) {
+        console.log('Active groomers found:', activeGroomers);
         // Get appointments for each groomer
         const appointmentsRef = db.collection('appointments');
         const now = new Date();
@@ -209,6 +210,8 @@ export function registerRoutes(app: Express) {
           .where('date', '>=', now)
           .where('status', 'in', ['pending', 'confirmed'])
           .get();
+        
+        console.log('Found appointments:', appointments.size);
 
         // Count appointments per groomer
         const groomerWorkload = {};
@@ -220,12 +223,16 @@ export function registerRoutes(app: Express) {
         });
 
         // Find groomer with least workload
+        console.log('Groomer workload:', groomerWorkload);
+        
         const autoAssignedGroomer = activeGroomers.reduce((min, groomer) => {
           const currentLoad = groomerWorkload[groomer.id] || 0;
           const minLoad = groomerWorkload[min.id] || 0;
+          console.log(`Comparing groomer ${groomer.name}: load=${currentLoad} with current min ${min.name}: load=${minLoad}`);
           return currentLoad < minLoad ? groomer : min;
         }, activeGroomers[0]);
 
+        console.log('Selected auto-assigned groomer:', autoAssignedGroomer);
         res.json({ groomers: activeGroomers, autoAssignedGroomer });
         return;
       }

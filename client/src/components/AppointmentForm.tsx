@@ -325,8 +325,13 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
           });
           const groomersData = await groomersResponse.json();
           
+          console.log('Groomers response:', groomersData);
+          console.log('Auto-assigned groomer:', groomersData.autoAssignedGroomer);
           if (groomersData.autoAssignedGroomer) {
             data.groomerId = groomersData.autoAssignedGroomer.id;
+            console.log('Setting groomer ID:', data.groomerId);
+          } else {
+            console.log('No auto-assigned groomer available');
           }
         } catch (error) {
           console.error('Error auto-assigning groomer:', error);
