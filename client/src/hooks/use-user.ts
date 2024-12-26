@@ -123,8 +123,12 @@ export function useUser() {
 
   const loginMutation = useMutation({
     mutationFn: loginWithFirebase,
-    onSuccess: () => {
+    onSuccess: (user) => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
+      // Redirect customers to customer portal
+      if (!user.email.endsWith('@groomery.in')) {
+        window.location.href = '/customer';
+      }
     },
   });
 

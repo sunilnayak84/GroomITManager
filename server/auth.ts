@@ -397,21 +397,6 @@ export async function setupAuth(app: Express) {
           });
         }
 
-        // In development mode, allow test token
-        if (isDevelopment && authHeader === 'Bearer test-token') {
-          const devUser: FirebaseUser = {
-            id: 'MjQnuZnthzUIh2huoDpqCSMMvxe2',
-            uid: 'MjQnuZnthzUIh2huoDpqCSMMvxe2',
-            email: 'admin@groomery.in',
-            name: 'Admin User',
-            role: 'admin',
-            permissions: ['all'],
-            displayName: 'Admin User'
-          };
-          req.user = devUser;
-          return next();
-        }
-
         const token = authHeader.split('Bearer ')[1];
         const auth = admin.auth();
         const decodedToken = await auth.verifyIdToken(token);
@@ -441,6 +426,34 @@ export async function setupAuth(app: Express) {
           await userRef.set(newUser);
           console.log('[AUTH] Created new user in Firebase:', newUser);
         }
+
+        const userRecord = await admin.auth().getUser(decodedToken.uid);
+        const email = userRecord.email?.toLowerCase() || '';
+      
+        // Redirect non-groomery.in emails to customer portal
+        if (!email.endsWith('@groomery.in') && !req.path.startsWith('/customer')) {
+          return res.status(403).json({
+            message: 'Please use the customer portal',
+            code: 'CUSTOMER_PORTAL_REQUIRED',
+            redirectTo: '/customer'
+          });
+        }
+
+        // In development mode, allow test token
+        if (isDevelopment && authHeader === 'Bearer test-token') {
+          const devUser: FirebaseUser = {
+            id: 'MjQnuZnthzUIh2huoDpqCSMMvxe2',
+            uid: 'MjQnuZnthzUIh2huoDpqCSMMvxe2',
+            email: 'admin@groomery.in',
+            name: 'Admin User',
+            role: 'admin',
+            permissions: ['all'],
+            displayName: 'Admin User'
+          };
+          req.user = devUser;
+          return next();
+        }
+
 
         req.user = {
           id: decodedToken.uid,
