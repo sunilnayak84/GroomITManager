@@ -31,7 +31,7 @@ import type { AppointmentWithRelations } from "@/lib/schema";
 import { useAppointments } from "@/hooks/use-appointments";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { PencilIcon } from "@heroicons/react/24/solid"; // Assuming this icon is used
+import { Pencil } from "lucide-react"; // Assuming this icon is used
 
 // Placeholder for ProtectedElement.  Replace with your actual implementation.
 const ProtectedElement = ({ children, requiredPermissions }: { children: any; requiredPermissions: string }) => {
@@ -306,7 +306,7 @@ const AppointmentDetails = ({
                   onClick={onEdit}
                   className="ml-2"
                 >
-                  <PencilIcon className="h-4 w-4 mr-2" />
+                  <Pencil className="h-4 w-4 mr-2" />
                   Edit
                 </Button>
               </ProtectedElement>
