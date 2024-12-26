@@ -370,38 +370,31 @@ export function useAppointments() {
   const isTimeSlotAvailable = (date: Date, groomerId?: string, duration: number = 30, currentAppointmentId?: string): boolean => {
     if (!appointments) return true;
     
-    // Convert input date to start of 15-min slot
     const slotStart = new Date(date);
     slotStart.setSeconds(0);
     slotStart.setMilliseconds(0);
     
-    // Calculate end time based on service duration
     const slotEnd = new Date(slotStart);
     slotEnd.setMinutes(slotEnd.getMinutes() + duration);
 
-    // Check if there are any overlapping appointments for the specified groomer
+    // Check for any overlapping appointments for all groomers or specific groomer
     const hasOverlap = appointments.some(appointment => {
-      // Skip if appointment is soft deleted, being edited, cancelled, or groomer doesn't match
       if (
         appointment.deletedAt ||
         (currentAppointmentId && appointment.id === currentAppointmentId) || 
         appointment.status === 'cancelled' ||
-        !appointment.date // Skip if appointment has no date
+        !appointment.date ||
+        (groomerId && appointment.groomerId !== groomerId)
       ) return false;
       
       const appointmentStart = new Date(appointment.date);
       const appointmentEnd = new Date(appointmentStart);
       appointmentEnd.setMinutes(appointmentEnd.getMinutes() + (appointment.totalDuration || 30));
 
-      // Only check if the appointment is in the selected time slot
-      const overlaps = (slotStart < appointmentEnd && slotEnd > appointmentStart);
-      return overlaps;
+      return (slotStart < appointmentEnd && slotEnd > appointmentStart);
     });
 
-    // Check if groomer is available
-    const groomerIsAvailable = !hasOverlap;
-
-    return groomerIsAvailable;
+    return !hasOverlap;
   };
 
   const updateAppointmentMutation = useMutation({

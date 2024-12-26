@@ -318,6 +318,11 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         throw new Error("Please select both pet and at least one service");
       }
 
+      const appointmentDateTime = new Date(data.date + 'T' + data.time);
+      if (!isTimeSlotAvailable(appointmentDateTime, null, data.totalDuration || 30)) {
+        throw new Error("This time slot is already booked. Please select a different time.");
+      }
+
       // For staff members, groomer selection is required
       if (user?.role !== 'customer' && !data.groomerId) {
         throw new Error("Please select a groomer");
