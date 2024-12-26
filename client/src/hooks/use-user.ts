@@ -130,8 +130,8 @@ export function useUser() {
     onSuccess: (user) => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
       // Redirect customers to customer portal
-      if (user.role === 'customer') {
-        window.location.href = '/customer';
+      if (user.role === 'receptionist') {
+        window.location.href = '/appointments';
       }
     },
   });
