@@ -1,3 +1,4 @@
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getAuth } from 'firebase/auth';
 import { User, InsertUser } from '@/lib/user-types';
@@ -6,8 +7,6 @@ import { useUser } from './use-user';
 export function useStaff() {
   const queryClient = useQueryClient();
   const auth = getAuth();
-  const { user } = useUser();
-
   const { user } = useUser();
   const isCustomer = user?.role === 'customer';
 
