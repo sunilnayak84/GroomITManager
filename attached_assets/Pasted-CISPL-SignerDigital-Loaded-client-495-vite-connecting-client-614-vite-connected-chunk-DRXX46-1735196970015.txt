@@ -1,0 +1,94 @@
+CISPL SignerDigital Loaded
+client:495 [vite] connecting...
+client:614 [vite] connected.
+chunk-DRXX46FI.js?v=9ee811ff:21507 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+use-inventory.ts:102 FETCH_INVENTORY: Starting fetch operation
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+firebase.ts:26 FIREBASE_INIT: Firebase initialized successfully
+use-inventory.ts:156 FETCH_INVENTORY: Operation completed Object
+use-services.ts:92 FETCH_SERVICES: Completed fetching services Object
+use-staff-management.ts:13 [STAFF] Starting to fetch staff members
+use-roles.ts:84 [ROLES] Starting role fetch...
+use-roles.ts:93 [ROLES] Got fresh ID token
+use-roles.ts:147 [FIREBASE-USERS] Fetching users...
+use-roles.ts:168 [FIREBASE-USERS] Successfully fetched users: Object
+use-roles.ts:116 [ROLES] Fetched roles: Array(5)
+RoleManagement.tsx:16 Available roles: Array(5)
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+use-pets.ts:71 FETCH_PETS: Raw pets data: Array(3)
+use-pets.ts:122 FETCH_PETS: Completed fetching pets Object
+use-appointments.ts:321 FETCH_APPOINTMENTS: Processed 2 appointments. Success: 2, Errors: 0
+use-customers.ts:356 FETCH_CUSTOMERS: Starting customer fetch
+use-customers.ts:382 FETCH_CUSTOMERS: Processed customer: Object
+use-customers.ts:390 USE CUSTOMERS: Fetched customers Object
+main.tsx:77 Global error: Objectcolno: 65error: TypeError: Cannot read properties of undefined (reading 'join')
+    at Object.cell (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx:135:65)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx:258:83
+    at Array.map (<anonymous>)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx:257:73
+    at Array.map (<anonymous>)
+    at StaffPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx:256:66)
+    at renderWithHooks (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=9ee811ff:12151:26)
+    at updateFunctionComponent (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=9ee811ff:14557:28)
+    at mountLazyComponent (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=9ee811ff:14808:23)
+    at beginWork (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=9ee811ff:15886:22)message: "Cannot read properties of undefined (reading 'join')"stack: "TypeError: Cannot read properties of undefined (reading 'join')\n    at Object.cell (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx:135:65)\n    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx:258:83\n    at Array.map (<anonymous>)\n    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx:257:73\n    at Array.map (<anonymous>)\n    at StaffPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx:256:66)\n    at renderWithHooks (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=9ee811ff:12151:26)\n    at updateFunctionComponent (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=9ee811ff:14557:28)\n    at mountLazyComponent (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=9ee811ff:14808:23)\n    at beginWork (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=9ee811ff:15886:22)"[[Prototype]]: Errorlineno: 135message: "Uncaught TypeError: Cannot read properties of undefined (reading 'join')"source: "https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx"[[Prototype]]: Object
+window.onerror @ main.tsx:77Understand this errorAI
+StaffPage.tsx:135 Uncaught TypeError: Cannot read properties of undefined (reading 'join')
+    at Object.cell (StaffPage.tsx:135:72)
+    at StaffPage.tsx:205:50
+    at Array.map (<anonymous>)
+    at StaffPage.tsx:204:26
+    at Array.map (<anonymous>)
+    at StaffPage (StaffPage.tsx:202:27)
+    at renderWithHooks (chunk-DRXX46FI.js?v=9ee811ff:12151:26)
+    at updateFunctionComponent (chunk-DRXX46FI.js?v=9ee811ff:14557:28)
+    at mountLazyComponent (chunk-DRXX46FI.js?v=9ee811ff:14808:23)
+    at beginWork (chunk-DRXX46FI.js?v=9ee811ff:15886:22)Understand this errorAI
+main.tsx:77 Global error: Objectcolno: 65error: TypeError: Cannot read properties of undefined (reading 'join')
+    at Object.cell (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx:135:65)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx:258:83
+    at Array.map (<anonymous>)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx:257:73
+    at Array.map (<anonymous>)
+    at StaffPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx:256:66)
+    at renderWithHooks (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=9ee811ff:12151:26)
+    at updateFunctionComponent (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=9ee811ff:14557:28)
+    at mountLazyComponent (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=9ee811ff:14808:23)
+    at beginWork (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=9ee811ff:15886:22)message: "Cannot read properties of undefined (reading 'join')"stack: "TypeError: Cannot read properties of undefined (reading 'join')\n    at Object.cell (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx:135:65)\n    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx:258:83\n    at Array.map (<anonymous>)\n    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx:257:73\n    at Array.map (<anonymous>)\n    at StaffPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx:256:66)\n    at renderWithHooks (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=9ee811ff:12151:26)\n    at updateFunctionComponent (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=9ee811ff:14557:28)\n    at mountLazyComponent (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=9ee811ff:14808:23)\n    at beginWork (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DRXX46FI.js?v=9ee811ff:15886:22)"[[Prototype]]: Errorlineno: 135message: "Uncaught TypeError: Cannot read properties of undefined (reading 'join')"source: "https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx"[[Prototype]]: Object
+window.onerror @ main.tsx:77Understand this errorAI
+StaffPage.tsx:135 Uncaught TypeError: Cannot read properties of undefined (reading 'join')
+    at Object.cell (StaffPage.tsx:135:72)
+    at StaffPage.tsx:205:50
+    at Array.map (<anonymous>)
+    at StaffPage.tsx:204:26
+    at Array.map (<anonymous>)
+    at StaffPage (StaffPage.tsx:202:27)
+    at renderWithHooks (chunk-DRXX46FI.js?v=9ee811ff:12151:26)
+    at updateFunctionComponent (chunk-DRXX46FI.js?v=9ee811ff:14557:28)
+    at mountLazyComponent (chunk-DRXX46FI.js?v=9ee811ff:14808:23)
+    at beginWork (chunk-DRXX46FI.js?v=9ee811ff:15886:22)Understand this errorAI
+chunk-DRXX46FI.js?v=9ee811ff:14016 The above error occurred in the <StaffPage> component:
+
+    at StaffPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/StaffPage.tsx:80:7)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=0340d49b:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=0340d49b:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=d5313fb3:18:5)
+    at div
+    at main
+    at main
+    at _c9 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:398:48)
+    at div
+    at div
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-PYPT7BFL.js?v=9ee811ff:38:15)
+    at TooltipProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=447c24b0:290:5)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:54:7
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:28:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx?t=1735196532645:142:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=c873da14:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=d5313fb3:18:5)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+logCapturedError @ chunk-DRXX46FI.js?v=9ee811ff:14016Understand this errorAI
