@@ -417,15 +417,16 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
           title: "Success",
           description: "Appointment scheduled successfully",
         });
-        
-        // Force dialog closure
+          
+        // Close dialog and reset form state
         form.reset();
         setValidationError(null);
         setSelectedService(null);
         setAvailableTimeSlots([]);
         setIsSubmitting(false);
         setOpen(false);
-        window.location.reload(); // Force a full page refresh
+        // Refresh appointments data using queryClient
+        queryClient.invalidateQueries({ queryKey: ["appointments"] });
       } catch (error) {
         console.error('Failed to schedule appointment:', error);
         const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
