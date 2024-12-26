@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useMemo } from "react";
 import { auth } from "../lib/firebase";
 import { useForm } from "react-hook-form";
@@ -118,7 +119,6 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
     }
   }, [initialDate, initialTime, workingHours]);
 
-  // Helper function to generate time slots
   const generateTimeSlots = (
     openingTime: string,
     closingTime: string,
@@ -185,7 +185,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
     daySchedule: WorkingDays | undefined,
     groomerId: string
   ): { isValid: boolean; error?: string } => {
-    setValidationError(null); // Clear previous errors
+    setValidationError(null);
 
     if (!daySchedule || !daySchedule.isOpen) {
       return { isValid: false, error: "This day is not available for appointments" };
@@ -195,7 +195,6 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
     const appointmentStartTime = new Date(date);
     appointmentStartTime.setHours(hours, minutes, 0, 0);
 
-    // Calculate end time based on selected service duration
     const appointmentEndTime = new Date(appointmentStartTime);
     appointmentEndTime.setMinutes(appointmentEndTime.getMinutes() + (selectedService?.duration || 60));
 
@@ -203,7 +202,6 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       return { isValid: false, error: "Cannot schedule appointments in the past" };
     }
 
-    // Convert opening and closing times to Date objects for comparison
     const openingTime = new Date(date);
     const [openHours, openMinutes] = daySchedule.openingTime.split(':').map(Number);
     openingTime.setHours(openHours, openMinutes, 0, 0);
@@ -262,21 +260,17 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         }
       }
 
-      // Get all appointments for the selected time slot
       const conflictingAppointments = appointments?.filter(a => {
         const existingStart = new Date(a.date);
         const existingEnd = new Date(existingStart);
         existingEnd.setMinutes(existingEnd.getMinutes() + (a.totalDuration || 30));
 
         return (
-          // New appointment starts during existing appointment
           (appointmentStartTime >= existingStart && appointmentStartTime < existingEnd) ||
-          // New appointment ends during existing appointment
           (appointmentEndTime > existingStart && appointmentEndTime <= existingEnd)
         );
       }) || [];
 
-      // Check if all groomers are busy
       const availableGroomers = availableGroomers?.filter(groomer => 
         !conflictingAppointments.some(appt => appt.groomerId === groomer.id)
       );
@@ -288,7 +282,6 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         };
       }
 
-      // If a specific groomer is selected, check their availability
       if (groomerId) {
         const groomerConflict = conflictingAppointments.find(a => a.groomerId === groomerId);
         if (groomerConflict) {
@@ -317,180 +310,161 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       return;
     }
 
-      const appointmentDateTime = new Date(data.date + 'T' + data.time);
-      if (!isTimeSlotAvailable(appointmentDateTime, null, data.totalDuration || 30)) {
-        const errorMsg = "This time slot is already booked. Please select a different time.";
-        setValidationError(errorMsg);
-        toast({
-          variant: "destructive",
-          title: "Booking Error",
-          description: errorMsg,
-          duration: 3000,
-        });
-        return;
-      }
+    const appointmentDateTime = new Date(data.date + 'T' + data.time);
+    if (!isTimeSlotAvailable(appointmentDateTime, null, data.totalDuration || 30)) {
+      const errorMsg = "This time slot is already booked. Please select a different time.";
+      setValidationError(errorMsg);
+      toast({
+        variant: "destructive",
+        title: "Booking Error",
+        description: errorMsg,
+        duration: 3000,
+      });
+      return;
+    }
 
-      // For staff members, groomer selection is required
-      if (user?.role !== 'customer' && !data.groomerId) {
-        throw new Error("Please select a groomer");
-      }
+    if (user?.role !== 'customer' && !data.groomerId) {
+      throw new Error("Please select a groomer");
+    }
 
-      // For customers, auto-assign groomer
-      if (user?.role === 'customer') {
-        try {
-          const groomersResponse = await fetch('/api/groomers', {
-            headers: {
-              'Authorization': `Bearer ${await auth.currentUser?.getIdToken()}`
-            }
-          });
-          const groomersData = await groomersResponse.json();
-          
-          if (groomersData.autoAssignedGroomer) {
-            data.groomerId = groomersData.autoAssignedGroomer.id;
-            if (!data.groomerId) {
-              throw new Error('No groomer ID received from auto-assignment');
-            }
-            // Add groomer info to appointment data
-            const appointmentData = {
-              ...data,
-              groomer: {
-                id: groomersData.autoAssignedGroomer.id,
-                name: groomersData.autoAssignedGroomer.name
-              }
-            };
-            await addAppointment(appointmentData);
-            return;
-          } else {
-            throw new Error('No groomer available for auto-assignment');
-          }
-        } catch (error) {
-          console.error('Error auto-assigning groomer:', error);
-          data.groomerId = null;
-        }
-      }
-
-      const formDate = form.getValues('date');
-      const formTime = form.getValues('time');
-      
-      if (!formDate || !formTime) {
-        throw new Error("Please select both date and time");
-      }
-
-      const [timeHours, timeMinutes] = formTime.split(':').map(Number);
-      appointmentDateTime.setHours(timeHours, timeMinutes, 0, 0);
-      // Convert to UTC for storage while preserving the intended local time
-      const offset = appointmentDateTime.getTimezoneOffset() * 60000;
-      const adjustedDate = new Date(appointmentDateTime.getTime() - offset);
-      
-      if (isNaN(appointmentDateTime.getTime())) {
-        throw new Error("Invalid appointment date and time");
-      }
-
-      const now = new Date();
-      if (appointmentDateTime < now) {
-        throw new Error("Appointment must be in the future");
-      }
-
-      // Validate against working hours
-      const dayOfWeek = appointmentDateTime.getDay();
-      const daySchedule = workingHours?.find(
-        (schedule) => schedule.dayOfWeek === dayOfWeek
-      );
-
-      const validation = validateTimeSlot(formDate, formTime, daySchedule, data.groomerId);
-      // Validation is now handled by backend
-
-      if (!validation.isValid) {
-        const errorMessage = validation.error || "This time slot conflicts with an existing appointment";
-        
-        setValidationError(errorMessage);
-        
-        form.setError('time', {
-          type: 'manual',
-          message: errorMessage
-        });
-        
-        form.setError('groomerId', {
-          type: 'manual',
-          message: "Groomer is not available at this time"
-        });
-        
-        toast({
-          variant: "destructive",
-          title: "Scheduling Error",
-          description: errorMessage,
-          duration: 5000,
-        });
-        
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Add debug logs
-      console.log('Form date:', formDate);
-      console.log('Form time:', formTime);
-      console.log('Raw date/time:', appointmentDateTime);
-      console.log('ISO date/time:', appointmentDateTime.toISOString());
-
-      const appointmentData: InsertAppointment = {
-        ...data,
-        date: adjustedDate.toISOString(),
-        status: "pending" as const,
-      };
-      
-      console.log('Final appointment data:', appointmentData);
-
+    if (user?.role === 'customer') {
       try {
-        await addAppointment(appointmentData);
-        
-        // Reset form and states
-        form.reset();
-        setIsSubmitting(false);
-        setValidationError(null);
-        setSelectedService(null);
-        setAvailableTimeSlots([]);
-        
-        // Close dialog first
-        setOpen(false);
-        
-        // Show success message and refresh data after dialog closes
-        setTimeout(() => {
-          toast({
-            title: "Success",
-            description: "Appointment scheduled successfully",
-            duration: 3000,
-          });
-          queryClient.invalidateQueries({ queryKey: ["appointments"] });
-        }, 300);
-      } catch (error) {
-        console.error('Failed to schedule appointment:', error);
-        const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
-        setValidationError(errorMessage);
-        toast({
-          variant: "destructive",
-          title: "Scheduling Error",
-          description: errorMessage || "Failed to schedule appointment",
-          duration: 3000,
+        const groomersResponse = await fetch('/api/groomers', {
+          headers: {
+            'Authorization': `Bearer ${await auth.currentUser?.getIdToken()}`
+          }
         });
-        setIsSubmitting(false);
-        return; // Exit early on error
+        const groomersData = await groomersResponse.json();
+        
+        if (groomersData.autoAssignedGroomer) {
+          data.groomerId = groomersData.autoAssignedGroomer.id;
+          if (!data.groomerId) {
+            throw new Error('No groomer ID received from auto-assignment');
+          }
+          const appointmentData = {
+            ...data,
+            groomer: {
+              id: groomersData.autoAssignedGroomer.id,
+              name: groomersData.autoAssignedGroomer.name
+            }
+          };
+          await addAppointment(appointmentData);
+          return;
+        } else {
+          throw new Error('No groomer available for auto-assignment');
+        }
+      } catch (error) {
+        console.error('Error auto-assigning groomer:', error);
+        data.groomerId = null;
       }
+    }
 
-      // Only runs on success
+    const formDate = form.getValues('date');
+    const formTime = form.getValues('time');
+    
+    if (!formDate || !formTime) {
+      throw new Error("Please select both date and time");
+    }
+
+    const [timeHours, timeMinutes] = formTime.split(':').map(Number);
+    appointmentDateTime.setHours(timeHours, timeMinutes, 0, 0);
+    const offset = appointmentDateTime.getTimezoneOffset() * 60000;
+    const adjustedDate = new Date(appointmentDateTime.getTime() - offset);
+    
+    if (isNaN(appointmentDateTime.getTime())) {
+      throw new Error("Invalid appointment date and time");
+    }
+
+    const now = new Date();
+    if (appointmentDateTime < now) {
+      throw new Error("Appointment must be in the future");
+    }
+
+    const dayOfWeek = appointmentDateTime.getDay();
+    const daySchedule = workingHours?.find(
+      (schedule) => schedule.dayOfWeek === dayOfWeek
+    );
+
+    const validation = validateTimeSlot(formDate, formTime, daySchedule, data.groomerId);
+
+    if (!validation.isValid) {
+      const errorMessage = validation.error || "This time slot conflicts with an existing appointment";
+      
+      setValidationError(errorMessage);
+      
+      form.setError('time', {
+        type: 'manual',
+        message: errorMessage
+      });
+      
+      form.setError('groomerId', {
+        type: 'manual',
+        message: "Groomer is not available at this time"
+      });
+      
+      toast({
+        variant: "destructive",
+        title: "Scheduling Error",
+        description: errorMessage,
+        duration: 5000,
+      });
+      
       setIsSubmitting(false);
+      return;
+    }
+
+    console.log('Form date:', formDate);
+    console.log('Form time:', formTime);
+    console.log('Raw date/time:', appointmentDateTime);
+    console.log('ISO date/time:', appointmentDateTime.toISOString());
+
+    const appointmentData: InsertAppointment = {
+      ...data,
+      date: adjustedDate.toISOString(),
+      status: "pending" as const,
+    };
+    
+    console.log('Final appointment data:', appointmentData);
+
+    try {
+      await addAppointment(appointmentData);
+      
+      form.reset();
+      setIsSubmitting(false);
+      setValidationError(null);
+      setSelectedService(null);
+      setAvailableTimeSlots([]);
+      
       setOpen(false);
       
-      // Show success toast after dialog closes
       setTimeout(() => {
         toast({
           title: "Success",
           description: "Appointment scheduled successfully",
           duration: 3000,
         });
+        queryClient.invalidateQueries({ queryKey: ["appointments"] });
       }, 300);
-
-      queryClient.invalidateQueries({ queryKey: ["appointments"] });
+    } catch (error) {
+      console.error('Failed to schedule appointment:', error);
+      const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
+      setValidationError(errorMessage);
+      setIsSubmitting(false);
+      return;
     }
+
+    setIsSubmitting(false);
+    setOpen(false);
+    
+    setTimeout(() => {
+      toast({
+        title: "Success",
+        description: "Appointment scheduled successfully",
+        duration: 3000,
+      });
+    }, 300);
+
+    queryClient.invalidateQueries({ queryKey: ["appointments"] });
   }
 
   useEffect(() => {
@@ -569,12 +543,8 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
                       min={new Date().toISOString().split('T')[0]}
                       onChange={(e) => {
                         field.onChange(e.target.value);
-                        // Create date object and set it to start of day to avoid timezone issues
                         const selectedDate = new Date(e.target.value + 'T00:00:00');
                         const dayOfWeek = selectedDate.getDay();
-                        
-                        // Update form field with ISO date string
-                        field.onChange(e.target.value);
                         
                         const daySchedule = workingHours?.find(
                           (schedule) => schedule.dayOfWeek === dayOfWeek
@@ -599,10 +569,8 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
                           return;
                         }
                         
-                        // Update form field with ISO date string if validation passes
                         field.onChange(e.target.value);
                         
-                        // Generate time slots with default duration if no service selected
                         const duration = selectedService?.duration || 30;
                         const slots = generateTimeSlots(
                           daySchedule.openingTime,
@@ -612,11 +580,9 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
                           duration
                         );
                         
-                        // Filter slots based on current time if it's today
                         const today = new Date();
                         const selectedDateObj = new Date(e.target.value);
                         
-                        // Date is already formatted correctly from the input
                         field.onChange(e.target.value);
                         
                         if (selectedDateObj.toDateString() === today.toDateString()) {
@@ -632,7 +598,6 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
                           setAvailableTimeSlots(slots);
                         }
                         
-                        // Set initial time slot if available
                         if (slots.length > 0) {
                           form.setValue('time', slots[0]);
                         }
@@ -694,7 +659,6 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
                                 : currentValue.filter((id) => id !== serviceId);
                               field.onChange(updatedServices);
                             
-                              // Calculate total duration and price
                               const selectedServices = services.filter((s) => 
                                 updatedServices.includes(String(s.service_id))
                               );
@@ -780,7 +744,6 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
               </FormItem>
             )}
           />
-          {/* Customer ID is now handled in form's defaultValues */}
           <div className="flex gap-4">
             <Button 
               type="button"
