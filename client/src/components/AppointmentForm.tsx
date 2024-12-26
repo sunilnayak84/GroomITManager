@@ -405,11 +405,19 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         return;
       }
 
+      // Add debug logs
+      console.log('Form date:', formDate);
+      console.log('Form time:', formTime);
+      console.log('Raw date/time:', appointmentDateTime);
+      console.log('ISO date/time:', appointmentDateTime.toISOString());
+
       const appointmentData: InsertAppointment = {
         ...data,
         date: appointmentDateTime.toISOString(),
         status: "pending" as const,
       };
+      
+      console.log('Final appointment data:', appointmentData);
 
       try {
         await addAppointment(appointmentData);
