@@ -423,14 +423,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
 
     try {
       await addAppointment(appointmentData);
-      
-      form.reset();
-      setIsSubmitting(false);
-      setValidationError(null);
-      setSelectedService(null);
-      setAvailableTimeSlots([]);
-      
-      setOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
       
       setTimeout(() => {
         toast({
@@ -438,28 +431,16 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
           description: "Appointment scheduled successfully",
           duration: 3000,
         });
-        queryClient.invalidateQueries({ queryKey: ["appointments"] });
       }, 300);
+
+      setOpen(false);
     } catch (error) {
       console.error('Failed to schedule appointment:', error);
       const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
       setValidationError(errorMessage);
+    } finally {
       setIsSubmitting(false);
-      return;
     }
-
-    setIsSubmitting(false);
-    setOpen(false);
-    
-    setTimeout(() => {
-      toast({
-        title: "Success",
-        description: "Appointment scheduled successfully",
-        duration: 3000,
-      });
-    }, 300);
-
-    queryClient.invalidateQueries({ queryKey: ["appointments"] });
   }
 
   useEffect(() => {
