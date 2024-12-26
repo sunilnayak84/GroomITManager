@@ -126,7 +126,7 @@ export function useUser() {
     onSuccess: (user) => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
       // Redirect customers to customer portal
-      if (!user.email.endsWith('@groomery.in')) {
+      if (user.role === 'customer') {
         window.location.href = '/customer';
       }
     },
