@@ -194,6 +194,42 @@ export function registerRoutes(app: Express) {
           };
         });
 
+      // Auto-assign logic
+      if (activeGroomers.length === 1) {
+        // If only one groomer, return them directly
+        res.json({ groomers: activeGroomers, autoAssignedGroomer: activeGroomers[0] });
+        return;
+      }
+
+      if (activeGroomers.length > 1) {
+        // Get appointments for each groomer
+        const appointmentsRef = db.collection('appointments');
+        const now = new Date();
+        const appointments = await appointmentsRef
+          .where('date', '>=', now)
+          .where('status', 'in', ['pending', 'confirmed'])
+          .get();
+
+        // Count appointments per groomer
+        const groomerWorkload = {};
+        appointments.docs.forEach(doc => {
+          const data = doc.data();
+          if (data.groomerId) {
+            groomerWorkload[data.groomerId] = (groomerWorkload[data.groomerId] || 0) + 1;
+          }
+        });
+
+        // Find groomer with least workload
+        const autoAssignedGroomer = activeGroomers.reduce((min, groomer) => {
+          const currentLoad = groomerWorkload[groomer.id] || 0;
+          const minLoad = groomerWorkload[min.id] || 0;
+          return currentLoad < minLoad ? groomer : min;
+        }, activeGroomers[0]);
+
+        res.json({ groomers: activeGroomers, autoAssignedGroomer });
+        return;
+      }
+
       if (activeGroomers.length === 0) {
         console.log('[GROOMERS] No active groomers found');
       } else {

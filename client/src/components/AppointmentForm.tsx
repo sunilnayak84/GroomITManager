@@ -317,9 +317,23 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         throw new Error("Please select a groomer");
       }
 
-      // For customers, groomer is optional
+      // For customers, auto-assign groomer
       if (user?.role === 'customer') {
-        data.groomerId = null; // Make it explicitly null for customer bookings
+        try {
+          const groomersResponse = await fetch('/api/groomers', {
+            headers: {
+              'Authorization': `Bearer ${await auth.currentUser?.getIdToken()}`
+            }
+          });
+          const groomersData = await groomersResponse.json();
+          
+          if (groomersData.autoAssignedGroomer) {
+            data.groomerId = groomersData.autoAssignedGroomer.id;
+          }
+        } catch (error) {
+          console.error('Error auto-assigning groomer:', error);
+          data.groomerId = null;
+        }
       }
 
       const formDate = form.getValues('date');
