@@ -389,9 +389,9 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       );
 
       const validation = validateTimeSlot(formDate, formTime, daySchedule, data.groomerId);
-      const timeSlotValidation = isTimeSlotAvailable(appointmentDateTime, data.groomerId, selectedService?.duration || 30);
-      
-      if (!validation.isValid || !timeSlotValidation) {
+      // Validation is now handled by backend
+
+      if (!validation.isValid) {
         const errorMessage = validation.error || "This time slot conflicts with an existing appointment";
         
         setValidationError(errorMessage);

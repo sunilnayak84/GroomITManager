@@ -377,7 +377,6 @@ export function useAppointments() {
         appointment.deletedAt ||
         (currentAppointmentId && appointment.id === currentAppointmentId) || 
         appointment.status === 'cancelled' ||
-        (groomerId && appointment.groomerId !== groomerId) ||
         !appointment.date // Skip if appointment has no date
       ) return false;
       
@@ -385,19 +384,9 @@ export function useAppointments() {
       const appointmentEnd = new Date(appointmentStart);
       appointmentEnd.setMinutes(appointmentEnd.getMinutes() + (appointment.totalDuration || 30));
 
-      // For manual groomer selection, check specific groomer availability
-      // For auto-assignment, check all groomers
-      if (!groomerId || (groomerId && appointment.groomerId === groomerId)) {
-        const overlaps = (slotStart < appointmentEnd && slotEnd > appointmentStart);
-        if (overlaps) {
-          console.log('Appointment overlap detected:', {
-            newAppointment: { start: slotStart, end: slotEnd, groomer: groomerId },
-            existingAppointment: { id: appointment.id, start: appointmentStart, end: appointmentEnd, groomer: appointment.groomerId }
-          });
-          return true;
-        }
-      }
-      return false;
+      // Only check if the appointment is in the selected time slot
+      const overlaps = (slotStart < appointmentEnd && slotEnd > appointmentStart);
+      return overlaps;
     });
 
     // Check if groomer is available
