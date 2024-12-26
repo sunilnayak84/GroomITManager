@@ -59,10 +59,9 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
   const { pets } = usePets();
   const { services } = useServices();
   const { toast } = useToast();
+  const { user } = useUser();
+  const isCustomer = user?.role === 'customer';
   const { staffMembers, isLoading: isStaffLoading } = useStaff();
-  useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: ['staff'] });
-  }, []);
   
   const availableGroomers = useMemo(() => {
     return (staffMembers || []).filter((staff: Staff) => 

@@ -8,11 +8,14 @@ export function useStaff() {
   const auth = getAuth();
   const { user } = useUser();
 
+  const { user } = useUser();
+  const isCustomer = user?.role === 'customer';
+
   const { data: staffMembers = [], isLoading } = useQuery({
     queryKey: ['staff'],
     staleTime: 5 * 60 * 1000,
     cacheTime: 30 * 60 * 1000,
-    enabled: true,
+    enabled: !isCustomer,
     queryFn: async () => {
       try {
         const token = await auth.currentUser?.getIdToken();
