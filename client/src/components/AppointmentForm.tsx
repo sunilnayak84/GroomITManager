@@ -425,15 +425,13 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       await addAppointment(appointmentData);
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
       
-      setTimeout(() => {
-        toast({
-          title: "Success",
-          description: "Appointment scheduled successfully",
-          duration: 3000,
-        });
-      }, 300);
+      toast({
+        title: "Success",
+        description: "Appointment scheduled successfully",
+        duration: 3000,
+      });
 
-      setOpen(false);
+      closeDialog();
     } catch (error) {
       console.error('Failed to schedule appointment:', error);
       const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
