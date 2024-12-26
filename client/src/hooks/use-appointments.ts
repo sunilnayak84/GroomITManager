@@ -386,7 +386,7 @@ export function useAppointments() {
       appointmentEnd.setMinutes(appointmentEnd.getMinutes() + (appointment.totalDuration || 30));
 
       // For manual groomer selection, check specific groomer availability
-      // For auto-assignment, server handles groomer selection
+      // For auto-assignment, check all groomers
       if (!groomerId || (groomerId && appointment.groomerId === groomerId)) {
         const overlaps = (slotStart < appointmentEnd && slotEnd > appointmentStart);
         if (overlaps) {
@@ -394,10 +394,10 @@ export function useAppointments() {
             newAppointment: { start: slotStart, end: slotEnd, groomer: groomerId },
             existingAppointment: { id: appointment.id, start: appointmentStart, end: appointmentEnd, groomer: appointment.groomerId }
           });
-          return overlaps;
+          return true;
         }
       }
-      return overlaps;
+      return false;
     });
 
     // Check if groomer is available
