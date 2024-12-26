@@ -385,12 +385,12 @@ export function useAppointments() {
       const appointmentEnd = new Date(appointmentStart);
       appointmentEnd.setMinutes(appointmentEnd.getMinutes() + (appointment.totalDuration || 30));
 
-      // Check for overlap - simplified logic
-      const overlaps = slotStart < appointmentEnd && slotEnd > appointmentStart;
-      
-      if (overlaps) {
-        console.log('Appointment overlap detected:', {
-          newAppointment: { start: slotStart, end: slotEnd, groomer: groomerId },
+      // Only check appointments for the requested groomer
+      if (groomerId && appointment.groomerId === groomerId) {
+        const overlaps = (slotStart < appointmentEnd && slotEnd > appointmentStart);
+        if (overlaps) {
+          console.log('Appointment overlap detected:', {
+            newAppointment: { start: slotStart, end: slotEnd, groomer: groomerId },
           existingAppointment: { id: appointment.id, start: appointmentStart, end: appointmentEnd, groomer: appointment.groomerId }
         });
       }
