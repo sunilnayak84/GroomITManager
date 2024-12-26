@@ -329,6 +329,7 @@ export function useAppointments() {
 
   const addAppointmentMutation = useMutation({
     mutationFn: async (appointmentData: InsertAppointment) => {
+      try {
         if (!appointmentData.services || appointmentData.services.length === 0) {
           throw new Error("Please select at least one service");
         }
