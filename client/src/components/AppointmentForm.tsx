@@ -312,16 +312,11 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
 
     const appointmentDateTime = new Date(data.date + 'T' + data.time);
     if (!isTimeSlotAvailable(appointmentDateTime, null, data.totalDuration || 30)) {
-      const errorMsg = "This time slot is already booked. Please select a different time.";
-      setValidationError(errorMsg);
-      toast({
-        variant: "destructive",
-        title: "Booking Error",
-        description: errorMsg,
-        duration: 3000,
-      });
-      return;
-    }
+        const errorMsg = "This time slot is already booked. Please select a different time.";
+        setValidationError(errorMsg);
+        setIsSubmitting(false);
+        return;
+      }
 
     if (user?.role !== 'customer' && !data.groomerId) {
       throw new Error("Please select a groomer");
