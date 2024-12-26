@@ -173,21 +173,26 @@ export function registerRoutes(app: Express) {
       const app = await getFirebaseAdmin();
       const db = getFirestore();
       
-      const query = db.collection('users')
-        .where('isGroomer', '==', true)
-        .where('disabled', '==', false);
-      const snapshot = await query.get();
+      const snapshot = await db.collection('users')
+        .where('disabled', '==', false)
+        .get();
       
-      const activeGroomers = snapshot.docs.map(doc => {
-        const userData = doc.data();
-        return {
-          id: doc.id,
-          name: userData.name || 'Unknown',
-          isGroomer: true,
-          isActive: true,
-          maxDailyAppointments: userData.maxDailyAppointments || 8
-        };
-      });
+      const activeGroomers = snapshot.docs
+        .filter(doc => {
+          const userData = doc.data();
+          return Array.isArray(userData.specialties) && 
+                 userData.specialties.includes('groomer');
+        })
+        .map(doc => {
+          const userData = doc.data();
+          return {
+            id: doc.id,
+            name: userData.name || 'Unknown',
+            isActive: true,
+            specialties: userData.specialties || [],
+            maxDailyAppointments: userData.maxDailyAppointments || 8
+          };
+        });
 
       if (activeGroomers.length === 0) {
         console.log('[GROOMERS] No active groomers found');
