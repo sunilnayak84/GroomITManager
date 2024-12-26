@@ -462,8 +462,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
           });
           queryClient.invalidateQueries({ queryKey: ["appointments"] });
         }, 300);
-
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to schedule appointment:', error);
         const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
         setValidationError(errorMessage);
