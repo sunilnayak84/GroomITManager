@@ -370,7 +370,6 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       }
 
       const [timeHours, timeMinutes] = formTime.split(':').map(Number);
-      const appointmentDateTime = new Date(formDate);
       appointmentDateTime.setHours(timeHours, timeMinutes, 0, 0);
       // Convert to UTC for storage while preserving the intended local time
       const offset = appointmentDateTime.getTimezoneOffset() * 60000;
