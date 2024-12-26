@@ -436,19 +436,24 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       try {
         await addAppointment(appointmentData);
           
-        // Show success message
-        toast({
-          title: "Appointment Scheduled",
-          description: "Your appointment has been scheduled successfully",
-        });
-          
-        // Reset states and close dialog
+        // Reset states first
         setIsSubmitting(false);
         setValidationError(null);
         setSelectedService(null);
         setAvailableTimeSlots([]);
         form.reset();
+        
+        // Close dialog
         setOpen(false);
+        
+        // Show success message after dialog closes
+        setTimeout(() => {
+          toast({
+            title: "Appointment Scheduled",
+            description: "Your appointment has been scheduled successfully",
+            duration: 5000,
+          });
+        }, 100);
           
         // Refresh appointments data
         queryClient.invalidateQueries({ queryKey: ["appointments"] });
