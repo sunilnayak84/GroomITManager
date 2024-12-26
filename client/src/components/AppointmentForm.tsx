@@ -320,7 +320,15 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
 
       const appointmentDateTime = new Date(data.date + 'T' + data.time);
       if (!isTimeSlotAvailable(appointmentDateTime, null, data.totalDuration || 30)) {
-        throw new Error("This time slot is already booked. Please select a different time.");
+        const errorMsg = "This time slot is already booked. Please select a different time.";
+        setValidationError(errorMsg);
+        toast({
+          variant: "destructive",
+          title: "Booking Error",
+          description: errorMsg,
+          duration: 3000,
+        });
+        return;
       }
 
       // For staff members, groomer selection is required
