@@ -127,25 +127,23 @@ export function useUser() {
 
   const loginMutation = useMutation({
     mutationFn: loginWithFirebase,
-    onSuccess: (user) => {
-      queryClient.invalidateQueries({ queryKey: ['user'] });
-      // Redirect based on role
-      switch (user.role) {
-        case 'customer':
-          window.location.href = '/customer';
-          break;
-        case 'receptionist':
-          window.location.href = '/appointments';
-          break;
-        case 'staff':
-          window.location.href = '/appointments';
-          break;
-        case 'manager':
-          window.location.href = '/dashboard';
-          break;
-        case 'admin':
-          window.location.href = '/dashboard';
-          break;
+    onSuccess: async (user) => {
+      await queryClient.invalidateQueries({ queryKey: ['user'] });
+      // Force redirection based on role
+      if (user.role === 'customer') {
+        window.location.replace('/customer');
+        return;
+      }
+      
+      const roleRedirects = {
+        'receptionist': '/appointments',
+        'staff': '/appointments',
+        'manager': '/dashboard',
+        'admin': '/dashboard'
+      };
+      
+      if (roleRedirects[user.role]) {
+        window.location.replace(roleRedirects[user.role]);
       }
     },
   });

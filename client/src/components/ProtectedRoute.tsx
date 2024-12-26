@@ -21,6 +21,8 @@ export default function ProtectedRoute({
     if (!isLoading && !user) {
       // Redirect to login if not authenticated
       setLocation('/login');
+    } else if (!isLoading && user && user.role === 'customer' && location !== '/customer') {
+      setLocation('/customer');
     } else if (!isLoading && user && allowedRoles.length > 0) {
       // Special check for manager and user management pages
       if (user.role === 'manager') {
