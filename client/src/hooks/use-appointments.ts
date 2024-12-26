@@ -370,73 +370,39 @@ export function useAppointments() {
     const slotEnd = new Date(slotStart);
     slotEnd.setMinutes(slotEnd.getMinutes() + duration);
 
-    // Check if there are any overlapping appointments
+    // Check if there are any overlapping appointments for the specified groomer
     const hasOverlap = appointments.some(appointment => {
-      // Skip if this is the appointment being edited or if appointment is cancelled
+      // Skip if this is the appointment being edited, appointment is cancelled, or groomer doesn't match
       if (
         (currentAppointmentId && appointment.id === currentAppointmentId) || 
         appointment.status === 'cancelled' ||
-        (groomerId && appointment.groomerId !== groomerId) // Only check groomer conflicts if a groomer is specified
+        (groomerId && appointment.groomerId !== groomerId) 
       ) return false;
       
       const appointmentStart = new Date(appointment.date);
       const appointmentEnd = new Date(appointmentStart);
-      const appointmentDuration = appointment.totalDuration || 30;
-      appointmentEnd.setMinutes(appointmentEnd.getMinutes() + appointmentDuration);
+      appointmentEnd.setMinutes(appointmentEnd.getMinutes() + (appointment.totalDuration || 30));
 
-      // Check if the new appointment overlaps with existing appointment
-      // An overlap occurs if either:
-      // 1. New appointment starts during existing appointment
-      // 2. New appointment ends during existing appointment
-      // 3. New appointment completely contains existing appointment
-      // 4. Existing appointment completely contains new appointment
+      // Check for overlap
       const overlaps = (
         (slotStart >= appointmentStart && slotStart < appointmentEnd) ||
         (slotEnd > appointmentStart && slotEnd <= appointmentEnd) ||
         (slotStart <= appointmentStart && slotEnd >= appointmentEnd) ||
         (appointmentStart <= slotStart && appointmentEnd >= slotEnd)
       );
-
-      if (overlaps) {
-        console.log('Appointment overlap found:', {
-          newAppointment: {
-            start: slotStart.toISOString(),
-            end: slotEnd.toISOString(),
-            duration
-          },
-          existingAppointment: {
-            id: appointment.id,
-            start: appointmentStart.toISOString(),
-            end: appointmentEnd.toISOString(),
-            duration: appointmentDuration,
-            status: appointment.status
-          }
-        });
-      }
-
       if (overlaps) {
         console.log('Appointment overlap detected:', {
-          newAppointment: {
-            start: slotStart.toISOString(),
-            end: slotEnd.toISOString(),
-            duration,
-            groomer: groomerId
-          },
-          existingAppointment: {
-            id: appointment.id,
-            start: appointmentStart.toISOString(),
-            end: appointmentEnd.toISOString(),
-            duration: appointmentDuration,
-            groomer: appointment.groomerId,
-            status: appointment.status
-          }
+          newAppointment: { start: slotStart, end: slotEnd, groomer: groomerId },
+          existingAppointment: { id: appointment.id, start: appointmentStart, end: appointmentEnd, groomer: appointment.groomerId }
         });
       }
-
       return overlaps;
     });
 
-    return !hasOverlap;
+    // Check if groomer is available
+    const groomerIsAvailable = !hasOverlap;
+
+    return groomerIsAvailable;
   };
 
   const updateAppointmentMutation = useMutation({

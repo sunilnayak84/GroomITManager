@@ -263,36 +263,33 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       }
 
       // Check for overlapping appointments
-      const timeSlotValidation = isTimeSlotAvailable(appointmentStartTime, groomerId, selectedService.duration);
-      if (!timeSlotValidation) {
-        // Find the conflicting appointment for a more specific error message
-        const conflictingAppointment = appointments?.find(a => {
-          if (a.groomerId !== groomerId) return false;
-          const existingStart = new Date(a.date);
-          const existingEnd = new Date(existingStart);
-          existingEnd.setMinutes(existingEnd.getMinutes() + (a.totalDuration || 60));
-            
-          return (
-            // New appointment starts during existing appointment
-            (appointmentStartTime >= existingStart && appointmentStartTime < existingEnd) ||
-            // New appointment ends during existing appointment
-            (appointmentEndTime > existingStart && appointmentEndTime <= existingEnd) ||
-            // New appointment completely contains existing appointment
-            (appointmentStartTime <= existingStart && appointmentEndTime >= existingEnd) ||
-            // Existing appointment completely contains new appointment
-            (existingStart <= appointmentStartTime && existingEnd >= appointmentEndTime)
-          );
-        });
-          
+      const appointmentEndTime = new Date(appointmentStartTime);
+      appointmentEndTime.setMinutes(appointmentEndTime.getMinutes() + (selectedService?.duration || 30));
+
+      // Find any conflicting appointments for the groomer
+      const conflictingAppointment = appointments?.find(a => {
+        if (a.groomerId !== groomerId) return false;
+        
+        const existingStart = new Date(a.date);
+        const existingEnd = new Date(existingStart);
+        existingEnd.setMinutes(existingEnd.getMinutes() + (a.totalDuration || 30));
+
+        return (
+          // New appointment starts during existing appointment
+          (appointmentStartTime >= existingStart && appointmentStartTime < existingEnd) ||
+          // New appointment ends during existing appointment
+          (appointmentEndTime > existingStart && appointmentEndTime <= existingEnd)
+        );
+      });
+
+      if (conflictingAppointment) {
         return {
           isValid: false,
-          error: conflictingAppointment 
-            ? `This time slot conflicts with an existing appointment from ${format(new Date(conflictingAppointment.date), 'h:mm a')} to ${format((() => {
-                const end = new Date(conflictingAppointment.date);
-                end.setMinutes(end.getMinutes() + (conflictingAppointment.totalDuration || 60));
-                return end;
-              })(), 'h:mm a')}`
-            : "The selected groomer is not available during this time. Please choose another time slot."
+          error: `This time slot conflicts with an existing appointment from ${format(new Date(conflictingAppointment.date), 'h:mm a')} to ${format((() => {
+            const end = new Date(conflictingAppointment.date);
+            end.setMinutes(end.getMinutes() + (conflictingAppointment.totalDuration || 60));
+            return end;
+          })(), 'h:mm a')}`
         };
       }
     }
