@@ -329,12 +329,13 @@ export function useAppointments() {
 
   const addAppointmentMutation = useMutation({
     mutationFn: async (appointmentData: InsertAppointment) => {
-      if (!appointmentData.services || appointmentData.services.length === 0) {
-        throw new Error("Please select at least one service");
-      }
-      console.log('Adding appointment with data:', appointmentData);
-      const appointmentsRef = collection(db, 'appointments');
-      const newAppointmentRef = doc(appointmentsRef);
+      try {
+        if (!appointmentData.services || appointmentData.services.length === 0) {
+          throw new Error("Please select at least one service");
+        }
+        console.log('Adding appointment with data:', appointmentData);
+        const appointmentsRef = collection(db, 'appointments');
+        const newAppointmentRef = doc(appointmentsRef);
         
         // Combine date and time properly
         const [year, month, day] = appointmentData.date.split('-').map(Number);
