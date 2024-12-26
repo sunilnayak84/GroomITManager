@@ -131,17 +131,12 @@ export function useUser() {
       await queryClient.invalidateQueries({ queryKey: ['user'] });
       if (!user) return;
 
-      const redirectMap = {
-        customer: '/customer',
-        receptionist: '/appointments',
-        staff: '/appointments',
-        manager: '/dashboard',
-        admin: '/dashboard'
-      };
-
-      const path = redirectMap[user.role];
-      if (path) {
-        window.location.href = path;
+      if (user.role === 'customer') {
+        window.location.replace('/customer');
+      } else if (user.role === 'receptionist' || user.role === 'staff') {
+        window.location.replace('/appointments');
+      } else {
+        window.location.replace('/dashboard');
       }
     },
   });
