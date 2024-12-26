@@ -435,28 +435,27 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
 
       try {
         await addAppointment(appointmentData);
-          
-        // Reset states first
+        
+        // Reset form and states
+        form.reset();
         setIsSubmitting(false);
         setValidationError(null);
         setSelectedService(null);
         setAvailableTimeSlots([]);
-        form.reset();
         
-        // Close dialog
+        // Close dialog first
         setOpen(false);
         
-        // Show success message after dialog closes
+        // Show success message and refresh data after dialog closes
         setTimeout(() => {
           toast({
-            title: "Appointment Scheduled",
-            description: "Your appointment has been scheduled successfully",
-            duration: 5000,
+            title: "Success",
+            description: "Appointment scheduled successfully",
+            duration: 3000,
           });
-        }, 100);
-          
-        // Refresh appointments data
-        queryClient.invalidateQueries({ queryKey: ["appointments"] });
+          queryClient.invalidateQueries({ queryKey: ["appointments"] });
+        }, 300);
+
       } catch (error) {
         console.error('Failed to schedule appointment:', error);
         const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
