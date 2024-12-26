@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from "react";
 import { auth } from "../lib/firebase";
 import { useForm } from "react-hook-form";
@@ -344,6 +343,12 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
             }
           };
           await addAppointment(appointmentData);
+          toast({
+            title: "Success",
+            description: "Appointment scheduled successfully",
+            duration: 3000,
+          });
+          closeDialog();
           return;
         } else {
           throw new Error('No groomer available for auto-assignment');
