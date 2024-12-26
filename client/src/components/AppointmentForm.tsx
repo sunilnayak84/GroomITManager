@@ -462,7 +462,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         setValidationError(errorMessage);
         toast({
           variant: "destructive",
-          title: "Scheduling Error",
+          title: "Error",
           description: errorMessage,
           duration: 3000,
         });
@@ -490,7 +490,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       setValidationError(errorMessage);
       toast({
         variant: "destructive",
-        title: "Scheduling Error",
+        title: "Error",
         description: errorMessage,
         duration: 3000,
       });
