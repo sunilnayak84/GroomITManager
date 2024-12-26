@@ -1,0 +1,17 @@
+CISPL SignerDigital Loaded
+client:495 [vite] connecting...
+client:614 [vite] connected.
+chunk-DRXX46FI.js?v=0cf51c99:21507 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+firebase.ts:26 FIREBASE_INIT: Firebase initialized successfully
+use-pets.ts:71 FETCH_PETS: Raw pets data: (3) [{…}, {…}, {…}]
+use-services.ts:92 FETCH_SERVICES: Completed fetching services {count: 3, services: Array(3)}
+use-pets.ts:122 FETCH_PETS: Completed fetching pets {totalPets: 3, pets: Array(3)}
+use-appointments.ts:333 Adding appointment with data: {petId: 'Qk2LqOtXLnzTYhFo7InK', services: Array(1), groomerId: 'p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82', branchId: '1', date: '2024-12-27', …}branchId: "1"date: "2024-12-27T05:30:00.000Z"groomer: id: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"name: "Groomer One"[[Prototype]]: ObjectgroomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"notes: ""petId: "Qk2LqOtXLnzTYhFo7InK"productsUsed: nullservices: Array(1)0: "8sWdC28UWMGPd70awXQf"length: 1[[Prototype]]: Array(0)status: "pending"time: "11:00"totalDuration: 30totalPrice: 99[[Prototype]]: Object
+use-appointments.ts:321 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
+use-appointments.ts:333 Adding appointment with data: {petId: 'ho3chzn2qWibcB7fqR2l', services: Array(1), groomerId: 'zjMezeDkskSz772Lxn7dHqkxuLV2', branchId: '1', date: '2024-12-27', …}branchId: "1"date: "2024-12-27T05:30:00.000Z"groomer: id: "zjMezeDkskSz772Lxn7dHqkxuLV2"name: "Groomer Two"[[Prototype]]: ObjectgroomerId: "zjMezeDkskSz772Lxn7dHqkxuLV2"notes: ""petId: "ho3chzn2qWibcB7fqR2l"productsUsed: nullservices: Array(1)0: "qs4WniktDLLArQJQOOqi"length: 1[[Prototype]]: Array(0)status: "pending"time: "11:00"totalDuration: 30totalPrice: 299[[Prototype]]: Object
+use-appointments.ts:321 FETCH_APPOINTMENTS: Processed 2 appointments. Success: 2, Errors: 0
+use-appointments.ts:333 Adding appointment with data: {petId: 'iK1lVmJXXA1Y9kV4n5iM', services: Array(1), groomerId: 'p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82', branchId: '1', date: '2024-12-27', …}branchId: "1"date: "2024-12-27T05:30:00.000Z"groomer: id: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"name: "Groomer One"[[Prototype]]: ObjectgroomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"notes: ""petId: "iK1lVmJXXA1Y9kV4n5iM"productsUsed: nullservices: Array(1)0: "8sWdC28UWMGPd70awXQf"length: 1[[Prototype]]: Array(0)status: "pending"time: "11:00"totalDuration: 30totalPrice: 99[[Prototype]]: Object
+use-appointments.ts:321 FETCH_APPOINTMENTS: Processed 3 appointments. Success: 3, Errors: 0
