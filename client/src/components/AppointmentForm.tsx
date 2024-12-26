@@ -462,7 +462,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
           });
           queryClient.invalidateQueries({ queryKey: ["appointments"] });
         }, 300);
-      } catch (error: any) {
+      } catch (error) {
         console.error('Failed to schedule appointment:', error);
         const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
         setValidationError(errorMessage);
@@ -490,18 +490,6 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       }, 300);
 
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
-    } catch (error: any) {
-      console.error('Failed to schedule appointment:', error);
-      const errorMessage = error?.message || error?.toString() || "Failed to schedule appointment";
-      setValidationError(errorMessage);
-      toast({
-        variant: "destructive", 
-        title: "Error",
-        description: errorMessage,
-        duration: 5000,
-      });
-      setIsSubmitting(false);
-      return;
     }
   }
 
