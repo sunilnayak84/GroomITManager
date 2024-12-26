@@ -346,6 +346,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
           toast({
             title: "Success",
             description: "Appointment scheduled successfully",
+            variant: "default",
             duration: 3000,
           });
           closeDialog();
