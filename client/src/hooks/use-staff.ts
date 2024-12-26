@@ -47,7 +47,8 @@ export function useStaff() {
             id: user.uid || user.id,
             name: user.displayName || user.name,
             isGroomer: true,
-            isActive: user.disabled !== true
+            isActive: user.disabled !== true,
+            specialties: user.specialties || []
           }))
           .filter(groomer => groomer.isActive);
 
