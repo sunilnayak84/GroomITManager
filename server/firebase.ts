@@ -2,14 +2,6 @@ import admin from 'firebase-admin';
 import { getAuth } from 'firebase-admin/auth';
 import { getDatabase } from 'firebase-admin/database';
 
-// Role Types
-export enum RoleTypes {
-  admin = 'admin',
-  manager = 'manager',
-  staff = 'staff',
-  receptionist = 'receptionist'
-}
-
 // All available permissions
 export const ALL_PERMISSIONS = [
   'all',
@@ -39,10 +31,12 @@ export const ALL_PERMISSIONS = [
 
 export type Permission = typeof ALL_PERMISSIONS[number];
 
-// Default permissions for each role
-export const DefaultPermissions: Record<RoleTypes, Permission[]> = {
-  [RoleTypes.admin]: ['all'],
-  [RoleTypes.manager]: [
+export type Role = string;
+
+// Default permissions for each role.  These will likely need to be updated to reflect your database structure.
+export const DefaultPermissions: Record<Role, Permission[]> = {
+  'admin': ['all'],
+  'manager': [
     'manage_appointments',
     'view_appointments',
     'manage_services',
@@ -52,12 +46,12 @@ export const DefaultPermissions: Record<RoleTypes, Permission[]> = {
     'manage_inventory',
     'view_inventory'
   ],
-  [RoleTypes.staff]: [
+  'staff': [
     'view_appointments',
     'manage_own_schedule',
     'view_customers'
   ],
-  [RoleTypes.receptionist]: [
+  'receptionist': [
     'view_appointments',
     'create_appointments',
     'view_customers',
@@ -66,29 +60,29 @@ export const DefaultPermissions: Record<RoleTypes, Permission[]> = {
 };
 
 export const InitialRoleConfigs = {
-  [RoleTypes.admin]: {
+  'admin': {
     permissions: ['all'],
     description: 'Full system access with all permissions',
     isSystem: true,
     createdAt: Date.now(),
     updatedAt: Date.now()
   },
-  [RoleTypes.manager]: {
-    permissions: DefaultPermissions[RoleTypes.manager],
+  'manager': {
+    permissions: DefaultPermissions['manager'],
     description: 'Manages daily operations and staff',
     isSystem: true,
     createdAt: Date.now(),
     updatedAt: Date.now()
   },
-  [RoleTypes.staff]: {
-    permissions: DefaultPermissions[RoleTypes.staff],
+  'staff': {
+    permissions: DefaultPermissions['staff'],
     description: 'Regular staff member access',
     isSystem: true,
     createdAt: Date.now(),
     updatedAt: Date.now()
   },
-  [RoleTypes.receptionist]: {
-    permissions: DefaultPermissions[RoleTypes.receptionist],
+  'receptionist': {
+    permissions: DefaultPermissions['receptionist'],
     description: 'Front desk and customer service access',
     isSystem: true,
     createdAt: Date.now(),
@@ -141,29 +135,29 @@ export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
 }
 
 // Role management functions
-export async function getUserRole(userId: string): Promise<{ role: RoleTypes; permissions: Permission[] }> {
+export async function getUserRole(userId: string): Promise<{ role: Role; permissions: Permission[] }> {
   const db = getDatabase(getFirebaseAdmin());
   const snapshot = await db.ref(`roles/${userId}`).once('value');
   const roleData = snapshot.val();
   
   if (!roleData) {
     return {
-      role: RoleTypes.staff,
-      permissions: DefaultPermissions[RoleTypes.staff]
+      role: 'staff', // Default to 'staff' if no role is found
+      permissions: DefaultPermissions['staff']
     };
   }
   
   return {
-    role: roleData.role as RoleTypes,
+    role: roleData.role,
     permissions: roleData.permissions as Permission[]
   };
 }
 
 export async function updateUserRole(
   userId: string,
-  role: RoleTypes,
+  role: Role,
   customPermissions?: Permission[]
-): Promise<{ success: boolean; role: RoleTypes; permissions: Permission[] }> {
+): Promise<{ success: boolean; role: Role; permissions: Permission[] }> {
   const app = getFirebaseAdmin();
   const db = getDatabase(app);
   const auth = getAuth(app);
@@ -171,7 +165,7 @@ export async function updateUserRole(
   
   await auth.getUser(userId);
   
-  const permissions = customPermissions || DefaultPermissions[role];
+  const permissions = customPermissions || DefaultPermissions[role] || []; // Handle cases where DefaultPermissions[role] is undefined.
   
   await db.ref(`roles/${userId}`).set({
     role,
@@ -219,15 +213,15 @@ export async function setupAdminUser(adminEmail: string): Promise<void> {
   
   // Set up admin role
   await db.ref(`roles/${userId}`).set({
-    role: RoleTypes.admin,
-    permissions: DefaultPermissions[RoleTypes.admin],
+    role: 'admin',
+    permissions: DefaultPermissions['admin'],
     updatedAt: Date.now(),
     createdAt: Date.now()
   });
   
   await auth.setCustomUserClaims(userId, {
-    role: RoleTypes.admin,
-    permissions: DefaultPermissions[RoleTypes.admin],
+    role: 'admin',
+    permissions: DefaultPermissions['admin'],
     updatedAt: Date.now()
   });
 }

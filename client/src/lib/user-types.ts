@@ -1,13 +1,16 @@
+
 import { z } from "zod";
 
 export const SERVICE_CATEGORIES = ['grooming', 'spa', 'training'] as const;
 export const PET_TYPES = ['dog', 'cat', 'bird', 'rabbit'] as const;
 
+export type Role = 'admin' | 'customer' | 'manager' | 'receptionist' | 'staff';
+
 export const insertUserSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email format"),
   phone: z.string().regex(/^[6-9]\d{9}$/, "Invalid Indian mobile number"),
-  role: z.enum(["staff", "groomer", "admin"]),
+  role: z.string(),
   branchId: z.number().optional(),
   isGroomer: z.boolean().default(false),
   specialties: z.array(z.string()).optional(),
@@ -24,7 +27,7 @@ export type User = {
   name: string;
   email: string;
   phone: string;
-  role: "staff" | "groomer" | "admin";
+  role: string;
   branchId?: number;
   isGroomer: boolean;
   specialties?: string[];

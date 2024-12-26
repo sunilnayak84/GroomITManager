@@ -54,98 +54,13 @@ declare global {
   }
 }
 
-// Define role permissions
-export const RolePermissions: Record<string, string[]> = {
-  admin: ['all'],
-  manager: [
-    // Appointment Management
-    'manage_appointments',
-    'view_all_appointments',
-    'reschedule_appointments',
-    'cancel_appointments',
-    'create_appointments',
-    
-    // Service Management
-    'manage_services',
-    'create_services',
-    'edit_services',
-    'view_services',
-    'set_service_pricing',
-    
-    // Staff Schedule Management (excluding user/role management)
-    'view_staff_schedule',
-    'manage_staff_schedule',
-    'assign_staff_tasks',
-    'manage_working_hours',
-    
-    // Customer and Pet Management
-    'manage_customers',
-    'view_customers',
-    'edit_customer_info',
-    'manage_pets',
-    'view_all_pets',
-    'edit_pet_info',
-    
-    // Inventory and Stock Management
-    'manage_inventory',
-    'view_inventory',
-    'update_stock',
-    'manage_consumables',
-    'view_stock_alerts',
-    'create_purchase_orders',
-    
-    // Business Operations
-    'view_analytics',
-    'view_reports',
-    'manage_branch_settings',
-    'view_financial_reports',
-    'export_reports',
-    
-    // Service Package Management
-    'manage_service_packages',
-    'create_packages',
-    'edit_packages',
-    'set_package_pricing',
-    
-    // Branch Operations
-    'view_branch_details',
-    'manage_branch_operations',
-    'view_branch_performance',
-    
-    // Customer Communication
-    'manage_notifications',
-    'send_customer_notifications',
-    'manage_customer_feedback',
-    
-    // Marketing and Promotions
-    'manage_marketing_campaigns',
-    'create_promotions',
-    'edit_promotions',
-    'view_campaign_analytics',
-    
-    // Financial Operations
-    'manage_service_pricing',
-    'set_special_rates',
-    'view_revenue_reports',
-    'manage_discounts'
-  ],
-  staff: [
-    'manage_appointments',
-    'view_appointments',
-    'manage_own_schedule',
-    'view_customers',
-    'view_inventory',
-    'view_pets',
-    'update_stock'
-  ],
-  receptionist: [
-    'view_appointments',
-    'create_appointments',
-    'view_customers',
-    'create_customers',
-    'view_pets'
-  ]
-};
+// Get role permissions from database
+async function getRolePermissions(role: string): Promise<string[]> {
+  const db = admin.database();
+  const roleSnapshot = await db.ref(`role-definitions/${role}`).once('value');
+  const roleData = roleSnapshot.val();
+  return roleData?.permissions || [];
+}
 
 // Define restricted endpoints for manager role - anything related to user management
 export const MANAGER_RESTRICTED_ENDPOINTS = [
