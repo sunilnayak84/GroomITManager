@@ -344,26 +344,15 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
           };
           try {
             await addAppointment(appointmentData);
-            toast({
-              title: "Success", 
-              description: "Appointment scheduled successfully",
-              duration: 2000,
-            });
-            
-            // First cleanup form state
             form.reset();
             setValidationError(null);
             setSelectedService(null);
             setAvailableTimeSlots([]);
             setIsSubmitting(false);
-            
-            // Close dialog after a brief delay
-            requestAnimationFrame(() => {
-              setOpen(false);
-            });
+            setOpen(false);
           } catch (error) {
             console.error('Failed to create appointment:', error);
-            toast({
+            setValidationError('Failed to create appointment');
               title: "Error",
               description: "Failed to create appointment",
               variant: "destructive",
