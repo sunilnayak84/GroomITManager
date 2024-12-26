@@ -129,8 +129,10 @@ export function useUser() {
     mutationFn: loginWithFirebase,
     onSuccess: (user) => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
-      // Redirect customers to customer portal
-      if (user.role === 'receptionist') {
+      // Redirect based on role
+      if (user.role === 'customer') {
+        window.location.href = '/customer';
+      } else if (user.role === 'receptionist') {
         window.location.href = '/appointments';
       }
     },

@@ -31,9 +31,17 @@ export const ALL_PERMISSIONS = [
 
 export type Permission = typeof ALL_PERMISSIONS[number];
 
-export type Role = string;
+export enum RoleTypes {
+  admin = 'admin',
+  customer = 'customer',
+  manager = 'manager',
+  receptionist = 'receptionist',
+  staff = 'staff'
+}
 
-// Default permissions for each role.  These will likely need to be updated to reflect your database structure.
+export type Role = keyof typeof RoleTypes;
+
+// Default permissions for each role
 export const DefaultPermissions: Record<Role, Permission[]> = {
   'admin': ['all'],
   'manager': [
