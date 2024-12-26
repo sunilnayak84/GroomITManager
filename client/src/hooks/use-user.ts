@@ -96,16 +96,19 @@ function useFirebaseUser() {
           unsubscribe();
           if (user) {
             // Get custom claims from Firebase user
-            user.getIdTokenResult().then(tokenResult => {
-              const role = (tokenResult.claims.role as UserRole) || 'staff';
-              const permissions = tokenResult.claims.permissions as string[] || [];
+            // First get reference to the Firebase Realtime Database
+            const db = getDatabase();
+            get(ref(db, `roles/${user.uid}`)).then(snapshot => {
+              const roleData = snapshot.val();
+              const role = roleData?.role || 'staff';
+              const permissions = roleData?.permissions || [];
               resolve({
                 id: user.uid,
                 email: user.email!,
                 name: user.displayName || user.email!,
                 role,
                 permissions,
-                branchId: tokenResult.claims.branchId as number
+                branchId: roleData?.branchId
               });
             })
           } else {
