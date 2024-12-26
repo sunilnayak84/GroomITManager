@@ -1,0 +1,13 @@
+CISPL SignerDigital Loaded
+client:495 [vite] connecting...
+client:614 [vite] connected.
+chunk-DRXX46FI.js?v=0cf51c99:21507 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+firebase.ts:26 FIREBASE_INIT: Firebase initialized successfully
+use-pets.ts:71 FETCH_PETS: Raw pets data: (3) [{…}, {…}, {…}]0: {id: 'Qk2LqOtXLnzTYhFo7InK', updatedAt: _Timestamp, submissionId: '1734950533941-r8uz4qwx2', image: 'https://firebasestorage.googleapis.com/v0/b/replit…=media&token=9fd22f01-7c30-4890-a060-6555d0ae9020', age: 5, …}1: {id: 'ho3chzn2qWibcB7fqR2l', weightUnit: 'kg', image: 'https://firebasestorage.googleapis.com/v0/b/replit…=media&token=9ab59b6d-84f0-4fb4-af5c-d41f66bdc0a5', updatedAt: _Timestamp, owner: null, …}2: {id: 'iK1lVmJXXA1Y9kV4n5iM', submissionId: '1735194505373-w8x00kb07', name: 'NewPetTest', owner: null, firebaseId: null, …}length: 3[[Prototype]]: Array(0)
+use-services.ts:92 FETCH_SERVICES: Completed fetching services {count: 3, services: Array(3)}count: 3services: Array(3)0: {service_id: '8sWdC28UWMGPd70awXQf', name: 'Service One', category: 'Service', duration: 30, price: 99, …}1: {service_id: 'qs4WniktDLLArQJQOOqi', name: 'Service Two', category: 'Service', duration: 30, price: 299, …}2: {service_id: 'udoipAkeRVOxYnPnKu0g', name: 'Pack One', category: 'Package', duration: 60, price: 358, …}length: 3[[Prototype]]: Array(0)[[Prototype]]: Object
+use-pets.ts:122 FETCH_PETS: Completed fetching pets {totalPets: 3, pets: Array(3)}pets: (3) [{…}, {…}, {…}]totalPets: 3[[Prototype]]: Object
+use-appointments.ts:333 Adding appointment with data: {petId: 'Qk2LqOtXLnzTYhFo7InK', services: Array(1), groomerId: 'p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82', branchId: '1', date: '2024-12-27', …}branchId: "1"date: "2024-12-27"groomer: id: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"name: "Groomer One"[[Prototype]]: ObjectgroomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"notes: ""petId: "Qk2LqOtXLnzTYhFo7InK"productsUsed: nullservices: Array(1)0: "8sWdC28UWMGPd70awXQf"length: 1[[Prototype]]: Array(0)status: "pending"time: "11:00"totalDuration: 30totalPrice: 99[[Prototype]]: Object
+use-appointments.ts:321 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
