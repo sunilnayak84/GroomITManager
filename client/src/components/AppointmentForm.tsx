@@ -262,10 +262,8 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         }
       }
 
-      // Find any conflicting appointments for the groomer
-      const conflictingAppointment = appointments?.find(a => {
-        if (a.groomerId !== groomerId) return false;
-        
+      // Get all appointments for the selected time slot
+      const conflictingAppointments = appointments?.filter(a => {
         const existingStart = new Date(a.date);
         const existingEnd = new Date(existingStart);
         existingEnd.setMinutes(existingEnd.getMinutes() + (a.totalDuration || 30));
@@ -276,17 +274,33 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
           // New appointment ends during existing appointment
           (appointmentEndTime > existingStart && appointmentEndTime <= existingEnd)
         );
-      });
+      }) || [];
 
-      if (conflictingAppointment) {
+      // Check if all groomers are busy
+      const availableGroomers = availableGroomers?.filter(groomer => 
+        !conflictingAppointments.some(appt => appt.groomerId === groomer.id)
+      );
+
+      if (availableGroomers.length === 0) {
         return {
           isValid: false,
-          error: `This time slot conflicts with an existing appointment from ${format(new Date(conflictingAppointment.date), 'h:mm a')} to ${format((() => {
-            const end = new Date(conflictingAppointment.date);
-            end.setMinutes(end.getMinutes() + (conflictingAppointment.totalDuration || 60));
-            return end;
-          })(), 'h:mm a')}`
+          error: 'All groomers are busy during this time slot'
         };
+      }
+
+      // If a specific groomer is selected, check their availability
+      if (groomerId) {
+        const groomerConflict = conflictingAppointments.find(a => a.groomerId === groomerId);
+        if (groomerConflict) {
+          return {
+            isValid: false,
+            error: `Selected groomer has a conflicting appointment from ${format(new Date(groomerConflict.date), 'h:mm a')} to ${format((() => {
+              const end = new Date(groomerConflict.date);
+              end.setMinutes(end.getMinutes() + (groomerConflict.totalDuration || 60));
+              return end;
+            })(), 'h:mm a')}`
+          };
+        }
       }
     }
 
@@ -419,16 +433,25 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
 
       try {
         await addAppointment(appointmentData);
-          
-        // Reset all states first
+        
+        // Show success message and refresh data
+        toast({
+          title: "Success",
+          description: "Appointment scheduled successfully",
+        });
+        
+        // Close dialog first
+        setOpen(false);
+        
+        // Then reset states
         setIsSubmitting(false);
         setValidationError(null);
         setSelectedService(null);
         setAvailableTimeSlots([]);
         form.reset();
-          
-        // Close dialog
-        setOpen(false);
+        
+        // Refresh appointments data
+        queryClient.invalidateQueries({ queryKey: ["appointments"] });
           
         // Show success message and refresh data
         toast({
