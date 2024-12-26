@@ -329,10 +329,9 @@ export function useAppointments() {
 
   const addAppointmentMutation = useMutation({
     mutationFn: async (appointmentData: InsertAppointment) => {
-      try {
-        if (!appointmentData.services || appointmentData.services.length === 0) {
-          throw new Error("Please select at least one service");
-        }
+      if (!appointmentData.services || appointmentData.services.length === 0) {
+        throw new Error("Please select at least one service");
+      }
         console.log('Adding appointment with data:', appointmentData);
         const appointmentsRef = collection(db, 'appointments');
         const newAppointmentRef = doc(appointmentsRef);
