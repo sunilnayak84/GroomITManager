@@ -8,7 +8,7 @@ import {
 } from 'firebase/auth';
 import { getDatabase, ref, get } from 'firebase/database';
 
-export type UserRole = 'admin' | 'manager' | 'staff' | 'receptionist';
+export type UserRole = 'admin' | 'manager' | 'staff' | 'receptionist' | 'customer';
 
 // Define permissions for each role
 export const RolePermissions = {
@@ -130,10 +130,22 @@ export function useUser() {
     onSuccess: (user) => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
       // Redirect based on role
-      if (user.role === 'customer') {
-        window.location.href = '/customer';
-      } else if (user.role === 'receptionist') {
-        window.location.href = '/appointments';
+      switch (user.role) {
+        case 'customer':
+          window.location.href = '/customer';
+          break;
+        case 'receptionist':
+          window.location.href = '/appointments';
+          break;
+        case 'staff':
+          window.location.href = '/appointments';
+          break;
+        case 'manager':
+          window.location.href = '/dashboard';
+          break;
+        case 'admin':
+          window.location.href = '/dashboard';
+          break;
       }
     },
   });
