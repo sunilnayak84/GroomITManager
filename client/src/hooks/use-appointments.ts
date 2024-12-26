@@ -333,7 +333,18 @@ export function useAppointments() {
         console.log('Adding appointment with data:', appointmentData);
         const appointmentsRef = collection(db, 'appointments');
         const newAppointmentRef = doc(appointmentsRef);
-        const dataToSave = createFirestoreAppointmentData(appointmentData);
+        // Get groomer data before saving
+        const groomerDoc = await getDoc(doc(db, 'users', appointmentData.groomerId));
+        const groomerData = groomerDoc.data();
+        const groomerName = groomerData?.name || 'Unknown Groomer';
+
+        const dataToSave = {
+          ...createFirestoreAppointmentData(appointmentData),
+          groomer: {
+            id: appointmentData.groomerId,
+            name: groomerName
+          }
+        };
         await setDoc(newAppointmentRef, dataToSave);
         return newAppointmentRef.id;
       } catch (error) {
