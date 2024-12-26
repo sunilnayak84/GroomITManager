@@ -342,17 +342,28 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
               name: groomersData.autoAssignedGroomer.name
             }
           };
-          await addAppointment(appointmentData);
-          // First close dialog
-          setOpen(false);
-          // Then show toast after a brief delay
-          setTimeout(() => {
-            toast({
-              title: "Success",
-              description: "Appointment scheduled successfully",
-              duration: 3000,
+          try {
+            await addAppointment(appointmentData);
+            const toastPromise = new Promise<void>(resolve => {
+              toast({
+                title: "Success",
+                description: "Appointment scheduled successfully",
+                duration: 2000,
+              });
+              setTimeout(resolve, 100);
             });
-          }, 300);
+            
+            await toastPromise;
+            form.reset();
+            setOpen(false);
+          } catch (error) {
+            console.error('Failed to create appointment:', error);
+            toast({
+              title: "Error",
+              description: "Failed to create appointment",
+              variant: "destructive",
+            });
+          }
           return;
         } else {
           throw new Error('No groomer available for auto-assignment');
@@ -473,12 +484,13 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
     }
   }, [open, form]);
 
-  const closeDialog = () => {
-    form.reset();
+  const closeDialog = async () => {
+    await new Promise(resolve => setTimeout(resolve, 100));
     setValidationError(null);
     setSelectedService(null);
     setAvailableTimeSlots([]);
     setIsSubmitting(false);
+    form.reset();
     setOpen(false);
   };
 
