@@ -42,7 +42,9 @@ export function useStaff() {
         }
 
         const groomers = data.groomers
-          .filter(user => user && (user.role === 'staff' || user.isGroomer === true))
+          .filter(user => {
+            return user && Array.isArray(user.specialties) && user.specialties.includes('groomer');
+          })
           .map(user => ({
             id: user.uid || user.id,
             name: user.displayName || user.name,
