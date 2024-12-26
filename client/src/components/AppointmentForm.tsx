@@ -357,9 +357,14 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         throw new Error("Please select both date and time");
       }
 
-      const appointmentDateTime = new Date(formDate);
+      // Create date at start of day in local timezone
+      const appointmentDateTime = new Date(formDate + 'T00:00:00');
       const [timeHours, timeMinutes] = formTime.split(':').map(Number);
+      // Set hours/minutes in local timezone
       appointmentDateTime.setHours(timeHours, timeMinutes, 0, 0);
+      // Convert to UTC for storage while preserving the intended local time
+      const offset = appointmentDateTime.getTimezoneOffset() * 60000;
+      const adjustedDate = new Date(appointmentDateTime.getTime() - offset);
       
       if (isNaN(appointmentDateTime.getTime())) {
         throw new Error("Invalid appointment date and time");
@@ -413,7 +418,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
 
       const appointmentData: InsertAppointment = {
         ...data,
-        date: appointmentDateTime.toISOString(),
+        date: adjustedDate.toISOString(),
         status: "pending" as const,
       };
       
