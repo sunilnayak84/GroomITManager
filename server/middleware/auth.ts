@@ -94,37 +94,18 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
       let role: keyof typeof RoleTypes;
       let permissions: string[];
 
-      // Special handling for development admin
-      const isDevAdmin = process.env.NODE_ENV === 'development' && user.email === 'admin@groomery.in';
-      if (isDevAdmin) {
-        console.log('[AUTH] Development admin user detected');
-        role = 'admin';
-        permissions = DefaultPermissions.admin;
+      // Get role and permissions from database
+      if (!userRole) {
+        console.warn('[AUTH] No role found for user');
+        return res.status(403).json({
+          message: 'No role assigned',
+          code: 'NO_ROLE_ASSIGNED'
+        });
       }
-      // Check custom claims
-      else if (customClaims.isAdmin === true || customClaims.role === 'admin') {
-        console.log('[AUTH] User has admin claims:', customClaims);
-        role = 'admin';
-        permissions = DefaultPermissions.admin;
-      }
-      // Check database role
-      else if (userRole?.role === 'admin') {
-        console.log('[AUTH] User has admin role in database');
-        role = 'admin';
-        permissions = DefaultPermissions.admin;
-      }
-      // Use database role if available
-      else if (userRole) {
-        console.log('[AUTH] User has role from database:', userRole);
-        role = userRole.role;
-        permissions = userRole.permissions;
-      }
-      // Default to staff role
-      else {
-        console.warn(`[AUTH] No role found for user ${user.email}, using default staff role`);
-        role = 'staff';
-        permissions = DefaultPermissions.staff;
-      }
+
+      role = userRole.role;
+      permissions = userRole.permissions;
+      console.log('[AUTH] User role loaded:', { role, permissionsCount: permissions.length });
 
       // For admin users, ensure they have all admin permissions
       if (role === 'admin') {
