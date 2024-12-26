@@ -486,8 +486,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
     } catch (error: any) {
       console.error('Failed to schedule appointment:', error);
-      // Extract message from Firebase error or fallback
-      const errorMessage = error?.customData?.message || error?.message || error?.toString() || "Failed to schedule appointment";
+      const errorMessage = error?.message || "This time slot is already booked. Please select a different time.";
       setValidationError(errorMessage);
       toast({
         variant: "destructive", 
