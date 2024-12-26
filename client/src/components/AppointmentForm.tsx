@@ -343,13 +343,16 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
             }
           };
           await addAppointment(appointmentData);
-          toast({
-            title: "Success",
-            description: "Appointment scheduled successfully", 
-            duration: 3000,
-          });
-          await new Promise(resolve => setTimeout(resolve, 100));
-          closeDialog();
+          // First close dialog
+          setOpen(false);
+          // Then show toast after a brief delay
+          setTimeout(() => {
+            toast({
+              title: "Success",
+              description: "Appointment scheduled successfully",
+              duration: 3000,
+            });
+          }, 300);
           return;
         } else {
           throw new Error('No groomer available for auto-assignment');
