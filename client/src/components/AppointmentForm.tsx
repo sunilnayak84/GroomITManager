@@ -424,7 +424,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         setSelectedService(null);
         setAvailableTimeSlots([]);
         setIsSubmitting(false);
-        setOpen(false);
+        closeDialog(); // Use the closeDialog function instead
         // Refresh appointments data using queryClient
         queryClient.invalidateQueries({ queryKey: ["appointments"] });
       } catch (error) {
