@@ -463,12 +463,32 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         setValidationError(errorMessage);
         toast({
           variant: "destructive",
-          title: "Error",
+          title: "Scheduling Error",
           description: errorMessage,
+          duration: 3000,
         });
-      } finally {
         setIsSubmitting(false);
+        return; // Exit early on error
       }
+
+      // Only proceed if no errors
+      setIsSubmitting(false);
+      setValidationError(null);
+      setSelectedService(null);
+      setAvailableTimeSlots([]);
+      form.reset();
+      setOpen(false);
+
+      // Show success toast after dialog closes
+      setTimeout(() => {
+        toast({
+          title: "Success",
+          description: "Appointment scheduled successfully",
+          duration: 3000,
+        });
+      }, 100);
+
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
     } catch (error) {
       console.error('Failed to schedule appointment:', error);
       const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
