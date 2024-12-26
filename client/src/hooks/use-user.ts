@@ -129,21 +129,19 @@ export function useUser() {
     mutationFn: loginWithFirebase,
     onSuccess: async (user) => {
       await queryClient.invalidateQueries({ queryKey: ['user'] });
-      // Force redirection based on role
-      if (user.role === 'customer') {
-        window.location.replace('/customer');
-        return;
-      }
-      
-      const roleRedirects = {
-        'receptionist': '/appointments',
-        'staff': '/appointments',
-        'manager': '/dashboard',
-        'admin': '/dashboard'
+      if (!user) return;
+
+      const redirectMap = {
+        customer: '/customer',
+        receptionist: '/appointments',
+        staff: '/appointments',
+        manager: '/dashboard',
+        admin: '/dashboard'
       };
-      
-      if (roleRedirects[user.role]) {
-        window.location.replace(roleRedirects[user.role]);
+
+      const path = redirectMap[user.role];
+      if (path) {
+        window.location.href = path;
       }
     },
   });

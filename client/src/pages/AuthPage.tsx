@@ -28,15 +28,16 @@ export default function AuthPage() {
     try {
       console.log('Attempting login...');
       form.clearErrors();
-      await login(data);
+      const user = await login(data);
       
       toast({
         title: "Success",
         description: "Logged in successfully",
       });
       
-      // Use window.location.reload() instead of changing href to properly handle SPA navigation
-      window.location.reload();
+      if (user?.role === 'customer') {
+        window.location.href = '/customer';
+      }
       
     } catch (error) {
       console.error("Login error:", error);
