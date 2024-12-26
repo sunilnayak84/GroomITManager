@@ -419,14 +419,20 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         });
           
         // Close dialog and reset form state
-        form.reset();
+        // Force immediate state updates
+        setIsSubmitting(false);
         setValidationError(null);
         setSelectedService(null);
         setAvailableTimeSlots([]);
-        setIsSubmitting(false);
-        closeDialog(); // Use the closeDialog function instead
-        // Refresh appointments data using queryClient
-        queryClient.invalidateQueries({ queryKey: ["appointments"] });
+        
+        // Close dialog first
+        setOpen(false);
+        
+        // Reset form after dialog closes
+        setTimeout(() => {
+          form.reset();
+          queryClient.invalidateQueries({ queryKey: ["appointments"] });
+        }, 100);
       } catch (error) {
         console.error('Failed to schedule appointment:', error);
         const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
