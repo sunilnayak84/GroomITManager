@@ -1,0 +1,39 @@
+chunk-DRXX46FI.js?v=0cf51c99:8462 Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.
+    at removeChildFromContainer (chunk-DRXX46FI.js?v=0cf51c99:8462:23)
+    at commitDeletionEffectsOnFiber (chunk-DRXX46FI.js?v=0cf51c99:17476:21)
+    at recursivelyTraverseDeletionEffects (chunk-DRXX46FI.js?v=0cf51c99:17454:13)
+    at commitDeletionEffectsOnFiber (chunk-DRXX46FI.js?v=0cf51c99:17545:15)
+    at recursivelyTraverseDeletionEffects (chunk-DRXX46FI.js?v=0cf51c99:17454:13)
+    at commitDeletionEffectsOnFiber (chunk-DRXX46FI.js?v=0cf51c99:17545:15)
+    at recursivelyTraverseDeletionEffects (chunk-DRXX46FI.js?v=0cf51c99:17454:13)
+    at commitDeletionEffectsOnFiber (chunk-DRXX46FI.js?v=0cf51c99:17545:15)
+    at recursivelyTraverseDeletionEffects (chunk-DRXX46FI.js?v=0cf51c99:17454:13)
+    at commitDeletionEffectsOnFiber (chunk-DRXX46FI.js?v=0cf51c99:17545:15)
+chunk-DRXX46FI.js?v=0cf51c99:14016 The above error occurred in the <Portal> component:
+
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=0cf51c99:993:22
+    at Presence (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=0cf51c99:1011:11)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-PYPT7BFL.js?v=0cf51c99:38:15)
+    at DialogPortal (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=0cf51c99:1648:11)
+    at _c3 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/dialog.tsx:49:12)
+    at AppointmentForm (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/AppointmentForm.tsx:58:43)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-PYPT7BFL.js?v=0cf51c99:38:15)
+    at Dialog (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=0cf51c99:1589:5)
+    at div
+    at div
+    at CustomerAppointmentsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/customer/CustomerAppointmentsPage.tsx:28:20)
+    at main
+    at div
+    at div
+    at div
+    at CustomerLayout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/CustomerLayout.tsx:22:42)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=0cf51c99:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=0cf51c99:379:17)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:142:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=0cf51c99:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=0cf51c99:18:5)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+﻿
+
