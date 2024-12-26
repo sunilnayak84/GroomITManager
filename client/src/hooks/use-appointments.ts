@@ -372,8 +372,9 @@ export function useAppointments() {
 
     // Check if there are any overlapping appointments for the specified groomer
     const hasOverlap = appointments.some(appointment => {
-      // Skip if this is the appointment being edited, appointment is cancelled, or groomer doesn't match
+      // Skip if appointment is soft deleted, being edited, cancelled, or groomer doesn't match
       if (
+        appointment.deletedAt ||
         (currentAppointmentId && appointment.id === currentAppointmentId) || 
         appointment.status === 'cancelled' ||
         (groomerId && appointment.groomerId !== groomerId) 
