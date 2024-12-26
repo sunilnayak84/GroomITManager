@@ -377,14 +377,13 @@ export function useAppointments() {
     const slotEnd = new Date(slotStart);
     slotEnd.setMinutes(slotEnd.getMinutes() + duration);
 
-    // Check for any overlapping appointments for all groomers or specific groomer
-    const hasOverlap = appointments.some(appointment => {
+    // Get all overlapping appointments
+    const overlappingAppointments = appointments.filter(appointment => {
       if (
         appointment.deletedAt ||
         (currentAppointmentId && appointment.id === currentAppointmentId) || 
         appointment.status === 'cancelled' ||
-        !appointment.date ||
-        (groomerId && appointment.groomerId !== groomerId)
+        !appointment.date
       ) return false;
       
       const appointmentStart = new Date(appointment.date);
@@ -394,7 +393,14 @@ export function useAppointments() {
       return (slotStart < appointmentEnd && slotEnd > appointmentStart);
     });
 
-    return !hasOverlap;
+    // If checking for a specific groomer
+    if (groomerId) {
+      return !overlappingAppointments.some(appt => appt.groomerId === groomerId);
+    }
+
+    // For auto-assignment, check if all groomers are busy
+    const busyGroomerIds = new Set(overlappingAppointments.map(appt => appt.groomerId));
+    return busyGroomerIds.size < 2; // Allow booking if at least one groomer is available
   };
 
   const updateAppointmentMutation = useMutation({
