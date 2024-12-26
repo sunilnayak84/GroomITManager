@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { auth } from "../lib/firebase";
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";

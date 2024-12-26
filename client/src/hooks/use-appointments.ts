@@ -338,13 +338,7 @@ export function useAppointments() {
         const groomerData = groomerDoc.data();
         const groomerName = groomerData?.name || 'Unknown Groomer';
 
-        const dataToSave = {
-          ...createFirestoreAppointmentData(appointmentData),
-          groomer: {
-            id: appointmentData.groomerId,
-            name: groomerName
-          }
-        };
+        const dataToSave = createFirestoreAppointmentData(appointmentData);
         await setDoc(newAppointmentRef, dataToSave);
         return newAppointmentRef.id;
       } catch (error) {
