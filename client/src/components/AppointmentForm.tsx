@@ -486,11 +486,11 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
     } catch (error: any) {
       console.error('Failed to schedule appointment:', error);
-      const errorMessage = error?.message || "This time slot is already booked. Please select a different time.";
+      const errorMessage = error?.message || error?.toString() || "Failed to schedule appointment";
       setValidationError(errorMessage);
       toast({
         variant: "destructive", 
-        title: "Scheduling Error",
+        title: "Error",
         description: errorMessage,
         duration: 5000,
       });
