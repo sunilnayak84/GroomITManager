@@ -1,5 +1,5 @@
 
-import * as React from "react"
+import { useState, useEffect } from "react"
 import { type ToastProps } from "@/components/ui/toast"
 
 const TOAST_LIMIT = 1
@@ -57,9 +57,9 @@ toast.error = (message: string) => {
 export { toast }
 
 export function useToast() {
-  const [state, setState] = React.useState<State>(memoryState)
+  const [state, setState] = useState<State>(memoryState)
 
-  React.useEffect(() => {
+  useEffect(() => {
     const interval = setInterval(() => {
       setState(memoryState)
     }, 100)
