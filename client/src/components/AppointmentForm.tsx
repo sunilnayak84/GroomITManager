@@ -59,7 +59,6 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
   const { pets } = usePets();
   const { services } = useServices();
   const { toast } = useToast();
-  const { user } = useUser();
   const isCustomer = user?.role === 'customer';
   const { staffMembers, isLoading: isStaffLoading } = useStaff();
   
