@@ -349,7 +349,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
             setSelectedService(null);
             setAvailableTimeSlots([]);
             setIsSubmitting(false);
-            closeDialog();
+            handleOpenChange(false);
           } catch (error) {
             console.error('Failed to create appointment:', error);
             setValidationError('Failed to create appointment');
@@ -447,7 +447,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         setAvailableTimeSlots([]);
         setIsSubmitting(false);
         form.reset();
-        closeDialog();
+        handleOpenChange(false);
       } catch (error) {
         console.error('Failed to schedule appointment:', error);
         const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
@@ -456,46 +456,27 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       }
   }
 
-  useEffect(() => {
-    let cleanup: number;
+  const handleOpenChange = (open: boolean) => {
     if (!open) {
-      cleanup = requestAnimationFrame(() => {
-        form.reset({
-          petId: "",
-          services: [],
-          groomerId: "",
-          branchId: "1", 
-          date: format(new Date(), 'yyyy-MM-dd'),
-          time: format(new Date(), 'HH:mm'),
-          status: "pending",
-          notes: "",
-          productsUsed: null,
-          totalPrice: 0,
-          totalDuration: 0
-        });
-        form.clearErrors();
-        setValidationError(null);
-        setSelectedService(null);
-        setAvailableTimeSlots([]);
-        setIsSubmitting(false);
+      setValidationError(null);
+      setSelectedService(null);
+      setAvailableTimeSlots([]);
+      setIsSubmitting(false);
+      form.reset({
+        petId: "",
+        services: [],
+        groomerId: "",
+        branchId: "1",
+        date: format(new Date(), 'yyyy-MM-dd'),
+        time: format(new Date(), 'HH:mm'),
+        status: "pending",
+        notes: "",
+        productsUsed: null,
+        totalPrice: 0,
+        totalDuration: 0
       });
     }
-    return () => {
-      if (cleanup) cancelAnimationFrame(cleanup);
-    };
-  }, [open, form]);
-
-  const closeDialog = () => {
-    setValidationError(null);
-    setSelectedService(null);
-    setAvailableTimeSlots([]);
-    setIsSubmitting(false);
-    
-    // Use RAF to ensure state updates are processed before closing
-    requestAnimationFrame(() => {
-      form.reset();
-      setOpen(false);
-    });
+    setOpen(open);
   };
 
   return (
