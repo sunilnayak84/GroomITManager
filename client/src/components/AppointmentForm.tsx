@@ -488,7 +488,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
     // Use RAF to ensure DOM updates are processed before state changes
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        closeDialog();
+        setOpen(false);
       });
     });
   };
