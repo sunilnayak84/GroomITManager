@@ -1,0 +1,34 @@
+CustomerPetsPage.tsx:201 Uncaught ReferenceError: DialogHeader is not defined
+    at CustomerPetsPage (CustomerPetsPage.tsx:201:12)
+CustomerPetsPage	@	CustomerPetsPage.tsx:201
+chunk-DRXX46FI.js?v=0cf51c99:14016 The above error occurred in the <CustomerPetsPage> component:
+
+    at CustomerPetsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/customer/CustomerPetsPage.tsx:31:44)
+    at main
+    at div
+    at div
+    at div
+    at CustomerLayout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/CustomerLayout.tsx:22:42)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=0cf51c99:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=0cf51c99:379:17)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:143:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=0cf51c99:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=0cf51c99:18:5)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+logCapturedError	@	chunk-DRXX46FI.js?v=0cf51c99:14016
+callback	@	chunk-DRXX46FI.js?v=0cf51c99:14062
+callCallback	@	chunk-DRXX46FI.js?v=0cf51c99:10491
+commitUpdateQueue	@	chunk-DRXX46FI.js?v=0cf51c99:10508
+commitLayoutEffectOnFiber	@	chunk-DRXX46FI.js?v=0cf51c99:17043
+commitLayoutMountEffects_complete	@	chunk-DRXX46FI.js?v=0cf51c99:17948
+commitLayoutEffects_begin	@	chunk-DRXX46FI.js?v=0cf51c99:17937
+commitLayoutEffects	@	chunk-DRXX46FI.js?v=0cf51c99:17888
+commitRootImpl	@	chunk-DRXX46FI.js?v=0cf51c99:19321
+commitRoot	@	chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot	@	chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks	@	chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous)	@	chunk-DRXX46FI.js?v=0cf51c99:18595
+﻿
+
