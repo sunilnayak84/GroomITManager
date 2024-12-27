@@ -314,6 +314,10 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
     const appointmentDateTime = new Date(data.date);
     appointmentDateTime.setHours(hours, minutes, 0, 0);
     
+    // Convert to UTC while preserving the local time
+    const offset = appointmentDateTime.getTimezoneOffset();
+    appointmentDateTime.setMinutes(appointmentDateTime.getMinutes() - offset);
+    
     // Validate time slot
     if (!isTimeSlotAvailable(appointmentDateTime, null, data.totalDuration || 30)) {
         const errorMsg = "This time slot is already booked. Please select a different time.";
