@@ -136,7 +136,14 @@ export default function CustomerPetsPage() {
 
       <div className="grid md:grid-cols-2 gap-6">
         {customerPets.map((pet) => (
-          <Card key={pet.id} className="hover:shadow-lg transition-all duration-300 group">
+          <Card 
+    key={pet.id} 
+    className="hover:shadow-lg transition-all duration-300 group cursor-pointer"
+    onClick={() => {
+      setSelectedPet(pet);
+      setShowPetModal(true);
+    }}
+  >
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <div className="flex items-center gap-3">
                 {pet.image ? (
@@ -157,9 +164,10 @@ export default function CustomerPetsPage() {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   setSelectedPet(pet);
-                  setShowPetModal(true);
+                  setShowEditModal(true);
                 }}
                 className="opacity-0 group-hover:opacity-100 transition-opacity"
               >
@@ -189,17 +197,36 @@ export default function CustomerPetsPage() {
       </div>
 
       <Dialog open={showPetModal} onOpenChange={setShowPetModal}>
+        <DialogContent className="sm:max-w-[625px]">
+          <DialogHeader>
+            <DialogTitle>Pet Details</DialogTitle>
+            <DialogDescription>View and manage pet information</DialogDescription>
+          </DialogHeader>
+          {selectedPet && (
+            <PetDetails
+              pet={selectedPet}
+              formatDate={(date) => date ? new Date(date).toLocaleDateString() : 'N/A'}
+              onEdit={() => {
+                setShowPetModal(false);
+                setShowEditModal(true);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogTitle className="text-xl font-semibold mb-4">
-            {selectedPet ? 'Edit Pet' : 'Add New Pet'}
+            Edit Pet
           </DialogTitle>
           <PetForm
-            handleSubmit={selectedPet ? handleUpdatePet : handleAddPet}
-            onCancel={() => setShowPetModal(false)}
+            handleSubmit={handleUpdatePet}
+            onCancel={() => setShowEditModal(false)}
             defaultValues={selectedPet ?? undefined}
             customerId={user?.uid ?? ''}
             hideCustomerField={true}
-            isEditing={!!selectedPet}
+            isEditing={true}
           />
         </DialogContent>
       </Dialog>
