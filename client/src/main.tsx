@@ -128,6 +128,13 @@ function Router() {
             </CustomerLayout>
           )}
         </Route>
+        <Route path="/customer/profile">
+          {() => (
+            <CustomerLayout>
+              <CustomerProfilePage />
+            </CustomerLayout>
+          )}
+        </Route>
         <Route>
           {() => {
             window.location.href = '/customer';
