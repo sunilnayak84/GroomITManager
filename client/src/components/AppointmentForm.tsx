@@ -458,25 +458,30 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
-      setValidationError(null);
-      setSelectedService(null);
-      setAvailableTimeSlots([]);
-      setIsSubmitting(false);
-      form.reset({
-        petId: "",
-        services: [],
-        groomerId: "",
-        branchId: "1",
-        date: format(new Date(), 'yyyy-MM-dd'),
-        time: format(new Date(), 'HH:mm'),
-        status: "pending",
-        notes: "",
-        productsUsed: null,
-        totalPrice: 0,
-        totalDuration: 0
-      });
+      setTimeout(() => {
+        setValidationError(null);
+        setSelectedService(null);
+        setAvailableTimeSlots([]);
+        setIsSubmitting(false);
+        form.reset({
+          petId: "",
+          services: [],
+          groomerId: "",
+          branchId: "1",
+          date: format(new Date(), 'yyyy-MM-dd'),
+          time: format(new Date(), 'HH:mm'),
+          status: "pending",
+          notes: "",
+          productsUsed: null,
+          totalPrice: 0,
+          totalDuration: 0
+        });
+        form.clearErrors();
+      }, 0);
     }
-    setOpen(open);
+    requestAnimationFrame(() => {
+      setOpen(open);
+    });
   };
 
   return (

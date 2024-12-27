@@ -32,17 +32,31 @@ const DialogContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
 >(({ className, children, ...props }, ref) => (
   <DialogPortal>
-    <DialogOverlay />
+    <DialogOverlay onClick={(e) => e.stopPropagation()} />
     <DialogPrimitive.Content
       ref={ref}
-      onCloseAutoFocus={(event) => {
+      onOpenAutoFocus={(event) => {
         event.preventDefault();
+        const content = event.currentTarget;
+        if (content) {
+          const firstFocusable = content.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+          if (firstFocusable instanceof HTMLElement) {
+            firstFocusable.focus();
+          }
+        }
       }}
+      onCloseAutoFocus={(event) => event.preventDefault()}
       onEscapeKeyDown={(event) => {
         event.preventDefault();
+        if (props.onEscapeKeyDown) {
+          props.onEscapeKeyDown(event);
+        }
       }}
       onPointerDownOutside={(event) => {
         event.preventDefault();
+        if (props.onPointerDownOutside) {
+          props.onPointerDownOutside(event);
+        }
       }}
       className={cn(
         "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
