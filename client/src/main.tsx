@@ -22,6 +22,7 @@ import CustomerDashboardPage from './pages/CustomerDashboardPage';
 import CustomerLayout from './components/CustomerLayout';
 import CustomerPetsPage from './pages/customer/CustomerPetsPage';
 import CustomerAppointmentsPage from './pages/customer/CustomerAppointmentsPage';
+import CustomerProfilePage from './pages/customer/CustomerProfilePage'; // Added import for CustomerProfilePage
 // Added import for ProtectedRoute.  This component needs to be defined elsewhere.
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -166,18 +167,15 @@ function Router() {
               )}
             </Route>
             <Route path="/customer/profile">
-              {() => {
-                const CustomerProfilePage = lazy(() => import('./pages/customer/CustomerProfilePage'));
-                return (
-                  <ProtectedRoute allowedRoles={['customer']}>
-                    <CustomerLayout>
-                      <Suspense fallback={<div>Loading...</div>}>
-                        <CustomerProfilePage />
-                      </Suspense>
-                    </CustomerLayout>
-                  </ProtectedRoute>
-                );
-              }}
+              {() => (
+                <ProtectedRoute allowedRoles={['customer']}>
+                  <CustomerLayout>
+                    <Suspense fallback={<div>Loading...</div>}>
+                      <CustomerProfilePage />
+                    </Suspense>
+                  </CustomerLayout>
+                </ProtectedRoute>
+              )}
             </Route>
             <Route>404 Page Not Found</Route>
           </Switch>
