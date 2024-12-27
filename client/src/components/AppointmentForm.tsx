@@ -457,7 +457,11 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
   }
 
   useEffect(() => {
-    const cleanup = () => {
+    if (!open) {
+      setValidationError(null);
+      setSelectedService(null);
+      setAvailableTimeSlots([]);
+      setIsSubmitting(false);
       form.reset({
         petId: "",
         services: [],
@@ -472,21 +476,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         totalDuration: 0
       });
       form.clearErrors();
-      setValidationError(null);
-      setSelectedService(null);
-      setAvailableTimeSlots([]);
-      setIsSubmitting(false);
-    };
-
-    if (!open) {
-      requestAnimationFrame(cleanup);
     }
-
-    return () => {
-      if (!open) {
-        cleanup();
-      }
-    };
   }, [open]);
 
   const closeDialog = async () => {
