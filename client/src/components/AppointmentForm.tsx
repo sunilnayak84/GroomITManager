@@ -458,39 +458,41 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
 
   useEffect(() => {
     if (!open) {
-      setValidationError(null);
-      setSelectedService(null);
-      setAvailableTimeSlots([]);
-      setIsSubmitting(false);
-      form.reset({
-        petId: "",
-        services: [],
-        groomerId: "",
-        branchId: "1", 
-        date: format(new Date(), 'yyyy-MM-dd'),
-        time: format(new Date(), 'HH:mm'),
-        status: "pending",
-        notes: "",
-        productsUsed: null,
-        totalPrice: 0,
-        totalDuration: 0
-      });
-      form.clearErrors();
+      const cleanup = setTimeout(() => {
+        setValidationError(null);
+        setSelectedService(null);
+        setAvailableTimeSlots([]);
+        setIsSubmitting(false);
+        form.reset({
+          petId: "",
+          services: [],
+          groomerId: "",
+          branchId: "1", 
+          date: format(new Date(), 'yyyy-MM-dd'),
+          time: format(new Date(), 'HH:mm'),
+          status: "pending",
+          notes: "",
+          productsUsed: null,
+          totalPrice: 0,
+          totalDuration: 0
+        });
+        form.clearErrors();
+      }, 100); // Small delay to allow animation to complete
+
+      return () => clearTimeout(cleanup);
     }
   }, [open]);
 
   const closeDialog = () => {
+    // First update form state
+    form.reset();
+    // Then update component state
     setValidationError(null);
     setSelectedService(null);
     setAvailableTimeSlots([]);
     setIsSubmitting(false);
-    form.reset();
-    // Use RAF to ensure DOM updates are processed before state changes
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        setOpen(false);
-      });
-    });
+    // Finally close dialog
+    setOpen(false);
   };
 
   return (
