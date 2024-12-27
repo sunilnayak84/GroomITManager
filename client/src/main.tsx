@@ -166,13 +166,18 @@ function Router() {
               )}
             </Route>
             <Route path="/customer/profile">
-              {() => (
-                <ProtectedRoute allowedRoles={['customer']}>
-                  <CustomerLayout>
-                    <CustomerProfilePage />
-                  </CustomerLayout>
-                </ProtectedRoute>
-              )}
+              {() => {
+                const CustomerProfilePage = lazy(() => import('./pages/customer/CustomerProfilePage'));
+                return (
+                  <ProtectedRoute allowedRoles={['customer']}>
+                    <CustomerLayout>
+                      <Suspense fallback={<div>Loading...</div>}>
+                        <CustomerProfilePage />
+                      </Suspense>
+                    </CustomerLayout>
+                  </ProtectedRoute>
+                );
+              }}
             </Route>
             <Route>404 Page Not Found</Route>
           </Switch>
