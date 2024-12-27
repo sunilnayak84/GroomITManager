@@ -457,12 +457,9 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
   }
 
   useEffect(() => {
+    let cleanup: number;
     if (!open) {
-      const cleanup = setTimeout(() => {
-        setValidationError(null);
-        setSelectedService(null);
-        setAvailableTimeSlots([]);
-        setIsSubmitting(false);
+      cleanup = requestAnimationFrame(() => {
         form.reset({
           petId: "",
           services: [],
@@ -477,22 +474,28 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
           totalDuration: 0
         });
         form.clearErrors();
-      }, 100); // Small delay to allow animation to complete
-
-      return () => clearTimeout(cleanup);
+        setValidationError(null);
+        setSelectedService(null);
+        setAvailableTimeSlots([]);
+        setIsSubmitting(false);
+      });
     }
-  }, [open]);
+    return () => {
+      if (cleanup) cancelAnimationFrame(cleanup);
+    };
+  }, [open, form]);
 
   const closeDialog = () => {
-    // First update form state
-    form.reset();
-    // Then update component state
     setValidationError(null);
     setSelectedService(null);
     setAvailableTimeSlots([]);
     setIsSubmitting(false);
-    // Finally close dialog
-    setOpen(false);
+    
+    // Use RAF to ensure state updates are processed before closing
+    requestAnimationFrame(() => {
+      form.reset();
+      setOpen(false);
+    });
   };
 
   return (
