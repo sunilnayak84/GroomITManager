@@ -270,11 +270,11 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         );
       }) || [];
 
-      const availableGroomers = availableGroomers?.filter(groomer => 
+      const availableGroomersForSlot = availableGroomers?.filter(groomer => 
         !conflictingAppointments.some(appt => appt.groomerId === groomer.id)
-      );
+      ) || [];
 
-      if (availableGroomers.length === 0) {
+      if (availableGroomersForSlot.length === 0) {
         return {
           isValid: false,
           error: 'All groomers are busy during this time slot'
