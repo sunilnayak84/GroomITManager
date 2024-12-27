@@ -309,10 +309,17 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       return;
     }
 
-    // Create date object and handle timezone
-    const [hours, minutes] = data.time.split(':').map(Number);
-    const appointmentDateTime = new Date(data.date);
-    appointmentDateTime.setHours(hours, minutes, 0, 0);
+    const formDate = form.getValues('date');
+    const formTime = form.getValues('time');
+    
+    if (!formDate || !formTime) {
+      throw new Error("Please select both date and time");
+    }
+
+    // Create appointment date in local timezone
+    const [timeHours, timeMinutes] = formTime.split(':').map(Number);
+    const appointmentDateTime = new Date(formDate);
+    appointmentDateTime.setHours(timeHours, timeMinutes, 0, 0);
     
     // Handle timezone adjustment
     const timezoneOffset = appointmentDateTime.getTimezoneOffset();
@@ -373,18 +380,6 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         data.groomerId = null;
       }
     }
-
-    const formDate = form.getValues('date');
-    const formTime = form.getValues('time');
-    
-    if (!formDate || !formTime) {
-      throw new Error("Please select both date and time");
-    }
-
-    const [timeHours, timeMinutes] = formTime.split(':').map(Number);
-    appointmentDateTime.setHours(timeHours, timeMinutes, 0, 0);
-    const offset = appointmentDateTime.getTimezoneOffset() * 60000;
-    const adjustedDate = new Date(appointmentDateTime.getTime() - offset);
     
     if (isNaN(appointmentDateTime.getTime())) {
       throw new Error("Invalid appointment date and time");
