@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { db } from "@/lib/firebase";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { useToast } from "@/components/ui/use-toast";
 
 export default function CustomerProfilePage() {
@@ -19,7 +19,10 @@ export default function CustomerProfilePage() {
     email: "",
     phone: "",
     address: "",
-    gender: ""
+    gender: "",
+    petCount: 0,
+    createdAt: "",
+    updatedAt: ""
   });
 
   useEffect(() => {
@@ -28,10 +31,12 @@ export default function CustomerProfilePage() {
       
       try {
         // Query customer by email
-        const customerRef = doc(db, "customers", user.id);
-        const customerDoc = await getDoc(customerRef);
+        const customersRef = collection(db, "customers");
+        const q = query(customersRef, where("email", "==", user.email));
+        const querySnapshot = await getDocs(q);
         
-        if (customerDoc.exists()) {
+        if (!querySnapshot.empty) {
+          const customerDoc = querySnapshot.docs[0];
           const data = customerDoc.data();
           setCustomerData({
             firstName: data.firstName || "",
@@ -39,10 +44,14 @@ export default function CustomerProfilePage() {
             email: data.email || "",
             phone: data.phone || "",
             address: data.address || "",
-            gender: data.gender || ""
+            gender: data.gender || "",
+            petCount: data.petCount || 0,
+            createdAt: data.createdAt?.toDate?.()?.toISOString() || "",
+            updatedAt: data.updatedAt?.toDate?.()?.toISOString() || ""
           });
         }
       } catch (error) {
+        console.error('Error fetching profile:', error);
         toast({
           title: "Error",
           description: "Failed to fetch profile data",
@@ -56,24 +65,31 @@ export default function CustomerProfilePage() {
 
   const handleSave = async () => {
     try {
-      if (!user?.id) return;
+      if (!user?.email) return;
+
+      const customersRef = collection(db, "customers");
+      const q = query(customersRef, where("email", "==", user.email));
+      const querySnapshot = await getDocs(q);
       
-      const customerRef = doc(db, "customers", user.id);
-      await updateDoc(customerRef, {
-        firstName: customerData.firstName,
-        lastName: customerData.lastName,
-        phone: customerData.phone,
-        address: customerData.address,
-        gender: customerData.gender,
-        updatedAt: new Date().toISOString()
-      });
-      
-      toast({
-        title: "Success",
-        description: "Profile updated successfully",
-      });
-      setIsEditing(false);
+      if (!querySnapshot.empty) {
+        const customerDoc = querySnapshot.docs[0];
+        await updateDoc(customerDoc.ref, {
+          firstName: customerData.firstName,
+          lastName: customerData.lastName,
+          phone: customerData.phone,
+          address: customerData.address,
+          gender: customerData.gender,
+          updatedAt: new Date()
+        });
+        
+        toast({
+          title: "Success",
+          description: "Profile updated successfully",
+        });
+        setIsEditing(false);
+      }
     } catch (error) {
+      console.error('Error updating profile:', error);
       toast({
         title: "Error",
         description: "Failed to update profile",
@@ -156,6 +172,10 @@ export default function CustomerProfilePage() {
             ) : (
               <p className="text-lg">{customerData.gender || "Not set"}</p>
             )}
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Pet Count</label>
+            <p className="text-lg">{customerData.petCount}</p>
           </div>
           <div className="pt-4">
             {isEditing ? (
