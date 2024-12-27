@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { usePets } from "@/hooks/use-pets";
 import { useUser } from "@/hooks/use-user";
@@ -16,13 +17,11 @@ export default function CustomerPetsPage() {
   const [showPetModal, setShowPetModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
-
-export default function CustomerPetsPage() {
   const { user, isLoading: userLoading } = useUser();
   const { pets, addPet, updatePet } = usePets();
-  const [showPetModal, setShowPetModal] = useState(false);
-  const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
-  const [showAddPetDialog, setShowAddPetDialog] = useState(false); // Added state for Add Pet Dialog
+  const [showAddPetDialog, setShowAddPetDialog] = useState(false);
+  const { hasPermission } = useRole();
+  const { toast } = useToast();
 
   if (userLoading) {
     return <div className="flex items-center justify-center min-h-screen">
@@ -43,8 +42,6 @@ export default function CustomerPetsPage() {
     pet.owner?.email === user.email
   );
 
-  const { hasPermission } = useRole();
-  const { toast } = useToast();
   const handleAddPet = async (formData: any) => {
     try {
       if (!user?.uid || !user?.email) {
@@ -84,14 +81,12 @@ export default function CustomerPetsPage() {
         description: error.message || "An unexpected error occurred",
         variant: "destructive"
       });
-      throw error; // Re-throw to prevent form from closing
+      throw error;
     }
   };
 
   const handleUpdatePet = async (formData: any) => {
-    console.log('UPDATE_PET: Starting pet update', { formData, selectedPet });
     if (!selectedPet?.id) {
-      console.error('UPDATE_PET: No pet selected for update');
       toast({
         title: "Error",
         description: "No pet selected for update",
@@ -104,7 +99,6 @@ export default function CustomerPetsPage() {
         petId: selectedPet.id, 
         updateData: formData 
       });
-      console.log('UPDATE_PET: Pet updated successfully');
       toast({
         title: "Success",
         description: "Pet updated successfully",
@@ -114,7 +108,6 @@ export default function CustomerPetsPage() {
       setSelectedPet(null);
       return true;
     } catch (error: any) {
-      console.error('UPDATE_PET: Failed to update pet', error);
       toast({
         title: "Error",
         description: error.message || "Failed to update pet",
@@ -143,13 +136,13 @@ export default function CustomerPetsPage() {
       <div className="grid md:grid-cols-2 gap-6">
         {customerPets.map((pet) => (
           <Card 
-    key={pet.id} 
-    className="hover:shadow-lg transition-all duration-300 group cursor-pointer"
-    onClick={() => {
-      setSelectedPet(pet);
-      setShowPetModal(true);
-    }}
-  >
+            key={pet.id} 
+            className="hover:shadow-lg transition-all duration-300 group cursor-pointer"
+            onClick={() => {
+              setSelectedPet(pet);
+              setShowPetModal(true);
+            }}
+          >
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <div className="flex items-center gap-3">
                 {pet.image ? (
@@ -236,7 +229,6 @@ export default function CustomerPetsPage() {
           />
         </DialogContent>
       </Dialog>
-      
     </div>
   );
 }
