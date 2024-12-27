@@ -25,7 +25,6 @@ const DialogContent = React.forwardRef<
   <DialogPortal>
     <DialogPrimitive.Overlay
       className="fixed inset-0 z-40 bg-black/80 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
-      onPointerDownOutside={(e) => e.preventDefault()}
     />
     <DialogPrimitive.Content
       ref={ref}
