@@ -165,6 +165,15 @@ function Router() {
                 </ProtectedRoute>
               )}
             </Route>
+            <Route path="/customer/profile">
+              {() => (
+                <ProtectedRoute allowedRoles={['customer']}>
+                  <CustomerLayout>
+                    <CustomerProfilePage />
+                  </CustomerLayout>
+                </ProtectedRoute>
+              )}
+            </Route>
             <Route>404 Page Not Found</Route>
           </Switch>
         </Suspense>
