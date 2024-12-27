@@ -338,9 +338,7 @@ export function useAppointments() {
         const newAppointmentRef = doc(appointmentsRef);
         
         // Combine date and time properly
-        const [year, month, day] = appointmentData.date.split('-').map(Number);
-        const [hours, minutes] = appointmentData.time.split(':').map(Number);
-        const appointmentDateTime = new Date(year, month - 1, day, hours, minutes, 0, 0);
+        const appointmentDateTime = appointmentData.date instanceof Date ? appointmentData.date : new Date(appointmentData.date);
         appointmentData.date = appointmentDateTime.toISOString();
 
         // For customers, get auto-assigned groomer from backend

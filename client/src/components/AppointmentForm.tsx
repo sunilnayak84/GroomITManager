@@ -309,13 +309,18 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       return;
     }
 
-    const appointmentDateTime = new Date(data.date + 'T' + data.time);
+    // Create date object and handle timezone
+    const [hours, minutes] = data.time.split(':').map(Number);
+    const appointmentDateTime = new Date(data.date);
+    appointmentDateTime.setHours(hours, minutes, 0, 0);
+    
+    // Validate time slot
     if (!isTimeSlotAvailable(appointmentDateTime, null, data.totalDuration || 30)) {
         const errorMsg = "This time slot is already booked. Please select a different time.";
         setValidationError(errorMsg);
         setIsSubmitting(false);
         return;
-      }
+    }
 
     if (user?.role !== 'customer' && !data.groomerId) {
       throw new Error("Please select a groomer");
