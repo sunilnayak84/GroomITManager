@@ -312,6 +312,7 @@ export type AppointmentWithRelations = {
   time?: string;
   status: "pending" | "confirmed" | "completed" | "cancelled" | "in_progress";
   notes: string | null;
+  observations: string | null;
   productsUsed: string | null;
   totalPrice: number;
   totalDuration: number;
