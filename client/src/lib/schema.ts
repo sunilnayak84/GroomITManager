@@ -120,7 +120,7 @@ export const appointmentSchema = z.object({
     "Please select a valid time"
   ),
   status: z.enum(["pending", "confirmed", "in_progress", "completed", "cancelled"]),
-  notes: z.string().nullable(),
+  recommendations: z.string().nullable(),
   productsUsed: z.string().nullable(),
   totalPrice: z.number(),
   totalDuration: z.number(),
@@ -311,7 +311,7 @@ export type AppointmentWithRelations = {
   date: string;
   time?: string;
   status: "pending" | "confirmed" | "completed" | "cancelled" | "in_progress";
-  notes: string | null;
+  recommendations: string | null;
   observations: string | null;
   productsUsed: string | null;
   totalPrice: number;
