@@ -1,0 +1,29 @@
+Authentication & Authorization:
+Are you using Firebase custom claims for role-based access control? I notice role management code but want to confirm the authentication flow.
+I am using firebase emai/password for auth, customers are in customers collection, business users are in users collection. We have RBAC implemented, the role definition (permissions) and user roles are stored in firebase realtime database.
+What's the fallback mechanism if Firebase auth fails?
+We dont have a fallback mechanism
+Database Structure:
+Could you clarify the relationship between Firebase Realtime Database and Firestore in your app? I see both being used.
+What's the rationale behind using both databases?
+There is no rationale behing using firestore db and firestore realtime db. Replit agent implemented it while developing the MVP. I feel it is redundant.
+Customer Portal:
+Is the customer portal (CustomerLayout and related components) a separate application or part of the main admin dashboard?
+It is a separate application that uses the same backend.
+What features are planned for the customer portal?
+currently we have pet management, appointments
+Appointment System:
+I notice auto-assignment logic for groomers. What are the business rules for this assignment?
+We have working hours defined in firebase, the appointment scheduling logic should check the working hours, timeslot availability, groomer availability and then book appointment. There should be no overlaps.
+How are conflicts handled in appointment scheduling?
+we have form validation checking for conflicts onsubmit.
+Frontend Architecture:
+The project uses a mix of hooks for state management. Is there a plan to standardize this approach?
+Yes, i need to standardize this.
+Why was wouter chosen over react-router-dom?
+No reason, replit agent did that on its own.
+Performance:
+With the current Firebase setup, have you considered implementing caching strategies?
+We need to but I haven't planned it yet.
+Are there plans to optimize large data fetches, especially for the appointment calendar?
+We should plan it.
