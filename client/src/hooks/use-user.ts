@@ -92,7 +92,15 @@ async function loginWithFirebase(credentials: { email: string; password: string 
       branchId: tokenResult.claims.branchId as number
     };
   } catch (error: any) {
-    throw new Error(error.message);
+    console.error('[AUTH] Login failed:', error);
+    // Show user-friendly error message
+    if (error.code === 'auth/network-request-failed') {
+      throw new Error('Network error. Please check your connection.');
+    } else if (error.code === 'auth/too-many-requests') {
+      throw new Error('Too many attempts. Please try again later.');
+    } else {
+      throw new Error(error.message);
+    }
   }
 }
 

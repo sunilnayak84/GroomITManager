@@ -9,6 +9,8 @@ import {
 import { db } from "../lib/firebase";
 import { timestampToString } from "../lib/types";
 import { auth } from "../lib/firebase"; // Assuming auth object is available
+import { startOfDay, endOfDay } from 'date-fns';
+import React from 'react';
 
 interface FirestoreAppointmentData {
   petId: string;
@@ -43,7 +45,7 @@ const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppoi
     if (isNaN(appointmentDate.getTime())) {
       throw new Error('Invalid appointment date');
     }
-    
+
     return {
       petId: data.petId,
       services: data.services,
@@ -61,34 +63,27 @@ const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppoi
     };
   };
 
-export function useAppointments() {
-  const queryClient = useQueryClient();
+const fetchAppointments = async ({ startDate, endDate, limit }: { startDate: Date, endDate: Date, limit: number }) => {
+  try {
+    if (!db) {
+      throw new Error('Firebase not initialized');
+    }
 
-  const { data: appointments, isLoading, error } = useQuery<AppointmentWithRelations[]>({
-    queryKey: ["appointments"],
-    queryFn: async () => {
-      try {
-        if (!db) {
-          throw new Error('Firebase not initialized');
-        }
+    const appointmentsRef = collection(db, 'appointments');
+    const appointmentsQuery = query(
+      appointmentsRef,
+      where("deletedAt", "==", null),
+      where("date", ">=", startDate),
+      where("date", "<=", endDate),
+      limit(limit)
+    );
 
-        const appointmentsRef = collection(db, 'appointments');
-        const appointmentsQuery = query(
-          appointmentsRef,
-          where("deletedAt", "==", null)
-        );
-
-        // Fetch appointments, pets, and services in parallel
-        const [appointmentsSnapshot, petsSnapshot, servicesSnapshot] = await Promise.all([
-          getDocs(appointmentsQuery),
-          getDocs(collection(db, 'pets')),
-          getDocs(collection(db, 'services'))
-        ]);
+    const appointmentsSnapshot = await getDocs(appointmentsQuery);
 
         // Create lookup maps for faster access
         const petsMap = new Map(petsSnapshot.docs.map(doc => [doc.id, doc.data()]));
         const servicesMap = new Map(servicesSnapshot.docs.map(doc => [doc.id, doc.data()]));
-        
+
         if (appointmentsSnapshot.empty) {
           return [];
         }
@@ -101,7 +96,7 @@ export function useAppointments() {
           appointmentsSnapshot.docs.map(async (appointmentDoc) => {
             try {
               const rawData = appointmentDoc.data() as FirestoreAppointmentData;
-              
+
               // Validate required fields
               if (!rawData) {
                 console.error('FETCH_APPOINTMENTS: Missing raw data for appointment:', appointmentDoc.id);
@@ -128,12 +123,12 @@ export function useAppointments() {
 
             // Get pet data
             let petData = null;
-            
+
             try {
               if (!rawData.petId) {
                 throw new Error('Invalid pet ID');
               }
-              
+
               if (!rawData.petId) {
                 console.error('Missing petId for appointment:', appointmentDoc.id);
                 return null;
@@ -142,11 +137,11 @@ export function useAppointments() {
               try {
                 const petDocRef = doc(db, 'pets', String(rawData.petId));
                 const petDoc = await getDoc(petDocRef);
-                
+
                 if (petDoc.exists()) {
                 const rawPetData = petDoc.data() as any;
                 let customerData = null;
-                
+
                 try {
                   if (rawPetData.customerId) {
                     const customerDoc = await getDoc(doc(db, 'customers', rawPetData.customerId));
@@ -262,7 +257,7 @@ export function useAppointments() {
             if (rawData.services && rawData.services.length > 0) {
               const serviceRefs = rawData.services.map(id => doc(db, 'services', id));
               const serviceDocs = await Promise.all(serviceRefs.map(ref => getDoc(ref)));
-              
+
               serviceData = serviceDocs
                 .filter(doc => doc.exists())
                 .map(doc => {
@@ -320,11 +315,25 @@ export function useAppointments() {
 
         console.log(`FETCH_APPOINTMENTS: Processed ${appointmentsSnapshot.size} appointments. Success: ${successCount}, Errors: ${errorCount}`);
         return appointments;
-      } catch (error) {
-        console.error('Error fetching appointments:', error);
-        throw error;
-      }
-    }
+  } catch (error) {
+    console.error('Error fetching appointments:', error);
+    throw error;
+  }
+};
+
+
+export function useAppointments() {
+  const queryClient = useQueryClient();
+  const [selectedDate, setSelectedDate] = React.useState(new Date()); // Add state for selected date
+
+  const { data: appointments, isLoading, error } = useQuery({
+    queryKey: ['appointments', selectedDate],
+    queryFn: () => fetchAppointments({
+      startDate: startOfDay(selectedDate),
+      endDate: endOfDay(selectedDate),
+      limit: 10
+    }),
+    keepPreviousData: true
   });
 
   const addAppointmentMutation = useMutation({
@@ -336,7 +345,7 @@ export function useAppointments() {
         console.log('Adding appointment with data:', appointmentData);
         const appointmentsRef = collection(db, 'appointments');
         const newAppointmentRef = doc(appointmentsRef);
-        
+
         // Combine date and time properly
         const [year, month, day] = appointmentData.date.split('-').map(Number);
         const [hours, minutes] = appointmentData.time.split(':').map(Number);
@@ -349,11 +358,11 @@ export function useAppointments() {
             headers: { Authorization: `Bearer ${await auth.currentUser.getIdToken()}` }
           });
           const data = await response.json();
-          
+
           if (!data.autoAssignedGroomer) {
             throw new Error('No groomers available for this time slot');
           }
-          
+
           appointmentData.groomerId = data.autoAssignedGroomer.id;
         }
 
@@ -372,11 +381,11 @@ export function useAppointments() {
 
   const isTimeSlotAvailable = (date: Date, groomerId?: string, duration: number = 30, currentAppointmentId?: string): boolean => {
     if (!appointments) return true;
-    
+
     const slotStart = new Date(date);
     slotStart.setSeconds(0);
     slotStart.setMilliseconds(0);
-    
+
     const slotEnd = new Date(slotStart);
     slotEnd.setMinutes(slotEnd.getMinutes() + duration);
 
@@ -388,7 +397,7 @@ export function useAppointments() {
         appointment.status === 'cancelled' ||
         !appointment.date
       ) return false;
-      
+
       const appointmentStart = new Date(appointment.date);
       const appointmentEnd = new Date(appointmentStart);
       appointmentEnd.setMinutes(appointmentEnd.getMinutes() + (appointment.totalDuration || 30));
@@ -421,20 +430,20 @@ export function useAppointments() {
       try {
         console.log('Updating appointment:', data);
         const appointmentRef = doc(db, 'appointments', data.id);
-        
+
         // Get current appointment data
         const appointmentSnap = await getDoc(appointmentRef);
         if (!appointmentSnap.exists()) {
           throw new Error('Appointment not found');
         }
-        
+
         const currentData = appointmentSnap.data() as FirestoreAppointmentData;
-        
+
         // Validate status transitions
         if (currentData.status === 'completed' || currentData.status === 'cancelled') {
           throw new Error('Completed or cancelled appointments cannot be modified');
         }
-        
+
         if (currentData.status === 'in_progress' && 
             (data.status === 'pending' || data.status === 'confirmed')) {
           throw new Error('Appointments in progress cannot go back to pending or confirmed status');
@@ -479,7 +488,7 @@ export function useAppointments() {
       try {
         console.log('Soft deleting appointment:', appointmentId);
         const appointmentRef = doc(db, 'appointments', appointmentId);
-        
+
         // Get current appointment data
         const appointmentSnap = await getDoc(appointmentRef);
         if (!appointmentSnap.exists()) {
@@ -514,5 +523,6 @@ export function useAppointments() {
     updateAppointment: updateAppointmentMutation.mutateAsync,
     deleteAppointment: deleteAppointmentMutation.mutateAsync,
     isTimeSlotAvailable,
+    setSelectedDate //Expose setSelectedDate to allow date selection updates
   };
 }
