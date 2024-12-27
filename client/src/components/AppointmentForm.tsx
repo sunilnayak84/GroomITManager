@@ -458,6 +458,8 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
+      setOpen(false); // Close dialog first
+      // Wait for animation to complete
       setTimeout(() => {
         setValidationError(null);
         setSelectedService(null);
@@ -477,11 +479,10 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
           totalDuration: 0
         });
         form.clearErrors();
-      }, 0);
+      }, 300); // Match animation duration
+    } else {
+      setOpen(true);
     }
-    requestAnimationFrame(() => {
-      setOpen(open);
-    });
   };
 
   return (

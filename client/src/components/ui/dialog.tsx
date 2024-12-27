@@ -32,8 +32,21 @@ const DialogContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
 >(({ className, children, ...props }, ref) => (
   <DialogPortal>
-    <DialogOverlay onClick={(e) => e.stopPropagation()} />
+    <DialogOverlay 
+      onClick={(e) => e.stopPropagation()} 
+      className="fixed inset-0 z-40 bg-black/80 data-[state=closed]:animate-[dialog-overlay-hide_200ms] data-[state=open]:animate-[dialog-overlay-show_200ms]"
+    />
     <DialogPrimitive.Content
+      onCloseAutoFocus={(event) => {
+        event.preventDefault();
+        const focusableElements = document.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        const firstFocusable = focusableElements[0] as HTMLElement;
+        if (firstFocusable) {
+          firstFocusable.focus();
+        }
+      }}
       ref={ref}
       onOpenAutoFocus={(event) => {
         event.preventDefault();
