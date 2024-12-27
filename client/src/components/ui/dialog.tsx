@@ -32,21 +32,8 @@ const DialogContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
 >(({ className, children, ...props }, ref) => (
   <DialogPortal>
-    <DialogOverlay 
-      onClick={(e) => e.stopPropagation()} 
-      className="fixed inset-0 z-40 bg-black/80 data-[state=closed]:animate-[dialog-overlay-hide_200ms] data-[state=open]:animate-[dialog-overlay-show_200ms]"
-    />
+    <DialogOverlay />
     <DialogPrimitive.Content
-      onCloseAutoFocus={(event) => {
-        event.preventDefault();
-        const focusableElements = document.querySelectorAll(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        const firstFocusable = focusableElements[0] as HTMLElement;
-        if (firstFocusable) {
-          firstFocusable.focus();
-        }
-      }}
       ref={ref}
       onOpenAutoFocus={(event) => {
         event.preventDefault();
@@ -58,7 +45,17 @@ const DialogContent = React.forwardRef<
           }
         }
       }}
-      onCloseAutoFocus={(event) => event.preventDefault()}
+      onCloseAutoFocus={(event) => {
+        event.preventDefault();
+        const root = document.body;
+        const focusableElements = root.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        const firstFocusable = focusableElements[0] as HTMLElement;
+        if (firstFocusable) {
+          firstFocusable.focus();
+        }
+      }}
       onEscapeKeyDown={(event) => {
         event.preventDefault();
         if (props.onEscapeKeyDown) {
@@ -66,7 +63,10 @@ const DialogContent = React.forwardRef<
         }
       }}
       onPointerDownOutside={(event) => {
-        event.preventDefault();
+        const target = event.target as HTMLElement;
+        if (target.getAttribute('role') === 'dialog') {
+          event.preventDefault();
+        }
         if (props.onPointerDownOutside) {
           props.onPointerDownOutside(event);
         }
