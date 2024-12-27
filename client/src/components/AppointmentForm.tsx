@@ -349,7 +349,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
             setSelectedService(null);
             setAvailableTimeSlots([]);
             setIsSubmitting(false);
-            setOpen(false);
+            closeDialog();
           } catch (error) {
             console.error('Failed to create appointment:', error);
             setValidationError('Failed to create appointment');
@@ -447,7 +447,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
         setAvailableTimeSlots([]);
         setIsSubmitting(false);
         form.reset();
-        setOpen(false);
+        closeDialog();
       } catch (error) {
         console.error('Failed to schedule appointment:', error);
         const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
@@ -479,14 +479,18 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
     }
   }, [open]);
 
-  const closeDialog = async () => {
-    await new Promise(resolve => setTimeout(resolve, 100));
+  const closeDialog = () => {
     setValidationError(null);
     setSelectedService(null);
     setAvailableTimeSlots([]);
     setIsSubmitting(false);
     form.reset();
-    setOpen(false);
+    // Use RAF to ensure DOM updates are processed before state changes
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        closeDialog();
+      });
+    });
   };
 
   return (
