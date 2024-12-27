@@ -1,4 +1,3 @@
-
 import { useUser } from "@/hooks/use-user";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, Home, LogOut, Dog, Settings, User } from "lucide-react";
@@ -12,7 +11,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
     { name: 'Dashboard', href: '/customer', icon: Home },
     { name: 'Appointments', href: '/customer/appointments', icon: CalendarDays },
     { name: 'My Pets', href: '/customer/pets', icon: Dog },
-    { name: 'Profile', href: '/customer/profile', icon: User },
+    { name: 'Profile', href: '/customer/profile', icon: User }, // Added Profile link
     { name: 'Settings', href: '/customer/settings', icon: Settings },
   ];
 
