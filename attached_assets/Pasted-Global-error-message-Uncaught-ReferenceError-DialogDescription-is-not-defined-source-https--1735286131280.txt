@@ -1,0 +1,210 @@
+Global error: {message: 'Uncaught ReferenceError: DialogDescription is not defined', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-34…eplit.dev/src/pages/customer/CustomerPetsPage.tsx', lineno: 348, colno: 32, error: ReferenceError: DialogDescription is not defined
+    at CustomerPetsPage (https://c2ee078f-4b26-408…}
+window.onerror @ main.tsx:78
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=0cf51c99:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=0cf51c99:3733
+beginWork$1 @ chunk-DRXX46FI.js?v=0cf51c99:19733
+performUnitOfWork @ chunk-DRXX46FI.js?v=0cf51c99:19166
+workLoopSync @ chunk-DRXX46FI.js?v=0cf51c99:19105
+renderRootSync @ chunk-DRXX46FI.js?v=0cf51c99:19084
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18842
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+error
+setupErrorHandlers @ main.tsx:76
+(anonymous) @ main.tsx:196Understand this errorAI
+CustomerPetsPage.tsx:203 Uncaught ReferenceError: DialogDescription is not defined
+    at CustomerPetsPage (CustomerPetsPage.tsx:203:14)
+    at renderWithHooks (chunk-DRXX46FI.js?v=0cf51c99:12151:26)
+    at mountIndeterminateComponent (chunk-DRXX46FI.js?v=0cf51c99:14901:21)
+    at beginWork (chunk-DRXX46FI.js?v=0cf51c99:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-DRXX46FI.js?v=0cf51c99:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-DRXX46FI.js?v=0cf51c99:3699:24)
+    at invokeGuardedCallback (chunk-DRXX46FI.js?v=0cf51c99:3733:39)
+    at beginWork$1 (chunk-DRXX46FI.js?v=0cf51c99:19733:15)
+    at performUnitOfWork (chunk-DRXX46FI.js?v=0cf51c99:19166:20)
+    at workLoopSync (chunk-DRXX46FI.js?v=0cf51c99:19105:13)
+CustomerPetsPage @ CustomerPetsPage.tsx:203
+renderWithHooks @ chunk-DRXX46FI.js?v=0cf51c99:12151
+mountIndeterminateComponent @ chunk-DRXX46FI.js?v=0cf51c99:14901
+beginWork @ chunk-DRXX46FI.js?v=0cf51c99:15882
+callCallback2 @ chunk-DRXX46FI.js?v=0cf51c99:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=0cf51c99:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=0cf51c99:3733
+beginWork$1 @ chunk-DRXX46FI.js?v=0cf51c99:19733
+performUnitOfWork @ chunk-DRXX46FI.js?v=0cf51c99:19166
+workLoopSync @ chunk-DRXX46FI.js?v=0cf51c99:19105
+renderRootSync @ chunk-DRXX46FI.js?v=0cf51c99:19084
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18842
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+setData @ @tanstack_react-query.js?v=0cf51c99:695
+onSuccess @ @tanstack_react-query.js?v=0cf51c99:896
+resolve @ @tanstack_react-query.js?v=0cf51c99:455
+Promise.then
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+main.tsx:78 Global error: {message: 'Uncaught ReferenceError: DialogDescription is not defined', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-34…eplit.dev/src/pages/customer/CustomerPetsPage.tsx', lineno: 348, colno: 32, error: ReferenceError: DialogDescription is not defined
+    at CustomerPetsPage (https://c2ee078f-4b26-408…}
+window.onerror @ main.tsx:78
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=0cf51c99:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=0cf51c99:3733
+beginWork$1 @ chunk-DRXX46FI.js?v=0cf51c99:19733
+performUnitOfWork @ chunk-DRXX46FI.js?v=0cf51c99:19166
+workLoopSync @ chunk-DRXX46FI.js?v=0cf51c99:19105
+renderRootSync @ chunk-DRXX46FI.js?v=0cf51c99:19084
+recoverFromConcurrentError @ chunk-DRXX46FI.js?v=0cf51c99:18704
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18847
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+error
+setupErrorHandlers @ main.tsx:76
+(anonymous) @ main.tsx:196Understand this errorAI
+CustomerPetsPage.tsx:203 Uncaught ReferenceError: DialogDescription is not defined
+    at CustomerPetsPage (CustomerPetsPage.tsx:203:14)
+    at renderWithHooks (chunk-DRXX46FI.js?v=0cf51c99:12151:26)
+    at mountIndeterminateComponent (chunk-DRXX46FI.js?v=0cf51c99:14901:21)
+    at beginWork (chunk-DRXX46FI.js?v=0cf51c99:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-DRXX46FI.js?v=0cf51c99:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-DRXX46FI.js?v=0cf51c99:3699:24)
+    at invokeGuardedCallback (chunk-DRXX46FI.js?v=0cf51c99:3733:39)
+    at beginWork$1 (chunk-DRXX46FI.js?v=0cf51c99:19733:15)
+    at performUnitOfWork (chunk-DRXX46FI.js?v=0cf51c99:19166:20)
+    at workLoopSync (chunk-DRXX46FI.js?v=0cf51c99:19105:13)
+CustomerPetsPage @ CustomerPetsPage.tsx:203
+renderWithHooks @ chunk-DRXX46FI.js?v=0cf51c99:12151
+mountIndeterminateComponent @ chunk-DRXX46FI.js?v=0cf51c99:14901
+beginWork @ chunk-DRXX46FI.js?v=0cf51c99:15882
+callCallback2 @ chunk-DRXX46FI.js?v=0cf51c99:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=0cf51c99:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=0cf51c99:3733
+beginWork$1 @ chunk-DRXX46FI.js?v=0cf51c99:19733
+performUnitOfWork @ chunk-DRXX46FI.js?v=0cf51c99:19166
+workLoopSync @ chunk-DRXX46FI.js?v=0cf51c99:19105
+renderRootSync @ chunk-DRXX46FI.js?v=0cf51c99:19084
+recoverFromConcurrentError @ chunk-DRXX46FI.js?v=0cf51c99:18704
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18847
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+setData @ @tanstack_react-query.js?v=0cf51c99:695
+onSuccess @ @tanstack_react-query.js?v=0cf51c99:896
+resolve @ @tanstack_react-query.js?v=0cf51c99:455
+Promise.then
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
+chunk-DRXX46FI.js?v=0cf51c99:14016 The above error occurred in the <CustomerPetsPage> component:
+
+    at CustomerPetsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/customer/CustomerPetsPage.tsx:31:44)
+    at main
+    at div
+    at div
+    at div
+    at CustomerLayout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/CustomerLayout.tsx:22:42)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=0cf51c99:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=0cf51c99:379:17)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:143:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=0cf51c99:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=0cf51c99:18:5)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+logCapturedError @ chunk-DRXX46FI.js?v=0cf51c99:14016
+callback @ chunk-DRXX46FI.js?v=0cf51c99:14062
+callCallback @ chunk-DRXX46FI.js?v=0cf51c99:10491
+commitUpdateQueue @ chunk-DRXX46FI.js?v=0cf51c99:10508
+commitLayoutEffectOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:17043
+commitLayoutMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:17948
+commitLayoutEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:17937
+commitLayoutEffects @ chunk-DRXX46FI.js?v=0cf51c99:17888
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19321
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=0cf51c99:554
+flush @ @tanstack_react-query.js?v=0cf51c99:568
+batch @ @tanstack_react-query.js?v=0cf51c99:586
+dispatch_fn @ @tanstack_react-query.js?v=0cf51c99:995
+setData @ @tanstack_react-query.js?v=0cf51c99:695
+onSuccess @ @tanstack_react-query.js?v=0cf51c99:896
+resolve @ @tanstack_react-query.js?v=0cf51c99:455
+Promise.then
+run @ @tanstack_react-query.js?v=0cf51c99:497
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18836
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19400
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+finishConcurrentRender @ chunk-DRXX46FI.js?v=0cf51c99:18773
+performConcurrentWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18686
+workLoop @ chunk-DRXX46FI.js?v=0cf51c99:197
+flushWork @ chunk-DRXX46FI.js?v=0cf51c99:176
+performWorkUntilDeadline @ chunk-DRXX46FI.js?v=0cf51c99:384Understand this errorAI
