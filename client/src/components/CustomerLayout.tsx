@@ -11,9 +11,8 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
     { name: 'Dashboard', href: '/customer', icon: Home },
     { name: 'Appointments', href: '/customer/appointments', icon: CalendarDays },
     { name: 'My Pets', href: '/customer/pets', icon: Dog },
-    { name: 'Profile', href: '/customer/profile', icon: User }, // Added Profile link
-    { name: 'Settings', href: '/customer/settings', icon: Settings },
-  ];
+    { name: 'Profile', href: '/customer/profile', icon: User },
+];
 
   return (
     <div className="min-h-screen bg-background">
