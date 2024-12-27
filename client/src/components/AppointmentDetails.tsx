@@ -176,8 +176,23 @@ const AppointmentDetails = ({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+    <Dialog open={open} onOpenChange={(open) => {
+    if (!open) {
+      // Allow animation to complete before state change
+      setTimeout(() => {
+        form.reset();
+        setShowCancellationForm(false);
+        setIsUpdating(false);
+        setShowCompletionForm(false);
+        onOpenChange(false);
+      }, 150);
+    } else {
+      onOpenChange(true);
+    }
+  }}>
+      <DialogContent onInteractOutside={(e) => {
+        e.preventDefault(); // Prevent interaction during animation
+      }}>
         <DialogHeader>
           <DialogTitle>Appointment Details</DialogTitle>
         </DialogHeader>
