@@ -351,8 +351,15 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
           if (!data.groomerId) {
             throw new Error('No groomer ID received from auto-assignment');
           }
+          
+          // Create the appointment date in local timezone
+          const [year, month, day] = formDate.split('-').map(Number);
+          const [hours, minutes] = formTime.split(':').map(Number);
+          const localDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
+          
           const appointmentData = {
             ...data,
+            date: localDate.toISOString(),
             groomer: {
               id: groomersData.autoAssignedGroomer.id,
               name: groomersData.autoAssignedGroomer.name
