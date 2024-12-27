@@ -433,23 +433,27 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
     console.log('Final appointment data:', appointmentData);
 
     try {
-      await addAppointment(appointmentData);
-      queryClient.invalidateQueries({ queryKey: ["appointments"] });
-      
-      toast({
-        title: "Success",
-        description: "Appointment scheduled successfully",
-        duration: 3000,
-      });
+        await addAppointment(appointmentData);
+        queryClient.invalidateQueries({ queryKey: ["appointments"] });
+        
+        toast({
+          title: "Success",
+          description: "Appointment scheduled successfully",
+          duration: 3000,
+        });
 
-      closeDialog();
-    } catch (error) {
-      console.error('Failed to schedule appointment:', error);
-      const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
-      setValidationError(errorMessage);
-    } finally {
-      setIsSubmitting(false);
-    }
+        setValidationError(null);
+        setSelectedService(null);
+        setAvailableTimeSlots([]);
+        setIsSubmitting(false);
+        form.reset();
+        setOpen(false);
+      } catch (error) {
+        console.error('Failed to schedule appointment:', error);
+        const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
+        setValidationError(errorMessage);
+        setIsSubmitting(false);
+      }
   }
 
   useEffect(() => {
