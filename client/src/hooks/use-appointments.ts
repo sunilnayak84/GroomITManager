@@ -337,13 +337,9 @@ export function useAppointments() {
         const appointmentsRef = collection(db, 'appointments');
         const newAppointmentRef = doc(appointmentsRef);
         
-        // Get appointment date in local timezone
+        // Use the date directly without timezone adjustments
         const appointmentDateTime = appointmentData.date instanceof Date ? appointmentData.date : new Date(appointmentData.date);
-        
-        // Store UTC time while preserving local time selection
-        const offset = appointmentDateTime.getTimezoneOffset();
-        const adjustedDateTime = new Date(appointmentDateTime.getTime() - (offset * 60 * 1000));
-        appointmentData.date = adjustedDateTime.toISOString();
+        appointmentData.date = appointmentDateTime.toISOString();
 
         // For customers, get auto-assigned groomer from backend
         if (auth.currentUser?.role === 'customer') {

@@ -428,18 +428,16 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
       return;
     }
 
-    console.log('Form date:', formDate);
-    console.log('Form time:', formTime);
-    console.log('Raw date/time:', appointmentDateTime);
-    console.log('ISO date/time:', appointmentDateTime.toISOString());
-
+    // Create the appointment date in local timezone
+    const [year, month, day] = formDate.split('-').map(Number);
+    const [hours, minutes] = formTime.split(':').map(Number);
+    const localDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
+    
     const appointmentData: InsertAppointment = {
       ...data,
-      date: adjustedDate.toISOString(),
+      date: localDate.toISOString(),
       status: "pending" as const,
     };
-    
-    console.log('Final appointment data:', appointmentData);
 
     try {
         await addAppointment(appointmentData);
