@@ -8,8 +8,14 @@ import { Button } from "@/components/ui/button";
 import { Plus, Pencil } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { PetForm } from "@/components/PetForm";
+import { PetDetails } from "@/components/PetDetails";
 import { Pet } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
+
+export default function CustomerPetsPage() {
+  const [showPetModal, setShowPetModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
 
 export default function CustomerPetsPage() {
   const { user, isLoading: userLoading } = useUser();
