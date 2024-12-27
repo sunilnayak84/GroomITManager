@@ -1,0 +1,48 @@
+react-dom.development.js:86 
+ Warning: Unknown event handler property `onPointerDownOutside`. It will be ignored.
+    at div
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=0cf51c99:1233:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=0cf51c99:1155:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=0cf51c99:1136:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=0cf51c99:1258:21
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=0cf51c99:1665:13
+    at Presence (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=0cf51c99:1011:11)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=0cf51c99:1656:64
+    at div
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=0cf51c99:899:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=0cf51c99:880:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=0cf51c99:977:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=0cf51c99:993:22
+    at Presence (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=0cf51c99:1011:11)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-PYPT7BFL.js?v=0cf51c99:38:15)
+    at DialogPortal (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=0cf51c99:1648:11)
+    at DialogPortal (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/dialog.tsx:24:3)
+    at _c2 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/dialog.tsx:38:12)
+    at AppointmentForm (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/AppointmentForm.tsx:58:43)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-PYPT7BFL.js?v=0cf51c99:38:15)
+    at Dialog (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=0cf51c99:1589:5)
+    at div
+    at div
+    at AppointmentCalendar (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/AppointmentCalendar.tsx:34:47)
+    at div
+    at AppointmentsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/AppointmentsPage.tsx:154:41)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=0cf51c99:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=0cf51c99:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=0cf51c99:18:5)
+    at div
+    at main
+    at main
+    at _c9 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:398:48)
+    at div
+    at div
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-PYPT7BFL.js?v=0cf51c99:38:15)
+    at TooltipProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=0cf51c99:290:5)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:54:7
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:28:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:143:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=0cf51c99:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=0cf51c99:18:5)
+﻿
+
