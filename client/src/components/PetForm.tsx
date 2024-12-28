@@ -205,8 +205,17 @@ export function PetForm({
     <Form {...form}>
       <form 
         onSubmit={form.handleSubmit(async (data) => {
-          console.log('PetForm: Starting form submission', { formData: data });
+          console.log('PetForm: Form submission triggered', {
+            formData: data,
+            isSubmitting,
+            submitForm: !!submitForm
+          });
+          if (isSubmitting) {
+            console.log('PetForm: Already submitting, returning');
+            return false;
+          }
           try {
+            console.log('PetForm: Preparing pet data for submission');
             const petData = {
               name: data.name,
               type: data.type,

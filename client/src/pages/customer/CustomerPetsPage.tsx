@@ -87,7 +87,13 @@ export default function CustomerPetsPage() {
   };
 
   const handleUpdatePet = async (formData: any) => {
+    console.log('CustomerPetsPage: Update pet triggered', {
+      formData,
+      selectedPetId: selectedPet?.id,
+      userId: user?.uid
+    });
     if (!selectedPet?.id || !user?.uid) {
+      console.log('CustomerPetsPage: Missing required data');
       toast({
         title: "Error",
         description: "Missing required information",
