@@ -87,28 +87,33 @@ export default function CustomerPetsPage() {
   };
 
   const handleUpdatePet = async (formData: any) => {
-    if (!selectedPet?.id) {
+    if (!selectedPet?.id || !user?.uid) {
       toast({
         title: "Error",
-        description: "No pet selected for update",
+        description: "Missing required information",
         variant: "destructive"
       });
       return false;
     }
     try {
+      console.log('Updating pet with data:', { petId: selectedPet.id, formData });
       await updatePet({ 
         petId: selectedPet.id, 
-        updateData: formData 
+        updateData: {
+          ...formData,
+          customerId: selectedPet.customerId // Preserve the original customerId
+        }
       });
       toast({
         title: "Success",
         description: "Pet updated successfully",
         variant: "success"
       });
-      setShowPetModal(false);
+      setShowEditModal(false);
       setSelectedPet(null);
       return true;
     } catch (error: any) {
+      console.error('Error updating pet:', error);
       toast({
         title: "Error",
         description: error.message || "Failed to update pet",
