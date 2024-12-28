@@ -220,6 +220,9 @@ export default function CustomerPetsPage() {
           <DialogTitle className="text-xl font-semibold mb-4">
             Edit Pet
           </DialogTitle>
+          <DialogDescription className="text-muted-foreground">
+            Update your pet's information below
+          </DialogDescription>
           <ScrollArea className="h-[calc(80vh-100px)]">
             <PetForm
               handleSubmit={handleUpdatePet}
