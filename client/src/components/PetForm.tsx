@@ -204,55 +204,7 @@ export function PetForm({
   return (
     <Form {...form}>
       <form 
-        onSubmit={form.handleSubmit(onSubmit)}
-          });
-          if (isSubmitting) {
-            console.log('PetForm: Already submitting, returning');
-            return false;
-          }
-          try {
-            console.log('PetForm: Preparing pet data for submission');
-            const petData = {
-              name: data.name,
-              type: data.type,
-              breed: data.breed,
-              customerId: customerId || data.customerId,
-              dateOfBirth: data.dateOfBirth,
-              age: data.age,
-              gender: data.gender,
-              weight: data.weight,
-              weightUnit: data.weightUnit,
-              image: data.image,
-              notes: data.notes
-            };
-            
-            console.log('PetForm: Submitting pet data:', petData);
-            const result = await submitForm(petData);
-            
-            if (!result) {
-              throw new Error('Failed to save pet');
-            }
-            
-            form.reset();
-            toast({
-              title: "Success",
-              description: "Pet saved successfully"
-            });
-            onSuccess?.(petData);
-          } catch (error) {
-            console.error('PetForm: Submit error details:', {
-              error,
-              errorMessage: error instanceof Error ? error.message : 'Unknown error',
-              formData: data
-            });
-            toast({
-              title: "Error",
-              description: error instanceof Error ? error.message : "Failed to save pet",
-              variant: "destructive"
-            });
-          }
-          })(e);
-        }} 
+        onSubmit={form.handleSubmit(onSubmit)} 
         className="space-y-4"
       >
         <div className="space-y-4">
