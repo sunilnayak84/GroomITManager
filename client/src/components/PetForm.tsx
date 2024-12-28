@@ -204,7 +204,35 @@ export function PetForm({
   return (
     <Form {...form}>
       <form 
-        onSubmit={form.handleSubmit(onSubmit)} 
+        onSubmit={form.handleSubmit(async (data) => {
+          console.log('PetForm: Form submission started', { data });
+          
+          if (isSubmitting) {
+            console.log('PetForm: Already submitting, preventing duplicate');
+            return;
+          }
+
+          setIsSubmitting(true);
+          try {
+            console.log('PetForm: Calling submit handler');
+            const result = await submitForm(data);
+            console.log('PetForm: Submit handler result:', result);
+            
+            if (result) {
+              console.log('PetForm: Submission successful');
+              onSuccess?.(data);
+            }
+          } catch (error) {
+            console.error('PetForm: Submission error:', error);
+            toast({
+              title: "Error",
+              description: error instanceof Error ? error.message : "Failed to save pet",
+              variant: "destructive"
+            });
+          } finally {
+            setIsSubmitting(false);
+          }
+        })} 
         className="space-y-4"
       >
         <div className="space-y-4">
