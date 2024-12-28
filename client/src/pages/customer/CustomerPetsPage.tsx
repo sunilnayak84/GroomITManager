@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Pencil } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { PetForm } from "@/components/PetForm";
 import { PetDetails } from "@/components/PetDetails";
 import { Pet } from "@/lib/types";
@@ -219,14 +220,16 @@ export default function CustomerPetsPage() {
           <DialogTitle className="text-xl font-semibold mb-4">
             Edit Pet
           </DialogTitle>
-          <PetForm
-            handleSubmit={handleUpdatePet}
-            onCancel={() => setShowEditModal(false)}
-            defaultValues={selectedPet ?? undefined}
-            customerId={user?.uid ?? ''}
-            hideCustomerField={true}
-            isEditing={true}
-          />
+          <ScrollArea className="h-[calc(80vh-100px)]">
+            <PetForm
+              handleSubmit={handleUpdatePet}
+              onCancel={() => setShowEditModal(false)}
+              defaultValues={selectedPet ?? undefined}
+              customerId={user?.uid ?? ''}
+              hideCustomerField={true}
+              isEditing={true}
+            />
+          </ScrollArea>
         </DialogContent>
       </Dialog>
     </div>
