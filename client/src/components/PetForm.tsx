@@ -204,11 +204,7 @@ export function PetForm({
   return (
     <Form {...form}>
       <form 
-        onSubmit={form.handleSubmit(async (data) => {
-          console.log('PetForm: Form submission triggered', {
-            formData: data,
-            isSubmitting,
-            submitForm: !!submitForm
+        onSubmit={form.handleSubmit(onSubmit)}
           });
           if (isSubmitting) {
             console.log('PetForm: Already submitting, returning');
