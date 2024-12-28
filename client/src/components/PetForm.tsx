@@ -204,8 +204,10 @@ export function PetForm({
   return (
     <Form {...form}>
       <form 
-        onSubmit={form.handleSubmit(async (data) => {
-          console.log('PetForm: Form submission triggered', {
+        onSubmit={(e) => {
+          console.log('PetForm: Form submit event fired');
+          form.handleSubmit(async (data) => {
+            console.log('PetForm: Form submission triggered', {
             formData: data,
             isSubmitting,
             submitForm: !!submitForm
@@ -255,7 +257,8 @@ export function PetForm({
               variant: "destructive"
             });
           }
-        })} 
+          })(e);
+        }} 
         className="space-y-4"
       >
         <div className="space-y-4">
