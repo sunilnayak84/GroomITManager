@@ -397,6 +397,21 @@ export async function updatePet({ petId, updateData }: { petId: string; updateDa
   }
 }
 
+export async function deletePet(id: string) {
+  try {
+    const petRef = doc(petsCollection, id);
+    await updateDoc(petRef, {
+      deleted: true,
+      deletedAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    return true;
+  } catch (error) {
+    console.error('Error soft deleting pet:', error);
+    throw error;
+  }
+}
+
 export async function updateAppointment(id: string, data: Partial<Appointment>) {
   try {
     const appointmentRef = doc(appointmentsCollection, id);
