@@ -46,10 +46,16 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
             return service ? service.data().name : 'Unknown Service';
           }));
 
-          console.log('Used items data:', data.productsUsed);
+          // Get service history document
+          const serviceHistoryRef = collection(db, 'service_history');
+          const serviceHistoryQuery = query(serviceHistoryRef, where('appointmentId', '==', doc.id));
+          const serviceHistorySnap = await getDocs(serviceHistoryQuery);
+          
+          const serviceHistory = serviceHistorySnap.docs[0]?.data();
+          console.log('Service history data:', serviceHistory);
 
           // Fetch product details for used items
-          const usedProducts = await Promise.all((data.productsUsed || []).map(async (item: any) => {
+          const usedProducts = await Promise.all((serviceHistory?.usedItems || []).map(async (item: any) => {
             try {
               if (!item?.itemId) {
                 console.error('Invalid item:', item);
