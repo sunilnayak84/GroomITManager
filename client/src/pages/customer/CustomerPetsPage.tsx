@@ -21,7 +21,7 @@ export default function CustomerPetsPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const { user, isLoading: userLoading } = useUser();
-  const { pets, addPet, updatePet } = usePets();
+  const { pets, addPet, updatePet, deletePet } = usePets();
   const [showAddPetDialog, setShowAddPetDialog] = useState(false);
   const { hasPermission } = useRole();
   const { toast } = useToast();
