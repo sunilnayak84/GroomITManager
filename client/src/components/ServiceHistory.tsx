@@ -46,7 +46,7 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
             return service ? service.data().name : 'Unknown Service';
           }));
 
-          console.log('Used items data:', data.usedItems);
+          console.log('Used items data:', data.productsUsed);
 
           // Fetch product details for used items
           const usedProducts = await Promise.all((data.productsUsed || []).map(async (item: any) => {
