@@ -1,0 +1,35 @@
+CISPL SignerDigital Loaded
+chunk-DRXX46FI.js?v=0cf51c99:21507 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+firebase.ts:26 FIREBASE_INIT: Firebase initialized successfully
+use-pets.ts:71 FETCH_PETS: Raw pets data: (3) [{…}, {…}, {…}]0: {id: 'Qk2LqOtXLnzTYhFo7InK', age: 5, submissionId: '1734950533941-r8uz4qwx2', gender: 'male', weightUnit: 'kg', …}1: {id: 'ho3chzn2qWibcB7fqR2l', updatedAt: _Timestamp, gender: 'male', notes: null, weightUnit: 'kg', …}2: {id: 'iK1lVmJXXA1Y9kV4n5iM', submissionId: '1735194505373-w8x00kb07', breed: 'Lhasa Apso', weight: 8, age: 5, …}length: 3[[Prototype]]: Array(0)
+use-pets.ts:122 FETCH_PETS: Completed fetching pets {totalPets: 3, pets: Array(3)}pets: (3) [{…}, {…}, {…}]totalPets: 3[[Prototype]]: Object
+CustomerPetsPage.tsx:271 Error deleting pet: ReferenceError: deletePet is not defined
+    at onClick (CustomerPetsPage.tsx:263:21)
+    at handleEvent (chunk-HFCPDRS2.js?v=0cf51c99:4:45)
+    at HTMLUnknownElement.callCallback2 (chunk-DRXX46FI.js?v=0cf51c99:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-DRXX46FI.js?v=0cf51c99:3699:24)
+    at invokeGuardedCallback (chunk-DRXX46FI.js?v=0cf51c99:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (chunk-DRXX46FI.js?v=0cf51c99:3736:33)
+    at executeDispatch (chunk-DRXX46FI.js?v=0cf51c99:7014:11)
+    at processDispatchQueueItemsInOrder (chunk-DRXX46FI.js?v=0cf51c99:7034:15)
+    at processDispatchQueue (chunk-DRXX46FI.js?v=0cf51c99:7043:13)
+    at dispatchEventsForPlugins (chunk-DRXX46FI.js?v=0cf51c99:7051:11)
+onClick @ CustomerPetsPage.tsx:271
+handleEvent @ chunk-HFCPDRS2.js?v=0cf51c99:4
+callCallback2 @ chunk-DRXX46FI.js?v=0cf51c99:3674
+invokeGuardedCallbackDev @ chunk-DRXX46FI.js?v=0cf51c99:3699
+invokeGuardedCallback @ chunk-DRXX46FI.js?v=0cf51c99:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-DRXX46FI.js?v=0cf51c99:3736
+executeDispatch @ chunk-DRXX46FI.js?v=0cf51c99:7014
+processDispatchQueueItemsInOrder @ chunk-DRXX46FI.js?v=0cf51c99:7034
+processDispatchQueue @ chunk-DRXX46FI.js?v=0cf51c99:7043
+dispatchEventsForPlugins @ chunk-DRXX46FI.js?v=0cf51c99:7051
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:7174
+batchedUpdates$1 @ chunk-DRXX46FI.js?v=0cf51c99:18881
+batchedUpdates @ chunk-DRXX46FI.js?v=0cf51c99:3579
+dispatchEventForPluginEventSystem @ chunk-DRXX46FI.js?v=0cf51c99:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-DRXX46FI.js?v=0cf51c99:5478
+dispatchEvent @ chunk-DRXX46FI.js?v=0cf51c99:5472
+dispatchDiscreteEvent @ chunk-DRXX46FI.js?v=0cf51c99:5449Understand this errorAI
