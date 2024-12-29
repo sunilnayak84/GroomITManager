@@ -52,10 +52,11 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
           const serviceHistorySnap = await getDocs(serviceHistoryQuery);
           
           const serviceHistory = serviceHistorySnap.docs[0]?.data();
-          console.log('Service history data:', serviceHistory?.productsUsed || []);
+          const items = serviceHistory?.productsUsed || serviceHistory?.usedItems || [];
+          console.log('Service history data:', items);
 
           // Fetch product details for used items
-          const usedProducts = await Promise.all((serviceHistory?.productsUsed || []).map(async (item: any) => {
+          const usedProducts = await Promise.all(items.map(async (item: any) => {
             console.log('Processing item:', item);
             try {
               const itemId = item?.itemId || item?.id;
