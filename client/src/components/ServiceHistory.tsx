@@ -33,8 +33,8 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
         );
 
         const snapshot = await getDocs(historyQuery);
-        const historyData = await Promise.all(snapshot.docs.map(async doc => {
-          const data = doc.data();
+        const historyData = await Promise.all(snapshot.docs.map(async docSnap => {
+          const data = docSnap.data();
 
           // Fetch service details
           const services = await Promise.all((data.services || []).map(async (serviceId: string) => {
