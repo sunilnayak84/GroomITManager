@@ -38,7 +38,8 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
 
           // Fetch service details
           const services = await Promise.all((data.services || []).map(async (serviceId: string) => {
-            const serviceDoc = await getDoc(doc(db, 'services', serviceId));
+            const serviceRef = doc(db, 'services', serviceId);
+            const serviceDoc = await getDoc(serviceRef);
             return serviceDoc.exists() ? serviceDoc.data().name : 'Unknown Service';
           }));
 
