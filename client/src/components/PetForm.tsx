@@ -131,7 +131,7 @@ export function PetForm({
   };
 
   const onSubmit = useCallback(async (data: FormData) => {
-    console.log('PetForm: Submit button clicked', { data });
+    console.log('PetForm: Submit button clicked', { data, isSubmitting, submitForm: !!submitForm });
     if (isSubmitting) {
       console.log('PetForm: Already submitting, returning');
       return false;
@@ -143,7 +143,7 @@ export function PetForm({
       if (!submitForm) {
         throw new Error('Submit function is not available');
       }
-      console.log('PetForm: Preparing pet data');
+
       const petData: InsertPet = {
         name: data.name,
         type: data.type,
@@ -162,17 +162,17 @@ export function PetForm({
       console.log('PetForm: Submitting pet data:', petData);
       const result = await submitForm(petData);
       console.log('PetForm: Submission result:', result);
+      
       if (!result) {
         throw new Error('Failed to save pet');
       }
+
       setImagePreview(null);
       form.reset();
-      setIsSubmitting(false);
       onSuccess?.(petData);
       return true;
     } catch (error) {
       console.error('PetForm: Error submitting form:', error);
-      setIsSubmitting(false);
       if (error instanceof Error) {
         onError?.(error);
         toast({
@@ -181,12 +181,6 @@ export function PetForm({
           variant: "destructive",
         });
       }
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to save pet",
-        variant: "destructive",
-      });
-      return false;
       return false;
     } finally {
       setIsSubmitting(false);
