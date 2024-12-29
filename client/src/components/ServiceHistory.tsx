@@ -43,11 +43,23 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
             const service = serviceDoc.docs.find(doc => doc.id === serviceId);
             return service ? service.data().name : 'Unknown Service';
           }));
+
+          // Fetch product details for used items
+          const usedProducts = await Promise.all((data.usedItems || []).map(async (item: any) => {
+            const itemDoc = await getDocs(collection(db, 'inventory'));
+            const product = itemDoc.docs.find(doc => doc.id === item.itemId);
+            return product ? {
+              name: product.data().name,
+              quantity: item.quantity,
+              unit: product.data().unit || 'units'
+            } : null;
+          }));
           
           return {
             id: doc.id,
             ...data,
             services,
+            usedProducts: usedProducts.filter(Boolean),
             date: data.date?.toDate?.()?.toISOString() || null
           };
         }));
@@ -98,6 +110,19 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
                         {record.usedItems.map((item: any, index: number) => (
                           <li key={index}>
                             {item.name || 'Unknown Product'} - {item.quantity} {item.unit || 'units'}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  
+                  {record.usedProducts && record.usedProducts.length > 0 && (
+                    <div>
+                      <h4 className="font-semibold mb-2">Products Used</h4>
+                      <ul className="list-disc pl-4">
+                        {record.usedProducts.map((item: any, index: number) => (
+                          <li key={index}>
+                            {item.name} - {item.quantity} {item.unit}
                           </li>
                         ))}
                       </ul>
