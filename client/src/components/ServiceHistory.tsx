@@ -71,12 +71,16 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
               if (itemSnap.exists()) {
                 const product = itemSnap.data();
                 console.log('Found product:', product);
-                return {
-                  name: product.name || 'Unknown Product',
-                  quantity: item.quantity || 0,
-                  unit: product.unit || 'units',
-                  category: item.categoryId || product.category || 'Unknown Category'
-                };
+                if (!product?.name) {
+                console.warn('Product data incomplete:', product);
+                return null;
+              }
+              return {
+                name: product.name,
+                quantity: item.quantity || 0,
+                unit: product.unit || 'units',
+                category: item.categoryId || product.category || 'Unknown Category'
+              };
               }
               console.error('Product not found:', item.itemId);
               return null;
