@@ -38,20 +38,26 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
           const data = doc.data();
           
           // Fetch service details
+          console.log('Fetching service history - Raw data:', data);
+          
           const services = await Promise.all((data.services || []).map(async (serviceId: string) => {
             const serviceDoc = await getDocs(collection(db, 'services'));
             const service = serviceDoc.docs.find(doc => doc.id === serviceId);
             return service ? service.data().name : 'Unknown Service';
           }));
 
+          console.log('Used items data:', data.usedItems);
+
           // Fetch product details for used items
           const usedProducts = await Promise.all((data.usedItems || []).map(async (item: any) => {
             try {
+              console.log('Fetching product with ID:', item.itemId);
               const itemRef = doc(db, 'inventory', item.itemId);
               const itemSnap = await getDoc(itemRef);
               
               if (itemSnap.exists()) {
                 const product = itemSnap.data();
+                console.log('Found product:', product);
                 return {
                   name: product.name,
                   quantity: item.quantity,
@@ -65,6 +71,8 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
               return null;
             }
           }));
+          
+          console.log('Processed products:', usedProducts);
 
           const formattedProducts = usedProducts.filter(Boolean);
 
