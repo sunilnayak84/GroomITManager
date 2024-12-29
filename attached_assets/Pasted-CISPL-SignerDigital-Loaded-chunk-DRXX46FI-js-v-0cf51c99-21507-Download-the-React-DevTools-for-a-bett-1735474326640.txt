@@ -1,0 +1,19 @@
+CISPL SignerDigital Loaded
+chunk-DRXX46FI.js?v=0cf51c99:21507 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+firebase.ts:26 FIREBASE_INIT: Firebase initialized successfully
+use-pets.ts:71 FETCH_PETS: Raw pets data: (3) [{…}, {…}, {…}]
+use-pets.ts:122 FETCH_PETS: Completed fetching pets {totalPets: 3, pets: Array(3)}
+ServiceHistory.tsx:41 Fetching service history - Raw data: {recommendations: 'Continue brushing every day to avoid matting.', petId: 'Qk2LqOtXLnzTYhFo7InK', cancellationReason: null, branchId: '1', createdAt: _Timestamp, …}
+ServiceHistory.tsx:41 Fetching service history - Raw data: {date: _Timestamp, updatedAt: '2024-12-27T13:11:03.810Z', groomerId: 'p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82', petId: 'Qk2LqOtXLnzTYhFo7InK', totalDuration: 30, …}
+ServiceHistory.tsx:41 Fetching service history - Raw data: {recommendations: 'Continue brushing every day to avoid matting.', petId: 'Qk2LqOtXLnzTYhFo7InK', cancellationReason: null, branchId: '1', createdAt: _Timestamp, …}branchId: "1"cancellationReason: nullcreatedAt: _Timestamp {seconds: 1735471243, nanoseconds: 573000000}nanoseconds: 573000000seconds: 1735471243[[Prototype]]: Objectdate: _Timestamp {seconds: 1735536600, nanoseconds: 0}nanoseconds: 0seconds: 1735536600[[Prototype]]: ObjectdeletedAt: nullgroomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"notes: ""observations: "No observations, gentle pet."petId: "Qk2LqOtXLnzTYhFo7InK"productsUsed: nullrecommendations: "Continue brushing every day to avoid matting."services: ['8sWdC28UWMGPd70awXQf']0: "8sWdC28UWMGPd70awXQf"length: 1[[Prototype]]: Array(0)status: "completed"statusHistory: Array(3)0: {updatedBy: 'MjQnuZnthzUIh2huoDpqCSMMvxe2', status: 'in_progress', timestamp: _Timestamp}1: {timestamp: _Timestamp, updatedBy: 'MjQnuZnthzUIh2huoDpqCSMMvxe2', status: 'in_progress'}2: {updatedBy: 'system', timestamp: _Timestamp, status: 'completed'}length: 3[[Prototype]]: Array(0)totalDuration: 30totalPrice: 99updatedAt: "2024-12-29T11:26:21.068Z"[[Prototype]]: Object
+ServiceHistory.tsx:41 Fetching service history - Raw data: {date: _Timestamp, updatedAt: '2024-12-27T13:11:03.810Z', groomerId: 'p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82', petId: 'Qk2LqOtXLnzTYhFo7InK', totalDuration: 30, …}branchId: "1"cancellationReason: nullcreatedAt: _Timestamp {seconds: 1735288647, nanoseconds: 846000000}date: _Timestamp {seconds: 1735290000, nanoseconds: 0}deletedAt: nullgroomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"notes: "test"observations: "test"petId: "Qk2LqOtXLnzTYhFo7InK"productsUsed: nullservices: ['8sWdC28UWMGPd70awXQf']0: "8sWdC28UWMGPd70awXQf"length: 1[[Prototype]]: Array(0)status: "completed"statusHistory: Array(4)0: {timestamp: _Timestamp, updatedBy: 'MjQnuZnthzUIh2huoDpqCSMMvxe2', status: 'confirmed'}1: {status: 'confirmed', timestamp: _Timestamp, updatedBy: 'MjQnuZnthzUIh2huoDpqCSMMvxe2'}2: {status: 'confirmed', updatedBy: 'MjQnuZnthzUIh2huoDpqCSMMvxe2', timestamp: _Timestamp}3: {timestamp: _Timestamp, updatedBy: 'system', status: 'completed'}status: "completed"timestamp: _Timestamp {seconds: 1735305063, nanoseconds: 810000000}nanoseconds: 810000000seconds: 1735305063[[Prototype]]: ObjectupdatedBy: "system"[[Prototype]]: Objectlength: 4[[Prototype]]: Array(0)totalDuration: 30totalPrice: 99updatedAt: "2024-12-27T13:11:03.810Z"[[Prototype]]: Object
+ServiceHistory.tsx:49 Used items data: undefined
+ServiceHistory.tsx:75 Processed products: []length: 0[[Prototype]]: Array(0)
+ServiceHistory.tsx:49 Used items data: undefined
+ServiceHistory.tsx:75 Processed products: []length: 0[[Prototype]]: Array(0)
+ServiceHistory.tsx:49 Used items data: undefined
+ServiceHistory.tsx:75 Processed products: []length: 0[[Prototype]]: Array(0)
+ServiceHistory.tsx:49 Used items data: undefined
+ServiceHistory.tsx:75 Processed products: []length: 0[[Prototype]]: Array(0)
