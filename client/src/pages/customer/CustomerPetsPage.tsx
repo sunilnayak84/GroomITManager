@@ -172,7 +172,20 @@ export default function CustomerPetsPage() {
                 )}
                 <CardTitle className="text-xl">{pet.name}</CardTitle>
               </div>
-              
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedPet(pet);
+                    setShowEditModal(true);
+                  }}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -233,6 +246,47 @@ export default function CustomerPetsPage() {
               isEditing={true}
             />
           </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Pet Dialog */}
+      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Edit Pet</DialogTitle>
+            <DialogDescription>Update your pet's information below</DialogDescription>
+          </DialogHeader>
+          {selectedPet && (
+            <PetForm
+              handleSubmit={async (formData) => {
+                try {
+                  await updatePet({
+                    petId: selectedPet.id,
+                    updateData: formData
+                  });
+                  toast({
+                    title: "Success",
+                    description: "Pet updated successfully"
+                  });
+                  setShowEditModal(false);
+                  return true;
+                } catch (error) {
+                  console.error('Error updating pet:', error);
+                  toast({
+                    title: "Error",
+                    description: "Failed to update pet",
+                    variant: "destructive"
+                  });
+                  return false;
+                }
+              }}
+              onCancel={() => setShowEditModal(false)}
+              defaultValues={selectedPet}
+              hideCustomerField={true}
+              customerId={user?.uid || ''}
+              isEditing={true}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </div>
