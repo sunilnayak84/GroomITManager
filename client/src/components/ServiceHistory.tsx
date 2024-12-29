@@ -141,8 +141,8 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
                       <h4 className="font-semibold mb-2">Products Used</h4>
                       <ul className="list-disc pl-4">
                         {record.usedProducts.map((item: any, index: number) => (
-                          <li key={index} className="text-sm">
-                            {item.name} ({item.category}) - {item.quantity} × {item.unit}
+                          <li key={index} className="text-sm text-muted-foreground">
+                            {item.name} - {item.quantity} {item.unit}
                           </li>
                         ))}
                       </ul>
