@@ -52,14 +52,14 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
           const serviceHistorySnap = await getDocs(serviceHistoryQuery);
           
           const serviceHistory = serviceHistorySnap.docs[0]?.data();
-          const items = serviceHistory?.productsUsed || serviceHistory?.usedItems || [];
-          console.log('Service history data:', items);
+          const usedItems = serviceHistory?.usedItems || [];
+          console.log('Service history data:', usedItems);
 
           // Fetch product details for used items
-          const usedProducts = await Promise.all(items.map(async (item: any) => {
+          const usedProducts = await Promise.all(usedItems.map(async (item: any) => {
             console.log('Processing item:', item);
             try {
-              const itemId = item?.itemId || item?.id;
+              const itemId = item.itemId;
               if (!itemId) {
                 console.error('Invalid item:', item);
                 return null;
@@ -143,9 +143,9 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
                     <div>
                       <h4 className="font-semibold mb-2">Products Used</h4>
                       <ul className="list-disc pl-4">
-                        {record.usedProducts.map((item: any, index: number) => (
+                        {record.usedProducts?.filter(Boolean).map((item: any, index: number) => (
                           <li key={index} className="text-sm text-muted-foreground">
-                            {item.name} - {item.quantity} {item.unit}
+                            {item.name} ({item.quantity} {item.unit})
                           </li>
                         ))}
                       </ul>
