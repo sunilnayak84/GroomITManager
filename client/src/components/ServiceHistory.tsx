@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
+import { collection, query, where, getDocs, orderBy, doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { format } from 'date-fns';
 import {
@@ -111,19 +111,6 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
                       ))}
                     </ul>
                   </div>
-                  
-                  {record.usedProducts && record.usedProducts.length > 0 && (
-                    <div>
-                      <h4 className="font-semibold mb-2">Products Used</h4>
-                      <ul className="list-disc pl-4">
-                        {record.usedProducts.map((item: any, index: number) => (
-                          <li key={index}>
-                            {item.name} - {item.quantity} {item.unit}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
                   
                   {record.usedProducts && record.usedProducts.length > 0 && (
                     <div>
