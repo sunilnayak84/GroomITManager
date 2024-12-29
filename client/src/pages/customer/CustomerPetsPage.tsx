@@ -172,18 +172,7 @@ export default function CustomerPetsPage() {
                 )}
                 <CardTitle className="text-xl">{pet.name}</CardTitle>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedPet(pet);
-                  setShowEditModal(true);
-                }}
-                className="opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
+              
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
