@@ -190,9 +190,7 @@ export async function createPet(pet: Omit<Pet, 'id' | 'createdAt' | 'updatedAt' 
           submissionId,
           createdAt: timestamp,
           updatedAt: null,
-          owner: pet.owner || null,
-          deleted: false,
-          deletedAt: null
+          owner: pet.owner || null
         };
 
         console.log('FIRESTORE: Creating new pet', { 

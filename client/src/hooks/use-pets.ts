@@ -65,7 +65,8 @@ export function usePets() {
       console.log('FETCH_PETS: Starting to fetch pets');
       const batchSize = 50; // Increased to ensure we get all pets
       const q = query(
-        petsCollection
+        petsCollection,
+        where('deleted', '==', false)
       );
       const querySnapshot = await getDocs(q);
       
