@@ -64,11 +64,17 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
             }
           }));
           
+          const formattedProducts = data.usedItems?.map((item: any) => ({
+            name: usedProducts.find((p: any) => p?.name)?.name || 'Unknown Product',
+            quantity: item.quantity,
+            unit: usedProducts.find((p: any) => p?.unit)?.unit || 'units'
+          })) || [];
+
           return {
             id: doc.id,
             ...data,
             services,
-            usedProducts: usedProducts.filter(Boolean),
+            usedProducts: formattedProducts,
             date: data.date?.toDate?.()?.toISOString() || null
           };
         }));
