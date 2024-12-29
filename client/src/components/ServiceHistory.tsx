@@ -52,10 +52,10 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
           const serviceHistorySnap = await getDocs(serviceHistoryQuery);
           
           const serviceHistory = serviceHistorySnap.docs[0]?.data();
-          console.log('Service history data:', serviceHistory?.usedItems);
+          console.log('Service history data:', serviceHistory?.productsUsed || []);
 
           // Fetch product details for used items
-          const usedProducts = await Promise.all((serviceHistory?.usedItems || []).map(async (item: any) => {
+          const usedProducts = await Promise.all((serviceHistory?.productsUsed || []).map(async (item: any) => {
             console.log('Processing item:', item);
             try {
               const itemId = item?.itemId || item?.id;
@@ -64,8 +64,7 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
                 return null;
               }
               console.log('Fetching product with ID:', itemId);
-              const inventoryRef = collection(db, 'inventory');
-              const itemRef = doc(inventoryRef, itemId);
+              const itemRef = doc(db, 'inventory', itemId);
               const itemSnap = await getDoc(itemRef);
               
               if (itemSnap.exists()) {
