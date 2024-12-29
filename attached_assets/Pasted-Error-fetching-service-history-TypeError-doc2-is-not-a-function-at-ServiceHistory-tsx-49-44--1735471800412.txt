@@ -1,0 +1,41 @@
+Error fetching service history: TypeError: doc2 is not a function
+    at ServiceHistory.tsx:49:44
+    at Array.map (<anonymous>)
+    at ServiceHistory.tsx:48:58
+    at async Promise.all (index 0)
+    at async fetchHistory (ServiceHistory.tsx:35:29)
+fetchHistory @ ServiceHistory.tsx:70
+await in fetchHistory
+(anonymous) @ ServiceHistory.tsx:76
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595Understand this errorAI
+ServiceHistory.tsx:70 Error fetching service history: TypeError: doc2 is not a function
+    at ServiceHistory.tsx:49:44
+    at Array.map (<anonymous>)
+    at ServiceHistory.tsx:48:58
+    at async Promise.all (index 0)
+    at async fetchHistory (ServiceHistory.tsx:35:29)
+fetchHistory @ ServiceHistory.tsx:70
+await in fetchHistory
+(anonymous) @ ServiceHistory.tsx:76
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+invokePassiveEffectMountInDEV @ chunk-DRXX46FI.js?v=0cf51c99:18292
+invokeEffectsInDev @ chunk-DRXX46FI.js?v=0cf51c99:19669
+commitDoubleInvokeEffectsInDEV @ chunk-DRXX46FI.js?v=0cf51c99:19654
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19471
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595Understand this errorAI
