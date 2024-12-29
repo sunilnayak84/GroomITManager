@@ -46,12 +46,12 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
 
           // Fetch product details for used items
           const usedProducts = await Promise.all((data.usedItems || []).map(async (item: any) => {
-            const itemDoc = await getDocs(collection(db, 'inventory'));
-            const product = itemDoc.docs.find(doc => doc.id === item.itemId);
-            return product ? {
-              name: product.data().name,
+            const itemRef = doc(db, 'inventory', item.itemId);
+            const itemDoc = await getDoc(itemRef);
+            return itemDoc.exists() ? {
+              name: itemDoc.data().name,
               quantity: item.quantity,
-              unit: product.data().unit || 'units'
+              unit: itemDoc.data().unit || 'units'
             } : null;
           }));
           
