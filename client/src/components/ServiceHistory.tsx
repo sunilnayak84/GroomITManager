@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -82,13 +81,28 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
             </AccordionTrigger>
             <AccordionContent>
               <div className="space-y-4 p-4">
-                <div>
-                  <h4 className="font-semibold mb-2">Services</h4>
-                  <ul className="list-disc pl-4">
-                    {record.services?.map((service: string, index: number) => (
-                      <li key={index}>{service}</li>
-                    ))}
-                  </ul>
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-semibold mb-2">Services</h4>
+                    <ul className="list-disc pl-4">
+                      {record.services?.map((service: string, index: number) => (
+                        <li key={index}>{service}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  {record.usedItems && record.usedItems.length > 0 && (
+                    <div>
+                      <h4 className="font-semibold mb-2">Products Used</h4>
+                      <ul className="list-disc pl-4">
+                        {record.usedItems.map((item: any, index: number) => (
+                          <li key={index}>
+                            {item.name || 'Unknown Product'} - {item.quantity} {item.unit || 'units'}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
                 
                 {record.observations && (
