@@ -45,7 +45,9 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
           }));
 
           // Fetch product details for used items
+          // Fetch product details for used items
           const usedProducts = await Promise.all((data.usedItems || []).map(async (item: any) => {
+            if (!item.itemId) return null;
             try {
               const itemRef = doc(db, 'inventory', item.itemId);
               const itemSnap = await getDoc(itemRef);
@@ -54,9 +56,11 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
                 return {
                   name: product.name,
                   quantity: item.quantity,
-                  unit: product.unit || 'units'
+                  unit: product.unit || 'units',
+                  category: item.categoryId
                 };
               }
+              console.log('Product not found:', item.itemId);
               return null;
             } catch (error) {
               console.error('Error fetching product:', error);
