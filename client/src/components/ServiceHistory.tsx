@@ -25,12 +25,11 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
       }
       
       try {
-        const historyRef = collection(db, 'appointments');
+        const historyRef = collection(db, 'service_history');
         const historyQuery = query(
           historyRef,
           where('petId', '==', petId),
-          where('status', '==', 'completed'),
-          orderBy('date', 'desc')
+          orderBy('createdAt', 'desc')
         );
 
         const snapshot = await getDocs(historyQuery);
