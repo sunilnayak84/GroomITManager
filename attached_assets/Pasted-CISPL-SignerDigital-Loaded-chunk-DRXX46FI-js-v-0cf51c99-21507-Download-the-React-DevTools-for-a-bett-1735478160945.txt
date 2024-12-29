@@ -1,0 +1,23 @@
+CISPL SignerDigital Loaded
+chunk-DRXX46FI.js?v=0cf51c99:21507 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+firebase.ts:26 FIREBASE_INIT: Firebase initialized successfully
+use-pets.ts:71 FETCH_PETS: Raw pets data: (3) [{…}, {…}, {…}]
+use-pets.ts:122 FETCH_PETS: Completed fetching pets {totalPets: 3, pets: Array(3)}
+ServiceHistory.tsx:41 Fetching service history - Raw data: {petId: 'Qk2LqOtXLnzTYhFo7InK', totalDuration: 30, recommendations: 'Continue brushing every day to avoid matting.', date: _Timestamp, productsUsed: null, …}
+ServiceHistory.tsx:41 Fetching service history - Raw data: {observations: 'test', totalDuration: 30, productsUsed: null, statusHistory: Array(4), branchId: '1', …}
+ServiceHistory.tsx:41 Fetching service history - Raw data: {petId: 'Qk2LqOtXLnzTYhFo7InK', totalDuration: 30, recommendations: 'Continue brushing every day to avoid matting.', date: _Timestamp, productsUsed: null, …}branchId: "1"cancellationReason: nullcreatedAt: _Timestamp {seconds: 1735471243, nanoseconds: 573000000}date: _Timestamp {seconds: 1735536600, nanoseconds: 0}deletedAt: nullgroomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"notes: ""observations: "No observations, gentle pet."petId: "Qk2LqOtXLnzTYhFo7InK"productsUsed: nullrecommendations: "Continue brushing every day to avoid matting."services: ['8sWdC28UWMGPd70awXQf']status: "completed"statusHistory: (3) [{…}, {…}, {…}]totalDuration: 30totalPrice: 99updatedAt: "2024-12-29T11:26:21.068Z"[[Prototype]]: Object
+ServiceHistory.tsx:41 Fetching service history - Raw data: {observations: 'test', totalDuration: 30, productsUsed: null, statusHistory: Array(4), branchId: '1', …}branchId: "1"cancellationReason: nullcreatedAt: _Timestamp {seconds: 1735288647, nanoseconds: 846000000}date: _Timestamp {seconds: 1735290000, nanoseconds: 0}deletedAt: nullgroomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"notes: "test"observations: "test"petId: "Qk2LqOtXLnzTYhFo7InK"productsUsed: nullservices: ['8sWdC28UWMGPd70awXQf']status: "completed"statusHistory: (4) [{…}, {…}, {…}, {…}]totalDuration: 30totalPrice: 99updatedAt: "2024-12-27T13:11:03.810Z"[[Prototype]]: Object
+ServiceHistory.tsx:55 Service history data: []length: 0[[Prototype]]: Array(0)
+ServiceHistory.tsx:87 Processed used products: []
+ServiceHistory.tsx:89 Processed products: []length: 0[[Prototype]]: Array(0)
+ServiceHistory.tsx:55 Service history data: []
+ServiceHistory.tsx:87 Processed used products: []
+ServiceHistory.tsx:89 Processed products: []
+ServiceHistory.tsx:55 Service history data: []
+ServiceHistory.tsx:87 Processed used products: []
+ServiceHistory.tsx:89 Processed products: []
+ServiceHistory.tsx:55 Service history data: []
+ServiceHistory.tsx:87 Processed used products: []
+ServiceHistory.tsx:89 Processed products: []
