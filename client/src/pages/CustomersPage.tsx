@@ -648,7 +648,7 @@ export default function CustomersPage() {
 
       {/* Add Pet Dialog */}
       <Dialog open={showAddPet} onOpenChange={setShowAddPet}>
-        <DialogContent>
+        <DialogContent className="max-h-[90vh] overflow-y-auto max-w-2xl">
           <DialogHeader>
             <DialogTitle>Add New Pet</DialogTitle>
             <DialogDescription>Enter the details for the new pet below.</DialogDescription>
