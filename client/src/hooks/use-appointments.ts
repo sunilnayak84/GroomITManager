@@ -52,7 +52,6 @@ const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppoi
       date: Timestamp.fromDate(appointmentDate),
       status: data.status,
       notes: data.notes,
-      productsUsed: data.productsUsed,
       totalPrice: data.totalPrice || 0,
       totalDuration: data.totalDuration || 30,
       createdAt: Timestamp.fromDate(new Date()),
