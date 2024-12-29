@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { usePets } from "@/hooks/use-pets";
 import { useUser } from "@/hooks/use-user";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useRole } from "@/hooks/use-role";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 export default function CustomerPetsPage() {
   const [showPetModal, setShowPetModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const { user, isLoading: userLoading } = useUser();
   const { pets, addPet, updatePet } = usePets();
@@ -210,6 +212,10 @@ export default function CustomerPetsPage() {
                 setShowPetModal(false);
                 setShowEditModal(true);
               }}
+              onDelete={() => {
+                setShowPetModal(false);
+                setShowDeleteConfirm(true);
+              }}
             />
           )}
         </DialogContent>
@@ -235,6 +241,49 @@ export default function CustomerPetsPage() {
           </ScrollArea>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your pet's profile and all associated records.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setShowDeleteConfirm(false);
+              setShowPetModal(true);
+            }}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                if (selectedPet) {
+                  try {
+                    await deletePet(selectedPet.id);
+                    toast({
+                      title: "Success",
+                      description: "Pet deleted successfully",
+                      variant: "success"
+                    });
+                    setShowDeleteConfirm(false);
+                  } catch (error) {
+                    console.error('Error deleting pet:', error);
+                    toast({
+                      title: "Error",
+                      description: "Failed to delete pet",
+                      variant: "destructive"
+                    });
+                  }
+                }
+              }}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
