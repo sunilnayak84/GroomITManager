@@ -51,6 +51,10 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
           // Fetch product details for used items
           const usedProducts = await Promise.all((data.usedItems || []).map(async (item: any) => {
             try {
+              if (!item?.itemId) {
+                console.error('Invalid item:', item);
+                return null;
+              }
               console.log('Fetching product with ID:', item.itemId);
               const itemRef = doc(db, 'inventory', item.itemId);
               const itemSnap = await getDoc(itemRef);
@@ -59,10 +63,10 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
                 const product = itemSnap.data();
                 console.log('Found product:', product);
                 return {
-                  name: product.name,
-                  quantity: item.quantity,
-                  unit: product.quantity_per_use ? `${product.quantity_per_use}ml` : 'units',
-                  category: item.categoryId
+                  name: product.name || 'Unknown Product',
+                  quantity: item.quantity || 0,
+                  unit: product.unit || 'units',
+                  category: product.category || 'Unknown Category'
                 };
               }
               console.error('Product not found:', item.itemId);
