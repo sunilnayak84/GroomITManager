@@ -72,7 +72,7 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
                   name: product.name || 'Unknown Product',
                   quantity: item.quantity || 0,
                   unit: product.unit || 'units',
-                  category: product.category || 'Unknown Category'
+                  category: item.categoryId || product.category || 'Unknown Category'
                 };
               }
               console.error('Product not found:', item.itemId);
@@ -82,6 +82,7 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
               return null;
             }
           }));
+          console.log('Processed used products:', usedProducts);
           
           console.log('Processed products:', usedProducts);
 
