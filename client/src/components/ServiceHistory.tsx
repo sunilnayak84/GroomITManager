@@ -46,15 +46,22 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
 
           // Fetch product details for used items
           const usedProducts = await Promise.all((data.usedItems || []).map(async (item: any) => {
-            const itemRef = collection(db, 'inventory');
-            const itemQuery = query(itemRef, where('__name__', '==', item.itemId));
-            const itemSnap = await getDocs(itemQuery);
-            const product = !itemSnap.empty ? itemSnap.docs[0].data() : null;
-            return product ? {
-              name: product.name,
-              quantity: item.quantity,
-              unit: product.unit || 'units'
-            } : null;
+            try {
+              const itemRef = doc(db, 'inventory', item.itemId);
+              const itemSnap = await getDoc(itemRef);
+              if (itemSnap.exists()) {
+                const product = itemSnap.data();
+                return {
+                  name: product.name,
+                  quantity: item.quantity,
+                  unit: product.unit || 'units'
+                };
+              }
+              return null;
+            } catch (error) {
+              console.error('Error fetching product:', error);
+              return null;
+            }
           }));
           
           return {
@@ -105,13 +112,13 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
                     </ul>
                   </div>
                   
-                  {record.usedItems && record.usedItems.length > 0 && (
+                  {record.usedProducts && record.usedProducts.length > 0 && (
                     <div>
                       <h4 className="font-semibold mb-2">Products Used</h4>
                       <ul className="list-disc pl-4">
-                        {record.usedItems.map((item: any, index: number) => (
+                        {record.usedProducts.map((item: any, index: number) => (
                           <li key={index}>
-                            {item.name || 'Unknown Product'} - {item.quantity} {item.unit || 'units'}
+                            {item.name} - {item.quantity} {item.unit}
                           </li>
                         ))}
                       </ul>
