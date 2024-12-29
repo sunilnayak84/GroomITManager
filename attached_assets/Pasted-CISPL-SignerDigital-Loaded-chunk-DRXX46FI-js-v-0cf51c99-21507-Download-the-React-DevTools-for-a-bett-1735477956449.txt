@@ -1,0 +1,41 @@
+CISPL SignerDigital Loaded
+chunk-DRXX46FI.js?v=0cf51c99:21507 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+firebase.ts:26 FIREBASE_INIT: Firebase initialized successfully
+use-pets.ts:71 FETCH_PETS: Raw pets data: Array(3)
+use-pets.ts:122 FETCH_PETS: Completed fetching pets Object
+ServiceHistory.tsx:41 Fetching service history - Raw data: ObjectbranchId: "1"cancellationReason: nullcreatedAt: _Timestamp {seconds: 1735471243, nanoseconds: 573000000}date: _Timestamp {seconds: 1735536600, nanoseconds: 0}deletedAt: nullgroomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"notes: ""observations: "No observations, gentle pet."petId: "Qk2LqOtXLnzTYhFo7InK"productsUsed: nullrecommendations: "Continue brushing every day to avoid matting."services: ['8sWdC28UWMGPd70awXQf']status: "completed"statusHistory: (3) [{…}, {…}, {…}]totalDuration: 30totalPrice: 99updatedAt: "2024-12-29T11:26:21.068Z"[[Prototype]]: Object
+ServiceHistory.tsx:41 Fetching service history - Raw data: ObjectbranchId: "1"cancellationReason: nullcreatedAt: _Timestamp {seconds: 1735288647, nanoseconds: 846000000}date: _Timestamp {seconds: 1735290000, nanoseconds: 0}deletedAt: nullgroomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"notes: "test"observations: "test"petId: "Qk2LqOtXLnzTYhFo7InK"productsUsed: nullservices: ['8sWdC28UWMGPd70awXQf']status: "completed"statusHistory: (4) [{…}, {…}, {…}, {…}]totalDuration: 30totalPrice: 99updatedAt: "2024-12-27T13:11:03.810Z"[[Prototype]]: Object
+ServiceHistory.tsx:41 Fetching service history - Raw data: ObjectbranchId: "1"cancellationReason: nullcreatedAt: _Timestamp {seconds: 1735471243, nanoseconds: 573000000}date: _Timestamp {seconds: 1735536600, nanoseconds: 0}deletedAt: nullgroomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"notes: ""observations: "No observations, gentle pet."petId: "Qk2LqOtXLnzTYhFo7InK"productsUsed: nullrecommendations: "Continue brushing every day to avoid matting."services: ['8sWdC28UWMGPd70awXQf']status: "completed"statusHistory: (3) [{…}, {…}, {…}]totalDuration: 30totalPrice: 99updatedAt: "2024-12-29T11:26:21.068Z"[[Prototype]]: Object
+ServiceHistory.tsx:41 Fetching service history - Raw data: ObjectbranchId: "1"cancellationReason: nullcreatedAt: _Timestamp {seconds: 1735288647, nanoseconds: 846000000}date: _Timestamp {seconds: 1735290000, nanoseconds: 0}deletedAt: nullgroomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"notes: "test"observations: "test"petId: "Qk2LqOtXLnzTYhFo7InK"productsUsed: nullservices: ['8sWdC28UWMGPd70awXQf']status: "completed"statusHistory: (4) [{…}, {…}, {…}, {…}]totalDuration: 30totalPrice: 99updatedAt: "2024-12-27T13:11:03.810Z"[[Prototype]]: Object
+ServiceHistory.tsx:55 Service history data: Array(1)0: {categoryId: 'Shampoo', itemId: 'IctkQ7zzpjxCQOHJAAOo', quantity: 10}length: 1[[Prototype]]: Array(0)
+ServiceHistory.tsx:59 Processing item: ObjectcategoryId: "Shampoo"itemId: "IctkQ7zzpjxCQOHJAAOo"quantity: 10[[Prototype]]: Object
+ServiceHistory.tsx:66 Fetching product with ID: IctkQ7zzpjxCQOHJAAOo
+ServiceHistory.tsx:83 Error fetching product: TypeError: doc2 is not a function
+    at ServiceHistory.tsx:67:31
+    at Array.map (<anonymous>)
+    at ServiceHistory.tsx:58:84
+    at async Promise.all (index 0)
+    at async fetchHistory (ServiceHistory.tsx:37:29)
+(anonymous) @ ServiceHistory.tsx:83Understand this errorAI
+ServiceHistory.tsx:87 Processed used products: Array(1)
+ServiceHistory.tsx:89 Processed products: Array(1)0: nulllength: 1[[Prototype]]: Array(0)
+ServiceHistory.tsx:55 Service history data: Array(1)0: {categoryId: 'Shampoo', itemId: 'IctkQ7zzpjxCQOHJAAOo', quantity: 10}length: 1[[Prototype]]: Array(0)
+ServiceHistory.tsx:59 Processing item: ObjectcategoryId: "Shampoo"itemId: "IctkQ7zzpjxCQOHJAAOo"quantity: 10[[Prototype]]: Object
+ServiceHistory.tsx:66 Fetching product with ID: IctkQ7zzpjxCQOHJAAOo
+ServiceHistory.tsx:83 Error fetching product: TypeError: doc2 is not a function
+    at ServiceHistory.tsx:67:31
+    at Array.map (<anonymous>)
+    at ServiceHistory.tsx:58:84
+    at async Promise.all (index 0)
+    at async fetchHistory (ServiceHistory.tsx:37:29)
+(anonymous) @ ServiceHistory.tsx:83Understand this errorAI
+ServiceHistory.tsx:87 Processed used products: Array(1)0: nulllength: 1[[Prototype]]: Array(0)
+ServiceHistory.tsx:89 Processed products: Array(1)0: nulllength: 1[[Prototype]]: Array(0)at: ƒ at()concat: ƒ concat()constructor: ƒ Array()copyWithin: ƒ copyWithin()entries: ƒ entries()every: ƒ every()fill: ƒ fill()filter: ƒ filter()find: ƒ find()findIndex: ƒ findIndex()findLast: ƒ findLast()findLastIndex: ƒ findLastIndex()flat: ƒ flat()flatMap: ƒ flatMap()forEach: ƒ forEach()includes: ƒ includes()indexOf: ƒ indexOf()join: ƒ join()keys: ƒ keys()lastIndexOf: ƒ lastIndexOf()length: 0map: ƒ map()pop: ƒ pop()push: ƒ push()reduce: ƒ reduce()reduceRight: ƒ reduceRight()reverse: ƒ reverse()shift: ƒ shift()slice: ƒ slice()some: ƒ some()sort: ƒ sort()splice: ƒ splice()toLocaleString: ƒ toLocaleString()toReversed: ƒ toReversed()toSorted: ƒ toSorted()toSpliced: ƒ toSpliced()toString: ƒ toString()unshift: ƒ unshift()values: ƒ values()with: ƒ with()Symbol(Symbol.iterator): ƒ values()Symbol(Symbol.unscopables): {at: true, copyWithin: true, entries: true, fill: true, find: true, …}[[Prototype]]: Object
+ServiceHistory.tsx:55 Service history data: Array(0)length: 0[[Prototype]]: Array(0)
+ServiceHistory.tsx:87 Processed used products: Array(0)length: 0[[Prototype]]: Array(0)
+ServiceHistory.tsx:89 Processed products: Array(0)length: 0[[Prototype]]: Array(0)
+ServiceHistory.tsx:55 Service history data: Array(0)length: 0[[Prototype]]: Array(0)
+ServiceHistory.tsx:87 Processed used products: Array(0)
+ServiceHistory.tsx:89 Processed products: Array(0)length: 0[[Prototype]]: Array(0)
