@@ -64,7 +64,8 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
                 return null;
               }
               console.log('Fetching product with ID:', itemId);
-              const itemRef = doc(db, 'inventory', itemId);
+              const inventoryRef = collection(db, 'inventory');
+              const itemRef = doc(inventoryRef, itemId);
               const itemSnap = await getDoc(itemRef);
               
               if (itemSnap.exists()) {
