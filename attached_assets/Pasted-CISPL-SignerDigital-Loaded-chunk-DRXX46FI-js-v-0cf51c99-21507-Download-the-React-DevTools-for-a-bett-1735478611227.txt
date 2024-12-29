@@ -1,0 +1,74 @@
+CISPL SignerDigital Loaded
+chunk-DRXX46FI.js?v=0cf51c99:21507 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+firebase.ts:26 FIREBASE_INIT: Firebase initialized successfully
+use-pets.ts:71 FETCH_PETS: Raw pets data: (3) [{…}, {…}, {…}]
+use-pets.ts:122 FETCH_PETS: Completed fetching pets {totalPets: 3, pets: Array(3)}
+ServiceHistory.tsx:41 Fetching service history - Raw data: {status: 'completed', deletedAt: null, branchId: '1', statusHistory: Array(3), updatedAt: '2024-12-29T11:26:21.068Z', …}
+ServiceHistory.tsx:41 Fetching service history - Raw data: {petId: 'Qk2LqOtXLnzTYhFo7InK', totalPrice: 99, date: _Timestamp, status: 'completed', createdAt: _Timestamp, …}
+ServiceHistory.tsx:41 Fetching service history - Raw data: {status: 'completed', deletedAt: null, branchId: '1', statusHistory: Array(3), updatedAt: '2024-12-29T11:26:21.068Z', …}
+ServiceHistory.tsx:41 Fetching service history - Raw data: {petId: 'Qk2LqOtXLnzTYhFo7InK', totalPrice: 99, date: _Timestamp, status: 'completed', createdAt: _Timestamp, …}
+ServiceHistory.tsx:56 Service history data: [{…}]
+ServiceHistory.tsx:60 Processing item: {itemId: 'IctkQ7zzpjxCQOHJAAOo', quantity: 10, categoryId: 'Shampoo'}
+ServiceHistory.tsx:67 Fetching product with ID: IctkQ7zzpjxCQOHJAAOo
+ServiceHistory.tsx:88 Error fetching product: TypeError: doc2 is not a function
+    at ServiceHistory.tsx:68:31
+    at Array.map (<anonymous>)
+    at ServiceHistory.tsx:59:60
+    at async Promise.all (index 0)
+    at async fetchHistory (ServiceHistory.tsx:37:29)
+(anonymous) @ ServiceHistory.tsx:88
+(anonymous) @ ServiceHistory.tsx:59
+await in (anonymous)
+fetchHistory @ ServiceHistory.tsx:37
+await in fetchHistory
+(anonymous) @ ServiceHistory.tsx:115
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595Understand this errorAI
+ServiceHistory.tsx:92 Processed used products: [null]
+ServiceHistory.tsx:94 Processed products: [null]
+ServiceHistory.tsx:56 Service history data: [{…}]
+ServiceHistory.tsx:60 Processing item: {itemId: 'IctkQ7zzpjxCQOHJAAOo', quantity: 10, categoryId: 'Shampoo'}
+ServiceHistory.tsx:67 Fetching product with ID: IctkQ7zzpjxCQOHJAAOo
+ServiceHistory.tsx:88 Error fetching product: TypeError: doc2 is not a function
+    at ServiceHistory.tsx:68:31
+    at Array.map (<anonymous>)
+    at ServiceHistory.tsx:59:60
+    at async Promise.all (index 0)
+    at async fetchHistory (ServiceHistory.tsx:37:29)
+(anonymous) @ ServiceHistory.tsx:88
+(anonymous) @ ServiceHistory.tsx:59
+await in (anonymous)
+fetchHistory @ ServiceHistory.tsx:37
+await in fetchHistory
+(anonymous) @ ServiceHistory.tsx:115
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+invokePassiveEffectMountInDEV @ chunk-DRXX46FI.js?v=0cf51c99:18292
+invokeEffectsInDev @ chunk-DRXX46FI.js?v=0cf51c99:19669
+commitDoubleInvokeEffectsInDEV @ chunk-DRXX46FI.js?v=0cf51c99:19654
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19471
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595Understand this errorAI
+ServiceHistory.tsx:92 Processed used products: [null]
+ServiceHistory.tsx:94 Processed products: [null]
+ServiceHistory.tsx:56 Service history data: []
+ServiceHistory.tsx:92 Processed used products: []
+ServiceHistory.tsx:94 Processed products: []
+ServiceHistory.tsx:56 Service history data: []
+ServiceHistory.tsx:92 Processed used products: []
+ServiceHistory.tsx:94 Processed products: []
