@@ -65,7 +65,8 @@ export function usePets() {
       console.log('FETCH_PETS: Starting to fetch pets');
       const batchSize = 50; // Increased to ensure we get all pets
       const q = query(
-        petsCollection
+        petsCollection,
+        where('deleted', 'in', [false, null])
       );
       const querySnapshot = await getDocs(q);
       
@@ -315,7 +316,10 @@ export function usePets() {
       const customerRef = doc(customersCollection, petData.customerId);
 
       await runTransaction(db, async (transaction) => {
-        transaction.delete(petRef);
+        transaction.update(petRef, {
+          deleted: true,
+          deletedAt: serverTimestamp()
+        });
         transaction.update(customerRef, {
           petCount: increment(-1)
         });
