@@ -1,0 +1,40 @@
+CISPL SignerDigital Loaded
+chunk-DRXX46FI.js?v=0cf51c99:21507 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+use-pets.ts:132 FETCH_PETS: Error fetching pets: FirebaseError: Function where() called with invalid data. Unsupported field value: undefined
+fetchPets @ use-pets.ts:132
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+start @ @tanstack_react-query.js?v=0cf51c99:535
+fetch @ @tanstack_react-query.js?v=0cf51c99:925
+executeFetch_fn @ @tanstack_react-query.js?v=0cf51c99:2211
+onSubscribe @ @tanstack_react-query.js?v=0cf51c99:1898
+subscribe @ @tanstack_react-query.js?v=0cf51c99:24
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:3013
+subscribeToStore @ chunk-DRXX46FI.js?v=0cf51c99:12587
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595Understand this errorAI
+firebase.ts:26 FIREBASE_INIT: Firebase initialized successfully
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+use-pets.ts:132 FETCH_PETS: Error fetching pets: FirebaseError: Function where() called with invalid data. Unsupported field value: undefined
+fetchPets @ use-pets.ts:132
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518Understand this errorAI
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+use-pets.ts:132 FETCH_PETS: Error fetching pets: FirebaseError: Function where() called with invalid data. Unsupported field value: undefined
+fetchPets @ use-pets.ts:132
+fetchFn @ @tanstack_react-query.js?v=0cf51c99:839
+run @ @tanstack_react-query.js?v=0cf51c99:493
+(anonymous) @ @tanstack_react-query.js?v=0cf51c99:518Understand this errorAI
