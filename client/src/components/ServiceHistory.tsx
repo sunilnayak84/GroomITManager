@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { collection, query, where, getDocs, orderBy, doc, getDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, orderBy, doc as firestoreDoc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { format } from 'date-fns';
 import {
@@ -65,7 +65,7 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
                 return null;
               }
               console.log('Fetching product with ID:', itemId);
-              const itemRef = doc(db, 'inventory', itemId);
+              const itemRef = firestoreDoc(db, 'inventory', itemId);
               const itemSnap = await getDoc(itemRef);
               
               if (itemSnap.exists()) {
