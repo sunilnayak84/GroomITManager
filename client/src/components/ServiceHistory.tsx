@@ -54,6 +54,7 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
               if (itemSnap.exists()) {
                 const product = itemSnap.data();
                 return {
+                  id: item.itemId,
                   name: product.name,
                   quantity: item.quantity,
                   unit: product.unit || 'units',
@@ -68,11 +69,14 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
             }
           }));
           
-          const formattedProducts = data.usedItems?.map((item: any) => ({
-            name: usedProducts.find((p: any) => p?.name)?.name || 'Unknown Product',
-            quantity: item.quantity,
-            unit: usedProducts.find((p: any) => p?.unit)?.unit || 'units'
-          })) || [];
+          const formattedProducts = data.usedItems?.map((item: any) => {
+            const product = usedProducts.find((p: any) => p?.id === item.itemId);
+            return {
+              name: product?.name || 'Unknown Product',
+              quantity: item.quantity,
+              unit: product?.unit || 'units'
+            };
+          }) || [];
 
           return {
             id: doc.id,
