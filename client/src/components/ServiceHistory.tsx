@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { collection, query, where, getDocs, orderBy, getDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -33,21 +32,20 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
         );
 
         const snapshot = await getDocs(historyQuery);
-        const historyData = await Promise.all(snapshot.docs.map(async docSnap => {
-          const data = docSnap.data();
+        const historyData = await Promise.all(snapshot.docs.map(async doc => {
+          const data = doc.data();
 
           // Fetch service details
           const services = await Promise.all((data.services || []).map(async (serviceId: string) => {
-            const serviceRef = doc(db, 'services', serviceId);
-            const serviceDoc = await getDoc(serviceRef);
-            return serviceDoc.exists() ? serviceDoc.data().name : 'Unknown Service';
+            const serviceDoc = await getDocs(collection(db, 'services'));
+            const service = serviceDoc.docs.find(doc => doc.id === serviceId);
+            return service ? service.data().name : 'Unknown Service';
           }));
 
           // Fetch inventory items if they exist
           let usedItems = [];
           if (data.usedItems && data.usedItems.length > 0) {
             usedItems = await Promise.all(data.usedItems.map(async (item: any) => {
-              if (!item.itemId) return null;
               const itemDoc = await getDoc(doc(db, 'inventory', item.itemId));
               const itemData = itemDoc.data();
               return {
@@ -62,8 +60,8 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
             id: doc.id,
             ...data,
             services,
-            usedItems: usedItems.filter(Boolean),
-            date: data.createdAt ? new Date(data.createdAt) : null
+            usedItems,
+            date: data.createdAt || null
           };
         }));
 
@@ -92,7 +90,7 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
         {history.map((record) => (
           <AccordionItem key={record.id} value={record.id}>
             <AccordionTrigger>
-              Service on {record.date ? format(record.date, 'PPP') : 'Unknown Date'}
+              Service on {record.date ? format(new Date(record.date), 'PPP') : 'Unknown Date'}
             </AccordionTrigger>
             <AccordionContent>
               <div className="space-y-4 p-4">
