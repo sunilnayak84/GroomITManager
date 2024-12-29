@@ -46,10 +46,10 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
             return service ? service.data().name : 'Unknown Service';
           }));
 
-          console.log('Used items data:', data.productsUsed);
+          console.log('Used items data:', data.usedItems);
 
           // Fetch product details for used items
-          const usedProducts = await Promise.all((data.productsUsed || []).map(async (item: any) => {
+          const usedProducts = await Promise.all((data.usedItems || []).map(async (item: any) => {
             try {
               console.log('Fetching product with ID:', item.itemId);
               const itemRef = doc(db, 'inventory', item.itemId);
