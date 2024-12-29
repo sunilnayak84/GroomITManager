@@ -149,7 +149,7 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
                       <ul className="list-disc pl-4">
                         {record.usedProducts?.filter(Boolean).map((item: any, index: number) => (
                           <li key={index} className="text-sm text-muted-foreground">
-                            {item.name} ({item.quantity} {item.unit})
+                            {item.category}: {item.name}
                           </li>
                         ))}
                       </ul>
