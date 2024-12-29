@@ -229,7 +229,9 @@ export function usePets() {
           createdAt: serverTimestamp(),
           updatedAt: null,
           owner: null,
-          submissionId
+          submissionId,
+          deleted: false,
+          deletedAt: null
         };
         const newPetDoc = await addDoc(petsCollection, firestoreData);
         console.log('ADD_PET: Created new pet document with ID:', newPetDoc.id);
