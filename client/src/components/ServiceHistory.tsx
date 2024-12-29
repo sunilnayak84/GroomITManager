@@ -45,47 +45,28 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
           }));
 
           // Fetch product details for used items
-          // Fetch product details for used items
-          // Fetch and map used products
           const usedProducts = await Promise.all((data.usedItems || []).map(async (item: any) => {
-            if (!item.itemId) {
-              console.log('Missing itemId for product');
-              return null;
-            }
             try {
               const itemRef = doc(db, 'inventory', item.itemId);
               const itemSnap = await getDoc(itemRef);
               
-              if (!itemSnap.exists()) {
-                console.log('Product not found:', item.itemId);
-                return null;
+              if (itemSnap.exists()) {
+                const product = itemSnap.data();
+                return {
+                  name: product.name,
+                  quantity: item.quantity,
+                  unit: product.unit || 'units'
+                };
               }
-              
-              const product = itemSnap.data();
-              return {
-                id: item.itemId,
-                name: product.name || 'Unknown Product',
-                quantity: item.quantity || 0,
-                unit: product.unit || 'units'
-              };
+              console.error('Product not found:', item.itemId);
+              return null;
             } catch (error) {
-              console.error('Error fetching product:', error, 'for itemId:', item.itemId);
+              console.error('Error fetching product:', error);
               return null;
             }
-          })).then(results => results.filter(p => p !== null));
-          
-          // Format products with proper null checks
-          const formattedProducts = data.usedItems?.map((item: any) => {
-            const product = usedProducts.find((p: any) => p && p.id === item.itemId);
-            if (!product) {
-              console.log('No matching product found for item:', item.itemId);
-            }
-            return {
-              name: product?.name || 'Unknown Product',
-              quantity: item.quantity || 0,
-              unit: product?.unit || 'units'
-            };
-          }).filter(Boolean) || [];
+          }));
+
+          const formattedProducts = usedProducts.filter(Boolean);
 
           return {
             id: doc.id,
