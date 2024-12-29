@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
+import { collection, query, where, getDocs, orderBy, getDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { format } from 'date-fns';
 import {
@@ -23,35 +23,48 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
         setIsLoading(false);
         return;
       }
-      
+
       try {
-        const historyRef = collection(db, 'appointments');
         const historyQuery = query(
-          historyRef,
+          collection(db, 'service_history'),
           where('petId', '==', petId),
-          where('status', '==', 'completed'),
-          orderBy('date', 'desc')
+          orderBy('createdAt', 'desc')
         );
 
         const snapshot = await getDocs(historyQuery);
         const historyData = await Promise.all(snapshot.docs.map(async doc => {
           const data = doc.data();
-          
+
           // Fetch service details
           const services = await Promise.all((data.services || []).map(async (serviceId: string) => {
             const serviceDoc = await getDocs(collection(db, 'services'));
             const service = serviceDoc.docs.find(doc => doc.id === serviceId);
             return service ? service.data().name : 'Unknown Service';
           }));
-          
+
+          // Fetch inventory items if they exist
+          let usedItems = [];
+          if (data.usedItems && data.usedItems.length > 0) {
+            usedItems = await Promise.all(data.usedItems.map(async (item: any) => {
+              const itemDoc = await getDoc(doc(db, 'inventory', item.itemId));
+              const itemData = itemDoc.data();
+              return {
+                name: itemData?.name || 'Unknown Product',
+                quantity: item.quantity,
+                unit: itemData?.unit || 'units'
+              };
+            }));
+          }
+
           return {
             id: doc.id,
             ...data,
             services,
-            date: data.date?.toDate?.()?.toISOString() || null
+            usedItems,
+            date: data.createdAt || null
           };
         }));
-        
+
         setHistory(historyData);
       } catch (error) {
         console.error('Error fetching service history:', error);
@@ -90,7 +103,7 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
                       ))}
                     </ul>
                   </div>
-                  
+
                   {record.usedItems && record.usedItems.length > 0 && (
                     <div>
                       <h4 className="font-semibold mb-2">Products Used</h4>
@@ -104,14 +117,14 @@ export function ServiceHistory({ petId }: ServiceHistoryProps) {
                     </div>
                   )}
                 </div>
-                
+
                 {record.observations && (
                   <div>
                     <h4 className="font-semibold mb-2">Observations</h4>
                     <p className="text-sm text-muted-foreground">{record.observations}</p>
                   </div>
                 )}
-                
+
                 {record.recommendations && (
                   <div>
                     <h4 className="font-semibold mb-2">Recommendations</h4>
