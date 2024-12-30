@@ -292,18 +292,31 @@ export default function CustomerPetsPage() {
                 if (!selectedPet) {
                   throw new Error('No pet selected for update');
                 }
-                console.log('[PET-UPDATE] Submitting update:', { petId: selectedPet.id, data });
-                const result = await updatePet({
-                  petId: selectedPet.id,
-                  updateData: data
-                });
-                console.log('[PET-UPDATE] Update result:', result);
-                setShowEditModal(false);
-                toast({
-                  title: "Success",
-                  description: "Pet updated successfully",
-                });
-                return true;
+                console.log('[PET-UPDATE] Starting update:', { selectedPet, data });
+                try {
+                  const result = await updatePet({
+                    petId: selectedPet.id,
+                    updateData: {
+                      ...data,
+                      customerId: selectedPet.customerId // Ensure we keep the original customerId
+                    }
+                  });
+                  console.log('[PET-UPDATE] Update successful:', result);
+                  setShowEditModal(false);
+                  toast({
+                    title: "Success",
+                    description: "Pet updated successfully",
+                  });
+                  return true;
+                } catch (error) {
+                  console.error('[PET-UPDATE] Update failed:', error);
+                  toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: error instanceof Error ? error.message : "Failed to update pet"
+                  });
+                  throw error;
+                }
               } catch (error) {
                 console.error('Error updating pet:', error);
                 toast({

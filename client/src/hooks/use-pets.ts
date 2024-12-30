@@ -281,25 +281,19 @@ export function usePets() {
         }
 
         console.log('[USE-PETS] Current pet data:', petSnapshot.data());
-
-        let imageUrl = updateData.image;
-        if (updateData.image instanceof File) {
-          const path = `pets/${updateData.customerId}/${Date.now()}_${updateData.image.name}`;
-          imageUrl = await uploadFile(updateData.image, path);
-        }
         
         const updates: Record<string, any> = {
-          ...(updateData.name && { name: updateData.name }),
-          ...(updateData.type && { type: updateData.type }),
-          ...(updateData.breed && { breed: updateData.breed }),
-          ...(updateData.customerId && { customerId: updateData.customerId }),
-          ...(('dateOfBirth' in updateData) && { dateOfBirth: updateData.dateOfBirth }),
-          ...(('age' in updateData) && { age: toNumber(updateData.age) }),
-          ...(('gender' in updateData) && { gender: updateData.gender }),
-          ...(('weight' in updateData) && { weight: toNumber(updateData.weight) }),
-          ...(updateData.weightUnit && { weightUnit: updateData.weightUnit }),
-          ...(('notes' in updateData) && { notes: updateData.notes }),
-          ...(imageUrl && { image: imageUrl }),
+          name: updateData.name,
+          type: updateData.type,
+          breed: updateData.breed,
+          customerId: updateData.customerId,
+          dateOfBirth: updateData.dateOfBirth,
+          age: toNumber(updateData.age),
+          gender: updateData.gender,
+          weight: toNumber(updateData.weight),
+          weightUnit: updateData.weightUnit,
+          notes: updateData.notes,
+          image: updateData.image,
           updatedAt: serverTimestamp()
         };
 
