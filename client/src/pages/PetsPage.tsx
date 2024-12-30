@@ -436,6 +436,7 @@ export default function PetsPage() {
           setShowEditModal(open);
           if (!open) {
             setSelectedPet(null);
+            setShowPetModal(false);
           }
         }}
       >
