@@ -288,10 +288,13 @@ export default function CustomerPetsPage() {
           </DialogHeader>
           <PetForm
             handleSubmit={async (data) => {
+              console.log('[PET-UPDATE] Starting form submission with data:', data);
               try {
                 if (!selectedPet) {
+                  console.error('[PET-UPDATE] No pet selected for update');
                   throw new Error('No pet selected for update');
                 }
+                console.log('[PET-UPDATE] Selected pet:', selectedPet);
                 
                 const result = await updatePet({ 
                   petId: selectedPet.id, 

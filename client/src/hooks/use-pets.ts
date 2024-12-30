@@ -267,8 +267,10 @@ export function usePets() {
 
   const updatePetMutation = useMutation({
     mutationFn: async ({ petId, updateData }: { petId: string; updateData: Partial<PetInput> }) => {
+      console.log('[USE-PETS] Starting pet update mutation:', { petId, updateData });
       try {
         const petRef = doc(petsCollection, petId);
+        console.log('[USE-PETS] Got pet reference for ID:', petId);
         const timestamp = serverTimestamp();
 
         let imageUrl = updateData.image;
