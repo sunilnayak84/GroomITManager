@@ -288,31 +288,14 @@ export default function CustomerPetsPage() {
           </DialogHeader>
           <PetForm
             handleSubmit={async (data) => {
-              console.log('[PET-UPDATE] Starting form submission with data:', data);
               try {
                 if (!selectedPet) {
-                  console.error('[PET-UPDATE] No pet selected for update');
                   throw new Error('No pet selected for update');
                 }
-                console.log('[PET-UPDATE] Selected pet:', selectedPet);
-                
-                const updateData = {
-                  ...data,
-                  customerId: user.uid,
-                  owner: {
-                    id: user.uid,
-                    name: user.displayName || 'Unknown',
-                    email: user.email || ''
-                  }
-                };
-                
-                console.log('[PET-UPDATE] Sending update with data:', updateData);
-                const result = await updatePet({ 
-                  petId: selectedPet.id, 
-                  updateData 
+                await updatePet({
+                  petId: selectedPet.id,
+                  updateData: data
                 });
-
-                console.log('[PET-UPDATE] Update result:', result);
                 setShowEditModal(false);
                 toast({
                   title: "Success",
@@ -323,8 +306,8 @@ export default function CustomerPetsPage() {
                 console.error('Error updating pet:', error);
                 toast({
                   variant: "destructive",
-                  title: "Error", 
-                  description: error instanceof Error ? error.message : "Failed to update pet",
+                  title: "Error",
+                  description: error instanceof Error ? error.message : "Failed to update pet"
                 });
                 throw error;
               }
