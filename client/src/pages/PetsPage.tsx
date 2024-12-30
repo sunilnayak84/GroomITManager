@@ -238,15 +238,16 @@ export default function PetsPage() {
                   </span>
                 </TableCell>
                 <TableCell className="text-right">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="hover:bg-purple-50 hover:text-purple-600"
-                      >
-                        View Details
-                      </Button>
-                    </DialogTrigger>
+                  <div className="flex justify-end gap-2">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="hover:bg-purple-50 hover:text-purple-600"
+                        >
+                          View Details
+                        </Button>
+                      </DialogTrigger>
                     <DialogContent className="sm:max-w-[625px]">
                       <DialogHeader>
                         <DialogTitle>Pet Details</DialogTitle>
@@ -269,6 +270,27 @@ export default function PetsPage() {
                       />
                     </DialogContent>
                   </Dialog>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedPet(pet);
+                      setShowEditModal(true);
+                    }}
+                    className="hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedPet(pet);
+                      setShowDeleteConfirm(true);
+                    }}
+                    className="hover:bg-red-50 hover:text-red-600"
+                  >
+                    Delete
+                  </Button>
+                </div>
                 </TableCell>
               </TableRow>
             ))}

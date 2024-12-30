@@ -79,12 +79,6 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
 
         <div className="flex justify-end gap-2 mt-6 pt-4 border-t">
           <Button variant="outline" onClick={() => setShowHistory(true)}>View History</Button>
-          {onEdit && onDelete && (
-            <>
-              <Button variant="outline" onClick={onDelete}>Delete</Button>
-              <Button onClick={onEdit}>Edit</Button>
-            </>
-          )}
         </div>
       </div>
 
