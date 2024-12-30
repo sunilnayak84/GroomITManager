@@ -2,18 +2,17 @@
 import { useState } from "react";
 import { usePets } from "@/hooks/use-pets";
 import { useUser } from "@/hooks/use-user";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { useRole } from "@/hooks/use-role";
-import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { PetForm } from "@/components/PetForm";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { PetDetails } from "@/components/PetDetails";
+import { useToast } from "@/hooks/use-toast";
+import { PetForm } from "@/components/PetForm";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Search, Plus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pet } from "@/lib/types";
-import { Badge } from "@/components/ui/badge";
 
 export default function CustomerPetsPage() {
   const [showPetModal, setShowPetModal] = useState(false);
@@ -22,9 +21,8 @@ export default function CustomerPetsPage() {
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const { user, isLoading: userLoading } = useUser();
   const { pets, addPet, updatePet, deletePet } = usePets();
-  const [showAddPetDialog, setShowAddPetDialog] = useState(false);
-  const { hasPermission } = useRole();
   const { toast } = useToast();
+  const [searchQuery, setSearchQuery] = useState("");
 
   if (userLoading) {
     return <div className="flex items-center justify-center min-h-screen">
@@ -45,6 +43,11 @@ export default function CustomerPetsPage() {
     pet.owner?.email === user.email
   );
 
+  const filteredPets = customerPets.filter(pet => 
+    pet.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    pet.breed?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const handleAddPet = async (formData: any) => {
     try {
       if (!user?.uid || !user?.email) {
@@ -61,7 +64,6 @@ export default function CustomerPetsPage() {
         }
       };
 
-      console.log('Submitting pet data:', petData);
       const result = await addPet(petData);
       
       if (!result) {
@@ -74,7 +76,6 @@ export default function CustomerPetsPage() {
         variant: "success"
       });
       
-      setShowAddPetDialog(false);
       setShowPetModal(false);
       return true;
     } catch (error: any) {
@@ -88,196 +89,267 @@ export default function CustomerPetsPage() {
     }
   };
 
-  const handleUpdatePet = async (formData: any) => {
-    console.log('CustomerPetsPage: Update pet triggered', {
-      formData,
-      selectedPetId: selectedPet?.id,
-      userId: user?.uid
-    });
-    if (!selectedPet?.id || !user?.uid) {
-      console.log('CustomerPetsPage: Missing required data');
-      toast({
-        title: "Error",
-        description: "Missing required information",
-        variant: "destructive"
-      });
-      return false;
-    }
+  const formatDate = (date: any) => {
+    if (!date) return 'N/A';
     try {
-      console.log('Updating pet with data:', { petId: selectedPet.id, formData });
-      await updatePet({ 
-        petId: selectedPet.id, 
-        updateData: {
-          ...formData,
-          customerId: selectedPet.customerId // Preserve the original customerId
-        }
-      });
-      toast({
-        title: "Success",
-        description: "Pet updated successfully",
-        variant: "success"
-      });
-      setShowEditModal(false);
-      setSelectedPet(null);
-      return true;
-    } catch (error: any) {
-      console.error('Error updating pet:', error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update pet",
-        variant: "destructive"
-      });
-      return false;
+      if (typeof date === 'string') {
+        return new Date(date).toLocaleDateString();
+      }
+      if (date instanceof Date) {
+        return date.toLocaleDateString();
+      }
+      return 'N/A';
+    } catch (error) {
+      return 'N/A';
     }
   };
 
   return (
-    <div className="container mx-auto p-6 max-w-4xl">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">My Pets</h1>
+    <div className="container mx-auto py-6 space-y-4">
+      <div className="relative h-48 rounded-xl overflow-hidden">
+        <img
+          src="https://images.unsplash.com/photo-1450778869180-41d0601e046e"
+          alt="My Pets"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-transparent flex items-center p-8">
+          <div className="text-white">
+            <h2 className="text-2xl font-bold">My Pets</h2>
+            <p>Manage your furry friends</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-between items-center mb-6 gap-4">
+        <div className="flex-1 max-w-md">
+          <div className="relative">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by pet name or breed..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 h-12 text-base bg-white shadow-sm"
+            />
+          </div>
+        </div>
         <Button
+          size="lg"
           onClick={() => {
             setSelectedPet(null);
             setShowPetModal(true);
           }}
-          className="gap-2 bg-primary hover:bg-primary/90"
+          className="h-12 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
         >
-          <Plus className="h-4 w-4" />
-          Add Pet
+          <Plus className="mr-2 h-5 w-5" />
+          Add New Pet
         </Button>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        {customerPets.map((pet) => (
-          <Card 
-            key={pet.id} 
-            className="hover:shadow-lg transition-all duration-300 group cursor-pointer"
-            onClick={() => {
-              setSelectedPet(pet);
-              setShowPetModal(true);
-            }}
-          >
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <div className="flex items-center gap-3">
-                {pet.image ? (
-                  <img
-                    src={pet.image}
-                    alt={pet.name}
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                    <span className="text-lg font-semibold text-primary">
-                      {pet.name?.substring(0, 2).toUpperCase()}
-                    </span>
+      <div className="rounded-xl border bg-white shadow-sm">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Pet</TableHead>
+              <TableHead>Age</TableHead>
+              <TableHead>Gender</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredPets?.map((pet) => (
+              <TableRow key={pet.id}>
+                <TableCell>
+                  <div className="flex items-center gap-4">
+                    {pet.image ? (
+                      <Avatar className="h-12 w-12 border-2 border-purple-100">
+                        <AvatarImage src={pet.image} alt={pet.name} />
+                        <AvatarFallback className="bg-gradient-to-br from-purple-100 to-pink-100 text-purple-600">
+                          {pet.name.substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    ) : (
+                      <Avatar className="h-12 w-12 border-2 border-purple-100">
+                        <AvatarFallback className="bg-gradient-to-br from-purple-100 to-pink-100 text-purple-600">
+                          {pet.name.substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
+                    <div>
+                      <div className="font-semibold text-base">{pet.name}</div>
+                      <div className="text-sm text-muted-foreground flex items-center gap-2">
+                        <span className="capitalize">{pet.type}</span>
+                        <span>•</span>
+                        <span>{pet.breed}</span>
+                      </div>
+                    </div>
                   </div>
-                )}
-                <CardTitle className="text-xl">{pet.name}</CardTitle>
-              </div>
-              
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex flex-wrap gap-2">
-                  <Badge variant="secondary" className="capitalize">{pet.type}</Badge>
-                  <Badge variant="outline" className="capitalize">{pet.breed}</Badge>
-                </div>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div>
-                    <span className="text-muted-foreground">Age:</span>
-                    <span className="ml-2">{pet.age} years</span>
+                </TableCell>
+                <TableCell>
+                  <div className="flex flex-col">
+                    <span className="font-medium">{pet.age || 'N/A'}</span>
+                    <span className="text-sm text-muted-foreground">Years old</span>
                   </div>
-                  <div>
-                    <span className="text-muted-foreground">Weight:</span>
-                    <span className="ml-2">{pet.weight} {pet.weightUnit}</span>
+                </TableCell>
+                <TableCell>
+                  <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${
+                    pet.gender === 'male' ? 'bg-blue-100 text-blue-700' :
+                    pet.gender === 'female' ? 'bg-pink-100 text-pink-700' :
+                    'bg-gray-100 text-gray-700'
+                  }`}>
+                    {pet.gender ? pet.gender.charAt(0).toUpperCase() + pet.gender.slice(1) : 'Unknown'}
+                  </span>
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-2">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="hover:bg-purple-50 hover:text-purple-600"
+                        >
+                          View Details
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[625px]">
+                        <DialogHeader>
+                          <DialogTitle>Pet Details</DialogTitle>
+                          <DialogDescription>View and manage pet information</DialogDescription>
+                        </DialogHeader>
+                        <PetDetails 
+                          pet={pet}
+                          formatDate={formatDate}
+                          onEdit={() => {
+                            setSelectedPet(pet);
+                            setShowEditModal(true);
+                          }}
+                          onDelete={() => {
+                            setSelectedPet(pet);
+                            setShowDeleteConfirm(true);
+                          }}
+                        />
+                      </DialogContent>
+                    </Dialog>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSelectedPet(pet);
+                        setShowEditModal(true);
+                      }}
+                      className="hover:bg-blue-50 hover:text-blue-600"
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSelectedPet(pet);
+                        setShowDeleteConfirm(true);
+                      }}
+                      className="hover:bg-red-50 hover:text-red-600"
+                    >
+                      Delete
+                    </Button>
                   </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                </TableCell>
+              </TableRow>
+            ))}
+            {filteredPets?.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={4} className="h-24 text-center">
+                  No pets found.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
 
+      {/* Add/Edit Pet Dialog */}
       <Dialog open={showPetModal} onOpenChange={setShowPetModal}>
-        <DialogContent className="sm:max-w-[625px]">
+        <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>Pet Details</DialogTitle>
-            <DialogDescription>View and manage pet information</DialogDescription>
+            <DialogTitle>Add New Pet</DialogTitle>
+            <DialogDescription>Fill in the pet details below.</DialogDescription>
           </DialogHeader>
-          {selectedPet && (
-            <PetDetails
-              pet={selectedPet}
-              formatDate={(date) => date ? new Date(date).toLocaleDateString() : 'N/A'}
-              onEdit={() => {
-                setShowPetModal(false);
-                setShowEditModal(true);
-              }}
-              onDelete={() => {
-                setShowPetModal(false);
-                setShowDeleteConfirm(true);
-              }}
-            />
-          )}
+          <PetForm
+            handleSubmit={handleAddPet}
+            onCancel={() => setShowPetModal(false)}
+            customerId={user.uid}
+            hideCustomerField={true}
+          />
         </DialogContent>
       </Dialog>
 
+      {/* Edit Pet Dialog */}
       <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
         <DialogContent className="sm:max-w-[600px]">
-          <DialogTitle className="text-xl font-semibold mb-4">
-            Edit Pet
-          </DialogTitle>
-          <DialogDescription className="text-muted-foreground">
-            Update your pet's information below
-          </DialogDescription>
-          <ScrollArea className="h-[calc(80vh-100px)]">
-            <PetForm
-              handleSubmit={handleUpdatePet}
-              onCancel={() => setShowEditModal(false)}
-              defaultValues={selectedPet ?? undefined}
-              customerId={user?.uid ?? ''}
-              hideCustomerField={true}
-              isEditing={true}
-            />
-          </ScrollArea>
+          <DialogHeader>
+            <DialogTitle>Edit Pet</DialogTitle>
+            <DialogDescription>Update your pet's information below.</DialogDescription>
+          </DialogHeader>
+          <PetForm
+            handleSubmit={async (data) => {
+              try {
+                if (selectedPet) {
+                  await updatePet({ petId: selectedPet.id, updateData: data });
+                  toast({
+                    title: "Success",
+                    description: "Pet updated successfully",
+                  });
+                  setShowEditModal(false);
+                  return true;
+                }
+                return false;
+              } catch (error) {
+                console.error('Error updating pet:', error);
+                toast({
+                  variant: "destructive",
+                  title: "Error",
+                  description: error instanceof Error ? error.message : "Failed to update pet",
+                });
+                return false;
+              }
+            }}
+            onCancel={() => setShowEditModal(false)}
+            defaultValues={selectedPet ?? undefined}
+            customerId={user.uid}
+            hideCustomerField={true}
+            isEditing={true}
+          />
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Delete Confirmation */}
       <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>Are you sure you want to delete this pet?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your pet's profile and all associated records.
+              This action cannot be undone. This will permanently delete {selectedPet?.name}'s record.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => {
-              setShowDeleteConfirm(false);
-              setShowPetModal(true);
-            }}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={async () => {
                 if (selectedPet) {
                   try {
                     await deletePet(selectedPet.id);
+                    setShowDeleteConfirm(false);
                     toast({
                       title: "Success",
-                      description: "Pet deleted successfully",
-                      variant: "success"
+                      description: "Pet deleted successfully"
                     });
-                    setShowDeleteConfirm(false);
                   } catch (error) {
                     console.error('Error deleting pet:', error);
                     toast({
+                      variant: "destructive",
                       title: "Error",
-                      description: "Failed to delete pet",
-                      variant: "destructive"
+                      description: error instanceof Error ? error.message : "Failed to delete pet"
                     });
                   }
                 }
               }}
-              className="bg-red-600 hover:bg-red-700"
             >
               Delete
             </AlertDialogAction>
