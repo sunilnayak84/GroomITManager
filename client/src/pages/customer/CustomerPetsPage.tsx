@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { usePets } from "@/hooks/use-pets";
 import { useUser } from "@/hooks/use-user";
@@ -282,7 +281,7 @@ export default function CustomerPetsPage() {
 
       {/* Edit Pet Dialog */}
       <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
-        <DialogContent className="sm:max-w-[90vw] h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[600px] h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Pet</DialogTitle>
             <DialogDescription>Update your pet's information below.</DialogDescription>
