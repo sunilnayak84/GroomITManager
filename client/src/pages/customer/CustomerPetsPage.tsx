@@ -292,31 +292,27 @@ export default function CustomerPetsPage() {
                 if (!selectedPet) {
                   throw new Error('No pet selected for update');
                 }
-                console.log('[PET-UPDATE] Starting update:', { selectedPet, data });
-                try {
-                  const result = await updatePet({
-                    petId: selectedPet.id,
-                    updateData: {
-                      ...data,
-                      customerId: selectedPet.customerId // Ensure we keep the original customerId
-                    }
-                  });
-                  console.log('[PET-UPDATE] Update successful:', result);
-                  setShowEditModal(false);
-                  toast({
-                    title: "Success",
-                    description: "Pet updated successfully",
-                  });
-                  return true;
-                } catch (error) {
-                  console.error('[PET-UPDATE] Update failed:', error);
-                  toast({
-                    variant: "destructive",
-                    title: "Error",
-                    description: error instanceof Error ? error.message : "Failed to update pet"
-                  });
-                  throw error;
-                }
+                const optimisticPet = {
+                  ...selectedPet,
+                  ...data,
+                  updatedAt: new Date().toISOString()
+                };
+
+                const result = await updatePet({
+                  petId: selectedPet.id,
+                  updateData: {
+                    ...data,
+                    customerId: selectedPet.customerId,
+                    owner: selectedPet.owner
+                  }
+                });
+
+                setShowEditModal(false);
+                toast({
+                  title: "Success",
+                  description: "Pet updated successfully",
+                });
+                return true;
               } catch (error) {
                 console.error('Error updating pet:', error);
                 toast({
@@ -324,7 +320,7 @@ export default function CustomerPetsPage() {
                   title: "Error",
                   description: error instanceof Error ? error.message : "Failed to update pet"
                 });
-                throw error;
+                return false;
               }
             }}
             onCancel={() => setShowEditModal(false)}
