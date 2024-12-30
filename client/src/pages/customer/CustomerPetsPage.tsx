@@ -292,10 +292,12 @@ export default function CustomerPetsPage() {
                 if (!selectedPet) {
                   throw new Error('No pet selected for update');
                 }
-                await updatePet({
+                console.log('[PET-UPDATE] Submitting update:', { petId: selectedPet.id, data });
+                const result = await updatePet({
                   petId: selectedPet.id,
                   updateData: data
                 });
+                console.log('[PET-UPDATE] Update result:', result);
                 setShowEditModal(false);
                 toast({
                   title: "Success",

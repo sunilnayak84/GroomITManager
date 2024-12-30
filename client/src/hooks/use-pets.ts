@@ -281,12 +281,29 @@ export function usePets() {
         }
 
         console.log('[USE-PETS] Current pet data:', petSnapshot.data());
-        console.log('[USE-PETS] Update data:', updateData);
         
-        const timestamp = serverTimestamp();
-        let imageUrl = updateData.image;
-        if (updateData.image instanceof File) {
-          const path = `pets/${updateData.customerId}/${Date.now()}_${updateData.image.name}`;
+        // Clean up update data
+        const cleanUpdateData = {
+          name: updateData.name,
+          type: updateData.type,
+          breed: updateData.breed,
+          age: updateData.age ? Number(updateData.age) : null,
+          gender: updateData.gender || null,
+          weight: updateData.weight ? Number(updateData.weight) : null,
+          weightUnit: updateData.weightUnit || 'kg',
+          notes: updateData.notes || null,
+          updatedAt: serverTimestamp()
+        };
+
+        console.log('[USE-PETS] Clean update data:', cleanUpdateData);
+        
+        await updateDoc(petRef, cleanUpdateData);
+        console.log('[USE-PETS] Update successful');
+        return { success: true };
+      } catch (error) {
+        console.error('[USE-PETS] Update failed:', error);
+        throw error;
+      }
           imageUrl = await uploadFile(updateData.image, path);
         }
 
