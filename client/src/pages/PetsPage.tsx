@@ -47,6 +47,14 @@ export default function PetsPage() {
   const [optimisticPets, setOptimisticPets] = useState<{ [key: string]: Pet }>({});
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
+  const [modalState, setModalState] = useState<{ type: 'edit' | 'add' | null; open: boolean; } | null>(null);
+
+  const closeModal = () => {
+    setModalState(null);
+    setSelectedPet(null);
+    setShowPetModal(false);
+    setShowEditModal(false);
+  }
 
   const data = useMemo(() => {
     if (!pets) return [];
@@ -167,7 +175,7 @@ export default function PetsPage() {
           size="lg"
           onClick={() => {
             setSelectedPet(null);
-            setShowPetModal(true);
+            setModalState({ type: 'add', open: true });
           }}
           className="h-12 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
         >
@@ -257,11 +265,8 @@ export default function PetsPage() {
                         pet={pet}
                         formatDate={formatDate}
                         onEdit={() => {
-                          setShowPetModal(false);
+                          setModalState({ type: 'edit', open: true });
                           setSelectedPet(pet);
-                          setTimeout(() => {
-                            setShowEditModal(true);
-                          }, 100);
                         }}
                         onDelete={() => {
                           setSelectedPet(pet);
@@ -274,7 +279,7 @@ export default function PetsPage() {
                     variant="outline"
                     onClick={() => {
                       setSelectedPet(pet);
-                      setShowEditModal(true);
+                      setModalState({ type: 'edit', open: true });
                     }}
                     className="hover:bg-blue-50 hover:text-blue-600"
                   >
@@ -307,12 +312,9 @@ export default function PetsPage() {
 
       {/* Add Pet Dialog */}
       <Dialog 
-        open={showPetModal && !selectedPet}
+        open={modalState?.type === 'add'}
         onOpenChange={(open) => {
-          setShowPetModal(open);
-          if (!open) {
-            setSelectedPet(null);
-          }
+          if (!open) closeModal();
         }}
       >
         <DialogContent className="sm:max-w-[600px]">
@@ -329,7 +331,7 @@ export default function PetsPage() {
                   title: "Success",
                   description: "Pet added successfully",
                 });
-                setShowPetModal(false);
+                closeModal();
                 return true;
               } catch (error) {
                 console.error('Error handling pet:', error);
@@ -341,7 +343,7 @@ export default function PetsPage() {
                 return false;
               }
             }}
-            onCancel={() => setShowPetModal(false)}
+            onCancel={() => closeModal()}
             customers={customers}
             customerId={customers?.[0]?.firebaseId ?? ''}
           />
@@ -351,12 +353,9 @@ export default function PetsPage() {
       {/* View/Edit Pet Dialog */}
       {selectedPet && (
         <Dialog 
-          open={showPetModal}
+          open={modalState?.type === 'view'}
           onOpenChange={(open) => {
-            setShowPetModal(open);
-            if (!open) {
-              setSelectedPet(null);
-            }
+            if (!open) closeModal();
           }}
         >
           <DialogContent className="sm:max-w-[425px]">
@@ -415,10 +414,7 @@ export default function PetsPage() {
                 </Button>
                 <Button
                   onClick={() => {
-                    setShowPetModal(false);
-                    setTimeout(() => {
-                      setShowEditModal(true);
-                    }, 0);
+                    setModalState({ type: 'edit', open: true });
                   }}
                 >
                   Edit
@@ -431,13 +427,9 @@ export default function PetsPage() {
 
       {/* Edit Pet Dialog */}
       <Dialog
-        open={showEditModal}
+        open={modalState?.type === 'edit'}
         onOpenChange={(open) => {
-          setShowEditModal(open);
-          if (!open) {
-            setSelectedPet(null);
-            setShowPetModal(false);
-          }
+          if (!open) closeModal();
         }}
       >
         <DialogContent className="max-h-[90vh] overflow-y-auto max-w-2xl">
@@ -455,9 +447,7 @@ export default function PetsPage() {
                     title: "Success",
                     description: "Pet updated successfully",
                   });
-                  setShowEditModal(false);
-                  setShowPetModal(false);
-                  setSelectedPet(null);
+                  closeModal();
                   return true;
                 }
                 return false;
@@ -471,10 +461,7 @@ export default function PetsPage() {
                 return false;
               }
             }}
-            onCancel={() => {
-              setShowEditModal(false);
-              setShowPetModal(true);
-            }}
+            onCancel={() => closeModal()}
             customers={customers}
             defaultValues={selectedPet ?? undefined}
             customerId={selectedPet?.customerId ?? ''}
@@ -499,8 +486,7 @@ export default function PetsPage() {
                   try {
                     await deletePet(selectedPet.id);
                     setShowDeleteConfirm(false);
-                    setShowPetModal(false);
-                    setSelectedPet(null);
+                    closeModal();
                     toast({
                       title: "Success",
                       description: "Pet deleted successfully"
