@@ -3,7 +3,7 @@ import { useState } from "react";
 import { usePets } from "@/hooks/use-pets";
 import { useUser } from "@/hooks/use-user";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { PetDetails } from "@/components/PetDetails";
 import { useToast } from "@/hooks/use-toast";
 import { PetForm } from "@/components/PetForm";
