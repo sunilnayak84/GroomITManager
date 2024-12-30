@@ -467,7 +467,14 @@ export function PetForm({
 
         <div className="sticky bottom-0 bg-white pt-4 pb-2 flex justify-end gap-4">
           {onCancel && (
-            <Button type="button" variant="outline" onClick={onCancel}>
+            <Button 
+              variant="outline" 
+              type="button" 
+              onClick={(e) => {
+                e.preventDefault();
+                onCancel?.();
+              }}
+            >
               Cancel
             </Button>
           )}

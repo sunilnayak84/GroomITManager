@@ -407,7 +407,8 @@ export default function PetsPage() {
         open={showEditModal}
         onOpenChange={(open) => {
           setShowEditModal(open);
-          if (!open && selectedPet) {
+          if (!open) {
+            // Return to pet details modal
             setShowPetModal(true);
           }
         }}
