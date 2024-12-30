@@ -289,24 +289,41 @@ export default function CustomerPetsPage() {
           <PetForm
             handleSubmit={async (data) => {
               try {
-                if (selectedPet) {
-                  await updatePet({ petId: selectedPet.id, updateData: data });
-                  toast({
-                    title: "Success",
-                    description: "Pet updated successfully",
-                  });
-                  setShowEditModal(false);
-                  return true;
+                if (!selectedPet) {
+                  throw new Error('No pet selected for update');
                 }
-                return false;
+                
+                const result = await updatePet({ 
+                  petId: selectedPet.id, 
+                  updateData: {
+                    ...data,
+                    customerId: user.uid,
+                    owner: {
+                      id: user.uid,
+                      name: user.displayName || 'Unknown',
+                      email: user.email || ''
+                    }
+                  }
+                });
+
+                if (!result) {
+                  throw new Error('Failed to update pet');
+                }
+
+                toast({
+                  title: "Success",
+                  description: "Pet updated successfully",
+                });
+                setShowEditModal(false);
+                return true;
               } catch (error) {
                 console.error('Error updating pet:', error);
                 toast({
                   variant: "destructive",
-                  title: "Error",
+                  title: "Error", 
                   description: error instanceof Error ? error.message : "Failed to update pet",
                 });
-                return false;
+                throw error;
               }
             }}
             onCancel={() => setShowEditModal(false)}
