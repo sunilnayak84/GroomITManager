@@ -255,7 +255,7 @@ export default function PetsPage() {
                       <PetDetails 
                         pet={pet}
                         formatDate={formatDate}
-                        onClick={() => {
+                        onEdit={() => {
                           setShowPetModal(false);
                           setSelectedPet(pet);
                           setTimeout(() => {
