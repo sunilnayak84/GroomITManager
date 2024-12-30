@@ -390,8 +390,10 @@ export default function PetsPage() {
                 </Button>
                 <Button
                   onClick={() => {
-                    setShowEditModal(true);
                     setShowPetModal(false);
+                    setTimeout(() => {
+                      setShowEditModal(true);
+                    }, 0);
                   }}
                 >
                   Edit
@@ -406,10 +408,9 @@ export default function PetsPage() {
       <Dialog
         open={showEditModal}
         onOpenChange={(open) => {
-          setShowEditModal(open);
           if (!open) {
+            setShowEditModal(false);
             setSelectedPet(null);
-            setShowPetModal(false); // Ensure pet modal is also closed
           }
         }}
       >
