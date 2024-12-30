@@ -324,7 +324,8 @@ export function useCustomers() {
         const petCounts = new Map<string, number>();
         snapshot.docs.forEach(doc => {
           const pet = doc.data();
-          if (pet.customerId) {
+          // Only count pets that are not deleted
+          if (pet.customerId && !pet.deleted) {
             const count = petCounts.get(pet.customerId) || 0;
             petCounts.set(pet.customerId, count + 1);
           }
