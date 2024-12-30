@@ -409,6 +409,7 @@ export default function PetsPage() {
           setShowEditModal(open);
           if (!open) {
             setSelectedPet(null);
+            setShowPetModal(false); // Ensure pet modal is also closed
           }
         }}
       >
