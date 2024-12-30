@@ -412,7 +412,7 @@ export default function PetsPage() {
           }
         }}
       >
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="max-h-[90vh] overflow-y-auto max-w-2xl">
           <DialogHeader>
             <DialogTitle>Edit Pet</DialogTitle>
             <DialogDescription>Update the pet information below.</DialogDescription>
