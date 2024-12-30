@@ -281,32 +281,13 @@ export function usePets() {
         }
 
         console.log('[USE-PETS] Current pet data:', petSnapshot.data());
-        
-        // Clean up update data
-        const cleanUpdateData = {
-          name: updateData.name,
-          type: updateData.type,
-          breed: updateData.breed,
-          age: updateData.age ? Number(updateData.age) : null,
-          gender: updateData.gender || null,
-          weight: updateData.weight ? Number(updateData.weight) : null,
-          weightUnit: updateData.weightUnit || 'kg',
-          notes: updateData.notes || null,
-          updatedAt: serverTimestamp()
-        };
 
-        console.log('[USE-PETS] Clean update data:', cleanUpdateData);
-        
-        await updateDoc(petRef, cleanUpdateData);
-        console.log('[USE-PETS] Update successful');
-        return { success: true };
-      } catch (error) {
-        console.error('[USE-PETS] Update failed:', error);
-        throw error;
-      }
+        let imageUrl = updateData.image;
+        if (updateData.image instanceof File) {
+          const path = `pets/${updateData.customerId}/${Date.now()}_${updateData.image.name}`;
           imageUrl = await uploadFile(updateData.image, path);
         }
-
+        
         const updates: Record<string, any> = {
           ...(updateData.name && { name: updateData.name }),
           ...(updateData.type && { type: updateData.type }),
@@ -318,14 +299,16 @@ export function usePets() {
           ...(('weight' in updateData) && { weight: toNumber(updateData.weight) }),
           ...(updateData.weightUnit && { weightUnit: updateData.weightUnit }),
           ...(('notes' in updateData) && { notes: updateData.notes }),
-          ...(imageUrl && { image: imageUrl })
+          ...(imageUrl && { image: imageUrl }),
+          updatedAt: serverTimestamp()
         };
-        updates.updatedAt = firestoreServerTimestamp();
 
+        console.log('[USE-PETS] Update data:', updates);
         await updateDoc(petRef, updates);
+        console.log('[USE-PETS] Update successful');
         return { success: true };
       } catch (error) {
-        console.error('UPDATE_PET: Error updating pet:', error);
+        console.error('[USE-PETS] Update failed:', error);
         throw error;
       }
     },
