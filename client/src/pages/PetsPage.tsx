@@ -435,7 +435,7 @@ export default function PetsPage() {
         onOpenChange={(open) => {
           setShowEditModal(open);
           if (!open) {
-            setShowPetModal(true);
+            setSelectedPet(null);
           }
         }}
       >
