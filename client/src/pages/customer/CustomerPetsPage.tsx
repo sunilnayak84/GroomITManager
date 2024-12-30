@@ -266,7 +266,7 @@ export default function CustomerPetsPage() {
 
       {/* Add/Edit Pet Dialog */}
       <Dialog open={showPetModal} onOpenChange={setShowPetModal}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[90vw] h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Add New Pet</DialogTitle>
             <DialogDescription>Fill in the pet details below.</DialogDescription>
@@ -282,7 +282,7 @@ export default function CustomerPetsPage() {
 
       {/* Edit Pet Dialog */}
       <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[90vw] h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Pet</DialogTitle>
             <DialogDescription>Update your pet's information below.</DialogDescription>
