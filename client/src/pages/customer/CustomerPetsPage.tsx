@@ -296,28 +296,28 @@ export default function CustomerPetsPage() {
                 }
                 console.log('[PET-UPDATE] Selected pet:', selectedPet);
                 
+                const updateData = {
+                  ...data,
+                  customerId: user.uid,
+                  owner: {
+                    id: user.uid,
+                    name: user.displayName || 'Unknown',
+                    email: user.email || ''
+                  }
+                };
+                
+                console.log('[PET-UPDATE] Sending update with data:', updateData);
                 const result = await updatePet({ 
                   petId: selectedPet.id, 
-                  updateData: {
-                    ...data,
-                    customerId: user.uid,
-                    owner: {
-                      id: user.uid,
-                      name: user.displayName || 'Unknown',
-                      email: user.email || ''
-                    }
-                  }
+                  updateData 
                 });
 
-                if (!result) {
-                  throw new Error('Failed to update pet');
-                }
-
+                console.log('[PET-UPDATE] Update result:', result);
+                setShowEditModal(false);
                 toast({
                   title: "Success",
                   description: "Pet updated successfully",
                 });
-                setShowEditModal(false);
                 return true;
               } catch (error) {
                 console.error('Error updating pet:', error);

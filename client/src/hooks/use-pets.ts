@@ -269,10 +269,21 @@ export function usePets() {
     mutationFn: async ({ petId, updateData }: { petId: string; updateData: Partial<PetInput> }) => {
       console.log('[USE-PETS] Starting pet update mutation:', { petId, updateData });
       try {
-        const petRef = doc(petsCollection, petId);
-        console.log('[USE-PETS] Got pet reference for ID:', petId);
-        const timestamp = serverTimestamp();
+        if (!petId) {
+          throw new Error('Pet ID is required for update');
+        }
 
+        const petRef = doc(petsCollection, petId);
+        const petSnapshot = await getDoc(petRef);
+        
+        if (!petSnapshot.exists()) {
+          throw new Error('Pet not found');
+        }
+
+        console.log('[USE-PETS] Current pet data:', petSnapshot.data());
+        console.log('[USE-PETS] Update data:', updateData);
+        
+        const timestamp = serverTimestamp();
         let imageUrl = updateData.image;
         if (updateData.image instanceof File) {
           const path = `pets/${updateData.customerId}/${Date.now()}_${updateData.image.name}`;
