@@ -66,7 +66,7 @@ export function usePets() {
       const batchSize = 50; // Increased to ensure we get all pets
       const q = query(
         petsCollection,
-        where('deleted', 'in', [false, null])
+        where('deleted', '==', false)
       );
       const querySnapshot = await getDocs(q);
       
@@ -315,17 +315,18 @@ export function usePets() {
       }
 
       const petData = petDoc.data() as FirestorePet;
-      const customerRef = doc(customersCollection, petData.customerId);
-
-      await runTransaction(db, async (transaction) => {
-        transaction.update(petRef, {
-          deleted: true,
-          deletedAt: serverTimestamp()
+      if (!petData.deleted) {
+        const customerRef = doc(customersCollection, petData.customerId);
+        await runTransaction(db, async (transaction) => {
+          transaction.update(petRef, {
+            deleted: true,
+            deletedAt: serverTimestamp()
+          });
+          transaction.update(customerRef, {
+            petCount: increment(-1)
+          });
         });
-        transaction.update(customerRef, {
-          petCount: increment(-1)
-        });
-      });
+      }
 
       return { success: true };
     },
