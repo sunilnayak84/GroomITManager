@@ -411,9 +411,9 @@ export default function PetsPage() {
       <Dialog
         open={showEditModal}
         onOpenChange={(open) => {
+          setShowEditModal(open);
           if (!open) {
-            setShowEditModal(false);
-            setSelectedPet(null);
+            setShowPetModal(true);
           }
         }}
       >
