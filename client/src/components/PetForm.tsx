@@ -470,8 +470,7 @@ export function PetForm({
             <Button 
               variant="outline" 
               type="button" 
-              onClick={(e) => {
-                e.preventDefault();
+              onClick={() => {
                 onCancel?.();
               }}
             >
