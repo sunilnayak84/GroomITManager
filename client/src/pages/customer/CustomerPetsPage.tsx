@@ -293,16 +293,32 @@ export default function CustomerPetsPage() {
                   throw new Error('No pet selected for update');
                 }
 
-                const updateData = {
-                  ...data,
+                console.log('Edit pet - Starting update with data:', data);
+
+                const updateData: Record<string, any> = {
+                  name: data.name,
+                  type: data.type,
+                  breed: data.breed,
+                  dateOfBirth: data.dateOfBirth,
+                  age: data.age,
+                  gender: data.gender,
+                  weight: data.weight,
+                  weightUnit: data.weightUnit || 'kg',
+                  notes: data.notes,
                   customerId: selectedPet.customerId,
                   owner: selectedPet.owner
                 };
 
                 if (data.image instanceof File) {
+                  console.log('Edit pet - Uploading new image');
                   const path = `pets/${selectedPet.customerId}/${Date.now()}_${data.image.name}`;
                   updateData.image = await uploadFile(data.image, path);
                 }
+
+                console.log('Edit pet - Sending update request with data:', {
+                  petId: selectedPet.id,
+                  updateData
+                });
 
                 await updatePet({
                   petId: selectedPet.id,
@@ -312,11 +328,12 @@ export default function CustomerPetsPage() {
                   }
                 });
 
-                queryClient.invalidateQueries(['pets']);
+                await queryClient.invalidateQueries(['pets']);
                 setShowEditModal(false);
                 toast({
                   title: "Success",
                   description: "Pet updated successfully",
+                  variant: "default"
                 });
                 return true;
               } catch (error) {

@@ -280,21 +280,24 @@ export function usePets() {
           throw new Error('Pet not found');
         }
 
-        console.log('[USE-PETS] Current pet data:', petSnapshot.data());
-        
+        const currentPet = petSnapshot.data();
+        console.log('[USE-PETS] Current pet data:', currentPet);
+
+        // Prepare updates, maintaining existing values if not provided
         const updates: Record<string, any> = {
-          name: updateData.name,
-          type: updateData.type,
-          breed: updateData.breed,
-          customerId: updateData.customerId,
-          dateOfBirth: updateData.dateOfBirth,
-          age: toNumber(updateData.age),
-          gender: updateData.gender,
-          weight: toNumber(updateData.weight),
-          weightUnit: updateData.weightUnit,
-          notes: updateData.notes,
-          image: updateData.image,
-          updatedAt: serverTimestamp()
+          name: updateData.name || currentPet.name,
+          type: updateData.type || currentPet.type,
+          breed: updateData.breed || currentPet.breed,
+          customerId: updateData.customerId || currentPet.customerId,
+          dateOfBirth: updateData.dateOfBirth || currentPet.dateOfBirth,
+          age: toNumber(updateData.age) ?? currentPet.age,
+          gender: updateData.gender || currentPet.gender,
+          weight: toNumber(updateData.weight) ?? currentPet.weight,
+          weightUnit: updateData.weightUnit || currentPet.weightUnit || 'kg',
+          notes: updateData.notes ?? currentPet.notes,
+          image: updateData.image || currentPet.image,
+          updatedAt: serverTimestamp(),
+          owner: updateData.owner || currentPet.owner
         };
 
         console.log('[USE-PETS] Update data:', updates);
