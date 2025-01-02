@@ -289,52 +289,52 @@ export default function CustomerPetsPage() {
             <DialogDescription>Update your pet's information below.</DialogDescription>
           </DialogHeader>
           <PetForm
-            handleSubmit={async (data) => {
+            handleSubmit={async (formData) => {
               try {
                 if (!selectedPet) {
                   throw new Error('No pet selected for update');
                 }
 
-                console.log('Edit pet - Starting update with data:', data);
+                console.log('Edit pet - Starting update with data:', formData);
 
-                // Prepare update data while maintaining existing values
-                const updateData: Record<string, any> = {
-                  name: data.name || selectedPet.name,
-                  type: data.type || selectedPet.type,
-                  breed: data.breed || selectedPet.breed,
-                  dateOfBirth: data.dateOfBirth || selectedPet.dateOfBirth,
-                  age: data.age || selectedPet.age,
-                  gender: data.gender || selectedPet.gender,
-                  weight: data.weight || selectedPet.weight,
-                  weightUnit: data.weightUnit || selectedPet.weightUnit || 'kg',
-                  notes: data.notes ?? selectedPet.notes,
-                  customerId: selectedPet.customerId,
-                  owner: selectedPet.owner,
-                  image: selectedPet.image // Maintain existing image by default
+                const optimisticPet = {
+                  ...selectedPet,
+                  name: formData.name || selectedPet.name,
+                  type: formData.type || selectedPet.type,
+                  breed: formData.breed || selectedPet.breed,
+                  dateOfBirth: formData.dateOfBirth || selectedPet.dateOfBirth,
+                  age: formData.age || selectedPet.age,
+                  gender: formData.gender || selectedPet.gender,
+                  weight: formData.weight || selectedPet.weight,
+                  weightUnit: formData.weightUnit || selectedPet.weightUnit || 'kg',
+                  notes: formData.notes ?? selectedPet.notes,
+                  image: typeof formData.image === 'string' ? formData.image : selectedPet.image,
+                  updatedAt: new Date().toISOString(),
                 };
 
-                if (data.image instanceof File) {
+                let imageUrl = selectedPet.image;
+                if (formData.image instanceof File) {
                   console.log('Edit pet - Uploading new image');
-                  const path = `pets/${selectedPet.customerId}/${Date.now()}_${data.image.name}`;
-                  updateData.image = await uploadFile(data.image, path);
+                  const path = `pets/${selectedPet.customerId}/${Date.now()}_${formData.image.name}`;
+                  imageUrl = await uploadFile(formData.image, path);
                 }
 
-                console.log('Edit pet - Sending update request with data:', {
-                  petId: selectedPet.id,
+                const updateData = {
+                  ...formData,
+                  image: imageUrl,
+                  customerId: selectedPet.customerId
+                };
+
+                await updatePet({ 
+                  petId: selectedPet.id, 
                   updateData
                 });
 
-                await updatePet({
-                  petId: selectedPet.id,
-                  updateData
-                });
-
-                queryClient.invalidateQueries(['pets']);
+                await queryClient.invalidateQueries(['pets']);
                 setShowEditModal(false);
                 toast({
                   title: "Success",
-                  description: "Pet updated successfully",
-                  variant: "default"
+                  description: "Pet updated successfully"
                 });
                 return true;
               } catch (error) {
