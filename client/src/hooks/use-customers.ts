@@ -320,25 +320,27 @@ export function useCustomers() {
         // Get current customers from cache
         const currentCustomers = queryClient.getQueryData<CustomerType[]>(["customers"]) || [];
         
-        // Count pets for each customer
+        // Count pets for each customer, including initial load
         const petCounts = new Map<string, number>();
         snapshot.docs.forEach(doc => {
           const pet = doc.data();
-          // Only count pets that are not deleted
           if (pet.customerId && !pet.deleted) {
             const count = petCounts.get(pet.customerId) || 0;
             petCounts.set(pet.customerId, count + 1);
           }
         });
 
-        // Update customers in cache only, don't trigger Firestore updates
+        // Update customers with accurate pet counts
         const updatedCustomers = currentCustomers.map(customer => ({
           ...customer,
           petCount: petCounts.get(customer.id) || 0
         }));
 
-        // Update cache without triggering a refetch
+        // Force cache update and trigger UI refresh
         queryClient.setQueryData(["customers"], updatedCustomers);
+        
+        // Invalidate the customers query to ensure data consistency
+        await queryClient.invalidateQueries({ queryKey: ["customers"] });
       } catch (error) {
         console.error('Error updating pet counts in cache:', error);
       }
