@@ -292,9 +292,6 @@ export default function CustomerPetsPage() {
                 if (!selectedPet) {
                   throw new Error('No pet selected for update');
                 }
-                if (!selectedPet) {
-                  throw new Error('No pet selected for update');
-                }
 
                 const updateData = {
                   ...data,
@@ -309,9 +306,13 @@ export default function CustomerPetsPage() {
 
                 await updatePet({
                   petId: selectedPet.id,
-                  updateData
+                  updateData: {
+                    ...updateData,
+                    updatedAt: new Date().toISOString()
+                  }
                 });
 
+                queryClient.invalidateQueries(['pets']);
                 setShowEditModal(false);
                 toast({
                   title: "Success",
