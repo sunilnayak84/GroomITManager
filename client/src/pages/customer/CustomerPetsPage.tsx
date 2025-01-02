@@ -292,19 +292,24 @@ export default function CustomerPetsPage() {
                 if (!selectedPet) {
                   throw new Error('No pet selected for update');
                 }
-                const optimisticPet = {
-                  ...selectedPet,
+                if (!selectedPet) {
+                  throw new Error('No pet selected for update');
+                }
+
+                const updateData = {
                   ...data,
-                  updatedAt: new Date().toISOString()
+                  customerId: selectedPet.customerId,
+                  owner: selectedPet.owner
                 };
 
-                const result = await updatePet({
+                if (data.image instanceof File) {
+                  const path = `pets/${selectedPet.customerId}/${Date.now()}_${data.image.name}`;
+                  updateData.image = await uploadFile(data.image, path);
+                }
+
+                await updatePet({
                   petId: selectedPet.id,
-                  updateData: {
-                    ...data,
-                    customerId: selectedPet.customerId,
-                    owner: selectedPet.owner
-                  }
+                  updateData
                 });
 
                 setShowEditModal(false);
