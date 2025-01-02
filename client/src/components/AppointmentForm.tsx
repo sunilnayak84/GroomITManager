@@ -495,7 +495,7 @@ export default function AppointmentForm({ setOpen, initialDate, initialTime }: A
   };
 
   return (
-    <DialogContent className="sm:max-w-[600px]">
+    <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
       <DialogHeader>
         <DialogTitle>Schedule Appointment</DialogTitle>
         <DialogDescription>
