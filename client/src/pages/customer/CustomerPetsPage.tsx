@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { usePets } from "@/hooks/use-pets";
+import { useQueryClient } from "@tanstack/react-query";
 import { useUser } from "@/hooks/use-user";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -14,6 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Pet } from "@/lib/types";
 
 export default function CustomerPetsPage() {
+  const queryClient = useQueryClient();
   const [showPetModal, setShowPetModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -295,18 +297,20 @@ export default function CustomerPetsPage() {
 
                 console.log('Edit pet - Starting update with data:', data);
 
+                // Prepare update data while maintaining existing values
                 const updateData: Record<string, any> = {
-                  name: data.name,
-                  type: data.type,
-                  breed: data.breed,
-                  dateOfBirth: data.dateOfBirth,
-                  age: data.age,
-                  gender: data.gender,
-                  weight: data.weight,
-                  weightUnit: data.weightUnit || 'kg',
-                  notes: data.notes,
+                  name: data.name || selectedPet.name,
+                  type: data.type || selectedPet.type,
+                  breed: data.breed || selectedPet.breed,
+                  dateOfBirth: data.dateOfBirth || selectedPet.dateOfBirth,
+                  age: data.age || selectedPet.age,
+                  gender: data.gender || selectedPet.gender,
+                  weight: data.weight || selectedPet.weight,
+                  weightUnit: data.weightUnit || selectedPet.weightUnit || 'kg',
+                  notes: data.notes ?? selectedPet.notes,
                   customerId: selectedPet.customerId,
-                  owner: selectedPet.owner
+                  owner: selectedPet.owner,
+                  image: selectedPet.image // Maintain existing image by default
                 };
 
                 if (data.image instanceof File) {
@@ -322,13 +326,10 @@ export default function CustomerPetsPage() {
 
                 await updatePet({
                   petId: selectedPet.id,
-                  updateData: {
-                    ...updateData,
-                    updatedAt: new Date().toISOString()
-                  }
+                  updateData
                 });
 
-                await queryClient.invalidateQueries(['pets']);
+                queryClient.invalidateQueries(['pets']);
                 setShowEditModal(false);
                 toast({
                   title: "Success",
