@@ -143,7 +143,8 @@ const AppointmentDetails = ({
       toast({
         title: "Success",
         description: `Appointment status updated to ${data.status}`,
-        variant: "default"
+        variant: "default",
+        duration: 3000
       });
     } catch (error) {
       // Invalidate the query to refetch correct data on error

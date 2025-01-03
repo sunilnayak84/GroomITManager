@@ -1,10 +1,5 @@
-"use client"
 
-import {
-  Toast,
-  ToastProvider,
-  ToastViewport,
-} from "@/components/ui/toast"
+import { Toast, ToastProvider, ToastViewport } from "@/components/ui/toast"
 import { useToast } from "@/hooks/use-toast"
 
 export function Toaster() {
@@ -12,12 +7,13 @@ export function Toaster() {
 
   return (
     <ToastProvider>
-      {toasts.map(({ id, title, description, ...props }) => (
+      {toasts.map(({ id, title, description, action, ...props }) => (
         <Toast key={id} {...props}>
           <div className="grid gap-1">
-            <div className="text-sm font-semibold">{title || 'Notification'}</div>
-            <div className="text-sm opacity-90">{description || 'Action completed'}</div>
+            {title && <div className="text-sm font-semibold">{title}</div>}
+            {description && <div className="text-sm opacity-90">{description}</div>}
           </div>
+          {action}
         </Toast>
       ))}
       <ToastViewport />

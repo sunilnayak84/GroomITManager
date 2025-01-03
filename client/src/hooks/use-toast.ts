@@ -1,6 +1,6 @@
 
-import * as React from "react"
 import { type ToastActionElement, type ToastProps } from "@/components/ui/toast"
+import { useState, useEffect } from "react"
 
 const TOAST_LIMIT = 1
 const TOAST_REMOVE_DELAY = 5000
@@ -12,6 +12,16 @@ type ToasterToast = ToastProps & {
   action?: ToastActionElement
 }
 
+type State = {
+  toasts: ToasterToast[]
+}
+
+let count = 0
+function genId() {
+  count = (count + 1) % Number.MAX_VALUE
+  return count.toString()
+}
+
 const actionTypes = {
   ADD_TOAST: "ADD_TOAST",
   UPDATE_TOAST: "UPDATE_TOAST",
@@ -19,65 +29,18 @@ const actionTypes = {
   REMOVE_TOAST: "REMOVE_TOAST",
 } as const
 
-let count = 0
-
-function genId() {
-  count = (count + 1) % Number.MAX_VALUE
-  return count.toString()
-}
-
-type ActionType = typeof actionTypes
-
-type Action =
-  | {
-      type: ActionType["ADD_TOAST"]
-      toast: ToasterToast
-    }
-  | {
-      type: ActionType["UPDATE_TOAST"]
-      toast: Partial<ToasterToast>
-    }
-  | {
-      type: ActionType["DISMISS_TOAST"]
-      toastId?: ToasterToast["id"]
-    }
-  | {
-      type: ActionType["REMOVE_TOAST"]
-      toastId?: ToasterToast["id"]
-    }
-
-interface State {
-  toasts: ToasterToast[]
-}
-
+let memoryState: State = { toasts: [] }
+const listeners: Array<(state: State) => void> = []
 const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>()
 
-const addToRemoveQueue = (toastId: string) => {
-  if (toastTimeouts.has(toastId)) {
-    return
-  }
-
-  const timeout = setTimeout(() => {
-    toastTimeouts.delete(toastId)
-    dispatch({
-      type: "REMOVE_TOAST",
-      toastId: toastId,
-    })
-  }, TOAST_REMOVE_DELAY)
-
-  toastTimeouts.set(toastId, timeout)
-}
-
-let memoryState: State = { toasts: [] }
-
-function dispatch(action: Action) {
+function dispatch(action: any) {
   memoryState = reducer(memoryState, action)
   listeners.forEach((listener) => {
     listener(memoryState)
   })
 }
 
-const reducer = (state: State, action: Action): State => {
+function reducer(state: State, action: any): State {
   switch (action.type) {
     case "ADD_TOAST":
       return {
@@ -127,14 +90,28 @@ const reducer = (state: State, action: Action): State => {
         ...state,
         toasts: state.toasts.filter((t) => t.id !== action.toastId),
       }
+    default:
+      return state
   }
 }
 
-const listeners: Array<(state: State) => void> = []
+function addToRemoveQueue(toastId: string) {
+  if (toastTimeouts.has(toastId)) {
+    return
+  }
 
-type Toast = Omit<ToasterToast, "id">
+  const timeout = setTimeout(() => {
+    toastTimeouts.delete(toastId)
+    dispatch({
+      type: "REMOVE_TOAST",
+      toastId: toastId,
+    })
+  }, TOAST_REMOVE_DELAY)
 
-function toast(props: Toast) {
+  toastTimeouts.set(toastId, timeout)
+}
+
+function toast(props: Omit<ToasterToast, "id">) {
   const id = genId()
 
   const update = (props: ToasterToast) =>
@@ -164,9 +141,9 @@ function toast(props: Toast) {
 }
 
 export function useToast() {
-  const [state, setState] = React.useState<State>(memoryState)
+  const [state, setState] = useState<State>(memoryState)
 
-  React.useEffect(() => {
+  useEffect(() => {
     listeners.push(setState)
     return () => {
       const index = listeners.indexOf(setState)
