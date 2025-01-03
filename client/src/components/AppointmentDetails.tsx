@@ -102,7 +102,7 @@ const AppointmentDetails = ({
     try {
       if (appointment.status === 'completed' || appointment.status === 'cancelled') {
         toast({
-          variant: "destructive",
+          type: "error",
           title: "Cannot Modify Appointment",
           description: "Completed or cancelled appointments cannot be modified"
         });
@@ -141,8 +141,8 @@ const AppointmentDetails = ({
       onOpenChange(false);
       
       toast({
-        title: "Success",
-        description: "Appointment status updated successfully",
+        type: 'success',
+        description: "Appointment status updated successfully"
       });
       
       onOpenChange(false);
@@ -151,7 +151,7 @@ const AppointmentDetails = ({
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
       
       toast({
-        variant: "destructive",
+        type: "error",
         title: "Error",
         description: error instanceof Error 
           ? `Failed to update appointment: ${error.message}` 
@@ -169,13 +169,13 @@ const AppointmentDetails = ({
     try {
         await updateAppointment({id: appointment.id, status: newStatus})
         toast({
-          title: "Success",
+          type: 'success',
           description: `Appointment status updated to ${newStatus}`,
         });
         onOpenChange(false)
     } catch (error) {
         toast({
-          variant: "destructive",
+          type: "error",
           title: "Error",
           description: `Failed to update status: ${error}`,
         });
