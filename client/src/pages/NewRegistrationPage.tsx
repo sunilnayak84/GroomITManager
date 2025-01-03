@@ -5,7 +5,7 @@ import * as z from "zod";
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import { PawPrint } from "lucide-react";
-import { toast } from "@/lib/toast";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -79,10 +79,7 @@ export default function NewRegistrationPage() {
         throw new Error(await response.text());
       }
 
-      toast({
-        title: "Success",
-        description: "Account created successfully",
-      });
+      console.log("Account created successfully");
 
       // Force token refresh to get new role claims
       await userCredential.user.getIdTokenResult(true);
@@ -92,11 +89,7 @@ export default function NewRegistrationPage() {
       console.error('Registration error:', error);
       
       const errorMessage = error instanceof Error ? error.message : "Failed to register";
-      toast({
-        variant: "destructive",
-        title: "Registration Error",
-        description: errorMessage,
-      });
+      console.error("Registration Error:", errorMessage);
     } finally {
       setIsSubmitting(false);
     }
