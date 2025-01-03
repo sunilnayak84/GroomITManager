@@ -478,6 +478,11 @@ export function useAppointments() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
+      toast({
+        title: "Success",
+        description: "Appointment status updated successfully",
+        duration: 3000
+      });
     }
   });
 
