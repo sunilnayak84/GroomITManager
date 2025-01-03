@@ -2,8 +2,8 @@ import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tansta
 import { getAuth } from 'firebase/auth';
 import { getDatabase, ref, get, set, update } from 'firebase/database';
 import { getApp } from 'firebase/app';
-
 import type { UserRole } from './use-user';
+import { useToast } from "@/hooks/use-toast";
 
 interface Role {
   name: string;
@@ -36,7 +36,7 @@ export async function updateUserStatus(userId: string, disabled: boolean) {
   if (!auth.currentUser) {
     throw new Error('User not authenticated');
   }
-  
+
   const token = await auth.currentUser.getIdToken(true);
   const port = import.meta.env.VITE_SERVER_PORT || '3000';
   const response = await fetch(`${window.location.protocol}//${window.location.hostname}:${port}/api/users/${userId}/disable`, {
@@ -48,18 +48,18 @@ export async function updateUserStatus(userId: string, disabled: boolean) {
     body: JSON.stringify({ disabled }),
     credentials: 'include'
   });
-  
+
   if (!response.ok) {
     const error = await response.json().catch(() => ({ message: 'Failed to update user status' }));
     throw new Error(error.message || 'Failed to update user status');
   }
-  
+
   // Force refresh of user data
   await Promise.all([
     queryClient.invalidateQueries({ queryKey: ['firebase-users'] }),
     queryClient.refetchQueries({ queryKey: ['firebase-users'] })
   ]);
-  
+
   return response.json();
 }
 
@@ -87,11 +87,11 @@ async function fetchRoles(): Promise<Role[]> {
       console.warn('[ROLES] User not authenticated when fetching roles');
       return [];
     }
-    
+
     // Get fresh ID token
     const token = await auth.currentUser.getIdToken(true);
     console.log('[ROLES] Got fresh ID token');
-    
+
     // Fetch roles from backend API
     const port = import.meta.env.VITE_SERVER_PORT || '3000';
     const response = await fetch(`${window.location.protocol}//${window.location.hostname}:${port}/api/roles`, {
@@ -107,21 +107,21 @@ async function fetchRoles(): Promise<Role[]> {
       const newToken = await auth.currentUser.getIdToken(true);
       return await fetchRoles(); // Retry with new token
     }
-    
+
     if (!response.ok) {
       throw new Error(`Failed to fetch roles: ${response.statusText}`);
     }
-    
+
     const fetchedRoles = await response.json() as Role[];
     console.log('[ROLES] Fetched roles:', fetchedRoles);
-    
+
     // Sort roles: system roles first, then alphabetically
     return fetchedRoles.sort((roleA: Role, roleB: Role) => {
       if (roleA.isSystem && !roleB.isSystem) return -1;
       if (!roleB.isSystem && roleA.isSystem) return 1;
       return roleA.name.localeCompare(roleB.name);
     });
-    
+
   } catch (error) {
     console.error('[ROLES] Error in fetchRoles:', error);
     // Return empty array instead of throwing to prevent UI from breaking
@@ -135,17 +135,17 @@ async function fetchFirebaseUsers(params: { pageParam?: string | null }): Promis
     console.warn('[FIREBASE-USERS] User not authenticated');
     return { users: [], pageToken: null };
   }
-  
+
   try {
     const token = await auth.currentUser.getIdToken(true);
-    
+
     const searchParams = new URLSearchParams();
     if (params.pageParam) {
       searchParams.append('pageToken', params.pageParam);
     }
-    
+
     console.log('[FIREBASE-USERS] Fetching users...');
-    
+
     const makeRequest = async (authToken: string) => {
       // Updated URL to use the correct port
       const port = import.meta.env.VITE_SERVER_PORT || '3000';
@@ -157,18 +157,18 @@ async function fetchFirebaseUsers(params: { pageParam?: string | null }): Promis
         },
         credentials: 'include'
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error('[FIREBASE-USERS] Error response:', errorText);
         throw new Error(`Failed to fetch users: ${errorText}`);
       }
-      
+
       const data = await response.json();
       console.log('[FIREBASE-USERS] Successfully fetched users:', data);
       return data;
     };
-    
+
     try {
       return await makeRequest(token);
     } catch (error) {
@@ -282,6 +282,7 @@ async function updateRole(role: Role): Promise<Role> {
 
 export function useRoles() {
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const { data: roles, isLoading: isLoadingRoles } = useQuery({
     queryKey: ['roles'],
@@ -337,15 +338,21 @@ export function useRoles() {
         queryClient.refetchQueries({ queryKey: ['roles'] });
         queryClient.refetchQueries({ queryKey: ['firebase-users'] });
       });
-      
+
       toast({
         title: 'Success',
         description: 'Role updated successfully',
+        variant: "success"
       });
     },
     onError: (error: Error) => {
       console.error('[ROLES] Role update error:', error);
       console.error('[ROLES] Error:', error.message);
+      toast({
+        title: 'Error',
+        description: `Failed to update role: ${error.message}`,
+        variant: "destructive"
+      });
     },
   });
 
@@ -363,7 +370,7 @@ export function useRoles() {
         if (!oldData) return [data];
         return [...oldData, data];
       });
-      
+
       // Then invalidate and refetch to ensure consistency
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ['roles'] }),

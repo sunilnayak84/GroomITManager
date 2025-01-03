@@ -31,7 +31,7 @@ import type { AppointmentWithRelations } from "@/lib/schema";
 import { useAppointments } from "@/hooks/use-appointments";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { Pencil } from "lucide-react"; // Assuming this icon is used
+import { Pencil } from "lucide-react";
 
 // Placeholder for ProtectedElement.  Replace with your actual implementation.
 const ProtectedElement = ({ children, requiredPermissions }: { children: any; requiredPermissions: string }) => {
@@ -45,7 +45,7 @@ interface AppointmentDetailsProps {
   appointment: AppointmentWithRelations;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onEdit: () => void; // Added onEdit prop
+  onEdit: () => void;
 }
 
 const updateAppointmentSchema = z.object({
@@ -60,13 +60,13 @@ const AppointmentDetails = ({
   appointment,
   open,
   onOpenChange,
-  onEdit, // Added onEdit prop
+  onEdit,
 }: AppointmentDetailsProps): React.ReactElement => {
   const { updateAppointment } = useAppointments();
   const { toast } = useToast();
   const [showCancellationForm, setShowCancellationForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [showCompletionForm, setShowCompletionForm] = useState(false); // Added state for completion form
+  const [showCompletionForm, setShowCompletionForm] = useState(false);
   const queryClient = useQueryClient();
 
   const form = useForm<UpdateAppointmentForm>({
@@ -87,14 +87,14 @@ const AppointmentDetails = ({
         notes: appointment.notes || undefined,
       });
     }
-  }, [open, appointment.id]); // Only reset when dialog opens or appointment ID changes
+  }, [open, appointment.id]);
 
   // Reset state when dialog closes
   React.useEffect(() => {
     if (!open) {
       setShowCancellationForm(false);
       setIsUpdating(false);
-      setShowCompletionForm(false); // Reset completion form state
+      setShowCompletionForm(false);
     }
   }, [open]);
 
@@ -102,17 +102,17 @@ const AppointmentDetails = ({
     try {
       if (appointment.status === 'completed' || appointment.status === 'cancelled') {
         toast({
-          type: "error",
           title: "Cannot Modify Appointment",
-          description: "Completed or cancelled appointments cannot be modified"
+          description: "Completed or cancelled appointments cannot be modified",
+          variant: "destructive"
         });
         return;
       }
       setIsUpdating(true);
-    
+
       // Store the previous data for rollback
       const previousData = queryClient.getQueryData<AppointmentWithRelations[]>(["appointments"]);
-        
+
       // Optimistically update the UI
       if (previousData) {
         queryClient.setQueryData<AppointmentWithRelations[]>(
@@ -129,7 +129,7 @@ const AppointmentDetails = ({
         id: appointment.id,
         status: data.status
       });
-      
+
       await updateAppointment({
         id: appointment.id,
         status: data.status,
@@ -139,23 +139,22 @@ const AppointmentDetails = ({
 
       // Only close the form after successful update
       onOpenChange(false);
-      
+
       toast({
         title: "Success",
         description: `Appointment status updated to ${data.status}`,
-        type: 'success',
-        duration: 3000
+        variant: "success",
       });
     } catch (error) {
       // Invalidate the query to refetch correct data on error
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
-      
+
       toast({
-        type: "error",
         title: "Error",
-        description: error instanceof Error 
-          ? `Failed to update appointment: ${error.message}` 
+        description: error instanceof Error
+          ? `Failed to update appointment: ${error.message}`
           : "Failed to update appointment status",
+        variant: "destructive"
       });
     } finally {
       setIsUpdating(false);
@@ -163,40 +162,38 @@ const AppointmentDetails = ({
   };
 
   const handleStatusChange = async (newStatus: string) => {
-    // This is a placeholder, actual implementation depends on your backend
-    // and how you handle updates.  You'll need to make an API call to update
-    // the appointment status.
     try {
-        await updateAppointment({id: appointment.id, status: newStatus})
-        toast({
-          type: 'success',
-          description: `Appointment status updated to ${newStatus}`,
-        });
-        onOpenChange(false)
+      await updateAppointment({id: appointment.id, status: newStatus})
+      toast({
+        title: "Success",
+        description: `Appointment status updated to ${newStatus}`,
+        variant: "success"
+      });
+      onOpenChange(false)
     } catch (error) {
-        toast({
-          type: "error",
-          title: "Error",
-          description: `Failed to update status: ${error}`,
-        });
+      toast({
+        title: "Error",
+        description: `Failed to update status: ${error}`,
+        variant: "destructive"
+      });
     }
   }
 
   return (
     <Dialog open={open} onOpenChange={(open) => {
-    if (!open) {
-      // Allow animation to complete before state change
-      setTimeout(() => {
-        form.reset();
-        setShowCancellationForm(false);
-        setIsUpdating(false);
-        setShowCompletionForm(false);
-        onOpenChange(false);
-      }, 150);
-    } else {
-      onOpenChange(true);
-    }
-  }}>
+      if (!open) {
+        // Allow animation to complete before state change
+        setTimeout(() => {
+          form.reset();
+          setShowCancellationForm(false);
+          setIsUpdating(false);
+          setShowCompletionForm(false);
+          onOpenChange(false);
+        }, 150);
+      } else {
+        onOpenChange(true);
+      }
+    }}>
       <DialogContent onEscapeKeyDown={() => {
         onOpenChange(false);
       }}>
@@ -352,9 +349,9 @@ const AppointmentDetails = ({
                 <FormItem>
                   <FormLabel>Notes</FormLabel>
                   <FormControl>
-                    <Input 
-                      {...field} 
-                      value={field.value || ''} 
+                    <Input
+                      {...field}
+                      value={field.value || ''}
                       disabled={appointment.status === 'completed' || appointment.status === 'cancelled'}
                     />
                   </FormControl>
@@ -383,8 +380,8 @@ const AppointmentDetails = ({
               >
                 Cancel
               </Button>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={isUpdating}
                 className="min-w-[140px]"
               >
@@ -397,7 +394,7 @@ const AppointmentDetails = ({
                   "Update Appointment"
                 )}
               </Button>
-              
+
             </div>
           </form>
         </Form>
