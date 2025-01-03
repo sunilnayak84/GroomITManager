@@ -7,7 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PawPrint } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
+
 import { auth } from "@/lib/firebase";
 import { createUserWithEmailAndPassword, sendPasswordResetEmail, updateProfile } from "firebase/auth";
 
@@ -62,18 +62,11 @@ export default function AuthPage() {
     
     try {
       await login(data);
-      toast({
-        title: "Success",
-        description: "Logged in successfully",
-      });
+      console.log("Logged in successfully");
       window.location.href = '/';
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to login";
-      toast({
-        variant: "destructive",
-        title: "Login Error",
-        description: errorMessage,
-      });
+      console.error("Login Error:", errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -110,21 +103,14 @@ export default function AuthPage() {
         throw new Error(await response.text());
       }
 
-      toast({
-        title: "Success",
-        description: "Account created successfully",
-      });
+      console.log("Account created successfully");
       
       await login({ email: data.email, password: data.password });
       window.location.reload();
     } catch (error) {
       console.error('Registration error:', error);
       const errorMessage = error instanceof Error ? error.message : "Failed to register";
-      toast({
-        variant: "destructive",
-        title: "Registration Error",
-        description: errorMessage,
-      });
+      console.error("Registration Error:", errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -136,17 +122,10 @@ export default function AuthPage() {
     
     try {
       await sendPasswordResetEmail(auth, resetEmail);
-      toast({
-        title: "Success",
-        description: "Password reset email sent",
-      });
+      console.log("Password reset email sent");
       setShowReset(false);
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to send reset email",
-      });
+      console.error("Failed to send reset email");
     } finally {
       setIsSubmitting(false);
     }
