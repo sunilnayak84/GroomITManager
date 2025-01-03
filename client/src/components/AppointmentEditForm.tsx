@@ -173,7 +173,9 @@ export default function AppointmentEditForm({ appointment, setOpen, open }: Appo
   };
 
   return (
-    <DialogContent>
+    <DialogContent onEscapeKeyDown={() => {
+        setOpen(false);
+      }}>
       <DialogHeader>
         <DialogTitle>Edit Appointment</DialogTitle>
         <DialogDescription>
