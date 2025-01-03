@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { toast } from "@/components/ui/use-toast";
+
 import {
   Select,
   SelectContent,
@@ -136,11 +136,7 @@ export function ConsumablesModal({
       onOpenChange(false);
     } catch (error) {
       console.error('Error saving consumables:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : 'Failed to save consumables',
-        variant: "destructive"
-      });
+      console.error('Failed to save consumables:', error);
     }
   };
 
