@@ -1,0 +1,41 @@
+Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:8 Checking Firebase environment variables...
+content.js:1 CISPL SignerDigital Loaded
+use-pets.ts:65 FETCH_PETS: Starting to fetch pets
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+firebase.ts:26 FIREBASE_INIT: Firebase initialized successfully
+use-pets.ts:74 FETCH_PETS: Raw pets data: [{…}]
+use-services.ts:92 FETCH_SERVICES: Completed fetching services {count: 3, services: Array(3)}
+use-pets.ts:125 FETCH_PETS: Completed fetching pets {totalPets: 1, pets: Array(1)}
+use-appointments.ts:330 FETCH_APPOINTMENTS: Processed 3 appointments. Success: 3, Errors: 0
+@radix-ui_react-dialog.js?v=0cf51c99:1875 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ @radix-ui_react-dialog.js?v=0cf51c99:1875
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+commitPassiveMountOnFiber @ chunk-DRXX46FI.js?v=0cf51c99:18124
+commitPassiveMountEffects_complete @ chunk-DRXX46FI.js?v=0cf51c99:18097
+commitPassiveMountEffects_begin @ chunk-DRXX46FI.js?v=0cf51c99:18087
+commitPassiveMountEffects @ chunk-DRXX46FI.js?v=0cf51c99:18077
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19458
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595Understand this warningAI
+@radix-ui_react-dialog.js?v=0cf51c99:1875 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ @radix-ui_react-dialog.js?v=0cf51c99:1875
+commitHookEffectListMount @ chunk-DRXX46FI.js?v=0cf51c99:16883
+invokePassiveEffectMountInDEV @ chunk-DRXX46FI.js?v=0cf51c99:18292
+invokeEffectsInDev @ chunk-DRXX46FI.js?v=0cf51c99:19669
+commitDoubleInvokeEffectsInDEV @ chunk-DRXX46FI.js?v=0cf51c99:19654
+flushPassiveEffectsImpl @ chunk-DRXX46FI.js?v=0cf51c99:19471
+flushPassiveEffects @ chunk-DRXX46FI.js?v=0cf51c99:19415
+commitRootImpl @ chunk-DRXX46FI.js?v=0cf51c99:19384
+commitRoot @ chunk-DRXX46FI.js?v=0cf51c99:19245
+performSyncWorkOnRoot @ chunk-DRXX46FI.js?v=0cf51c99:18863
+flushSyncCallbacks @ chunk-DRXX46FI.js?v=0cf51c99:9119
+(anonymous) @ chunk-DRXX46FI.js?v=0cf51c99:18595Understand this warningAI
+AppointmentDetails.tsx:128 Updating appointment status: {id: 'E5WtCCtYccgFLq5Edd8R', status: 'confirmed'}id: "E5WtCCtYccgFLq5Edd8R"status: "confirmed"[[Prototype]]: Object
+use-appointments.ts:429 Updating appointment: {id: 'E5WtCCtYccgFLq5Edd8R', status: 'confirmed', cancellationReason: undefined, notes: ''}cancellationReason: undefinedid: "E5WtCCtYccgFLq5Edd8R"notes: ""status: "confirmed"[[Prototype]]: Object
+use-appointments.ts:472 Appointment updated successfully
+use-appointments.ts:330 FETCH_APPOINTMENTS: Processed 3 appointments. Success: 3, Errors: 0
