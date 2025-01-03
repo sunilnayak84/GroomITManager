@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tansta
 import { getAuth } from 'firebase/auth';
 import { getDatabase, ref, get, set, update } from 'firebase/database';
 import { getApp } from 'firebase/app';
-import { toast } from '@/components/ui/use-toast';
+
 import type { UserRole } from './use-user';
 
 interface Role {
@@ -313,18 +313,10 @@ export function useRoles() {
       console.log('[ROLES] User role update successful:', variables);
       queryClient.invalidateQueries({ queryKey: ['firebase-users'] });
       queryClient.invalidateQueries({ queryKey: ['roles'] });
-      toast({
-        title: 'Success',
-        description: 'User role updated successfully. Please log out and log back in to see the changes.',
-      });
     },
     onError: (error: Error) => {
       console.error('[ROLES] User role update error:', error);
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      });
+      console.error('[ROLES] Error:', error.message);
     },
   });
 
@@ -353,11 +345,7 @@ export function useRoles() {
     },
     onError: (error: Error) => {
       console.error('[ROLES] Role update error:', error);
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      });
+      console.error('[ROLES] Error:', error.message);
     },
   });
 
@@ -384,19 +372,10 @@ export function useRoles() {
         queryClient.refetchQueries({ queryKey: ['roles'] });
         queryClient.refetchQueries({ queryKey: ['firebase-users'] });
       });
-      
-      toast({
-        title: 'Success',
-        description: 'Role created successfully',
-      });
     },
     onError: (error: Error) => {
       console.error('[ROLES] Role creation error:', error);
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      });
+      console.error('[ROLES] Error:', error.message);
     },
   });
 
