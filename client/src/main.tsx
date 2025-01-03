@@ -5,7 +5,6 @@ import "./index.css";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
-import { ToastProvider } from "@/components/ui/toast";
 import HomePage from "./pages/HomePage";
 import NewRegistrationPage from "./pages/NewRegistrationPage";
 import AuthPage from "./pages/AuthPage";
