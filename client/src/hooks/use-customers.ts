@@ -6,7 +6,7 @@ import { db, database } from "../lib/firebase";
 import { getDatabase } from "firebase/database"; // Added getDatabase import
 import { getAuth, createUserWithEmailAndPassword, sendPasswordResetEmail, fetchSignInMethodsForEmail, deleteUser } from "firebase/auth";
 import { ref, set, serverTimestamp } from "firebase/database";
-import { toast } from '@/components/ui/use-toast';
+
 import { 
   type Customer as CustomerType, 
   type InsertCustomer, 
@@ -152,23 +152,13 @@ export function useCustomers() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["customers"] });
-      toast({
-        title: "Success",
-        description: "Customer added successfully"
-      });
+      console.log("Success: Customer added successfully");
     },
     onError: (error) => {
       console.error('ADD_CUSTOMER: Mutation error', { 
         error,
         message: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : undefined
-      });
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error instanceof Error 
-          ? error.message 
-          : "Failed to add customer. Please try again."
       });
     }
   });
@@ -201,20 +191,10 @@ export function useCustomers() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["customers"] });
-      toast({
-        title: "Success",
-        description: "Customer updated successfully"
-      });
+      console.log("Success: Customer updated successfully");
     },
     onError: (error) => {
       console.error('UPDATE_CUSTOMER: Mutation error', { error });
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error instanceof Error 
-          ? error.message 
-          : "Failed to update customer"
-      });
     }
   });
 
@@ -252,10 +232,6 @@ export function useCustomers() {
     },
     onSuccess: (deletedId) => {
       console.log('Delete mutation succeeded for customer:', deletedId);
-      toast({
-        title: "Success",
-        description: "Customer deleted successfully"
-      });
     },
     onError: (error, _, context) => {
       console.error('Delete mutation error:', error);
@@ -263,13 +239,6 @@ export function useCustomers() {
       if (context?.previousCustomers) {
         queryClient.setQueryData(["customers"], context.previousCustomers);
       }
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error instanceof Error 
-          ? error.message 
-          : "Unable to delete customer"
-      });
     },
     onSettled: () => {
       // Always refetch after error or success to ensure consistency
