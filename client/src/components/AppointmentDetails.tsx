@@ -103,7 +103,7 @@ const AppointmentDetails = ({
       if (appointment.status === 'completed' || appointment.status === 'cancelled') {
         toast({
           variant: "destructive",
-          title: "Error",
+          title: "Cannot Modify Appointment",
           description: "Completed or cancelled appointments cannot be modified"
         });
         return;
