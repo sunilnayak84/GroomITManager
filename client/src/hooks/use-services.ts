@@ -1,7 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, query, limit } from 'firebase/firestore';
 import { db } from "../lib/firebase";
-import { toast } from "@/components/ui/use-toast";
 import {
   Service,
   InsertService,
@@ -160,11 +159,7 @@ export function useServices() {
       await setDoc(docRef, firestoreData);
       await queryClient.invalidateQueries({ queryKey: ['services'] });
       
-      toast({
-        title: "Success",
-        description: "Service added successfully",
-        variant: "default"
-      });
+      console.log("Service added successfully");
 
       return {
         service_id: docRef.id,
@@ -172,11 +167,7 @@ export function useServices() {
       };
     } catch (error) {
       console.error('ADD_SERVICE: Error adding service:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : 'Failed to add service',
-        variant: "destructive"
-      });
+      console.error("Failed to add service:", error instanceof Error ? error.message : 'Unknown error');
       throw error;
     }
   };
@@ -197,20 +188,12 @@ export function useServices() {
       await updateDoc(serviceRef, updatePayload);
       await queryClient.invalidateQueries({ queryKey: ['services'] });
       
-      toast({
-        title: "Success",
-        description: "Service updated successfully",
-        variant: "default"
-      });
+      console.log("Service updated successfully");
       
       return true;
     } catch (error) {
       console.error('UPDATE_SERVICE: Error updating service:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : 'Failed to update service',
-        variant: "destructive"
-      });
+      console.error("Failed to update service:", error instanceof Error ? error.message : 'Unknown error');
       throw error;
     }
   };
@@ -221,20 +204,12 @@ export function useServices() {
       await deleteDoc(serviceRef);
       await queryClient.invalidateQueries({ queryKey: ['services'] });
       
-      toast({
-        title: "Success",
-        description: "Service deleted successfully",
-        variant: "default"
-      });
+      console.log("Service deleted successfully");
       
       return true;
     } catch (error) {
       console.error('DELETE_SERVICE: Error deleting service:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : 'Failed to delete service',
-        variant: "destructive"
-      });
+      console.error("Failed to delete service:", error instanceof Error ? error.message : 'Unknown error');
       throw error;
     }
   };
