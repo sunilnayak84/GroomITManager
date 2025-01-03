@@ -104,8 +104,7 @@ const AppointmentDetails = ({
         toast({
           variant: "destructive",
           title: "Cannot Modify Appointment",
-          description: "Completed or cancelled appointments cannot be modified",
-          duration: 3000
+          description: "Completed or cancelled appointments cannot be modified"
         });
         return;
       }
@@ -144,7 +143,6 @@ const AppointmentDetails = ({
       toast({
         title: "Success",
         description: "Appointment status updated successfully",
-        duration: 3000
       });
       
       onOpenChange(false);
@@ -158,7 +156,6 @@ const AppointmentDetails = ({
         description: error instanceof Error 
           ? `Failed to update appointment: ${error.message}` 
           : "Failed to update appointment status",
-        duration: 3000
       });
     } finally {
       setIsUpdating(false);
@@ -174,7 +171,6 @@ const AppointmentDetails = ({
         toast({
           title: "Success",
           description: `Appointment status updated to ${newStatus}`,
-          duration: 3000
         });
         onOpenChange(false)
     } catch (error) {
@@ -182,7 +178,6 @@ const AppointmentDetails = ({
           variant: "destructive",
           title: "Error",
           description: `Failed to update status: ${error}`,
-          duration: 3000
         });
     }
   }
