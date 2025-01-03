@@ -142,7 +142,8 @@ const AppointmentDetails = ({
       
       toast({
         type: 'success',
-        description: "Appointment status updated successfully"
+        title: "Success",
+        description: `Appointment status updated to ${data.status}`
       });
       
       onOpenChange(false);
