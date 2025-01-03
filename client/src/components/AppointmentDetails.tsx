@@ -130,7 +130,7 @@ const AppointmentDetails = ({
         status: data.status
       });
       
-      const result = await updateAppointment({
+      await updateAppointment({
         id: appointment.id,
         status: data.status,
         cancellationReason: data.status === 'cancelled' ? data.cancellationReason : undefined,
@@ -141,9 +141,8 @@ const AppointmentDetails = ({
       onOpenChange(false);
       
       toast({
-        variant: "default",
-        title: "Status Updated",
-        description: `Appointment status has been updated to ${data.status}`
+        description: `Appointment status updated to ${data.status}`,
+        duration: 3000
       });
     } catch (error) {
       // Invalidate the query to refetch correct data on error
