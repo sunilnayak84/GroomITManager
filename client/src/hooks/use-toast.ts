@@ -86,8 +86,6 @@ function reducer(state: State, action: any): State {
   return state;
 }
 
-import { useState } from "react";
-
 function addToRemoveQueue(toastId: string) {
   if (toastTimeouts.has(toastId)) {
     return;
