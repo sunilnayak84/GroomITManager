@@ -104,11 +104,32 @@ const AppointmentDetails = ({
         toast({
           variant: "destructive",
           title: "Cannot Modify Appointment",
-          description: "Completed or cancelled appointments cannot be modified"
+          description: "Completed or cancelled appointments cannot be modified",
+          duration: 3000
         });
         return;
       }
       setIsUpdating(true);
+    
+      // Store the previous data for rollback
+      const previousData = queryClient.getQueryData<AppointmentWithRelations[]>(["appointments"]);
+        
+      // Optimistically update the UI
+      if (previousData) {
+        queryClient.setQueryData<AppointmentWithRelations[]>(
+          ["appointments"],
+          previousData.map((apt) =>
+            apt.id === appointment.id
+              ? { ...apt, status: data.status, notes: data.notes || null }
+              : apt
+          )
+        );
+      }
+
+      console.log('Updating appointment status:', {
+        id: appointment.id,
+        status: data.status
+      });
       
       await updateAppointment({
         id: appointment.id,
@@ -117,9 +138,13 @@ const AppointmentDetails = ({
         notes: data.notes || '',
       });
 
+      // Only close the form after successful update
+      onOpenChange(false);
+      
       toast({
-        title: "Success", 
-        description: "Appointment status updated successfully"
+        title: "Success",
+        description: "Appointment status updated successfully",
+        duration: 3000
       });
       
       onOpenChange(false);
