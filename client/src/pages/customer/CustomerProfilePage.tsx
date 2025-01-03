@@ -38,6 +38,17 @@ export default function CustomerProfilePage() {
         if (!querySnapshot.empty) {
           const customerDoc = querySnapshot.docs[0];
           const data = customerDoc.data();
+          
+          // Get active pets count
+          const petsRef = collection(db, "pets");
+          const petsQuery = query(
+            petsRef,
+            where("customerId", "==", customerDoc.id),
+            where("deleted", "==", false)
+          );
+          const petsSnapshot = await getDocs(petsQuery);
+          const activePetCount = petsSnapshot.size;
+
           setCustomerData({
             firstName: data.firstName || "",
             lastName: data.lastName || "",
@@ -45,7 +56,7 @@ export default function CustomerProfilePage() {
             phone: data.phone || "",
             address: data.address || "",
             gender: data.gender || "",
-            petCount: data.petCount || 0,
+            petCount: activePetCount,
             createdAt: data.createdAt?.toDate?.()?.toISOString() || "",
             updatedAt: data.updatedAt?.toDate?.()?.toISOString() || ""
           });
