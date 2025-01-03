@@ -226,7 +226,7 @@ export function useAppointments() {
               console.error('Error fetching groomer data:', error);
             }
 
-            // Get customer data
+            // Get customer data with accurate pet count
             let customerData = {
               firstName: 'Unknown',
               lastName: 'Customer',
@@ -241,6 +241,16 @@ export function useAppointments() {
               const customerDoc = await getDoc(doc(db, 'customers', petData.customerId));
               if (customerDoc.exists()) {
                 const rawCustomerData = customerDoc.data();
+                
+                // Get active (non-deleted) pets count
+                const petsQuery = query(
+                  collection(db, 'pets'),
+                  where('customerId', '==', petData.customerId),
+                  where('deleted', '==', false)
+                );
+                const petsSnapshot = await getDocs(petsQuery);
+                const activePetCount = petsSnapshot.size;
+
                 customerData = {
                   firstName: rawCustomerData.firstName || 'Unknown',
                   lastName: rawCustomerData.lastName || 'Customer',
@@ -248,7 +258,7 @@ export function useAppointments() {
                   phone: rawCustomerData.phone || null,
                   address: rawCustomerData.address || null,
                   gender: rawCustomerData.gender || null,
-                  petCount: rawCustomerData.petCount || 0
+                  petCount: activePetCount
                 };
               } else {
                 console.error('Customer not found for ID:', petData.customerId);
