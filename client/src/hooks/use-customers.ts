@@ -357,6 +357,19 @@ export function useCustomers() {
       try {
         console.log('FETCH_CUSTOMERS: Starting customer fetch');
         const querySnapshot = await getDocs(customersCollection);
+        
+        // First get pet counts
+        const petsSnapshot = await getDocs(collection(db, 'pets'));
+        const petCounts = new Map<string, number>();
+        
+        petsSnapshot.docs.forEach(doc => {
+          const pet = doc.data();
+          if (pet.customerId && !pet.deleted) {
+            const count = petCounts.get(pet.customerId) || 0;
+            petCounts.set(pet.customerId, count + 1);
+          }
+        });
+        
         const customers = querySnapshot.docs.map(doc => {
           const customerData = doc.data();
           const processTimestamp = (timestamp: FirestoreTimestamp | string | null | undefined): string | null => {
@@ -377,14 +390,15 @@ export function useCustomers() {
             phone: customerData.phone as string,
             address: customerData.address as string | null,
             gender: (customerData.gender as "male" | "female" | "other" | null) || null,
-            petCount: Number(customerData.petCount || 0),
+            petCount: petCounts.get(doc.id) || 0,
             createdAt: processTimestamp(customerData.createdAt as FirestoreTimestamp) || new Date().toISOString(),
             updatedAt: processTimestamp(customerData.updatedAt as FirestoreTimestamp)
           };
           console.log('FETCH_CUSTOMERS: Processed customer:', {
             id: customer.id,
             firebaseId: customer.firebaseId,
-            name: `${customer.firstName} ${customer.lastName}`
+            name: `${customer.firstName} ${customer.lastName}`,
+            petCount: customer.petCount
           });
           return customer;
         });
