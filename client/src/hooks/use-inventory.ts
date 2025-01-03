@@ -3,7 +3,6 @@ import {
   collection, doc, getDocs, updateDoc, setDoc, deleteDoc,
   query, where, orderBy, serverTimestamp, getDoc, Timestamp 
 } from 'firebase/firestore';
-import { toast } from "@/components/ui/use-toast";
 import { z } from "zod";
 import { db } from "../lib/firebase";
 
@@ -223,19 +222,11 @@ export function useInventory() {
       
       // Check if stock is low after adding
       if (firestoreData.quantity <= firestoreData.minimum_quantity) {
-        toast({
-          title: "Low Stock Alert",
-          description: `${firestoreData.name} is below minimum quantity`,
-          variant: "destructive"
-        });
+        console.warn(`Low Stock Alert: ${firestoreData.name} is below minimum quantity`);
       }
 
       await queryClient.invalidateQueries({ queryKey: ['inventory'] });
-      toast({
-        title: "Success",
-        description: "Item added to inventory",
-        variant: "default"
-      });
+      console.log("Success: Item added to inventory");
       
       return {
         item_id: docRef.id,
@@ -267,19 +258,10 @@ export function useInventory() {
 
       await updateDoc(itemRef, updatePayload);
       await queryClient.invalidateQueries({ queryKey: ['inventory'] });
-      toast({
-        title: "Success",
-        description: "Inventory item updated",
-        variant: "default"
-      });
+      console.log("Success: Inventory item updated");
       return true;
     } catch (error) {
       console.error('UPDATE_INVENTORY: Error updating item:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : 'Failed to update inventory item',
-        variant: "destructive"
-      });
       throw error;
     }
   };
@@ -290,19 +272,10 @@ export function useInventory() {
       const itemRef = doc(inventoryCollection, item_id);
       await deleteDoc(itemRef);
       await queryClient.invalidateQueries({ queryKey: ['inventory'] });
-      toast({
-        title: "Success",
-        description: "Inventory item deleted",
-        variant: "default"
-      });
+      console.log("Success: Inventory item deleted");
       return true;
     } catch (error) {
       console.error('DELETE_INVENTORY: Error deleting item:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : 'Failed to delete inventory item',
-        variant: "destructive"
-      });
       throw error;
     }
   };
@@ -382,18 +355,10 @@ export function useInventory() {
 
       // Check stock levels and show appropriate alerts
       if (newQuantity <= minimumQuantity) {
-        toast({
-          title: "Critical Stock Alert",
-          description: `${itemData.name} is below minimum quantity (${newQuantity} ${itemData.unit} remaining). Suggested reorder: ${reorderQuantity} ${itemData.unit}`,
-          variant: "destructive"
-        });
+        console.warn(`Critical Stock Alert: ${itemData.name} is below minimum quantity (${newQuantity} ${itemData.unit} remaining). Suggested reorder: ${reorderQuantity} ${itemData.unit}`);
       } else if (newQuantity <= reorderPoint) {
         const suggestedQuantity = reorderQuantity || Math.max(minimumQuantity * 2, currentQuantity);
-        toast({
-          title: "Low Stock Alert",
-          description: `${itemData.name} has reached reorder point (${newQuantity} ${itemData.unit} remaining). Suggested reorder: ${suggestedQuantity} ${itemData.unit}`,
-          variant: "default"
-        });
+        console.warn(`Low Stock Alert: ${itemData.name} has reached reorder point (${newQuantity} ${itemData.unit} remaining). Suggested reorder: ${suggestedQuantity} ${itemData.unit}`);
       }
 
       // If auto-reorder is enabled and stock is low, create a reorder suggestion
