@@ -168,10 +168,17 @@ const AppointmentDetails = ({
     // the appointment status.
     try {
         await updateAppointment({id: appointment.id, status: newStatus})
-        toast.success(`Appointment ${newStatus} successfully`);
+        toast({
+          title: "Success",
+          description: `Appointment status updated to ${newStatus}`,
+        });
         onOpenChange(false)
     } catch (error) {
-        toast.error(`Failed to update status: ${error}`);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: `Failed to update status: ${error}`,
+        });
     }
   }
 
