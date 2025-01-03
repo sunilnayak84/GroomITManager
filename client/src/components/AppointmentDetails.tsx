@@ -190,9 +190,7 @@ const AppointmentDetails = ({
       onOpenChange(true);
     }
   }}>
-      <DialogContent onInteractOutside={(e) => {
-        e.preventDefault(); // Prevent interaction during animation
-      }}>
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Appointment Details</DialogTitle>
         </DialogHeader>
