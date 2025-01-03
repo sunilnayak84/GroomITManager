@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { collection, doc, getDocs, updateDoc, addDoc, onSnapshot, query, where, orderBy, Timestamp } from 'firebase/firestore';
+import { collection, doc, getDocs, updateDoc, addDoc, onSnapshot, query, where, orderBy } from 'firebase/firestore';
 import { db } from "../lib/firebase";
-import { toast } from '@/components/ui/use-toast';
 import { useEffect } from "react";
 
 interface Notification {
@@ -54,11 +53,7 @@ export function useNotifications(userId: string) {
       }
     },
     onError: (error) => {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to create notification"
-      });
+      console.error("Failed to create notification:", error);
     }
   });
 
@@ -84,11 +79,7 @@ export function useNotifications(userId: string) {
       queryClient.invalidateQueries({ queryKey: ['notifications', userId] });
     },
     onError: (error) => {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to mark notification as read"
-      });
+      console.error("Failed to mark notification as read:", error);
     }
   });
 
