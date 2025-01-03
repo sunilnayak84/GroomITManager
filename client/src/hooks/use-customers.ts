@@ -320,15 +320,17 @@ export function useCustomers() {
         // Get current customers from cache
         const currentCustomers = queryClient.getQueryData<CustomerType[]>(["customers"]) || [];
         
-        // Count pets for each customer, including initial load
+        // Count pets for each customer, only including non-deleted pets
         const petCounts = new Map<string, number>();
         snapshot.docs.forEach(doc => {
           const pet = doc.data();
-          if (pet.customerId && !pet.deleted) {
+          if (pet.customerId && pet.deleted !== true) {
             const count = petCounts.get(pet.customerId) || 0;
             petCounts.set(pet.customerId, count + 1);
           }
         });
+
+        console.log('Pet counts calculated:', Object.fromEntries(petCounts));
 
         // Update customers with accurate pet counts
         const updatedCustomers = currentCustomers.map(customer => ({
@@ -336,11 +338,8 @@ export function useCustomers() {
           petCount: petCounts.get(customer.id) || 0
         }));
 
-        // Force cache update and trigger UI refresh
+        // Update cache without invalidating
         queryClient.setQueryData(["customers"], updatedCustomers);
-        
-        // Invalidate the customers query to ensure data consistency
-        await queryClient.invalidateQueries({ queryKey: ["customers"] });
       } catch (error) {
         console.error('Error updating pet counts in cache:', error);
       }
