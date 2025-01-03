@@ -190,7 +190,9 @@ const AppointmentDetails = ({
       onOpenChange(true);
     }
   }}>
-      <DialogContent>
+      <DialogContent onEscapeKeyDown={() => {
+        onOpenChange(false);
+      }}>
         <DialogHeader>
           <DialogTitle>Appointment Details</DialogTitle>
         </DialogHeader>
