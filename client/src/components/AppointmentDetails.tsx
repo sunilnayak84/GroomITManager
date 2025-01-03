@@ -143,7 +143,7 @@ const AppointmentDetails = ({
       toast({
         title: "Success",
         description: `Appointment status updated to ${data.status}`,
-        variant: "default",
+        type: 'success',
         duration: 3000
       });
     } catch (error) {

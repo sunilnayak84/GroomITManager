@@ -9,6 +9,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import Navigation from "./Navigation";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function Layout({ children }: PropsWithChildren) {
   const { user } = useUser();
@@ -37,6 +38,7 @@ export default function Layout({ children }: PropsWithChildren) {
               {children}
             </div>
           </main>
+          <Toaster/>
         </SidebarInset>
       </div>
     </SidebarProvider>
