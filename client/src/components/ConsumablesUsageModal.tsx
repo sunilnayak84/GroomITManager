@@ -21,8 +21,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useInventory } from "@/hooks/use-inventory";
 import { useUser } from "@/hooks/use-user";
-import { toast } from "@/components/ui/use-toast";
-
 const usageFormSchema = z.object({
   quantity_used: z.number().min(0, "Usage quantity must be positive"),
   service_id: z.string().optional(),
@@ -62,20 +60,12 @@ export function ConsumablesUsageModal({
 
   async function onSubmit(data: UsageFormData) {
     if (!user) {
-      toast({
-        title: "Error",
-        description: "You must be logged in to record usage",
-        variant: "destructive",
-      });
+      console.error("Error: You must be logged in to record usage");
       return;
     }
 
     if (data.quantity_used > currentQuantity) {
-      toast({
-        title: "Error",
-        description: `Cannot use more than available quantity (${currentQuantity} ${unit})`,
-        variant: "destructive",
-      });
+      console.error(`Error: Cannot use more than available quantity (${currentQuantity} ${unit})`);
       return;
     }
 
@@ -95,11 +85,7 @@ export function ConsumablesUsageModal({
       form.reset();
     } catch (error) {
       console.error('Error recording usage:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to record usage",
-        variant: "destructive",
-      });
+      console.error('Failed to record usage:', error instanceof Error ? error.message : error);
     }
   }
 
