@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getAuth } from 'firebase/auth';
-import { toast } from '@/components/ui/use-toast';
+// import { toast } from '@/components/ui/use-toast'; // Removed import
 import type { Staff, InsertStaff, UpdateStaff } from '@/lib/staff-types';
 
 export function useStaffManagement() {
@@ -69,10 +69,7 @@ export function useStaffManagement() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['staff'] });
-      toast({
-        title: "Success",
-        description: "Staff member created successfully"
-      });
+      // toast removed
     }
   });
 
@@ -106,10 +103,7 @@ export function useStaffManagement() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['staff'] });
-      toast({
-        title: "Success",
-        description: "Staff member updated successfully"
-      });
+      // toast removed
     }
   });
 
@@ -139,10 +133,7 @@ export function useStaffManagement() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['staff'] });
-      toast({
-        title: "Success",
-        description: "Staff member deactivated successfully"
-      });
+      // toast removed
     }
   });
 
