@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@firebase/auth": "^1.8.1",
+    "@firebase/firestore": "^4.7.5",
     "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/daygrid": "^6.1.15",
     "@fullcalendar/interaction": "^6.1.15",

@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, initializeLocalCache, persistentLocalCache } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 // Validate required environment variables
@@ -48,15 +48,12 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
-// Enable offline persistence
-getFirestore(app).enablePersistence()
-  .catch((err) => {
-    if (err.code === 'failed-precondition') {
-      console.warn('Persistence failed: multiple tabs open');
-    } else if (err.code === 'unimplemented') {
-      console.warn('Persistence not available in this browser');
-    }
-  });
+// Initialize Firestore with persistence enabled
+export const db = getFirestore(app, {
+  localCache: initializeLocalCache({
+    tabManager: persistentLocalCache()
+  })
+});
 
 // Set auth persistence to local
 auth.setPersistence('local')
