@@ -54,16 +54,20 @@ async function initializeNotifications() {
 
     // Set security rules for the collection
     // Set notifications collection rules
-    await db.collection('notifications').doc('_rules').set({
-      read: true,
-      write: true,
+    await db.collection('notifications').doc('_security_rules').set({
       rules: {
-        read: "(auth != null && (resource.data.userId == auth.uid || request.auth.token.role == 'admin'))",
-        write: "(auth != null && (resource.data.userId == auth.uid || request.auth.token.role == 'admin'))",
-        list: "(auth != null)",
-        create: "(auth != null)",
-        update: "(auth != null && (resource.data.userId == auth.uid || request.auth.token.role == 'admin'))",
-        delete: "(auth != null && (resource.data.userId == auth.uid || request.auth.token.role == 'admin'))"
+        read: true,
+        write: true,
+        list: true,
+        delete: true,
+        conditions: {
+          read: "auth != null",
+          write: "auth != null",
+          list: "auth != null",
+          create: "auth != null",
+          update: "auth != null",
+          delete: "auth != null"
+        }
       },
       updatedAt: admin.firestore.FieldValue.serverTimestamp()
     });
