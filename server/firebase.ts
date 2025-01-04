@@ -1,11 +1,13 @@
 import * as admin from 'firebase-admin';
-import { getAuth } from 'firebase-admin/auth';
+import { getAuth as getFirebaseAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getDatabase } from 'firebase-admin/database';
 import { initializeNotifications } from './scripts/initialize-notifications';
 
 // Single instance of Firebase Admin
 let firebaseApp: admin.app.App | null = null;
+
+export const getAuth = () => getFirebaseAuth(admin.app());
 
 export enum RoleTypes {
   ADMIN = 'admin',
