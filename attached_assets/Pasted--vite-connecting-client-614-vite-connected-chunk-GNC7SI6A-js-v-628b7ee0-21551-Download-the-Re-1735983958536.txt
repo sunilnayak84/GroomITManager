@@ -1,0 +1,45 @@
+[vite] connecting...
+client:614 [vite] connected.
+chunk-GNC7SI6A.js?v=628b7ee0:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:16 Checking Firebase environment variables...
+firebase.ts:36 FIREBASE_INIT: Initializing Firebase with config: Object
+firebase.ts:41 FIREBASE_INIT: Firebase initialized successfully
+content.js:1 CISPL SignerDigital Loaded
+use-appointments.ts:67 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:75 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:78 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-pets.ts:55 FETCH_PETS: Starting to fetch pets
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+use-staff.ts:14 FETCH_STAFF: Starting to fetch staff members
+2chunk-UX7VKWOS.js?v=628b7ee0:1063 [2025-01-04T09:44:44.394Z]  @firebase/firestore: Firestore (11.0.2): Uncaught Error in snapshot listener: FirebaseError: [code=permission-denied]: Missing or insufficient permissions.
+defaultLogHandler @ chunk-UX7VKWOS.js?v=628b7ee0:1063Understand this errorAI
+use-appointments.ts:241 Error fetching appointments: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-appointments.ts:241Understand this errorAI
+use-working-hours.ts:102 Error fetching working hours: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-working-hours.ts:102Understand this errorAI
+use-notifications.ts:132 Error fetching notifications: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-notifications.ts:132Understand this errorAI
+use-staff.ts:29 FETCH_STAFF: Error fetching staff: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-staff.ts:29Understand this errorAI
+use-pets.ts:112 FETCH_PETS: Error fetching pets: FirebaseError: Missing or insufficient permissions.
+fetchPets @ use-pets.ts:112Understand this errorAI
+use-services.ts:84 FETCH_SERVICES: Error fetching services: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-services.ts:84Understand this errorAI
+use-appointments.ts:67 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:75 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:78 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-staff.ts:14 FETCH_STAFF: Starting to fetch staff members
+use-pets.ts:55 FETCH_PETS: Starting to fetch pets
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+use-appointments.ts:241 Error fetching appointments: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-appointments.ts:241Understand this errorAI
+use-working-hours.ts:102 Error fetching working hours: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-working-hours.ts:102Understand this errorAI
+use-services.ts:84 FETCH_SERVICES: Error fetching services: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-services.ts:84Understand this errorAI
+use-staff.ts:29 FETCH_STAFF: Error fetching staff: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-staff.ts:29Understand this errorAI
+use-pets.ts:112 FETCH_PETS: Error fetching pets: FirebaseError: Missing or insufficient permissions.
+fetchPets @ use-pets.ts:112Understand this errorAI
+2use-notifications.ts:132 Error fetching notifications: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-notifications.ts:132Understand this errorAI
