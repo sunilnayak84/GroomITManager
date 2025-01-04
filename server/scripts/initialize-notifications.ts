@@ -23,7 +23,8 @@ async function initializeNotifications() {
         isRead: 'boolean',
         createdAt: 'timestamp',
         priority: 'string',
-      }
+      },
+      schemaVersion: '1.0'
     });
 
     // Create indexes
@@ -42,6 +43,18 @@ async function initializeNotifications() {
       isRead: false,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       priority: 'low'
+    });
+
+    // Set security rules for the collection
+    const rulesRef = db.collection('_rules').doc('notifications');
+    await rulesRef.set({
+      read: true,
+      write: true,
+      rules: {
+        read: "auth != null",
+        write: "auth != null && (request.auth.token.role == 'admin' || request.auth.uid == resource.data.userId)"
+      },
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
     });
 
     console.log('[INIT] Notifications collection initialized successfully');

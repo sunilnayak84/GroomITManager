@@ -2,6 +2,7 @@ import admin from 'firebase-admin';
 import { getAuth } from 'firebase-admin/auth';
 import { getDatabase } from 'firebase-admin/database';
 import { getFirestore } from 'firebase-admin/firestore';
+import initializeNotifications from './scripts/initialize-notifications';
 
 // Role Types
 enum RoleTypes {
@@ -190,53 +191,46 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
       await db.collection('users').limit(1).get();
       console.log('[FIREBASE] Database connection verified');
 
-      // Initialize notifications collection
-      console.log('[FIREBASE] Verifying notifications collection...');
-      const notificationsRef = db.collection('notifications');
-
-      // Create schema document if it doesn't exist
-      const schemaRef = notificationsRef.doc('_schema');
-      const schemaDoc = await schemaRef.get();
-
-      if (!schemaDoc.exists) {
-        console.log('[FIREBASE] Creating notifications schema...');
-        await schemaRef.set({
-          version: '1.0',
-          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      // Initialize required collections
+      await Promise.all([
+        initializeNotifications(),
+        initializeCollectionWithSchema(db, 'pets', {
           fields: {
-            userId: 'string',
+            name: 'string',
             type: 'string',
-            title: 'string',
-            message: 'string',
-            appointmentId: 'string?',
-            isRead: 'boolean',
+            breed: 'string',
+            age: 'number',
+            ownerId: 'string',
             createdAt: 'timestamp',
-            priority: 'string',
+            updatedAt: 'timestamp'
           }
-        });
+        }),
+        initializeCollectionWithSchema(db, 'appointments', {
+          fields: {
+            petId: 'string',
+            userId: 'string',
+            serviceIds: 'array',
+            status: 'string',
+            startTime: 'timestamp',
+            endTime: 'timestamp',
+            createdAt: 'timestamp',
+            updatedAt: 'timestamp'
+          }
+        }),
+        initializeCollectionWithSchema(db, 'services', {
+          fields: {
+            name: 'string',
+            description: 'string',
+            duration: 'number',
+            price: 'number',
+            isActive: 'boolean',
+            createdAt: 'timestamp',
+            updatedAt: 'timestamp'
+          }
+        })
+      ]);
 
-        // Create indexes document
-        await notificationsRef.doc('_indexes').set({
-          byUser: ['userId', 'createdAt'],
-          byType: ['type', 'createdAt'],
-          byAppointment: ['appointmentId', 'createdAt']
-        });
-
-        // Create test notification to verify collection
-        await notificationsRef.add({
-          userId: 'system',
-          type: 'system',
-          title: 'System Initialized',
-          message: 'Notifications system has been initialized successfully',
-          isRead: false,
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
-          priority: 'low'
-        });
-
-        console.log('[FIREBASE] Notifications collection initialized successfully');
-      } else {
-        console.log('[FIREBASE] Notifications collection already exists');
-      }
+      console.log('[FIREBASE] All collections initialized successfully');
 
     } catch (error) {
       console.error('[FIREBASE] Database connection error:', error);
@@ -253,6 +247,29 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
     console.error('[FIREBASE] Failed to initialize Firebase Admin:', error);
     firebaseApp = null;
     throw error;
+  }
+}
+
+// Helper function to initialize collections with schema
+async function initializeCollectionWithSchema(db: admin.firestore.Firestore, collectionName: string, schema: any) {
+  const collectionRef = db.collection(collectionName);
+  const schemaDoc = await collectionRef.doc('_schema').get();
+
+  if (!schemaDoc.exists) {
+    await collectionRef.doc('_schema').set({
+      version: '1.0',
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      fields: schema.fields
+    });
+
+    // Set default security rules
+    await collectionRef.doc('_rules').set({
+      read: "auth != null",
+      write: "auth != null && (request.auth.token.role == 'admin' || request.auth.uid == resource.data.userId)",
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+
+    console.log(`[FIREBASE] Initialized ${collectionName} collection with schema`);
   }
 }
 
