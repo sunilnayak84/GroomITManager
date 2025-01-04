@@ -1,0 +1,23 @@
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Base rules
+    function isAuth() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuth() && request.auth.token.role == 'admin';
+    }
+
+    // Allow users to read their own notifications
+    match /notifications/{notificationId} {
+      allow read: if isAuth() && (
+        resource.data.userId == request.auth.uid || 
+        isAdmin()
+      );
+      allow write: if isAdmin();
+    }
+  }
+}

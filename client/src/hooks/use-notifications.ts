@@ -135,3 +135,6 @@ export function useNotifications(userId: string) {
     markAsRead: markAsReadMutation.mutate
   };
 }
+
+// IMPORTANT:  Add appropriate Firebase Firestore security rules to allow access to the 'notifications' collection.
+//  These rules should restrict access based on user authentication and authorization.  See Firebase documentation for details.
