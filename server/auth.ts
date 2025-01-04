@@ -210,11 +210,11 @@ export async function setUserRole(userId: string, role: keyof typeof RoleTypes) 
     }
 
     // Get role from Realtime Database
-    const db = admin.database();
-    const roleSnapshot = await db.ref(`roles/${userId}`).once('value');
+    const rtdb = admin.database();
+    const roleSnapshot = await rtdb.ref(`roles/${userId}`).once('value');
     const currentRole = roleSnapshot.val()?.role;
 
-    // Role transition validation
+    // Role transition validation  
     if (currentRole === 'admin') {
       if (role !== 'admin') {
         throw new Error('Cannot downgrade admin user');
@@ -272,9 +272,8 @@ export async function setUserRole(userId: string, role: keyof typeof RoleTypes) 
     console.log('[AUTH] Custom claims set:', customClaims);
     console.log('[AUTH] Tokens revoked, user will need to re-authenticate');
     
-    // Update user role in Firebase Realtime Database
-    const db = admin.database();
-    await db.ref(`users/${userId}`).update({ role });
+    // Update user role in Firebase Realtime Database 
+    await rtdb.ref(`users/${userId}`).update({ role });
     
     return true;
   } catch (error) {

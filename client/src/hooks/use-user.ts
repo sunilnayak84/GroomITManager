@@ -6,6 +6,7 @@ import {
   onAuthStateChanged,
   type User as FirebaseUser
 } from 'firebase/auth';
+import { getDatabase, ref, get } from 'firebase/database';
 
 export type UserRole = 'admin' | 'manager' | 'staff' | 'receptionist';
 
