@@ -2,67 +2,21 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isAuthenticated() {
-      return request.auth != null && request.auth.token != null;
-    }
-
-    function hasToken(token) {
-      return request.auth.token[token] != null;
-    }
-
-    function getUserRole() {
-      return request.auth.token.role;
-    }
-
-    function hasAnyRole(roles) {
-      return getUserRole() in roles;
-    }
-
-    function isAdmin() {
-      return getUserRole() == 'admin';
-    }
-
-    function isStaff() {
-      return getUserRole() == 'staff';
-    }
-
-    function isManager() {
-      return getUserRole() == 'manager';
-    }
-
-    // Default rule for all collections
-    match /{document=**} {
-      allow read, write: if isAuthenticated() && isAdmin();
-    }
-
-    match /appointments/{appointmentId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated() && (isAdmin() || isStaff() || isManager());
-    }
-
-    match /services/{serviceId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated() && (isAdmin() || isManager());
-    }
-
     match /pets/{petId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated() && (isAdmin() || isStaff() || isManager());
+      allow read: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if true;
     }
-
-    match /working-hours/{docId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated() && (isAdmin() || isManager());
+    
+    match /customers/{customerId} {
+      allow read: if true;
+      allow write: if true;
     }
-
-    match /staff/{staffId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated() && isAdmin();
-    }
-
-    match /roles/{userId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated() && isAdmin();
+    
+    match /{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
     }
   }
 }
