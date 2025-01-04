@@ -14,6 +14,12 @@ export const getDatabase = () => {
   }
   return admin.database();
 };
+export const getFirestore = () => {
+  if (!admin.apps.length) {
+    throw new Error('Firebase Admin not initialized');
+  }
+  return admin.firestore();
+};
 
 export enum RoleTypes {
   ADMIN = 'admin',
