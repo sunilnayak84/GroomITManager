@@ -142,9 +142,9 @@ export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
 
 // Role management functions
 export async function getUserRole(userId: string): Promise<{ role: RoleTypes; permissions: Permission[] }> {
-  const db = getDatabase(getFirebaseAdmin());
-  const snapshot = await db.ref(`roles/${userId}`).once('value');
-  const roleData = snapshot.val();
+  const firestore = getFirestore(getFirebaseAdmin());
+  const roleDoc = await firestore.collection('roles').doc(userId).get();
+  const roleData = roleDoc.data();
   
   if (!roleData) {
     return {
@@ -165,15 +165,15 @@ export async function updateUserRole(
   customPermissions?: Permission[]
 ): Promise<{ success: boolean; role: RoleTypes; permissions: Permission[] }> {
   const app = getFirebaseAdmin();
-  const db = getDatabase(app);
+  const firestore = getFirestore(app);
   const auth = getAuth(app);
-  const timestamp = Date.now();
+  const timestamp = new Date();
   
   await auth.getUser(userId);
   
   const permissions = customPermissions || DefaultPermissions[role];
   
-  await db.ref(`roles/${userId}`).set({
+  await firestore.collection('roles').doc(userId).set({
     role,
     permissions,
     updatedAt: timestamp
