@@ -197,13 +197,13 @@ export default function PetsPage() {
                       <Avatar className="h-12 w-12 border-2 border-purple-100">
                         <AvatarImage src={pet.image} alt={pet.name} />
                         <AvatarFallback className="bg-gradient-to-br from-purple-100 to-pink-100 text-purple-600">
-                          {pet.name.substring(0, 2).toUpperCase()}
+                          {(pet.name || 'UN').substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                     ) : (
                       <Avatar className="h-12 w-12 border-2 border-purple-100">
                         <AvatarFallback className="bg-gradient-to-br from-purple-100 to-pink-100 text-purple-600">
-                          {pet.name.substring(0, 2).toUpperCase()}
+                          {(pet.name || 'UN').substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                     )}
@@ -332,7 +332,7 @@ export default function PetsPage() {
                 ) : (
                   <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center">
                     <span className="text-xl font-semibold">
-                      {selectedPet.name.substring(0, 2).toUpperCase()}
+                      {(selectedPet.name || 'UN').substring(0, 2).toUpperCase()}
                     </span>
                   </div>
                 )}
