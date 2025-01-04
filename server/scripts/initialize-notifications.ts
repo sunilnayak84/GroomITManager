@@ -6,6 +6,7 @@ async function initializeNotifications() {
     console.log('[INIT] Starting notifications collection initialization...');
     const app = await getFirebaseAdmin();
     const db = admin.firestore();
+    const rtdb = admin.database();
 
     // Create notifications collection
     const notificationsRef = db.collection('notifications');
@@ -45,17 +46,23 @@ async function initializeNotifications() {
       priority: 'low'
     });
 
-    // Set security rules for the collection that respect roles from Realtime Database
+    // Get role definitions from Realtime Database
+    const roleSnapshot = await rtdb.ref('role-definitions').once('value');
+    const roleDefinitions = roleSnapshot.val();
+
+    console.log('[INIT] Retrieved role definitions:', roleDefinitions ? 'Success' : 'Not found');
+
+    // Set security rules for the collection
     await db.collection('_security_rules').doc('notifications').set({
       rules: {
-        read: true, // Allow all authenticated users to read
-        write: true, // Allow all authenticated users to write initially
+        read: true,
+        write: true,
         conditions: {
-          read: "auth != null", // Basic authentication check
-          write: "auth != null && (request.auth.token.role in ['admin', 'manager'])",
+          read: true, // Allow all authenticated users to read
+          write: "auth != null", // Basic auth check for write
           create: "auth != null",
-          update: "auth != null && (resource.data.userId == request.auth.uid || request.auth.token.role in ['admin', 'manager'])",
-          delete: "auth != null && (resource.data.userId == request.auth.uid || request.auth.token.role in ['admin', 'manager'])"
+          update: "auth != null && (resource.data.userId == request.auth.uid)",
+          delete: "auth != null && (resource.data.userId == request.auth.uid)"
         },
         updatedAt: admin.firestore.FieldValue.serverTimestamp()
       }

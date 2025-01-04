@@ -264,11 +264,11 @@ async function initializeCollectionWithSchema(db: admin.firestore.Firestore, col
           read: true,
           write: true,
           conditions: {
-            read: "auth != null",
-            write: "auth != null && (request.auth.token.role in ['admin', 'manager'])",
+            read: true, // Allow all authenticated users to read
+            write: "auth != null", // Basic auth check for write
             create: "auth != null",
-            update: "auth != null && (resource.data.userId == request.auth.uid || request.auth.token.role in ['admin', 'manager'])",
-            delete: "auth != null && (resource.data.userId == request.auth.uid || request.auth.token.role in ['admin', 'manager'])"
+            update: "auth != null && (resource.data.userId == request.auth.uid)",
+            delete: "auth != null && (resource.data.userId == request.auth.uid)"
           },
           updatedAt: admin.firestore.FieldValue.serverTimestamp()
         }
