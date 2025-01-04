@@ -10,40 +10,18 @@ service cloud.firestore {
       return request.auth.token.role == role;
     }
 
+    match /{document=**} {
+      allow read, write: if isAuthenticated();
+    }
+
     match /users/{userId} {
       allow read: if isAuthenticated();
       allow write: if isAuthenticated() && (request.auth.uid == userId || hasRole('admin'));
     }
 
-    match /customers/{customerId} {
-      allow read, write: if isAuthenticated();
-    }
-
-    match /pets/{petId} {
-      allow read, write: if isAuthenticated();
-    }
-
-    match /appointments/{appointmentId} {
-      allow read, write: if isAuthenticated();
-    }
-
-    match /services/{serviceId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated() && (hasRole('admin') || hasRole('manager'));
-    }
-
     match /roles/{userId} {
       allow read: if isAuthenticated();
       allow write: if isAuthenticated() && hasRole('admin');
-    }
-
-    match /notifications/{notificationId} {
-      allow read, write: if isAuthenticated();
-    }
-
-    match /working-hours/{docId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated() && (hasRole('admin') || hasRole('manager'));
     }
   }
 }
