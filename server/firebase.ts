@@ -27,29 +27,36 @@ const DefaultPermissions: Record<RoleTypes, Permission[]> = {
   ]
 };
 
-let firebaseApp: admin.app.App | null = null;
+try {
+  const privateKey = process.env.REPLIT_FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+  
+  if (!process.env.REPLIT_FIREBASE_PROJECT_ID) {
+    throw new Error('Missing REPLIT_FIREBASE_PROJECT_ID');
+  }
+  if (!process.env.REPLIT_FIREBASE_CLIENT_EMAIL) {
+    throw new Error('Missing REPLIT_FIREBASE_CLIENT_EMAIL');
+  }
+  if (!privateKey) {
+    throw new Error('Missing REPLIT_FIREBASE_PRIVATE_KEY');
+  }
 
-export function initializeFirebase() {
-  if (!firebaseApp) {
-    const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
-    
-    firebaseApp = admin.initializeApp({
+  // Initialize Firebase Admin only if not already initialized
+  if (!admin.apps.length) {
+    admin.initializeApp({
       credential: admin.credential.cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        projectId: process.env.REPLIT_FIREBASE_PROJECT_ID,
+        clientEmail: process.env.REPLIT_FIREBASE_CLIENT_EMAIL,
         privateKey: privateKey
-      }),
-      databaseURL: process.env.FIREBASE_DATABASE_URL
+      })
     });
   }
-  return firebaseApp;
+} catch (error) {
+  console.error('Firebase Admin initialization error:', error);
+  throw error;
 }
 
 export function getFirebaseApp() {
-  if (!firebaseApp) {
-    return initializeFirebase();
-  }
-  return firebaseApp;
+  return admin.app();
 }
 
 export async function setUserRole(uid: string, role: RoleTypes) {
