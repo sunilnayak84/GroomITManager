@@ -48,14 +48,6 @@ export default function PetsPage() {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredPets = useMemo(() => {
-    return data?.filter(pet => 
-      (pet.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
-      (pet.owner?.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
-      (pet.breed?.toLowerCase() || '').includes(searchQuery.toLowerCase())
-    );
-  }, [data, searchQuery]);
-
   useEffect(() => {
     if (pets) {
       const mergedPets = pets.map(pet => optimisticPets[pet.id] || pet);
