@@ -48,5 +48,21 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
+// Enable offline persistence
+getFirestore(app).enablePersistence()
+  .catch((err) => {
+    if (err.code === 'failed-precondition') {
+      console.warn('Persistence failed: multiple tabs open');
+    } else if (err.code === 'unimplemented') {
+      console.warn('Persistence not available in this browser');
+    }
+  });
+
+// Set auth persistence to local
+auth.setPersistence('local')
+  .catch((error) => {
+    console.error('Auth persistence error:', error);
+  });
+
 // Export the app instance for use in other parts of the application
 export default app;

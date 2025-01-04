@@ -59,6 +59,11 @@ const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppoi
 
 export function useAppointments() {
   const queryClient = useQueryClient();
+  const { currentUser } = useAuth();
+  
+  if (!currentUser) {
+    throw new Error('Authentication required');
+  }
 
   const { data: appointments, isLoading, error } = useQuery<AppointmentWithRelations[]>({
     queryKey: ["appointments"],
