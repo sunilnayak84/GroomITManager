@@ -194,27 +194,48 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
       console.log('[FIREBASE] Verifying notifications collection...');
       const notificationsRef = db.collection('notifications');
 
-      // Create schema document in a separate meta collection
-      const metaRef = db.collection('_meta').doc('notifications');
-      const metaDoc = await metaRef.get();
+      // Create schema document if it doesn't exist
+      const schemaRef = notificationsRef.doc('_schema');
+      const schemaDoc = await schemaRef.get();
 
-      if (!metaDoc.exists) {
-        await metaRef.set({
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
-          schemaVersion: '1.0',
-          collectionName: 'notifications',
+      if (!schemaDoc.exists) {
+        console.log('[FIREBASE] Creating notifications schema...');
+        await schemaRef.set({
+          version: '1.0',
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
           fields: {
             userId: 'string',
-            appointmentId: 'string?',
             type: 'string',
             title: 'string',
             message: 'string',
+            appointmentId: 'string?',
             isRead: 'boolean',
             createdAt: 'timestamp',
-            updatedAt: 'timestamp?'
+            priority: 'string',
           }
         });
-        console.log('[FIREBASE] Notifications schema initialized');
+
+        // Create indexes document
+        await notificationsRef.doc('_indexes').set({
+          byUser: ['userId', 'createdAt'],
+          byType: ['type', 'createdAt'],
+          byAppointment: ['appointmentId', 'createdAt']
+        });
+
+        // Create test notification to verify collection
+        await notificationsRef.add({
+          userId: 'system',
+          type: 'system',
+          title: 'System Initialized',
+          message: 'Notifications system has been initialized successfully',
+          isRead: false,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          priority: 'low'
+        });
+
+        console.log('[FIREBASE] Notifications collection initialized successfully');
+      } else {
+        console.log('[FIREBASE] Notifications collection already exists');
       }
 
     } catch (error) {
