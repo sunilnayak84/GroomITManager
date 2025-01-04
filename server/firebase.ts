@@ -207,14 +207,14 @@ export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
         }
       }
 
-      const credential = {
+      const serviceAccount = {
         projectId: projectId,
         clientEmail: clientEmail,
-        privateKey: privateKey
+        privateKey: privateKey.replace(/\\n/g, '\n')
       };
 
       firebaseApp = admin.initializeApp({
-        credential: admin.credential.cert(credential),
+        credential: admin.credential.cert(serviceAccount),
         databaseURL
       });
     } else {
