@@ -34,10 +34,10 @@ export function useServices() {
           try {
             const parsedData = serviceSchema.parse({
               service_id: doc.id,
-              name: data.name || '',  // Provide default empty string
+              name: data.name || 'Unnamed Service',  // Provide default empty string
               description: data.description || null,
               category: data.category || ServiceCategory.SERVICE,
-              duration: Number(data.duration) || 0, // Convert and provide default
+              duration: Math.max(Number(data.duration) || 15, 15), // Convert and provide default, ensure minimum 15 minutes
               price: Number(data.price) || 0,
               discount_percentage: data.discount_percentage || 0,
               consumables: data.consumables || [],
