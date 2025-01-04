@@ -159,9 +159,10 @@ export function useNotifications(userId: string) {
         return [];
       }
 
-      // Allow admin or users with view_notifications permission
-      if (roleData.role !== 'admin' && !roleData.permissions?.includes('view_notifications')) {
-        console.log('User lacks notification permissions');
+      // All authenticated users can view their own notifications
+      const uid = auth.currentUser?.uid;
+      if (!uid) {
+        console.log('No authenticated user found');
         return [];
       }
 

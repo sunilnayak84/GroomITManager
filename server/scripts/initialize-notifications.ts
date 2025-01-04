@@ -53,19 +53,19 @@ async function initializeNotifications() {
     console.log('[INIT] Retrieved role definitions:', roleDefinitions ? 'Success' : 'Not found');
 
     // Set security rules for the collection
-    await db.collection('_security_rules').doc('notifications').set({
+    // Set notifications collection rules
+    await db.collection('notifications').doc('_rules').set({
+      read: true,
+      write: true,
       rules: {
-        read: "auth != null",
-        write: "auth != null",
-        conditions: {
-          read: "auth != null",
-          write: "auth != null",
-          create: "auth != null",
-          update: "auth != null && (resource.data.userId == request.auth.uid)",
-          delete: "auth != null && (resource.data.userId == request.auth.uid)"
-        },
-        updatedAt: admin.firestore.FieldValue.serverTimestamp()
-      }
+        read: "(auth != null && (resource.data.userId == auth.uid || request.auth.token.role == 'admin'))",
+        write: "(auth != null && (resource.data.userId == auth.uid || request.auth.token.role == 'admin'))",
+        list: "(auth != null)",
+        create: "(auth != null)",
+        update: "(auth != null && (resource.data.userId == auth.uid || request.auth.token.role == 'admin'))",
+        delete: "(auth != null && (resource.data.userId == auth.uid || request.auth.token.role == 'admin'))"
+      },
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
     });
 
     console.log('[INIT] Notifications collection initialized successfully');
