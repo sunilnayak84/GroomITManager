@@ -53,7 +53,7 @@ export function usePets() {
   const fetchPets = async () => {
     try {
       console.log('FETCH_PETS: Starting to fetch pets');
-      const q = query(petsCollection);
+      const q = query(petsCollection, where('deletedAt', '==', null));
       const querySnapshot = await getDocs(q);
       
       if (querySnapshot.empty) {
