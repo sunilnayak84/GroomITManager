@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { collection, doc, getDocs, updateDoc, addDoc, onSnapshot, query, where, orderBy, Timestamp } from 'firebase/firestore';
+import { collection, doc, getDocs, updateDoc, addDoc, onSnapshot, query, where, orderBy, limit, Timestamp } from 'firebase/firestore';
 import { db } from "../lib/firebase";
 import { toast } from '@/components/ui/use-toast';
 import { useEffect } from "react";
@@ -120,7 +120,8 @@ export function useNotifications(userId: string) {
         const q = query(
           notificationsCollection,
           where('userId', '==', userId),
-          orderBy('createdAt', 'desc')
+          orderBy('createdAt', 'desc'),
+          limit(50)
         );
         
         const querySnapshot = await getDocs(q);
