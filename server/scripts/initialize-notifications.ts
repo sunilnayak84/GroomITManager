@@ -55,11 +55,11 @@ async function initializeNotifications() {
     // Set security rules for the collection
     await db.collection('_security_rules').doc('notifications').set({
       rules: {
-        read: true,
-        write: true,
+        read: "auth != null && (request.auth.token.role === 'admin' || request.auth.token.permissions.includes('view_notifications'))",
+        write: "auth != null",
         conditions: {
-          read: true, // Allow all authenticated users to read
-          write: "auth != null", // Basic auth check for write
+          read: "auth != null && (request.auth.token.role === 'admin' || request.auth.token.permissions.includes('view_notifications'))",
+          write: "auth != null",
           create: "auth != null",
           update: "auth != null && (resource.data.userId == request.auth.uid)",
           delete: "auth != null && (resource.data.userId == request.auth.uid)"
