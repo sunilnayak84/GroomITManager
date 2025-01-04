@@ -207,14 +207,19 @@ export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
         }
       }
 
+      // Load and validate Firebase credentials
+      if (!projectId || !clientEmail || !privateKey) {
+        throw new Error('Missing required Firebase credentials. Check environment variables.');
+      }
+
       const serviceAccount = {
         projectId: projectId,
-        clientEmail: clientEmail,
-        privateKey: privateKey.replace(/\\n/g, '\n')
+        client_email: clientEmail,
+        private_key: privateKey.replace(/\\n/g, '\n')
       };
 
       firebaseApp = admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
+        credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
         databaseURL
       });
     } else {
