@@ -19,13 +19,15 @@ function toNumber(value: string | number | null | undefined): number | null {
 }
 
 // Helper function to convert Firestore timestamp to string
-function timestampToString(timestamp: Timestamp | null | undefined): string | null {
+function timestampToString(timestamp: Timestamp | string | null | undefined): string | null {
   if (!timestamp) return null;
-  return timestamp.toDate().toISOString();
+  if (typeof timestamp === 'string') return timestamp;
+  if (timestamp instanceof Timestamp) return timestamp.toDate().toISOString();
+  return null;
 }
 
 // Helper function to parse Firestore pet data
-function parseFirestorePet(id: string, data: FirestorePet): Pet {
+function parseFirestorePet(id: string, data: any): Pet {
   return {
     id,
     firebaseId: data.firebaseId,
@@ -42,7 +44,8 @@ function parseFirestorePet(id: string, data: FirestorePet): Pet {
     image: data.image || null,
     createdAt: timestampToString(data.createdAt) ?? new Date().toISOString(),
     updatedAt: timestampToString(data.updatedAt),
-    owner: data.owner || null
+    owner: data.owner || null,
+    deletedAt: timestampToString(data.deletedAt)
   };
 }
 
