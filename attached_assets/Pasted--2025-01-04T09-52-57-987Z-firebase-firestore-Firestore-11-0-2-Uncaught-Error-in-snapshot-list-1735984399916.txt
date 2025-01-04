@@ -1,0 +1,47 @@
+[2025-01-04T09:52:57.987Z]  @firebase/firestore: Firestore (11.0.2): Uncaught Error in snapshot listener: FirebaseError: [code=permission-denied]: Missing or insufficient permissions.
+defaultLogHandler @ chunk-UX7VKWOS.js?v=1760c10c:1063Understand this errorAI
+2use-notifications.ts:132 Error fetching notifications: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-notifications.ts:132Understand this errorAI
+use-notifications.ts:132 Error fetching notifications: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-notifications.ts:132
+setTimeout
+Xa @ firebase_firestore.js?v=1760c10c:14610
+error @ firebase_firestore.js?v=1760c10c:14604
+onError @ firebase_firestore.js?v=1760c10c:13450
+__PRIVATE_eventManagerOnWatchError @ firebase_firestore.js?v=1760c10c:13403
+__PRIVATE_removeAndCleanupTarget @ firebase_firestore.js?v=1760c10c:14103
+(anonymous) @ firebase_firestore.js?v=1760c10c:14040
+Promise.then
+__PRIVATE_syncEngineRejectListen @ firebase_firestore.js?v=1760c10c:14040
+__PRIVATE_handleTargetError @ firebase_firestore.js?v=1760c10c:12905
+__PRIVATE_onWatchStreamChange @ firebase_firestore.js?v=1760c10c:12906
+onNext @ firebase_firestore.js?v=1760c10c:12565
+(anonymous) @ firebase_firestore.js?v=1760c10c:12524
+(anonymous) @ firebase_firestore.js?v=1760c10c:12544
+(anonymous) @ firebase_firestore.js?v=1760c10c:15553
+(anonymous) @ firebase_firestore.js?v=1760c10c:15584
+Promise.then
+yu @ firebase_firestore.js?v=1760c10c:15584
+enqueue @ firebase_firestore.js?v=1760c10c:15553
+enqueueAndForget @ firebase_firestore.js?v=1760c10c:15535
+(anonymous) @ firebase_firestore.js?v=1760c10c:12544
+(anonymous) @ firebase_firestore.js?v=1760c10c:12524
+vo @ firebase_firestore.js?v=1760c10c:12112
+(anonymous) @ firebase_firestore.js?v=1760c10c:12298
+(anonymous) @ firebase_firestore.js?v=1760c10c:12261
+ab @ firebase_firestore.js?v=1760c10c:944
+F2 @ firebase_firestore.js?v=1760c10c:914
+Z2.ta @ firebase_firestore.js?v=1760c10c:2534
+Rb @ firebase_firestore.js?v=1760c10c:1413
+M2.Y @ firebase_firestore.js?v=1760c10c:1278
+M2.ca @ firebase_firestore.js?v=1760c10c:1209
+ab @ firebase_firestore.js?v=1760c10c:944
+F2 @ firebase_firestore.js?v=1760c10c:914
+Wc @ firebase_firestore.js?v=1760c10c:1948
+h.bb @ firebase_firestore.js?v=1760c10c:1943
+h.Ea @ firebase_firestore.js?v=1760c10c:1940
+Lc @ firebase_firestore.js?v=1760c10c:1840
+h.Pa @ firebase_firestore.js?v=1760c10c:1807
+Promise.then
+Nc @ firebase_firestore.js?v=1760c10c:1798
+h.Pa @ firebase_firestore.js?v=1760c10c:1808Understand this errorAI
