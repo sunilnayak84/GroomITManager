@@ -168,7 +168,7 @@ export function registerRoutes(app: Express) {
     }
   });
 
-  app.get("/api/groomers", authenticateFirebase, requireRole([RoleTypes.admin, RoleTypes.manager, RoleTypes.customer]), async (req, res) => {
+  app.get("/api/groomers", authenticateFirebase, async (req, res) => {
     try {
       const app = await getFirebaseAdmin();
       const db = getFirestore();
