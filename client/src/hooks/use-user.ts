@@ -73,9 +73,10 @@ async function loginWithFirebase(credentials: { email: string; password: string 
     // Get role from Realtime Database
     const db = getDatabase();
     const roleSnapshot = await get(ref(db, `roles/${user.uid}`));
-    const roleData = roleSnapshot.val() || { role: 'staff', permissions: [] };
+    const roleData = roleSnapshot.val() || { role: 'staff', permissions: [], branchId: null };
     const role = roleData.role as UserRole;
     const permissions = roleData.permissions || [];
+    const branchId = roleData.branchId as number | undefined;
 
     return {
       id: user.uid,
@@ -83,7 +84,7 @@ async function loginWithFirebase(credentials: { email: string; password: string 
       name: user.displayName || user.email!,
       role,
       permissions,
-      branchId: tokenResult.claims.branchId as number
+      branchId
     };
   } catch (error: any) {
     throw new Error(error.message);
