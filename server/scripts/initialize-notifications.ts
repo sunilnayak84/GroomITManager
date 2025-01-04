@@ -59,8 +59,6 @@ async function initializeNotifications() {
         read: "auth != null",
         write: "auth != null",
         list: "auth != null",
-        create: "auth != null",
-        update: "auth != null",
         delete: "auth != null",
         conditions: {
           read: "auth != null && (resource.data.userId == auth.uid || request.auth.token.role == 'admin')",
