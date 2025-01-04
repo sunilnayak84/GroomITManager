@@ -6,8 +6,10 @@ async function initializeNotifications() {
   const db = getFirestore(getFirebaseApp());
   
   try {
-    await db.collection('notifications').add({
-      userId: 'admin',
+    // Create the notifications collection with an initial document
+    const notificationsRef = db.collection('notifications');
+    await notificationsRef.add({
+      userId: 'system',
       type: 'system',
       title: 'System Initialized',
       message: 'Notification system is now active',
@@ -16,10 +18,10 @@ async function initializeNotifications() {
       updatedAt: null
     });
     
-    console.log('Notifications collection initialized');
+    console.log('Notifications collection initialized successfully');
   } catch (error) {
     console.error('Error initializing notifications:', error);
   }
 }
 
-initializeNotifications();
+initializeNotifications().catch(console.error);
