@@ -1,5 +1,4 @@
 import { type PropsWithChildren } from "react";
-import { useUser } from "@/hooks/use-user";
 import {
   SidebarProvider,
   Sidebar,
@@ -10,8 +9,6 @@ import {
 import Navigation from "./Navigation";
 
 export default function Layout({ children }: PropsWithChildren) {
-  const { user } = useUser();
-
   return (
     <SidebarProvider defaultOpen>
       <div className="relative flex min-h-screen">
