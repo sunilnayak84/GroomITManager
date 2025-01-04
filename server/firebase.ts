@@ -228,14 +228,13 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
     }
 
     // Verify auth initialization
-    const auth = getAuth(firebaseApp);
+    const auth = getAuth(app);
     await auth.listUsers(1);
 
     console.log('[FIREBASE] Firebase initialized successfully');
-    return firebaseApp;
+    return app;
   } catch (error) {
     console.error('[FIREBASE] Failed to initialize Firebase Admin:', error);
-    firebaseApp = null;
     throw error;
   }
 }
