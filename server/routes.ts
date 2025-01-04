@@ -3,11 +3,6 @@ import { authenticateFirebase, requireRole } from "./middleware/auth";
 import path from "path";
 import { 
   RoleTypes, 
-  getUserRole, 
-  updateUserRole, 
-  listAllUsers,
-  getRoleDefinitions,
-  updateRoleDefinition,
   InitialRoleConfigs,
   Permission,
   validatePermissions,
@@ -15,16 +10,18 @@ import {
   ALL_PERMISSIONS,
   getFirebaseAdmin,
   setupAdminUser,
-  getDefaultPermissions
+  getDefaultPermissions,
+  getAuth,
+  getDatabase,
+  getFirestore
 } from "./firebase";
-import { getAuth } from "firebase-admin/auth";
-import { getDatabase } from "firebase-admin/database";
-import { getFirestore } from "firebase-admin/firestore";
-import admin from "firebase-admin";
 
-
-export function registerRoutes(app: Express) {
+export async function registerRoutes(app: Express) {
   console.log('[ROUTES] Starting route registration...');
+
+  // Initialize Firebase Admin
+  await getFirebaseAdmin();
+
   // Health check endpoint
   app.get("/api/health", (req, res) => {
     res.json({ status: "healthy" });

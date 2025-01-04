@@ -4,64 +4,8 @@ import { getFirestore } from 'firebase-admin/firestore';
 import { getDatabase } from 'firebase-admin/database';
 import { initializeNotifications } from './scripts/initialize-notifications';
 
-let firebaseApp: admin.app.App;
-
-const MAX_INIT_RETRIES = 3;
-const INIT_RETRY_DELAY = 1000; // 1 second
-
-export async function getFirebaseAdmin(): Promise<admin.app.App> {
-  if (firebaseApp) {
-    return firebaseApp;
-  }
-
-  console.log('[FIREBASE] Checking Firebase environment variables...');
-
-  let privateKey = process.env.FIREBASE_PRIVATE_KEY;
-  if (privateKey) {
-    privateKey = privateKey.replace(/\\n/g, '\n');
-  }
-
-  const databaseURL = process.env.FIREBASE_DATABASE_URL ||
-    `https://${process.env.FIREBASE_PROJECT_ID}-default-rtdb.asia-southeast1.firebasedatabase.app`;
-
-  if (!privateKey || !process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL) {
-    throw new Error('Missing Firebase credentials. Check environment variables.');
-  }
-
-  try {
-    if (admin.apps.length === 0) {
-      firebaseApp = admin.initializeApp({
-        credential: admin.credential.cert({
-          projectId: process.env.FIREBASE_PROJECT_ID,
-          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-          privateKey: privateKey
-        }),
-        databaseURL: databaseURL
-      });
-    } else {
-      firebaseApp = admin.app();
-    }
-
-    // Initialize Firestore with persistence
-    const db = getFirestore(firebaseApp);
-    db.settings({
-      ignoreUndefinedProperties: true
-    });
-
-    // Initialize collections and security rules
-    await initializeNotifications();
-
-    console.log('[FIREBASE] Firebase initialized successfully');
-    return firebaseApp;
-  } catch (error) {
-    console.error('[FIREBASE] Failed to initialize Firebase:', error);
-    throw error;
-  }
-}
-
-export const auth = getAuth(await getFirebaseAdmin());
-export const db = getFirestore(await getFirebaseAdmin());
-export const rtdb = getDatabase(await getFirebaseAdmin());
+// Single instance of Firebase Admin
+let firebaseApp: admin.app.App | null = null;
 
 export enum RoleTypes {
   ADMIN = 'admin',
@@ -70,7 +14,6 @@ export enum RoleTypes {
   RECEPTIONIST = 'receptionist'
 }
 
-// Define all available permissions
 export const ALL_PERMISSIONS = [
   // Appointment permissions
   'view_appointments',
@@ -130,7 +73,6 @@ export const ALL_PERMISSIONS = [
 
 export type Permission = typeof ALL_PERMISSIONS[number];
 
-// Helper function to validate permissions
 export function isValidPermission(permission: unknown): permission is Permission {
   return typeof permission === 'string' && ALL_PERMISSIONS.includes(permission as Permission);
 }
@@ -178,23 +120,6 @@ export const DefaultPermissions = {
   ]
 };
 
-// Add the missing getDefaultPermissions function
-export async function getDefaultPermissions(role: keyof typeof RoleTypes): Promise<string[]> {
-  // First check if there are custom role permissions in the database
-  const db = admin.database();
-  const roleRef = db.ref(`role-definitions/${role}`);
-  const snapshot = await roleRef.once('value');
-  const customPermissions = snapshot.val()?.permissions;
-
-  if (customPermissions) {
-    return customPermissions;
-  }
-
-  // If no custom permissions found, return the default ones
-  return DefaultPermissions[role] || [];
-}
-
-// Export InitialRoleConfigs
 export const InitialRoleConfigs = {
   [RoleTypes.ADMIN]: {
     permissions: ALL_PERMISSIONS,
@@ -225,3 +150,192 @@ export const InitialRoleConfigs = {
     updatedAt: Date.now()
   }
 };
+
+// Initialize Firebase Admin
+export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
+  if (firebaseApp) {
+    return firebaseApp;
+  }
+
+  console.log('[FIREBASE] Starting Firebase Admin initialization...');
+
+  // Get environment variables
+  const projectId = process.env.FIREBASE_PROJECT_ID;
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+  let privateKey = process.env.FIREBASE_PRIVATE_KEY;
+
+  // Validate required environment variables
+  if (!projectId || !clientEmail || !privateKey) {
+    console.error('[FIREBASE] Missing required environment variables');
+    throw new Error('Missing Firebase credentials. Check environment variables.');
+  }
+
+  try {
+    // Format private key if needed
+    if (privateKey) {
+      privateKey = privateKey.replace(/\\n/g, '\n');
+      if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
+        privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----`;
+      }
+    }
+
+    const databaseURL = process.env.FIREBASE_DATABASE_URL || 
+      `https://${projectId}-default-rtdb.asia-southeast1.firebasedatabase.app`;
+
+    if (!admin.apps.length) {
+      console.log('[FIREBASE] Initializing new Firebase Admin instance...');
+      firebaseApp = admin.initializeApp({
+        credential: admin.credential.cert({
+          projectId,
+          clientEmail,
+          privateKey
+        }),
+        databaseURL
+      });
+    } else {
+      console.log('[FIREBASE] Using existing Firebase Admin instance...');
+      firebaseApp = admin.app();
+    }
+
+    // Initialize Firestore
+    const db = getFirestore(firebaseApp);
+    db.settings({
+      ignoreUndefinedProperties: true
+    });
+
+    // Initialize notifications
+    await initializeNotifications();
+
+    console.log('[FIREBASE] Firebase Admin initialized successfully');
+    return firebaseApp;
+  } catch (error) {
+    console.error('[FIREBASE] Failed to initialize Firebase:', error);
+    throw error;
+  }
+}
+
+// Firebase service getters
+export function getFirebaseAuth(): admin.auth.Auth {
+  if (!firebaseApp) {
+    throw new Error('Firebase Admin not initialized');
+  }
+  return getAuth(firebaseApp);
+}
+
+export function getFirebaseFirestore(): admin.firestore.Firestore {
+  if (!firebaseApp) {
+    throw new Error('Firebase Admin not initialized');
+  }
+  return getFirestore(firebaseApp);
+}
+
+export function getFirebaseDatabase(): admin.database.Database {
+  if (!firebaseApp) {
+    throw new Error('Firebase Admin not initialized');
+  }
+  return getDatabase(firebaseApp);
+}
+
+// Role and permission management functions
+export async function getDefaultPermissions(role: keyof typeof RoleTypes): Promise<Permission[]> {
+  const db = getFirebaseDatabase();
+  const roleRef = db.ref(`role-definitions/${role}`);
+  const snapshot = await roleRef.once('value');
+  const customPermissions = snapshot.val()?.permissions;
+
+  if (customPermissions) {
+    return customPermissions;
+  }
+
+  return DefaultPermissions[role] || [];
+}
+
+export async function updateUserRole(userId: string, role: RoleTypes, customPermissions?: Permission[]) {
+  try {
+    const auth = getFirebaseAuth();
+    const db = getFirebaseDatabase();
+    const timestamp = Date.now();
+
+    const permissions = customPermissions || await getDefaultPermissions(role);
+
+    const roleData = {
+      role,
+      permissions,
+      updatedAt: timestamp
+    };
+
+    await db.ref(`roles/${userId}`).set(roleData);
+
+    await auth.setCustomUserClaims(userId, {
+      role,
+      permissions,
+      updatedAt: timestamp
+    });
+
+    await db.ref(`role-history/${userId}`).push({
+      action: 'update',
+      role,
+      permissions,
+      timestamp,
+      type: 'role_update'
+    });
+
+    return {
+      success: true,
+      role,
+      permissions,
+      updatedAt: timestamp
+    };
+  } catch (error) {
+    console.error('[ROLE-UPDATE] Error updating user role:', error);
+    throw error;
+  }
+}
+
+export async function setupAdminUser() {
+  try {
+    const auth = getFirebaseAuth();
+    const db = getFirebaseDatabase();
+
+    const adminEmail = 'admin@groomery.in';
+    const adminUid = 'MjQnuZnthzUIh2huoDpqCSMMvxe2';
+
+    try {
+      await auth.getUser(adminUid);
+      console.log('[FIREBASE] Found existing admin user');
+    } catch (error) {
+      await auth.createUser({
+        uid: adminUid,
+        email: adminEmail,
+        emailVerified: true,
+        displayName: 'Admin User'
+      });
+      console.log('[FIREBASE] Created new admin user');
+    }
+
+    await db.ref(`roles/${adminUid}`).set({
+      role: RoleTypes.ADMIN,
+      permissions: ALL_PERMISSIONS,
+      isAdmin: true,
+      updatedAt: Date.now()
+    });
+
+    await auth.setCustomUserClaims(adminUid, {
+      role: RoleTypes.ADMIN,
+      permissions: ALL_PERMISSIONS,
+      isAdmin: true,
+      updatedAt: Date.now()
+    });
+
+    console.log('[FIREBASE] Admin user setup completed');
+    return true;
+  } catch (error) {
+    console.error('[FIREBASE] Failed to setup admin user:', error);
+    throw error;
+  }
+}
+
+// Initialize Firebase Admin on module load
+initializeFirebaseAdmin().catch(error => {
+  console.error('[FIREBASE] Failed to initialize Firebase Admin:', error);
+});

@@ -1,13 +1,17 @@
 import { getFirestore } from 'firebase-admin/firestore';
-import { getFirebaseAdmin } from '../firebase';
+import { 
+  initializeFirebaseAdmin,
+  getFirebaseFirestore,
+  getFirebaseDatabase
+} from '../firebase';
 import * as admin from 'firebase-admin';
 
 export async function initializeNotifications() {
   try {
     console.log('[INIT] Starting notifications collection initialization...');
-    const app = await getFirebaseAdmin();
-    const db = admin.firestore();
-    const rtdb = admin.database();
+    const app = await initializeFirebaseAdmin();
+    const db = getFirebaseFirestore();
+    const rtdb = getFirebaseDatabase();
 
     // Create notifications collection
     const notificationsRef = db.collection('notifications');

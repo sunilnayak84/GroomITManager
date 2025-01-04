@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
-import { auth, RoleTypes, ALL_PERMISSIONS } from '../firebase';
-import * as admin from 'firebase-admin';
+import { 
+  RoleTypes,
+  ALL_PERMISSIONS,
+  getFirebaseAuth,
+  getFirebaseDatabase
+} from '../firebase';
 
 // Type for authenticated request
 interface AuthenticatedRequest extends Request {
@@ -25,10 +29,11 @@ export async function authenticateFirebase(req: AuthenticatedRequest, res: Respo
     }
 
     const token = authHeader.split('Bearer ')[1];
+    const auth = getFirebaseAuth();
     const decodedToken = await auth.verifyIdToken(token);
 
     // Get user's role and permissions from Realtime Database
-    const db = admin.database();
+    const db = getFirebaseDatabase();
     const userRoleRef = await db.ref(`roles/${decodedToken.uid}`).once('value');
     const roleData = userRoleRef.val();
 
@@ -42,7 +47,7 @@ export async function authenticateFirebase(req: AuthenticatedRequest, res: Respo
 
     req.user = {
       uid: decodedToken.uid,
-      email: decodedToken.email,
+      email: decodedToken.email || null,
       role: roleData.role,
       permissions: roleData.permissions || []
     };
@@ -71,11 +76,19 @@ export function requireRole(allowedRoles: (keyof typeof RoleTypes)[]) {
       }
 
       const userRole = req.user.role;
-      if (!allowedRoles.includes(userRole) && userRole !== RoleTypes.ADMIN) {
+
+      // Admin role always has access
+      if (userRole === RoleTypes.ADMIN) {
+        return next();
+      }
+
+      if (!allowedRoles.includes(userRole)) {
         return res.status(403).json({
           error: 'Forbidden',
           message: 'Insufficient role permissions',
-          code: 'INVALID_ROLE'
+          code: 'INVALID_ROLE',
+          required: allowedRoles,
+          current: userRole
         });
       }
 
@@ -116,7 +129,9 @@ export function requirePermission(requiredPermissions: string[]) {
         return res.status(403).json({
           error: 'Forbidden',
           message: 'Insufficient permissions',
-          code: 'INVALID_PERMISSIONS'
+          code: 'INVALID_PERMISSIONS',
+          required: requiredPermissions,
+          current: req.user.permissions
         });
       }
 
