@@ -19,9 +19,8 @@ async function deployRules() {
     const rules = fs.readFileSync(rulesPath, 'utf8');
     console.log('Rules content:', rules);
     
-    await app.firestore().settings({
-      ignoreUndefinedProperties: true
-    });
+    // Deploy rules to Firestore
+    await admin.securityRules().releaseFirestoreRulesetFromSource(rules);
     
     console.log('Rules deployed successfully');
   } catch (error) {
