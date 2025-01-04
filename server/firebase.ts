@@ -137,14 +137,13 @@ const DefaultPermissions: Record<RoleTypes, Permission[]> = {
 const permissionsCache = new Map<RoleTypes, { permissions: Permission[], timestamp: number }>();
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-let firebaseApp: admin.app.App | null = null;
 const MAX_INIT_RETRIES = 3;
 const INIT_RETRY_DELAY = 2000;
 
 // Firebase Admin initialization with proper async handling
 async function getFirebaseAdmin(): Promise<admin.app.App> {
-  if (firebaseApp) {
-    return firebaseApp;
+  if (admin.apps.length > 0) {
+    return admin.app();
   }
 
   console.log('[FIREBASE] Checking Firebase environment variables...');
@@ -164,18 +163,20 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
   }
 
   try {
-    if (admin.apps.length === 0) {
-      firebaseApp = admin.initializeApp({
-        credential: admin.credential.cert({
-          projectId: process.env.FIREBASE_PROJECT_ID,
-          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-          privateKey: privateKey
-        }),
-        databaseURL: databaseURL
-      });
-    } else {
-      firebaseApp = admin.app();
-    }
+    const app = admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: privateKey
+      }),
+      databaseURL: databaseURL
+    });
+
+    // Verify database connections
+    const db = getFirestore(app);
+    const rtdb = getDatabase(app);
+    
+    return app;
 
     // Verify database connections
     const db = getFirestore(firebaseApp);
