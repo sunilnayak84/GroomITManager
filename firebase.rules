@@ -1,33 +1,34 @@
 
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
     // Helper functions
     function isAuthenticated() {
       return request.auth != null;
     }
-
-    function getUserRole() {
-      return get(/databases/$(database)/refs/roles/$(request.auth.uid)).data;
-    }
-
+    
     function isAdmin() {
-      return getUserRole().role == 'admin' || getUserRole().isAdmin == true;
+      return isAuthenticated() && 
+        get(/databases/$(database)/documents/roles/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Users collection rules
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin() || request.auth.uid == userId;
+    }
+    
+    // Roles collection rules  
+    match /roles/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
     }
 
-    // Notifications access
+    // Notifications collection rules
     match /notifications/{notificationId} {
       allow read: if isAuthenticated() && 
         (resource.data.userId == request.auth.uid || isAdmin());
-      allow write: if isAuthenticated() && 
-        (request.resource.data.userId == request.auth.uid || isAdmin());
-    }
-
-    // Default rule
-    match /{document=**} {
-      allow read, write: if isAuthenticated() && 
-        (getUserRole().role == 'admin' || getUserRole().isAdmin == true);
+      allow write: if isAdmin();
     }
   }
 }

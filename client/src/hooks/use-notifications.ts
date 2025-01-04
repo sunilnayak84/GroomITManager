@@ -50,6 +50,11 @@ export function useNotifications(userId: string) {
         };
       } catch (error) {
         console.error('Error creating notification:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to create notification: " + (error.message || error)
+        });
         throw error;
       }
     },
@@ -57,7 +62,7 @@ export function useNotifications(userId: string) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to create notification"
+        description: "Failed to create notification: " + (error.message || error)
       });
     }
   });
@@ -77,6 +82,11 @@ export function useNotifications(userId: string) {
         return notificationId;
       } catch (error) {
         console.error('Error marking notification as read:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to mark notification as read: " + (error.message || error)
+        });
         throw error;
       }
     },
@@ -87,7 +97,7 @@ export function useNotifications(userId: string) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to mark notification as read"
+        description: "Failed to mark notification as read: " + (error.message || error)
       });
     }
   });
@@ -131,7 +141,12 @@ export function useNotifications(userId: string) {
         })) as Notification[];
       } catch (error) {
         console.error('Error fetching notifications:', error);
-        throw error;
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to fetch notifications: " + (error.message || error)
+        });
+        return []; // Return empty array on error instead of throwing
       }
     },
     staleTime: 1000 * 60 // 1 minute
@@ -141,6 +156,8 @@ export function useNotifications(userId: string) {
     notifications: notificationsQuery.data || [],
     unreadCount: notificationsQuery.data?.filter(n => !n.isRead).length || 0,
     isLoading: notificationsQuery.isLoading,
+    isError: notificationsQuery.isError, // Added isError property
+    error: notificationsQuery.error, // Added error property
     createNotification: createNotificationMutation.mutate,
     markAsRead: markAsReadMutation.mutate
   };
