@@ -3,21 +3,31 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Helper functions
     function isAuthenticated() {
       return request.auth != null;
     }
 
-    match /notifications/{notificationId} {
-      allow read: if isAuthenticated() && 
-        (resource.data.userId == request.auth.uid || 
-         get(/databases/$(database)/documents/roles/$(request.auth.uid)).data.role == 'admin');
-      allow write: if isAuthenticated() && 
-        (request.resource.data.userId == request.auth.uid || 
-         get(/databases/$(database)/documents/roles/$(request.auth.uid)).data.role == 'admin');
+    function getUserRole() {
+      return get(/databases/$(database)/refs/roles/$(request.auth.uid)).data;
     }
 
+    function isAdmin() {
+      return getUserRole().role == 'admin' || getUserRole().isAdmin == true;
+    }
+
+    // Notifications access
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.userId == request.auth.uid || isAdmin());
+      allow write: if isAuthenticated() && 
+        (request.resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    // Default rule
     match /{document=**} {
-      allow read, write: if isAuthenticated();
+      allow read, write: if isAuthenticated() && 
+        (getUserRole().role == 'admin' || getUserRole().isAdmin == true);
     }
   }
 }
