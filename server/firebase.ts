@@ -198,12 +198,23 @@ export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
 
     if (!admin.apps || admin.apps.length === 0) {
       console.log('[FIREBASE] Initializing new Firebase Admin instance...');
+      
+      // Format private key if needed
+      if (privateKey) {
+        privateKey = privateKey.replace(/\\n/g, '\n');
+        if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
+          privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----`;
+        }
+      }
+
+      const credential = {
+        projectId: projectId,
+        clientEmail: clientEmail,
+        privateKey: privateKey
+      };
+
       firebaseApp = admin.initializeApp({
-        credential: admin.credential.cert({
-          projectId,
-          clientEmail,
-          privateKey
-        }),
+        credential: admin.credential.cert(credential),
         databaseURL
       });
     } else {
