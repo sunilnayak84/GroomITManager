@@ -41,7 +41,20 @@ const ALL_PERMISSIONS = [
   'manage_own_schedule',
   'view_analytics',
   'view_reports',
-  'view_financial_reports'
+  'view_financial_reports',
+  'view_groomers',
+  'view_own_appointments',
+  'manage_own_pets',
+  'create_pets',
+  'edit_own_pets',
+  'delete_own_pets',
+  'view_own_pets',
+  'cancel_own_appointments',
+  'reschedule_own_appointments',
+  'view_own_profile',
+  'edit_own_profile',
+  'view_service_history',
+  'view_loyalty_points'
 ] as const;
 
 // Define Permission type once
@@ -101,10 +114,21 @@ const DefaultPermissions: Record<RoleTypes, Permission[]> = {
   ],
   [RoleTypes.customer]: [
     'view_appointments',
-    'create_appointments', 
+    'create_appointments',
     'view_services',
     'view_groomers',
-    'view_own_appointments'
+    'view_own_appointments',
+    'manage_own_pets',
+    'create_pets',
+    'edit_own_pets',
+    'delete_own_pets',
+    'view_own_pets',
+    'cancel_own_appointments',
+    'reschedule_own_appointments',
+    'view_own_profile',
+    'edit_own_profile',
+    'view_service_history',
+    'view_loyalty_points'
   ]
 };
 
@@ -116,7 +140,7 @@ let firebaseApp: admin.app.App | null = null;
 const MAX_INIT_RETRIES = 3;
 const INIT_RETRY_DELAY = 2000;
 
-// Firebase Admin initialization
+// Firebase Admin initialization with proper async handling
 async function getFirebaseAdmin(): Promise<admin.app.App> {
   if (firebaseApp) {
     return firebaseApp;
@@ -133,7 +157,7 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
   // Initialize Realtime Database URL
   const databaseURL = process.env.FIREBASE_DATABASE_URL || 
     `https://${process.env.FIREBASE_PROJECT_ID}-default-rtdb.asia-southeast1.firebasedatabase.app`;
-  
+
   if (!privateKey || !process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL) {
     console.error('[FIREBASE] Missing required credentials:',
       !privateKey ? 'FIREBASE_PRIVATE_KEY' : '',
@@ -154,7 +178,7 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
         }),
         databaseURL: databaseURL
       };
-      
+
       firebaseApp = admin.initializeApp(config);
     } else {
       firebaseApp = admin.app();
@@ -165,6 +189,19 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
     try {
       await db.collection('users').limit(1).get();
       console.log('[FIREBASE] Database connection verified');
+
+      // Initialize notifications collection with proper schema
+      const notificationsRef = db.collection('notifications');
+      const notificationsDoc = await notificationsRef.limit(1).get();
+      if (notificationsDoc.empty) {
+        console.log('[FIREBASE] Initializing notifications collection...');
+        // We don't create any documents, just ensure the collection exists
+        await db.collection('notifications').doc('__config__').set({
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          schema_version: '1.0'
+        });
+      }
+
     } catch (error) {
       console.error('[FIREBASE] Database connection error:', error);
       throw error;
@@ -173,7 +210,7 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
     // Verify auth initialization
     const auth = getAuth(firebaseApp);
     await auth.listUsers(1);
-    
+
     console.log('[FIREBASE] Firebase Admin initialized successfully');
     return firebaseApp;
   } catch (error) {
@@ -211,7 +248,7 @@ async function initializeFirebaseAdmin(): Promise<admin.app.App> {
 // Role and permission management functions
 async function getRolePermissions(role: RoleTypes): Promise<Permission[]> {
   const app = await getFirebaseAdmin();
-  const db = admin.database();
+  const db = admin.database(app);
   const snapshot = await db.ref(`role-definitions/${role}`).once('value');
   const roleData = snapshot.val();
   
@@ -305,7 +342,7 @@ async function updateUserRole(
     timestamp: Date.now(),
     type: 'role_change'
   });
-
+  
   await db.ref(`roles/${userId}`).set({
     role,
     permissions,
@@ -330,7 +367,7 @@ async function setupAdminUser(adminEmail: string): Promise<void> {
   if (!adminEmail.endsWith('@groomery.in') && process.env.NODE_ENV !== 'development') {
     throw new Error('Admin email must be from the @groomery.in domain');
   }
-
+  
   const app = getFirebaseAdmin();
   const auth = getAuth(app);
   const db = getDatabase(app);
@@ -350,7 +387,7 @@ async function setupAdminUser(adminEmail: string): Promise<void> {
   
   const userId = userRecord.uid;
   const timestamp = Date.now();
-
+  
   // Ensure admin has ALL permissions
   const adminPermissions = [...ALL_PERMISSIONS, 'all'];
   
@@ -362,7 +399,7 @@ async function setupAdminUser(adminEmail: string): Promise<void> {
     updatedAt: timestamp,
     createdAt: timestamp
   };
-
+  
   // Update role in database
   await db.ref(`roles/${userId}`).set(roleData);
   
@@ -373,7 +410,7 @@ async function setupAdminUser(adminEmail: string): Promise<void> {
     isAdmin: true,
     updatedAt: timestamp
   });
-
+  
   // Record in role history
   await db.ref(`role-history/${userId}`).push({
     action: 'admin_setup',
@@ -382,7 +419,7 @@ async function setupAdminUser(adminEmail: string): Promise<void> {
     timestamp,
     type: 'system_update'
   });
-
+  
   console.log('[SETUP-ADMIN] Admin user setup completed for:', userId);
 }
 
