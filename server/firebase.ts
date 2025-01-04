@@ -262,11 +262,20 @@ async function initializeCollectionWithSchema(db: admin.firestore.Firestore, col
       fields: schema.fields
     });
 
-    // Set default security rules
-    await collectionRef.doc('_rules').set({
-      read: "auth != null",
-      write: "auth != null && (request.auth.token.role == 'admin' || request.auth.uid == resource.data.userId)",
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    // Set security rules with more permissive access
+    await db.collection('_security_rules').doc(collectionName).set({
+      rules: {
+        read: true,
+        write: true,
+        conditions: {
+          read: "auth != null",
+          write: "auth != null",
+          create: "auth != null",
+          update: "auth != null && (resource.data.userId == request.auth.uid || request.auth.token.role in ['admin', 'manager'])",
+          delete: "auth != null && (resource.data.userId == request.auth.uid || request.auth.token.role in ['admin', 'manager'])"
+        },
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      }
     });
 
     console.log(`[FIREBASE] Initialized ${collectionName} collection with schema`);

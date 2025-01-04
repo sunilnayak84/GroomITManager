@@ -46,15 +46,19 @@ async function initializeNotifications() {
     });
 
     // Set security rules for the collection
-    const rulesRef = db.collection('_rules').doc('notifications');
-    await rulesRef.set({
-      read: true,
-      write: true,
+    await db.collection('_security_rules').doc('notifications').set({
       rules: {
-        read: "auth != null",
-        write: "auth != null && (request.auth.token.role == 'admin' || request.auth.uid == resource.data.userId)"
-      },
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        read: true, // Allow all authenticated users to read
+        write: true, // Allow all authenticated users to write initially
+        conditions: {
+          read: "auth != null", // Basic authentication check
+          write: "auth != null", // Allow authenticated users to write
+          create: "auth != null",
+          update: "auth != null && (resource.data.userId == request.auth.uid || request.auth.token.role == 'admin')",
+          delete: "auth != null && (resource.data.userId == request.auth.uid || request.auth.token.role == 'admin')"
+        },
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      }
     });
 
     console.log('[INIT] Notifications collection initialized successfully');
