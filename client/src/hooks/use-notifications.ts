@@ -149,6 +149,15 @@ export function useNotifications(userId: string) {
         return [];
       }
 
+      // Check role permissions from realtime db
+      const roleRef = ref(getDatabase(), `roles/${userId}`);
+      const roleSnapshot = await get(roleRef);
+      const roleData = roleSnapshot.val();
+      
+      if (!roleData || (!roleData.permissions?.includes('view_notifications') && roleData.role !== 'admin')) {
+        throw new Error('Missing or insufficient permissions');
+      }
+
       try {
         console.log('Fetching notifications for user:', userId);
         const q = query(
