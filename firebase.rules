@@ -1,6 +1,5 @@
 
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
     function isAuthenticated() {
@@ -13,7 +12,7 @@ service cloud.firestore {
 
     match /notifications/{notificationId} {
       allow read: if isAuthenticated() && (
-        resource.data.userId == request.auth.uid || 
+        resource.data.userId == request.auth.uid ||
         resource.data.groomerId == request.auth.uid
       );
       allow write: if isAuthenticated();
@@ -45,7 +44,8 @@ service cloud.firestore {
     }
     
     match /{document=**} {
-      allow read, write: if isAuthenticated();
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
     }
   }
 }

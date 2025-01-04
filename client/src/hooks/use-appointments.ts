@@ -216,6 +216,8 @@ export function useAppointments() {
               productsUsed: rawData.productsUsed,
               createdAt: timestampToISOString(rawData.createdAt),
               updatedAt: timestampToISOString(rawData.updatedAt),
+              totalPrice: rawData.totalPrice || 0,
+              totalDuration: rawData.totalDuration || 0,
               pet: {
                 name: petData.name,
                 breed: petData.breed,
@@ -229,8 +231,14 @@ export function useAppointments() {
                 name: groomerData.name
               },
               service: serviceData.length > 0 ? serviceData.map(s => ({
-                ...s,
-                service_id: s.id || ''
+                service_id: '',
+                name: s.name,
+                duration: s.duration,
+                price: s.price,
+                description: s.description,
+                category: s.category,
+                discount_percentage: s.discount_percentage,
+                consumables: s.consumables
               })) : undefined
             };
 
