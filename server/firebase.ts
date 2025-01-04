@@ -31,8 +31,15 @@ let firebaseApp: admin.app.App | null = null;
 
 export function initializeFirebase() {
   if (!firebaseApp) {
+    const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+    
     firebaseApp = admin.initializeApp({
-      credential: admin.credential.applicationDefault()
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: privateKey
+      }),
+      databaseURL: process.env.FIREBASE_DATABASE_URL
     });
   }
   return firebaseApp;
