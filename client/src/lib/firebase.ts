@@ -1,7 +1,6 @@
-
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword, browserLocalPersistence } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getDatabase } from "firebase/database";
 
@@ -19,8 +18,19 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-// Only set persistence without auto-login
+// Enable offline persistence
+enableIndexedDbPersistence(db)
+  .catch((err) => {
+    if (err.code === 'failed-precondition') {
+      console.warn('Multiple tabs open, persistence can only be enabled in one tab at a time.');
+    } else if (err.code === 'unimplemented') {
+      console.warn('The current browser doesn\'t support persistence.');
+    }
+  });
+
+// Set persistence and initialize auth
 auth.setPersistence(browserLocalPersistence)
   .then(() => {
     console.log('FIREBASE_INIT: Firebase initialized successfully');
@@ -29,8 +39,7 @@ auth.setPersistence(browserLocalPersistence)
     console.error('FIREBASE_INIT: Error:', error);
   });
 
-export { auth };
-export const db = getFirestore(app);
+export { auth, db };
 export const storage = getStorage(app);
 export const database = getDatabase(app);
 

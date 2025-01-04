@@ -3,6 +3,7 @@ import { collection, doc, getDocs, updateDoc, addDoc, onSnapshot, query, where, 
 import { db } from "../lib/firebase";
 import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useUser } from "@/hooks/use-user";
 
 interface Notification {
   id: string;
@@ -29,10 +30,18 @@ const notificationsCollection = collection(db, 'notifications');
 export function useNotifications(userId: string) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { user } = useUser();
+
+  // Only proceed if we have a valid authenticated user
+  const isAuthenticated = !!user;
 
   // Create notification mutation
   const createNotificationMutation = useMutation({
     mutationFn: async (data: CreateNotificationData) => {
+      if (!isAuthenticated) {
+        throw new Error('User must be authenticated to create notifications');
+      }
+
       try {
         const timestamp = new Date().toISOString();
         const notificationData = {
@@ -52,7 +61,9 @@ export function useNotifications(userId: string) {
         console.error('Error creating notification:', error);
         toast({
           title: "Error",
-          description: "Failed to create notification. Please try again.",
+          description: error.code === 'permission-denied' 
+            ? "You don't have permission to create notifications"
+            : "Failed to create notification. Please try again.",
           variant: "destructive",
         });
         throw error;
@@ -63,6 +74,10 @@ export function useNotifications(userId: string) {
   // Mark notification as read mutation
   const markAsReadMutation = useMutation({
     mutationFn: async (notificationId: string) => {
+      if (!isAuthenticated) {
+        throw new Error('User must be authenticated to update notifications');
+      }
+
       try {
         const notificationRef = doc(notificationsCollection, notificationId);
         const timestamp = new Date().toISOString();
@@ -77,7 +92,9 @@ export function useNotifications(userId: string) {
         console.error('Error marking notification as read:', error);
         toast({
           title: "Error",
-          description: "Failed to mark notification as read. Please try again.",
+          description: error.code === 'permission-denied'
+            ? "You don't have permission to update notifications"
+            : "Failed to mark notification as read. Please try again.",
           variant: "destructive",
         });
         throw error;
@@ -90,7 +107,9 @@ export function useNotifications(userId: string) {
 
   // Set up real-time updates for notifications
   useEffect(() => {
-    if (!userId) return;
+    if (!userId || !isAuthenticated) return;
+
+    console.log('Setting up notifications listener for user:', userId);
 
     const q = query(
       notificationsCollection,
@@ -119,13 +138,19 @@ export function useNotifications(userId: string) {
     });
 
     return () => unsubscribe();
-  }, [userId, queryClient, toast]);
+  }, [userId, queryClient, toast, isAuthenticated]);
 
   // Query for fetching notifications
   const notificationsQuery = useQuery({
     queryKey: ['notifications', userId],
     queryFn: async () => {
+      if (!isAuthenticated) {
+        console.log('User not authenticated, skipping notifications fetch');
+        return [];
+      }
+
       try {
+        console.log('Fetching notifications for user:', userId);
         const q = query(
           notificationsCollection,
           where('userId', '==', userId),
@@ -150,6 +175,7 @@ export function useNotifications(userId: string) {
         throw error;
       }
     },
+    enabled: isAuthenticated && !!userId,
     staleTime: 1000 * 60 // 1 minute
   });
 
