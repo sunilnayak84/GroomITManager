@@ -3,50 +3,51 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function isAuthenticated() {
-      return request.auth != null;
+      return request.auth != null && request.auth.token != null;
+    }
+
+    function hasToken(token) {
+      return request.auth.token[token] != null;
     }
 
     function getUserRole() {
       return request.auth.token.role;
     }
 
-    function hasRole(role) {
-      return getUserRole() == role;
+    function hasAnyRole(roles) {
+      return getUserRole() in roles;
     }
 
     function isAdmin() {
-      return hasRole('admin');
+      return getUserRole() == 'admin';
     }
 
     function isStaff() {
-      return hasRole('staff');
+      return getUserRole() == 'staff';
     }
 
     function isManager() {
-      return hasRole('manager');
+      return getUserRole() == 'manager';
     }
 
-    function hasAnyRole(roles) {
-      return roles.hasAny([getUserRole()]);
-    }
-
+    // Default rule for all collections
     match /{document=**} {
-      allow read: if isAuthenticated() && (isAdmin() || isManager());
+      allow read, write: if isAuthenticated() && isAdmin();
     }
 
     match /appointments/{appointmentId} {
       allow read: if isAuthenticated();
-      allow write: if isAuthenticated() && (isAdmin() || isManager() || isStaff());
-    }
-
-    match /pets/{petId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated() && (isAdmin() || isManager() || isStaff());
+      allow write: if isAuthenticated() && (isAdmin() || isStaff() || isManager());
     }
 
     match /services/{serviceId} {
       allow read: if isAuthenticated();
       allow write: if isAuthenticated() && (isAdmin() || isManager());
+    }
+
+    match /pets/{petId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && (isAdmin() || isStaff() || isManager());
     }
 
     match /working-hours/{docId} {
@@ -56,17 +57,12 @@ service cloud.firestore {
 
     match /staff/{staffId} {
       allow read: if isAuthenticated();
-      allow write: if isAuthenticated() && (isAdmin() || isManager());
+      allow write: if isAuthenticated() && isAdmin();
     }
 
     match /roles/{userId} {
       allow read: if isAuthenticated();
       allow write: if isAuthenticated() && isAdmin();
-    }
-
-    match /notifications/{notificationId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated();
     }
   }
 }
