@@ -47,15 +47,14 @@ try {
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-// Enable offline persistence
-enableIndexedDbPersistence(db)
-  .catch((err) => {
-    if (err.code === 'failed-precondition') {
-      console.warn('Persistence failed: multiple tabs open');
-    } else if (err.code === 'unimplemented') {
-      console.warn('Persistence not available in this browser');
-    }
-  });
+// Initialize Firestore with memory-only persistence
+const firestoreSettings = {
+  cacheSizeBytes: 40 * 1024 * 1024, // 40 MB
+  experimentalForceLongPolling: true,
+  ignoreUndefinedProperties: true
+};
+
+db.settings(firestoreSettings);
 export const storage = getStorage(app);
 
 // Set auth persistence to local
