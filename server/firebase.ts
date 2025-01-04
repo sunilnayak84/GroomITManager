@@ -8,7 +8,12 @@ import { initializeNotifications } from './scripts/initialize-notifications';
 let firebaseApp: admin.app.App | null = null;
 
 export const getAuth = () => getFirebaseAuth(admin.app());
-export const getDatabase = () => admin.database();
+export const getDatabase = () => {
+  if (!admin.apps.length) {
+    throw new Error('Firebase Admin not initialized');
+  }
+  return admin.database();
+};
 
 export enum RoleTypes {
   ADMIN = 'admin',
