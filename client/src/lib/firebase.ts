@@ -1,6 +1,7 @@
+
 import { initializeApp } from "firebase/app";
 import { getAuth, browserLocalPersistence } from "firebase/auth";
-import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 // Validate required environment variables
@@ -27,15 +28,15 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  experimentalForceLongPolling: true, // Add this for better connection stability
-  experimentalAutoDetectLongPolling: true // Enable auto-detection of long polling needs
+  experimentalForceLongPolling: true,
+  experimentalAutoDetectLongPolling: true
 };
 
 let app;
 try {
   console.log('FIREBASE_INIT: Initializing Firebase with config:', {
     ...firebaseConfig,
-    apiKey: '***' // Hide sensitive data in logs
+    apiKey: '***'
   });
   app = initializeApp(firebaseConfig);
   console.log('FIREBASE_INIT: Firebase initialized successfully');
@@ -45,16 +46,12 @@ try {
 }
 
 export const auth = getAuth(app);
-export const db = getFirestore(app);
-
-// Initialize Firestore with configuration options
+export const storage = getStorage(app);
 export const db = getFirestore(app, {
-  cacheSizeBytes: 40 * 1024 * 1024, // 40 MB
+  cacheSizeBytes: 40 * 1024 * 1024,
   experimentalForceLongPolling: true,
   ignoreUndefinedProperties: true
 });
-
-export const storage = getStorage(app);
 
 // Set auth persistence to local
 auth.setPersistence(browserLocalPersistence)
