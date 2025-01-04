@@ -176,12 +176,6 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
     const db = getFirestore(app);
     const rtdb = getDatabase(app);
     
-    return app;
-
-    // Verify database connections
-    const db = getFirestore(firebaseApp);
-    const rtdb = getDatabase(firebaseApp);
-
     // Test Firestore connection
     await db.collection('users').limit(1).get();
 
