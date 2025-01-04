@@ -6,24 +6,31 @@ service cloud.firestore {
     function isAuthenticated() {
       return request.auth != null;
     }
-    
-    function isAdmin() {
-      return isAuthenticated() && 
-        get(/databases/$(database)/documents/roles/$(request.auth.uid)).data.role == 'admin';
-    }
-    
-    // Users collection rules
-    match /users/{userId} {
-      allow read: if isAuthenticated();
-      allow write: if isAdmin() || request.auth.uid == userId;
-    }
-    
-    // Roles collection rules  
-    match /roles/{userId} {
-      allow read: if isAuthenticated();
-      allow write: if isAdmin();
+
+    // Allow authenticated users to read and write to all collections
+    match /appointments/{document=**} {
+      allow read, write: if isAuthenticated();
     }
 
-    
+    match /pets/{document=**} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /services/{document=**} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /staff/{document=**} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /working-hours/{document=**} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if request.auth.uid == userId;
+    }
   }
 }

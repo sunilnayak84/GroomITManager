@@ -1,25 +1,26 @@
 
+import admin from 'firebase-admin';
 import { initializeFirebaseAdmin } from '../firebase';
 import * as fs from 'fs';
-import * as path from 'path';
 import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = dirname(__filename);
 
 async function deployRules() {
   try {
     console.log('Deploying Firestore rules...');
     const app = await initializeFirebaseAdmin();
     
-    // Read rules file
-    const rulesPath = path.join(__dirname, '../../firebase.rules');
-    const rules = fs.readFileSync(rulesPath, 'utf8');
+    const rulesPath = join(__dirname, '../../firebase.rules');
+    console.log('Reading rules from:', rulesPath);
     
-    // Deploy rules
+    const rules = fs.readFileSync(rulesPath, 'utf8');
+    console.log('Rules content:', rules);
+    
     await app.firestore().settings({
-      ignoreUndefinedProperties: true,
-      rules: rules
+      ignoreUndefinedProperties: true
     });
     
     console.log('Rules deployed successfully');
