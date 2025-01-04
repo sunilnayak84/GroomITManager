@@ -227,7 +227,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
           if (a.groomerId !== groomerId) return false;
           const existingStart = new Date(a.date);
           const existingEnd = new Date(existingStart);
-          const existingDuration = a.service?.duration || 60;
+          const existingDuration = a.service?.[0]?.duration || 60;
           existingEnd.setMinutes(existingEnd.getMinutes() + existingDuration);
             
           return (
@@ -247,7 +247,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
           error: conflictingAppointment 
             ? `This time slot conflicts with an existing appointment from ${format(new Date(conflictingAppointment.date), 'h:mm a')} to ${format((() => {
                 const end = new Date(conflictingAppointment.date);
-                end.setMinutes(end.getMinutes() + (conflictingAppointment.service?.duration || 60));
+                end.setMinutes(end.getMinutes() + (conflictingAppointment.service?.[0]?.duration || 60));
                 return end;
               })(), 'h:mm a')}`
             : "The selected groomer is not available during this time. Please choose another time slot."

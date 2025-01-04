@@ -259,6 +259,7 @@ export default function AppointmentsPage() {
             appointment={selectedAppointment}
             open={openDetails}
             onOpenChange={setOpenDetails}
+            onEdit={() => setOpenEdit(true)}
           />
           <Dialog open={openEdit} onOpenChange={setOpenEdit}> {/* Added Edit Dialog */}
             <DialogTrigger asChild>
