@@ -172,10 +172,13 @@ export const petSchema = z.object({
   }).nullable()
 });
 
-export type Pet = z.infer<typeof petSchema>;
+export type Pet = z.infer<typeof petSchema> & {
+  deletedAt?: string | null;
+};
 export type InsertPet = Omit<PetInput, "id" | "submissionId"> & {
   submissionId?: string;
   firebaseId?: string | null;
+  deletedAt?: string | null;
 };
 
 export type FirestorePet = {

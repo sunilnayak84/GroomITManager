@@ -282,7 +282,10 @@ export function usePets() {
       const customerRef = doc(customersCollection, petData.customerId);
 
       await runTransaction(db, async (transaction) => {
-        transaction.delete(petRef);
+        transaction.update(petRef, {
+          deletedAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
         transaction.update(customerRef, {
           petCount: increment(-1)
         });
