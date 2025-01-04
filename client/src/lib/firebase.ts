@@ -1,3 +1,4 @@
+
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword, browserLocalPersistence } from "firebase/auth";
 import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
@@ -20,14 +21,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Enable offline persistence with forceOwnership
-enableIndexedDbPersistence(db, {forceOwnership: true}).catch((err) => {
-    if (err.code === 'failed-precondition') {
-        console.warn('Multiple tabs open, persistence can only be enabled in one tab at a time.');
-    } else if (err.code === 'unimplemented') {
-        console.warn('The current browser doesn\'t support persistence.');
-    }
-});
+// Enable offline persistence
+enableIndexedDbPersistence(db, {forceOwnership: true})
   .catch((err) => {
     if (err.code === 'failed-precondition') {
       console.warn('Multiple tabs open, persistence can only be enabled in one tab at a time.');
