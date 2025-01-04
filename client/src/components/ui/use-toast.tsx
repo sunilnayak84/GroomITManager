@@ -1,8 +1,3 @@
+import { useToast } from "@/hooks/use-toast"
 
-// Simplified toast implementation
-export function useToast() {
-  return {
-    toast: () => {},
-    dismiss: () => {},
-  };
-}
+export { useToast }
