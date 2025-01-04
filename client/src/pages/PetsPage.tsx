@@ -57,14 +57,14 @@ export default function PetsPage() {
   }, [data, searchQuery]);
 
   useEffect(() => {
-    if (pets && customers) {
+    if (pets) {
       const mergedPets = pets.map(pet => {
         const optimisticUpdate = optimisticPets[pet.id];
         return optimisticUpdate || pet;
       });
       setData(mergedPets);
     }
-  }, [pets, customers, optimisticPets]);
+  }, [pets, optimisticPets]);
 
   const handleUpdatePet = async (formData: InsertPet) => {
     if (!selectedPet) {
