@@ -27,12 +27,16 @@ interface FirestoreAppointmentData {
 
 const timestampToISOString = (timestamp: Timestamp | null | undefined): string => {
   if (!timestamp) return new Date().toISOString();
-  try {
+  if (timestamp.toDate && typeof timestamp.toDate === 'function') {
     return timestamp.toDate().toISOString();
-  } catch (error) {
-    console.error('Error converting timestamp:', error);
-    return new Date().toISOString();
   }
+  if (timestamp instanceof Date) {
+    return timestamp.toISOString();
+  }
+  if (typeof timestamp === 'string') {
+    return new Date(timestamp).toISOString();
+  }
+  return new Date().toISOString();
 };
 
 const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppointmentData => {

@@ -34,11 +34,11 @@ export function useServices() {
           try {
             const parsedData = serviceSchema.parse({
               service_id: doc.id,
-              name: data.name,
+              name: data.name || '',  // Provide default empty string
               description: data.description || null,
               category: data.category || ServiceCategory.SERVICE,
-              duration: data.duration,
-              price: data.price || 0,
+              duration: Number(data.duration) || 0, // Convert and provide default
+              price: Number(data.price) || 0,
               discount_percentage: data.discount_percentage || 0,
               consumables: data.consumables || [],
               isActive: data.isActive ?? true,
