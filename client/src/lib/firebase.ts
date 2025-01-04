@@ -1,7 +1,7 @@
 
 import { initializeApp } from "firebase/app";
 import { getAuth, browserLocalPersistence } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 // Validate required environment variables
@@ -57,7 +57,7 @@ const firestoreConfig = {
 export const db = getFirestore(app);
 
 // Enable offline persistence
-enableIndexedDbPersistence(db).catch((err) => {
+enableIndexedDbPersistence(db).catch((err: Error) => {
   console.error("Failed to enable offline persistence:", err);
 });
 
