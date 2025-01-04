@@ -6,40 +6,40 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    function getUserRole() {
-      return request.auth.token.role;
+    function getRoleFromRTDB() {
+      return get(/databases/$(database)/documents/roles/$(request.auth.uid)).data.role;
     }
 
-    function hasPermission(permission) {
-      return request.auth.token.permissions[permission] == true || 
-             request.auth.token.role == 'admin' ||
-             request.auth.token.permissions['all'] == true;
+    function isAdmin() {
+      return getRoleFromRTDB() == 'admin';
+    }
+
+    function isManager() {
+      return getRoleFromRTDB() == 'manager';
     }
 
     match /notifications/{notificationId} {
       allow read: if isAuthenticated() && (
         resource.data.userId == request.auth.uid ||
-        resource.data.recipientId == request.auth.uid ||
-        getUserRole() == 'admin' ||
-        getUserRole() == 'manager'
+        isAdmin() ||
+        isManager()
       );
       allow write: if isAuthenticated();
     }
 
     match /users/{userId} {
       allow read: if isAuthenticated();
-      allow write: if isAuthenticated() && (
-        request.auth.uid == userId ||
-        getUserRole() == 'admin'
-      );
+      allow write: if isAuthenticated() && (isAdmin() || request.auth.uid == userId);
+    }
+
+    match /customers/{customerId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && (isAdmin() || isManager());
     }
 
     match /{document=**} {
       allow read: if isAuthenticated();
-      allow write: if isAuthenticated() && (
-        getUserRole() == 'admin' ||
-        getUserRole() == 'manager'
-      );
+      allow write: if isAuthenticated() && isAdmin();
     }
   }
 }

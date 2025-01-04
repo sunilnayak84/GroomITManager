@@ -69,10 +69,12 @@ async function loginWithFirebase(credentials: { email: string; password: string 
       credentials.password
     );
     
-    // Get custom claims from Firebase user
-    const tokenResult = await user.getIdTokenResult();
-    const role = (tokenResult.claims.role as UserRole) || 'staff';
-    const permissions = tokenResult.claims.permissions as string[] || [];
+    // Get role from Realtime Database
+    const db = getDatabase();
+    const roleSnapshot = await get(ref(db, `roles/${user.uid}`));
+    const roleData = roleSnapshot.val() || { role: 'staff', permissions: [] };
+    const role = roleData.role as UserRole;
+    const permissions = roleData.permissions || [];
 
     return {
       id: user.uid,

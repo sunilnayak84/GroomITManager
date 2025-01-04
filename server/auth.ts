@@ -209,11 +209,13 @@ export async function setUserRole(userId: string, role: keyof typeof RoleTypes) 
       throw new Error('User not found in Firebase');
     }
 
-    // Get current claims
-    const currentClaims = (await admin.auth().getUser(userId)).customClaims || {};
+    // Get role from Realtime Database
+    const db = admin.database();
+    const roleSnapshot = await db.ref(`roles/${userId}`).once('value');
+    const currentRole = roleSnapshot.val()?.role;
 
     // Role transition validation
-    if (currentClaims.role === 'admin') {
+    if (currentRole === 'admin') {
       if (role !== 'admin') {
         throw new Error('Cannot downgrade admin user');
       }
@@ -221,14 +223,13 @@ export async function setUserRole(userId: string, role: keyof typeof RoleTypes) 
 
     // Special validation for manager role
     if (role === 'manager') {
-      // Validate email domain or any other business rules
       const email = userRecord.email?.toLowerCase() || '';
       if (!email.endsWith('@groomery.in') && process.env.NODE_ENV !== 'development') {
         throw new Error('Manager role requires a company email address');
       }
       
       // Ensure manager can't modify admin users
-      if (currentClaims.role === 'admin') {
+      if (currentRole === 'admin') {
         throw new Error('Cannot modify admin user roles');
       }
     }
