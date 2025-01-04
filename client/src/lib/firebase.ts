@@ -47,9 +47,18 @@ try {
 
 export const auth = getAuth(app);
 export const storage = getStorage(app);
-export const db = getFirestore(app, {
-  ignoreUndefinedProperties: true,
-  experimentalForceLongPolling: true
+
+// Initialize Firestore
+const firestoreConfig = {
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  databaseId: "(default)"
+};
+
+export const db = getFirestore(app);
+
+// Enable offline persistence
+enableIndexedDbPersistence(db).catch((err) => {
+  console.error("Failed to enable offline persistence:", err);
 });
 
 // Set auth persistence to local
