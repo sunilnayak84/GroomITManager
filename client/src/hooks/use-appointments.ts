@@ -60,7 +60,7 @@ const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppoi
 
 export function useAppointments() {
   const queryClient = useQueryClient();
-  const { currentUser } = useAuth();
+  const { user: currentUser } = useUser();
   
   if (!currentUser) {
     throw new Error('Authentication required');
@@ -228,7 +228,10 @@ export function useAppointments() {
               groomer: {
                 name: groomerData.name
               },
-              service: serviceData.length > 0 ? serviceData : undefined
+              service: serviceData.length > 0 ? serviceData.map(s => ({
+                ...s,
+                service_id: s.id || ''
+              })) : undefined
             };
 
             appointments.push(appointment);

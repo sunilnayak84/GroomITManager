@@ -59,7 +59,9 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
     try {
       await updateAppointment({
         id: appointment.id,
-        ...data
+        status: data.status,
+        notes: data.notes || undefined,
+        cancellationReason: undefined
       });
       
       toast({

@@ -1,36 +1,33 @@
 
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Allow read/write access to authenticated users
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.role == 'admin';
+    }
+    
+    function isManager() {
+      return isAuthenticated() && request.auth.token.role == 'manager';
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.userId == request.auth.uid || isAdmin() || isManager());
+      allow write: if isAuthenticated();
+    }
+    
     match /{document=**} {
-      allow read, write: if request.auth != null;
-    }
-    
-    // Specific collection rules
-    match /appointments/{appointmentId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null;
-    }
-    
-    match /customers/{customerId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null;
-    }
-    
-    match /pets/{petId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null;
-    }
-    
-    match /services/{serviceId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null;
-    }
-    
-    match /staff/{staffId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null;
+      allow read, write: if isAuthenticated();
     }
   }
 }
