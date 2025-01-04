@@ -50,9 +50,9 @@ export default function PetsPage() {
 
   const filteredPets = useMemo(() => {
     return data?.filter(pet => 
-      pet.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      pet.owner?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      pet.breed?.toLowerCase().includes(searchQuery.toLowerCase())
+      (pet.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+      (pet.owner?.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+      (pet.breed?.toLowerCase() || '').includes(searchQuery.toLowerCase())
     );
   }, [data, searchQuery]);
 
