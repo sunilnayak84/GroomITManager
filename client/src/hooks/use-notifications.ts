@@ -123,7 +123,7 @@ export function useNotifications(userId: string) {
           orderBy('createdAt', 'desc'),
           limit(50)
         );
-        
+        console.log('Fetching notifications for user:', userId);
         const querySnapshot = await getDocs(q);
         return querySnapshot.docs.map(doc => ({
           id: doc.id,

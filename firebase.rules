@@ -2,44 +2,47 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Helper functions
     function isAuthenticated() {
       return request.auth != null;
     }
-
-    function getRoleFromRTDB() {
-      return get(/databases/$(database)/documents/roles/$(request.auth.uid)).data.role;
-    }
-
+    
     function isAdmin() {
-      return getRoleFromRTDB() == 'admin';
+      return isAuthenticated() && (
+        get(/databases/$(database)/documents/roles/$(request.auth.uid)).data.role == 'admin' ||
+        request.auth.token.role == 'admin'
+      );
     }
 
-    function isManager() {
-      return getRoleFromRTDB() == 'manager';
-    }
-
+    // Notifications rules
     match /notifications/{notificationId} {
       allow read: if isAuthenticated() && (
-        resource.data.userId == request.auth.uid ||
-        isAdmin() ||
-        isManager()
+        resource.data.userId == request.auth.uid || 
+        isAdmin()
       );
-      allow write: if isAuthenticated();
+      allow write: if isAuthenticated() && (
+        request.resource.data.userId == request.auth.uid || 
+        isAdmin()
+      );
     }
 
+    // Users collection
     match /users/{userId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated() && (isAdmin() || request.auth.uid == userId);
+      allow read: if isAuthenticated() && (
+        request.auth.uid == userId || 
+        isAdmin()
+      );
+      allow write: if isAdmin();
     }
 
+    // Customers collection
     match /customers/{customerId} {
       allow read: if isAuthenticated();
-      allow write: if isAuthenticated() && (isAdmin() || isManager());
-    }
-
-    match /{document=**} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated() && isAdmin();
+      allow write: if isAuthenticated() && (
+        request.auth.token.role == 'admin' || 
+        request.auth.token.role == 'manager' ||
+        request.auth.token.role == 'receptionist'
+      );
     }
   }
 }
