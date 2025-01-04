@@ -8,7 +8,7 @@ import {
   validatePermissions,
   isValidPermission,
   ALL_PERMISSIONS,
-  getFirebaseAdmin,
+  initializeFirebaseAdmin,
   setupAdminUser,
   getDefaultPermissions,
   getAuth,
@@ -20,7 +20,7 @@ export async function registerRoutes(app: Express) {
   console.log('[ROUTES] Starting route registration...');
 
   // Initialize Firebase Admin
-  await getFirebaseAdmin();
+  await initializeFirebaseAdmin();
 
   // Health check endpoint
   app.get("/api/health", (req, res) => {
