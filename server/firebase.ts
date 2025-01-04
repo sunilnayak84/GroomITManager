@@ -196,7 +196,7 @@ export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
     const databaseURL = process.env.FIREBASE_DATABASE_URL || 
       `https://${projectId}-default-rtdb.asia-southeast1.firebasedatabase.app`;
 
-    if (!admin.apps.length) {
+    if (!admin.apps || admin.apps.length === 0) {
       console.log('[FIREBASE] Initializing new Firebase Admin instance...');
       firebaseApp = admin.initializeApp({
         credential: admin.credential.cert({
