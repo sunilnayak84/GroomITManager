@@ -281,7 +281,8 @@ export type AppointmentWithRelations = Omit<Appointment, "status" | "appointment
   groomer: {
     name: string;
   };
-  service?: {
+  service?: Array<{
+    service_id: string;
     name: string;
     duration: number;
     price: number;
@@ -289,7 +290,7 @@ export type AppointmentWithRelations = Omit<Appointment, "status" | "appointment
     category?: string;
     discount_percentage?: number;
     consumables?: any[];
-  };
+  }>;
 };
 
 // Additional types for inventory usage

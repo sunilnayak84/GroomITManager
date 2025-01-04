@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, browserLocalPersistence } from "firebase/auth";
 import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
@@ -59,7 +59,7 @@ enableIndexedDbPersistence(db)
 export const storage = getStorage(app);
 
 // Set auth persistence to local
-auth.setPersistence('local')
+auth.setPersistence(browserLocalPersistence)
   .catch((error) => {
     console.error('Auth persistence error:', error);
   });
