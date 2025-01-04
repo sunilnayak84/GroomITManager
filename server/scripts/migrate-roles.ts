@@ -19,9 +19,15 @@ async function migrateRoles() {
       return;
     }
 
+    interface RoleData {
+      role: string;
+      permissions: string[];
+      updatedAt?: Date;
+    }
+
     const batch = firestore.batch();
     
-    for (const [userId, roleData] of Object.entries(roles)) {
+    for (const [userId, roleData] of Object.entries(roles) as [string, RoleData][]) {
       console.log(`Migrating role for user ${userId}`);
       const roleRef = firestore.collection('roles').doc(userId);
       batch.set(roleRef, {
