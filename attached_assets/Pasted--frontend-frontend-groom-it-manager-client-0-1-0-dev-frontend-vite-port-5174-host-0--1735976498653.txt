@@ -1,0 +1,38 @@
+[frontend] 
+[frontend] > groom-it-manager-client@0.1.0 dev
+[frontend] > vite --port 5174 --host 0.0.0.0
+[frontend] 
+[frontend] ▲ [WARNING] Duplicate key "server" in object literal [duplicate-object-key]
+[frontend] 
+[frontend]     vite.config.ts:13:2:
+[frontend]       13 │   server: {
+[frontend]          ╵   ~~~~~~
+[frontend] 
+[frontend]   The original key "server" is here:
+[frontend] 
+[frontend]     vite.config.ts:7:2:
+[frontend]       7 │   server: {
+[frontend]         ╵   ~~~~~~
+[frontend] 
+[frontend] 
+[frontend]   VITE v5.4.11  ready in 215 ms
+[frontend] 
+[frontend]   ➜  Local:   http://localhost:5174/
+[frontend]   ➜  Network: http://172.31.196.26:5174/
+[backend] [INIT] Starting notifications collection initialization...
+[backend] [SERVER] Starting server initialization...
+[backend] [PORT_CLEANUP] Starting cleanup for port 3000...
+[backend] [INIT] Error initializing notifications: ReferenceError: Cannot access 'firebaseApp' before initialization
+[backend]     at getFirebaseAdmin (/home/runner/GroomITManager/server/firebase.ts:146:3)
+[backend]     at initializeNotifications (/home/runner/GroomITManager/server/scripts/initialize-notifications.ts:7:23)
+[backend]     at <anonymous> (/home/runner/GroomITManager/server/scripts/initialize-notifications.ts:81:3)
+[backend]     at ModuleJob.run (node:internal/modules/esm/module_job:234:25)
+[backend]     at async ModuleLoader.import (node:internal/modules/esm/loader:473:24)
+[backend]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:122:5)
+[backend] [INIT] Fatal error during initialization: ReferenceError: Cannot access 'firebaseApp' before initialization
+[backend]     at getFirebaseAdmin (/home/runner/GroomITManager/server/firebase.ts:146:3)
+[backend]     at initializeNotifications (/home/runner/GroomITManager/server/scripts/initialize-notifications.ts:7:23)
+[backend]     at <anonymous> (/home/runner/GroomITManager/server/scripts/initialize-notifications.ts:81:3)
+[backend]     at ModuleJob.run (node:internal/modules/esm/module_job:234:25)
+[backend]     at async ModuleLoader.import (node:internal/modules/esm/loader:473:24)
+[backend]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:122:5)
