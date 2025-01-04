@@ -155,7 +155,7 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
   }
 
   // Initialize Realtime Database URL
-  const databaseURL = process.env.FIREBASE_DATABASE_URL || 
+  const databaseURL = process.env.FIREBASE_DATABASE_URL ||
     `https://${process.env.FIREBASE_PROJECT_ID}-default-rtdb.asia-southeast1.firebasedatabase.app`;
 
   if (!privateKey || !process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL) {
@@ -190,16 +190,31 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
       await db.collection('users').limit(1).get();
       console.log('[FIREBASE] Database connection verified');
 
-      // Initialize notifications collection with proper schema
+      // Initialize notifications collection
+      console.log('[FIREBASE] Verifying notifications collection...');
       const notificationsRef = db.collection('notifications');
-      const notificationsDoc = await notificationsRef.limit(1).get();
-      if (notificationsDoc.empty) {
-        console.log('[FIREBASE] Initializing notifications collection...');
-        // We don't create any documents, just ensure the collection exists
-        await db.collection('notifications').doc('__config__').set({
+
+      // Create schema document in a separate meta collection
+      const metaRef = db.collection('_meta').doc('notifications');
+      const metaDoc = await metaRef.get();
+
+      if (!metaDoc.exists) {
+        await metaRef.set({
           createdAt: admin.firestore.FieldValue.serverTimestamp(),
-          schema_version: '1.0'
+          schemaVersion: '1.0',
+          collectionName: 'notifications',
+          fields: {
+            userId: 'string',
+            appointmentId: 'string?',
+            type: 'string',
+            title: 'string',
+            message: 'string',
+            isRead: 'boolean',
+            createdAt: 'timestamp',
+            updatedAt: 'timestamp?'
+          }
         });
+        console.log('[FIREBASE] Notifications schema initialized');
       }
 
     } catch (error) {
@@ -231,7 +246,7 @@ async function initializeFirebaseAdmin(): Promise<admin.app.App> {
     } catch (error) {
       console.error(`[FIREBASE] Attempt ${attempt} failed:`, error);
       lastError = error instanceof Error ? error : new Error(String(error));
-      
+
       if (attempt === MAX_INIT_RETRIES) {
         console.error('[FIREBASE] Maximum retry attempts reached');
         throw lastError;
@@ -251,31 +266,31 @@ async function getRolePermissions(role: RoleTypes): Promise<Permission[]> {
   const db = admin.database(app);
   const snapshot = await db.ref(`role-definitions/${role}`).once('value');
   const roleData = snapshot.val();
-  
+
   if (!roleData || !roleData.permissions) {
     console.warn(`[ROLES] No permissions found for role ${role}, using empty set`);
     return [];
   }
-  
+
   const validPermissions = validatePermissions(roleData.permissions);
   if (validPermissions.length !== roleData.permissions.length) {
     console.warn(`[ROLES] Some permissions were invalid for role ${role}`);
   }
-  
+
   return validPermissions;
 }
 
 async function getDefaultPermissions(role: RoleTypes): Promise<Permission[]> {
   const now = Date.now();
   const cached = permissionsCache.get(role);
-  
+
   if (cached && (now - cached.timestamp) < CACHE_TTL) {
     return cached.permissions;
   }
-  
+
   const permissions = await getRolePermissions(role);
   permissionsCache.set(role, { permissions, timestamp: now });
-  
+
   return permissions;
 }
 
@@ -296,14 +311,14 @@ async function getUserRole(userId: string): Promise<{ role: RoleTypes; permissio
     const db = admin.database(app);
     const snapshot = await db.ref(`roles/${userId}`).once('value');
     const roleData = snapshot.val();
-    
+
     if (!roleData) {
       return {
         role: RoleTypes.staff,
         permissions: DefaultPermissions[RoleTypes.staff]
       };
     }
-  
+
     return {
       role: roleData.role as RoleTypes,
       permissions: roleData.permissions || DefaultPermissions[roleData.role as RoleTypes]
@@ -326,11 +341,11 @@ async function updateUserRole(
   const db = getDatabase(app);
   const auth = getAuth(app);
   const timestamp = Date.now();
-  
+
   await auth.getUser(userId);
-  
+
   const permissions = customPermissions || DefaultPermissions[role];
-  
+
   // Save to role history
   const historyRef = db.ref(`role-history/${userId}`);
   await historyRef.push({
@@ -342,19 +357,19 @@ async function updateUserRole(
     timestamp: Date.now(),
     type: 'role_change'
   });
-  
+
   await db.ref(`roles/${userId}`).set({
     role,
     permissions,
     updatedAt: timestamp
   });
-  
+
   await auth.setCustomUserClaims(userId, {
     role,
     permissions,
     updatedAt: timestamp
   });
-  
+
   return {
     success: true,
     role,
@@ -367,11 +382,11 @@ async function setupAdminUser(adminEmail: string): Promise<void> {
   if (!adminEmail.endsWith('@groomery.in') && process.env.NODE_ENV !== 'development') {
     throw new Error('Admin email must be from the @groomery.in domain');
   }
-  
+
   const app = getFirebaseAdmin();
   const auth = getAuth(app);
   const db = getDatabase(app);
-  
+
   let userRecord;
   try {
     userRecord = await auth.getUserByEmail(adminEmail);
@@ -384,13 +399,13 @@ async function setupAdminUser(adminEmail: string): Promise<void> {
       displayName: 'System Admin',
     });
   }
-  
+
   const userId = userRecord.uid;
   const timestamp = Date.now();
-  
+
   // Ensure admin has ALL permissions
   const adminPermissions = [...ALL_PERMISSIONS, 'all'];
-  
+
   // Set role data with full permissions
   const roleData = {
     role: RoleTypes.admin,
@@ -399,10 +414,10 @@ async function setupAdminUser(adminEmail: string): Promise<void> {
     updatedAt: timestamp,
     createdAt: timestamp
   };
-  
+
   // Update role in database
   await db.ref(`roles/${userId}`).set(roleData);
-  
+
   // Set custom claims with full permissions
   await auth.setCustomUserClaims(userId, {
     role: RoleTypes.admin,
@@ -410,7 +425,7 @@ async function setupAdminUser(adminEmail: string): Promise<void> {
     isAdmin: true,
     updatedAt: timestamp
   });
-  
+
   // Record in role history
   await db.ref(`role-history/${userId}`).push({
     action: 'admin_setup',
@@ -419,14 +434,14 @@ async function setupAdminUser(adminEmail: string): Promise<void> {
     timestamp,
     type: 'system_update'
   });
-  
+
   console.log('[SETUP-ADMIN] Admin user setup completed for:', userId);
 }
 
 async function listAllUsers(pageToken?: string) {
   const auth = getAuth(getFirebaseAdmin());
   const result = await auth.listUsers(100, pageToken);
-  
+
   const users = await Promise.all(
     result.users.map(async (userRecord) => {
       const roleData = await getUserRole(userRecord.uid);
@@ -439,7 +454,7 @@ async function listAllUsers(pageToken?: string) {
       };
     })
   );
-  
+
   return {
     users,
     pageToken: result.pageToken
@@ -499,35 +514,35 @@ async function updateRoleDefinition(
 ) {
   const db = getDatabase(getFirebaseAdmin());
   const timestamp = Date.now();
-  
+
   const roleRef = db.ref(`role-definitions/${roleName}`);
   const snapshot = await roleRef.once('value');
-  
+
   if (!snapshot.exists()) {
     throw new Error(`Role ${roleName} not found`);
   }
-  
+
   const currentRole = snapshot.val();
-  
+
   if (currentRole.isSystem) {
     throw new Error('Cannot modify system roles');
   }
-  
+
   const updatedRole = {
     ...currentRole,
     permissions,
     description: description || currentRole.description,
     updatedAt: timestamp
   };
-  
+
   await roleRef.update(updatedRole);
-  
+
   await roleRef.child('history').push({
     permissions,
     timestamp,
     type: 'definition_update'
   });
-  
+
   return updatedRole;
 }
 
