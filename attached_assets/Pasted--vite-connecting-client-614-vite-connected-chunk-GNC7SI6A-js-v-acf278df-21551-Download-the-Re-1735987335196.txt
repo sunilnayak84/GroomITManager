@@ -1,0 +1,466 @@
+[vite] connecting...
+client:614 [vite] connected.
+chunk-GNC7SI6A.js?v=acf278df:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:17 Checking Firebase environment variables...
+firebase.ts:37 FIREBASE_INIT: Initializing Firebase with config: {apiKey: '***', authDomain: 'replit-5ac6a.firebaseapp.com', projectId: 'replit-5ac6a', storageBucket: 'replit-5ac6a.firebasestorage.app', messagingSenderId: '194114432530', …}
+firebase.ts:42 FIREBASE_INIT: Firebase initialized successfully
+firebase.ts:60 [2025-01-04T10:41:19.495Z]  @firebase/firestore: Firestore (11.0.2): enableIndexedDbPersistence() will be deprecated in the future, you can use `FirestoreSettings.cache` instead.
+defaultLogHandler @ chunk-2LIWWRRO.js?v=acf278df:1378
+warn @ chunk-2LIWWRRO.js?v=acf278df:1442
+__PRIVATE_logWarn @ firebase_firestore.js?v=acf278df:2625
+enableIndexedDbPersistence @ firebase_firestore.js?v=acf278df:15800
+(anonymous) @ firebase.ts:60Understand this warningAI
+content.js:1 CISPL SignerDigital Loaded
+use-appointments.ts:73 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:81 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:84 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-pets.ts:55 FETCH_PETS: Starting to fetch pets
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+use-staff.ts:14 FETCH_STAFF: Starting to fetch staff members
+use-working-hours.ts:102 Error fetching working hours: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-working-hours.ts:102
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627Understand this errorAI
+use-pets.ts:112 FETCH_PETS: Error fetching pets: FirebaseError: Missing or insufficient permissions.
+fetchPets @ use-pets.ts:112
+await in fetchPets
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627Understand this errorAI
+use-services.ts:84 FETCH_SERVICES: Error fetching services: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-services.ts:84
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627Understand this errorAI
+use-staff.ts:29 FETCH_STAFF: Error fetching staff: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-staff.ts:29
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627Understand this errorAI
+use-appointments.ts:258 Error fetching appointments: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-appointments.ts:258
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627Understand this errorAI
+use-pets.ts:55 FETCH_PETS: Starting to fetch pets
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+use-staff.ts:14 FETCH_STAFF: Starting to fetch staff members
+use-appointments.ts:73 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:81 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:84 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-working-hours.ts:102 Error fetching working hours: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-working-hours.ts:102
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+(anonymous) @ @tanstack_react-query.js?v=acf278df:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=acf278df:514
+Promise.catch
+run @ @tanstack_react-query.js?v=acf278df:497
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627Understand this errorAI
+use-services.ts:84 FETCH_SERVICES: Error fetching services: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-services.ts:84
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+(anonymous) @ @tanstack_react-query.js?v=acf278df:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=acf278df:514
+Promise.catch
+run @ @tanstack_react-query.js?v=acf278df:497
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627Understand this errorAI
+use-staff.ts:29 FETCH_STAFF: Error fetching staff: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-staff.ts:29
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+(anonymous) @ @tanstack_react-query.js?v=acf278df:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=acf278df:514
+Promise.catch
+run @ @tanstack_react-query.js?v=acf278df:497
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627Understand this errorAI
+use-pets.ts:112 FETCH_PETS: Error fetching pets: FirebaseError: Missing or insufficient permissions.
+fetchPets @ use-pets.ts:112
+await in fetchPets
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+(anonymous) @ @tanstack_react-query.js?v=acf278df:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=acf278df:514
+Promise.catch
+run @ @tanstack_react-query.js?v=acf278df:497
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627Understand this errorAI
+use-appointments.ts:258 Error fetching appointments: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-appointments.ts:258
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+(anonymous) @ @tanstack_react-query.js?v=acf278df:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=acf278df:514
+Promise.catch
+run @ @tanstack_react-query.js?v=acf278df:497
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627Understand this errorAI
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+use-staff.ts:14 FETCH_STAFF: Starting to fetch staff members
+use-working-hours.ts:102 Error fetching working hours: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-working-hours.ts:102
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+(anonymous) @ @tanstack_react-query.js?v=acf278df:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=acf278df:514
+Promise.catch
+run @ @tanstack_react-query.js?v=acf278df:497
+(anonymous) @ @tanstack_react-query.js?v=acf278df:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=acf278df:514
+Promise.catch
+run @ @tanstack_react-query.js?v=acf278df:497
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627Understand this errorAI
+use-services.ts:84 FETCH_SERVICES: Error fetching services: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-services.ts:84
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+(anonymous) @ @tanstack_react-query.js?v=acf278df:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=acf278df:514
+Promise.catch
+run @ @tanstack_react-query.js?v=acf278df:497
+(anonymous) @ @tanstack_react-query.js?v=acf278df:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=acf278df:514
+Promise.catch
+run @ @tanstack_react-query.js?v=acf278df:497
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627Understand this errorAI
+use-staff.ts:29 FETCH_STAFF: Error fetching staff: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-staff.ts:29
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+(anonymous) @ @tanstack_react-query.js?v=acf278df:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=acf278df:514
+Promise.catch
+run @ @tanstack_react-query.js?v=acf278df:497
+(anonymous) @ @tanstack_react-query.js?v=acf278df:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=acf278df:514
+Promise.catch
+run @ @tanstack_react-query.js?v=acf278df:497
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627Understand this errorAI
+use-pets.ts:55 FETCH_PETS: Starting to fetch pets
+use-appointments.ts:73 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:81 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:84 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-pets.ts:112 FETCH_PETS: Error fetching pets: FirebaseError: Missing or insufficient permissions.
+fetchPets @ use-pets.ts:112
+await in fetchPets
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+(anonymous) @ @tanstack_react-query.js?v=acf278df:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=acf278df:514
+Promise.catch
+run @ @tanstack_react-query.js?v=acf278df:497
+(anonymous) @ @tanstack_react-query.js?v=acf278df:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=acf278df:514
+Promise.catch
+run @ @tanstack_react-query.js?v=acf278df:497
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627Understand this errorAI
+use-appointments.ts:258 Error fetching appointments: FirebaseError: Missing or insufficient permissions.
+queryFn @ use-appointments.ts:258
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+(anonymous) @ @tanstack_react-query.js?v=acf278df:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=acf278df:514
+Promise.catch
+run @ @tanstack_react-query.js?v=acf278df:497
+(anonymous) @ @tanstack_react-query.js?v=acf278df:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=acf278df:514
+Promise.catch
+run @ @tanstack_react-query.js?v=acf278df:497
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627Understand this errorAI
