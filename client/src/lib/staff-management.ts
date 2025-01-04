@@ -1,6 +1,7 @@
+
 import { getAuth } from 'firebase/auth';
 import { getFirestore, doc, setDoc, updateDoc, collection } from 'firebase/firestore';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from '@/components/ui/use-toast';
 import type { InsertStaff, Staff } from '@/lib/staff-types';
 
 export class StaffManagement {
@@ -12,7 +13,7 @@ export class StaffManagement {
 
   static async createStaff(data: InsertStaff): Promise<Staff> {
     const token = await this.getToken();
-
+    
     const response = await fetch('/api/users/create', {
       method: 'POST',
       headers: {

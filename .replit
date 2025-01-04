@@ -63,4 +63,4 @@ task = "packager.installForAll"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npx concurrently -n \"backend,frontend\" -c \"blue,green\" \"cd server && PORT=3000 tsx watch --clear-screen=false index.ts\" \"cd client && VITE_PORT=5174 npm run dev\""
-waitForPort = 5174
+waitForPort = 3000
