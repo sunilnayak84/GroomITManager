@@ -144,8 +144,8 @@ export function useNotifications(userId: string) {
   const notificationsQuery = useQuery({
     queryKey: ['notifications', userId],
     queryFn: async () => {
-      if (!isAuthenticated) {
-        console.log('User not authenticated, skipping notifications fetch');
+      if (!isAuthenticated || !userId) {
+        console.log('User not authenticated or no userId, skipping notifications fetch');
         return [];
       }
 
