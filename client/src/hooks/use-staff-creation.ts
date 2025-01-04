@@ -1,18 +1,18 @@
+
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getAuth } from 'firebase/auth';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from '@/components/ui/use-toast';
 import type { InsertStaff } from '@/lib/staff-types';
 
 export function useStaffCreation() {
   const queryClient = useQueryClient();
   const auth = getAuth();
-  const { toast } = useToast();
 
   const createStaff = useMutation({
     mutationFn: async (data: InsertStaff) => {
       console.log('[STAFF_CREATE] Starting staff creation:', data);
       const token = await auth.currentUser?.getIdToken();
-
+      
       if (!token) {
         throw new Error('No authentication token available');
       }
@@ -49,8 +49,7 @@ export function useStaffCreation() {
       queryClient.invalidateQueries({ queryKey: ['staff'] });
       toast({
         title: "Success",
-        description: "Staff member created successfully",
-        variant: "success",
+        description: "Staff member created successfully"
       });
     },
     onError: (error: Error) => {

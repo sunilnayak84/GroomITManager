@@ -37,9 +37,8 @@ export function ProtectedElement({
     return <>{fallback}</>;
   }
 
-  // Admin or users with 'view_notifications' permission have access
-  if (role?.role === 'admin' || 
-      (requiredPermissions === 'view_notifications' && role?.permissions?.includes('view_notifications'))) {
+  // Admin always has access
+  if (role?.role === 'admin') {
     return <>{children}</>;
   }
 

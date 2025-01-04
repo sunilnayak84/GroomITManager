@@ -5,6 +5,7 @@ import {
   initializeFirebaseAdmin, 
   InitialRoleConfigs, 
   RoleTypes,
+  updateUserRole,
   DefaultPermissions 
 } from '../firebase';
 import { getDatabase } from 'firebase-admin/database';
@@ -27,11 +28,11 @@ if (missingVars.length > 0) {
 
 async function setupRoles() {
   console.log('Starting role setup...');
-
+  
   try {
     console.log('[ROLE-SETUP] Initializing Firebase Admin...');
     const app = await initializeFirebaseAdmin();
-
+    
     if (!app) {
       throw new Error('Failed to initialize Firebase Admin');
     }
@@ -61,25 +62,20 @@ async function setupRoles() {
 
     // Set up admin user role
     console.log('[ROLE-SETUP] Setting up admin user...');
-
+    
     // Check if admin user exists in Firebase Auth
     try {
       const userRecord = await auth.getUser(adminUid);
       console.log(`[ROLE-SETUP] Found admin user: ${userRecord.email}`);
-
+      
       // Update admin role with all permissions
-      await db.ref(`roles/${adminUid}`).set({
-        role: RoleTypes.ADMIN,
-        permissions: DefaultPermissions[RoleTypes.ADMIN],
-        isAdmin: true,
-        updatedAt: timestamp
-      });
+      await updateUserRole(adminUid, RoleTypes.admin);
       console.log('[ROLE-SETUP] Admin role set successfully');
-
+      
       // Set custom claims for admin
       await auth.setCustomUserClaims(adminUid, {
-        role: RoleTypes.ADMIN,
-        permissions: DefaultPermissions[RoleTypes.ADMIN],
+        role: RoleTypes.admin,
+        permissions: DefaultPermissions.admin,
         isAdmin: true,
         updatedAt: timestamp
       });
@@ -88,13 +84,13 @@ async function setupRoles() {
       // Create role history entry
       await db.ref(`role-history/${adminUid}/${timestamp}`).set({
         action: 'setup',
-        role: RoleTypes.ADMIN,
+        role: RoleTypes.admin,
         email: adminEmail,
-        permissions: DefaultPermissions[RoleTypes.ADMIN],
+        permissions: DefaultPermissions.admin,
         timestamp,
         type: 'initial_setup'
       });
-
+      
     } catch (error) {
       console.error('[ROLE-SETUP] Error setting up admin:', error);
       throw new Error('Failed to setup admin user');
@@ -102,7 +98,7 @@ async function setupRoles() {
 
     // Verify the setup
     console.log('[ROLE-SETUP] Verifying setup...');
-
+    
     const roleVerify = await db.ref('role-definitions').once('value');
     const adminRoleVerify = await db.ref(`roles/${adminUid}`).once('value');
 
@@ -115,14 +111,14 @@ async function setupRoles() {
     }
 
     const adminRole = adminRoleVerify.val();
-    if (adminRole.role !== RoleTypes.ADMIN) {
+    if (adminRole.role !== RoleTypes.admin) {
       throw new Error('Admin role verification failed - incorrect role');
     }
 
     console.log('✅ Setup verified successfully');
     console.log('Role definitions:', roleVerify.val());
     console.log('Admin role:', adminRole);
-
+    
     return true;
   } catch (error) {
     console.error('Failed to setup roles:', error);

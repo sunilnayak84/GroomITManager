@@ -24,11 +24,7 @@ interface NotificationsListProps {
 }
 
 export function NotificationsList({ userId }: NotificationsListProps) {
-  const { notifications, unreadCount, markAsRead, isError } = useNotifications(userId);
-
-  if (isError) {
-    return null; // Hide component if user doesn't have permission
-  }
+  const { notifications, unreadCount, markAsRead } = useNotifications(userId);
   const [selectedNotification, setSelectedNotification] = React.useState<any>(null);
   const [showDetails, setShowDetails] = React.useState(false);
 

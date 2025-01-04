@@ -18,14 +18,6 @@ externalPort = 3000
 localPort = 5174
 externalPort = 80
 
-[[ports]]
-localPort = 5176
-externalPort = 3001
-
-[[ports]]
-localPort = 5177
-externalPort = 3002
-
 [env]
 PORT = "3000"
 VITE_PORT = "5174"
@@ -71,4 +63,4 @@ task = "packager.installForAll"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npx concurrently -n \"backend,frontend\" -c \"blue,green\" \"cd server && PORT=3000 tsx watch --clear-screen=false index.ts\" \"cd client && VITE_PORT=5174 npm run dev\""
-waitForPort = 5174
+waitForPort = 3000

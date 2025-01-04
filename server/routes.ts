@@ -3,25 +3,28 @@ import { authenticateFirebase, requireRole } from "./middleware/auth";
 import path from "path";
 import { 
   RoleTypes, 
+  getUserRole, 
+  updateUserRole, 
+  listAllUsers,
+  getRoleDefinitions,
+  updateRoleDefinition,
   InitialRoleConfigs,
   Permission,
   validatePermissions,
   isValidPermission,
   ALL_PERMISSIONS,
-  initializeFirebaseAdmin,
+  getFirebaseAdmin,
   setupAdminUser,
-  getDefaultPermissions,
-  getAuth,
-  getDatabase,
-  getFirestore
+  getDefaultPermissions
 } from "./firebase";
+import { getAuth } from "firebase-admin/auth";
+import { getDatabase } from "firebase-admin/database";
+import { getFirestore } from "firebase-admin/firestore";
+import admin from "firebase-admin";
 
-export async function registerRoutes(app: Express) {
+
+export function registerRoutes(app: Express) {
   console.log('[ROUTES] Starting route registration...');
-
-  // Initialize Firebase Admin
-  await initializeFirebaseAdmin();
-
   // Health check endpoint
   app.get("/api/health", (req, res) => {
     res.json({ status: "healthy" });
@@ -165,7 +168,7 @@ export async function registerRoutes(app: Express) {
     }
   });
 
-  app.get("/api/groomers", authenticateFirebase, async (req, res) => {
+  app.get("/api/groomers", authenticateFirebase, requireRole([RoleTypes.admin, RoleTypes.manager, RoleTypes.customer]), async (req, res) => {
     try {
       const app = await getFirebaseAdmin();
       const db = getFirestore();
