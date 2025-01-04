@@ -1,0 +1,639 @@
+Error parsing service data: ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "name"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "number",
+    "received": "undefined",
+    "path": [
+      "duration"
+    ],
+    "message": "Required"
+  }
+]
+    at get error (zod.js?v=acf278df:512:23)
+    at _ZodObject.parse (zod.js?v=acf278df:588:18)
+    at use-services.ts:35:46
+    at Array.map (<anonymous>)
+    at queryFn (use-services.ts:32:52)
+(anonymous) @ use-services.ts:72
+queryFn @ use-services.ts:32
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=acf278df:554
+flush @ @tanstack_react-query.js?v=acf278df:568
+batch @ @tanstack_react-query.js?v=acf278df:586
+dispatch_fn @ @tanstack_react-query.js?v=acf278df:995
+setData @ @tanstack_react-query.js?v=acf278df:695
+onSuccess @ @tanstack_react-query.js?v=acf278df:896
+resolve @ @tanstack_react-query.js?v=acf278df:455
+Promise.then
+run @ @tanstack_react-query.js?v=acf278df:497
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19432
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=acf278df:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18718
+workLoop @ chunk-GNC7SI6A.js?v=acf278df:197
+flushWork @ chunk-GNC7SI6A.js?v=acf278df:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=acf278df:384Understand this errorAI
+use-services.ts:84 FETCH_SERVICES: Error fetching services: ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "name"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "number",
+    "received": "undefined",
+    "path": [
+      "duration"
+    ],
+    "message": "Required"
+  }
+]
+    at get error (zod.js?v=acf278df:512:23)
+    at _ZodObject.parse (zod.js?v=acf278df:588:18)
+    at use-services.ts:35:46
+    at Array.map (<anonymous>)
+    at queryFn (use-services.ts:32:52)
+queryFn @ use-services.ts:84
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=acf278df:554
+flush @ @tanstack_react-query.js?v=acf278df:568
+batch @ @tanstack_react-query.js?v=acf278df:586
+dispatch_fn @ @tanstack_react-query.js?v=acf278df:995
+setData @ @tanstack_react-query.js?v=acf278df:695
+onSuccess @ @tanstack_react-query.js?v=acf278df:896
+resolve @ @tanstack_react-query.js?v=acf278df:455
+Promise.then
+run @ @tanstack_react-query.js?v=acf278df:497
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19432
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=acf278df:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18718
+workLoop @ chunk-GNC7SI6A.js?v=acf278df:197
+flushWork @ chunk-GNC7SI6A.js?v=acf278df:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=acf278df:384Understand this errorAI
+use-appointments.ts:33 Error converting timestamp: TypeError: timestamp.toDate is not a function
+    at timestampToISOString (use-appointments.ts:31:22)
+    at queryFn (use-appointments.ts:218:26)
+timestampToISOString @ use-appointments.ts:33
+queryFn @ use-appointments.ts:218
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=acf278df:554
+flush @ @tanstack_react-query.js?v=acf278df:568
+batch @ @tanstack_react-query.js?v=acf278df:586
+dispatch_fn @ @tanstack_react-query.js?v=acf278df:995
+setData @ @tanstack_react-query.js?v=acf278df:695
+onSuccess @ @tanstack_react-query.js?v=acf278df:896
+resolve @ @tanstack_react-query.js?v=acf278df:455
+Promise.then
+run @ @tanstack_react-query.js?v=acf278df:497
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19432
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=acf278df:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18718
+workLoop @ chunk-GNC7SI6A.js?v=acf278df:197
+flushWork @ chunk-GNC7SI6A.js?v=acf278df:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=acf278df:384Understand this errorAI
+use-services.ts:72 Error parsing service data: ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "name"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "number",
+    "received": "undefined",
+    "path": [
+      "duration"
+    ],
+    "message": "Required"
+  }
+]
+    at get error (zod.js?v=acf278df:512:23)
+    at _ZodObject.parse (zod.js?v=acf278df:588:18)
+    at use-services.ts:35:46
+    at Array.map (<anonymous>)
+    at queryFn (use-services.ts:32:52)
+(anonymous) @ use-services.ts:72
+queryFn @ use-services.ts:32
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+(anonymous) @ @tanstack_react-query.js?v=acf278df:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=acf278df:514
+Promise.catch
+run @ @tanstack_react-query.js?v=acf278df:497
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=acf278df:554
+flush @ @tanstack_react-query.js?v=acf278df:568
+batch @ @tanstack_react-query.js?v=acf278df:586
+dispatch_fn @ @tanstack_react-query.js?v=acf278df:995
+setData @ @tanstack_react-query.js?v=acf278df:695
+onSuccess @ @tanstack_react-query.js?v=acf278df:896
+resolve @ @tanstack_react-query.js?v=acf278df:455
+Promise.then
+run @ @tanstack_react-query.js?v=acf278df:497
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19432
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=acf278df:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18718
+workLoop @ chunk-GNC7SI6A.js?v=acf278df:197
+flushWork @ chunk-GNC7SI6A.js?v=acf278df:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=acf278df:384Understand this errorAI
+use-services.ts:84 FETCH_SERVICES: Error fetching services: ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "name"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "number",
+    "received": "undefined",
+    "path": [
+      "duration"
+    ],
+    "message": "Required"
+  }
+]
+    at get error (zod.js?v=acf278df:512:23)
+    at _ZodObject.parse (zod.js?v=acf278df:588:18)
+    at use-services.ts:35:46
+    at Array.map (<anonymous>)
+    at queryFn (use-services.ts:32:52)
+queryFn @ use-services.ts:84
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+(anonymous) @ @tanstack_react-query.js?v=acf278df:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=acf278df:514
+Promise.catch
+run @ @tanstack_react-query.js?v=acf278df:497
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=acf278df:554
+flush @ @tanstack_react-query.js?v=acf278df:568
+batch @ @tanstack_react-query.js?v=acf278df:586
+dispatch_fn @ @tanstack_react-query.js?v=acf278df:995
+setData @ @tanstack_react-query.js?v=acf278df:695
+onSuccess @ @tanstack_react-query.js?v=acf278df:896
+resolve @ @tanstack_react-query.js?v=acf278df:455
+Promise.then
+run @ @tanstack_react-query.js?v=acf278df:497
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19432
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=acf278df:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18718
+workLoop @ chunk-GNC7SI6A.js?v=acf278df:197
+flushWork @ chunk-GNC7SI6A.js?v=acf278df:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=acf278df:384Understand this errorAI
+use-appointments.ts:33 Error converting timestamp: TypeError: timestamp.toDate is not a function
+    at timestampToISOString (use-appointments.ts:31:22)
+    at queryFn (use-appointments.ts:218:26)
+timestampToISOString @ use-appointments.ts:33
+queryFn @ use-appointments.ts:218
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=acf278df:554
+flush @ @tanstack_react-query.js?v=acf278df:568
+batch @ @tanstack_react-query.js?v=acf278df:586
+dispatch_fn @ @tanstack_react-query.js?v=acf278df:995
+setData @ @tanstack_react-query.js?v=acf278df:695
+onSuccess @ @tanstack_react-query.js?v=acf278df:896
+resolve @ @tanstack_react-query.js?v=acf278df:455
+Promise.then
+run @ @tanstack_react-query.js?v=acf278df:497
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19432
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=acf278df:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18718
+workLoop @ chunk-GNC7SI6A.js?v=acf278df:197
+flushWork @ chunk-GNC7SI6A.js?v=acf278df:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=acf278df:384Understand this errorAI
+use-services.ts:72 Error parsing service data: ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "name"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "number",
+    "received": "undefined",
+    "path": [
+      "duration"
+    ],
+    "message": "Required"
+  }
+]
+    at get error (zod.js?v=acf278df:512:23)
+    at _ZodObject.parse (zod.js?v=acf278df:588:18)
+    at use-services.ts:35:46
+    at Array.map (<anonymous>)
+    at queryFn (use-services.ts:32:52)
+(anonymous) @ use-services.ts:72
+queryFn @ use-services.ts:32
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+(anonymous) @ @tanstack_react-query.js?v=acf278df:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=acf278df:514
+Promise.catch
+run @ @tanstack_react-query.js?v=acf278df:497
+(anonymous) @ @tanstack_react-query.js?v=acf278df:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=acf278df:514
+Promise.catch
+run @ @tanstack_react-query.js?v=acf278df:497
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=acf278df:554
+flush @ @tanstack_react-query.js?v=acf278df:568
+batch @ @tanstack_react-query.js?v=acf278df:586
+dispatch_fn @ @tanstack_react-query.js?v=acf278df:995
+setData @ @tanstack_react-query.js?v=acf278df:695
+onSuccess @ @tanstack_react-query.js?v=acf278df:896
+resolve @ @tanstack_react-query.js?v=acf278df:455
+Promise.then
+run @ @tanstack_react-query.js?v=acf278df:497
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19432
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=acf278df:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18718
+workLoop @ chunk-GNC7SI6A.js?v=acf278df:197
+flushWork @ chunk-GNC7SI6A.js?v=acf278df:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=acf278df:384Understand this errorAI
+use-services.ts:84 FETCH_SERVICES: Error fetching services: ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "name"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "number",
+    "received": "undefined",
+    "path": [
+      "duration"
+    ],
+    "message": "Required"
+  }
+]
+    at get error (zod.js?v=acf278df:512:23)
+    at _ZodObject.parse (zod.js?v=acf278df:588:18)
+    at use-services.ts:35:46
+    at Array.map (<anonymous>)
+    at queryFn (use-services.ts:32:52)
+queryFn @ use-services.ts:84
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=acf278df:839
+run @ @tanstack_react-query.js?v=acf278df:493
+(anonymous) @ @tanstack_react-query.js?v=acf278df:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=acf278df:514
+Promise.catch
+run @ @tanstack_react-query.js?v=acf278df:497
+(anonymous) @ @tanstack_react-query.js?v=acf278df:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=acf278df:514
+Promise.catch
+run @ @tanstack_react-query.js?v=acf278df:497
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19416
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=acf278df:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=acf278df:554
+flush @ @tanstack_react-query.js?v=acf278df:568
+batch @ @tanstack_react-query.js?v=acf278df:586
+dispatch_fn @ @tanstack_react-query.js?v=acf278df:995
+setData @ @tanstack_react-query.js?v=acf278df:695
+onSuccess @ @tanstack_react-query.js?v=acf278df:896
+resolve @ @tanstack_react-query.js?v=acf278df:455
+Promise.then
+run @ @tanstack_react-query.js?v=acf278df:497
+start @ @tanstack_react-query.js?v=acf278df:535
+fetch @ @tanstack_react-query.js?v=acf278df:925
+executeFetch_fn @ @tanstack_react-query.js?v=acf278df:2211
+onSubscribe @ @tanstack_react-query.js?v=acf278df:1898
+subscribe @ @tanstack_react-query.js?v=acf278df:24
+(anonymous) @ @tanstack_react-query.js?v=acf278df:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=acf278df:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=acf278df:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=acf278df:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=acf278df:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=acf278df:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=acf278df:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=acf278df:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=acf278df:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=acf278df:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=acf278df:19432
+commitRoot @ chunk-GNC7SI6A.js?v=acf278df:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=acf278df:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=acf278df:18718
+workLoop @ chunk-GNC7SI6A.js?v=acf278df:197
+flushWork @ chunk-GNC7SI6A.js?v=acf278df:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=acf278df:384Understand this errorAI
