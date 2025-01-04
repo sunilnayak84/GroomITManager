@@ -147,6 +147,7 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
     return firebaseApp;
   }
 
+  console.log('[FIREBASE] Checking Firebase environment variables...');
   let privateKey = process.env.FIREBASE_PRIVATE_KEY;
   if (privateKey) {
     privateKey = privateKey.replace(/\\n/g, '\n');
@@ -155,43 +156,41 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
     }
   }
 
-  // Initialize Realtime Database URL
   const databaseURL = process.env.FIREBASE_DATABASE_URL ||
     `https://${process.env.FIREBASE_PROJECT_ID}-default-rtdb.asia-southeast1.firebasedatabase.app`;
 
   if (!privateKey || !process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL) {
-    console.error('[FIREBASE] Missing required credentials:',
-      !privateKey ? 'FIREBASE_PRIVATE_KEY' : '',
-      !process.env.FIREBASE_PROJECT_ID ? 'FIREBASE_PROJECT_ID' : '',
-      !process.env.FIREBASE_CLIENT_EMAIL ? 'FIREBASE_CLIENT_EMAIL' : ''
-    );
     throw new Error('Missing Firebase credentials. Check environment variables.');
   }
 
   try {
-    console.log('[FIREBASE] Initializing Firebase Admin...');
     if (admin.apps.length === 0) {
-      const config = {
+      firebaseApp = admin.initializeApp({
         credential: admin.credential.cert({
           projectId: process.env.FIREBASE_PROJECT_ID,
           clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
           privateKey: privateKey
         }),
         databaseURL: databaseURL
-      };
-
-      firebaseApp = admin.initializeApp(config);
+      });
     } else {
       firebaseApp = admin.app();
     }
 
-    // Initialize and verify database connection
-    const db = getFirestore();
-    try {
-      await db.collection('users').limit(1).get();
-      console.log('[FIREBASE] Database connection verified');
+    // Verify database connections
+    const db = getFirestore(firebaseApp);
+    const rtdb = getDatabase(firebaseApp);
 
-      // Initialize required collections
+    // Test Firestore connection
+    await db.collection('users').limit(1).get();
+
+    // Test Realtime Database connection
+    await rtdb.ref('role-definitions').once('value');
+
+    console.log('[FIREBASE] Database connections verified');
+
+    // Initialize collections
+    try {
       await Promise.all([
         initializeNotifications(),
         initializeCollectionWithSchema(db, 'pets', {
@@ -229,19 +228,15 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
           }
         })
       ]);
-
-      console.log('[FIREBASE] All collections initialized successfully');
-
     } catch (error) {
-      console.error('[FIREBASE] Database connection error:', error);
-      throw error;
+      console.error('[FIREBASE] Error initializing collections:', error);
     }
 
     // Verify auth initialization
     const auth = getAuth(firebaseApp);
     await auth.listUsers(1);
 
-    console.log('[FIREBASE] Firebase Admin initialized successfully');
+    console.log('[FIREBASE] Firebase initialized successfully');
     return firebaseApp;
   } catch (error) {
     console.error('[FIREBASE] Failed to initialize Firebase Admin:', error);
@@ -252,71 +247,50 @@ async function getFirebaseAdmin(): Promise<admin.app.App> {
 
 // Helper function to initialize collections with schema
 async function initializeCollectionWithSchema(db: admin.firestore.Firestore, collectionName: string, schema: any) {
-  const collectionRef = db.collection(collectionName);
-  const schemaDoc = await collectionRef.doc('_schema').get();
+  try {
+    const collectionRef = db.collection(collectionName);
+    const schemaDoc = await collectionRef.doc('_schema').get();
 
-  if (!schemaDoc.exists) {
-    await collectionRef.doc('_schema').set({
-      version: '1.0',
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      fields: schema.fields
-    });
+    if (!schemaDoc.exists) {
+      await collectionRef.doc('_schema').set({
+        version: '1.0',
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        fields: schema.fields
+      });
 
-    // Set security rules with more permissive access
-    await db.collection('_security_rules').doc(collectionName).set({
-      rules: {
-        read: true,
-        write: true,
-        conditions: {
-          read: "auth != null",
-          write: "auth != null",
-          create: "auth != null",
-          update: "auth != null && (resource.data.userId == request.auth.uid || request.auth.token.role in ['admin', 'manager'])",
-          delete: "auth != null && (resource.data.userId == request.auth.uid || request.auth.token.role in ['admin', 'manager'])"
-        },
-        updatedAt: admin.firestore.FieldValue.serverTimestamp()
-      }
-    });
+      // Set security rules
+      await db.collection('_security_rules').doc(collectionName).set({
+        rules: {
+          read: true,
+          write: true,
+          conditions: {
+            read: "auth != null",
+            write: "auth != null && (request.auth.token.role in ['admin', 'manager'])",
+            create: "auth != null",
+            update: "auth != null && (resource.data.userId == request.auth.uid || request.auth.token.role in ['admin', 'manager'])",
+            delete: "auth != null && (resource.data.userId == request.auth.uid || request.auth.token.role in ['admin', 'manager'])"
+          },
+          updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        }
+      });
 
-    console.log(`[FIREBASE] Initialized ${collectionName} collection with schema`);
-  }
-}
-
-async function initializeFirebaseAdmin(): Promise<admin.app.App> {
-  let attempt = 1;
-  let lastError: Error | null = null;
-
-  while (attempt <= MAX_INIT_RETRIES) {
-    try {
-      console.log(`[FIREBASE] Initialization attempt ${attempt}/${MAX_INIT_RETRIES}`);
-      return await getFirebaseAdmin();
-    } catch (error) {
-      console.error(`[FIREBASE] Attempt ${attempt} failed:`, error);
-      lastError = error instanceof Error ? error : new Error(String(error));
-
-      if (attempt === MAX_INIT_RETRIES) {
-        console.error('[FIREBASE] Maximum retry attempts reached');
-        throw lastError;
-      }
-
-      await new Promise(resolve => setTimeout(resolve, INIT_RETRY_DELAY));
-      attempt++;
+      console.log(`[FIREBASE] Initialized ${collectionName} collection with schema`);
     }
+  } catch (error) {
+    console.error(`[FIREBASE] Error initializing ${collectionName} collection:`, error);
+    throw error;
   }
-
-  throw lastError || new Error('Failed to initialize Firebase Admin');
 }
 
-// Role and permission management functions
 async function getRolePermissions(role: RoleTypes): Promise<Permission[]> {
   const app = await getFirebaseAdmin();
-  const db = admin.database(app);
+  const db = getDatabase(app);
   const snapshot = await db.ref(`role-definitions/${role}`).once('value');
   const roleData = snapshot.val();
 
   if (!roleData || !roleData.permissions) {
-    console.warn(`[ROLES] No permissions found for role ${role}, using empty set`);
-    return [];
+    console.warn(`[ROLES] No permissions found for role ${role}, using default permissions`);
+    return DefaultPermissions[role];
   }
 
   const validPermissions = validatePermissions(roleData.permissions);
@@ -384,7 +358,7 @@ async function updateUserRole(
   role: RoleTypes,
   customPermissions?: Permission[]
 ): Promise<{ success: boolean; role: RoleTypes; permissions: Permission[] }> {
-  const app = getFirebaseAdmin();
+  const app = await getFirebaseAdmin();
   const db = getDatabase(app);
   const auth = getAuth(app);
   const timestamp = Date.now();
@@ -430,7 +404,7 @@ async function setupAdminUser(adminEmail: string): Promise<void> {
     throw new Error('Admin email must be from the @groomery.in domain');
   }
 
-  const app = getFirebaseAdmin();
+  const app = await getFirebaseAdmin();
   const auth = getAuth(app);
   const db = getDatabase(app);
 
@@ -486,7 +460,7 @@ async function setupAdminUser(adminEmail: string): Promise<void> {
 }
 
 async function listAllUsers(pageToken?: string) {
-  const auth = getAuth(getFirebaseAdmin());
+  const auth = getAuth(await getFirebaseAdmin());
   const result = await auth.listUsers(100, pageToken);
 
   const users = await Promise.all(
@@ -549,7 +523,7 @@ const InitialRoleConfigs = {
 
 // Role definitions management
 async function getRoleDefinitions() {
-  const db = getDatabase(getFirebaseAdmin());
+  const db = getDatabase(await getFirebaseAdmin());
   const snapshot = await db.ref('role-definitions').once('value');
   return snapshot.val() || InitialRoleConfigs;
 }
@@ -559,7 +533,7 @@ async function updateRoleDefinition(
   permissions: Permission[],
   description?: string
 ) {
-  const db = getDatabase(getFirebaseAdmin());
+  const db = getDatabase(await getFirebaseAdmin());
   const timestamp = Date.now();
 
   const roleRef = db.ref(`role-definitions/${roleName}`);
@@ -611,3 +585,28 @@ export {
   getRoleDefinitions,
   updateRoleDefinition
 };
+
+async function initializeFirebaseAdmin(): Promise<admin.app.App> {
+  let attempt = 1;
+  let lastError: Error | null = null;
+
+  while (attempt <= MAX_INIT_RETRIES) {
+    try {
+      console.log(`[FIREBASE] Initialization attempt ${attempt}/${MAX_INIT_RETRIES}`);
+      return await getFirebaseAdmin();
+    } catch (error) {
+      console.error(`[FIREBASE] Attempt ${attempt} failed:`, error);
+      lastError = error instanceof Error ? error : new Error(String(error));
+
+      if (attempt === MAX_INIT_RETRIES) {
+        console.error('[FIREBASE] Maximum retry attempts reached');
+        throw lastError;
+      }
+
+      await new Promise(resolve => setTimeout(resolve, INIT_RETRY_DELAY));
+      attempt++;
+    }
+  }
+
+  throw lastError || new Error('Failed to initialize Firebase Admin');
+}

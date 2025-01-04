@@ -45,17 +45,17 @@ async function initializeNotifications() {
       priority: 'low'
     });
 
-    // Set security rules for the collection
+    // Set security rules for the collection that respect roles from Realtime Database
     await db.collection('_security_rules').doc('notifications').set({
       rules: {
         read: true, // Allow all authenticated users to read
         write: true, // Allow all authenticated users to write initially
         conditions: {
           read: "auth != null", // Basic authentication check
-          write: "auth != null", // Allow authenticated users to write
+          write: "auth != null && (request.auth.token.role in ['admin', 'manager'])",
           create: "auth != null",
-          update: "auth != null && (resource.data.userId == request.auth.uid || request.auth.token.role == 'admin')",
-          delete: "auth != null && (resource.data.userId == request.auth.uid || request.auth.token.role == 'admin')"
+          update: "auth != null && (resource.data.userId == request.auth.uid || request.auth.token.role in ['admin', 'manager'])",
+          delete: "auth != null && (resource.data.userId == request.auth.uid || request.auth.token.role in ['admin', 'manager'])"
         },
         updatedAt: admin.firestore.FieldValue.serverTimestamp()
       }
