@@ -37,16 +37,12 @@ import { useWorkingHours } from '../hooks/use-working-hours';
 import type { WorkingDays } from "@/lib/schema";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { format } from 'date-fns';
-import { useNotifications } from '@/hooks/use-notifications';
-import { useUser } from '@/hooks/use-user';
 
 interface AppointmentFormProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
-  const { user } = useUser();
-  const { createNotification } = useNotifications(user?.id || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const { data: appointments, addAppointment, isTimeSlotAvailable } = useAppointments();
@@ -332,42 +328,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
         status: "pending" as const,
       };
 
-      const appointmentId = await addAppointment(appointmentData);
-      
-      // Create reminder notifications
-      const appointmentTime = new Date(appointmentData.date);
-      const formattedTime = format(appointmentTime, 'PPp');
-      
-      // Create notification for the customer
-      if (user?.id) {
-        try {
-          await createNotification({
-            userId: user.id,
-            appointmentId,
-            type: 'reminder',
-            title: 'Upcoming Appointment Reminder',
-            message: `You have a grooming appointment scheduled for ${formattedTime}. Please arrive 10 minutes before your scheduled time.`
-          });
-        } catch (error) {
-          console.error('Error creating customer notification:', error);
-        }
-      }
-      
-      // Create notification for the groomer
-      if (data.groomerId) {
-        try {
-          await createNotification({
-            userId: data.groomerId,
-            appointmentId,
-            type: 'reminder',
-            title: 'New Appointment Scheduled',
-            message: `You have a new grooming appointment scheduled for ${formattedTime}.`
-          });
-        } catch (error) {
-          console.error('Error creating groomer notification:', error);
-        }
-      }
-
+      await addAppointment(appointmentData);
       setOpen(false);
       
       toast({
