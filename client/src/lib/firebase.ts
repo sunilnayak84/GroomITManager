@@ -45,15 +45,12 @@ try {
 }
 
 export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
-
-// Initialize Firestore with persistence enabled
 export const db = getFirestore(app, {
   localCache: initializeLocalCache({
     tabManager: persistentLocalCache()
   })
 });
+export const storage = getStorage(app);
 
 // Set auth persistence to local
 auth.setPersistence('local')
