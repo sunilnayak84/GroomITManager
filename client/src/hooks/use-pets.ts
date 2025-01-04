@@ -56,7 +56,7 @@ export function usePets() {
   const fetchPets = async () => {
     try {
       console.log('FETCH_PETS: Starting to fetch pets');
-      const q = query(petsCollection, where('deletedAt', '==', null));
+      const q = query(petsCollection, where('deleted', '==', false));
       const querySnapshot = await getDocs(q);
       
       if (querySnapshot.empty) {
@@ -288,6 +288,7 @@ export function usePets() {
 
       await runTransaction(db, async (transaction) => {
         transaction.update(petRef, {
+          deleted: true,
           deletedAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         });
