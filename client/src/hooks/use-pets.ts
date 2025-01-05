@@ -305,13 +305,64 @@ export function usePets() {
     }
   });
 
+  // Fetch breeds
+  const { data: breeds = [], isLoading: breedsLoading } = useQuery({
+    queryKey: ['breeds'],
+    queryFn: async () => {
+      const breedsSnapshot = await getDocs(collection(db, 'breeds'));
+      return breedsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        name: doc.data().name
+      }));
+    }
+  });
+
+  // Add breed
+  const addBreedMutation = useMutation({
+    mutationFn: async ({ name }: { name: string }) => {
+      const docRef = await addDoc(collection(db, 'breeds'), { name });
+      return { id: docRef.id, name };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['breeds'] });
+    }
+  });
+
+  // Update breed
+  const updateBreedMutation = useMutation({
+    mutationFn: async ({ id, name }: { id: string, name: string }) => {
+      const docRef = doc(db, 'breeds', id);
+      await updateDoc(docRef, { name });
+      return { id, name };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['breeds'] });
+    }
+  });
+
+  // Delete breed
+  const deleteBreedMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const docRef = doc(db, 'breeds', id);
+      await deleteDoc(docRef);
+      return id;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['breeds'] });
+    }
+  });
+
   return {
     pets,
+    breeds,
     isLoading,
     error,
     addPet: addPetMutation.mutateAsync,
     updatePet: updatePetMutation.mutateAsync,
     deletePet: deletePetMutation.mutateAsync,
+    addBreed: addBreedMutation.mutateAsync,
+    updateBreed: updateBreedMutation.mutateAsync,
+    deleteBreed: deleteBreedMutation.mutateAsync,
     refetch: () => queryClient.invalidateQueries({ queryKey: ['pets'] }),
     addPetMutation,
     updatePetMutation,

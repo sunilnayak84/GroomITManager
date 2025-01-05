@@ -477,8 +477,56 @@ export function useInventory() {
     });
   };
 
+  // Fetch categories
+  const { data: categories = [], isLoading: categoriesLoading } = useQuery({
+    queryKey: ['categories'],
+    queryFn: async () => {
+      const categoriesSnapshot = await getDocs(collection(db, 'categories'));
+      return categoriesSnapshot.docs.map(doc => ({
+        id: doc.id,
+        name: doc.data().name
+      }));
+    }
+  });
+
+  // Add category
+  const addCategoryMutation = useMutation({
+    mutationFn: async ({ name }: { name: string }) => {
+      const docRef = await addDoc(collection(db, 'categories'), { name });
+      return { id: docRef.id, name };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
+    }
+  });
+
+  // Update category
+  const updateCategoryMutation = useMutation({
+    mutationFn: async ({ id, name }: { id: string, name: string }) => {
+      const docRef = doc(db, 'categories', id);
+      await updateDoc(docRef, { name });
+      return { id, name };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
+    }
+  });
+
+  // Delete category
+  const deleteCategoryMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const docRef = doc(db, 'categories', id);
+      await deleteDoc(docRef);
+      return id;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
+    }
+  });
+
   return {
     inventory,
+    categories,
     isLoading,
     error,
     addInventoryItem,
@@ -486,6 +534,10 @@ export function useInventory() {
     deleteInventoryItem,
     recordUsage,
     getUsageHistory,
+    addCategory: addCategoryMutation.mutateAsync,
+    updateCategory: updateCategoryMutation.mutateAsync,
+    deleteCategory: deleteCategoryMutation.mutateAsync,
     ...rest
   };
+}
 }
