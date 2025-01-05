@@ -1,13 +1,5 @@
 
 import { db } from "../firebase";
-import {
-  collection,
-  getDocs,
-  query,
-  where,
-  updateDoc,
-  doc,
-} from 'firebase-admin/firestore';
 
 async function fixPetCounts() {
   try {
@@ -16,8 +8,9 @@ async function fixPetCounts() {
     const customers = customersSnapshot.docs;
 
     // Get all non-deleted pets
-    const petsQuery = db.collection("pets").where("deleted", "==", false);
-    const petsSnapshot = await petsQuery.get();
+    const petsSnapshot = await db.collection("pets")
+      .where("deleted", "==", false)
+      .get();
     const pets = petsSnapshot.docs;
 
     // Calculate pet counts
