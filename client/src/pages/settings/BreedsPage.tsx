@@ -22,6 +22,24 @@ export default function BreedsPage() {
   const [breedName, setBreedName] = useState("");
   const [breedType, setBreedType] = useState<string>("dog");
   const [isImporting, setIsImporting] = useState(false);
+  const [isImportingCats, setIsImportingCats] = useState(false);
+
+  const catBreeds = [
+    "Abyssinian", "American Bobtail", "American Curl", "American Shorthair", "American Wirehair",
+    "Arabian Mau", "Asian Semi-longhair", "Balinese", "Bengal", "Birman", "Bombay",
+    "British Longhair", "British Shorthair", "Burmese", "Burmilla", "California Spangled",
+    "Chantilly-Tiffany", "Chartreux", "Chausie", "Colorpoint Shorthair", "Cornish Rex",
+    "Cymric", "Devon Rex", "Domestic Longhair", "Domestic Shorthair", "Dragon Li (Chinese Li Hua)",
+    "Donskoy (Don Sphynx)", "Egyptian Mau", "European Burmese", "European Shorthair",
+    "Exotic Shorthair", "Foldex Cat", "German Rex", "Havana Brown", "Himalayan",
+    "Japanese Bobtail", "Javanese", "Khao Manee", "Korat", "Kurilian Bobtail", "LaPerm",
+    "Lykoi (Werewolf Cat)", "Maine Coon", "Manx", "Mekong Bobtail", "Minskin", "Munchkin",
+    "Nebelung", "Norwegian Forest Cat", "Ocicat", "Ojos Azules", "Oriental Longhair",
+    "Oriental Shorthair", "Persian", "Peterbald", "Pixie-Bob", "Ragdoll", "Russian Blue",
+    "Savannah", "Scottish Fold", "Selkirk Rex", "Siamese", "Siberian", "Singapura",
+    "Snowshoe", "Somali", "Sphynx", "Thai", "Tonkinese", "Toyger", "Turkish Angora",
+    "Turkish Van", "Ural Rex", "York Chocolate"
+  ];
   const { toast } = useToast();
   const { breeds, addBreed, updateBreed, deleteBreed } = usePets();
 
@@ -101,6 +119,39 @@ export default function BreedsPage() {
     }
   };
 
+  const importCatBreeds = async () => {
+    try {
+      setIsImportingCats(true);
+      const existingCatBreeds = breeds?.filter(breed => breed.type === 'cat') ?? [];
+      const existingBreedNames = new Set(existingCatBreeds.map(breed => breed.name));
+      
+      const missingBreeds = catBreeds.filter(breed => !existingBreedNames.has(breed));
+      
+      if (missingBreeds.length === 0) {
+        toast({ description: "All cat breeds are already imported!" });
+        return;
+      }
+
+      for (const breedName of missingBreeds) {
+        await addBreed({ 
+          name: breedName, 
+          type: 'cat',
+          deleted: false,
+          deletedAt: null 
+        });
+      }
+
+      toast({ description: `Successfully imported ${missingBreeds.length} cat breeds!` });
+    } catch (error) {
+      toast({ 
+        variant: "destructive", 
+        description: "Failed to import cat breeds" 
+      });
+    } finally {
+      setIsImportingCats(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -125,13 +176,22 @@ export default function BreedsPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Pet Breeds</h1>
         <div className="flex gap-2">
-          <Button 
-            variant="outline"
-            onClick={importDogBreeds}
-            disabled={isImporting}
-          >
-            {isImporting ? "Importing..." : "Import Dog Breeds"}
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              onClick={importDogBreeds}
+              disabled={isImporting}
+            >
+              {isImporting ? "Importing..." : "Import Dog Breeds"}
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={importCatBreeds}
+              disabled={isImportingCats}
+            >
+              {isImportingCats ? "Importing..." : "Import Cat Breeds"}
+            </Button>
+          </div>
           <Button onClick={() => setShowDialog(true)}>
             <Plus className="mr-2 h-4 w-4" /> Add Breed
           </Button>
