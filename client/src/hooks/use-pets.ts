@@ -309,7 +309,8 @@ export function usePets() {
   const { data: breeds = [], isLoading: breedsLoading } = useQuery({
     queryKey: ['breeds'],
     queryFn: async () => {
-      const breedsSnapshot = await getDocs(collection(db, 'breeds'));
+      const q = query(collection(db, 'breeds'), where('deleted', '!=', true));
+      const breedsSnapshot = await getDocs(q);
       return breedsSnapshot.docs.map(doc => ({
         id: doc.id,
         name: doc.data().name,
@@ -350,11 +351,14 @@ export function usePets() {
     }
   });
 
-  // Delete breed
+  // Delete breed (soft delete)
   const deleteBreedMutation = useMutation({
     mutationFn: async (id: string) => {
       const docRef = doc(db, 'breeds', id);
-      await deleteDoc(docRef);
+      await updateDoc(docRef, { 
+        deleted: true,
+        deletedAt: serverTimestamp()
+      });
       return id;
     },
     onSuccess: () => {
