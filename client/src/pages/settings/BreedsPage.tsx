@@ -82,7 +82,12 @@ export default function BreedsPage() {
       }
 
       for (const breedName of missingBreeds) {
-        await addBreed({ name: breedName, type: 'dog' });
+        await addBreed({ 
+          name: breedName, 
+          type: 'dog',
+          deleted: false,
+          deletedAt: null 
+        });
       }
 
       toast({ description: `Successfully imported ${missingBreeds.length} dog breeds!` });
