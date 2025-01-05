@@ -1,3 +1,4 @@
+
 import { db } from "../firebase";
 import {
   collection,
@@ -6,20 +7,17 @@ import {
   where,
   updateDoc,
   doc,
-} from "firebase/firestore";
+} from 'firebase-admin/firestore';
 
 async function fixPetCounts() {
   try {
     // Get all customers
-    const customersSnapshot = await getDocs(collection(db, "customers"));
+    const customersSnapshot = await db.collection("customers").get();
     const customers = customersSnapshot.docs;
 
     // Get all non-deleted pets
-    const petsQuery = query(
-      collection(db, "pets"),
-      where("deleted", "==", false),
-    );
-    const petsSnapshot = await getDocs(petsQuery);
+    const petsQuery = db.collection("pets").where("deleted", "==", false);
+    const petsSnapshot = await petsQuery.get();
     const pets = petsSnapshot.docs;
 
     // Calculate pet counts
@@ -34,7 +32,7 @@ async function fixPetCounts() {
     // Update customer documents
     for (const customer of customers) {
       const count = petCounts.get(customer.id) || 0;
-      await updateDoc(doc(db, "customers", customer.id), {
+      await db.collection("customers").doc(customer.id).update({
         petCount: count,
       });
       console.log(`Updated petCount for customer ${customer.id} to ${count}`);
