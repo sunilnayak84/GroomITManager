@@ -14,11 +14,13 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function BreedsPage() {
   const [showDialog, setShowDialog] = useState(false);
   const [editingBreed, setEditingBreed] = useState<string | null>(null);
   const [breedName, setBreedName] = useState("");
+  const [breedType, setBreedType] = useState<string>("dog");
   const { toast } = useToast();
   const { breeds, addBreed, updateBreed, deleteBreed } = usePets();
 
@@ -26,14 +28,15 @@ export default function BreedsPage() {
     e.preventDefault();
     try {
       if (editingBreed) {
-        await updateBreed(editingBreed, { name: breedName });
+        await updateBreed(editingBreed, { name: breedName, type: breedType });
         toast({ description: "Breed updated successfully" });
       } else {
-        await addBreed({ name: breedName });
+        await addBreed({ name: breedName, type: breedType });
         toast({ description: "Breed added successfully" });
       }
       setShowDialog(false);
       setBreedName("");
+      setBreedType("dog");
       setEditingBreed(null);
     } catch (error) {
       toast({ variant: "destructive", description: "Failed to save breed" });
@@ -54,6 +57,7 @@ export default function BreedsPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
+              <TableHead>Type</TableHead>
               <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -61,6 +65,7 @@ export default function BreedsPage() {
             {breeds?.map((breed) => (
               <TableRow key={breed.id}>
                 <TableCell>{breed.name}</TableCell>
+                <TableCell>{breed.type}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
                     <Button
@@ -69,6 +74,7 @@ export default function BreedsPage() {
                       onClick={() => {
                         setEditingBreed(breed.id);
                         setBreedName(breed.name);
+                        setBreedType(breed.type);
                         setShowDialog(true);
                       }}
                     >
@@ -97,12 +103,33 @@ export default function BreedsPage() {
             </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Input
-                placeholder="Breed name"
-                value={breedName}
-                onChange={(e) => setBreedName(e.target.value)}
-              />
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium">Type</label>
+                <Select 
+                  value={breedType} 
+                  onValueChange={setBreedType}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="dog">Dog</SelectItem>
+                    <SelectItem value="cat">Cat</SelectItem>
+                    <SelectItem value="bird">Bird</SelectItem>
+                    <SelectItem value="fish">Fish</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="text-sm font-medium">Name</label>
+                <Input
+                  placeholder="Breed name"
+                  value={breedName}
+                  onChange={(e) => setBreedName(e.target.value)}
+                />
+              </div>
             </div>
             <div className="flex justify-end gap-2">
               <Button
@@ -111,6 +138,7 @@ export default function BreedsPage() {
                 onClick={() => {
                   setShowDialog(false);
                   setBreedName("");
+                  setBreedType("dog");
                   setEditingBreed(null);
                 }}
               >

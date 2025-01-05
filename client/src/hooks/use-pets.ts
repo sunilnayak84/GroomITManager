@@ -319,9 +319,14 @@ export function usePets() {
 
   // Add breed
   const addBreedMutation = useMutation({
-    mutationFn: async ({ name }: { name: string }) => {
-      const docRef = await addDoc(collection(db, 'breeds'), { name });
-      return { id: docRef.id, name };
+    mutationFn: async ({ name, type }: { name: string, type: string }) => {
+      const docRef = await addDoc(collection(db, 'breeds'), { 
+        name,
+        type,
+        createdAt: serverTimestamp(),
+        updatedAt: null
+      });
+      return { id: docRef.id, name, type };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['breeds'] });
@@ -330,10 +335,14 @@ export function usePets() {
 
   // Update breed
   const updateBreedMutation = useMutation({
-    mutationFn: async ({ id, name }: { id: string, name: string }) => {
+    mutationFn: async ({ id, name, type }: { id: string, name: string, type: string }) => {
       const docRef = doc(db, 'breeds', id);
-      await updateDoc(docRef, { name });
-      return { id, name };
+      await updateDoc(docRef, { 
+        name,
+        type,
+        updatedAt: serverTimestamp()
+      });
+      return { id, name, type };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['breeds'] });
