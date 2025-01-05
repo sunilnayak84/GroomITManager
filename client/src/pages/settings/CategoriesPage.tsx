@@ -26,7 +26,7 @@ export default function CategoriesPage() {
     e.preventDefault();
     try {
       if (editingCategory) {
-        await updateCategory(editingCategory, { name: categoryName });
+        await updateCategory({ id: editingCategory, name: categoryName });
         toast({ description: "Category updated successfully" });
       } else {
         await addCategory({ name: categoryName });

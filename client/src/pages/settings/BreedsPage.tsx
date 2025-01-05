@@ -28,7 +28,7 @@ export default function BreedsPage() {
     e.preventDefault();
     try {
       if (editingBreed) {
-        await updateBreed(editingBreed, { name: breedName, type: breedType });
+        await updateBreed({ id: editingBreed, name: breedName, type: breedType });
         toast({ description: "Breed updated successfully" });
       } else {
         await addBreed({ name: breedName, type: breedType });
