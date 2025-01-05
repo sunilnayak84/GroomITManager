@@ -540,4 +540,3 @@ export function useInventory() {
     ...rest
   };
 }
-}
