@@ -312,7 +312,8 @@ export function usePets() {
       const breedsSnapshot = await getDocs(collection(db, 'breeds'));
       return breedsSnapshot.docs.map(doc => ({
         id: doc.id,
-        name: doc.data().name
+        name: doc.data().name,
+        type: doc.data().type
       }));
     }
   });
