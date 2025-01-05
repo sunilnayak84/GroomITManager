@@ -314,21 +314,29 @@ export function usePets() {
       return breedsSnapshot.docs.map(doc => ({
         id: doc.id,
         name: doc.data().name,
-        type: doc.data().type
+        type: doc.data().type,
+        deleted: doc.data().deleted,
+        deletedAt: doc.data().deletedAt
       }));
     }
   });
 
   // Add breed
   const addBreedMutation = useMutation({
-    mutationFn: async ({ name, type }: { name: string, type: string }) => {
-      const docRef = await addDoc(collection(db, 'breeds'), { 
+    mutationFn: async ({ name, type, deleted = false, deletedAt = null }: { 
+      name: string, 
+      type: string, 
+      deleted?: boolean, 
+      deletedAt?: null | Timestamp 
+    }) => {
+      const docRef = await addDoc(collection(db, 'breeds'), {
         name,
         type,
-        createdAt: serverTimestamp(),
-        updatedAt: null
+        deleted,
+        deletedAt,
+        createdAt: serverTimestamp()
       });
-      return { id: docRef.id, name, type };
+      return { id: docRef.id, name, type, deleted, deletedAt };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['breeds'] });
