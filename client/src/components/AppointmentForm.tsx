@@ -50,7 +50,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
   const { services } = useServices();
   const { toast } = useToast();
   const { staffMembers } = useStaff();
-  const availableGroomers = staffMembers.filter(user => user.isGroomer && user.isActive);
+  const availableGroomers = staffMembers.filter(user => (user.isGroomer || user.specialties?.includes('groomer')) && user.isActive);
   const { data: workingHours } = useWorkingHours();
   const [selectedService, setSelectedService] = useState<{ duration: number } | null>(null);
   const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);

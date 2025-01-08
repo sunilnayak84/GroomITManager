@@ -78,7 +78,7 @@ export default function StaffPage() {
       const role = data.role === 'groomer' ? 'groomer' as const : 'staff' as const;
       const staffData = {
         ...data,
-        isGroomer: role === 'groomer',
+        isGroomer: role === 'groomer' || data.specialties?.includes('groomer'),
         isActive: true,
         specialties: data.specialties || [],
         petTypePreferences: data.petTypePreferences || [],
