@@ -1,0 +1,21 @@
+[vite] connecting...
+client:614 [vite] connected.
+chunk-GNC7SI6A.js?v=7dc05c43:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:17 Checking Firebase environment variables...
+firebase.ts:37 FIREBASE_INIT: Initializing Firebase with config: Object
+firebase.ts:42 FIREBASE_INIT: Firebase initialized successfully
+chunk-2LIWWRRO.js?v=7dc05c43:1378 [2025-01-08T08:22:17.485Z]  @firebase/firestore: Firestore (11.0.2): enableIndexedDbPersistence() will be deprecated in the future, you can use `FirestoreSettings.cache` instead.
+defaultLogHandler @ chunk-2LIWWRRO.js?v=7dc05c43:1378Understand this warningAI
+content.js:1 CISPL SignerDigital Loaded
+use-appointments.ts:77 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:85 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:88 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-pets.ts:58 FETCH_PETS: Starting to fetch pets
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+use-staff.ts:14 FETCH_STAFF: Starting to fetch staff members
+use-appointments.ts:97 FETCH_APPOINTMENTS: Found 0 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Got snapshot with 0 active documents
+use-appointments.ts:106 FETCH_APPOINTMENTS: No appointments found
+use-services.ts:77 FETCH_SERVICES: Completed fetching services Object
+use-staff.ts:26 FETCH_STAFF: Successfully fetched staff members: Array(2)0: branch: nullcreatedAt: _Timestamp {seconds: 1735198280, nanoseconds: 566000000}disabled: falseemail: "groomer@groomery.in"experienceYears: 0firebaseId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"id: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"isActive: trueisGroomer: falsemaxDailyAppointments: 8metadata: {lastLogin: null, deviceTokens: Array(0), notificationPreferences: {…}}name: "Groomer One"petTypePreferences: []phone: "9856857854"role: "staff"schedule: {}specialties: ['groomer']updatedAt: _Timestamp {seconds: 1735198280, nanoseconds: 566000000}[[Prototype]]: Object1: branch: nullcreatedAt: _Timestamp {seconds: 1735203052, nanoseconds: 439000000}disabled: falseemail: "groomer2@groomery.in"experienceYears: 0firebaseId: "zjMezeDkskSz772Lxn7dHqkxuLV2"id: "zjMezeDkskSz772Lxn7dHqkxuLV2"isActive: trueisGroomer: falsemaxDailyAppointments: 8metadata: {deviceTokens: Array(0), lastLogin: null, notificationPreferences: {…}}name: "Groomer Two"petTypePreferences: []phone: "9856525478"role: "staff"schedule: {}specialties: ['groomer']updatedAt: _Timestamp {seconds: 1735203052, nanoseconds: 439000000}[[Prototype]]: Objectlength: 2[[Prototype]]: Array(0)at: ƒ at()concat: ƒ concat()constructor: ƒ Array()copyWithin: ƒ copyWithin()entries: ƒ entries()every: ƒ every()fill: ƒ fill()filter: ƒ filter()find: ƒ find()findIndex: ƒ findIndex()findLast: ƒ findLast()findLastIndex: ƒ findLastIndex()flat: ƒ flat()flatMap: ƒ flatMap()forEach: ƒ forEach()includes: ƒ includes()indexOf: ƒ indexOf()join: ƒ join()keys: ƒ keys()lastIndexOf: ƒ lastIndexOf()length: 0map: ƒ map()pop: ƒ pop()push: ƒ push()reduce: ƒ reduce()reduceRight: ƒ reduceRight()reverse: ƒ reverse()shift: ƒ shift()slice: ƒ slice()some: ƒ some()sort: ƒ sort()splice: ƒ splice()toLocaleString: ƒ toLocaleString()toReversed: ƒ toReversed()toSorted: ƒ toSorted()toSpliced: ƒ toSpliced()toString: ƒ toString()unshift: ƒ unshift()values: ƒ values()with: ƒ with()Symbol(Symbol.iterator): ƒ values()Symbol(Symbol.unscopables): {at: true, copyWithin: true, entries: true, fill: true, find: true, …}[[Prototype]]: Object
+use-pets.ts:108 FETCH_PETS: Completed fetching pets Object
