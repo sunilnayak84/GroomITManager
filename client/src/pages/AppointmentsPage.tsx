@@ -358,7 +358,7 @@ export default function AppointmentsPage() {
           {selectedPet && (
             <PetDetails
               pet={selectedPet}
-              formatDate={format}
+              formatDate={(date) => date ? format(new Date(date), 'PPP') : 'Not specified'}
             />
           )}
         </DialogContent>
