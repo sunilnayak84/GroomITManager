@@ -63,7 +63,6 @@ export default function StaffPage() {
       email: "",
       phone: "",
       role: "staff",
-      isGroomer: false,
       specialties: [],
       petTypePreferences: [],
       experienceYears: 0,
@@ -124,7 +123,6 @@ export default function StaffPage() {
       email: staff.email,
       phone: staff.phone,
       role: staff.role,
-      isGroomer: staff.isGroomer,
       specialties: staff.specialties || [],
       petTypePreferences: staff.petTypePreferences || [],
       experienceYears: staff.experienceYears || 0,
@@ -214,7 +212,6 @@ export default function StaffPage() {
               email: "",
               phone: "",
               role: "staff",
-              isGroomer: false,
               specialties: [],
               petTypePreferences: [],
               experienceYears: 0,
@@ -315,8 +312,10 @@ export default function StaffPage() {
                     <Select 
                       onValueChange={(value) => {
                         field.onChange(value);
-                        // Update isGroomer when role changes
-                        form.setValue('isGroomer', value === 'groomer');
+                        // Update specialties when role changes to include groomer
+                        if (value === 'groomer') {
+                          form.setValue('specialties', ['groomer']);
+                        }
                       }} 
                       defaultValue={field.value}
                     >
