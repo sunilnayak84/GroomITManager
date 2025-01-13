@@ -168,7 +168,24 @@ export default function AppointmentsPage() {
           const petRef = doc(petsCollection, petId);
           const petDoc = await getDoc(petRef);
           if (petDoc.exists()) {
-            const fullPetData = parseFirestorePet(petDoc.id, petDoc.data());
+            const petData = petDoc.data();
+            const customerId = petData.customerId;
+            
+            // Fetch customer data
+            const customerRef = doc(db, 'customers', customerId);
+            const customerDoc = await getDoc(customerRef);
+            
+            const fullPetData = parseFirestorePet(petDoc.id, petData);
+            
+            if (customerDoc.exists()) {
+              const customerData = customerDoc.data();
+              fullPetData.owner = {
+                id: customerDoc.id,
+                name: `${customerData.firstName} ${customerData.lastName}`,
+                email: customerData.email
+              };
+            }
+            
             setSelectedPet(fullPetData);
             setShowPetDetails(true);
           }
