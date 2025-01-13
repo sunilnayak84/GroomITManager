@@ -215,9 +215,24 @@ export default function AppointmentsPage() {
     {
       header: "Customer",
       cell: (row: AppointmentWithRelations) => (
-        <div className="font-medium cursor-pointer" onClick={() => {
-          setSelectedCustomer(row.customer);
-          setShowCustomerDetails(true);
+        <div className="font-medium cursor-pointer" onClick={async () => {
+          const petDoc = await getDoc(doc(db, 'pets', row.petId));
+          if (petDoc.exists()) {
+            const petData = petDoc.data();
+            const customerId = petData.customerId;
+            
+            const customerDoc = await getDoc(doc(db, 'customers', customerId));
+            if (customerDoc.exists()) {
+              const customerData = customerDoc.data();
+              setSelectedCustomer({
+                id: customerDoc.id,
+                ...customerData,
+                createdAt: customerData.createdAt,
+                updatedAt: customerData.updatedAt
+              });
+              setShowCustomerDetails(true);
+            }
+          }
         }}>
           {`${row.customer.firstName} ${row.customer.lastName}`}
         </div>
@@ -432,18 +447,25 @@ export default function AppointmentsPage() {
                 <div className="space-y-4">
                   <h3 className="font-semibold text-lg">Contact Information</h3>
                   <div className="space-y-2">
-                    <p><span className="text-muted-foreground">Email:</span> {selectedCustomer.email}</p>
-                    <p><span className="text-muted-foreground">Phone:</span> {selectedCustomer.phone}</p>
-                    <p><span className="text-muted-foreground">Address:</span> {selectedCustomer.address || 'Not specified'}</p>
+                    <p><span className="text-muted-foreground">Email: </span>{selectedCustomer.email || 'Not specified'}</p>
+                    <p><span className="text-muted-foreground">Phone: </span>{selectedCustomer.phone || 'Not specified'}</p>
+                    <p><span className="text-muted-foreground">Address: </span>{selectedCustomer.address || 'Not specified'}</p>
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   <h3 className="font-semibold text-lg">Additional Information</h3>
                   <div className="space-y-2">
-                    <p><span className="text-muted-foreground">Gender:</span> {selectedCustomer.gender || 'Not specified'}</p>
-                    <p><span className="text-muted-foreground">Pets:</span> {selectedCustomer.petCount} pet(s)</p>
-                    <p><span className="text-muted-foreground">Last Updated:</span> {selectedCustomer.updatedAt ? format(new Date(selectedCustomer.updatedAt), 'PPP') : 'Never'}</p>
+                    <p><span className="text-muted-foreground">Gender: </span>{selectedCustomer.gender ? selectedCustomer.gender.charAt(0).toUpperCase() + selectedCustomer.gender.slice(1) : 'Not specified'}</p>
+                    <p><span className="text-muted-foreground">Pets: </span>{selectedCustomer.petCount || 0} pet(s)</p>
+                    <p><span className="text-muted-foreground">Last Updated: </span>
+                      {selectedCustomer.updatedAt ? 
+                        format(typeof selectedCustomer.updatedAt === 'string' ? 
+                          new Date(selectedCustomer.updatedAt) : 
+                          selectedCustomer.updatedAt.toDate(), 
+                        'PPP') : 
+                        'Never'}
+                    </p>
                   </div>
                 </div>
               </div>
