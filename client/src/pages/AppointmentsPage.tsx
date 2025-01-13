@@ -170,7 +170,12 @@ export default function AppointmentsPage() {
           const petDoc = await getDoc(petRef);
           if (petDoc.exists()) {
             const petData = petDoc.data();
-            const customerId = petData.customerId;
+            const customerId = petData?.customerId;
+            
+            if (!customerId || typeof customerId !== 'string') {
+              console.error('Invalid customer ID');
+              return;
+            }
             
             // Fetch customer data
             const customerRef = doc(db, 'customers', customerId);
