@@ -27,7 +27,7 @@ function timestampToString(timestamp: Timestamp | string | null | undefined): st
 }
 
 // Helper function to parse Firestore pet data
-function parseFirestorePet(id: string, data: any): Pet {
+export function parseFirestorePet(id: string, data: any): Pet {
   return {
     id,
     firebaseId: data.firebaseId,

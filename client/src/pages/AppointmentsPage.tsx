@@ -164,7 +164,7 @@ export default function AppointmentsPage() {
       header: "Pet",
       cell: ({ pet }: AppointmentWithRelations) => (
         <div className="flex items-center gap-2 cursor-pointer" onClick={async () => {
-          const petRef = doc(petsCollection, pet.id);
+          const petRef = doc(petsCollection, petId);
           const petDoc = await getDoc(petRef);
           if (petDoc.exists()) {
             const fullPetData = parseFirestorePet(petDoc.id, petDoc.data());
