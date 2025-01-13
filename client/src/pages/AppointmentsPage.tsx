@@ -15,7 +15,7 @@ import AppointmentDetails from "../components/AppointmentDetails";
 import AppointmentCalendar from "../components/AppointmentCalendar";
 import AppointmentEditForm from "../components/AppointmentEditForm"; // Added import for edit form
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // Added Select component imports
-import PetDetails from "../components/PetDetails"; // Import PetDetails component
+import { PetDetails } from "../components/PetDetails"; // Import PetDetails component
 
 
 // Get status type from the schema
