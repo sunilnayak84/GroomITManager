@@ -15,8 +15,7 @@ import AppointmentDetails from "../components/AppointmentDetails";
 import AppointmentCalendar from "../components/AppointmentCalendar";
 import AppointmentEditForm from "../components/AppointmentEditForm"; // Added import for edit form
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // Added Select component imports
-import { PetDetails } from "../components/PetDetails";
-import { usePets } from "../hooks/use-pets";
+import { PetDetails } from "../components/PetDetails"; // Import PetDetails component
 
 
 // Get status type from the schema
@@ -106,10 +105,9 @@ export default function AppointmentsPage() {
   const [openDetails, setOpenDetails] = useState(false);
   const [openEdit, setOpenEdit] = useState(false); // Added openEdit state
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithRelations | null>(null);
-  const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
-  const [showPetDetails, setShowPetDetails] = useState(false);
+  const [selectedPet, setSelectedPet] = useState<any>(null); // State to hold selected pet
+  const [showPetDetails, setShowPetDetails] = useState(false); // State for PetDetails modal
   const [view, setView] = useState<'list' | 'calendar'>('list');
-  const { pets } = usePets();
   const [dateFilter, setDateFilter] = useState<'today' | 'week' | 'month' | 'past' | 'all'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled'>('all');
   const { data: appointments, isLoading, error } = useAppointments();
@@ -162,7 +160,7 @@ export default function AppointmentsPage() {
     {
       header: "Pet",
       cell: ({ pet }: AppointmentWithRelations) => (
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => {setSelectedPetId(pet.id); setShowPetDetails(true);}}>
+        <div className="flex items-center gap-2 cursor-pointer" onClick={() => {setSelectedPet(pet); setShowPetDetails(true);}}> {/* Make pet name clickable */}
           <img
             src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
             alt={pet.name}
@@ -357,9 +355,9 @@ export default function AppointmentsPage() {
       {/* Pet Details Dialog */}
       <Dialog open={showPetDetails} onOpenChange={setShowPetDetails}>
         <DialogContent className="sm:max-w-[625px]">
-          {selectedPetId && pets?.find(p => p.id === selectedPetId) && (
+          {selectedPet && (
             <PetDetails
-              pet={pets.find(p => p.id === selectedPetId)!}
+              pet={selectedPet}
               formatDate={(date) => date ? format(new Date(date), 'PPP') : 'Not specified'}
             />
           )}
