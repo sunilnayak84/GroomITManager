@@ -4,7 +4,7 @@ import { Plus, Calendar, List, Trash2, Pencil } from "lucide-react"; // Added Pe
 import { useUser } from "@/hooks/use-user";
 import { useToast } from "@/hooks/use-toast";
 import { useAppointments } from "../hooks/use-appointments";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import AppointmentForm from "../components/AppointmentForm";
 import { DataTable } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,7 @@ import AppointmentDetails from "../components/AppointmentDetails";
 import AppointmentCalendar from "../components/AppointmentCalendar";
 import AppointmentEditForm from "../components/AppointmentEditForm"; // Added import for edit form
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // Added Select component imports
+import PetDetails from "../components/PetDetails"; // Import PetDetails component
 
 
 // Get status type from the schema
@@ -104,6 +105,8 @@ export default function AppointmentsPage() {
   const [openDetails, setOpenDetails] = useState(false);
   const [openEdit, setOpenEdit] = useState(false); // Added openEdit state
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithRelations | null>(null);
+  const [selectedPet, setSelectedPet] = useState<any>(null); // State to hold selected pet
+  const [showPetDetails, setShowPetDetails] = useState(false); // State for PetDetails modal
   const [view, setView] = useState<'list' | 'calendar'>('list');
   const [dateFilter, setDateFilter] = useState<'today' | 'week' | 'month' | 'past' | 'all'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled'>('all');
@@ -157,7 +160,7 @@ export default function AppointmentsPage() {
     {
       header: "Pet",
       cell: ({ pet }: AppointmentWithRelations) => (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 cursor-pointer" onClick={() => {setSelectedPet(pet); setShowPetDetails(true);}}> {/* Make pet name clickable */}
           <img
             src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
             alt={pet.name}
@@ -348,6 +351,18 @@ export default function AppointmentsPage() {
           </Dialog>
         </>
       )}
+
+      {/* Pet Details Dialog */}
+      <Dialog open={showPetDetails} onOpenChange={setShowPetDetails}>
+        <DialogContent className="sm:max-w-[625px]">
+          {selectedPet && (
+            <PetDetails
+              pet={selectedPet}
+              formatDate={format}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
