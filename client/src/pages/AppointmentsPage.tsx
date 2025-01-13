@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Calendar, List, Trash2, Pencil } from "lucide-react"; // Added Pencil icon
 import { useUser } from "@/hooks/use-user";
@@ -14,6 +14,7 @@ import { appointmentSchema, type Appointment, type AppointmentWithRelations } fr
 import AppointmentDetails from "../components/AppointmentDetails";
 import AppointmentCalendar from "../components/AppointmentCalendar";
 import AppointmentEditForm from "../components/AppointmentEditForm"; // Added import for edit form
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // Added Select component imports
 
 
 // Get status type from the schema
@@ -104,8 +105,50 @@ export default function AppointmentsPage() {
   const [openEdit, setOpenEdit] = useState(false); // Added openEdit state
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithRelations | null>(null);
   const [view, setView] = useState<'list' | 'calendar'>('list');
+  const [dateFilter, setDateFilter] = useState<'today' | 'week' | 'month' | 'past' | 'all'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled'>('all');
   const { data: appointments, isLoading, error } = useAppointments();
-  
+
+  const filteredAppointments = useMemo(() => {
+    if (!appointments) return [];
+
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay());
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    return appointments.filter(appointment => {
+      const appointmentDate = new Date(appointment.date);
+
+      // Apply date filter
+      if (dateFilter === 'today') {
+        if (appointmentDate < startOfDay || appointmentDate > new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000)) {
+          return false;
+        }
+      } else if (dateFilter === 'week') {
+        if (appointmentDate < startOfWeek || appointmentDate > new Date(startOfWeek.getTime() + 7 * 24 * 60 * 60 * 1000)) {
+          return false;
+        }
+      } else if (dateFilter === 'month') {
+        if (appointmentDate < startOfMonth || appointmentDate > new Date(now.getFullYear(), now.getMonth() + 1, 0)) {
+          return false;
+        }
+      } else if (dateFilter === 'past') {
+        if (appointmentDate > now) {
+          return false;
+        }
+      }
+
+      // Apply status filter
+      if (statusFilter !== 'all' && appointment.status !== statusFilter) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [appointments, dateFilter, statusFilter]);
+
   const columns = [
     {
       header: "Date",
@@ -238,11 +281,47 @@ export default function AppointmentsPage() {
         </div>
       </div>
 
+      {view === 'list' && (
+        <div className="flex gap-4 mb-4 px-6">
+          <Select
+            value={dateFilter}
+            onValueChange={(value: any) => setDateFilter(value)}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select date range" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Appointments</SelectItem>
+              <SelectItem value="today">Today</SelectItem>
+              <SelectItem value="week">This Week</SelectItem>
+              <SelectItem value="month">This Month</SelectItem>
+              <SelectItem value="past">Past Appointments</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={statusFilter}
+            onValueChange={(value: any) => setStatusFilter(value)}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="confirmed">Confirmed</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="cancelled">Cancelled</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
       {view === 'list' ? (
         <div className="bg-white rounded-lg border shadow-sm">
           <DataTable
             columns={columns}
-            data={(appointments || []) as AppointmentWithRelations[]}
+            data={filteredAppointments as AppointmentWithRelations[]}
             isLoading={isLoading}
           />
         </div>
