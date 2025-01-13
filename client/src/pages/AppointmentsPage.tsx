@@ -1,4 +1,7 @@
 import { useState, useMemo } from "react";
+import { doc, getDoc } from 'firebase/firestore';
+import { petsCollection } from "@/lib/firestore";
+import { parseFirestorePet } from "@/hooks/use-pets";
 import { Button } from "@/components/ui/button";
 import { Plus, Calendar, List, Trash2, Pencil } from "lucide-react"; // Added Pencil icon
 import { useUser } from "@/hooks/use-user";
@@ -160,7 +163,15 @@ export default function AppointmentsPage() {
     {
       header: "Pet",
       cell: ({ pet }: AppointmentWithRelations) => (
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => {setSelectedPet(pet); setShowPetDetails(true);}}> {/* Make pet name clickable */}
+        <div className="flex items-center gap-2 cursor-pointer" onClick={async () => {
+          const petRef = doc(petsCollection, pet.id);
+          const petDoc = await getDoc(petRef);
+          if (petDoc.exists()) {
+            const fullPetData = parseFirestorePet(petDoc.id, petDoc.data());
+            setSelectedPet(fullPetData);
+            setShowPetDetails(true);
+          }
+        }}> 
           <img
             src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
             alt={pet.name}
