@@ -8,7 +8,7 @@ import { Plus, Calendar, List, Trash2, Pencil } from "lucide-react"; // Added Pe
 import { useUser } from "@/hooks/use-user";
 import { useToast } from "@/hooks/use-toast";
 import { useAppointments } from "../hooks/use-appointments";
-import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import AppointmentForm from "../components/AppointmentForm";
 import { DataTable } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
@@ -111,6 +111,8 @@ export default function AppointmentsPage() {
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithRelations | null>(null);
   const [selectedPet, setSelectedPet] = useState<any>(null); // State to hold selected pet
   const [showPetDetails, setShowPetDetails] = useState(false); // State for PetDetails modal
+  const [selectedCustomer, setSelectedCustomer] = useState<any>(null); // State for Customer Details
+  const [showCustomerDetails, setShowCustomerDetails] = useState(false); // State for Customer Details modal
   const [view, setView] = useState<'list' | 'calendar'>('list');
   const [dateFilter, setDateFilter] = useState<'today' | 'week' | 'month' | 'past' | 'all'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled'>('all');
@@ -171,18 +173,18 @@ export default function AppointmentsPage() {
           if (petDoc.exists()) {
             const petData = petDoc.data();
             const customerId = petData?.customerId;
-            
+
             if (!customerId || typeof customerId !== 'string') {
               console.error('Invalid customer ID');
               return;
             }
-            
+
             // Fetch customer data
             const customerRef = doc(db, 'customers', customerId);
             const customerDoc = await getDoc(customerRef);
-            
+
             const fullPetData = parseFirestorePet(petDoc.id, petData);
-            
+
             if (customerDoc.exists()) {
               const customerData = customerDoc.data();
               fullPetData.owner = {
@@ -190,8 +192,10 @@ export default function AppointmentsPage() {
                 name: `${customerData.firstName} ${customerData.lastName}`,
                 email: customerData.email
               };
+              setSelectedCustomer(customerData);
+              setShowCustomerDetails(true);
             }
-            
+
             setSelectedPet(fullPetData);
             setShowPetDetails(true);
           }
@@ -211,7 +215,10 @@ export default function AppointmentsPage() {
     {
       header: "Customer",
       cell: (row: AppointmentWithRelations) => (
-        <div className="font-medium">
+        <div className="font-medium cursor-pointer" onClick={() => {
+          setSelectedCustomer(row.customer);
+          setShowCustomerDetails(true);
+        }}>
           {`${row.customer.firstName} ${row.customer.lastName}`}
         </div>
       ),
@@ -395,6 +402,45 @@ export default function AppointmentsPage() {
               pet={selectedPet}
               formatDate={(date) => date ? format(new Date(date), 'PPP') : 'Not specified'}
             />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Customer Details Dialog */}
+      <Dialog open={showCustomerDetails} onOpenChange={setShowCustomerDetails}>
+        <DialogContent className="sm:max-w-[625px]">
+          <DialogHeader>
+            <DialogTitle>Customer Details</DialogTitle>
+          </DialogHeader>
+          {selectedCustomer && (
+            <div className="space-y-6 p-6">
+              <div className="flex items-start gap-4 mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold">{selectedCustomer.firstName} {selectedCustomer.lastName}</h2>
+                  <p className="text-muted-foreground">Customer since {format(new Date(selectedCustomer.createdAt), 'PPP')}</p>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-lg">Contact Information</h3>
+                  <div className="space-y-2">
+                    <p><span className="text-muted-foreground">Email:</span> {selectedCustomer.email}</p>
+                    <p><span className="text-muted-foreground">Phone:</span> {selectedCustomer.phone}</p>
+                    <p><span className="text-muted-foreground">Address:</span> {selectedCustomer.address || 'Not specified'}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-lg">Additional Information</h3>
+                  <div className="space-y-2">
+                    <p><span className="text-muted-foreground">Gender:</span> {selectedCustomer.gender || 'Not specified'}</p>
+                    <p><span className="text-muted-foreground">Pets:</span> {selectedCustomer.petCount} pet(s)</p>
+                    <p><span className="text-muted-foreground">Last Updated:</span> {selectedCustomer.updatedAt ? format(new Date(selectedCustomer.updatedAt), 'PPP') : 'Never'}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
         </DialogContent>
       </Dialog>
