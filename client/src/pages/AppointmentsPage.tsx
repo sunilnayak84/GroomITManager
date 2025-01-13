@@ -192,8 +192,6 @@ export default function AppointmentsPage() {
                 name: `${customerData.firstName} ${customerData.lastName}`,
                 email: customerData.email
               };
-              setSelectedCustomer(customerData);
-              setShowCustomerDetails(true);
             }
 
             setSelectedPet(fullPetData);
