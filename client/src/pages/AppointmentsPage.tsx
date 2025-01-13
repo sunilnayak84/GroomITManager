@@ -417,7 +417,14 @@ export default function AppointmentsPage() {
               <div className="flex items-start gap-4 mb-6">
                 <div>
                   <h2 className="text-2xl font-bold">{selectedCustomer.firstName} {selectedCustomer.lastName}</h2>
-                  <p className="text-muted-foreground">Customer since {format(new Date(selectedCustomer.createdAt), 'PPP')}</p>
+                  <p className="text-muted-foreground">
+                    Customer since {selectedCustomer.createdAt ? 
+                      format(typeof selectedCustomer.createdAt === 'string' ? 
+                        new Date(selectedCustomer.createdAt) : 
+                        selectedCustomer.createdAt.toDate(), 
+                      'PPP') : 
+                      'Not available'}
+                  </p>
                 </div>
               </div>
 
