@@ -109,10 +109,8 @@ export default function AppointmentsPage() {
   const [openDetails, setOpenDetails] = useState(false);
   const [openEdit, setOpenEdit] = useState(false); // Added openEdit state
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithRelations | null>(null);
-  const [showPetDetails, setShowPetDetails] = useState(false);
-  const [showCustomerDetails, setShowCustomerDetails] = useState(false); // Added state for customer details modal
-  const [selectedPet, setSelectedPet] = useState<any>(null);
-  const [selectedCustomer, setSelectedCustomer] = useState<any>(null); // Added state for selected customer
+  const [selectedPet, setSelectedPet] = useState<any>(null); // State to hold selected pet
+  const [showPetDetails, setShowPetDetails] = useState(false); // State for PetDetails modal
   const [view, setView] = useState<'list' | 'calendar'>('list');
   const [dateFilter, setDateFilter] = useState<'today' | 'week' | 'month' | 'past' | 'all'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled'>('all');
@@ -173,18 +171,18 @@ export default function AppointmentsPage() {
           if (petDoc.exists()) {
             const petData = petDoc.data();
             const customerId = petData?.customerId;
-
+            
             if (!customerId || typeof customerId !== 'string') {
               console.error('Invalid customer ID');
               return;
             }
-
+            
             // Fetch customer data
             const customerRef = doc(db, 'customers', customerId);
             const customerDoc = await getDoc(customerRef);
-
+            
             const fullPetData = parseFirestorePet(petDoc.id, petData);
-
+            
             if (customerDoc.exists()) {
               const customerData = customerDoc.data();
               fullPetData.owner = {
@@ -193,7 +191,7 @@ export default function AppointmentsPage() {
                 email: customerData.email
               };
             }
-
+            
             setSelectedPet(fullPetData);
             setShowPetDetails(true);
           }
@@ -213,10 +211,7 @@ export default function AppointmentsPage() {
     {
       header: "Customer",
       cell: (row: AppointmentWithRelations) => (
-        <div className="font-medium cursor-pointer" onClick={() => {
-          setSelectedCustomer(row.customer);
-          setShowCustomerDetails(true);
-        }}>
+        <div className="font-medium">
           {`${row.customer.firstName} ${row.customer.lastName}`}
         </div>
       ),
@@ -400,20 +395,6 @@ export default function AppointmentsPage() {
               pet={selectedPet}
               formatDate={(date) => date ? format(new Date(date), 'PPP') : 'Not specified'}
             />
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Customer Details Dialog - Placeholder */}
-      <Dialog open={showCustomerDetails} onOpenChange={setShowCustomerDetails}>
-        <DialogContent className="sm:max-w-[625px]">
-          {selectedCustomer && (
-            <div>
-              <h1>Customer Details Placeholder</h1>
-              <p>Customer ID: {selectedCustomer.id}</p>
-              <p>Name: {selectedCustomer.firstName} {selectedCustomer.lastName}</p>
-              {/* Add more customer details here */}
-            </div>
           )}
         </DialogContent>
       </Dialog>
