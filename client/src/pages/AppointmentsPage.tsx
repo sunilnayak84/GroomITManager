@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { doc, getDoc } from 'firebase/firestore';
 import { petsCollection } from "@/lib/firestore";
+import { db } from "@/lib/firebase";
 import { parseFirestorePet } from "@/hooks/use-pets";
 import { Button } from "@/components/ui/button";
 import { Plus, Calendar, List, Trash2, Pencil } from "lucide-react"; // Added Pencil icon
