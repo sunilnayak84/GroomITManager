@@ -59,7 +59,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
       status: appointment.status,
       notes: appointment.notes,
       groomerId: appointment.groomerId,
-      services: appointment.services?.map(s => s.service_id.toString()) || [],
+      services: appointment.services || [],
       date: formattedDate,
       time: formattedTime
     },
@@ -75,7 +75,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
         id: appointment.id,
         status: data.status,
         notes: data.notes || undefined,
-        date: dateTime.toISOString(),
+        appointmentDate: dateTime.toISOString(),
         groomerId: data.groomerId,
         services: data.services,
         cancellationReason: undefined
