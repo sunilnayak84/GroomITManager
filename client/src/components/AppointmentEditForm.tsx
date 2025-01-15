@@ -43,7 +43,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
   const { toast } = useToast();
   const { services } = useServices();
   const { staffMembers } = useStaff();
-  const availableGroomers = staffMembers.filter(user => user.isGroomer && user.isActive);
+  const availableGroomers = staffMembers?.filter(user => user.isGroomer && user.isActive) || [];
 
   const form = useForm({
     resolver: zodResolver(editAppointmentSchema),
@@ -51,7 +51,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
       status: appointment.status,
       notes: appointment.notes,
       groomerId: appointment.groomerId,
-      services: appointment.service?.map(s => s.service_id.toString()) || [],
+      services: appointment.services || [],
     },
   });
 
@@ -84,6 +84,38 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
       <DialogHeader>
         <DialogTitle>Edit Appointment</DialogTitle>
       </DialogHeader>
+
+      <div className="space-y-4 py-4">
+        <div>
+          <h3 className="text-sm font-medium text-gray-500">Date & Time</h3>
+          <p className="mt-1 text-sm font-medium">
+            {new Date(appointment.date).toLocaleString()}
+          </p>
+        </div>
+
+        <div>
+          <h3 className="text-sm font-medium text-gray-500">Pet</h3>
+          <div className="mt-1 flex items-center gap-2">
+            <img
+              src={appointment.pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${appointment.pet.name}`}
+              alt={appointment.pet.name}
+              className="h-8 w-8 rounded-full"
+            />
+            <div>
+              <p className="text-sm font-medium">{appointment.pet.name}</p>
+              <p className="text-xs text-gray-500">{appointment.pet.breed}</p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 className="text-sm font-medium text-gray-500">Customer</h3>
+          <p className="mt-1 text-sm font-medium">
+            {`${appointment.customer.firstName} ${appointment.customer.lastName}`}
+          </p>
+        </div>
+      </div>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
@@ -156,7 +188,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
                         key={service.service_id} 
                         value={service.service_id.toString()}
                       >
-                        {service.name}
+                        {service.name} - ₹{service.price}
                       </SelectItem>
                     ))}
                   </SelectContent>
