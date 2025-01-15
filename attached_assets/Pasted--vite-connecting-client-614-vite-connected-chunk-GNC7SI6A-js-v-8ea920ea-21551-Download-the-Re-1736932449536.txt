@@ -1,0 +1,31 @@
+[vite] connecting...
+client:614 [vite] connected.
+chunk-GNC7SI6A.js?v=8ea920ea:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:17 Checking Firebase environment variables...
+firebase.ts:37 FIREBASE_INIT: Initializing Firebase with config: {apiKey: '***', authDomain: 'replit-5ac6a.firebaseapp.com', projectId: 'replit-5ac6a', storageBucket: 'replit-5ac6a.firebasestorage.app', messagingSenderId: '194114432530', …}apiKey: "***"appId: "1:194114432530:web:b07a6d50e1db9e5372f2cb"authDomain: "replit-5ac6a.firebaseapp.com"experimentalAutoDetectLongPolling: trueexperimentalForceLongPolling: truemessagingSenderId: "194114432530"projectId: "replit-5ac6a"storageBucket: "replit-5ac6a.firebasestorage.app"[[Prototype]]: Object
+firebase.ts:42 FIREBASE_INIT: Firebase initialized successfully
+firebase.ts:60 [2025-01-15T09:12:24.321Z]  @firebase/firestore: Firestore (11.0.2): enableIndexedDbPersistence() will be deprecated in the future, you can use `FirestoreSettings.cache` instead.
+defaultLogHandler @ chunk-2LIWWRRO.js?v=8ea920ea:1378
+warn @ chunk-2LIWWRRO.js?v=8ea920ea:1442
+__PRIVATE_logWarn @ firebase_firestore.js?v=8ea920ea:2625
+enableIndexedDbPersistence @ firebase_firestore.js?v=8ea920ea:15800
+(anonymous) @ firebase.ts:60Understand this warningAI
+content.js:1 CISPL SignerDigital Loaded
+web-client-content-script.js:2 Uncaught (in promise) Error: Access to storage is not allowed from this context.Understand this errorAI
+c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/:1 [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) <input type=​"password" class=​"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:​border-0 file:​bg-transparent file:​text-sm file:​font-medium file:​text-foreground placeholder:​text-muted-foreground focus-visible:​outline-none focus-visible:​ring-2 focus-visible:​ring-ring focus-visible:​ring-offset-2 disabled:​cursor-not-allowed disabled:​opacity-50" name=​"password" id=​":​r3:​-form-item" aria-describedby=​":​r3:​-form-item-description" aria-invalid=​"false" value fdprocessedid=​"xw9bj7">​flex
+AuthPage.tsx:29 Attempting login...
+VM1155 .lp:6 [2025-01-15T09:12:57.551Z]  @firebase/database: FIREBASE WARNING: Database lives in a different region. Please change your database URL to https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app (https://replit-5ac6a-default-rtdb.firebaseio.com/) 
+defaultLogHandler @ chunk-2LIWWRRO.js?v=8ea920ea:1378
+warn @ chunk-2LIWWRRO.js?v=8ea920ea:1442
+warn @ firebase_database.js?v=8ea920ea:198
+(anonymous) @ firebase_database.js?v=8ea920ea:2830
+onConnectionShutdown_ @ firebase_database.js?v=8ea920ea:1808
+onControl_ @ firebase_database.js?v=8ea920ea:1697
+onPrimaryMessageReceived_ @ firebase_database.js?v=8ea920ea:1659
+(anonymous) @ firebase_database.js?v=8ea920ea:1583
+(anonymous) @ firebase_database.js?v=8ea920ea:670
+exceptionGuard @ firebase_database.js?v=8ea920ea:396
+handleResponse @ firebase_database.js?v=8ea920ea:669
+(anonymous) @ firebase_database.js?v=8ea920ea:781
+pRTLPCB @ VM1155 .lp:6
+(anonymous) @ VM1155 .lp:8Understand this warningAI
