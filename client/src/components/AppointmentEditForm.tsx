@@ -57,7 +57,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
     defaultValues: {
       status: appointment.status,
       notes: appointment.notes,
-      groomerId: appointment.groomerId,
+      groomerId: appointment.groomerId || '',
       services: appointment.services?.map(s => s) || [],
       date: formattedDate,
       time: formattedTime
