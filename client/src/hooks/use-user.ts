@@ -64,18 +64,35 @@ type AuthUser = {
 
 async function loginWithFirebase(credentials: { email: string; password: string }): Promise<AuthUser> {
   try {
+    // First authenticate
     const { user } = await signInWithEmailAndPassword(
       auth,
       credentials.email,
       credentials.password
     );
     
-    // Get role from Realtime Database
+    // Get role from ID token first
+    const idTokenResult = await user.getIdTokenResult();
+    const role = idTokenResult.claims.role as UserRole;
+    
+    if (role) {
+      // Use token claims if available
+      return {
+        id: user.uid,
+        email: user.email!,
+        name: user.displayName || user.email!,
+        role: role,
+        permissions: idTokenResult.claims.permissions as string[] || [],
+        branchId: idTokenResult.claims.branchId as number | undefined
+      };
+    }
+    
+    // Fallback to database check
     const db = getDatabase();
     const roleSnapshot = await get(ref(db, `roles/${user.uid}`));
     
     if (!roleSnapshot.exists()) {
-      throw new Error('User role not found');
+      throw new Error('User role not found. Please contact administrator.');
     }
     
     const roleData = roleSnapshot.val();
