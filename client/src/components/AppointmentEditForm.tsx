@@ -46,7 +46,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
   const { toast } = useToast();
   const { services } = useServices();
   const { staffMembers } = useStaff();
-  const availableGroomers = staffMembers?.filter(user => user.role === 'groomer' && !user.deletedAt) || [];
+  const availableGroomers = staffMembers?.filter(user => user.specialties?.includes('groomer') && user.isActive) || [];
 
   const appointmentDate = new Date(appointment.date);
   const formattedDate = format(appointmentDate, "yyyy-MM-dd");
