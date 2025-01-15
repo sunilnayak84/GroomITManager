@@ -49,14 +49,15 @@ export const auth = getAuth(app);
 export const storage = getStorage(app);
 
 // Initialize Firestore with persistence
-export const db = getFirestore(app);
 const firestoreSettings = {
   ignoreUndefinedProperties: true,
-  cacheSizeBytes: 40000000 // 40 MB
+  cacheSizeBytes: 40000000, // 40 MB
+  experimentalForceLongPolling: true
 };
 
-// Set Firestore settings
-db.settings(firestoreSettings);
+// Initialize Firestore with settings
+export const db = getFirestore(app);
+getFirestore().settings(firestoreSettings);
 
 // Set auth persistence to local
 auth.setPersistence(browserLocalPersistence)
