@@ -56,9 +56,15 @@ const firestoreConfig = {
 
 export const db = getFirestore(app);
 
-// Enable offline persistence
-enableIndexedDbPersistence(db).catch((err: Error) => {
-  console.error("Failed to enable offline persistence:", err);
+// Initialize Firestore with persistence
+const db = getFirestore(app);
+db.settings({
+  cache: {
+    // Enable offline persistence
+    persistenceEnabled: true,
+    // Maintain cache size under reasonable limits
+    cacheSizeBytes: 40000000 // 40 MB
+  }
 });
 
 // Set auth persistence to local
