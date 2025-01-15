@@ -140,7 +140,8 @@ export function useUser() {
 
   const loginMutation = useMutation({
     mutationFn: loginWithFirebase,
-    onSuccess: () => {
+    onSuccess: (userData) => {
+      queryClient.setQueryData(['user'], userData);
       queryClient.invalidateQueries({ queryKey: ['user'] });
     },
   });

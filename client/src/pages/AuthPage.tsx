@@ -28,17 +28,20 @@ export default function AuthPage() {
     try {
       console.log('Attempting login...');
       form.clearErrors();
-      await login(data);
+      const userData = await login(data);
+      
+      if (!userData) {
+        throw new Error('Login failed - no user data returned');
+      }
       
       toast({
         title: "Success",
         description: "Logged in successfully",
       });
       
-      // Use proper routing
-      setTimeout(() => {
-        window.location.replace('/');
-      }, 500);
+      // Navigate after ensuring auth state is updated
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      window.location.href = '/';
       
     } catch (error: any) {
       console.error("Login error:", error);
