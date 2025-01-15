@@ -28,6 +28,7 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  databaseURL: "https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app",
   experimentalForceLongPolling: true,
   experimentalAutoDetectLongPolling: true
 };
