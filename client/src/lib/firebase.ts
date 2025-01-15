@@ -48,16 +48,14 @@ try {
 export const auth = getAuth(app);
 export const storage = getStorage(app);
 
-// Initialize Firestore with persistence
-const firestoreSettings = {
-  ignoreUndefinedProperties: true,
-  cacheSizeBytes: 40000000, // 40 MB
-  experimentalForceLongPolling: true
-};
-
-// Initialize Firestore with settings
+// Initialize Firestore with persistence and settings
 export const db = getFirestore(app);
-getFirestore().settings(firestoreSettings);
+enablePersistence(db, {
+  synchronizeTabs: true,
+  cacheSizeBytes: 40000000 // 40 MB
+}).catch((err) => {
+  console.warn("Firestore persistence error:", err);
+});
 
 // Set auth persistence to local
 auth.setPersistence(browserLocalPersistence)
