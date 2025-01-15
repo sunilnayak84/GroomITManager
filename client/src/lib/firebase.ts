@@ -1,7 +1,7 @@
 
 import { initializeApp } from "firebase/app";
 import { getAuth, browserLocalPersistence } from "firebase/auth";
-import { getFirestore, enablePersistence } from "firebase/firestore";
+import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 // Validate required environment variables
@@ -49,12 +49,11 @@ export const auth = getAuth(app);
 export const storage = getStorage(app);
 
 // Initialize Firestore with persistence and settings
-export const db = getFirestore(app);
-enablePersistence(db, {
-  synchronizeTabs: true,
-  cacheSizeBytes: 40000000 // 40 MB
-}).catch((err) => {
-  console.warn("Firestore persistence error:", err);
+export const db = initializeFirestore(app, {
+  cache: persistentLocalCache({
+    tabManager: persistentMultipleTabManager(),
+    cacheSizeBytes: 40000000 // 40 MB
+  })
 });
 
 // Set auth persistence to local
