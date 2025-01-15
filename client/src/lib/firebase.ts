@@ -1,7 +1,7 @@
 
 import { initializeApp } from "firebase/app";
 import { getAuth, browserLocalPersistence } from "firebase/auth";
-import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 // Validate required environment variables
@@ -48,24 +48,15 @@ try {
 export const auth = getAuth(app);
 export const storage = getStorage(app);
 
-// Initialize Firestore
-const firestoreConfig = {
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  databaseId: "(default)"
+// Initialize Firestore with persistence
+export const db = getFirestore(app);
+const firestoreSettings = {
+  ignoreUndefinedProperties: true,
+  cacheSizeBytes: 40000000 // 40 MB
 };
 
-export const db = getFirestore(app);
-
-// Initialize Firestore with persistence
-const db = getFirestore(app);
-db.settings({
-  cache: {
-    // Enable offline persistence
-    persistenceEnabled: true,
-    // Maintain cache size under reasonable limits
-    cacheSizeBytes: 40000000 // 40 MB
-  }
-});
+// Set Firestore settings
+db.settings(firestoreSettings);
 
 // Set auth persistence to local
 auth.setPersistence(browserLocalPersistence)
