@@ -50,7 +50,7 @@ export const storage = getStorage(app);
 
 // Initialize Firestore with persistence and settings
 export const db = initializeFirestore(app, {
-  cache: persistentLocalCache({
+  localCache: persistentLocalCache({
     tabManager: persistentMultipleTabManager(),
     cacheSizeBytes: 40000000 // 40 MB
   })

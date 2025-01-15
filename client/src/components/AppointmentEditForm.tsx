@@ -74,7 +74,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
         id: appointment.id,
         status: data.status,
         notes: data.notes || undefined,
-        appointmentDate: dateTime.toISOString(),
+        date: dateTime.toISOString(),
         groomerId: data.groomerId,
         services: data.services,
         cancellationReason: undefined
@@ -144,11 +144,11 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
                 <FormLabel>Services</FormLabel>
                 <div className="space-y-2">
                   {(services || []).map((service) => (
-                    <div key={service.id} className="flex items-center space-x-2">
+                    <div key={service.service_id} className="flex items-center space-x-2">
                       <Checkbox
-                        checked={field.value.includes(service.id.toString())}
+                        checked={field.value.includes(service.service_id)}
                         onCheckedChange={(checked) => {
-                          const serviceId = service.id.toString();
+                          const serviceId = service.service_id;
                           const updatedServices = checked
                             ? [...field.value, serviceId]
                             : field.value.filter((id) => id !== serviceId);
