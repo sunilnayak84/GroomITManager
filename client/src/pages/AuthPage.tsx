@@ -28,22 +28,22 @@ export default function AuthPage() {
     try {
       console.log('Attempting login...');
       form.clearErrors();
-      await login(data);
+      const userData = await login(data);
       
       toast({
         title: "Success",
         description: "Logged in successfully",
       });
       
-      // Use window.location.reload() instead of changing href to properly handle SPA navigation
-      window.location.reload();
+      // Navigate to home page
+      window.location.href = '/';
       
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login error:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to login. Please try again.",
+        description: error.message || "Failed to login. Please try again.",
       });
     }
   }

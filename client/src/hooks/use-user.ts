@@ -78,7 +78,7 @@ async function loginWithFirebase(credentials: { email: string; password: string 
     const permissions = roleData.permissions || [];
     const branchId = roleData.branchId as number | undefined;
 
-    return {
+    const userData = {
       id: user.uid,
       email: user.email!,
       name: user.displayName || user.email!,
@@ -86,8 +86,11 @@ async function loginWithFirebase(credentials: { email: string; password: string 
       permissions,
       branchId
     };
+
+    return userData;
   } catch (error: any) {
-    throw new Error(error.message);
+    console.error('Login error:', error);
+    throw new Error(error.code === 'auth/user-not-found' ? 'Invalid email or password' : error.message);
   }
 }
 
