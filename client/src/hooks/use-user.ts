@@ -6,11 +6,9 @@ import {
   onAuthStateChanged,
   type User as FirebaseUser
 } from 'firebase/auth';
-import { getDatabase, ref, get } from 'firebase/database';
 
 export type UserRole = 'admin' | 'manager' | 'staff' | 'receptionist';
 
-// Define permissions for each role
 export const RolePermissions = {
   admin: ['all'],
   manager: [
@@ -64,58 +62,33 @@ type AuthUser = {
 
 async function loginWithFirebase(credentials: { email: string; password: string }): Promise<AuthUser> {
   try {
-    // First authenticate
     const { user } = await signInWithEmailAndPassword(
       auth,
       credentials.email,
       credentials.password
     );
-    
-    // Get role from ID token first
+
+    // Get role from ID token
     const idTokenResult = await user.getIdTokenResult();
     const role = idTokenResult.claims.role as UserRole;
-    
-    if (role) {
-      // Use token claims if available
-      return {
-        id: user.uid,
-        email: user.email!,
-        name: user.displayName || user.email!,
-        role: role,
-        permissions: idTokenResult.claims.permissions as string[] || [],
-        branchId: idTokenResult.claims.branchId as number | undefined
-      };
-    }
-    
-    // Fallback to database check
-    const db = getDatabase();
-    const roleSnapshot = await get(ref(db, `roles/${user.uid}`));
-    
-    if (!roleSnapshot.exists()) {
+
+    if (!role) {
       throw new Error('User role not found. Please contact administrator.');
     }
-    
-    const roleData = roleSnapshot.val();
-    const role = roleData.role as UserRole;
-    const permissions = roleData.permissions || [];
-    const branchId = roleData.branchId as number | undefined;
 
-    const userData = {
+    return {
       id: user.uid,
       email: user.email!,
       name: user.displayName || user.email!,
-      role,
-      permissions,
-      branchId
+      role: role,
+      permissions: idTokenResult.claims.permissions as string[] || [],
+      branchId: idTokenResult.claims.branchId as number | undefined
     };
 
-    return userData;
   } catch (error: any) {
     console.error('Login error:', error);
     if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
       throw new Error('Invalid email or password');
-    } else if (error.code === 'PERMISSION_DENIED') {
-      throw new Error('Access denied. Please contact administrator.');
     }
     throw error;
   }
@@ -129,16 +102,14 @@ function useFirebaseUser() {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
           unsubscribe();
           if (user) {
-            // Get custom claims from Firebase user
             user.getIdTokenResult().then(tokenResult => {
               const role = (tokenResult.claims.role as UserRole) || 'staff';
-              const permissions = tokenResult.claims.permissions as string[] || [];
               resolve({
                 id: user.uid,
                 email: user.email!,
                 name: user.displayName || user.email!,
                 role,
-                permissions,
+                permissions: tokenResult.claims.permissions as string[],
                 branchId: tokenResult.claims.branchId as number
               });
             })
