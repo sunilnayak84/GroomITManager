@@ -2,8 +2,9 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "./ui/dialog";
 import { Button } from "./ui/button";
+import { Checkbox } from "./ui/checkbox";
 import {
   Form,
   FormControl,
@@ -25,12 +26,15 @@ import { useToast } from "@/hooks/use-toast";
 import { useServices } from "@/hooks/use-services";
 import { useStaff } from "@/hooks/use-staff";
 import type { AppointmentWithRelations } from "@/lib/schema";
+import { format } from "date-fns";
 
 const editAppointmentSchema = z.object({
   status: z.enum(["pending", "confirmed", "completed", "cancelled"]),
   notes: z.string().nullable(),
   groomerId: z.string(),
   services: z.array(z.string()),
+  date: z.string(),
+  time: z.string()
 });
 
 interface AppointmentEditFormProps {
@@ -45,22 +49,35 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
   const { staffMembers } = useStaff();
   const availableGroomers = staffMembers?.filter(user => user.isGroomer && user.isActive) || [];
 
+  const appointmentDate = new Date(appointment.date);
+  const formattedDate = format(appointmentDate, "yyyy-MM-dd");
+  const formattedTime = format(appointmentDate, "HH:mm");
+
   const form = useForm({
     resolver: zodResolver(editAppointmentSchema),
     defaultValues: {
       status: appointment.status,
       notes: appointment.notes,
       groomerId: appointment.groomerId,
-      services: appointment.services || [],
+      services: appointment.services?.map(s => s.service_id.toString()) || [],
+      date: formattedDate,
+      time: formattedTime
     },
   });
 
   async function onSubmit(data: z.infer<typeof editAppointmentSchema>) {
     try {
+      const dateTime = new Date(data.date);
+      const [hours, minutes] = data.time.split(':');
+      dateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
       await updateAppointment({
         id: appointment.id,
         status: data.status,
         notes: data.notes || undefined,
+        date: dateTime.toISOString(),
+        groomerId: data.groomerId,
+        services: data.services,
         cancellationReason: undefined
       });
       
@@ -83,60 +100,69 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
     <DialogContent>
       <DialogHeader>
         <DialogTitle>Edit Appointment</DialogTitle>
+        <DialogDescription>
+          Update appointment details for pet grooming services.
+        </DialogDescription>
       </DialogHeader>
-
-      <div className="space-y-4 py-4">
-        <div>
-          <h3 className="text-sm font-medium text-gray-500">Date & Time</h3>
-          <p className="mt-1 text-sm font-medium">
-            {new Date(appointment.date).toLocaleString()}
-          </p>
-        </div>
-
-        <div>
-          <h3 className="text-sm font-medium text-gray-500">Pet</h3>
-          <div className="mt-1 flex items-center gap-2">
-            <img
-              src={appointment.pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${appointment.pet.name}`}
-              alt={appointment.pet.name}
-              className="h-8 w-8 rounded-full"
-            />
-            <div>
-              <p className="text-sm font-medium">{appointment.pet.name}</p>
-              <p className="text-xs text-gray-500">{appointment.pet.breed}</p>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <h3 className="text-sm font-medium text-gray-500">Customer</h3>
-          <p className="mt-1 text-sm font-medium">
-            {`${appointment.customer.firstName} ${appointment.customer.lastName}`}
-          </p>
-        </div>
-      </div>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Date</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="time"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Time</FormLabel>
+                  <FormControl>
+                    <Input type="time" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
           <FormField
             control={form.control}
-            name="status"
+            name="services"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Status</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="confirmed">Confirmed</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                  </SelectContent>
-                </Select>
+                <FormLabel>Services</FormLabel>
+                <div className="space-y-2">
+                  {(services || []).map((service) => (
+                    <div key={service.service_id} className="flex items-center space-x-2">
+                      <Checkbox
+                        checked={field.value.includes(service.service_id.toString())}
+                        onCheckedChange={(checked) => {
+                          const serviceId = service.service_id.toString();
+                          const updatedServices = checked
+                            ? [...field.value, serviceId]
+                            : field.value.filter((id) => id !== serviceId);
+                          field.onChange(updatedServices);
+                        }}
+                      />
+                      <div>
+                        <p className="font-medium">{service.name}</p>
+                        <p className="text-sm text-gray-500">₹{service.price} • {service.duration} minutes</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -148,7 +174,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Groomer</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a groomer" />
@@ -169,28 +195,21 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
 
           <FormField
             control={form.control}
-            name="services"
+            name="status"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Services</FormLabel>
-                <Select
-                  onValueChange={(value) => field.onChange([...field.value, value])}
-                  value={field.value[field.value.length - 1]}
-                >
+                <FormLabel>Status</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select services" />
+                      <SelectValue placeholder="Select status" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {services?.map((service) => (
-                      <SelectItem 
-                        key={service.service_id} 
-                        value={service.service_id.toString()}
-                      >
-                        {service.name} - ₹{service.price}
-                      </SelectItem>
-                    ))}
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="confirmed">Confirmed</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                    <SelectItem value="cancelled">Cancelled</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
