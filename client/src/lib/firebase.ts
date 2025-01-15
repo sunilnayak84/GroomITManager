@@ -1,7 +1,7 @@
 
 import { initializeApp } from "firebase/app";
 import { getAuth, browserLocalPersistence } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, enablePersistence } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 // Validate required environment variables
