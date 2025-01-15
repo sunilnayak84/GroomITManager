@@ -73,7 +73,12 @@ async function loginWithFirebase(credentials: { email: string; password: string 
     // Get role from Realtime Database
     const db = getDatabase();
     const roleSnapshot = await get(ref(db, `roles/${user.uid}`));
-    const roleData = roleSnapshot.val() || { role: 'staff', permissions: [], branchId: null };
+    
+    if (!roleSnapshot.exists()) {
+      throw new Error('User role not found');
+    }
+    
+    const roleData = roleSnapshot.val();
     const role = roleData.role as UserRole;
     const permissions = roleData.permissions || [];
     const branchId = roleData.branchId as number | undefined;
@@ -90,7 +95,12 @@ async function loginWithFirebase(credentials: { email: string; password: string 
     return userData;
   } catch (error: any) {
     console.error('Login error:', error);
-    throw new Error(error.code === 'auth/user-not-found' ? 'Invalid email or password' : error.message);
+    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+      throw new Error('Invalid email or password');
+    } else if (error.code === 'PERMISSION_DENIED') {
+      throw new Error('Access denied. Please contact administrator.');
+    }
+    throw error;
   }
 }
 

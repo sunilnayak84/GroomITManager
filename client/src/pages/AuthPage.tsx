@@ -28,15 +28,17 @@ export default function AuthPage() {
     try {
       console.log('Attempting login...');
       form.clearErrors();
-      const userData = await login(data);
+      await login(data);
       
       toast({
         title: "Success",
         description: "Logged in successfully",
       });
       
-      // Navigate to home page
-      window.location.href = '/';
+      // Use proper routing
+      setTimeout(() => {
+        window.location.replace('/');
+      }, 500);
       
     } catch (error: any) {
       console.error("Login error:", error);
