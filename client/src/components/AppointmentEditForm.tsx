@@ -46,7 +46,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
   const { toast } = useToast();
   const { services } = useServices();
   const { staffMembers } = useStaff();
-  const availableGroomers = staffMembers?.filter(user => user.isGroomer && user.isActive) || [];
+  const availableGroomers = staffMembers?.filter(user => user.role === 'groomer' && !user.deletedAt) || [];
 
   const appointmentDate = new Date(appointment.date);
   const formattedDate = format(appointmentDate, "yyyy-MM-dd");
@@ -56,9 +56,9 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
     resolver: zodResolver(editAppointmentSchema),
     defaultValues: {
       status: appointment.status,
-      notes: appointment.notes,
-      groomerId: appointment.groomerId || '',
-      services: appointment.services?.map(s => s) || [],
+      notes: appointment.notes || '',
+      groomerId: appointment.groomerId,
+      services: appointment.services || [],
       date: formattedDate,
       time: formattedTime
     },
