@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -59,7 +58,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
       status: appointment.status,
       notes: appointment.notes,
       groomerId: appointment.groomerId,
-      services: appointment.services || [],
+      services: appointment.services?.map(s => s) || [],
       date: formattedDate,
       time: formattedTime
     },
@@ -80,12 +79,12 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
         services: data.services,
         cancellationReason: undefined
       });
-      
+
       toast({
         title: "Success",
         description: "Appointment updated successfully",
       });
-      
+
       setOpen(false);
     } catch (error) {
       toast({
@@ -145,11 +144,11 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
                 <FormLabel>Services</FormLabel>
                 <div className="space-y-2">
                   {(services || []).map((service) => (
-                    <div key={service.service_id} className="flex items-center space-x-2">
+                    <div key={service.id} className="flex items-center space-x-2">
                       <Checkbox
-                        checked={field.value.includes(service.service_id.toString())}
+                        checked={field.value.includes(service.id.toString())}
                         onCheckedChange={(checked) => {
-                          const serviceId = service.service_id.toString();
+                          const serviceId = service.id.toString();
                           const updatedServices = checked
                             ? [...field.value, serviceId]
                             : field.value.filter((id) => id !== serviceId);
