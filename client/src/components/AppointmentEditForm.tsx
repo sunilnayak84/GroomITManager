@@ -73,12 +73,13 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
       const appointmentTime = dateTime.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
       const appointmentDate = dateTime.toISOString().split('T')[0];
       
+      const dateTime = new Date(`${data.date}T${data.time}`);
+
       await updateAppointment({
         id: appointment.id,
         status: data.status,
         notes: data.notes || undefined,
-        date: appointmentDate,
-        time: appointmentTime,
+        appointmentDate: dateTime.toISOString(),
         groomerId: data.groomerId,
         services: data.services,
         cancellationReason: undefined
