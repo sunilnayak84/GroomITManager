@@ -66,13 +66,6 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
 
   async function onSubmit(data: z.infer<typeof editAppointmentSchema>) {
     try {
-      const dateTime = new Date(data.date);
-      const [hours, minutes] = data.time.split(':');
-      dateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-
-      const appointmentTime = dateTime.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
-      const appointmentDate = dateTime.toISOString().split('T')[0];
-      
       const dateTime = new Date(`${data.date}T${data.time}`);
 
       await updateAppointment({
