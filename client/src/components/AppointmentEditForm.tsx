@@ -72,9 +72,6 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
         id: appointment.id,
         status: data.status,
         notes: data.notes || undefined,
-        appointmentDate: dateTime.toISOString(),
-        groomerId: data.groomerId,
-        services: data.services,
         cancellationReason: undefined
       });
 
