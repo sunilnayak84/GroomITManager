@@ -25,10 +25,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ServiceConsumable, baseConsumableSchema, serviceConsumableSchema } from "@/lib/service-types";
+import { ServiceConsumable, baseConsumableSchema } from "@/lib/service-types";
 
 interface ConsumablesModalProps {
   open: boolean;
@@ -46,66 +45,42 @@ export function ConsumablesModal({
   const [consumables, setConsumables] = React.useState<ServiceConsumable[]>([]);
   const { inventory } = useInventory();
 
-  // Update consumables state when initialConsumables changes or modal opens
   React.useEffect(() => {
     console.log('Initial consumables received:', initialConsumables);
     setConsumables(initialConsumables || []);
   }, [initialConsumables, open]);
-  
+
   const form = useForm<z.infer<typeof baseConsumableSchema>>({
     resolver: zodResolver(baseConsumableSchema),
     defaultValues: {
       item_id: "",
       item_name: "",
-      quantity_used: 0
+      quantity_used: 1
     },
   });
 
-  // Update form when inventory item is selected
-  const onInventoryItemSelect = (itemId: string) => {
-    const selectedItem = inventory.find(item => item.item_id === itemId);
-    if (selectedItem) {
-      form.setValue('item_id', itemId);
-      form.setValue('item_name', selectedItem.name);
-      // Values are set automatically by the form
-    }
-  };
+  // Get unique categories from inventory
+  const categories = React.useMemo(() => {
+    const uniqueCategories = new Set(inventory.map(item => item.category));
+    return Array.from(uniqueCategories);
+  }, [inventory]);
 
-  const addConsumable = (data: z.infer<typeof baseConsumableSchema>) => {
-    try {
-      console.log('Adding consumable with data:', data);
-      
-      // Create new consumable with proper type validation
+  // Update form when inventory category is selected
+  const onInventoryCategorySelect = (category: string) => {
+    const itemsInCategory = inventory.filter(item => item.category === category);
+    itemsInCategory.forEach(item => {
       const newConsumable: ServiceConsumable = {
-        item_id: data.item_id,
-        item_name: data.item_name,
-        quantity_used: Number(data.quantity_used)
+        item_id: item.item_id,
+        item_name: item.name,
+        quantity_used: 1
       };
 
-      console.log('Created new consumable:', newConsumable);
-
-      // Update consumables state
-      setConsumables(prev => {
-        const updated = [...prev, newConsumable];
-        console.log('Updated consumables state:', updated);
-        return updated;
-      });
-      
-      // Reset form after successful add
-      form.reset({
-        item_id: "",
-        item_name: "",
-        quantity_used: 0
-      });
-      
-      // Reset the form fields
-      form.setValue("item_id", "");
-      form.setValue("item_name", "");
-      form.setValue("quantity_used", 0);
-    } catch (error) {
-      console.error('Error adding consumable:', error);
-      return;
-    }
+      // Check if item already exists in consumables
+      if (!consumables.some(c => c.item_id === item.item_id)) {
+        setConsumables(prev => [...prev, newConsumable]);
+      }
+    });
+    form.reset();
   };
 
   const removeConsumable = (index: number) => {
@@ -115,22 +90,7 @@ export function ConsumablesModal({
   const handleSave = () => {
     try {
       console.log('Handling save with consumables:', consumables);
-      
-      // Validate each consumable
-      const validConsumables = consumables.map(c => {
-        const validated = serviceConsumableSchema.parse({
-          item_id: c.item_id,
-          item_name: c.item_name,
-          quantity_used: Number(c.quantity_used)
-        });
-        console.log('Validated consumable:', validated);
-        return validated;
-      });
-      
-      console.log('All validated consumables:', validConsumables);
-      
-      // Call parent save function with validated consumables
-      onSave(validConsumables);
+      onSave(consumables);
       onOpenChange(false);
     } catch (error) {
       console.error('Error saving consumables:', error);
@@ -148,29 +108,29 @@ export function ConsumablesModal({
         <DialogHeader>
           <DialogTitle>Manage Consumables</DialogTitle>
           <DialogDescription>
-            Add or remove consumables used in this service
+            Select categories of consumables used in this service
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(addConsumable)} className="space-y-4">
+            <form className="space-y-4">
               <FormField
                 control={form.control}
                 name="item_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Select Inventory Item</FormLabel>
-                    <Select onValueChange={onInventoryItemSelect} value={field.value}>
+                    <FormLabel>Select Category</FormLabel>
+                    <Select onValueChange={onInventoryCategorySelect}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select an item from inventory" />
+                          <SelectValue placeholder="Select a category" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {inventory.map((item) => (
-                          <SelectItem key={item.item_id} value={item.item_id}>
-                            {item.name} ({item.quantity} {item.unit} available)
+                        {categories.map((category) => (
+                          <SelectItem key={category} value={category}>
+                            {category}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -179,34 +139,11 @@ export function ConsumablesModal({
                   </FormItem>
                 )}
               />
-
-              <FormField
-                control={form.control}
-                name="quantity_used"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Quantity Used</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number"
-                        min="0.01"
-                        step="0.01"
-                        placeholder="Enter quantity used"
-                        {...field}
-                        onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button type="submit">Add Consumable</Button>
             </form>
           </Form>
 
           <div className="space-y-2">
-            <h4 className="font-medium">Current Consumables</h4>
+            <h4 className="font-medium">Selected Consumables</h4>
             {consumables.map((consumable, index) => (
               <div
                 key={index}
@@ -214,9 +151,6 @@ export function ConsumablesModal({
               >
                 <div>
                   <p className="font-medium">{consumable.item_name}</p>
-                  <p className="text-sm text-muted-foreground">
-                    Quantity: {consumable.quantity_used}
-                  </p>
                 </div>
                 <Button
                   variant="destructive"
