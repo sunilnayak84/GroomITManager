@@ -1,3 +1,4 @@
+
 import React from "react";
 import * as z from "zod";
 import {
@@ -27,35 +28,31 @@ import {
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ServiceConsumable, baseConsumableSchema } from "@/lib/service-types";
+import { ServiceConsumable } from "@/lib/service-types";
 
 interface ConsumablesModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (consumables: ServiceConsumable[]) => void;
-  initialConsumables?: ServiceConsumable[];
+  onSave: (categories: string[]) => void;
+  initialCategories?: string[];
 }
 
 export function ConsumablesModal({
   open,
   onOpenChange,
   onSave,
-  initialConsumables = [],
+  initialCategories = [],
 }: ConsumablesModalProps) {
-  const [consumables, setConsumables] = React.useState<ServiceConsumable[]>([]);
+  const [selectedCategories, setSelectedCategories] = React.useState<string[]>([]);
   const { inventory } = useInventory();
 
   React.useEffect(() => {
-    console.log('Initial consumables received:', initialConsumables);
-    setConsumables(initialConsumables || []);
-  }, [initialConsumables, open]);
+    setSelectedCategories(initialCategories || []);
+  }, [initialCategories, open]);
 
-  const form = useForm<z.infer<typeof baseConsumableSchema>>({
-    resolver: zodResolver(baseConsumableSchema),
+  const form = useForm({
     defaultValues: {
-      item_id: "",
-      item_name: "",
-      quantity_used: 1
+      category: "",
     },
   });
 
@@ -67,36 +64,25 @@ export function ConsumablesModal({
 
   // Update form when inventory category is selected
   const onInventoryCategorySelect = (category: string) => {
-    const itemsInCategory = inventory.filter(item => item.category === category);
-    itemsInCategory.forEach(item => {
-      const newConsumable: ServiceConsumable = {
-        item_id: item.item_id,
-        item_name: item.name,
-        quantity_used: 1
-      };
-
-      // Check if item already exists in consumables
-      if (!consumables.some(c => c.item_id === item.item_id)) {
-        setConsumables(prev => [...prev, newConsumable]);
-      }
-    });
+    if (!selectedCategories.includes(category)) {
+      setSelectedCategories(prev => [...prev, category]);
+    }
     form.reset();
   };
 
-  const removeConsumable = (index: number) => {
-    setConsumables((prev) => prev.filter((_, i) => i !== index));
+  const removeCategory = (categoryToRemove: string) => {
+    setSelectedCategories((prev) => prev.filter((cat) => cat !== categoryToRemove));
   };
 
   const handleSave = () => {
     try {
-      console.log('Handling save with consumables:', consumables);
-      onSave(consumables);
+      onSave(selectedCategories);
       onOpenChange(false);
     } catch (error) {
-      console.error('Error saving consumables:', error);
+      console.error('Error saving categories:', error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : 'Failed to save consumables',
+        description: error instanceof Error ? error.message : 'Failed to save categories',
         variant: "destructive"
       });
     }
@@ -106,9 +92,9 @@ export function ConsumablesModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Manage Consumables</DialogTitle>
+          <DialogTitle>Configure Service Categories</DialogTitle>
           <DialogDescription>
-            Select categories of consumables used in this service
+            Select inventory categories required for this service
           </DialogDescription>
         </DialogHeader>
 
@@ -117,7 +103,7 @@ export function ConsumablesModal({
             <form className="space-y-4">
               <FormField
                 control={form.control}
-                name="item_id"
+                name="category"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Select Category</FormLabel>
@@ -143,19 +129,19 @@ export function ConsumablesModal({
           </Form>
 
           <div className="space-y-2">
-            <h4 className="font-medium">Selected Consumables</h4>
-            {consumables.map((consumable, index) => (
+            <h4 className="font-medium">Selected Categories</h4>
+            {selectedCategories.map((category) => (
               <div
-                key={index}
+                key={category}
                 className="flex items-center justify-between p-2 border rounded"
               >
                 <div>
-                  <p className="font-medium">{consumable.item_name}</p>
+                  <p className="font-medium">{category}</p>
                 </div>
                 <Button
                   variant="destructive"
                   size="sm"
-                  onClick={() => removeConsumable(index)}
+                  onClick={() => removeCategory(category)}
                 >
                   Remove
                 </Button>
