@@ -1,0 +1,13 @@
+Updating appointment: {id: 'RSwbPjgPbX6sNiCfnhiM', status: 'pending', cancellationReason: undefined, notes: undefined}cancellationReason: undefinedid: "RSwbPjgPbX6sNiCfnhiM"notes: undefinedstatus: "pending"[[Prototype]]: Object
+use-appointments.ts:392 Appointment updated successfully
+use-appointments.ts:77 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:85 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:88 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-appointments.ts:97 FETCH_APPOINTMENTS: Found 1 active appointments
+use-appointments.ts:101 FETCH_APPOINTMENTS: Active appointment: RSwbPjgPbX6sNiCfnhiM {totalDuration: 30, cancellationReason: null, status: 'pending', petId: 'mbg6juwQBokDcvNYk32r', services: Array(1), …}branchId: "1"cancellationReason: nullcreatedAt: _Timestamp {seconds: 1737545852, nanoseconds: 610000000}date: _Timestamp {seconds: 1737611100, nanoseconds: 0}deletedAt: nullgroomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"notes: nullpetId: "mbg6juwQBokDcvNYk32r"productsUsed: nullservices: ['Jm2fkUCVsvF3yWeqwJ8a']status: "pending"totalDuration: 30totalPrice: 999updatedAt: _Timestamp {seconds: 1737547429, nanoseconds: 564000000}[[Prototype]]: Object
+use-appointments.ts:103 FETCH_APPOINTMENTS: Got snapshot with 1 active documents
+use-appointments.ts:116 FETCH_APPOINTMENTS: Processing appointment RSwbPjgPbX6sNiCfnhiM
+use-appointments.ts:185 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:190 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}category: "Package"consumables: []created_at: "2025-01-22T07:46:33.460Z"description: "Package including 1 services and 1 add-ons."discount_percentage: 0duration: 30isActive: truename: "Pack One"price: 999selectedAddons: []selectedServices: [{…}]updated_at: "2025-01-22T11:37:02.280Z"[[Prototype]]: Object
+use-appointments.ts:202 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
