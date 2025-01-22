@@ -81,15 +81,14 @@ export default function ServicesPage() {
       // Format and validate consumables data
       const formattedConsumables = (data.consumables || []).map(consumable => {
         // Required fields must have valid values
-        if (!consumable.item_id || !consumable.item_name || !consumable.quantity_used) {
+        if (!consumable.item_id || !consumable.item_name) {
           throw new Error("Missing required consumable fields");
         }
         
         // Return only the required fields according to the schema
         return {
           item_id: consumable.item_id,
-          item_name: consumable.item_name,
-          quantity_used: Number(consumable.quantity_used)
+          item_name: consumable.item_name
         };
       });
 

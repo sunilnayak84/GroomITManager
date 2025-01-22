@@ -10,8 +10,7 @@ export const ServiceCategory = {
 // Base consumable schema for form validation and service operations
 export const baseConsumableSchema = z.object({
   item_id: z.string().min(1, "Item ID is required"),
-  item_name: z.string().min(1, "Item name is required"),
-  quantity_used: z.coerce.number().min(0.1, "Quantity must be greater than 0")
+  item_name: z.string().min(1, "Item name is required")
 });
 
 // Service consumable schema - using the base schema directly since we handle number conversion in the form
