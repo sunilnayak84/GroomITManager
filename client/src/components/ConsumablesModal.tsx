@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from "react";
+import { Check } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -9,67 +10,57 @@ import {
 import { Button } from "@/components/ui/button";
 import { useInventory } from "@/hooks/use-inventory";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
-
-interface Consumable {
-  item_id: string;
-  item_name: string;
-  quantity_used: number;
-}
 
 interface ConsumablesModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  initialConsumables: Consumable[];
-  onSave: (consumables: Consumable[]) => void;
+  initialCategories?: string[];
+  onSave: (categories: string[]) => void;
 }
 
 export function ConsumablesModal({
   open,
   onOpenChange,
-  initialConsumables = [],
+  initialCategories = [],
   onSave,
 }: ConsumablesModalProps) {
   const { inventory } = useInventory();
-  const [selectedConsumables, setSelectedConsumables] = useState<Consumable[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   useEffect(() => {
     if (open) {
-      setSelectedConsumables(initialConsumables);
+      setSelectedCategories(initialCategories);
     }
-  }, [open, initialConsumables]);
+  }, [open, initialCategories]);
 
-  const toggleItem = (item: { id: string; name: string }) => {
-    setSelectedConsumables(prev => {
-      const exists = prev.find(c => c.item_id === item.id);
-      if (exists) {
-        return prev.filter(c => c.item_id !== item.id);
+  // Get unique categories from inventory
+  const categories = React.useMemo(() => {
+    const uniqueCategories = new Set(inventory.map(item => item.category));
+    return Array.from(uniqueCategories);
+  }, [inventory]);
+
+  const toggleCategory = (category: string) => {
+    setSelectedCategories(prev => {
+      if (prev.includes(category)) {
+        return prev.filter(c => c !== category);
       }
-      return [...prev, { item_id: item.id, item_name: item.name, quantity_used: 1 }];
+      return [...prev, category];
     });
-  };
-
-  const updateQuantity = (itemId: string, quantity: number) => {
-    setSelectedConsumables(prev =>
-      prev.map(c =>
-        c.item_id === itemId ? { ...c, quantity_used: quantity } : c
-      )
-    );
   };
 
   const handleSave = () => {
     try {
-      onSave(selectedConsumables);
+      onSave(selectedCategories);
       toast({
         title: "Success",
-        description: "Consumables saved successfully",
+        description: "Categories saved successfully",
       });
     } catch (error) {
-      console.error('Error saving consumables:', error);
+      console.error('Error saving categories:', error);
       toast({
         title: "Error",
-        description: "Failed to save consumables",
+        description: "Failed to save categories",
         variant: "destructive",
       });
     }
@@ -79,31 +70,27 @@ export function ConsumablesModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Configure Service Consumables</DialogTitle>
+          <DialogTitle>Configure Service Categories</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
-          {inventory.map((item) => (
-            <div key={item.id} className="flex items-center space-x-4">
-              <Checkbox
-                id={item.id}
-                checked={selectedConsumables.some(c => c.item_id === item.id)}
-                onCheckedChange={() => toggleItem({ id: item.id, name: item.name })}
-              />
-              <label htmlFor={item.id} className="flex-grow">
-                {item.name}
-              </label>
-              {selectedConsumables.some(c => c.item_id === item.id) && (
-                <Input
-                  type="number"
-                  min="1"
-                  value={selectedConsumables.find(c => c.item_id === item.id)?.quantity_used || 1}
-                  onChange={(e) => updateQuantity(item.id, parseInt(e.target.value) || 1)}
-                  className="w-20"
+          <div className="space-y-4">
+            {categories.map((category) => (
+              <div key={category} className="flex items-center space-x-2">
+                <Checkbox
+                  id={category}
+                  checked={selectedCategories.includes(category)}
+                  onCheckedChange={() => toggleCategory(category)}
                 />
-              )}
-            </div>
-          ))}
+                <label
+                  htmlFor={category}
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  {category}
+                </label>
+              </div>
+            ))}
+          </div>
 
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => onOpenChange(false)}>
