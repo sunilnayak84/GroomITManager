@@ -76,8 +76,10 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
       });
 
       toast({
+        variant: "default",
         title: "Success",
         description: `Appointment status updated to ${data.status}`,
+        className: "bg-white",
       });
 
       setOpen(false);
