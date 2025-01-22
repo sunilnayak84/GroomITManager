@@ -7,6 +7,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import Navigation from "./Navigation";
+import {Toaster} from "@/components/ui/toaster"; // Assuming Toaster component is in this location
 
 export default function Layout({ children }: PropsWithChildren) {
   return (
@@ -31,6 +32,7 @@ export default function Layout({ children }: PropsWithChildren) {
               {children}
             </div>
           </main>
+          <Toaster />
         </SidebarInset>
       </div>
     </SidebarProvider>

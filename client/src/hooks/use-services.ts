@@ -21,7 +21,8 @@ export function useServices() {
     queryFn: async () => {
       try {
         console.log('FETCH_SERVICES: Starting to fetch services');
-        const q = query(servicesCollection, where('isActive', '==', true));
+        // Get all services to check package contents
+        const q = query(servicesCollection);
         const querySnapshot = await getDocs(q);
 
         if (querySnapshot.empty) {
@@ -49,9 +50,14 @@ export function useServices() {
             });
 
             if (parsedData.category === ServiceCategory.PACKAGE) {
+              // Filter out inactive services/addons
               const selectedItems = [
-                ...(parsedData.selectedServices || []),
-                ...(parsedData.selectedAddons || [])
+                ...(parsedData.selectedServices?.filter(s => 
+                  fetchedServices.some(fs => fs.service_id === s.service_id && fs.isActive)
+                ) || []),
+                ...(parsedData.selectedAddons?.filter(a => 
+                  fetchedServices.some(fs => fs.service_id === a.service_id && fs.isActive)
+                ) || [])
               ];
               const totalOriginalPrice = selectedItems.reduce((sum, item) => {
                 return sum + (item.price || 0);
