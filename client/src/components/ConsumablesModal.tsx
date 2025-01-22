@@ -7,53 +7,60 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useInventory } from "@/hooks/use-inventory";
 import { Checkbox } from "@/components/ui/checkbox";
-import { toast } from "@/components/ui/use-toast";
+import { useInventory } from "@/hooks/use-inventory";
+import { toast } from "@/hooks/use-toast";
+
+interface Consumable {
+  item_id: string;
+  item_name: string;
+  quantity_used: number;
+}
 
 interface ConsumablesModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  initialCategories?: string[];
-  onSave: (categories: string[]) => void;
+  initialConsumables?: Consumable[];
+  onSave: (consumables: Consumable[]) => void;
 }
 
 export function ConsumablesModal({
   open,
   onOpenChange,
-  initialCategories = [],
+  initialConsumables = [],
   onSave,
 }: ConsumablesModalProps) {
   const { categories } = useInventory();
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedItems, setSelectedItems] = useState<Consumable[]>([]);
 
   useEffect(() => {
     if (open) {
-      setSelectedCategories(initialCategories);
+      setSelectedItems(initialConsumables);
     }
-  }, [open, initialCategories]);
+  }, [open, initialConsumables]);
 
-  const toggleCategory = (categoryId: string) => {
-    setSelectedCategories(prev => {
-      if (prev.includes(categoryId)) {
-        return prev.filter(c => c !== categoryId);
+  const toggleItem = (item: { id: string; name: string }) => {
+    setSelectedItems(prev => {
+      const exists = prev.find(i => i.item_id === item.id);
+      if (exists) {
+        return prev.filter(i => i.item_id !== item.id);
       }
-      return [...prev, categoryId];
+      return [...prev, { item_id: item.id, item_name: item.name, quantity_used: 1 }];
     });
   };
 
   const handleSave = () => {
     try {
-      onSave(selectedCategories);
+      onSave(selectedItems);
       toast({
         title: "Success",
-        description: "Categories saved successfully",
+        description: "Consumables saved successfully",
       });
     } catch (error) {
-      console.error('Error saving categories:', error);
+      console.error('Error saving consumables:', error);
       toast({
         title: "Error",
-        description: "Failed to save categories",
+        description: "Failed to save consumables",
         variant: "destructive",
       });
     }
@@ -63,17 +70,16 @@ export function ConsumablesModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Configure Service Categories</DialogTitle>
+          <DialogTitle>Configure Service Consumables</DialogTitle>
         </DialogHeader>
-
         <div className="space-y-4">
           <div className="space-y-4">
             {categories.map((category) => (
               <div key={category.id} className="flex items-center space-x-2">
                 <Checkbox
                   id={category.id}
-                  checked={selectedCategories.includes(category.id)}
-                  onCheckedChange={() => toggleCategory(category.id)}
+                  checked={selectedItems.some(item => item.item_id === category.id)}
+                  onCheckedChange={() => toggleItem(category)}
                 />
                 <label
                   htmlFor={category.id}
@@ -84,12 +90,14 @@ export function ConsumablesModal({
               </div>
             ))}
           </div>
-
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <div className="flex justify-end space-x-2">
+            <Button
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               Cancel
             </Button>
-            <Button onClick={handleSave}>Save Changes</Button>
+            <Button onClick={handleSave}>Save</Button>
           </div>
         </div>
       </DialogContent>
