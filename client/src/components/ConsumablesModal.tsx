@@ -1,9 +1,9 @@
-import React from "react";
+
+import React, { useState, useEffect } from "react";
 import { Check } from "lucide-react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -15,42 +15,30 @@ import { toast } from "@/components/ui/use-toast";
 interface ConsumablesModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (categories: string[]) => void;
   initialCategories?: string[];
+  onSave: (categories: string[]) => void;
 }
 
 export function ConsumablesModal({
   open,
   onOpenChange,
-  onSave,
   initialCategories = [],
+  onSave,
 }: ConsumablesModalProps) {
-  const [selectedCategories, setSelectedCategories] = React.useState<string[]>([]);
   const { inventory } = useInventory();
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
-  React.useEffect(() => {
-    setSelectedCategories(initialCategories || []);
-  }, [initialCategories, open]);
+  useEffect(() => {
+    if (open) {
+      setSelectedCategories(initialCategories);
+    }
+  }, [open, initialCategories]);
 
   // Get unique categories from inventory
   const categories = React.useMemo(() => {
     const uniqueCategories = new Set(inventory.map(item => item.category));
     return Array.from(uniqueCategories);
   }, [inventory]);
-
-  const handleSave = () => {
-    try {
-      onSave(selectedCategories);
-      onOpenChange(false);
-    } catch (error) {
-      console.error('Error saving categories:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : 'Failed to save categories',
-        variant: "destructive"
-      });
-    }
-  };
 
   const toggleCategory = (category: string) => {
     setSelectedCategories(prev => {
@@ -61,14 +49,28 @@ export function ConsumablesModal({
     });
   };
 
+  const handleSave = () => {
+    try {
+      onSave(selectedCategories);
+      toast({
+        title: "Success",
+        description: "Categories saved successfully",
+      });
+    } catch (error) {
+      console.error('Error saving categories:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save categories",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Configure Service Categories</DialogTitle>
-          <DialogDescription>
-            Select inventory categories required for this service
-          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
