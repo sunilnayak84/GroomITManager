@@ -75,4 +75,4 @@ const Toast = React.forwardRef<
 ))
 Toast.displayName = ToastPrimitives.Root.displayName
 
-export { type ToastProps, Toast, ToastProvider, ToastViewport }
+export { Toast, ToastProvider, ToastViewport }
