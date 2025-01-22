@@ -1,2 +1,3 @@
-// Re-export toast from use-toast
-export { toast } from "@/components/ui/use-toast";
+
+// Re-export toast from use-toast hook
+export { toast, useToast } from "@/hooks/use-toast"
