@@ -1,3 +1,4 @@
+
 "use client"
 
 import {
@@ -12,16 +13,21 @@ export function Toaster() {
 
   return (
     <ToastProvider>
-      {toasts.map(({ id, title, description, ...props }) => (
-        <Toast key={id} {...props}>
-          <div className="grid gap-1">
-            {title && <div className="text-sm font-semibold">{title}</div>}
-            {description && (
-              <div className="text-sm opacity-90">{description}</div>
-            )}
-          </div>
-        </Toast>
-      ))}
+      {toasts.map(function({ id, title, description, action, ...props }) {
+        return (
+          <Toast key={id} {...props}>
+            {title || description ? (
+              <div className="grid gap-1">
+                {title && <div className="text-sm font-semibold">{title}</div>}
+                {description && (
+                  <div className="text-sm opacity-90">{description}</div>
+                )}
+              </div>
+            ) : null}
+            {action}
+          </Toast>
+        )
+      })}
       <ToastViewport />
     </ToastProvider>
   )
