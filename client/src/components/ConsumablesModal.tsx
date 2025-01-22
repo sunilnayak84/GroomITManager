@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from "react";
-import { Check } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -25,7 +24,7 @@ export function ConsumablesModal({
   initialCategories = [],
   onSave,
 }: ConsumablesModalProps) {
-  const { inventory } = useInventory();
+  const { categories } = useInventory();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   useEffect(() => {
@@ -33,12 +32,6 @@ export function ConsumablesModal({
       setSelectedCategories(initialCategories);
     }
   }, [open, initialCategories]);
-
-  // Get unique categories from inventory
-  const categories = React.useMemo(() => {
-    const uniqueCategories = new Set(inventory.map(item => item.category));
-    return Array.from(uniqueCategories);
-  }, [inventory]);
 
   const toggleCategory = (category: string) => {
     setSelectedCategories(prev => {

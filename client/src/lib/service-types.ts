@@ -40,6 +40,7 @@ export const serviceSchema = z.object({
   service_id: z.string(),
   ...baseServiceSchema,
   discount_percentage: z.number().min(0).max(100).optional().default(0),
+  required_categories: z.array(z.string()).optional().default([]),
   consumables: z.array(serviceConsumableSchema).optional().default([]),
   isActive: z.boolean().default(true),
   created_at: z.date().or(z.string()).transform(val => 
