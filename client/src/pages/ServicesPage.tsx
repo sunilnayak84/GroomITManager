@@ -461,7 +461,35 @@ export default function ServicesPage() {
             {services.map((service) => (
               <TableRow key={service.service_id}>
                 {columns.map((column, index) => (
-                  <TableCell key={index}>{column.cell(service)}</TableCell>
+                  <TableCell key={index}>
+        {column.header === "Status" ? (
+          <Switch
+            checked={service.isActive}
+            onCheckedChange={async (checked) => {
+              if (checked === false) {
+                // Check if service is used in any packages
+                const affectedPackages = services.filter(pkg => 
+                  pkg.category === ServiceCategory.PACKAGE && 
+                  ([...(pkg.selectedServices || []), ...(pkg.selectedAddons || [])])
+                    .some(item => item.service_id === service.service_id)
+                );
+
+                if (affectedPackages.length > 0) {
+                  const packageNames = affectedPackages.map(pkg => pkg.name).join(", ");
+                  toast({
+                    title: "Warning",
+                    description: `This ${service.category.toLowerCase()} is used in the following packages: ${packageNames}. Deactivating it will affect these packages.`,
+                    variant: "destructive",
+                  });
+                }
+              }
+              await updateService(service.service_id, { isActive: checked });
+            }}
+          />
+        ) : (
+          column.cell(service)
+        )}
+      </TableCell>
                 ))}
               </TableRow>
             ))}
