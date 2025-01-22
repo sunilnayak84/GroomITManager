@@ -7,6 +7,8 @@ import {
   ToastViewport,
 } from "@/components/ui/toast"
 import { useToast } from "@/hooks/use-toast"
+import * as ToastPrimitives from "@radix-ui/react-toast"
+import { X } from "lucide-react"
 
 export function Toaster() {
   const { toasts } = useToast()
