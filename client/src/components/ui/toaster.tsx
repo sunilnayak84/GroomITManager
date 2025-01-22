@@ -1,19 +1,18 @@
+
 "use client"
 
-import { Toaster as RadixToaster } from "@/components/ui/toast"
+import { Toast, ToastProvider, ToastViewport } from "@/components/ui/toast"
 import { useToast } from "@/hooks/use-toast"
 
 export function Toaster() {
   const { toasts } = useToast()
 
   return (
-    <RadixToaster>
-      {toasts.map(({ id, title, description, ...props }) => (
-        <div key={id} {...props}>
-          {title && <div className="font-semibold">{title}</div>}
-          {description && <div>{description}</div>}
-        </div>
+    <ToastProvider>
+      {toasts.map(({ id, title, description, action, ...props }) => (
+        <Toast key={id} {...props} title={title} description={description} action={action} />
       ))}
-    </RadixToaster>
+      <ToastViewport />
+    </ToastProvider>
   )
 }

@@ -37,16 +37,19 @@ const toastVariants = cva(
   }
 )
 
-interface ToastProps extends React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root>,
-  VariantProps<typeof toastVariants> {
+export type ToastActionElement = React.ReactNode
+
+export interface ToastProps extends Omit<React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root>, "title" | "description"> {
+  variant?: VariantProps<typeof toastVariants>["variant"]
   title?: React.ReactNode
   description?: React.ReactNode
+  action?: ToastActionElement
 }
 
 const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
   ToastProps
->(({ className, variant, title, description, ...props }, ref) => (
+>(({ className, variant, title, description, action, ...props }, ref) => (
   <ToastPrimitives.Root
     ref={ref}
     className={cn(toastVariants({ variant }), className)}
@@ -64,6 +67,7 @@ const Toast = React.forwardRef<
         </ToastPrimitives.Description>
       )}
     </div>
+    {action}
     <ToastPrimitives.Close className="absolute right-1 top-1 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-1 group-hover:opacity-100">
       <X className="h-4 w-4" />
     </ToastPrimitives.Close>
