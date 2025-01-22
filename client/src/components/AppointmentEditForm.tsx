@@ -75,10 +75,13 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
         cancellationReason: undefined
       });
 
-      toast({
+      const toastConfig = {
+        variant: "default",
         title: "Success",
         description: "Appointment updated successfully",
-      });
+      };
+      console.log('Toast configuration:', toastConfig);
+      toast(toastConfig);
 
       setOpen(false);
     } catch (error) {
