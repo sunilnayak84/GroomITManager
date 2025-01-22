@@ -42,6 +42,8 @@ export const serviceSchema = z.object({
   required_categories: z.array(z.string()).optional().default([]),
   consumables: z.array(serviceConsumableSchema).optional().default([]),
   isActive: z.boolean().default(true),
+  isDeleted: z.boolean().default(false),
+  deletedAt: z.date().or(z.string()).nullable().optional(),
   created_at: z.date().or(z.string()).transform(val => 
     typeof val === 'string' ? new Date(val) : val
   ),

@@ -235,7 +235,15 @@ export function useServices() {
   const deleteService = async (id: string) => {
     try {
       const serviceRef = doc(servicesCollection, id);
-      await deleteDoc(serviceRef);
+      const timestamp = new Date();
+      
+      await updateDoc(serviceRef, {
+        isDeleted: true,
+        deletedAt: timestamp.toISOString(),
+        isActive: false,
+        updated_at: timestamp.toISOString()
+      });
+      
       await queryClient.invalidateQueries({ queryKey: ['services'] });
 
       toast({
@@ -255,6 +263,50 @@ export function useServices() {
       throw error;
     }
   };
+
+  // Filter out soft-deleted services from the query
+  const { data: services = [], isLoading, ...rest } = useQuery<Service[]>({
+    queryKey: ['services'],
+    queryFn: async () => {
+      try {
+        const q = query(servicesCollection);
+        const querySnapshot = await getDocs(q);
+        const fetchedServices = querySnapshot.docs
+          .map((doc) => {
+            const data = doc.data();
+            try {
+              return serviceSchema.parse({
+                service_id: doc.id,
+                name: data.name || 'Unnamed Service',
+                description: data.description || null,
+                category: data.category || ServiceCategory.SERVICE,
+                duration: Math.max(Number(data.duration) || 15, 15),
+                price: Number(data.price) || 0,
+                discount_percentage: data.discount_percentage || 0,
+                consumables: data.consumables || [],
+                isActive: data.isActive ?? true,
+                isDeleted: data.isDeleted ?? false,
+                deletedAt: data.deletedAt || null,
+                created_at: data.created_at || new Date(),
+                updated_at: data.updated_at || new Date(),
+                selectedServices: data.selectedServices || [],
+                selectedAddons: data.selectedAddons || []
+              });
+            } catch (error) {
+              console.error('Error parsing service data:', error);
+              throw error;
+            }
+          })
+          .filter(service => !service.isDeleted); // Filter out deleted services
+
+        return fetchedServices;
+      } catch (error) {
+        console.error('FETCH_SERVICES: Error fetching services:', error);
+        throw error;
+      }
+    },
+    staleTime: 1000 * 60 * 5
+  });
 
   return {
     services,
