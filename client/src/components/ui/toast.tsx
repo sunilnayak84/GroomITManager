@@ -45,7 +45,7 @@ type ToastProps = React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
     action?: React.ReactNode
   }
 
-export type ToastActionElement = React.ReactElement<typeof ToastPrimitives.Action>
+export type ToastActionElement = React.ReactNode
 
 const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
