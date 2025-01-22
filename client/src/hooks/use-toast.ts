@@ -129,7 +129,9 @@ const listeners: Array<(state: State) => void> = []
 let memoryState: State = { toasts: [] }
 
 function dispatch(action: Action) {
+  console.log('Toast dispatch:', action.type, action);
   memoryState = reducer(memoryState, action)
+  console.log('Toast state after dispatch:', memoryState);
   listeners.forEach((listener) => {
     listener(memoryState)
   })
