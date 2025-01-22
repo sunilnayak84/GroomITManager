@@ -76,9 +76,8 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
       });
 
       toast({
-        variant: "default" as const,
         title: "Success",
-        description: "Appointment updated successfully",
+        description: `Appointment status updated to ${data.status}`,
       });
 
       setOpen(false);
