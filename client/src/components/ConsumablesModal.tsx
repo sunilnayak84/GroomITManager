@@ -14,7 +14,6 @@ import { toast } from "@/hooks/use-toast";
 interface Consumable {
   item_id: string;
   item_name: string;
-  quantity_used: number;
 }
 
 interface ConsumablesModalProps {
@@ -45,7 +44,7 @@ export function ConsumablesModal({
       if (exists) {
         return prev.filter(i => i.item_id !== item.id);
       }
-      return [...prev, { item_id: item.id, item_name: item.name, quantity_used: 1 }];
+      return [...prev, { item_id: item.id, item_name: item.name }];
     });
   };
 
