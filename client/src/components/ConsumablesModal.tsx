@@ -33,12 +33,12 @@ export function ConsumablesModal({
     }
   }, [open, initialCategories]);
 
-  const toggleCategory = (category: string) => {
+  const toggleCategory = (categoryId: string) => {
     setSelectedCategories(prev => {
-      if (prev.includes(category)) {
-        return prev.filter(c => c !== category);
+      if (prev.includes(categoryId)) {
+        return prev.filter(c => c !== categoryId);
       }
-      return [...prev, category];
+      return [...prev, categoryId];
     });
   };
 
@@ -69,17 +69,17 @@ export function ConsumablesModal({
         <div className="space-y-4">
           <div className="space-y-4">
             {categories.map((category) => (
-              <div key={category} className="flex items-center space-x-2">
+              <div key={category.id} className="flex items-center space-x-2">
                 <Checkbox
-                  id={category}
-                  checked={selectedCategories.includes(category)}
-                  onCheckedChange={() => toggleCategory(category)}
+                  id={category.id}
+                  checked={selectedCategories.includes(category.id)}
+                  onCheckedChange={() => toggleCategory(category.id)}
                 />
                 <label
-                  htmlFor={category}
+                  htmlFor={category.id}
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  {category}
+                  {category.name}
                 </label>
               </div>
             ))}
