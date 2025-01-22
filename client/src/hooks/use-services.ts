@@ -23,7 +23,7 @@ export function useServices() {
         console.log('FETCH_SERVICES: Starting to fetch services');
         const q = query(servicesCollection);
         const querySnapshot = await getDocs(q);
-        
+
         if (querySnapshot.empty) {
           console.log('FETCH_SERVICES: No services found');
           return [];
@@ -56,10 +56,10 @@ export function useServices() {
               const totalOriginalPrice = selectedItems.reduce((sum, item) => {
                 return sum + (item.price || 0);
               }, 0);
-              
+
               const discountPercentage = parsedData.discount_percentage || 0;
               const finalPrice = Math.round(totalOriginalPrice * (1 - discountPercentage));
-              
+
               return {
                 ...parsedData,
                 price: finalPrice,
@@ -100,15 +100,14 @@ export function useServices() {
           console.log('Processing consumable:', consumable);
           return {
             item_id: consumable.item_id,
-            item_name: consumable.item_name,
-            quantity_used: Number(consumable.quantity_used)
+            item_name: consumable.item_name
           };
         } catch (error) {
           console.error('Invalid consumable:', consumable, error);
           throw new Error(`Invalid consumable data: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
       }) || [];
-      
+
       console.log('Final processed consumables:', processedConsumables);
 
       // Prepare data for Firestore
@@ -141,7 +140,7 @@ export function useServices() {
 
       await setDoc(docRef, firestoreData);
       await queryClient.invalidateQueries({ queryKey: ['services'] });
-      
+
       toast({
         title: "Success",
         description: "Service added successfully",
@@ -179,8 +178,7 @@ export function useServices() {
           try {
             const validated = serviceConsumableSchema.parse({
               item_id: consumable.item_id,
-              item_name: consumable.item_name,
-              quantity_used: Number(consumable.quantity_used)
+              item_name: consumable.item_name
             });
 
             console.log('Validated update consumable:', validated);
@@ -215,13 +213,13 @@ export function useServices() {
 
       await updateDoc(serviceRef, updatePayload);
       await queryClient.invalidateQueries({ queryKey: ['services'] });
-      
+
       toast({
         title: "Success",
         description: "Service updated successfully",
         variant: "default"
       });
-      
+
       return true;
     } catch (error) {
       console.error('UPDATE_SERVICE: Error updating service:', error);
@@ -239,13 +237,13 @@ export function useServices() {
       const serviceRef = doc(servicesCollection, id);
       await deleteDoc(serviceRef);
       await queryClient.invalidateQueries({ queryKey: ['services'] });
-      
+
       toast({
         title: "Success",
         description: "Service deleted successfully",
         variant: "default"
       });
-      
+
       return true;
     } catch (error) {
       console.error('DELETE_SERVICE: Error deleting service:', error);

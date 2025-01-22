@@ -225,7 +225,7 @@ export default function ServicesPage() {
           // Validate consumables data before submission
           if (formattedData.consumables.length > 0) {
             const hasInvalidConsumables = formattedData.consumables.some(
-              c => !c.item_id || !c.item_name || !c.quantity_used || c.quantity_used <= 0
+              c => !c.item_id || !c.item_name
             );
             
             if (hasInvalidConsumables) {
@@ -311,8 +311,7 @@ export default function ServicesPage() {
     // Format consumables to match the expected schema
     const formattedConsumables = (service.consumables || []).map(consumable => ({
       item_id: consumable.item_id,
-      item_name: consumable.item_name,
-      quantity_used: Number(consumable.quantity_used)
+      item_name: consumable.item_name
     }));
 
     console.log('Loading service with consumables:', formattedConsumables);
