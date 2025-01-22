@@ -30,15 +30,15 @@ export function useServices() {
           return [];
         }
 
-        const fetchedServices = querySnapshot.docs.map((doc) => {
+        let allServices = querySnapshot.docs.map((doc) => {
           const data = doc.data();
           try {
-            const parsedData = serviceSchema.parse({
+            return serviceSchema.parse({
               service_id: doc.id,
-              name: data.name || 'Unnamed Service',  // Provide default empty string
+              name: data.name || 'Unnamed Service',
               description: data.description || null,
               category: data.category || ServiceCategory.SERVICE,
-              duration: Math.max(Number(data.duration) || 15, 15), // Convert and provide default, ensure minimum 15 minutes
+              duration: Math.max(Number(data.duration) || 15, 15),
               price: Number(data.price) || 0,
               discount_percentage: data.discount_percentage || 0,
               consumables: data.consumables || [],
@@ -48,17 +48,23 @@ export function useServices() {
               selectedServices: data.selectedServices || [],
               selectedAddons: data.selectedAddons || []
             });
+          } catch (error) {
+            console.error('Error parsing service data:', error);
+            throw error;
+          }
+        });
 
-            if (parsedData.category === ServiceCategory.PACKAGE) {
-              // Filter out inactive services/addons
-              const selectedItems = [
-                ...(parsedData.selectedServices?.filter(s => 
-                  fetchedServices.some(fs => fs.service_id === s.service_id && fs.isActive)
-                ) || []),
-                ...(parsedData.selectedAddons?.filter(a => 
-                  fetchedServices.some(fs => fs.service_id === a.service_id && fs.isActive)
-                ) || [])
-              ];
+        // Process packages after all services are loaded
+        allServices = allServices.map(service => {
+          if (service.category === ServiceCategory.PACKAGE) {
+            const selectedItems = [
+              ...(service.selectedServices?.filter(s => 
+                allServices.some(as => as.service_id === s.service_id && as.isActive)
+              ) || []),
+              ...(service.selectedAddons?.filter(a => 
+                allServices.some(as => as.service_id === a.service_id && as.isActive)
+              ) || [])
+            ];
               const totalOriginalPrice = selectedItems.reduce((sum, item) => {
                 return sum + (item.price || 0);
               }, 0);
@@ -73,12 +79,18 @@ export function useServices() {
               };
             }
 
-            return parsedData;
-          } catch (error) {
-            console.error('Error parsing service data:', error);
-            throw error;
+            return {
+              ...service,
+              selectedServices: selectedItems.filter(i => i.category === ServiceCategory.SERVICE),
+              selectedAddons: selectedItems.filter(i => i.category === ServiceCategory.ADDON),
+              price: finalPrice,
+              discount_percentage: discountPercentage
+            };
           }
+          return service;
         });
+
+        return allServices;
 
         console.log('FETCH_SERVICES: Completed fetching services', {
           count: fetchedServices.length,
