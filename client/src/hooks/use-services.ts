@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, query } from 'firebase/firestore';
+import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
 import { db } from "../lib/firebase";
 import { toast } from "@/components/ui/use-toast";
 import {
@@ -21,7 +21,7 @@ export function useServices() {
     queryFn: async () => {
       try {
         console.log('FETCH_SERVICES: Starting to fetch services');
-        const q = query(servicesCollection);
+        const q = query(servicesCollection, where('isActive', '==', true));
         const querySnapshot = await getDocs(q);
 
         if (querySnapshot.empty) {
@@ -235,7 +235,7 @@ export function useServices() {
   const deleteService = async (id: string) => {
     try {
       const serviceRef = doc(servicesCollection, id);
-      await deleteDoc(serviceRef);
+      await updateDoc(serviceRef, {isActive: false});
       await queryClient.invalidateQueries({ queryKey: ['services'] });
 
       toast({
