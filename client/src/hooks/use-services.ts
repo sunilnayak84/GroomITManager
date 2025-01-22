@@ -55,7 +55,7 @@ export function useServices() {
         });
 
         // Process packages after all services are loaded
-        allServices = allServices.map(service => {
+        const processedServices = allServices.map(service => {
           if (service.category === ServiceCategory.PACKAGE) {
             const selectedItems = [
               ...(service.selectedServices?.filter(s => 
@@ -65,19 +65,11 @@ export function useServices() {
                 allServices.some(as => as.service_id === a.service_id && as.isActive)
               ) || [])
             ];
-              const totalOriginalPrice = selectedItems.reduce((sum, item) => {
-                return sum + (item.price || 0);
-              }, 0);
-
-              const discountPercentage = parsedData.discount_percentage || 0;
-              const finalPrice = Math.round(totalOriginalPrice * (1 - discountPercentage));
-
-              return {
-                ...parsedData,
-                price: finalPrice,
-                discount_percentage: discountPercentage
-              };
-            }
+            const totalOriginalPrice = selectedItems.reduce((sum, item) => 
+              sum + (item.price || 0), 0
+            );
+            const discountPercentage = service.discount_percentage || 0;
+            const finalPrice = Math.round(totalOriginalPrice * (1 - discountPercentage));
 
             return {
               ...service,
@@ -90,14 +82,7 @@ export function useServices() {
           return service;
         });
 
-        return allServices;
-
-        console.log('FETCH_SERVICES: Completed fetching services', {
-          count: fetchedServices.length,
-          services: fetchedServices
-        });
-
-        return fetchedServices;
+        return processedServices;
       } catch (error) {
         console.error('FETCH_SERVICES: Error fetching services:', error);
         throw error;
