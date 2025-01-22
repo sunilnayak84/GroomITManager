@@ -191,14 +191,13 @@ export function useAppointments() {
                   
                   // Map all required service fields
                   serviceData.push({
-                    name: rawServiceData.isDeleted ? `${rawServiceData.name} (Discontinued)` : (rawServiceData.name || 'Unknown Service'),
+                    name: rawServiceData.name || 'Unknown Service',
                     duration: rawServiceData.duration || 30,
                     price: rawServiceData.price || 0,
                     description: rawServiceData.description || null,
                     category: rawServiceData.category || 'Service',
                     discount_percentage: rawServiceData.discount_percentage || 0,
-                    consumables: rawServiceData.consumables || [],
-                    isDeleted: rawServiceData.isDeleted || false
+                    consumables: rawServiceData.consumables || []
                   });
                   console.log('FETCH_APPOINTMENTS: Processed service data:', serviceData);
                 } else {
