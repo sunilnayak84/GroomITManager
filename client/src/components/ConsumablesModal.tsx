@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from "react";
-import { Check } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -10,57 +9,67 @@ import {
 import { Button } from "@/components/ui/button";
 import { useInventory } from "@/hooks/use-inventory";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
+
+interface Consumable {
+  item_id: string;
+  item_name: string;
+  quantity_used: number;
+}
 
 interface ConsumablesModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  initialCategories?: string[];
-  onSave: (categories: string[]) => void;
+  initialConsumables: Consumable[];
+  onSave: (consumables: Consumable[]) => void;
 }
 
 export function ConsumablesModal({
   open,
   onOpenChange,
-  initialCategories = [],
+  initialConsumables = [],
   onSave,
 }: ConsumablesModalProps) {
   const { inventory } = useInventory();
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedConsumables, setSelectedConsumables] = useState<Consumable[]>([]);
 
   useEffect(() => {
     if (open) {
-      setSelectedCategories(initialCategories);
+      setSelectedConsumables(initialConsumables);
     }
-  }, [open, initialCategories]);
+  }, [open, initialConsumables]);
 
-  // Get unique categories from inventory
-  const categories = React.useMemo(() => {
-    const uniqueCategories = new Set(inventory.map(item => item.category));
-    return Array.from(uniqueCategories);
-  }, [inventory]);
-
-  const toggleCategory = (category: string) => {
-    setSelectedCategories(prev => {
-      if (prev.includes(category)) {
-        return prev.filter(c => c !== category);
+  const toggleItem = (item: { id: string; name: string }) => {
+    setSelectedConsumables(prev => {
+      const exists = prev.find(c => c.item_id === item.id);
+      if (exists) {
+        return prev.filter(c => c.item_id !== item.id);
       }
-      return [...prev, category];
+      return [...prev, { item_id: item.id, item_name: item.name, quantity_used: 1 }];
     });
+  };
+
+  const updateQuantity = (itemId: string, quantity: number) => {
+    setSelectedConsumables(prev =>
+      prev.map(c =>
+        c.item_id === itemId ? { ...c, quantity_used: quantity } : c
+      )
+    );
   };
 
   const handleSave = () => {
     try {
-      onSave(selectedCategories);
+      onSave(selectedConsumables);
       toast({
         title: "Success",
-        description: "Categories saved successfully",
+        description: "Consumables saved successfully",
       });
     } catch (error) {
-      console.error('Error saving categories:', error);
+      console.error('Error saving consumables:', error);
       toast({
         title: "Error",
-        description: "Failed to save categories",
+        description: "Failed to save consumables",
         variant: "destructive",
       });
     }
@@ -70,27 +79,31 @@ export function ConsumablesModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Configure Service Categories</DialogTitle>
+          <DialogTitle>Configure Service Consumables</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
-          <div className="space-y-4">
-            {categories.map((category) => (
-              <div key={category} className="flex items-center space-x-2">
-                <Checkbox
-                  id={category}
-                  checked={selectedCategories.includes(category)}
-                  onCheckedChange={() => toggleCategory(category)}
+          {inventory.map((item) => (
+            <div key={item.id} className="flex items-center space-x-4">
+              <Checkbox
+                id={item.id}
+                checked={selectedConsumables.some(c => c.item_id === item.id)}
+                onCheckedChange={() => toggleItem({ id: item.id, name: item.name })}
+              />
+              <label htmlFor={item.id} className="flex-grow">
+                {item.name}
+              </label>
+              {selectedConsumables.some(c => c.item_id === item.id) && (
+                <Input
+                  type="number"
+                  min="1"
+                  value={selectedConsumables.find(c => c.item_id === item.id)?.quantity_used || 1}
+                  onChange={(e) => updateQuantity(item.id, parseInt(e.target.value) || 1)}
+                  className="w-20"
                 />
-                <label
-                  htmlFor={category}
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  {category}
-                </label>
-              </div>
-            ))}
-          </div>
+              )}
+            </div>
+          ))}
 
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => onOpenChange(false)}>
