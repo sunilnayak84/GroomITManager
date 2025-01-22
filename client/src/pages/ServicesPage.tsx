@@ -1008,7 +1008,11 @@ export default function ServicesPage() {
         initialConsumables={form.getValues("consumables") || []}
         onSave={(consumables) => {
           console.log('Saving consumables:', consumables);
-          form.setValue("consumables", consumables, {
+          const consumablesWithQuantity = consumables.map(c => ({
+            ...c,
+            quantity_used: 1 // Default quantity
+          }));
+          form.setValue("consumables", consumablesWithQuantity, {
             shouldValidate: true,
             shouldDirty: true,
             shouldTouch: true
