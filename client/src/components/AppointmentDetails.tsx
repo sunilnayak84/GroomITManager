@@ -308,25 +308,33 @@ const AppointmentDetails = ({
               {appointment.beforeImage ? (
                 <div className="space-y-2">
                   <div className="relative">
-                    <a 
-                      href={appointment.beforeImage} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="block"
-                    >
-                      <img 
-                        src={appointment.beforeImage}
-                        alt="Before grooming"
-                        className="max-w-[200px] rounded-lg border border-gray-200 hover:opacity-80 transition-opacity"
-                        referrerPolicy="no-referrer"
-                        crossOrigin="anonymous"
-                        loading="lazy"
-                        onError={(e) => {
-                          console.error('Image failed to load:', appointment.beforeImage);
-                          e.currentTarget.src = 'https://placehold.co/200x200?text=Image+Error';
-                        }}
-                      />
-                    </a>
+                    {appointment.beforeImage ? (
+                      <a 
+                        href={appointment.beforeImage} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="block"
+                      >
+                        <img 
+                          src={appointment.beforeImage}
+                          alt="Before grooming"
+                          className="max-w-[200px] rounded-lg border border-gray-200 hover:opacity-80 transition-opacity"
+                          referrerPolicy="no-referrer"
+                          crossOrigin="anonymous"
+                          loading="lazy"
+                          onError={(e) => {
+                            console.error('Image failed to load:', appointment.beforeImage);
+                            const target = e.target as HTMLImageElement;
+                            target.onerror = null; // Prevent infinite loop
+                            target.src = 'data:image/svg+xml;charset=UTF-8,%3csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="200" height="200"%3e%3crect width="200" height="200" fill="%23f0f0f0"%2F%3e%3ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="system-ui" fill="%23999"%3eImage Error%3c%2Ftext%3e%3c%2Fsvg%3e';
+                          }}
+                        />
+                      </a>
+                    ) : (
+                      <div className="w-[200px] h-[200px] rounded-lg border border-gray-200 flex items-center justify-center bg-gray-50">
+                        <span className="text-gray-400">No image uploaded</span>
+                      </div>
+                    )}
                   </div>
                   <div className="text-xs text-gray-500 space-y-1">
                     <a 
