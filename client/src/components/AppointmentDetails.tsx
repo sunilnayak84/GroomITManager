@@ -311,8 +311,12 @@ const AppointmentDetails = ({
                     src={appointment.beforeImage}
                     alt="Before grooming"
                     className="max-w-[200px] rounded-lg"
+                    onError={(e) => {
+                      console.error('Image failed to load:', appointment.beforeImage);
+                      e.currentTarget.src = 'https://placehold.co/200x200?text=Image+Error';
+                    }}
                   />
-                  <p className="text-xs text-gray-500 break-all">{appointment.beforeImage}</p>
+                  <p className="text-xs text-gray-500 break-all">URL: {appointment.beforeImage}</p>
                 </div>
               ) : (
                 <p className="text-sm text-gray-500">No image uploaded</p>
