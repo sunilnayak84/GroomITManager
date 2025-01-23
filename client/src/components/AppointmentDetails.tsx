@@ -308,18 +308,17 @@ const AppointmentDetails = ({
               {appointment.beforeImage && appointment.beforeImage.length > 0 ? (
                 <div className="relative">
                   <img
-                    src={appointment.beforeImage}
+                    src={`${appointment.beforeImage}?t=${Date.now()}`}
                     alt="Before grooming"
                     className="h-40 w-40 object-cover rounded-md cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => appointment.beforeImage ? window.open(appointment.beforeImage, '_blank') : undefined}
                     onError={(e) => {
                       console.error('Image failed to load:', appointment.beforeImage);
-                      // Add a visual indicator instead of hiding
                       const img = e.target as HTMLImageElement;
                       img.src = `https://api.dicebear.com/7.x/initials/svg?seed=Failed%20to%20load`;
                     }}
                     loading="eager"
-                    crossOrigin="anonymous"
+                    referrerPolicy="no-referrer"
                   />
                 </div>
               ) : (
