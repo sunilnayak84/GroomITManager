@@ -61,7 +61,7 @@ const AppointmentDetails = ({
     resolver: zodResolver(updateAppointmentSchema),
     defaultValues: {
       status: appointment.status,
-      cancellationReason: appointment.status === 'cancelled' ? appointment.cancellationReason || undefined : undefined,
+      cancellationReason: appointment.cancellationReason || undefined,
       notes: appointment.notes || undefined,
     },
   });
@@ -95,7 +95,7 @@ const AppointmentDetails = ({
       await updateAppointment({
         id: appointment.id,
         status: data.status,
-        cancellationReason: data.status === 'cancelled' ? data.cancellationReason : undefined,
+        cancellationReason: data.status === 'cancelled' ? data.cancellationReason : null,
         notes: data.notes,
       });
 
