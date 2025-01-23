@@ -311,18 +311,9 @@ const AppointmentDetails = ({
                     href={appointment.beforeImage} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="block"
+                    className="text-blue-500 hover:text-blue-700 underline"
                   >
-                    <img
-                      src={appointment.beforeImage}
-                      alt="Before grooming"
-                      className="h-40 w-40 object-cover rounded-md cursor-pointer hover:opacity-80 transition-opacity"
-                      onError={(e) => {
-                        console.error('Image failed to load:', appointment.beforeImage);
-                        const img = e.target as HTMLImageElement;
-                        img.src = `https://api.dicebear.com/7.x/initials/svg?seed=${appointment.id || 'image'}`;
-                      }}
-                    />
+                    View Before Image
                   </a>
                 </div>
               ) : (
