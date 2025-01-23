@@ -319,7 +319,45 @@ export const editAppointmentSchema = z.object({
   cancellationReason: z.enum(["no_show", "rescheduled", "other"]).nullable().optional()
 });
 
-export type Appointment = z.infer<typeof appointmentSchema>;
+export type AppointmentWithRelations = {
+  id: string;
+  petId: string;
+  services: string[];
+  groomerId: string;
+  branchId: string;
+  date: string;
+  status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
+  notes: string | null;
+  productsUsed: string | null;
+  totalPrice: number;
+  totalDuration: number;
+  createdAt: string;
+  updatedAt: string | null;
+  cancellationReason?: string | null;
+  beforeImage?: string | null;
+  pet: {
+    name: string;
+    breed: string;
+    image: string | null;
+  };
+  customer: {
+    firstName: string;
+    lastName: string;
+  };
+  groomer: {
+    name: string;
+  };
+  service?: Array<{
+    service_id: string;
+    name: string;
+    duration: number;
+    price: number;
+    description: string | null;
+    category: string;
+    discount_percentage: number;
+    consumables: string[];
+  }>;
+};
 
 export type InsertAppointment = {
   petId: string;
