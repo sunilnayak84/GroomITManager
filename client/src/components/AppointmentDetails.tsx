@@ -306,15 +306,28 @@ const AppointmentDetails = ({
             <div className="mt-4 border-t pt-4">
               <h3 className="text-sm font-medium text-gray-500 mb-2">Before Image</h3>
               {appointment.beforeImage && appointment.beforeImage.length > 0 ? (
-                <div className="relative">
-                  <a 
-                    href={appointment.beforeImage} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:text-blue-700 underline break-all"
-                  >
-                    {appointment.beforeImage}
-                  </a>
+                <div className="space-y-2">
+                  <div>
+                    <a 
+                      href={appointment.beforeImage} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:text-blue-700 underline break-all"
+                    >
+                      {appointment.beforeImage}
+                    </a>
+                  </div>
+                  <div className="mt-2">
+                    <img 
+                      src={appointment.beforeImage}
+                      alt="Before grooming"
+                      className="max-w-[200px] rounded-md"
+                      onError={(e) => {
+                        const img = e.target as HTMLImageElement;
+                        img.style.display = 'none';
+                      }}
+                    />
+                  </div>
                 </div>
               ) : (
                 <p className="text-sm text-gray-500">No image uploaded</p>
