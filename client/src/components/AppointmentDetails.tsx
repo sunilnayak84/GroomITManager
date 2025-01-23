@@ -305,21 +305,21 @@ const AppointmentDetails = ({
 
             <div className="mt-4 border-t pt-4">
               <h3 className="text-sm font-medium text-gray-500 mb-2">Before Image</h3>
-              {form.getValues("beforeImage") ? (
+              {appointment.beforeImage ? (
                 <div className="space-y-2">
                   <div className="relative">
                     <a 
-                      href={form.getValues("beforeImage")} 
+                      href={appointment.beforeImage} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="block"
                     >
                       <img 
-                        src={form.getValues("beforeImage")}
+                        src={appointment.beforeImage}
                         alt="Before grooming"
                         className="max-w-[200px] rounded-lg border border-gray-200 hover:opacity-80 transition-opacity"
                         onError={(e) => {
-                          console.error('Image failed to load:', form.getValues("beforeImage"));
+                          console.error('Image failed to load:', appointment.beforeImage);
                           e.currentTarget.src = 'https://placehold.co/200x200?text=Image+Error';
                         }}
                       />
@@ -327,7 +327,7 @@ const AppointmentDetails = ({
                   </div>
                   <div className="text-xs text-gray-500 space-y-1">
                     <a 
-                      href={form.getValues("beforeImage")} 
+                      href={appointment.beforeImage} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="break-all text-blue-500 hover:underline"
