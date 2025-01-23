@@ -290,17 +290,19 @@ const AppointmentDetails = ({
               )}
             />
 
-            {appointment.beforeImage && (
-              <div className="mt-4 border-t pt-4">
-                <h3 className="text-sm font-medium text-gray-500 mb-2">Before Image</h3>
+            <div className="mt-4 border-t pt-4">
+              <h3 className="text-sm font-medium text-gray-500 mb-2">Before Image</h3>
+              {appointment.beforeImage ? (
                 <img
                   src={appointment.beforeImage}
                   alt="Before grooming"
                   className="h-20 w-20 object-cover rounded-md cursor-pointer hover:opacity-80 transition-opacity"
-                  onClick={() => appointment.beforeImage && window.open(appointment.beforeImage, '_blank')}
+                  onClick={() => window.open(appointment.beforeImage, '_blank')}
                 />
-              </div>
-            )}
+              ) : (
+                <p className="text-sm text-gray-500">No image uploaded</p>
+              )}
+            </div>
 
             <div className="flex justify-end space-x-2 mt-4">
               <Button
