@@ -311,7 +311,7 @@ const AppointmentDetails = ({
                     src={appointment.beforeImage}
                     alt="Before grooming"
                     className="h-20 w-20 object-cover rounded-md cursor-pointer hover:opacity-80 transition-opacity"
-                    onClick={() => window.open(appointment.beforeImage, '_blank')}
+                    onClick={() => appointment.beforeImage && window.open(appointment.beforeImage, '_blank')}
                     onError={(e) => {
                       console.error('Image load error:', {
                         url: appointment.beforeImage,
