@@ -308,18 +308,15 @@ const AppointmentDetails = ({
               {appointment.beforeImage && appointment.beforeImage.length > 0 ? (
                 <div className="relative">
                   <img
-                    src={`${appointment.beforeImage}?nocache=${new Date().getTime()}`}
+                    src={appointment.beforeImage}
                     alt="Before grooming"
                     className="h-40 w-40 object-cover rounded-md cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => appointment.beforeImage ? window.open(appointment.beforeImage, '_blank') : undefined}
                     onError={(e) => {
                       console.error('Image failed to load:', appointment.beforeImage);
                       const img = e.target as HTMLImageElement;
-                      img.src = `https://api.dicebear.com/7.x/initials/svg?seed=Failed%20to%20load`;
+                      img.src = `https://api.dicebear.com/7.x/initials/svg?seed=${appointment.id || 'image'}`;
                     }}
-                    loading="eager"
-                    crossOrigin="anonymous"
-                    style={{ maxHeight: '160px', width: 'auto' }}
                   />
                 </div>
               ) : (
