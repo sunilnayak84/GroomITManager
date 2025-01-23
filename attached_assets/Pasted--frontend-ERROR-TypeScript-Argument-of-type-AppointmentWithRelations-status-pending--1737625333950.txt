@@ -1,0 +1,220 @@
+[frontend]  ERROR(TypeScript)  Argument of type '(AppointmentWithRelations | { status: "pending" | "confirmed" | "completed" | "cancelled" | "in_progress"; notes: string | null; beforeImage: string | undefined; ... 6 more ...; service?: { ...; }[] | undefined; })[]' is not assignable to parameter of type 'Updater<AppointmentWithRelations[] | undefined, AppointmentWithRelations[] | undefined>'.
+[frontend]   Type '(AppointmentWithRelations | { status: "pending" | "confirmed" | "completed" | "cancelled" | "in_progress"; notes: string | null; beforeImage: string | undefined; ... 6 more ...; service?: { ...; }[] | undefined; })[]' is not assignable to type 'AppointmentWithRelations[]'.
+[frontend]     Type 'AppointmentWithRelations | { status: "pending" | "confirmed" | "completed" | "cancelled" | "in_progress"; notes: string | null; beforeImage: string | undefined; ... 6 more ...; service?: { ...; }[] | undefined; }' is not assignable to type 'AppointmentWithRelations'.
+[frontend]       Type '{ status: "pending" | "confirmed" | "completed" | "cancelled" | "in_progress"; notes: string | null; beforeImage: string | undefined; id: string; date: string; cancellationReason?: "no_show" | "rescheduled" | "other" | null; pet: { name: string; breed: string; image: string | null; }; customer: { firstName: string; ...' is not assignable to type 'AppointmentWithRelations'.
+[frontend]         Types of property 'beforeImage' are incompatible.
+[frontend]           Type 'string | undefined' is not assignable to type 'string | null'.
+[frontend]             Type 'undefined' is not assignable to type 'string | null'.
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentDetails.tsx:124:11
+[frontend] 
+[frontend]     122 |         queryClient.setQueryData<AppointmentWithRelations[]>(
+[frontend]     123 |           ["appointments"],
+[frontend]   > 124 |           previousData.map((apt) =>
+[frontend]         |           ^^^^^^^^^^^^^^^^^^^^^^^^^
+[frontend]   > 125 |             apt.id === appointment.id
+[frontend]         | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[frontend]   > 126 |               ? { ...apt, status: data.status, notes: data.notes || null, beforeImage: data.beforeImage } //Added beforeImage to update
+[frontend]         | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[frontend]   > 127 |               : apt
+[frontend]         | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[frontend]   > 128 |           )
+[frontend]         | ^^^^^^^^^^^^
+[frontend]     129 |         );
+[frontend]     130 |       }
+[frontend]     131 |
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'services' does not exist on type 'AppointmentWithRelations'. Did you mean 'service'?
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentDetails.tsx:209:30
+[frontend] 
+[frontend]     207 |               <h3 className="text-sm font-medium text-gray-500">Services</h3>
+[frontend]     208 |               <div className="mt-1 space-y-2">
+[frontend]   > 209 |                 {appointment.services.map((serviceId, index) => (
+[frontend]         |                              ^^^^^^^^
+[frontend]     210 |                   <div key={serviceId} className="border-b pb-2 last:border-b-0">
+[frontend]     211 |                     <p className="text-sm font-medium">
+[frontend]     212 |                       {appointment.service?.[index]?.name || 'Unknown Service'}
+[frontend] 
+[frontend]  ERROR(TypeScript)  Parameter 'serviceId' implicitly has an 'any' type.
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentDetails.tsx:209:44
+[frontend] 
+[frontend]     207 |               <h3 className="text-sm font-medium text-gray-500">Services</h3>
+[frontend]     208 |               <div className="mt-1 space-y-2">
+[frontend]   > 209 |                 {appointment.services.map((serviceId, index) => (
+[frontend]         |                                            ^^^^^^^^^
+[frontend]     210 |                   <div key={serviceId} className="border-b pb-2 last:border-b-0">
+[frontend]     211 |                     <p className="text-sm font-medium">
+[frontend]     212 |                       {appointment.service?.[index]?.name || 'Unknown Service'}
+[frontend] 
+[frontend]  ERROR(TypeScript)  Parameter 'index' implicitly has an 'any' type.
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentDetails.tsx:209:55
+[frontend] 
+[frontend]     207 |               <h3 className="text-sm font-medium text-gray-500">Services</h3>
+[frontend]     208 |               <div className="mt-1 space-y-2">
+[frontend]   > 209 |                 {appointment.services.map((serviceId, index) => (
+[frontend]         |                                                       ^^^^^
+[frontend]     210 |                   <div key={serviceId} className="border-b pb-2 last:border-b-0">
+[frontend]     211 |                     <p className="text-sm font-medium">
+[frontend]     212 |                       {appointment.service?.[index]?.name || 'Unknown Service'}
+[frontend] 
+[frontend]  ERROR(TypeScript)  Argument of type 'string | null' is not assignable to parameter of type 'string | URL | undefined'.
+[frontend]   Type 'null' is not assignable to type 'string | URL | undefined'.
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentDetails.tsx:300:46
+[frontend] 
+[frontend]     298 |                   alt="Before grooming"
+[frontend]     299 |                   className="h-20 w-20 object-cover rounded-md cursor-pointer hover:opacity-80 transition-opacity"
+[frontend]   > 300 |                   onClick={() => window.open(appointment.beforeImage, '_blank')}
+[frontend]         |                                              ^^^^^^^^^^^^^^^^^^^^^^^
+[frontend]     301 |                 />
+[frontend]     302 |               </div>
+[frontend]     303 |             )}
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'groomerId' does not exist on type 'AppointmentWithRelations'. Did you mean 'groomer'?
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentEditForm.tsx:61:30
+[frontend] 
+[frontend]     59 |       status: appointment.status,
+[frontend]     60 |       notes: appointment.notes || undefined,
+[frontend]   > 61 |       groomerId: appointment.groomerId,
+[frontend]        |                              ^^^^^^^^^
+[frontend]     62 |       services: appointment.services || [],
+[frontend]     63 |       date: formattedDate,
+[frontend]     64 |       time: formattedTime,
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'services' does not exist on type 'AppointmentWithRelations'. Did you mean 'service'?
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentEditForm.tsx:62:29
+[frontend] 
+[frontend]     60 |       notes: appointment.notes || undefined,
+[frontend]     61 |       groomerId: appointment.groomerId,
+[frontend]   > 62 |       services: appointment.services || [],
+[frontend]        |                             ^^^^^^^^
+[frontend]     63 |       date: formattedDate,
+[frontend]     64 |       time: formattedTime,
+[frontend]     65 |       cancellationReason: appointment.cancellationReason
+[frontend] 
+[frontend]  ERROR(TypeScript)  Argument of type '(data: { status: "pending" | "confirmed" | "completed" | "cancelled"; date: string; services: string[]; groomerId: string; time: string; notes?: string | null | undefined; cancellationReason?: "other" | ... 3 more ... | undefined; }) => Promise<...>' is not assignable to parameter of type 'SubmitHandler<{ status: "pending" | "confirmed" | "completed" | "cancelled" | "in_progress"; notes: string | undefined; groomerId: any; services: any; date: string; time: string; cancellationReason: "other" | ... 3 more ... | undefined; }>'.
+[frontend]   Types of parameters 'data' and 'data' are incompatible.
+[frontend]     Type '{ status: "pending" | "confirmed" | "completed" | "cancelled" | "in_progress"; notes: string | undefined; groomerId: any; services: any; date: string; time: string; cancellationReason: "other" | ... 3 more ... | undefined; }' is not assignable to type '{ status: "pending" | "confirmed" | "completed" | "cancelled"; date: string; services: string[]; groomerId: string; time: string; notes?: string | null | undefined; cancellationReason?: "other" | "no_show" | "rescheduled" | null | undefined; }'.
+[frontend]       Types of property 'status' are incompatible.
+[frontend]         Type '"pending" | "confirmed" | "completed" | "cancelled" | "in_progress"' is not assignable to type '"pending" | "confirmed" | "completed" | "cancelled"'.
+[frontend]           Type '"in_progress"' is not assignable to type '"pending" | "confirmed" | "completed" | "cancelled"'.
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentEditForm.tsx:109:43
+[frontend] 
+[frontend]     107 |
+[frontend]     108 |       <Form {...form}>
+[frontend]   > 109 |         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+[frontend]         |                                           ^^^^^^^^
+[frontend]     110 |           <div className="grid grid-cols-2 gap-4">
+[frontend]     111 |             <FormField
+[frontend]     112 |               control={form.control}
+[frontend] 
+[frontend]  ERROR(TypeScript)  Parameter 'id' implicitly has an 'any' type.
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentEditForm.tsx:155:51
+[frontend] 
+[frontend]     153 |                           const updatedServices = checked
+[frontend]     154 |                             ? [...field.value, serviceId]
+[frontend]   > 155 |                             : field.value.filter((id) => id !== serviceId);
+[frontend]         |                                                   ^^
+[frontend]     156 |                           field.onChange(updatedServices);
+[frontend]     157 |                         }}
+[frontend]     158 |                       />
+[frontend] 
+[frontend]  ERROR(TypeScript)  Module '"@/lib/schema"' has no exported member 'InsertAppointment'.
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentForm.tsx:5:40
+[frontend] 
+[frontend]     3 | import { zodResolver } from "@hookform/resolvers/zod";
+[frontend]     4 | import { z } from "zod";
+[frontend]   > 5 | import { insertAppointmentSchema, type InsertAppointment } from "@/lib/schema";
+[frontend]       |                                        ^^^^^^^^^^^^^^^^^
+[frontend]     6 | import { Button } from "@/components/ui/button";
+[frontend]     7 | import { Checkbox } from "@/components/ui/checkbox";
+[frontend]     8 | import {
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'groomerId' does not exist on type 'AppointmentWithRelations'. Did you mean 'groomer'?
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentForm.tsx:223:17
+[frontend] 
+[frontend]     221 |         // Find the conflicting appointment for a more specific error message
+[frontend]     222 |         const conflictingAppointment = appointments?.find(a => {
+[frontend]   > 223 |           if (a.groomerId !== groomerId) return false;
+[frontend]         |                 ^^^^^^^^^
+[frontend]     224 |           const existingStart = new Date(a.date);
+[frontend]     225 |           const existingEnd = new Date(existingStart);
+[frontend]     226 |           const existingDuration = a.service?.[0]?.duration || 60;
+[frontend] 
+[frontend]  ERROR(TypeScript)  Module '"@/lib/schema"' has no exported member 'InsertAppointment'.
+[frontend]  FILE  /home/runner/workspace/client/src/hooks/use-appointments.ts:3:41
+[frontend] 
+[frontend]     1 | import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+[frontend]     2 | import { useUser } from './use-user';
+[frontend]   > 3 | import type { AppointmentWithRelations, InsertAppointment } from "@/lib/schema";
+[frontend]       |                                         ^^^^^^^^^^^^^^^^^
+[frontend]     4 | import { 
+[frontend]     5 |   collection, doc, setDoc, getDoc, getDocs, query, 
+[frontend]     6 |   where, DocumentData, CollectionReference, runTransaction,
+[frontend] 
+[frontend]  ERROR(TypeScript)  Object literal may only specify known properties, but 'petId' does not exist in type 'AppointmentWithRelations'. Did you mean to write 'pet'?
+[frontend]  FILE  /home/runner/workspace/client/src/hooks/use-appointments.ts:215:15
+[frontend] 
+[frontend]     213 |             const appointment: AppointmentWithRelations = {
+[frontend]     214 |               id: appointmentDoc.id,
+[frontend]   > 215 |               petId: rawData.petId,
+[frontend]         |               ^^^^^
+[frontend]     216 |               services: rawData.services,
+[frontend]     217 |               groomerId: rawData.groomerId,
+[frontend]     218 |               branchId: rawData.branchId,
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'groomerId' does not exist on type 'AppointmentWithRelations'. Did you mean 'groomer'?
+[frontend]  FILE  /home/runner/workspace/client/src/hooks/use-appointments.ts:305:23
+[frontend] 
+[frontend]     303 |     const hasOverlap = appointments.some(appointment => {
+[frontend]     304 |       // Skip if not the same groomer or if appointment is cancelled
+[frontend]   > 305 |       if (appointment.groomerId !== groomerId || appointment.status === 'cancelled') return false;
+[frontend]         |                       ^^^^^^^^^
+[frontend]     306 |       
+[frontend]     307 |       const appointmentStart = new Date(appointment.date);
+[frontend]     308 |       const appointmentEnd = new Date(appointmentStart);
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'groomerId' does not exist on type 'AppointmentWithRelations'. Did you mean 'groomer'?
+[frontend]  FILE  /home/runner/workspace/client/src/hooks/use-appointments.ts:356:34
+[frontend] 
+[frontend]     354 |             end: appointmentEnd.toISOString(),
+[frontend]     355 |             duration: appointmentDuration,
+[frontend]   > 356 |             groomer: appointment.groomerId,
+[frontend]         |                                  ^^^^^^^^^
+[frontend]     357 |             status: appointment.status
+[frontend]     358 |           }
+[frontend]     359 |         });
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'petId' does not exist on type 'AppointmentWithRelations'.
+[frontend]  FILE  /home/runner/workspace/client/src/pages/AppointmentsPage.tsx:168:21
+[frontend] 
+[frontend]     166 |     {
+[frontend]     167 |       header: "Pet",
+[frontend]   > 168 |       cell: ({ pet, petId }: AppointmentWithRelations) => (
+[frontend]         |                     ^^^^^
+[frontend]     169 |         <div className="flex items-center gap-2 cursor-pointer" onClick={async () => {
+[frontend]     170 |           if (!petId) return;
+[frontend]     171 |           const petRef = doc(petsCollection, petId);
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'petId' does not exist on type 'AppointmentWithRelations'. Did you mean 'pet'?
+[frontend]  FILE  /home/runner/workspace/client/src/pages/AppointmentsPage.tsx:217:59
+[frontend] 
+[frontend]     215 |       cell: (row: AppointmentWithRelations) => (
+[frontend]     216 |         <div className="font-medium cursor-pointer" onClick={async () => {
+[frontend]   > 217 |           const petDoc = await getDoc(doc(db, 'pets', row.petId));
+[frontend]         |                                                           ^^^^^
+[frontend]     218 |           if (petDoc.exists()) {
+[frontend]     219 |             const petData = petDoc.data();
+[frontend]     220 |             const customerId = petData.customerId;
+[frontend] 
+[frontend]  ERROR(TypeScript)  Element implicitly has an 'any' type because expression of type '"pending" | "confirmed" | "completed" | "cancelled" | "in_progress"' can't be used to index type 'Record<"pending" | "confirmed" | "completed" | "cancelled", string>'.
+[frontend]   Property 'in_progress' does not exist on type 'Record<"pending" | "confirmed" | "completed" | "cancelled", string>'.
+[frontend]  FILE  /home/runner/workspace/client/src/pages/AppointmentsPage.tsx:270:27
+[frontend] 
+[frontend]     268 |       header: "Status",
+[frontend]     269 |       cell: ({ status }: AppointmentWithRelations) => (
+[frontend]   > 270 |         <Badge className={statusColors[status]}>
+[frontend]         |                           ^^^^^^^^^^^^^^^^^^^^
+[frontend]     271 |           {status.charAt(0).toUpperCase() + status.slice(1)}
+[frontend]     272 |         </Badge>
+[frontend]     273 |       ),
+[frontend] 
+[frontend] [TypeScript] Found 18 errors. Watching for file changes.
