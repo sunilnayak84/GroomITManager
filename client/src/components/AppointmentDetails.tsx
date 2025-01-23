@@ -292,6 +292,7 @@ const AppointmentDetails = ({
 
             <div className="mt-4 border-t pt-4">
               <h3 className="text-sm font-medium text-gray-500 mb-2">Before Image</h3>
+              {console.log('beforeImage:', form.watch('beforeImage'))}
               {form.watch('beforeImage') ? (
                 <img
                   src={form.watch('beforeImage')}
