@@ -29,7 +29,7 @@ import { format } from "date-fns";
 
 const editAppointmentSchema = z.object({
   status: z.enum(["pending", "confirmed", "completed", "cancelled"]),
-  notes: z.string().nullable(),
+  notes: z.string().nullable().optional(),
   groomerId: z.string(),
   services: z.array(z.string()),
   date: z.string(),

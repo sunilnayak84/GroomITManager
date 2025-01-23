@@ -222,6 +222,7 @@ export function useAppointments() {
               updatedAt: timestampToISOString(rawData.updatedAt),
               totalPrice: rawData.totalPrice || 0,
               totalDuration: rawData.totalDuration || 0,
+              cancellationReason: rawData.cancellationReason || null,
               pet: {
                 name: petData.name,
                 breed: petData.breed,
