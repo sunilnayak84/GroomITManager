@@ -305,11 +305,11 @@ const AppointmentDetails = ({
 
             <div className="mt-4 border-t pt-4">
               <h3 className="text-sm font-medium text-gray-500 mb-2">Before Image</h3>
-              {appointment.beforeImage ? (
+              {form.watch('beforeImage') || appointment.beforeImage ? (
                 <div className="space-y-2">
                   <div className="relative">
                     <img 
-                      src={appointment.beforeImage}
+                      src={form.watch('beforeImage') || appointment.beforeImage}
                       alt="Before grooming"
                       className="max-w-[200px] rounded-lg border border-gray-200"
                       onError={(e) => {
@@ -319,7 +319,7 @@ const AppointmentDetails = ({
                     />
                   </div>
                   <div className="text-xs text-gray-500 space-y-1">
-                    <p className="break-all">URL: {appointment.beforeImage}</p>
+                    <p className="break-all">URL: {form.watch('beforeImage') || appointment.beforeImage}</p>
                   </div>
                 </div>
               ) : (
