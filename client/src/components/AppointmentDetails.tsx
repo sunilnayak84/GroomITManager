@@ -313,10 +313,12 @@ const AppointmentDetails = ({
                     className="h-20 w-20 object-cover rounded-md cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => appointment.beforeImage && window.open(appointment.beforeImage, '_blank')}
                     onError={(e) => {
+                      console.error('Image load error:', appointment.beforeImage);
                       const target = e.target as HTMLImageElement;
                       target.onerror = null;
                       target.src = `https://api.dicebear.com/7.x/initials/svg?seed=BeforeImage`;
                     }}
+                    onLoad={() => console.log('Image loaded successfully:', appointment.beforeImage)}
                   />
                 </div>
               ) : (

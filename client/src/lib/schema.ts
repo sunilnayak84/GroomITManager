@@ -305,7 +305,7 @@ export type AppointmentWithRelations = {
   totalDuration: number;
   createdAt: string;
   updatedAt: string | null;
-  cancellationReason?: string | null;
+  cancellationReason?: "no_show" | "rescheduled" | "other" | null;
   beforeImage?: string | null;
   pet: {
     name: string;
