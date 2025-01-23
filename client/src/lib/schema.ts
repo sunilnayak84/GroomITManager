@@ -318,6 +318,18 @@ export type AppointmentWithRelations = {
   };
   groomer: {
     name: string;
+  };
+  service?: Array<{
+    service_id: string;
+    name: string;
+    duration: number;
+    price: number;
+    description: string | null;
+    category: string;
+    discount_percentage: number;
+    consumables: string[];
+  }>;
+};
 
 export type Appointment = {
   id: string;
@@ -335,19 +347,6 @@ export type Appointment = {
   updatedAt: string | null;
   cancellationReason?: "no_show" | "rescheduled" | "other" | null;
   beforeImage?: string | null;
-};
-
-  };
-  service?: Array<{
-    service_id: string;
-    name: string;
-    duration: number;
-    price: number;
-    description: string | null;
-    category: string;
-    discount_percentage: number;
-    consumables: string[];
-  }>;
 };
 
 export type InsertAppointment = {
