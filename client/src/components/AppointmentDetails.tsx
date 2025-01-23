@@ -184,32 +184,63 @@ const AppointmentDetails = ({
             {form.watch("status") === 'cancelled' && (
               <FormField
                 control={form.control}
-                name="cancellationReason"
+                name="status"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Cancellation Reason</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value || ""}>
+                    <FormLabel>Status</FormLabel>
+                    <Select
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        setShowCancellationForm(value === 'cancelled');
+                      }}
+                      value={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select reason for cancellation" />
+                          <SelectValue />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="no_show">No Show</SelectItem>
-                        <SelectItem value="rescheduled">Rescheduled</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
+                        <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="confirmed">Confirmed</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
+                        <SelectItem value="cancelled">Cancelled</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            )}
 
-            <div>
-              <h3 className="text-sm font-medium text-gray-500">Groomer</h3>
-              <p className="mt-1 text-sm">{appointment.groomer.name}</p>
-            </div>
+              {form.watch("status") === "cancelled" && (
+                <FormField
+                  control={form.control}
+                  name="cancellationReason"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cancellation Reason</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value || ""}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select reason for cancellation" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="no_show">No Show</SelectItem>
+                          <SelectItem value="rescheduled">Rescheduled</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              <div>
+                <h3 className="text-sm font-medium text-gray-500">Groomer</h3>
+                <p className="mt-1 text-sm">{appointment.groomer.name}</p>
+              </div>
 
             <div>
               <h3 className="text-sm font-medium text-gray-500">Services</h3>
