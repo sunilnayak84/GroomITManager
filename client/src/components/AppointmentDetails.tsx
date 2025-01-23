@@ -94,7 +94,6 @@ const AppointmentDetails = ({
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.accept = 'image/*';
-        fileInput.capture = 'environment'; // This enables the camera on mobile devices
 
         const file = await new Promise<File | null>((resolve) => {
           fileInput.onchange = (e) => {
