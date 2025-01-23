@@ -304,15 +304,15 @@ const AppointmentDetails = ({
             />
 
             <div className="mt-4 border-t pt-4">
-              <h3 className="text-sm font-medium text-gray-500 mb-2">Before Image</h3>
-              {form.watch('beforeImage') ? (
+              <h3 className="text-sm font-medium text-gray-500 mb-2">Before Image URL</h3>
+              {appointment.beforeImage ? (
                 <a 
-                  href={form.watch('beforeImage')} 
+                  href={appointment.beforeImage} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-blue-500 hover:text-blue-700 underline break-all"
+                  className="text-blue-500 hover:text-blue-700 underline"
                 >
-                  {form.watch('beforeImage')}
+                  View Before Image
                 </a>
               ) : (
                 <p className="text-sm text-gray-500">No image uploaded</p>
