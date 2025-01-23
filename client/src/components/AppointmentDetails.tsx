@@ -41,9 +41,10 @@ interface AppointmentDetailsProps {
 }
 
 const updateAppointmentSchema = z.object({
-  status: z.enum(['pending', 'confirmed', 'completed', 'cancelled']),
+  status: z.enum(['pending', 'confirmed', 'completed', 'cancelled', 'in_progress']), // Added 'in_progress'
   cancellationReason: z.enum(['no_show', 'rescheduled', 'other']).optional(),
   notes: z.string().optional(),
+  beforeImage: z.string().optional(), // Added beforeImage
 });
 
 type UpdateAppointmentForm = z.infer<typeof updateAppointmentSchema>;
@@ -65,6 +66,7 @@ const AppointmentDetails = ({
       status: appointment.status,
       cancellationReason: appointment.cancellationReason || undefined,
       notes: appointment.notes || undefined,
+      beforeImage: appointment.beforeImage || undefined, //Added default value for beforeImage
     },
   });
 
@@ -74,6 +76,7 @@ const AppointmentDetails = ({
         status: appointment.status,
         cancellationReason: appointment.cancellationReason || undefined,
         notes: appointment.notes || undefined,
+        beforeImage: appointment.beforeImage || undefined, //Added reset for beforeImage
       });
     }
   }, [open, appointment.id]);
@@ -86,12 +89,12 @@ const AppointmentDetails = ({
   const onSubmit = async (data: UpdateAppointmentForm) => {
     try {
       setIsUpdating(true);
-      
+
       if (data.status === 'in_progress' && !appointment.beforeImage) {
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.accept = 'image/*';
-        
+
         const file = await new Promise<File | null>((resolve) => {
           fileInput.onchange = (e) => {
             const files = (e.target as HTMLInputElement).files;
@@ -120,7 +123,7 @@ const AppointmentDetails = ({
           ["appointments"],
           previousData.map((apt) =>
             apt.id === appointment.id
-              ? { ...apt, status: data.status, notes: data.notes || null }
+              ? { ...apt, status: data.status, notes: data.notes || null, beforeImage: data.beforeImage } //Added beforeImage to update
               : apt
           )
         );
@@ -131,6 +134,7 @@ const AppointmentDetails = ({
         status: data.status,
         cancellationReason: data.status === 'cancelled' ? data.cancellationReason || undefined : undefined,
         notes: data.notes,
+        beforeImage: data.beforeImage // Added beforeImage to updateAppointment call
       });
 
       toast({

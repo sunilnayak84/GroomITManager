@@ -373,15 +373,17 @@ export function useAppointments() {
       notes,
       groomerId,
       services,
-      date
+      date,
+      beforeImage
     }: { 
       id: string; 
-      status: "pending" | "confirmed" | "completed" | "cancelled";
+      status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
       cancellationReason?: string;
       notes?: string;
       groomerId?: string;
       services?: string[];
       date?: string;
+      beforeImage?: string;
     }) => {
       try {
         console.log('Updating appointment:', { id, status, cancellationReason, notes });

@@ -218,3 +218,10 @@ export type FirestoreCustomer = {
   createdAt: FirestoreTimestamp;
   updatedAt: FirestoreTimestamp | null;
 };
+
+export type AppointmentWithRelations = Omit<Appointment, "status" | "appointmentDate" | "appointmentTime"> & {
+  status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
+  date: string;
+  beforeImage?: string | null;
+  cancellationReason?: "no_show" | "rescheduled" | "other" | null;
+};
