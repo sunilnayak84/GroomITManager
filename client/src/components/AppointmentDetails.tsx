@@ -89,33 +89,42 @@ const AppointmentDetails = ({
   const onSubmit = async (data: UpdateAppointmentForm) => {
     try {
       setIsUpdating(true);
+      
+      // Only handle beforeImage when changing to in_progress
+      if (data.status === 'in_progress') {
+        // Check if we already have a beforeImage
+        if (!appointment.beforeImage) {
+          const fileInput = document.createElement('input');
+          fileInput.type = 'file';
+          fileInput.accept = 'image/*';
 
-      if (data.status === 'in_progress' && !appointment.beforeImage) {
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.accept = 'image/*';
-
-        const file = await new Promise<File | null>((resolve) => {
-          fileInput.onchange = (e) => {
-            const files = (e.target as HTMLInputElement).files;
-            resolve(files ? files[0] : null);
-          };
-          fileInput.click();
-        });
-
-        if (!file) {
-          toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Please upload a before image to start grooming",
+          const file = await new Promise<File | null>((resolve) => {
+            fileInput.onchange = (e) => {
+              const files = (e.target as HTMLInputElement).files;
+              resolve(files ? files[0] : null);
+            };
+            fileInput.click();
           });
-          setIsUpdating(false);
-          return;
-        }
 
-        const imageUrl = await handleImageUpload(file);
-        data.beforeImage = imageUrl;
-        form.setValue('beforeImage', imageUrl);
+          if (!file) {
+            toast({
+              variant: "destructive",
+              title: "Error",
+              description: "Please upload a before image to start grooming",
+            });
+            setIsUpdating(false);
+            return;
+          }
+
+          const imageUrl = await handleImageUpload(file);
+          data.beforeImage = imageUrl;
+          form.setValue('beforeImage', imageUrl);
+        } else {
+          data.beforeImage = appointment.beforeImage;
+        }
+      } else {
+        // For other statuses, maintain the existing beforeImage
+        data.beforeImage = appointment.beforeImage || null;
       }
       const previousData = queryClient.getQueryData<AppointmentWithRelations[]>(["appointments"]);
 
@@ -293,16 +302,17 @@ const AppointmentDetails = ({
 
             <div className="mt-4 border-t pt-4">
               <h3 className="text-sm font-medium text-gray-500 mb-2">Before Image</h3>
-              {console.log('beforeImage:', form.watch('beforeImage'))}
-              {form.watch('beforeImage') ? (
-                <img
-                  src={form.watch('beforeImage')}
-                  alt="Before grooming"
-                  className="h-20 w-20 object-cover rounded-md cursor-pointer hover:opacity-80 transition-opacity"
-                  onClick={() => form.watch('beforeImage') && window.open(form.watch('beforeImage'), '_blank')}
-                />
-              ) : (
-                <p className="text-sm text-gray-500">No image uploaded</p>
+              {(appointment.status === 'in_progress' || appointment.beforeImage) && (
+                appointment.beforeImage ? (
+                  <img
+                    src={appointment.beforeImage}
+                    alt="Before grooming"
+                    className="h-20 w-20 object-cover rounded-md cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => appointment.beforeImage && window.open(appointment.beforeImage, '_blank')}
+                  />
+                ) : (
+                  <p className="text-sm text-gray-500">No image uploaded</p>
+                )
               )}
             </div>
 
