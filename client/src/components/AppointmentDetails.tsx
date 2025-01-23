@@ -308,36 +308,40 @@ const AppointmentDetails = ({
               {form.watch("beforeImage") ? (
                 <div className="space-y-2">
                   <div className="relative">
-                    <a 
-                      href={form.getValues("beforeImage")} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="block"
-                    >
-                      <img 
-                        src={form.getValues("beforeImage")}
-                        alt="Before grooming"
-                        className="max-w-[200px] rounded-lg border border-gray-200 hover:opacity-80 transition-opacity"
-                        referrerPolicy="no-referrer"
-                        crossOrigin="anonymous"
-                        loading="lazy"
-                        onError={(e) => {
-                          console.error('Image failed to load:', form.getValues("beforeImage"));
-                          e.currentTarget.src = 'https://placehold.co/200x200?text=Image+Error';
-                        }}
-                      />
-                    </a>
+                    {appointment.beforeImage && (
+                      <a 
+                        href={appointment.beforeImage} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="block"
+                      >
+                        <img 
+                          src={form.getValues("beforeImage")}
+                          alt="Before grooming"
+                          className="max-w-[200px] rounded-lg border border-gray-200 hover:opacity-80 transition-opacity"
+                          referrerPolicy="no-referrer"
+                          crossOrigin="anonymous"
+                          loading="lazy"
+                          onError={(e) => {
+                            console.error('Image failed to load:', form.getValues("beforeImage"));
+                            e.currentTarget.src = 'https://placehold.co/200x200?text=Image+Error';
+                          }}
+                        />
+                      </a>
+                    )}
                   </div>
-                  <div className="text-xs text-gray-500 space-y-1">
-                    <a 
-                      href={appointment.beforeImage} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="break-all text-blue-500 hover:underline"
-                    >
-                      View Image URL
-                    </a>
-                  </div>
+                  {appointment.beforeImage && (
+                    <div className="text-xs text-gray-500 space-y-1">
+                      <a 
+                        href={appointment.beforeImage} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="break-all text-blue-500 hover:underline"
+                      >
+                        View Image URL
+                      </a>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <p className="text-sm text-gray-500">No image uploaded</p>
