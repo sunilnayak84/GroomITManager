@@ -236,4 +236,6 @@ export type AppointmentWithRelations = {
   productsUsed: string | null;
   totalPrice: number;
   totalDuration: number;
+  createdAt: string;
+  updatedAt: string | null;
 };
