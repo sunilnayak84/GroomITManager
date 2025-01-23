@@ -72,7 +72,7 @@ const AppointmentDetails = ({
     resolver: zodResolver(updateAppointmentSchema),
     defaultValues: {
       status: appointment.status,
-      cancellationReason: undefined,
+      cancellationReason: appointment.cancellationReason || undefined,
       notes: appointment.notes || undefined,
     },
   });
@@ -82,7 +82,7 @@ const AppointmentDetails = ({
     if (open) {
       form.reset({
         status: appointment.status,
-        cancellationReason: undefined,
+        cancellationReason: appointment.cancellationReason || undefined,
         notes: appointment.notes || undefined,
       });
     }
