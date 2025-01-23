@@ -405,8 +405,12 @@ export function useAppointments() {
           groomerId: groomerId || currentData.groomerId,
           services: services || currentData.services,
           date: date ? Timestamp.fromDate(new Date(date)) : currentData.date,
-          beforeImage: beforeImage || currentData.beforeImage
         };
+
+        // Only include beforeImage if it exists
+        if (currentData.beforeImage || beforeImage) {
+          updateData.beforeImage = beforeImage || currentData.beforeImage;
+        }
 
         await setDoc(appointmentRef, updateData);
         console.log('Appointment updated successfully');
