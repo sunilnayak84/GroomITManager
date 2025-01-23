@@ -72,7 +72,7 @@ const AppointmentDetails = ({
     resolver: zodResolver(updateAppointmentSchema),
     defaultValues: {
       status: appointment.status,
-      cancellationReason: appointment.cancellationReason || undefined,
+      cancellationReason: appointment.status === 'cancelled' ? appointment.cancellationReason || null : null,
       notes: appointment.notes || undefined,
     },
   });
@@ -181,11 +181,29 @@ const AppointmentDetails = ({
               </p>
             </div>
 
-            {appointment.status === 'cancelled' && appointment.cancellationReason && (
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">Cancellation Reason</h3>
-                <p className="mt-1 text-sm capitalize">{appointment.cancellationReason.replace('_', ' ')}</p>
-              </div>
+            {form.watch("status") === 'cancelled' && (
+              <FormField
+                control={form.control}
+                name="cancellationReason"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Cancellation Reason</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value || ""}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select reason for cancellation" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="no_show">No Show</SelectItem>
+                        <SelectItem value="rescheduled">Rescheduled</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             )}
 
             <div>
