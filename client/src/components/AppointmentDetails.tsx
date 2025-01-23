@@ -311,12 +311,13 @@ const AppointmentDetails = ({
                     src={appointment.beforeImage}
                     alt="Before grooming"
                     className="h-40 w-40 object-cover rounded-md cursor-pointer hover:opacity-80 transition-opacity"
-                    onClick={() => window.open(appointment.beforeImage, '_blank')}
+                    onClick={() => appointment.beforeImage ? window.open(appointment.beforeImage, '_blank') : undefined}
                     onError={(e) => {
                       console.error('Image failed to load:', appointment.beforeImage);
                       const img = e.target as HTMLImageElement;
                       img.style.display = 'none';
                     }}
+                    style={{ maxWidth: '100%', height: 'auto' }}
                   />
                 </div>
               ) : (
