@@ -1,17 +1,30 @@
 
-{
-  "rules": {
-    "roles": {
-      "$uid": {
-        ".read": "$uid === auth.uid || root.child('roles').child(auth.uid).child('role').val() === 'admin'",
-        ".write": "root.child('roles').child(auth.uid).child('role').val() === 'admin'"
-      }
-    },
-    "users": {
-      "$uid": {
-        ".read": "$uid === auth.uid || root.child('roles').child(auth.uid).child('role').val() === 'admin'",
-        ".write": "$uid === auth.uid || root.child('roles').child(auth.uid).child('role').val() === 'admin'"
-      }
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Function to check if user is an admin
+    function isAdmin() {
+      return isAuthenticated() && 
+        ('role' in request.auth.token) && 
+        request.auth.token.role == 'admin';
+    }
+
+    match /{document=**} {
+      allow read, write: if isAuthenticated();
+    }
+  }
+}
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /appointments/{appointmentId}/{filename} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
     }
   }
 }
