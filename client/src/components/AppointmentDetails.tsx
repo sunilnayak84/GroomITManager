@@ -5,15 +5,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Form,
   FormControl,
@@ -22,7 +13,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
@@ -31,21 +30,12 @@ import type { AppointmentWithRelations } from "@/lib/schema";
 import { useAppointments } from "@/hooks/use-appointments";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { Pencil } from "lucide-react"; // Assuming this icon is used
-
-// Placeholder for ProtectedElement.  Replace with your actual implementation.
-const ProtectedElement = ({ children, requiredPermissions }: { children: any; requiredPermissions: string }) => {
-  // Replace this with your actual permission check logic
-  const hasPermission = true; // Replace with a check against user roles and permissions
-  return hasPermission ? children : null;
-};
-
 
 interface AppointmentDetailsProps {
   appointment: AppointmentWithRelations;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onEdit: () => void; // Added onEdit prop
+  onEdit: () => void;
 }
 
 const updateAppointmentSchema = z.object({
@@ -60,11 +50,10 @@ const AppointmentDetails = ({
   appointment,
   open,
   onOpenChange,
-  onEdit, // Added onEdit prop
+  onEdit,
 }: AppointmentDetailsProps): React.ReactElement => {
   const { updateAppointment } = useAppointments();
   const { toast } = useToast();
-  const [showCancellationForm, setShowCancellationForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const queryClient = useQueryClient();
 
@@ -77,7 +66,6 @@ const AppointmentDetails = ({
     },
   });
 
-  // Reset form when dialog opens or appointment changes
   React.useEffect(() => {
     if (open) {
       form.reset({
@@ -86,24 +74,13 @@ const AppointmentDetails = ({
         notes: appointment.notes || undefined,
       });
     }
-  }, [open, appointment.id]); // Only reset when dialog opens or appointment ID changes
-
-  // Reset state when dialog closes
-  React.useEffect(() => {
-    if (!open) {
-      setShowCancellationForm(false);
-      setIsUpdating(false);
-    }
-  }, [open]);
+  }, [open, appointment.id]);
 
   const onSubmit = async (data: UpdateAppointmentForm) => {
     try {
       setIsUpdating(true);
-    
-      // Store the previous data for rollback
       const previousData = queryClient.getQueryData<AppointmentWithRelations[]>(["appointments"]);
-        
-      // Optimistically update the UI
+
       if (previousData) {
         queryClient.setQueryData<AppointmentWithRelations[]>(
           ["appointments"],
@@ -121,17 +98,16 @@ const AppointmentDetails = ({
         cancellationReason: data.status === 'cancelled' ? data.cancellationReason : undefined,
         notes: data.notes,
       });
-      
+
       toast({
         title: "Success",
         description: "Appointment status updated successfully",
       });
-      
+
       onOpenChange(false);
     } catch (error) {
-      // Invalidate the query to refetch correct data on error
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
-      
+
       toast({
         variant: "destructive",
         title: "Error",
@@ -181,66 +157,10 @@ const AppointmentDetails = ({
               </p>
             </div>
 
-            {form.watch("status") === 'cancelled' && (
-              <FormField
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Status</FormLabel>
-                    <Select
-                      onValueChange={(value) => {
-                        field.onChange(value);
-                        setShowCancellationForm(value === 'cancelled');
-                      }}
-                      value={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="confirmed">Confirmed</SelectItem>
-                        <SelectItem value="completed">Completed</SelectItem>
-                        <SelectItem value="cancelled">Cancelled</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {form.watch("status") === "cancelled" && (
-                <FormField
-                  control={form.control}
-                  name="cancellationReason"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Cancellation Reason</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value || ""}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select reason for cancellation" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="no_show">No Show</SelectItem>
-                          <SelectItem value="rescheduled">Rescheduled</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">Groomer</h3>
-                <p className="mt-1 text-sm">{appointment.groomer.name}</p>
-              </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Groomer</h3>
+              <p className="mt-1 text-sm">{appointment.groomer.name}</p>
+            </div>
 
             <div>
               <h3 className="text-sm font-medium text-gray-500">Services</h3>
@@ -271,13 +191,7 @@ const AppointmentDetails = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Status</FormLabel>
-                  <Select
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                      setShowCancellationForm(value === 'cancelled');
-                    }}
-                    value={field.value}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue />
@@ -295,14 +209,14 @@ const AppointmentDetails = ({
               )}
             />
 
-            {showCancellationForm && (
+            {form.watch("status") === "cancelled" && (
               <FormField
                 control={form.control}
                 name="cancellationReason"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Cancellation Reason</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value || ""}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select reason for cancellation" />
