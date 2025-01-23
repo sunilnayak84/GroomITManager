@@ -266,6 +266,10 @@ export type WorkingDays = z.infer<typeof workingDaysSchema>;
 export type InsertWorkingDays = z.infer<typeof insertWorkingDaysSchema>;
 export type AppointmentWithRelations = {
   id: string;
+  petId: string;
+  groomerId: string;
+  branchId: string;
+  services: string[];
   status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
   date: string;
   cancellationReason?: "no_show" | "rescheduled" | "other" | null;
@@ -283,16 +287,7 @@ export type AppointmentWithRelations = {
   groomer: {
     name: string;
   };
-  service?: Array<{
-    service_id: string;
-    name: string;
-    duration: number;
-    price: number;
-    description?: string | null;
-    category?: string;
-    discount_percentage?: number;
-    consumables?: any[];
-  }>;
+  service?: { service_id: string; name: string; duration: number; price: number }[];
 };
 
 // Additional types for inventory usage
@@ -322,3 +317,17 @@ export const editAppointmentSchema = z.object({
 });
 
 export type Appointment = z.infer<typeof appointmentSchema>;
+
+export type InsertAppointment = {
+  petId: string;
+  services: string[];
+  groomerId: string;
+  branchId: string;
+  date: string;
+  time: string;
+  status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
+  notes: string | null;
+  productsUsed?: string | null;
+  totalPrice?: number;
+  totalDuration?: number;
+};
