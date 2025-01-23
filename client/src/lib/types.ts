@@ -226,7 +226,7 @@ export type AppointmentWithRelations = {
   branchId: string;
   status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
   date: string;
-  beforeImage: string | null;
+  beforeImage?: string | null;
   notes: string | null;
   pet: { name: string; breed: string; image: string | null };
   customer: { firstName: string; lastName: string };
@@ -234,8 +234,8 @@ export type AppointmentWithRelations = {
   service?: { service_id: string; name: string; duration: number; price: number }[];
   cancellationReason?: "no_show" | "rescheduled" | "other" | null;
   productsUsed: string | null;
-  totalPrice?: number;
-  totalDuration?: number;
+  totalPrice: number;
+  totalDuration: number;
   createdAt: string;
   updatedAt: string | null;
 };

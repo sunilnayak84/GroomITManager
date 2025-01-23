@@ -396,7 +396,16 @@ export function useAppointments() {
         }
 
         const currentData = appointmentSnap.data();
-        const updateData = {
+        const updateData: {
+          status: string;
+          updatedAt: Timestamp;
+          notes: string | null;
+          cancellationReason: string | null;
+          groomerId: string;
+          services: string[];
+          date: Timestamp;
+          beforeImage?: string | null;
+        } = {
           ...currentData,
           status,
           updatedAt: Timestamp.fromDate(new Date()),
