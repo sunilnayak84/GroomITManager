@@ -309,20 +309,6 @@ export const inventoryUsageSchema = z.object({
 export type InventoryUsage = z.infer<typeof inventoryUsageSchema>;
 export type InsertInventoryUsage = Omit<InventoryUsage, "usage_id" | "used_at">;
 
-export const appointmentSchema = z.object({
-  id: z.string(),
-  petId: z.string(),
-  services: z.array(z.string()),
-  groomerId: z.string(),
-  branchId: z.string(),
-  status: z.enum(["pending", "confirmed", "in_progress", "completed", "cancelled"]),
-  notes: z.string().nullable(),
-  beforeImage: z.string().nullable(),
-  cancellationReason: z.enum(["no_show", "rescheduled", "other"]).nullable(),
-  date: z.string(),
-  time: z.string()
-});
-
 export const editAppointmentSchema = z.object({
   status: z.enum(["pending", "confirmed", "in_progress", "completed", "cancelled"]),
   notes: z.string().nullable(),
