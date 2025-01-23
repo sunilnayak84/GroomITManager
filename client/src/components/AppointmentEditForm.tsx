@@ -231,9 +231,6 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
             )}
           />
 
-          <Button type="submit" className="w-full">
-            Update Appointment
-          </Button>
 
           {form.watch("status") === "cancelled" && (
             <FormField
