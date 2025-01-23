@@ -123,7 +123,7 @@ const AppointmentDetails = ({
           ["appointments"],
           previousData.map((apt) =>
             apt.id === appointment.id
-              ? { ...apt, status: data.status, notes: data.notes || null, beforeImage: data.beforeImage } //Added beforeImage to update
+              ? { ...apt, status: data.status, notes: data.notes || null, beforeImage: data.beforeImage || null }
               : apt
           )
         );
@@ -301,7 +301,7 @@ const AppointmentDetails = ({
                 />
               </div>
             )}
-            
+
             <div className="flex justify-end space-x-2 mt-4">
               <Button
                 type="button"

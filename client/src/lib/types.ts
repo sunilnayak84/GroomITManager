@@ -233,7 +233,7 @@ export type AppointmentWithRelations = {
   groomer: { name: string };
   service?: { service_id: string; name: string; duration: number; price: number }[];
   cancellationReason?: "no_show" | "rescheduled" | "other" | null;
-  productsUsed?: string | null;
-  totalPrice?: number;
-  totalDuration?: number;
+  productsUsed: string | null;
+  totalPrice: number;
+  totalDuration: number;
 };

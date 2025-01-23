@@ -15,7 +15,7 @@ interface FirestoreAppointmentData {
   groomerId: string;
   branchId: string;
   date: Timestamp;
-  status: "pending" | "confirmed" | "completed" | "cancelled";
+  status: "pending" | "confirmed" | "completed" | "cancelled" | "in_progress";
   notes: string | null;
   productsUsed: string | null;
   totalPrice: number;

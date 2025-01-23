@@ -28,7 +28,7 @@ import type { AppointmentWithRelations } from "@/lib/schema";
 import { format } from "date-fns";
 
 const editAppointmentSchema = z.object({
-  status: z.enum(["pending", "confirmed", "completed", "cancelled"]),
+  status: z.enum(["pending", "confirmed", "completed", "cancelled", "in_progress"]),
   notes: z.string().nullable().optional(),
   groomerId: z.string(),
   services: z.array(z.string()),
