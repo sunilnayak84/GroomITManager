@@ -1,0 +1,100 @@
+[frontend]  ERROR(TypeScript)  Argument of type '(AppointmentWithRelations | { status: "pending" | "confirmed" | "completed" | "cancelled" | "in_progress"; notes: string | null; beforeImage: string | undefined; ... 10 more ...; service?: { ...; }[] | undefined; })[]' is not assignable to parameter of type 'Updater<AppointmentWithRelations[] | undefined, AppointmentWithRelations[] | undefined>'.
+[frontend]   Type '(AppointmentWithRelations | { status: "pending" | "confirmed" | "completed" | "cancelled" | "in_progress"; notes: string | null; beforeImage: string | undefined; ... 10 more ...; service?: { ...; }[] | undefined; })[]' is not assignable to type 'AppointmentWithRelations[]'.
+[frontend]     Type 'AppointmentWithRelations | { status: "pending" | "confirmed" | "completed" | "cancelled" | "in_progress"; notes: string | null; beforeImage: string | undefined; ... 10 more ...; service?: { ...; }[] | undefined; }' is not assignable to type 'AppointmentWithRelations'.
+[frontend]       Type '{ status: "pending" | "confirmed" | "completed" | "cancelled" | "in_progress"; notes: string | null; beforeImage: string | undefined; id: string; petId: string; groomerId: string; ... 7 more ...; service?: { service_id: string; name: string; duration: number; price: number; }[]; }' is not assignable to type 'AppointmentWithRelations'.
+[frontend]         Types of property 'beforeImage' are incompatible.
+[frontend]           Type 'string | undefined' is not assignable to type 'string | null'.
+[frontend]             Type 'undefined' is not assignable to type 'string | null'.
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentDetails.tsx:124:11
+[frontend] 
+[frontend]     122 |         queryClient.setQueryData<AppointmentWithRelations[]>(
+[frontend]     123 |           ["appointments"],
+[frontend]   > 124 |           previousData.map((apt) =>
+[frontend]         |           ^^^^^^^^^^^^^^^^^^^^^^^^^
+[frontend]   > 125 |             apt.id === appointment.id
+[frontend]         | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[frontend]   > 126 |               ? { ...apt, status: data.status, notes: data.notes || null, beforeImage: data.beforeImage } //Added beforeImage to update
+[frontend]         | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[frontend]   > 127 |               : apt
+[frontend]         | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[frontend]   > 128 |           )
+[frontend]         | ^^^^^^^^^^^^
+[frontend]     129 |         );
+[frontend]     130 |       }
+[frontend]     131 |
+[frontend] 
+[frontend]  ERROR(TypeScript)  Argument of type '(data: { status: "pending" | "confirmed" | "completed" | "cancelled"; date: string; services: string[]; groomerId: string; time: string; notes?: string | null | undefined; cancellationReason?: "other" | ... 3 more ... | undefined; }) => Promise<...>' is not assignable to parameter of type 'SubmitHandler<{ status: "pending" | "confirmed" | "completed" | "cancelled" | "in_progress"; notes: string | undefined; groomerId: string; services: string[]; date: string; time: string; cancellationReason: "other" | ... 3 more ... | undefined; }>'.
+[frontend]   Types of parameters 'data' and 'data' are incompatible.
+[frontend]     Type '{ status: "pending" | "confirmed" | "completed" | "cancelled" | "in_progress"; notes: string | undefined; groomerId: string; services: string[]; date: string; time: string; cancellationReason: "other" | ... 3 more ... | undefined; }' is not assignable to type '{ status: "pending" | "confirmed" | "completed" | "cancelled"; date: string; services: string[]; groomerId: string; time: string; notes?: string | null | undefined; cancellationReason?: "other" | "no_show" | "rescheduled" | null | undefined; }'.
+[frontend]       Types of property 'status' are incompatible.
+[frontend]         Type '"pending" | "confirmed" | "completed" | "cancelled" | "in_progress"' is not assignable to type '"pending" | "confirmed" | "completed" | "cancelled"'.
+[frontend]           Type '"in_progress"' is not assignable to type '"pending" | "confirmed" | "completed" | "cancelled"'.
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentEditForm.tsx:109:43
+[frontend] 
+[frontend]     107 |
+[frontend]     108 |       <Form {...form}>
+[frontend]   > 109 |         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+[frontend]         |                                           ^^^^^^^^
+[frontend]     110 |           <div className="grid grid-cols-2 gap-4">
+[frontend]     111 |             <FormField
+[frontend]     112 |               control={form.control}
+[frontend] 
+[frontend]  ERROR(TypeScript)  Type '"pending" | "confirmed" | "completed" | "cancelled" | "in_progress"' is not assignable to type '"pending" | "confirmed" | "completed" | "cancelled"'.
+[frontend]   Type '"in_progress"' is not assignable to type '"pending" | "confirmed" | "completed" | "cancelled"'.
+[frontend]  FILE  /home/runner/workspace/client/src/hooks/use-appointments.ts:56:7
+[frontend] 
+[frontend]     54 |       branchId: data.branchId,
+[frontend]     55 |       date: Timestamp.fromDate(appointmentDate),
+[frontend]   > 56 |       status: data.status,
+[frontend]        |       ^^^^^^
+[frontend]     57 |       notes: data.notes,
+[frontend]     58 |       productsUsed: data.productsUsed,
+[frontend]     59 |       totalPrice: data.totalPrice || 0,
+[frontend] 
+[frontend]  ERROR(TypeScript)  Type 'string | null | undefined' is not assignable to type 'string | null'.
+[frontend]   Type 'undefined' is not assignable to type 'string | null'.
+[frontend]  FILE  /home/runner/workspace/client/src/hooks/use-appointments.ts:58:7
+[frontend] 
+[frontend]     56 |       status: data.status,
+[frontend]     57 |       notes: data.notes,
+[frontend]   > 58 |       productsUsed: data.productsUsed,
+[frontend]        |       ^^^^^^^^^^^^
+[frontend]     59 |       totalPrice: data.totalPrice || 0,
+[frontend]     60 |       totalDuration: data.totalDuration || 30,
+[frontend]     61 |       createdAt: Timestamp.fromDate(new Date()),
+[frontend] 
+[frontend]  ERROR(TypeScript)  Object literal may only specify known properties, and 'productsUsed' does not exist in type 'AppointmentWithRelations'.
+[frontend]  FILE  /home/runner/workspace/client/src/hooks/use-appointments.ts:222:15
+[frontend] 
+[frontend]     220 |               status: rawData.status,
+[frontend]     221 |               notes: rawData.notes,
+[frontend]   > 222 |               productsUsed: rawData.productsUsed,
+[frontend]         |               ^^^^^^^^^^^^
+[frontend]     223 |               createdAt: timestampToISOString(rawData.createdAt),
+[frontend]     224 |               updatedAt: timestampToISOString(rawData.updatedAt),
+[frontend]     225 |               totalPrice: rawData.totalPrice || 0,
+[frontend] 
+[frontend]  ERROR(TypeScript)  Object literal may only specify known properties, and 'in_progress' does not exist in type 'Record<"pending" | "confirmed" | "completed" | "cancelled", string>'.
+[frontend]  FILE  /home/runner/workspace/client/src/pages/AppointmentsPage.tsx:105:3
+[frontend] 
+[frontend]     103 |   completed: "bg-green-100 text-green-800",
+[frontend]     104 |   cancelled: "bg-red-100 text-red-800",
+[frontend]   > 105 |   in_progress: "bg-purple-100 text-purple-800",
+[frontend]         |   ^^^^^^^^^^^
+[frontend]     106 | };
+[frontend]     107 |
+[frontend]     108 | export default function AppointmentsPage() {
+[frontend] 
+[frontend]  ERROR(TypeScript)  Element implicitly has an 'any' type because expression of type '"pending" | "confirmed" | "completed" | "cancelled" | "in_progress"' can't be used to index type 'Record<"pending" | "confirmed" | "completed" | "cancelled", string>'.
+[frontend]   Property 'in_progress' does not exist on type 'Record<"pending" | "confirmed" | "completed" | "cancelled", string>'.
+[frontend]  FILE  /home/runner/workspace/client/src/pages/AppointmentsPage.tsx:271:27
+[frontend] 
+[frontend]     269 |       header: "Status",
+[frontend]     270 |       cell: ({ status }: AppointmentWithRelations) => (
+[frontend]   > 271 |         <Badge className={statusColors[status]}>
+[frontend]         |                           ^^^^^^^^^^^^^^^^^^^^
+[frontend]     272 |           {status.charAt(0).toUpperCase() + status.slice(1)}
+[frontend]     273 |         </Badge>
+[frontend]     274 |       ),
+[frontend] 
+[frontend] [TypeScript] Found 7 errors. Watching for file changes.
