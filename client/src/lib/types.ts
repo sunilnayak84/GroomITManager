@@ -219,11 +219,15 @@ export type FirestoreCustomer = {
   updatedAt: FirestoreTimestamp | null;
 };
 
-export type AppointmentWithRelations = Omit<Appointment, "appointmentDate" | "appointmentTime"> & {
+export type AppointmentWithRelations = {
+  id: string;
+  status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
+  date: string;
+  beforeImage: string | null;
+  notes: string | null;
   pet: { name: string; breed: string; image: string | null };
   customer: { firstName: string; lastName: string };
   groomer: { name: string };
   service?: { service_id: string; name: string; duration: number; price: number }[];
-  beforeImage: string | null;
   cancellationReason?: "no_show" | "rescheduled" | "other" | null;
 };

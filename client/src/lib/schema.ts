@@ -201,8 +201,6 @@ export interface ToastProps {
 export type InsertCustomer = Omit<Customer, 'id' | 'createdAt' | 'updatedAt' | 'firebaseId' | 'petCount'>;
 export type Pet = z.infer<typeof petSchema>;
 export type InsertPet = z.infer<typeof insertPetSchema>;
-export type Appointment = z.infer<typeof appointmentSchema>;
-export type InsertAppointment = z.infer<typeof insertAppointmentSchema>;
 export type User = z.infer<typeof userSchema>;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 
@@ -266,10 +264,13 @@ export const insertWorkingDaysSchema = workingDaysSchema.omit({
 
 export type WorkingDays = z.infer<typeof workingDaysSchema>;
 export type InsertWorkingDays = z.infer<typeof insertWorkingDaysSchema>;
-export type AppointmentWithRelations = Omit<Appointment, "status" | "appointmentDate" | "appointmentTime"> & {
-  status: "pending" | "confirmed" | "completed" | "cancelled";
+export type AppointmentWithRelations = {
+  id: string;
+  status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
   date: string;
   cancellationReason?: "no_show" | "rescheduled" | "other" | null;
+  beforeImage: string | null;
+  notes: string | null;
   pet: {
     name: string;
     breed: string;
