@@ -91,14 +91,9 @@ const AppointmentDetails = ({
       setIsUpdating(true);
 
       if (data.status === 'in_progress' && !appointment.beforeImage) {
-        const useCamera = window.confirm('Would you like to use camera to take a photo? Click OK for camera or Cancel for file upload.');
-        
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.accept = 'image/*';
-        if (useCamera) {
-          fileInput.capture = 'environment';
-        }
 
         const file = await new Promise<File | null>((resolve) => {
           fileInput.onchange = (e) => {
