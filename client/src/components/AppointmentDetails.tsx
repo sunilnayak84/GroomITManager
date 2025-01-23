@@ -308,6 +308,7 @@ const AppointmentDetails = ({
               {appointment.beforeImage && appointment.beforeImage !== 'undefined' && appointment.beforeImage !== 'null' ? (
                 <div className="relative">
                   <img
+                    key={appointment.beforeImage}
                     src={appointment.beforeImage}
                     alt="Before grooming"
                     className="h-20 w-20 object-cover rounded-md cursor-pointer hover:opacity-80 transition-opacity"
@@ -321,9 +322,16 @@ const AppointmentDetails = ({
                       target.onerror = null;
                       target.src = `https://api.dicebear.com/7.x/initials/svg?seed=BeforeImage`;
                     }}
-                    onLoad={() => console.log('Image loaded successfully:', appointment.beforeImage)}
-                    crossOrigin="anonymous"
-                    referrerPolicy="no-referrer"
+                    onLoad={(e) => {
+                      const img = e.target as HTMLImageElement;
+                      console.log('Image loaded successfully:', {
+                        url: appointment.beforeImage,
+                        naturalWidth: img.naturalWidth,
+                        naturalHeight: img.naturalHeight
+                      });
+                    }}
+                    loading="eager"
+                    style={{ minHeight: '80px', minWidth: '80px' }}
                   />
                 </div>
               ) : (
