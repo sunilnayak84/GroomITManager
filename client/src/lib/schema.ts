@@ -276,6 +276,8 @@ export type AppointmentWithRelations = {
   beforeImage: string | null;
   notes: string | null;
   productsUsed: string | null;
+  createdAt: string;
+  updatedAt: string | null;
   pet: {
     name: string;
     breed: string;
