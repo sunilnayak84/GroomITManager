@@ -67,8 +67,6 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
   async function onSubmit(data: z.infer<typeof editAppointmentSchema>) {
     try {
       const dateTime = new Date(`${data.date}T${data.time}`);
-
-      const dateTime = new Date(`${data.date}T${data.time}`);
       await updateAppointment({
         id: appointment.id,
         status: data.status,
