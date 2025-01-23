@@ -217,21 +217,6 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="notes"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Notes</FormLabel>
-                <FormControl>
-                  <Input {...field} value={field.value || ''} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-
           {form.watch("status") === "cancelled" && (
             <FormField
               control={form.control}
@@ -256,6 +241,20 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
               )}
             />
           )}
+
+          <FormField
+            control={form.control}
+            name="notes"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Notes</FormLabel>
+                <FormControl>
+                  <Input {...field} value={field.value || ''} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <Button type="submit" className="w-full">
             Update Appointment
