@@ -304,13 +304,16 @@ const AppointmentDetails = ({
             />
 
             <div className="mt-4 border-t pt-4">
-              <h3 className="text-sm font-medium text-gray-500 mb-2">Before Image URL</h3>
+              <h3 className="text-sm font-medium text-gray-500 mb-2">Before Image</h3>
               {appointment?.beforeImage ? (
-                <img 
-                  src={appointment.beforeImage} 
-                  alt="Before grooming"
-                  className="max-w-[200px] rounded-lg"
-                />
+                <div className="space-y-2">
+                  <img 
+                    src={appointment.beforeImage}
+                    alt="Before grooming"
+                    className="max-w-[200px] rounded-lg"
+                  />
+                  <p className="text-xs text-gray-500 break-all">{appointment.beforeImage}</p>
+                </div>
               ) : (
                 <p className="text-sm text-gray-500">No image uploaded</p>
               )}
