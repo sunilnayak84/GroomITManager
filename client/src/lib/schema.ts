@@ -275,6 +275,7 @@ export type AppointmentWithRelations = {
   cancellationReason?: "no_show" | "rescheduled" | "other" | null;
   beforeImage: string | null;
   notes: string | null;
+  productsUsed: string | null;
   pet: {
     name: string;
     breed: string;
