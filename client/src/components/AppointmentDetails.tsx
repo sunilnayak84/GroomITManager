@@ -305,7 +305,7 @@ const AppointmentDetails = ({
 
             <div className="mt-4 border-t pt-4">
               <h3 className="text-sm font-medium text-gray-500 mb-2">Before Image</h3>
-              {appointment.beforeImage ? (
+              {appointment?.beforeImage && (
                 <div className="space-y-2">
                   <div className="relative">
                     <a 
@@ -318,6 +318,7 @@ const AppointmentDetails = ({
                         src={appointment.beforeImage}
                         alt="Before grooming"
                         className="max-w-[200px] rounded-lg border border-gray-200 hover:opacity-80 transition-opacity"
+                        crossOrigin="anonymous"
                         onError={(e) => {
                           console.error('Image failed to load:', appointment.beforeImage);
                           e.currentTarget.src = 'https://placehold.co/200x200?text=Image+Error';
