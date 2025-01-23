@@ -269,6 +269,7 @@ export type InsertWorkingDays = z.infer<typeof insertWorkingDaysSchema>;
 export type AppointmentWithRelations = Omit<Appointment, "status" | "appointmentDate" | "appointmentTime"> & {
   status: "pending" | "confirmed" | "completed" | "cancelled";
   date: string;
+  cancellationReason?: "no_show" | "rescheduled" | "other" | null;
   pet: {
     name: string;
     breed: string;
