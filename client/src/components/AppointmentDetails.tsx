@@ -311,9 +311,9 @@ const AppointmentDetails = ({
                     href={appointment.beforeImage} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-blue-500 hover:text-blue-700 underline"
+                    className="text-blue-500 hover:text-blue-700 underline break-all"
                   >
-                    View Before Image
+                    {appointment.beforeImage}
                   </a>
                 </div>
               ) : (
