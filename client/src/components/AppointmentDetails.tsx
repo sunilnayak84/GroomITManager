@@ -125,6 +125,9 @@ const AppointmentDetails = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Appointment Details</DialogTitle>
+          <DialogDescription>
+            View and manage appointment information
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
