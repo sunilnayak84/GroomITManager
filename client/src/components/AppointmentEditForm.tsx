@@ -34,7 +34,7 @@ const editAppointmentSchema = z.object({
   services: z.array(z.string()),
   date: z.string(),
   time: z.string(),
-  cancellationReason: z.enum(["no_show", "rescheduled", "other"]).nullable().optional()
+  cancellationReason: z.enum(["no_show", "rescheduled", "other"]).nullable()
 });
 
 interface AppointmentEditFormProps {
@@ -237,7 +237,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Cancellation Reason</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value || ""}>
+                  <Select onValueChange={field.onChange} value={field.value ?? ""}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select reason for cancellation" />
