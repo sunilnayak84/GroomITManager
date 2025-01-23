@@ -234,8 +234,8 @@ export type AppointmentWithRelations = {
   service?: { service_id: string; name: string; duration: number; price: number }[];
   cancellationReason?: "no_show" | "rescheduled" | "other" | null;
   productsUsed: string | null;
-  totalPrice: number;
-  totalDuration: number;
+  totalPrice?: number;
+  totalDuration?: number;
   createdAt: string;
   updatedAt: string | null;
 };

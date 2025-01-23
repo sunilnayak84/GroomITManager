@@ -404,7 +404,8 @@ export function useAppointments() {
           cancellationReason: status === 'cancelled' ? (cancellationReason || currentData.cancellationReason) : null,
           groomerId: groomerId || currentData.groomerId,
           services: services || currentData.services,
-          date: date ? Timestamp.fromDate(new Date(date)) : currentData.date
+          date: date ? Timestamp.fromDate(new Date(date)) : currentData.date,
+          beforeImage: beforeImage || currentData.beforeImage
         };
 
         await setDoc(appointmentRef, updateData);
