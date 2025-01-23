@@ -1,0 +1,86 @@
+Request URL:
+https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2FpcQDSkPxrvRHSg1AKOBm%2Fbefore-image-1737627982058?alt=media&token=c6ef91bc-8ff5-4a3d-9737-e9af1ba30478
+Request Method:
+GET
+Status Code:
+304 Not Modified
+Remote Address:
+[2404:6800:4009:812::200a]:443
+Referrer Policy:
+strict-origin-when-cross-origin
+alt-svc:
+h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+cache-control:
+private, max-age=0
+content-length:
+0
+content-type:
+image/jpeg
+date:
+Thu, 23 Jan 2025 12:01:46 GMT
+etag:
+"d849528c7296b794ed6485d7f83f9d2b"
+expires:
+Thu, 23 Jan 2025 12:01:46 GMT
+last-modified:
+Thu, 23 Jan 2025 10:26:24 GMT
+server:
+UploadServer
+x-guploader-uploadid:
+AFIdbgQFNrc1KxBgiv8BnGAK_t56u2G21uro08dqGa6PibygIlav9hbc7knBA40RSpI1J1dzEXwL3Gc
+:authority:
+firebasestorage.googleapis.com
+:method:
+GET
+:path:
+/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2FpcQDSkPxrvRHSg1AKOBm%2Fbefore-image-1737627982058?alt=media&token=c6ef91bc-8ff5-4a3d-9737-e9af1ba30478
+:scheme:
+https
+accept:
+text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+accept-encoding:
+gzip, deflate, br, zstd
+accept-language:
+en-US,en;q=0.9
+cache-control:
+max-age=0
+if-modified-since:
+Thu, 23 Jan 2025 10:26:24 GMT
+if-none-match:
+"d849528c7296b794ed6485d7f83f9d2b"
+priority:
+u=0, i
+sec-ch-ua:
+"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"
+sec-ch-ua-mobile:
+?0
+sec-ch-ua-platform:
+"Windows"
+sec-fetch-dest:
+document
+sec-fetch-mode:
+navigate
+sec-fetch-site:
+none
+sec-fetch-user:
+?1
+upgrade-insecure-requests:
+1
+user-agent:
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
+x-browser-channel:
+stable
+x-browser-copyright:
+Copyright 2024 Google LLC. All rights reserved.
+x-browser-validation:
+Nbt54E7jcg8lQ4EExJrU2ugNG6o=
+x-browser-year:
+2024
+x-client-data:
+CJK2yQEIorbJAQipncoBCMrpygEIlKHLAQj/ossBCJz+zAEIhaDNAQj+pc4BCKvHzgEIxs/OAQjh0M4BCLPTzgEI+dfOAQix2M4BCMbYzgEIzdjOAQjR2M4BGPTJzQEYz9XOAQ==
+Decoded:
+message ClientVariations {
+  // Active Google-visible variation IDs on this client. These are reported for analysis, but do not directly affect any server-side behavior.
+  repeated int32 variation_id = [3300114, 3300130, 3313321, 3323082, 3330196, 3330431, 3358492, 3362821, 3379966, 3384235, 3385286, 3385441, 3385779, 3386361, 3386417, 3386438, 3386445, 3386449];
+  // Active Google-visible variation IDs on this client that trigger server-side behavior. These are reported for analysis *and* directly affect server-side behavior.
+  repeated int32 trigger_variation_id = [3368180, 3386063];
