@@ -115,6 +115,7 @@ const AppointmentDetails = ({
 
         const imageUrl = await handleImageUpload(file);
         data.beforeImage = imageUrl;
+        form.setValue('beforeImage', imageUrl);
       }
       const previousData = queryClient.getQueryData<AppointmentWithRelations[]>(["appointments"]);
 
