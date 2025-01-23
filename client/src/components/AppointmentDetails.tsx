@@ -308,18 +308,34 @@ const AppointmentDetails = ({
               {form.watch('beforeImage') || appointment.beforeImage ? (
                 <div className="space-y-2">
                   <div className="relative">
-                    <img 
-                      src={form.watch('beforeImage') || appointment.beforeImage}
-                      alt="Before grooming"
-                      className="max-w-[200px] rounded-lg border border-gray-200"
-                      onError={(e) => {
-                        console.error('Image failed to load:', appointment.beforeImage);
-                        e.currentTarget.src = 'https://placehold.co/200x200?text=Image+Error';
-                      }}
-                    />
+                    {(form.watch('beforeImage') || appointment.beforeImage) && (
+                      <a 
+                        href={form.watch('beforeImage') || appointment.beforeImage || ''} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="block"
+                      >
+                        <img 
+                          src={form.watch('beforeImage') || appointment.beforeImage || ''}
+                          alt="Before grooming"
+                          className="max-w-[200px] rounded-lg border border-gray-200 hover:opacity-80 transition-opacity"
+                          onError={(e) => {
+                            console.error('Image failed to load:', appointment.beforeImage);
+                            e.currentTarget.src = 'https://placehold.co/200x200?text=Image+Error';
+                          }}
+                        />
+                      </a>
+                    )}
                   </div>
                   <div className="text-xs text-gray-500 space-y-1">
-                    <p className="break-all">URL: {form.watch('beforeImage') || appointment.beforeImage}</p>
+                    <a 
+                      href={form.watch('beforeImage') || appointment.beforeImage || ''} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="break-all text-blue-500 hover:underline"
+                    >
+                      View Image
+                    </a>
                   </div>
                 </div>
               ) : (
