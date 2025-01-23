@@ -33,7 +33,8 @@ const editAppointmentSchema = z.object({
   groomerId: z.string(),
   services: z.array(z.string()),
   date: z.string(),
-  time: z.string()
+  time: z.string(),
+  cancellationReason: z.enum(["no_show", "rescheduled", "other"]).optional()
 });
 
 interface AppointmentEditFormProps {
@@ -228,6 +229,31 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
               </FormItem>
             )}
           />
+
+          {form.watch("status") === "cancelled" && (
+            <FormField
+              control={form.control}
+              name="cancellationReason"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cancellation Reason</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value || ""}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select reason for cancellation" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="no_show">No Show</SelectItem>
+                      <SelectItem value="rescheduled">Rescheduled</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           <Button type="submit" className="w-full">
             Update Appointment

@@ -181,6 +181,13 @@ const AppointmentDetails = ({
               </p>
             </div>
 
+            {appointment.status === 'cancelled' && appointment.cancellationReason && (
+              <div>
+                <h3 className="text-sm font-medium text-gray-500">Cancellation Reason</h3>
+                <p className="mt-1 text-sm capitalize">{appointment.cancellationReason.replace('_', ' ')}</p>
+              </div>
+            )}
+
             <div>
               <h3 className="text-sm font-medium text-gray-500">Groomer</h3>
               <p className="mt-1 text-sm">{appointment.groomer.name}</p>
