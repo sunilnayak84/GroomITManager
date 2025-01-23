@@ -73,7 +73,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
         id: appointment.id,
         status: data.status,
         notes: data.notes || undefined,
-        cancellationReason: data.status === 'cancelled' ? data.cancellationReason : undefined,
+        cancellationReason: data.status === 'cancelled' ? data.cancellationReason || undefined : undefined,
         groomerId: data.groomerId,
         services: data.services,
         date: dateTime.toISOString()
