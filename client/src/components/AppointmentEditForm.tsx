@@ -68,11 +68,15 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
     try {
       const dateTime = new Date(`${data.date}T${data.time}`);
 
+      const dateTime = new Date(`${data.date}T${data.time}`);
       await updateAppointment({
         id: appointment.id,
         status: data.status,
         notes: data.notes || undefined,
-        cancellationReason: undefined
+        cancellationReason: undefined,
+        groomerId: data.groomerId,
+        services: data.services,
+        date: dateTime.toISOString()
       });
 
       toast({

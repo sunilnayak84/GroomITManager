@@ -363,11 +363,22 @@ export function useAppointments() {
   };
 
   const updateAppointmentMutation = useMutation({
-    mutationFn: async ({ id, status, cancellationReason, notes }: { 
+    mutationFn: async ({ 
+      id, 
+      status, 
+      cancellationReason, 
+      notes,
+      groomerId,
+      services,
+      date
+    }: { 
       id: string; 
       status: "pending" | "confirmed" | "completed" | "cancelled";
       cancellationReason?: string;
       notes?: string;
+      groomerId?: string;
+      services?: string[];
+      date?: string;
     }) => {
       try {
         console.log('Updating appointment:', { id, status, cancellationReason, notes });
