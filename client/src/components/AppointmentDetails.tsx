@@ -95,7 +95,7 @@ const AppointmentDetails = ({
       await updateAppointment({
         id: appointment.id,
         status: data.status,
-        cancellationReason: data.status === 'cancelled' ? data.cancellationReason : null,
+        cancellationReason: data.status === 'cancelled' ? data.cancellationReason || undefined : undefined,
         notes: data.notes,
       });
 

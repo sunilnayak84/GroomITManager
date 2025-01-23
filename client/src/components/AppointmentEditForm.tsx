@@ -34,7 +34,7 @@ const editAppointmentSchema = z.object({
   services: z.array(z.string()),
   date: z.string(),
   time: z.string(),
-  cancellationReason: z.enum(["no_show", "rescheduled", "other"]).nullable().optional()
+  cancellationReason: z.enum(["no_show", "rescheduled", "other"]).optional()
 });
 
 interface AppointmentEditFormProps {
@@ -73,7 +73,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
         id: appointment.id,
         status: data.status,
         notes: data.notes || undefined,
-        cancellationReason: data.cancellationReason, //Added this line
+        cancellationReason: data.status === 'cancelled' ? data.cancellationReason : undefined,
         groomerId: data.groomerId,
         services: data.services,
         date: dateTime.toISOString()
