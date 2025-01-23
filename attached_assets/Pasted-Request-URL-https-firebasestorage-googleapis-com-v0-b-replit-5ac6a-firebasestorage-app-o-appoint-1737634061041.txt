@@ -1,0 +1,80 @@
+Request URL:
+https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2FpcQDSkPxrvRHSg1AKOBm%2Fbefore-image-1737627982058?alt=media&token=c6ef91bc-8ff5-4a3d-9737-e9af1ba30478
+Request Method:
+GET
+Status Code:
+304 Not Modified
+Remote Address:
+[2404:6800:4009:826::200a]:443
+Referrer Policy:
+strict-origin-when-cross-origin
+alt-svc:
+h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+cache-control:
+private, max-age=0
+content-length:
+0
+content-type:
+image/jpeg
+date:
+Thu, 23 Jan 2025 12:05:54 GMT
+etag:
+"d849528c7296b794ed6485d7f83f9d2b"
+expires:
+Thu, 23 Jan 2025 12:05:54 GMT
+last-modified:
+Thu, 23 Jan 2025 10:26:24 GMT
+server:
+UploadServer
+x-guploader-uploadid:
+AFIdbgSKnRhHQwhyiObFOAdovrfOU9ItKmnozJ9q-FG2nmiOoqUkB5wtXJWYzoqkQuAeUNl7GOLS1Vo
+:authority:
+firebasestorage.googleapis.com
+:method:
+GET
+:path:
+/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2FpcQDSkPxrvRHSg1AKOBm%2Fbefore-image-1737627982058?alt=media&token=c6ef91bc-8ff5-4a3d-9737-e9af1ba30478
+:scheme:
+https
+accept:
+text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+accept-encoding:
+gzip, deflate, br, zstd
+accept-language:
+en-US,en;q=0.9
+if-modified-since:
+Thu, 23 Jan 2025 10:26:24 GMT
+if-none-match:
+"d849528c7296b794ed6485d7f83f9d2b"
+priority:
+u=0, i
+sec-ch-ua:
+"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"
+sec-ch-ua-arch:
+"x86"
+sec-ch-ua-bitness:
+"64"
+sec-ch-ua-full-version-list:
+"Not A(Brand";v="8.0.0.0", "Chromium";v="132.0.6834.84", "Google Chrome";v="132.0.6834.84"
+sec-ch-ua-mobile:
+?0
+sec-ch-ua-model:
+""
+sec-ch-ua-platform:
+"Windows"
+sec-ch-ua-platform-version:
+"19.0.0"
+sec-ch-ua-wow64:
+?0
+sec-fetch-dest:
+document
+sec-fetch-mode:
+navigate
+sec-fetch-site:
+none
+sec-fetch-user:
+?1
+upgrade-insecure-requests:
+1
+user-agent:
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36
