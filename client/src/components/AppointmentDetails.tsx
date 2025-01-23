@@ -72,7 +72,7 @@ const AppointmentDetails = ({
     resolver: zodResolver(updateAppointmentSchema),
     defaultValues: {
       status: appointment.status,
-      cancellationReason: appointment.status === 'cancelled' ? appointment.cancellationReason || null : null,
+      cancellationReason: appointment.status === 'cancelled' ? appointment.cancellationReason || undefined : undefined,
       notes: appointment.notes || undefined,
     },
   });
