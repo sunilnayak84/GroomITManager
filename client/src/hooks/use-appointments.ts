@@ -396,7 +396,10 @@ export function useAppointments() {
           status,
           updatedAt: Timestamp.fromDate(new Date()),
           notes: notes !== undefined ? notes : currentData.notes,
-          cancellationReason: status === 'cancelled' ? cancellationReason : null
+          cancellationReason: status === 'cancelled' ? cancellationReason : null,
+          groomerId: groomerId || currentData.groomerId,
+          services: services || currentData.services,
+          date: date ? Timestamp.fromDate(new Date(date)) : currentData.date
         };
 
         await setDoc(appointmentRef, updateData);
