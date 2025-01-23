@@ -307,12 +307,12 @@ const AppointmentDetails = ({
               <h3 className="text-sm font-medium text-gray-500 mb-2">Before Image URL</h3>
               {appointment.beforeImage ? (
                 <a 
-                  href={appointment.beforeImage} 
+                  href={appointment.beforeImage}
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-blue-500 hover:text-blue-700 underline"
+                  className="text-blue-500 hover:text-blue-700 underline break-all"
                 >
-                  View Before Image
+                  {appointment.beforeImage}
                 </a>
               ) : (
                 <p className="text-sm text-gray-500">No image uploaded</p>
