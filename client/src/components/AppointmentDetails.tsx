@@ -90,7 +90,7 @@ const AppointmentDetails = ({
     try {
       setIsUpdating(true);
       
-      // Only handle beforeImage when changing to in_progress
+      // Handle beforeImage based on status
       if (data.status === 'in_progress') {
         // Check if we already have a beforeImage
         if (!appointment.beforeImage) {
@@ -122,9 +122,12 @@ const AppointmentDetails = ({
         } else {
           data.beforeImage = appointment.beforeImage;
         }
+      } else if (appointment.beforeImage) {
+        // Keep existing beforeImage if it exists
+        data.beforeImage = appointment.beforeImage;
       } else {
-        // For other statuses, maintain the existing beforeImage
-        data.beforeImage = appointment.beforeImage || null;
+        // Don't include beforeImage for other statuses if it doesn't exist
+        delete data.beforeImage;
       }
       const previousData = queryClient.getQueryData<AppointmentWithRelations[]>(["appointments"]);
 
