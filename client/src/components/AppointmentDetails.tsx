@@ -24,6 +24,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
+import { uploadFile } from "@/lib/storage";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { z } from "zod";
@@ -77,9 +78,41 @@ const AppointmentDetails = ({
     }
   }, [open, appointment.id]);
 
+  const handleImageUpload = async (file: File) => {
+    const path = `appointments/${appointment.id}/before-image-${Date.now()}`;
+    return await uploadFile(file, path);
+  };
+
   const onSubmit = async (data: UpdateAppointmentForm) => {
     try {
       setIsUpdating(true);
+      
+      if (data.status === 'in_progress' && !appointment.beforeImage) {
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        
+        const file = await new Promise<File | null>((resolve) => {
+          fileInput.onchange = (e) => {
+            const files = (e.target as HTMLInputElement).files;
+            resolve(files ? files[0] : null);
+          };
+          fileInput.click();
+        });
+
+        if (!file) {
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Please upload a before image to start grooming",
+          });
+          setIsUpdating(false);
+          return;
+        }
+
+        const imageUrl = await handleImageUpload(file);
+        data.beforeImage = imageUrl;
+      }
       const previousData = queryClient.getQueryData<AppointmentWithRelations[]>(["appointments"]);
 
       if (previousData) {
@@ -204,6 +237,7 @@ const AppointmentDetails = ({
                     <SelectContent>
                       <SelectItem value="pending">Pending</SelectItem>
                       <SelectItem value="confirmed">Confirmed</SelectItem>
+                      <SelectItem value="in_progress">In Progress</SelectItem>
                       <SelectItem value="completed">Completed</SelectItem>
                       <SelectItem value="cancelled">Cancelled</SelectItem>
                     </SelectContent>

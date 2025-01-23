@@ -24,6 +24,7 @@ interface FirestoreAppointmentData {
   updatedAt: Timestamp | null;
   deletedAt: Timestamp | null;
   cancellationReason?: "no_show" | "rescheduled" | "other" | null;
+  beforeImage?: string | null;
 }
 
 const timestampToISOString = (timestamp: Timestamp | null | undefined): string => {
