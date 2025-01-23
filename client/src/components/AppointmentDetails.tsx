@@ -307,23 +307,18 @@ const AppointmentDetails = ({
               <h3 className="text-sm font-medium text-gray-500 mb-2">Before Image</h3>
               {appointment?.beforeImage ? (
                 <div className="space-y-2">
-                  {console.log('Rendering image with URL:', appointment.beforeImage)}
-                  <img 
-                    src={appointment.beforeImage}
-                    alt="Before grooming"
-                    className="max-w-[200px] rounded-lg border border-gray-200"
-                    crossOrigin="anonymous"
-                    onLoad={() => console.log('Image loaded successfully')}
-                    onError={(e) => {
-                      console.error('Image failed to load:', {
-                        url: appointment.beforeImage,
-                        error: e
-                      });
-                      e.currentTarget.src = 'https://placehold.co/200x200?text=Image+Error';
-                    }}
-                  />
+                  <div className="relative">
+                    <img 
+                      src={appointment.beforeImage}
+                      alt="Before grooming"
+                      className="max-w-[200px] rounded-lg border border-gray-200"
+                      onError={(e) => {
+                        console.error('Image failed to load:', appointment.beforeImage);
+                        e.currentTarget.src = 'https://placehold.co/200x200?text=Image+Error';
+                      }}
+                    />
+                  </div>
                   <div className="text-xs text-gray-500 space-y-1">
-                    <p>Status: Loading...</p>
                     <p className="break-all">URL: {appointment.beforeImage}</p>
                   </div>
                 </div>
