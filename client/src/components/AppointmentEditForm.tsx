@@ -57,11 +57,12 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
     resolver: zodResolver(editAppointmentSchema),
     defaultValues: {
       status: appointment.status,
-      notes: appointment.notes || '',
+      notes: appointment.notes || undefined,
       groomerId: appointment.groomerId,
       services: appointment.services || [],
       date: formattedDate,
-      time: formattedTime
+      time: formattedTime,
+      cancellationReason: appointment.cancellationReason
     },
   });
 
@@ -72,7 +73,7 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
         id: appointment.id,
         status: data.status,
         notes: data.notes || undefined,
-        cancellationReason: undefined,
+        cancellationReason: data.cancellationReason, //Added this line
         groomerId: data.groomerId,
         services: data.services,
         date: dateTime.toISOString()
@@ -230,29 +231,6 @@ export default function AppointmentEditForm({ appointment, setOpen }: Appointmen
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="status"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Status</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="confirmed">Confirmed</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
 
           {form.watch("status") === "cancelled" && (
             <FormField
