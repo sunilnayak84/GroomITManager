@@ -305,13 +305,13 @@ const AppointmentDetails = ({
 
             <div className="mt-4 border-t pt-4">
               <h3 className="text-sm font-medium text-gray-500 mb-2">Before Image</h3>
-              {appointment.beforeImage ? (
+              {appointment.beforeImage && appointment.beforeImage.length > 0 ? (
                 <div className="relative">
                   <img
                     src={appointment.beforeImage}
                     alt="Before grooming"
                     className="h-40 w-40 object-cover rounded-md cursor-pointer hover:opacity-80 transition-opacity"
-                    onClick={() => window.open(appointment.beforeImage!, '_blank')}
+                    onClick={() => window.open(appointment.beforeImage, '_blank')}
                     onError={(e) => {
                       console.error('Image failed to load:', appointment.beforeImage);
                       const img = e.target as HTMLImageElement;
