@@ -265,7 +265,7 @@ const AppointmentDetails = ({
                           const path = `appointments/${appointment.id}/before-image.${file.name.split('.').pop()}`;
                           const { uploadFile } = await import("@/lib/storage");
                           const url = await uploadFile(file, path);
-                          
+
                           // Update local state immediately for better UX
                           const currentData = queryClient.getQueryData<AppointmentWithRelations[]>(["appointments"]);
                           if (currentData) {
@@ -312,24 +312,20 @@ const AppointmentDetails = ({
                 </div>
                 {appointment.beforeImage && (
                   <div className="mt-2">
+                    <div className="relative">
                     <img
+                      key={appointment.beforeImage} // Force re-render on URL change
                       src={appointment.beforeImage}
                       alt="Before grooming"
                       className="h-32 w-32 object-cover rounded-md"
-                      crossOrigin="anonymous"
                       loading="lazy"
                       onError={(e) => {
                         const img = e.target as HTMLImageElement;
                         console.error('Image failed to load:', img.src);
-                        // Attempt to reload the image once
-                        if (!img.dataset.retried) {
-                          img.dataset.retried = 'true';
-                          img.src = `${img.src}&t=${Date.now()}`;
-                        } else {
-                          img.style.display = 'none';
-                        }
+                        img.style.display = 'none';
                       }}
                     />
+                  </div>
                   </div>
                 )}
               </div>
