@@ -313,8 +313,25 @@ const AppointmentDetails = ({
                         src={appointment.beforeImage}
                         alt="Before grooming"
                         className="max-w-[200px] rounded-lg border border-gray-200 hover:opacity-80 transition-opacity"
+                        onLoad={() => {
+                          console.log('Image loaded successfully:', appointment.beforeImage);
+                        }}
                         onError={(e) => {
-                          console.error('Error loading image:', appointment.beforeImage);
+                          console.error('Image load error details:', {
+                            url: appointment.beforeImage,
+                            error: e,
+                            timestamp: new Date().toISOString(),
+                            appointmentId: appointment.id
+                          });
+                          // Try loading image directly first
+                          fetch(appointment.beforeImage!)
+                            .then(response => {
+                              console.log('Image fetch response:', response.status, response.statusText);
+                              if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                            })
+                            .catch(fetchError => {
+                              console.error('Image fetch error:', fetchError);
+                            });
                           (e.target as HTMLImageElement).src = `https://api.dicebear.com/7.x/shapes/svg?seed=${appointment.id}`;
                         }}
                       />
