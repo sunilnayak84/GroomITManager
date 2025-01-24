@@ -267,10 +267,11 @@ const AppointmentDetails = ({
                           const url = await uploadFile(file, path);
                           
                           // Update local state immediately for better UX
-                          if (previousData) {
+                          const currentData = queryClient.getQueryData<AppointmentWithRelations[]>(["appointments"]);
+                          if (currentData) {
                             queryClient.setQueryData<AppointmentWithRelations[]>(
                               ["appointments"],
-                              previousData.map((apt) =>
+                              currentData.map((apt) =>
                                 apt.id === appointment.id
                                   ? { ...apt, beforeImage: url }
                                   : apt
@@ -315,10 +316,18 @@ const AppointmentDetails = ({
                       src={appointment.beforeImage}
                       alt="Before grooming"
                       className="h-32 w-32 object-cover rounded-md"
+                      crossOrigin="anonymous"
+                      loading="lazy"
                       onError={(e) => {
                         const img = e.target as HTMLImageElement;
-                        img.style.display = 'none';
                         console.error('Image failed to load:', img.src);
+                        // Attempt to reload the image once
+                        if (!img.dataset.retried) {
+                          img.dataset.retried = 'true';
+                          img.src = `${img.src}&t=${Date.now()}`;
+                        } else {
+                          img.style.display = 'none';
+                        }
                       }}
                     />
                   </div>
