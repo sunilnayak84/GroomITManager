@@ -309,7 +309,6 @@ const AppointmentDetails = ({
                 <div className="relative">
                   {appointment?.beforeImage ? (
                     <div className="space-y-2">
-                      {console.log("Before Image URL:", appointment.beforeImage)}
                       <img 
                         src={appointment.beforeImage}
                         alt="Before grooming"
@@ -332,7 +331,6 @@ const AppointmentDetails = ({
                             (e.target as HTMLImageElement).src = `https://api.dicebear.com/7.x/shapes/svg?seed=${appointment.id}`;
                           }
                         }}
-                        crossOrigin="anonymous"
                         onLoad={(e) => {
                           console.log('Image loaded successfully:', appointment.beforeImage);
                           // Force re-render on successful load
