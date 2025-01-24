@@ -308,15 +308,14 @@ const AppointmentDetails = ({
               <div className="space-y-2">
                 <div className="relative">
                   {appointment?.beforeImage ? (
-                    <>
-                      <div className="space-y-2">
-                        <img 
-                          src={appointment.beforeImage}
-                          alt="Before grooming"
-                          className="max-w-[200px] rounded-lg border border-gray-200 hover:opacity-80 transition-opacity"
-                          loading="lazy"
-                          crossOrigin="use-credentials"
-                          onLoad={(e) => {
+                    <div className="space-y-2">
+                      <img 
+                        src={appointment.beforeImage}
+                        alt="Before grooming"
+                        className="max-w-[200px] rounded-lg border border-gray-200 hover:opacity-80 transition-opacity"
+                        loading="lazy"
+                        crossOrigin="use-credentials"
+                        onLoad={(e) => {
                           console.log('Image loaded successfully:', appointment.beforeImage);
                           // Force re-render on successful load
                           (e.target as HTMLImageElement).style.opacity = '1';
@@ -371,7 +370,7 @@ const AppointmentDetails = ({
                           URL: {appointment.beforeImage}
                         </p>
                       </div>
-                    </>
+                    </div>
                   ) : (
                     <div className="w-[200px] h-[200px] rounded-lg border border-gray-200 flex items-center justify-center bg-gray-50">
                       <span className="text-gray-400">No image uploaded</span>
