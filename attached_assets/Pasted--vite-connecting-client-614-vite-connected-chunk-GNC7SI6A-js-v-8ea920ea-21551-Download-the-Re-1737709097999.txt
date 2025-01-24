@@ -1,0 +1,27 @@
+[vite] connecting...
+client:614 [vite] connected.
+chunk-GNC7SI6A.js?v=8ea920ea:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:17 Checking Firebase environment variables...
+firebase.ts:37 FIREBASE_INIT: Initializing Firebase with config: {apiKey: '***', authDomain: 'replit-5ac6a.firebaseapp.com', projectId: 'replit-5ac6a', storageBucket: 'replit-5ac6a.firebasestorage.app', messagingSenderId: '194114432530', …}
+firebase.ts:42 FIREBASE_INIT: Firebase initialized successfully
+content.js:1 CISPL SignerDigital Loaded
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-pets.ts:58 FETCH_PETS: Starting to fetch pets
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+use-staff.ts:14 FETCH_STAFF: Starting to fetch staff members
+chunk-GNC7SI6A.js?v=8ea920ea:18625 [Violation] 'setTimeout' handler took 81ms
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 1 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: zM4Z6gPEeByqixkeBLFO {groomerId: 'p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82', petId: 'mbg6juwQBokDcvNYk32r', cancellationReason: null, notes: null, createdAt: _Timestamp, …}beforeImage: "https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2FzM4Z6gPEeByqixkeBLFO%2Fbefore-image-1737635358612?alt=media&token=ed579f15-9e84-410c-aafe-c360b35c2d3d"branchId: "1"cancellationReason: nullcreatedAt: _Timestamp {seconds: 1737635330, nanoseconds: 194000000}date: _Timestamp {seconds: 1737696600, nanoseconds: 0}deletedAt: nullgroomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"notes: nullpetId: "mbg6juwQBokDcvNYk32r"productsUsed: nullservices: (2) ['KBLvbaMCaz8uRMXutcrz', 'scG1CGWPQ8VjMbXZBCAj']status: "in_progress"totalDuration: 45totalPrice: 1199updatedAt: _Timestamp {seconds: 1737635359, nanoseconds: 635000000}[[Prototype]]: Object
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 1 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment zM4Z6gPEeByqixkeBLFO
+use-staff.ts:26 FETCH_STAFF: Successfully fetched staff members: (2) [{…}, {…}]
+use-pets.ts:108 FETCH_PETS: Completed fetching pets {totalPets: 1, pets: Array(1)}
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: KBLvbaMCaz8uRMXutcrz
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {selectedServices: Array(0), isActive: true, duration: 15, created_at: '2025-01-22T07:46:06.044Z', selectedAddons: Array(0), …}
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: scG1CGWPQ8VjMbXZBCAj
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {selectedServices: Array(0), name: 'Service One', discount_percentage: 0, price: 999, consumables: Array(1), …}
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: (2) [{…}, {…}]
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
