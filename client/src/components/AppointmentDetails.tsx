@@ -310,7 +310,7 @@ const AppointmentDetails = ({
                   {appointment?.beforeImage ? (
                     <>
                       <img 
-                        src={appointment.beforeImage}
+                        src={`${appointment.beforeImage}?t=${Date.now()}`}
                         alt="Before grooming"
                         className="max-w-[200px] rounded-lg border border-gray-200 hover:opacity-80 transition-opacity"
                         loading="lazy"
@@ -327,14 +327,13 @@ const AppointmentDetails = ({
                           });
                           
                           try {
-                            // Add cache-busting parameter
                             const imageUrl = new URL(appointment.beforeImage!);
                             imageUrl.searchParams.append('t', Date.now().toString());
                             
                             const response = await fetch(imageUrl.toString(), {
                               method: 'GET',
                               cache: 'no-cache',
-                              credentials: 'include',
+                              mode: 'cors',
                               headers: {
                                 'Cache-Control': 'no-cache',
                                 'Pragma': 'no-cache'
@@ -354,7 +353,6 @@ const AppointmentDetails = ({
                           }
                         }}
                         referrerPolicy="no-referrer"
-                        crossOrigin="anonymous"
                       />
                       <a 
                         href={appointment.beforeImage}
