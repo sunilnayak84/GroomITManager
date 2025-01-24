@@ -309,11 +309,29 @@ const AppointmentDetails = ({
                 <div className="relative">
                   {appointment?.beforeImage ? (
                     <div className="space-y-2">
+                      {console.log("Before Image URL:", appointment.beforeImage)}
                       <img 
                         src={appointment.beforeImage}
                         alt="Before grooming"
                         className="max-w-[200px] rounded-lg border border-gray-200 hover:opacity-80 transition-opacity"
                         loading="lazy"
+                        crossOrigin="anonymous"
+                        onError={async (e) => {
+                          console.error("Image load error:", {
+                            imageUrl: appointment.beforeImage,
+                            timestamp: new Date().toISOString(),
+                            appointmentId: appointment.id
+                          });
+                          
+                          try {
+                            const imageUrl = new URL(appointment.beforeImage!);
+                            imageUrl.searchParams.append('t', Date.now().toString());
+                            (e.target as HTMLImageElement).src = imageUrl.toString();
+                          } catch (error) {
+                            console.error("URL parsing error:", error);
+                            (e.target as HTMLImageElement).src = `https://api.dicebear.com/7.x/shapes/svg?seed=${appointment.id}`;
+                          }
+                        }}
                         crossOrigin="anonymous"
                         onLoad={(e) => {
                           console.log('Image loaded successfully:', appointment.beforeImage);
