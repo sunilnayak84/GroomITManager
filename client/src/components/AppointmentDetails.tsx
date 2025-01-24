@@ -316,24 +316,43 @@ const AppointmentDetails = ({
                         onLoad={() => {
                           console.log('Image loaded successfully:', appointment.beforeImage);
                         }}
-                        onError={(e) => {
+                        onError={async (e) => {
                           console.error('Image load error details:', {
                             url: appointment.beforeImage,
                             error: e,
                             timestamp: new Date().toISOString(),
                             appointmentId: appointment.id
                           });
-                          // Try loading image directly first
-                          fetch(appointment.beforeImage!)
-                            .then(response => {
-                              console.log('Image fetch response:', response.status, response.statusText);
-                              if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                            })
-                            .catch(fetchError => {
-                              console.error('Image fetch error:', fetchError);
+                          
+                          try {
+                            // Add cache-busting parameter
+                            const imageUrl = new URL(appointment.beforeImage!);
+                            imageUrl.searchParams.append('t', Date.now().toString());
+                            
+                            const response = await fetch(imageUrl.toString(), {
+                              method: 'GET',
+                              cache: 'no-cache',
+                              credentials: 'include',
+                              headers: {
+                                'Cache-Control': 'no-cache',
+                                'Pragma': 'no-cache'
+                              }
                             });
-                          (e.target as HTMLImageElement).src = `https://api.dicebear.com/7.x/shapes/svg?seed=${appointment.id}`;
+                            
+                            if (!response.ok) {
+                              throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            
+                            const blob = await response.blob();
+                            const objectUrl = URL.createObjectURL(blob);
+                            (e.target as HTMLImageElement).src = objectUrl;
+                          } catch (fetchError) {
+                            console.error('Image fetch error:', fetchError);
+                            (e.target as HTMLImageElement).src = `https://api.dicebear.com/7.x/shapes/svg?seed=${appointment.id}`;
+                          }
                         }}
+                        referrerPolicy="no-referrer"
+                        crossOrigin="anonymous"
                       />
                       <a 
                         href={appointment.beforeImage}
