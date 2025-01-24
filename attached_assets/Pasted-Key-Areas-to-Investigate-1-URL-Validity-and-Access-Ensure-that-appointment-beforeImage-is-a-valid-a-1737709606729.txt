@@ -1,0 +1,98 @@
+Key Areas to Investigate
+1. URL Validity and Access
+Ensure that appointment.beforeImage is a valid and accessible URL.
+Debugging Steps:
+Log the appointment.beforeImage value before rendering:
+javascript
+Copy
+Edit
+console.log("Before Image URL:", appointment.beforeImage);
+Copy the logged URL and test it in a browser. If the image doesn’t load:
+Check if the URL is expired or invalid.
+Confirm Firebase rules allow read access for this URL.
+2. Image Loading and Error Handling
+Your <img> tag has an onError handler to fetch and replace a problematic image. If this is not working as intended:
+
+Log all error details and verify the flow.
+Test if the error is due to:
+CORS restrictions: Check the browser console for any CORS errors.
+Firebase token expiration: Ensure the token in the URL is active.
+Debugging Steps:
+
+Add detailed logs in the onError handler:
+javascript
+Copy
+Edit
+console.error("Error loading image:", {
+  imageUrl: appointment.beforeImage,
+  timestamp: new Date().toISOString(),
+});
+If replacing the URL dynamically, ensure it appends a fresh query parameter for cache busting:
+javascript
+Copy
+Edit
+const imageUrl = new URL(appointment.beforeImage!);
+imageUrl.searchParams.append("timestamp", Date.now().toString());
+(e.target as HTMLImageElement).src = imageUrl.toString();
+3. React Conditional Rendering
+The image is conditionally rendered only if appointment.beforeImage is available. If this property is undefined or empty, the placeholder "No image uploaded" is shown instead.
+Debugging Steps:
+Log whether appointment.beforeImage is populated:
+javascript
+Copy
+Edit
+console.log("Rendered Before Image:", appointment?.beforeImage || "No Image Available");
+4. Firebase Permissions
+Firebase Storage rules might block access to the image URL.
+Debugging Steps:
+Temporarily modify your Firebase Storage rules to allow public access for testing:
+json
+Copy
+Edit
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read: if true;
+    }
+  }
+}
+Test whether the image loads with these rules. If it does, refine your permissions for better security.
+5. CORS Configuration
+Ensure Firebase Storage has proper CORS settings. Missing configurations can block the image in browsers.
+Debugging Steps:
+Check CORS settings in Firebase Console:
+Go to Firebase Console > Storage > Rules.
+Ensure your app's origin is added to the CORS configuration:
+json
+Copy
+Edit
+[
+  {
+    "origin": ["*"],
+    "method": ["GET"],
+    "maxAgeSeconds": 3600
+  }
+]
+Verify the absence of CORS-related errors in the browser console.
+Potential Code Adjustments
+Improve Conditional Rendering for Images
+Ensure the beforeImage fallback logic works correctly:
+javascript
+Copy
+Edit
+{appointment?.beforeImage ? (
+  <img
+    src={appointment.beforeImage}
+    alt="Before grooming"
+    className="max-w-[200px] rounded-lg border border-gray-200 hover:opacity-80 transition-opacity"
+    onError={(e) => {
+      console.error("Image failed to load:", appointment.beforeImage);
+      (e.target as HTMLImageElement).src = `https://api.dicebear.com/7.x/shapes/svg?seed=${appointment.id}`;
+    }}
+  />
+) : (
+  <div className="w-[200px] h-[200px] rounded-lg border flex items-center justify-center">
+    <span className="text-gray-400">No image uploaded</span>
+  </div>
+)}
