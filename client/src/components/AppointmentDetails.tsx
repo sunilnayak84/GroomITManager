@@ -256,38 +256,73 @@ const AppointmentDetails = ({
                   <input
                     type="file"
                     accept="image/*"
+                    id="before-image-upload"
                     onChange={async (e) => {
                       const file = e.target.files?.[0];
                       if (file) {
                         try {
                           setIsUpdating(true);
-                          const path = `appointments/${appointment.id}/before-image`;
+                          const path = `appointments/${appointment.id}/before-image.${file.name.split('.').pop()}`;
                           const { uploadFile } = await import("@/lib/storage");
                           const url = await uploadFile(file, path);
+                          
+                          // Update local state immediately for better UX
+                          if (previousData) {
+                            queryClient.setQueryData<AppointmentWithRelations[]>(
+                              ["appointments"],
+                              previousData.map((apt) =>
+                                apt.id === appointment.id
+                                  ? { ...apt, beforeImage: url }
+                                  : apt
+                              )
+                            );
+                          }
+
                           await updateAppointment({
                             id: appointment.id,
                             status: form.getValues("status"),
                             beforeImage: url,
                           });
+
                           toast({
                             title: "Success",
                             description: "Before image uploaded successfully",
                           });
-                          queryClient.invalidateQueries({ queryKey: ["appointments"] });
                         } catch (error) {
+                          console.error('Image upload error:', error);
                           toast({
                             variant: "destructive",
                             title: "Error",
-                            description: "Failed to upload before image",
+                            description: error instanceof Error 
+                              ? `Failed to upload image: ${error.message}`
+                              : "Failed to upload image",
                           });
+                          queryClient.invalidateQueries({ queryKey: ["appointments"] });
                         } finally {
                           setIsUpdating(false);
+                          // Reset file input
+                          const input = document.getElementById('before-image-upload') as HTMLInputElement;
+                          if (input) input.value = '';
                         }
                       }
                     }}
                     className="text-sm"
                   />
                 </div>
+                {appointment.beforeImage && (
+                  <div className="mt-2">
+                    <img
+                      src={appointment.beforeImage}
+                      alt="Before grooming"
+                      className="h-32 w-32 object-cover rounded-md"
+                      onError={(e) => {
+                        const img = e.target as HTMLImageElement;
+                        img.style.display = 'none';
+                        console.error('Image failed to load:', img.src);
+                      }}
+                    />
+                  </div>
+                )}
               </div>
             )}
 
@@ -309,7 +344,7 @@ const AppointmentDetails = ({
                         await updateAppointment({
                           id: appointment.id,
                           status: form.getValues("status"),
-                          beforeImage: null,
+                          beforeImage: undefined,
                         });
                         toast({
                           title: "Success",
