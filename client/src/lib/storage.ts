@@ -1,35 +1,18 @@
-import { storage } from './firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "./firebase";
 
 export async function uploadFile(file: File, path: string): Promise<string> {
   try {
-    // Create a storage reference
+    console.log('Uploading file to path:', path);
     const storageRef = ref(storage, path);
-
-    // Upload the file
     const snapshot = await uploadBytes(storageRef, file);
-    console.log('File uploaded successfully:', snapshot);
+    console.log('File uploaded successfully');
 
-    // Get the download URL
     const downloadURL = await getDownloadURL(snapshot.ref);
-    console.log('File upload successful. Generated URL:', downloadURL);
-    
-    // Verify URL is accessible
-    try {
-      const response = await fetch(downloadURL, { 
-        method: 'HEAD',
-        mode: 'cors'
-      });
-      if (!response.ok) {
-        console.error('Generated URL may not be accessible:', response.status);
-      }
-    } catch (error) {
-      console.error('Error verifying download URL:', error);
-    }
-
+    console.log('Download URL obtained:', downloadURL);
     return downloadURL;
   } catch (error) {
     console.error('Error uploading file:', error);
-    throw error;
+    throw new Error(`Failed to upload file: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }

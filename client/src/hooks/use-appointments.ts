@@ -437,9 +437,9 @@ export function useAppointments() {
           date: date ? Timestamp.fromDate(new Date(date)) : currentData.date,
         };
 
-        // Only include beforeImage if it exists
-        if (currentData.beforeImage || beforeImage) {
-          updateData.beforeImage = beforeImage || currentData.beforeImage;
+        // Handle beforeImage update
+        if (beforeImage !== undefined) {
+          updateData.beforeImage = beforeImage;
         }
 
         await setDoc(appointmentRef, updateData);

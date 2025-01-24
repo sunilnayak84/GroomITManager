@@ -298,7 +298,7 @@ const AppointmentDetails = ({
                     src={appointment.beforeImage}
                     alt="Before grooming"
                     className="h-20 w-20 object-cover cursor-pointer rounded"
-                    onClick={() => window.open(appointment.beforeImage, '_blank')}
+                    onClick={() => appointment.beforeImage && window.open(appointment.beforeImage, '_blank')}
                   />
                   <Button
                     variant="destructive"
@@ -309,7 +309,7 @@ const AppointmentDetails = ({
                         await updateAppointment({
                           id: appointment.id,
                           status: form.getValues("status"),
-                          beforeImage: null,
+                          beforeImage: null as any,
                         });
                         toast({
                           title: "Success",
