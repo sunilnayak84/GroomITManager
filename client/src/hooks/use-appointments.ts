@@ -428,6 +428,7 @@ export function useAppointments() {
         } = {
           ...currentData,
           status,
+          inProgressAt,
           updatedAt: Timestamp.fromDate(new Date()),
           notes: notes !== undefined ? notes : currentData.notes,
           cancellationReason: status === 'cancelled' ? (cancellationReason || currentData.cancellationReason) : null,
