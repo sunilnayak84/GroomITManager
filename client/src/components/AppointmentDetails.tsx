@@ -310,13 +310,15 @@ const AppointmentDetails = ({
                   {appointment?.beforeImage ? (
                     <>
                       <img 
-                        src={`${appointment.beforeImage}?t=${Date.now()}`}
+                        src={appointment.beforeImage}
                         alt="Before grooming"
                         className="max-w-[200px] rounded-lg border border-gray-200 hover:opacity-80 transition-opacity"
                         loading="lazy"
-                        crossOrigin="anonymous"
-                        onLoad={() => {
+                        crossOrigin="use-credentials"
+                        onLoad={(e) => {
                           console.log('Image loaded successfully:', appointment.beforeImage);
+                          // Force re-render on successful load
+                          (e.target as HTMLImageElement).style.opacity = '1';
                         }}
                         onError={async (e) => {
                           console.error('Image load error details:', {
@@ -332,10 +334,11 @@ const AppointmentDetails = ({
                             
                             const response = await fetch(imageUrl.toString(), {
                               method: 'GET',
-                              cache: 'no-cache',
+                              cache: 'no-store',
                               mode: 'cors',
+                              credentials: 'include',
                               headers: {
-                                'Cache-Control': 'no-cache',
+                                'Cache-Control': 'no-store',
                                 'Pragma': 'no-cache'
                               }
                             });
