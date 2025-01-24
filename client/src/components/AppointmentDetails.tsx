@@ -307,12 +307,16 @@ const AppointmentDetails = ({
               <h3 className="text-sm font-medium text-gray-500 mb-2">Before Image</h3>
               <div className="space-y-2">
                 <div className="relative">
-                  {appointment.beforeImage ? (
+                  {appointment?.beforeImage ? (
                     <>
                       <img 
                         src={appointment.beforeImage}
                         alt="Before grooming"
                         className="max-w-[200px] rounded-lg border border-gray-200 hover:opacity-80 transition-opacity"
+                        onError={(e) => {
+                          console.error('Error loading image:', appointment.beforeImage);
+                          (e.target as HTMLImageElement).src = `https://api.dicebear.com/7.x/shapes/svg?seed=${appointment.id}`;
+                        }}
                       />
                       <a 
                         href={appointment.beforeImage}
