@@ -310,7 +310,7 @@ const AppointmentDetails = ({
                   {appointment?.beforeImage ? (
                     <div className="space-y-2">
                       <img 
-                        src={appointment?.beforeImage || form.watch('beforeImage')}
+                        src={appointment.beforeImage}
                         alt="Before grooming"
                         className="max-w-[200px] rounded-lg border border-gray-200 hover:opacity-80 transition-opacity"
                         loading="lazy"
