@@ -385,6 +385,25 @@ export function useAppointments() {
       date?: string;
       beforeImage?: string;
     }) => {
+      const appointmentRef = doc(db, 'appointments', id);
+      const appointmentSnap = await getDoc(appointmentRef);
+      
+      if (!appointmentSnap.exists()) {
+        throw new Error('Appointment not found');
+      }
+
+      const currentData = appointmentSnap.data();
+      const currentStatus = currentData.status;
+
+      // Validate status transitions
+      if (currentStatus === 'in_progress' && (status === 'pending' || status === 'confirmed')) {
+        throw new Error('Cannot change status back to pending or confirmed once in progress');
+      }
+
+      // Set inProgressAt timestamp when moving to in_progress
+      const inProgressAt = status === 'in_progress' && currentStatus !== 'in_progress' 
+        ? Timestamp.fromDate(new Date()) 
+        : currentData.inProgressAt;
       try {
         console.log('Updating appointment:', { id, status, cancellationReason, notes });
         const appointmentRef = doc(db, 'appointments', id);
@@ -405,6 +424,7 @@ export function useAppointments() {
           services: string[];
           date: Timestamp;
           beforeImage?: string | null;
+          inProgressAt: Timestamp | null;
         } = {
           ...currentData,
           status,

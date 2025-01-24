@@ -238,4 +238,5 @@ export type AppointmentWithRelations = {
   totalDuration: number;
   createdAt: string;
   updatedAt: string | null;
+  inProgressAt?: string | null;
 };
