@@ -24,7 +24,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
-import { uploadFile } from "@/lib/storage";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { z } from "zod";
@@ -41,10 +40,9 @@ interface AppointmentDetailsProps {
 }
 
 const updateAppointmentSchema = z.object({
-  status: z.enum(['pending', 'confirmed', 'completed', 'cancelled', 'in_progress']), // Added 'in_progress'
+  status: z.enum(['pending', 'confirmed', 'completed', 'cancelled', 'in_progress']),
   cancellationReason: z.enum(['no_show', 'rescheduled', 'other']).optional(),
   notes: z.string().optional(),
-  beforeImage: z.string().optional(), // Added beforeImage
 });
 
 type UpdateAppointmentForm = z.infer<typeof updateAppointmentSchema>;
@@ -66,7 +64,6 @@ const AppointmentDetails = ({
       status: appointment.status,
       cancellationReason: appointment.cancellationReason || undefined,
       notes: appointment.notes || undefined,
-      beforeImage: appointment.beforeImage || undefined, //Added default value for beforeImage
     },
   });
 
@@ -76,59 +73,15 @@ const AppointmentDetails = ({
         status: appointment.status,
         cancellationReason: appointment.cancellationReason || undefined,
         notes: appointment.notes || undefined,
-        beforeImage: appointment.beforeImage || undefined, //Added reset for beforeImage
       });
     }
   }, [open, appointment.id]);
 
-  const handleImageUpload = async (file: File) => {
-    const path = `appointments/${appointment.id}/before-image-${Date.now()}`;
-    return await uploadFile(file, path);
-  };
 
   const onSubmit = async (data: UpdateAppointmentForm) => {
     try {
       setIsUpdating(true);
 
-      // Handle beforeImage based on status
-      if (data.status === 'in_progress') {
-        // Check if we already have a beforeImage
-        if (!appointment.beforeImage) {
-          const fileInput = document.createElement('input');
-          fileInput.type = 'file';
-          fileInput.accept = 'image/*';
-
-          const file = await new Promise<File | null>((resolve) => {
-            fileInput.onchange = (e) => {
-              const files = (e.target as HTMLInputElement).files;
-              resolve(files ? files[0] : null);
-            };
-            fileInput.click();
-          });
-
-          if (!file) {
-            toast({
-              variant: "destructive",
-              title: "Error",
-              description: "Please upload a before image to start grooming",
-            });
-            setIsUpdating(false);
-            return;
-          }
-
-          const imageUrl = await handleImageUpload(file);
-          data.beforeImage = imageUrl;
-          form.setValue('beforeImage', imageUrl);
-        } else {
-          data.beforeImage = appointment.beforeImage;
-        }
-      } else if (appointment.beforeImage) {
-        // Keep existing beforeImage if it exists
-        data.beforeImage = appointment.beforeImage;
-      } else {
-        // Don't include beforeImage for other statuses if it doesn't exist
-        delete data.beforeImage;
-      }
       const previousData = queryClient.getQueryData<AppointmentWithRelations[]>(["appointments"]);
 
       if (previousData) {
@@ -136,7 +89,7 @@ const AppointmentDetails = ({
           ["appointments"],
           previousData.map((apt) =>
             apt.id === appointment.id
-              ? { ...apt, status: data.status, notes: data.notes || null, beforeImage: data.beforeImage || null }
+              ? { ...apt, status: data.status, notes: data.notes || null }
               : apt
           )
         );
@@ -147,7 +100,6 @@ const AppointmentDetails = ({
         status: data.status,
         cancellationReason: data.status === 'cancelled' ? data.cancellationReason || undefined : undefined,
         notes: data.notes,
-        beforeImage: data.beforeImage // Added beforeImage to updateAppointment call
       });
 
       toast({
@@ -302,70 +254,6 @@ const AppointmentDetails = ({
                 </FormItem>
               )}
             />
-
-            <div className="mt-4 border-t pt-4">
-              <h3 className="text-sm font-medium text-gray-500 mb-2">Before Image</h3>
-              <div className="space-y-2">
-                <div className="relative">
-                  {appointment?.beforeImage ? (
-                    <div className="space-y-2">
-                      <img 
-                        src={appointment.beforeImage}
-                        alt="Before grooming"
-                        className="max-w-[200px] rounded-lg border border-gray-200 hover:opacity-80 transition-opacity"
-                        loading="lazy"
-                        crossOrigin="anonymous"
-                        onError={async (e) => {
-                          console.error('Image load error details:', {
-                            url: appointment.beforeImage,
-                            error: e,
-                            timestamp: new Date().toISOString(),
-                            appointmentId: appointment.id
-                          });
-
-                          try {
-                            const imageUrl = new URL(appointment.beforeImage!);
-                            imageUrl.searchParams.append('t', Date.now().toString());
-                            (e.target as HTMLImageElement).src = imageUrl.toString();
-                          } catch (error) {
-                            console.error("URL parsing error:", error);
-                            (e.target as HTMLImageElement).src = `https://api.dicebear.com/7.x/shapes/svg?seed=${appointment.id}`;
-                          }
-                        }}
-                        onLoad={(e) => {
-                          console.log('Image loaded successfully:', appointment.beforeImage);
-                          // Force re-render on successful load
-                          (e.target as HTMLImageElement).style.opacity = '1';
-                        }}
-                        referrerPolicy="no-referrer"
-                      />
-                      <div className="space-y-1">
-                        <a 
-                          href={appointment.beforeImage}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block text-xs text-blue-500 hover:underline"
-                        >
-                          View Full Image
-                        </a>
-                        <p className="text-xs text-gray-500 break-all">
-                          URL: {appointment.beforeImage}
-                        </p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      <div className="w-[200px] h-[200px] rounded-lg border border-gray-200 flex items-center justify-center bg-gray-50">
-                        <span className="text-gray-400">No image uploaded</span>
-                      </div>
-                      <p className="text-xs text-gray-500 break-all">
-                        URL: {form.watch('beforeImage') || 'No URL available'}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
 
             <div className="flex justify-end space-x-2 mt-4">
               <Button
