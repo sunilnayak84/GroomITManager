@@ -401,9 +401,9 @@ export function useAppointments() {
       }
 
       // Set inProgressAt timestamp when moving to in_progress
-      const inProgressAt = status === 'in_progress' && currentStatus !== 'in_progress' 
-        ? Timestamp.fromDate(new Date()) 
-        : currentData.inProgressAt;
+      const inProgressAt = status === 'in_progress' && currentStatus !== 'in_progress'
+        ? Timestamp.fromDate(new Date())
+        : (currentData.inProgressAt || null);
       try {
         console.log('Updating appointment:', { id, status, cancellationReason, notes });
         const appointmentRef = doc(db, 'appointments', id);
