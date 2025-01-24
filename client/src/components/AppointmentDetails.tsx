@@ -372,8 +372,13 @@ const AppointmentDetails = ({
                       </div>
                     </div>
                   ) : (
-                    <div className="w-[200px] h-[200px] rounded-lg border border-gray-200 flex items-center justify-center bg-gray-50">
-                      <span className="text-gray-400">No image uploaded</span>
+                    <div className="space-y-2">
+                      <div className="w-[200px] h-[200px] rounded-lg border border-gray-200 flex items-center justify-center bg-gray-50">
+                        <span className="text-gray-400">No image uploaded</span>
+                      </div>
+                      <p className="text-xs text-gray-500 break-all">
+                        URL: {form.watch('beforeImage') || 'No URL available'}
+                      </p>
                     </div>
                   )}
                 </div>
