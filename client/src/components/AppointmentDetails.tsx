@@ -273,6 +273,7 @@ const AppointmentDetails = ({
                             title: "Success",
                             description: "Before image uploaded successfully",
                           });
+                          queryClient.invalidateQueries({ queryKey: ["appointments"] });
                         } catch (error) {
                           toast({
                             variant: "destructive",
@@ -286,6 +287,47 @@ const AppointmentDetails = ({
                     }}
                     className="text-sm"
                   />
+                </div>
+              </div>
+            )}
+
+            {appointment.beforeImage && (
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium text-gray-500">Current Before Image</h3>
+                <div className="flex items-center gap-4">
+                  <img
+                    src={appointment.beforeImage}
+                    alt="Before grooming"
+                    className="h-32 w-32 object-cover rounded-md border"
+                  />
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={async () => {
+                      try {
+                        setIsUpdating(true);
+                        await updateAppointment({
+                          id: appointment.id,
+                          status: form.getValues("status"),
+                          beforeImage: null,
+                        });
+                        toast({
+                          title: "Success",
+                          description: "Before image removed successfully",
+                        });
+                      } catch (error) {
+                        toast({
+                          variant: "destructive",
+                          title: "Error",
+                          description: "Failed to remove before image",
+                        });
+                      } finally {
+                        setIsUpdating(false);
+                      }
+                    }}
+                  >
+                    Remove Image
+                  </Button>
                 </div>
               </div>
             )}
