@@ -1,19 +1,14 @@
-
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Function to check if user is authenticated
     function isAuthenticated() {
       return request.auth != null;
     }
-
-    // Function to check if user is an admin
     function isAdmin() {
       return isAuthenticated() && 
         ('role' in request.auth.token) && 
         request.auth.token.role == 'admin';
     }
-
     match /{document=**} {
       allow read, write: if isAuthenticated();
     }
@@ -22,9 +17,9 @@ service cloud.firestore {
 
 service firebase.storage {
   match /b/{bucket}/o {
-    match /appointments/{appointmentId}/{filename} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null;
+    match /{allPaths=**} {
+      allow read: if true;  // Allow public read access to images
+      allow write: if request.auth != null;  // Require auth for uploads
     }
   }
 }

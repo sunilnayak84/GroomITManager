@@ -313,6 +313,8 @@ const AppointmentDetails = ({
                         src={appointment.beforeImage}
                         alt="Before grooming"
                         className="max-w-[200px] rounded-lg border border-gray-200 hover:opacity-80 transition-opacity"
+                        loading="lazy"
+                        crossOrigin="anonymous"
                         onLoad={() => {
                           console.log('Image loaded successfully:', appointment.beforeImage);
                         }}
