@@ -226,7 +226,7 @@ export type AppointmentWithRelations = {
   branchId: string;
   status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
   date: string;
-  beforeImage?: string | null;
+  beforeImage: string | null;
   notes: string | null;
   pet: { name: string; breed: string; image: string | null };
   customer: { firstName: string; lastName: string };

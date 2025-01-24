@@ -249,6 +249,89 @@ const AppointmentDetails = ({
               />
             )}
 
+            {form.watch("status") === "in_progress" && (
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium text-gray-500">Before Image</h3>
+                <div className="flex items-center gap-4">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        try {
+                          setIsUpdating(true);
+                          const path = `appointments/${appointment.id}/before-image`;
+                          const { uploadFile } = await import("@/lib/storage");
+                          const url = await uploadFile(file, path);
+                          await updateAppointment({
+                            id: appointment.id,
+                            status: form.getValues("status"),
+                            beforeImage: url,
+                          });
+                          toast({
+                            title: "Success",
+                            description: "Before image uploaded successfully",
+                          });
+                        } catch (error) {
+                          toast({
+                            variant: "destructive",
+                            title: "Error",
+                            description: "Failed to upload before image",
+                          });
+                        } finally {
+                          setIsUpdating(false);
+                        }
+                      }
+                    }}
+                    className="text-sm"
+                  />
+                </div>
+              </div>
+            )}
+
+            {appointment.beforeImage && (
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium text-gray-500">Current Before Image</h3>
+                <div className="flex items-center gap-4">
+                  <img
+                    src={appointment.beforeImage}
+                    alt="Before grooming"
+                    className="h-20 w-20 object-cover cursor-pointer rounded"
+                    onClick={() => window.open(appointment.beforeImage, '_blank')}
+                  />
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={async () => {
+                      try {
+                        setIsUpdating(true);
+                        await updateAppointment({
+                          id: appointment.id,
+                          status: form.getValues("status"),
+                          beforeImage: null,
+                        });
+                        toast({
+                          title: "Success",
+                          description: "Before image removed successfully",
+                        });
+                      } catch (error) {
+                        toast({
+                          variant: "destructive",
+                          title: "Error",
+                          description: "Failed to remove before image",
+                        });
+                      } finally {
+                        setIsUpdating(false);
+                      }
+                    }}
+                  >
+                    Remove Image
+                  </Button>
+                </div>
+              </div>
+            )}
+
             <FormField
               control={form.control}
               name="notes"
