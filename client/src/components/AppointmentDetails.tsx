@@ -316,12 +316,13 @@ const AppointmentDetails = ({
                         loading="lazy"
                         crossOrigin="anonymous"
                         onError={async (e) => {
-                          console.error("Image load error:", {
-                            imageUrl: appointment.beforeImage,
+                          console.error('Image load error details:', {
+                            url: appointment.beforeImage,
+                            error: e,
                             timestamp: new Date().toISOString(),
                             appointmentId: appointment.id
                           });
-                          
+
                           try {
                             const imageUrl = new URL(appointment.beforeImage!);
                             imageUrl.searchParams.append('t', Date.now().toString());
@@ -335,41 +336,6 @@ const AppointmentDetails = ({
                           console.log('Image loaded successfully:', appointment.beforeImage);
                           // Force re-render on successful load
                           (e.target as HTMLImageElement).style.opacity = '1';
-                        }}
-                        onError={async (e) => {
-                          console.error('Image load error details:', {
-                            url: appointment.beforeImage,
-                            error: e,
-                            timestamp: new Date().toISOString(),
-                            appointmentId: appointment.id
-                          });
-                          
-                          try {
-                            const imageUrl = new URL(appointment.beforeImage!);
-                            imageUrl.searchParams.append('t', Date.now().toString());
-                            
-                            const response = await fetch(imageUrl.toString(), {
-                              method: 'GET',
-                              cache: 'no-store',
-                              mode: 'cors',
-                              credentials: 'include',
-                              headers: {
-                                'Cache-Control': 'no-store',
-                                'Pragma': 'no-cache'
-                              }
-                            });
-                            
-                            if (!response.ok) {
-                              throw new Error(`HTTP error! status: ${response.status}`);
-                            }
-                            
-                            const blob = await response.blob();
-                            const objectUrl = URL.createObjectURL(blob);
-                            (e.target as HTMLImageElement).src = objectUrl;
-                          } catch (fetchError) {
-                            console.error('Image fetch error:', fetchError);
-                            (e.target as HTMLImageElement).src = `https://api.dicebear.com/7.x/shapes/svg?seed=${appointment.id}`;
-                          }
                         }}
                         referrerPolicy="no-referrer"
                       />
