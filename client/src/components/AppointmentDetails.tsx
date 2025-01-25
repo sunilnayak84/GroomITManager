@@ -321,12 +321,13 @@ const AppointmentDetails = ({
                           <>
                             <img
                               key={`before-image-${appointment.id}-${Date.now()}`}
-                              src={appointment.beforeImage}
+                              src={`${appointment.beforeImage}?t=${Date.now()}`}
                               alt="Before grooming"
                               className="h-32 w-32 object-cover rounded-md border border-gray-200"
                               loading="eager"
                               onLoad={(e) => {
                                 const img = e.target as HTMLImageElement;
+                                img.style.display = 'block';
                                 console.log('Image loaded successfully:', {
                                   id: appointment.id,
                                   src: img.src,
@@ -336,19 +337,18 @@ const AppointmentDetails = ({
                               }}
                               onError={(e) => {
                                 const img = e.target as HTMLImageElement;
+                                img.style.display = 'none';
                                 console.error('Image failed to load:', {
                                   id: appointment.id,
                                   src: img.src,
                                   error: e
                                 });
-                                // Force reload on error
-                                img.src = `${appointment.beforeImage}?t=${Date.now()}`;
                               }}
                               style={{ 
                                 minHeight: '128px', 
                                 minWidth: '128px', 
                                 background: '#f3f4f6',
-                                display: 'block'
+                                display: 'none'
                               }}
                             />
                             <div className="mt-1 text-xs text-gray-500 break-all">
