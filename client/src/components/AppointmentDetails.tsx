@@ -338,67 +338,30 @@ const AppointmentDetails = ({
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-4">
                   <div className="relative">
-                    {appointment.beforeImage ? (
-                      <>
-                        <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-2">
+                      {appointment.beforeImage && (
+                        <>
                           <img
                             src={appointment.beforeImage}
                             alt="Before grooming"
                             className="h-32 w-32 object-cover rounded-md border"
                           />
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              const url = appointment.beforeImage;
-                              if (url) {
-                                const win = window.open();
-                                if (win) {
-                                  win.document.write(`<img src="${url}" alt="Before grooming" style="max-width: 100%; height: auto;"/>`);
-                                }
-                              }
-                            }}
+                          <p className="text-xs text-gray-500 break-all">
+                            Image URL: {appointment.beforeImage}
+                          </p>
+                          <a 
+                            href={appointment.beforeImage}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-500 hover:underline"
                           >
-                            View Full Image
-                          </Button>
-                        </div>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={async () => {
-                            try {
-                              setIsUpdating(true);
-                              await updateAppointment({
-                                id: appointment.id,
-                                status: form.getValues("status"),
-                                beforeImage: '',
-                              });
-                              toast({
-                                title: "Success",
-                                description: "Before image removed successfully",
-                              });
-                            } catch (error) {
-                              toast({
-                                variant: "destructive",
-                                title: "Error",
-                                description: "Failed to remove before image",
-                              });
-                            } finally {
-                              setIsUpdating(false);
-                            }
-                          }}
-                          className="mt-2"
-                        >
-                          Remove Image
-                        </Button>
-                      </>
-                    ) : (
-                      <p className="text-sm text-gray-500">No before image available</p>
-                    )}
-                    <div className="mt-2">
-                      <p className="text-xs text-gray-500 break-all">
-                        {appointment.beforeImage ? `Image URL: ${appointment.beforeImage}` : 'No URL available'}
-                      </p>
+                            Open Image in New Tab
+                          </a>
+                        </>
+                      )}
+                      {!appointment.beforeImage && (
+                        <p className="text-sm text-gray-500">No before image available</p>
+                      )}
                     </div>
                   </div>
                 </div>
