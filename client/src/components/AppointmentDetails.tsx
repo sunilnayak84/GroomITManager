@@ -393,6 +393,7 @@ const AppointmentDetails = ({
                   </Button>
                 </div>
               </div>
+            </div>
             )}
 
             <FormField
