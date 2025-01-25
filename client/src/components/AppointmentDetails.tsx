@@ -254,61 +254,64 @@ const AppointmentDetails = ({
                 <h3 className="text-sm font-medium text-gray-500">Before Image</h3>
                 <div className="flex items-center gap-4">
                   <input
-                    type="file"
-                    accept="image/*"
-                    id="before-image-upload"
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        try {
-                          setIsUpdating(true);
-                          const path = `appointments/${appointment.id}/before-image.${file.name.split('.').pop()}`;
-                          const { uploadFile } = await import("@/lib/storage");
-                          const url = await uploadFile(file, path);
+                      type="file"
+                      accept="image/*"
+                      id="before-image-upload"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          try {
+                            console.log('Starting image upload for appointment:', appointment.id);
+                            setIsUpdating(true);
+                            const path = `appointments/${appointment.id}/before-image.${file.name.split('.').pop()}`;
+                            console.log('Upload path:', path);
+                            const { uploadFile } = await import("@/lib/storage");
+                            const url = await uploadFile(file, path);
+                            console.log('Image uploaded successfully, URL:', url);
 
-                          // Update local state immediately for better UX
-                          const currentData = queryClient.getQueryData<AppointmentWithRelations[]>(["appointments"]);
-                          if (currentData) {
-                            queryClient.setQueryData<AppointmentWithRelations[]>(
-                              ["appointments"],
-                              currentData.map((apt) =>
-                                apt.id === appointment.id
-                                  ? { ...apt, beforeImage: url }
-                                  : apt
-                              )
-                            );
+                            // Update local state immediately for better UX
+                            const currentData = queryClient.getQueryData<AppointmentWithRelations[]>(["appointments"]);
+                            if (currentData) {
+                              queryClient.setQueryData<AppointmentWithRelations[]>(
+                                ["appointments"],
+                                currentData.map((apt) =>
+                                  apt.id === appointment.id
+                                    ? { ...apt, beforeImage: url }
+                                    : apt
+                                )
+                              );
+                            }
+
+                            await updateAppointment({
+                              id: appointment.id,
+                              status: form.getValues("status"),
+                              beforeImage: url,
+                            });
+
+                            toast({
+                              title: "Success",
+                              description: "Before image uploaded successfully",
+                            });
+                          } catch (error) {
+                            console.error('Image upload error:', error);
+                            toast({
+                              variant: "destructive",
+                              title: "Error",
+                              description: error instanceof Error 
+                                ? `Failed to upload image: ${error.message}`
+                                : "Failed to upload image",
+                            });
+                            queryClient.invalidateQueries({ queryKey: ["appointments"] });
+                          } finally {
+                            setIsUpdating(false);
+                            // Reset file input
+                            const input = document.getElementById('before-image-upload') as HTMLInputElement;
+                            if (input) input.value = '';
                           }
-
-                          await updateAppointment({
-                            id: appointment.id,
-                            status: form.getValues("status"),
-                            beforeImage: url,
-                          });
-
-                          toast({
-                            title: "Success",
-                            description: "Before image uploaded successfully",
-                          });
-                        } catch (error) {
-                          console.error('Image upload error:', error);
-                          toast({
-                            variant: "destructive",
-                            title: "Error",
-                            description: error instanceof Error 
-                              ? `Failed to upload image: ${error.message}`
-                              : "Failed to upload image",
-                          });
-                          queryClient.invalidateQueries({ queryKey: ["appointments"] });
-                        } finally {
-                          setIsUpdating(false);
-                          // Reset file input
-                          const input = document.getElementById('before-image-upload') as HTMLInputElement;
-                          if (input) input.value = '';
                         }
-                      }
-                    }}
-                    className="text-sm"
-                  />
+                      }}
+                      className="text-sm"
+                    />
                 </div>
                 {appointment.beforeImage && (
                   <div className="mt-2">

@@ -3,10 +3,10 @@ import { storage } from "./firebase";
 
 export async function uploadFile(file: File, path: string): Promise<string> {
   try {
-    console.log('Uploading file to path:', path);
+    console.log('Storage: Starting upload', { path, fileSize: file.size, fileType: file.type });
     const storageRef = ref(storage, path);
     const snapshot = await uploadBytes(storageRef, file);
-    console.log('File uploaded successfully');
+    console.log('Storage: Upload successful', { path, bytesTransferred: snapshot.bytesTransferred });
 
     const downloadURL = await getDownloadURL(snapshot.ref);
     console.log('Download URL obtained:', downloadURL);
