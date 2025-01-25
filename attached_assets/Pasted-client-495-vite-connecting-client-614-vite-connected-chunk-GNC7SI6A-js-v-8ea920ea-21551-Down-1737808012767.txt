@@ -1,0 +1,63 @@
+client:495 [vite] connecting...
+client:614 [vite] connected.
+chunk-GNC7SI6A.js?v=8ea920ea:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:17 Checking Firebase environment variables...
+firebase.ts:37 FIREBASE_INIT: Initializing Firebase with config: {apiKey: '***', authDomain: 'replit-5ac6a.firebaseapp.com', projectId: 'replit-5ac6a', storageBucket: 'replit-5ac6a.firebasestorage.app', messagingSenderId: '194114432530', …}
+firebase.ts:42 FIREBASE_INIT: Firebase initialized successfully
+content.js:1 CISPL SignerDigital Loaded
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-pets.ts:58 FETCH_PETS: Starting to fetch pets
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+use-staff.ts:14 FETCH_STAFF: Starting to fetch staff members
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 1 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: 59Xvt7Bw9keCMwQ1AKa0 {petId: 'mbg6juwQBokDcvNYk32r', totalDuration: 30, status: 'pending', updatedAt: null, totalPrice: 999, …}
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 1 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment 59Xvt7Bw9keCMwQ1AKa0
+use-staff.ts:26 FETCH_STAFF: Successfully fetched staff members: (2) [{…}, {…}]
+use-pets.ts:108 FETCH_PETS: Completed fetching pets {totalPets: 1, pets: Array(1)}
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
+AppointmentDetails.tsx:265 Starting image upload for appointment: 59Xvt7Bw9keCMwQ1AKa0
+AppointmentDetails.tsx:268 Upload path: appointments/59Xvt7Bw9keCMwQ1AKa0/before-image.jpg
+storage.ts:6 Storage: Starting upload {path: 'appointments/59Xvt7Bw9keCMwQ1AKa0/before-image.jpg', fileSize: 13005, fileType: 'image/jpeg'}
+storage.ts:14 Storage: Upload successful {path: 'appointments/59Xvt7Bw9keCMwQ1AKa0/before-image.jpg', metadata: {…}}
+storage.ts:17 Download URL obtained: https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2F59Xvt7Bw9keCMwQ1AKa0%2Fbefore-image.jpg?alt=media&token=687ff6ce-8009-4ccd-a537-ffb5142aac97
+AppointmentDetails.tsx:271 Image uploaded successfully, URL: https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2F59Xvt7Bw9keCMwQ1AKa0%2Fbefore-image.jpg?alt=media&token=687ff6ce-8009-4ccd-a537-ffb5142aac97
+use-appointments.ts:408 Updating appointment: {id: '59Xvt7Bw9keCMwQ1AKa0', status: 'in_progress', cancellationReason: undefined, notes: undefined}
+use-appointments.ts:446 Appointment updated successfully
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 1 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: 59Xvt7Bw9keCMwQ1AKa0 {petId: 'mbg6juwQBokDcvNYk32r', totalDuration: 30, status: 'in_progress', updatedAt: _Timestamp, totalPrice: 999, …}
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 1 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment 59Xvt7Bw9keCMwQ1AKa0
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
+use-appointments.ts:408 Updating appointment: {id: '59Xvt7Bw9keCMwQ1AKa0', status: 'in_progress', cancellationReason: undefined, notes: undefined}
+use-appointments.ts:446 Appointment updated successfully
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 1 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: 59Xvt7Bw9keCMwQ1AKa0 {deletedAt: null, services: Array(1), inProgressAt: _Timestamp, updatedAt: _Timestamp, groomerId: 'p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82', …}
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 1 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment 59Xvt7Bw9keCMwQ1AKa0
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '1'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '1'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
