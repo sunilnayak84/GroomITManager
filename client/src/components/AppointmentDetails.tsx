@@ -325,10 +325,20 @@ const AppointmentDetails = ({
                               alt="Before grooming"
                               className="h-32 w-32 object-cover rounded-md border border-gray-200"
                               loading="eager"
+                              crossOrigin="use-credentials"
                               onError={(e) => {
-                                console.error('Image failed to load:', appointment.beforeImage);
-                                const img = e.target as HTMLImageElement;
-                                img.style.display = 'none';
+                                console.error('Image failed to load:', {
+                                  url: appointment.beforeImage,
+                                  error: e
+                                });
+                                fetch(appointment.beforeImage, {
+                                  method: 'HEAD',
+                                  credentials: 'include'
+                                }).then(response => {
+                                  console.log('Image HEAD response:', response);
+                                }).catch(error => {
+                                  console.error('Image HEAD request failed:', error);
+                                });
                               }}
                             />
                             <div className="mt-1 text-xs text-gray-500 break-all">

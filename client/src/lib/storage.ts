@@ -5,7 +5,12 @@ export async function uploadFile(file: File, path: string): Promise<string> {
   try {
     console.log('Storage: Starting upload', { path, fileSize: file.size, fileType: file.type });
     const storageRef = ref(storage, path);
-    const snapshot = await uploadBytes(storageRef, file);
+    const metadata = {
+      customMetadata: {
+        'Access-Control-Allow-Origin': '*'
+      }
+    };
+    const snapshot = await uploadBytes(storageRef, file, metadata);
     console.log('Storage: Upload successful', { path, metadata: snapshot.metadata });
 
     const downloadURL = await getDownloadURL(snapshot.ref);
