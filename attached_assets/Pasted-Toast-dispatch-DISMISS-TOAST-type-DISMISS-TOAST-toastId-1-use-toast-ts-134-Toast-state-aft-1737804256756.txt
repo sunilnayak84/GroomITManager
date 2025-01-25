@@ -1,0 +1,52 @@
+Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '1'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '1'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST {type: 'REMOVE_TOAST', toastId: '1'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(0)}
+AppointmentDetails.tsx:264 Starting image upload for appointment: NnxhJIhogrgndCZVvkS1
+AppointmentDetails.tsx:267 Upload path: appointments/NnxhJIhogrgndCZVvkS1/before-image.jpg
+storage.ts:6 Storage: Starting upload {path: 'appointments/NnxhJIhogrgndCZVvkS1/before-image.jpg', fileSize: 13005, fileType: 'image/jpeg'}fileSize: 13005fileType: "image/jpeg"path: "appointments/NnxhJIhogrgndCZVvkS1/before-image.jpg"[[Prototype]]: Object
+storage.ts:9 Storage: Upload successful {path: 'appointments/NnxhJIhogrgndCZVvkS1/before-image.jpg', metadata: {…}}metadata: {type: 'file', bucket: 'replit-5ac6a.firebasestorage.app', generation: '1737804186584139', metageneration: '1', fullPath: 'appointments/NnxhJIhogrgndCZVvkS1/before-image.jpg', …}path: "appointments/NnxhJIhogrgndCZVvkS1/before-image.jpg"[[Prototype]]: Object
+storage.ts:12 Download URL obtained: https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2FNnxhJIhogrgndCZVvkS1%2Fbefore-image.jpg?alt=media&token=e511a1ce-3924-4ed2-a839-3e2a71f05c9e
+AppointmentDetails.tsx:270 Image uploaded successfully, URL: https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2FNnxhJIhogrgndCZVvkS1%2Fbefore-image.jpg?alt=media&token=e511a1ce-3924-4ed2-a839-3e2a71f05c9e
+use-appointments.ts:408 Updating appointment: {id: 'NnxhJIhogrgndCZVvkS1', status: 'in_progress', cancellationReason: undefined, notes: undefined}cancellationReason: undefinedid: "NnxhJIhogrgndCZVvkS1"notes: undefinedstatus: "in_progress"[[Prototype]]: Object
+use-appointments.ts:446 Appointment updated successfully
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 1 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: NnxhJIhogrgndCZVvkS1 {status: 'in_progress', branchId: '1', inProgressAt: _Timestamp, deletedAt: null, createdAt: _Timestamp, …}beforeImage: "https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2FNnxhJIhogrgndCZVvkS1%2Fbefore-image.jpg?alt=media&token=e511a1ce-3924-4ed2-a839-3e2a71f05c9e"branchId: "1"cancellationReason: nullcreatedAt: _Timestamp {seconds: 1737803781, nanoseconds: 938000000}date: _Timestamp {seconds: 1737955800, nanoseconds: 0}deletedAt: nullgroomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"inProgressAt: _Timestamp {seconds: 1737803799, nanoseconds: 656000000}notes: nullpetId: "mbg6juwQBokDcvNYk32r"productsUsed: nullservices: ['Jm2fkUCVsvF3yWeqwJ8a']status: "in_progress"totalDuration: 30totalPrice: 999updatedAt: _Timestamp {seconds: 1737804187, nanoseconds: 931000000}[[Prototype]]: Object
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 1 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment NnxhJIhogrgndCZVvkS1
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}category: "Package"consumables: []created_at: "2025-01-22T07:46:33.460Z"description: "Package including 1 services and 1 add-ons."discount_percentage: 0duration: 30isActive: truename: "Pack One"price: 999selectedAddons: []selectedServices: [{…}]updated_at: "2025-01-22T11:37:02.280Z"[[Prototype]]: Object
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
+use-appointments.ts:408 Updating appointment: {id: 'NnxhJIhogrgndCZVvkS1', status: 'in_progress', cancellationReason: undefined, notes: undefined}cancellationReason: undefinedid: "NnxhJIhogrgndCZVvkS1"notes: undefinedstatus: "in_progress"[[Prototype]]: Object
+use-appointments.ts:446 Appointment updated successfully
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}toast: {title: 'Success', description: 'Appointment status updated successfully', id: '3', open: true, onOpenChange: ƒ}type: "ADD_TOAST"[[Prototype]]: Object
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}toasts: [{…}][[Prototype]]: Object
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 1 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: NnxhJIhogrgndCZVvkS1 {beforeImage: 'https://firebasestorage.googleapis.com/v0/b/replit…=media&token=e511a1ce-3924-4ed2-a839-3e2a71f05c9e', cancellationReason: null, inProgressAt: _Timestamp, date: _Timestamp, status: 'in_progress', …}beforeImage: "https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2FNnxhJIhogrgndCZVvkS1%2Fbefore-image.jpg?alt=media&token=e511a1ce-3924-4ed2-a839-3e2a71f05c9e"branchId: "1"cancellationReason: nullcreatedAt: _Timestamp {seconds: 1737803781, nanoseconds: 938000000}date: _Timestamp {seconds: 1737955800, nanoseconds: 0}deletedAt: nullgroomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"inProgressAt: _Timestamp {seconds: 1737803799, nanoseconds: 656000000}notes: nullpetId: "mbg6juwQBokDcvNYk32r"productsUsed: nullservices: ['Jm2fkUCVsvF3yWeqwJ8a']status: "in_progress"totalDuration: 30totalPrice: 999updatedAt: _Timestamp {seconds: 1737804189, nanoseconds: 613000000}[[Prototype]]: Object
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 1 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment NnxhJIhogrgndCZVvkS1
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}category: "Package"consumables: []created_at: "2025-01-22T07:46:33.460Z"description: "Package including 1 services and 1 add-ons."discount_percentage: 0duration: 30isActive: truename: "Pack One"price: 999selectedAddons: []selectedServices: [{…}]updated_at: "2025-01-22T11:37:02.280Z"[[Prototype]]: Object
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]0: category: "Package"consumables: []description: "Package including 1 services and 1 add-ons."discount_percentage: 0duration: 30name: "Pack One"price: 999[[Prototype]]: Objectlength: 1[[Prototype]]: Array(0)
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '2'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '2'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST {type: 'REMOVE_TOAST', toastId: '2'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '3'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST {type: 'REMOVE_TOAST', toastId: '3'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(0)}
