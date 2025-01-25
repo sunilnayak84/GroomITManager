@@ -316,7 +316,6 @@ const AppointmentDetails = ({
                 {appointment.beforeImage && (
                   <div className="mt-2">
                     <div className="relative">
-                      {console.log('Attempting to render image with URL:', appointment.beforeImage)}
                       <img
                         key={`before-image-${appointment.id}-${Date.now()}`}
                         src={appointment.beforeImage}
