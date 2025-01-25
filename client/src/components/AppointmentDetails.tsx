@@ -340,22 +340,31 @@ const AppointmentDetails = ({
                   <div className="relative">
                     {appointment.beforeImage ? (
                       <>
-                        <img
-                          key={`before-image-${appointment.id}`}
-                          src={appointment.beforeImage}
-                          alt="Before grooming"
-                          className="h-32 w-32 object-cover rounded-md border cursor-pointer"
-                          onClick={() => {
-                            if (appointment.beforeImage) {
-                              window.open(appointment.beforeImage, '_blank');
-                            }
-                          }}
-                          crossOrigin="anonymous"
-                          loading="eager"
-                          onError={(e) => {
-                            console.error('Image load error:', e);
-                          }}
-                        />
+                        <div className="flex flex-col gap-2">
+                          <img
+                            key={`before-image-${appointment.id}`}
+                            src={appointment.beforeImage}
+                            alt="Before grooming"
+                            className="h-32 w-32 object-cover rounded-md border"
+                            crossOrigin="anonymous"
+                            referrerPolicy="no-referrer"
+                          />
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              const url = appointment.beforeImage;
+                              if (url) {
+                                const win = window.open();
+                                if (win) {
+                                  win.document.write(`<img src="${url}" alt="Before grooming" style="max-width: 100%; height: auto;"/>`);
+                                }
+                              }
+                            }}
+                          >
+                            View Full Image
+                          </Button>
+                        </div>
                         <Button
                           variant="destructive"
                           size="sm"
