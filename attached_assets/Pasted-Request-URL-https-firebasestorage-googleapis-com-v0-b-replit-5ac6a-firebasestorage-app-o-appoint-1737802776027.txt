@@ -1,0 +1,79 @@
+Request URL:
+https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2FWHbXCPyxb2rJ0rN6Snwh%2Fbefore-image.png
+Request Method:
+GET
+Status Code:
+200 OK
+Remote Address:
+[2404:6800:4009:820::200a]:443
+Referrer Policy:
+strict-origin-when-cross-origin
+access-control-allow-origin:
+*
+access-control-expose-headers:
+Cache-Control, Content-Length, Content-Range, Date, Expires, Server, Transfer-Encoding, X-Firebase-Storage-XSRF, X-GUploader-UploadID, X-Google-Trace
+alt-svc:
+h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+cache-control:
+private, max-age=0
+content-length:
+597
+content-type:
+application/json; charset=UTF-8
+date:
+Sat, 25 Jan 2025 10:57:42 GMT
+expires:
+Sat, 25 Jan 2025 10:57:42 GMT
+server:
+UploadServer
+x-content-type-options:
+nosniff
+x-guploader-uploadid:
+AFIdbgR9umoXRvo1lCKGJCQrEFFklWsct0SeFeBTV0fZRUR4Oc2WCEzxhBe8FSCrPV85xb_K
+:authority:
+firebasestorage.googleapis.com
+:method:
+GET
+:path:
+/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2FWHbXCPyxb2rJ0rN6Snwh%2Fbefore-image.png
+:scheme:
+https
+accept:
+*/*
+accept-encoding:
+gzip, deflate, br, zstd
+accept-language:
+en-US,en;q=0.9
+authorization:
+Firebase eyJhbGciOiJSUzI1NiIsImtpZCI6IjgxYjUyMjFlN2E1ZGUwZTVhZjQ5N2UzNzVhNzRiMDZkODJiYTc4OGIiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiQWRtaW4gVXNlciIsInJvbGUiOiJhZG1pbiIsInBlcm1pc3Npb25zIjpbImFsbCJdLCJpc0FkbWluIjp0cnVlLCJ1cGRhdGVkQXQiOjE3MzY5Mzg5NTQwOTMsImlzcyI6Imh0dHBzOi8vc2VjdXJldG9rZW4uZ29vZ2xlLmNvbS9yZXBsaXQtNWFjNmEiLCJhdWQiOiJyZXBsaXQtNWFjNmEiLCJhdXRoX3RpbWUiOjE3Mzc3MDk2ODYsInVzZXJfaWQiOiJNalFudVpudGh6VUloMmh1b0RwcUNTTU12eGUyIiwic3ViIjoiTWpRbnVabnRoelVJaDJodW9EcHFDU01NdnhlMiIsImlhdCI6MTczNzgwMTcwNCwiZXhwIjoxNzM3ODA1MzA0LCJlbWFpbCI6ImFkbWluQGdyb29tZXJ5LmluIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZW1haWwiOlsiYWRtaW5AZ3Jvb21lcnkuaW4iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJwYXNzd29yZCJ9fQ.MWAuAXmxsMcXjILvUeqDo5lk3NnFbjhTI3fEENxLb09Y5GVpWnG4YJI6fksDSZzFW1W8GSEKkahx4JXQOOt869_H7QSJCT3f6RnYpbDk43HY5HHP85K64QAAhExiyn0hgGSHoo7orVOgpkXfzNfm_oGAqnNnl6yKUrjV8jMHRcB9UadP3Z6pZd2YAF0vRkq6jHF1zFNBKBvKgyjmljWFa7dMQLe7KxFcKWbwuUqs7NoDx4EI3PIqHEzYfvBTy4BLzuo3ONa8kBqKzLm1nBxA-j4jwd0Lbq9Wuwd0IRK1G7al-c5TcAkZeXhajzjZgxWUzrrR7bXJ35Ay672J3knWiA
+origin:
+https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev
+priority:
+u=1, i
+referer:
+https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/
+sec-ch-ua:
+"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"
+sec-ch-ua-mobile:
+?0
+sec-ch-ua-platform:
+"Windows"
+sec-fetch-dest:
+empty
+sec-fetch-mode:
+cors
+sec-fetch-site:
+cross-site
+user-agent:
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36
+x-client-data:
+CJK2yQEIorbJAQipncoBCMrpygEIk6HLAQj/ossBCJz+zAEIhaDNAQj5184BCMHbzgEY9MnNAQ==
+Decoded:
+message ClientVariations {
+  // Active Google-visible variation IDs on this client. These are reported for analysis, but do not directly affect any server-side behavior.
+  repeated int32 variation_id = [3300114, 3300130, 3313321, 3323082, 3330195, 3330431, 3358492, 3362821, 3386361, 3386817];
+  // Active Google-visible variation IDs on this client that trigger server-side behavior. These are reported for analysis *and* directly affect server-side behavior.
+  repeated int32 trigger_variation_id = [3368180];
+}
+x-firebase-storage-version:
+webjs/11.0.2
