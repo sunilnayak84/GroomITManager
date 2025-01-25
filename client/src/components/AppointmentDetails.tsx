@@ -320,7 +320,13 @@ const AppointmentDetails = ({
                       alt="Before grooming"
                       className="h-32 w-32 object-cover rounded-md border border-gray-200"
                       referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        console.error('Image load error:', e);
+                      }}
                     />
+                    <div className="mt-2 text-xs text-gray-500 break-all">
+                      Image URL: {appointment.beforeImage}
+                    </div>
                   </div>
                 )}
               </div>
