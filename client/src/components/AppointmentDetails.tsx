@@ -347,7 +347,14 @@ const AppointmentDetails = ({
                             alt="Before grooming"
                             className="h-32 w-32 object-cover rounded-md border"
                             crossOrigin="anonymous"
-                            referrerPolicy="no-referrer"
+                            onError={(e) => {
+                              const img = e.target as HTMLImageElement;
+                              console.error('Image load error:', e);
+                              // Retry with a cache-busting parameter
+                              if (!img.src.includes('?cache=')) {
+                                img.src = `${appointment.beforeImage}?cache=${Date.now()}`;
+                              }
+                            }}
                           />
                           <Button
                             variant="outline"
