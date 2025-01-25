@@ -253,7 +253,8 @@ const AppointmentDetails = ({
               <h3 className="text-sm font-medium text-gray-500">Before Image</h3>
               <div className="flex items-center gap-4">
                 {form.watch("status") === "in_progress" && (
-                  <input
+                  <>
+                    <input
                       type="file"
                       accept="image/*"
                       id="before-image-upload"
@@ -312,22 +313,23 @@ const AppointmentDetails = ({
                       }}
                       className="text-sm"
                     />
-                </div>
-                {appointment.beforeImage && (
-                  <div className="mt-2">
-                    <img
-                      src={appointment.beforeImage}
-                      alt="Before grooming"
-                      className="h-32 w-32 object-cover rounded-md border border-gray-200"
-                      referrerPolicy="no-referrer"
-                      crossOrigin="anonymous"
-                      onError={(e) => {
-                        console.error('Image load error:', e);
-                        const img = e.target as HTMLImageElement;
-                        img.style.display = 'none';
-                      }}
-                    />
-                  </div>
+                    {appointment.beforeImage && (
+                      <div className="mt-2">
+                        <img
+                          src={appointment.beforeImage}
+                          alt="Before grooming"
+                          className="h-32 w-32 object-cover rounded-md border border-gray-200"
+                          referrerPolicy="no-referrer"
+                          crossOrigin="anonymous"
+                          onError={(e) => {
+                            console.error('Image load error:', e);
+                            const img = e.target as HTMLImageElement;
+                            img.style.display = 'none';
+                          }}
+                        />
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
               {appointment.beforeImage && (
