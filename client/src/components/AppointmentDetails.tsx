@@ -336,54 +336,54 @@ const AppointmentDetails = ({
             {appointment.beforeImage && (
               <div className="space-y-2">
                 <h3 className="text-sm font-medium text-gray-500">Current Before Image</h3>
-                <div className="flex items-center gap-4">
-                  <div className="relative">
-                    <img
-                      key={`before-image-${appointment.id}-${Date.now()}`}
-                      src={appointment.beforeImage || ''}
-                      alt="Before grooming"
-                      className="h-32 w-32 object-cover rounded-md border cursor-pointer"
-                      onClick={() => appointment.beforeImage && window.open(appointment.beforeImage, '_blank')}
-                      onLoad={() => {
-                        console.log('Image loaded successfully:', appointment.beforeImage);
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-4">
+                    <div className="relative">
+                      <img
+                        key={`before-image-${appointment.id}-${Date.now()}`}
+                        src={appointment.beforeImage}
+                        alt="Before grooming"
+                        className="h-32 w-32 object-cover rounded-md border cursor-pointer"
+                        onClick={() => window.open(appointment.beforeImage, '_blank')}
+                        onLoad={() => console.log('Image loaded successfully:', appointment.beforeImage)}
+                        onError={(e) => {
+                          console.error('Image failed to load:', appointment.beforeImage);
+                          const img = e.target as HTMLImageElement;
+                          img.style.display = 'none';
+                        }}
+                        crossOrigin="anonymous"
+                      />
+                    </div>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={async () => {
+                        try {
+                          setIsUpdating(true);
+                          await updateAppointment({
+                            id: appointment.id,
+                            status: form.getValues("status"),
+                            beforeImage: '',
+                          });
+                          toast({
+                            title: "Success",
+                            description: "Before image removed successfully",
+                          });
+                        } catch (error) {
+                          toast({
+                            variant: "destructive",
+                            title: "Error",
+                            description: "Failed to remove before image",
+                          });
+                        } finally {
+                          setIsUpdating(false);
+                        }
                       }}
-                      onError={(e) => {
-                        console.error('Image failed to load:', appointment.beforeImage);
-                        console.error('Error event:', e);
-                        const img = e.target as HTMLImageElement;
-                        img.style.display = 'none';
-                      }}
-                      crossOrigin="anonymous"
-                    />
+                    >
+                      Remove Image
+                    </Button>
                   </div>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={async () => {
-                      try {
-                        setIsUpdating(true);
-                        await updateAppointment({
-                          id: appointment.id,
-                          status: form.getValues("status"),
-                          beforeImage: '',
-                        });
-                        toast({
-                          title: "Success",
-                          description: "Before image removed successfully",
-                        });
-                      } catch (error) {
-                        toast({
-                          variant: "destructive",
-                          title: "Error",
-                          description: "Failed to remove before image",
-                        });
-                      } finally {
-                        setIsUpdating(false);
-                      }
-                    }}
-                  >
-                    Remove Image
-                  </Button>
+                  <p className="text-xs text-gray-500 break-all">{appointment.beforeImage}</p>
                 </div>
               </div>
             )}
