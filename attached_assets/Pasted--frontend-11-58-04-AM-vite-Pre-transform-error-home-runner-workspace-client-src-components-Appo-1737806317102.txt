@@ -1,0 +1,377 @@
+[frontend] 11:58:04 AM [vite] Pre-transform error: /home/runner/workspace/client/src/components/AppointmentDetails.tsx: Adjacent JSX elements must be wrapped in an enclosing tag. Did you want a JSX fragment <>...</>? (389:14)
+[frontend] 
+[frontend]   387 |                   </div>
+[frontend]   388 |                 </div>
+[frontend] > 389 |               </>
+[frontend]       |               ^
+[frontend]   390 |             )}
+[frontend]   391 |
+[frontend]   392 |             <FormField
+[frontend] 11:58:07 AM [vite] Internal server error: /home/runner/workspace/client/src/components/AppointmentDetails.tsx: Adjacent JSX elements must be wrapped in an enclosing tag. Did you want a JSX fragment <>...</>? (389:14)
+[frontend] 
+[frontend]   387 |                   </div>
+[frontend]   388 |                 </div>
+[frontend] > 389 |               </>
+[frontend]       |               ^
+[frontend]   390 |             )}
+[frontend]   391 |
+[frontend]   392 |             <FormField
+[frontend]   Plugin: vite:react-babel
+[frontend]   File: /home/runner/workspace/client/src/components/AppointmentDetails.tsx:389:14
+[frontend]   387|                    </div>
+[frontend]   388|                  </div>
+[frontend]   389|                </>
+[frontend]      |                ^
+[frontend]   390|              )}
+[frontend]   391|  
+[frontend]       at constructor (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:359:19)
+[frontend]       at TypeScriptParserMixin.raise (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:3266:19)
+[frontend]       at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6796:18)
+[frontend]       at TypeScriptParserMixin.jsxParseElement (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6803:17)
+[frontend]       at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6813:19)
+[frontend]       at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10615:23)
+[frontend]       at TypeScriptParserMixin.parseUpdate (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10600:21)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10580:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9489:18)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10434:61)
+[frontend]       at TypeScriptParserMixin.parseExprOps (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10439:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeConditional (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10416:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10379:21)
+[frontend]       at /home/runner/workspace/node_modules/@babel/parser/lib/index.js:9427:39
+[frontend]       at TypeScriptParserMixin.tryParse (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:3604:20)
+[frontend]       at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9427:18)
+[frontend]       at /home/runner/workspace/node_modules/@babel/parser/lib/index.js:10349:39
+[frontend]       at TypeScriptParserMixin.allowInAnd (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:11951:12)
+[frontend]       at TypeScriptParserMixin.parseMaybeAssignAllowIn (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10349:17)
+[frontend]       at TypeScriptParserMixin.parseParenAndDistinguishExpression (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:11210:28)
+[frontend]       at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10863:23)
+[frontend]       at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6818:20)
+[frontend]       at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10615:23)
+[frontend]       at TypeScriptParserMixin.parseUpdate (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10600:21)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10580:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9489:18)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10434:61)
+[frontend]       at TypeScriptParserMixin.parseExprOpBaseRightExpr (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10520:34)
+[frontend]       at TypeScriptParserMixin.parseExprOpRightExpr (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10515:21)
+[frontend]       at TypeScriptParserMixin.parseExprOp (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10482:27)
+[frontend]       at TypeScriptParserMixin.parseExprOp (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9032:18)
+[frontend]       at TypeScriptParserMixin.parseExprOps (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10443:17)
+[frontend]       at TypeScriptParserMixin.parseMaybeConditional (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10416:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10379:21)
+[frontend]       at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9438:20)
+[frontend]       at TypeScriptParserMixin.parseExpressionBase (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10333:23)
+[frontend]       at /home/runner/workspace/node_modules/@babel/parser/lib/index.js:10329:39
+[frontend]       at TypeScriptParserMixin.allowInAnd (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:11951:12)
+[frontend]       at TypeScriptParserMixin.parseExpression (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10329:17)
+[frontend]       at TypeScriptParserMixin.jsxParseExpressionContainer (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6686:31)
+[frontend]       at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6765:36)
+[frontend]       at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6752:32)
+[frontend]       at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6752:32)
+[frontend]       at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6752:32)
+[frontend]       at TypeScriptParserMixin.jsxParseElement (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6803:17)
+[frontend]       at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6813:19)
+[frontend]       at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10615:23)
+[frontend]       at TypeScriptParserMixin.parseUpdate (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10600:21)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10580:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9489:18)
+[frontend] 11:58:07 AM [vite] Internal server error: /home/runner/workspace/client/src/components/AppointmentDetails.tsx: Adjacent JSX elements must be wrapped in an enclosing tag. Did you want a JSX fragment <>...</>? (389:14)
+[frontend] 
+[frontend]   387 |                   </div>
+[frontend]   388 |                 </div>
+[frontend] > 389 |               </>
+[frontend]       |               ^
+[frontend]   390 |             )}
+[frontend]   391 |
+[frontend]   392 |             <FormField
+[frontend]   Plugin: vite:react-babel
+[frontend]   File: /home/runner/workspace/client/src/components/AppointmentDetails.tsx:389:14
+[frontend]   387|                    </div>
+[frontend]   388|                  </div>
+[frontend]   389|                </>
+[frontend]      |                ^
+[frontend]   390|              )}
+[frontend]   391|  
+[frontend]       at constructor (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:359:19)
+[frontend]       at TypeScriptParserMixin.raise (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:3266:19)
+[frontend]       at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6796:18)
+[frontend]       at TypeScriptParserMixin.jsxParseElement (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6803:17)
+[frontend]       at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6813:19)
+[frontend]       at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10615:23)
+[frontend]       at TypeScriptParserMixin.parseUpdate (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10600:21)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10580:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9489:18)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10434:61)
+[frontend]       at TypeScriptParserMixin.parseExprOps (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10439:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeConditional (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10416:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10379:21)
+[frontend]       at /home/runner/workspace/node_modules/@babel/parser/lib/index.js:9427:39
+[frontend]       at TypeScriptParserMixin.tryParse (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:3604:20)
+[frontend]       at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9427:18)
+[frontend]       at /home/runner/workspace/node_modules/@babel/parser/lib/index.js:10349:39
+[frontend]       at TypeScriptParserMixin.allowInAnd (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:11951:12)
+[frontend]       at TypeScriptParserMixin.parseMaybeAssignAllowIn (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10349:17)
+[frontend]       at TypeScriptParserMixin.parseParenAndDistinguishExpression (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:11210:28)
+[frontend]       at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10863:23)
+[frontend]       at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6818:20)
+[frontend]       at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10615:23)
+[frontend]       at TypeScriptParserMixin.parseUpdate (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10600:21)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10580:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9489:18)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10434:61)
+[frontend]       at TypeScriptParserMixin.parseExprOpBaseRightExpr (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10520:34)
+[frontend]       at TypeScriptParserMixin.parseExprOpRightExpr (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10515:21)
+[frontend]       at TypeScriptParserMixin.parseExprOp (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10482:27)
+[frontend]       at TypeScriptParserMixin.parseExprOp (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9032:18)
+[frontend]       at TypeScriptParserMixin.parseExprOps (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10443:17)
+[frontend]       at TypeScriptParserMixin.parseMaybeConditional (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10416:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10379:21)
+[frontend]       at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9438:20)
+[frontend]       at TypeScriptParserMixin.parseExpressionBase (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10333:23)
+[frontend]       at /home/runner/workspace/node_modules/@babel/parser/lib/index.js:10329:39
+[frontend]       at TypeScriptParserMixin.allowInAnd (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:11951:12)
+[frontend]       at TypeScriptParserMixin.parseExpression (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10329:17)
+[frontend]       at TypeScriptParserMixin.jsxParseExpressionContainer (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6686:31)
+[frontend]       at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6765:36)
+[frontend]       at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6752:32)
+[frontend]       at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6752:32)
+[frontend]       at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6752:32)
+[frontend]       at TypeScriptParserMixin.jsxParseElement (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6803:17)
+[frontend]       at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6813:19)
+[frontend]       at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10615:23)
+[frontend]       at TypeScriptParserMixin.parseUpdate (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10600:21)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10580:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9489:18)
+[frontend] 11:58:07 AM [vite] Internal server error: /home/runner/workspace/client/src/components/AppointmentDetails.tsx: Adjacent JSX elements must be wrapped in an enclosing tag. Did you want a JSX fragment <>...</>? (389:14)
+[frontend] 
+[frontend]   387 |                   </div>
+[frontend]   388 |                 </div>
+[frontend] > 389 |               </>
+[frontend]       |               ^
+[frontend]   390 |             )}
+[frontend]   391 |
+[frontend]   392 |             <FormField
+[frontend]   Plugin: vite:react-babel
+[frontend]   File: /home/runner/workspace/client/src/components/AppointmentDetails.tsx:389:14
+[frontend]   387|                    </div>
+[frontend]   388|                  </div>
+[frontend]   389|                </>
+[frontend]      |                ^
+[frontend]   390|              )}
+[frontend]   391|  
+[frontend]       at constructor (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:359:19)
+[frontend]       at TypeScriptParserMixin.raise (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:3266:19)
+[frontend]       at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6796:18)
+[frontend]       at TypeScriptParserMixin.jsxParseElement (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6803:17)
+[frontend]       at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6813:19)
+[frontend]       at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10615:23)
+[frontend]       at TypeScriptParserMixin.parseUpdate (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10600:21)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10580:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9489:18)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10434:61)
+[frontend]       at TypeScriptParserMixin.parseExprOps (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10439:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeConditional (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10416:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10379:21)
+[frontend]       at /home/runner/workspace/node_modules/@babel/parser/lib/index.js:9427:39
+[frontend]       at TypeScriptParserMixin.tryParse (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:3604:20)
+[frontend]       at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9427:18)
+[frontend]       at /home/runner/workspace/node_modules/@babel/parser/lib/index.js:10349:39
+[frontend]       at TypeScriptParserMixin.allowInAnd (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:11951:12)
+[frontend]       at TypeScriptParserMixin.parseMaybeAssignAllowIn (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10349:17)
+[frontend]       at TypeScriptParserMixin.parseParenAndDistinguishExpression (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:11210:28)
+[frontend]       at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10863:23)
+[frontend]       at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6818:20)
+[frontend]       at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10615:23)
+[frontend]       at TypeScriptParserMixin.parseUpdate (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10600:21)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10580:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9489:18)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10434:61)
+[frontend]       at TypeScriptParserMixin.parseExprOpBaseRightExpr (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10520:34)
+[frontend]       at TypeScriptParserMixin.parseExprOpRightExpr (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10515:21)
+[frontend]       at TypeScriptParserMixin.parseExprOp (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10482:27)
+[frontend]       at TypeScriptParserMixin.parseExprOp (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9032:18)
+[frontend]       at TypeScriptParserMixin.parseExprOps (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10443:17)
+[frontend]       at TypeScriptParserMixin.parseMaybeConditional (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10416:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10379:21)
+[frontend]       at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9438:20)
+[frontend]       at TypeScriptParserMixin.parseExpressionBase (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10333:23)
+[frontend]       at /home/runner/workspace/node_modules/@babel/parser/lib/index.js:10329:39
+[frontend]       at TypeScriptParserMixin.allowInAnd (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:11951:12)
+[frontend]       at TypeScriptParserMixin.parseExpression (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10329:17)
+[frontend]       at TypeScriptParserMixin.jsxParseExpressionContainer (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6686:31)
+[frontend]       at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6765:36)
+[frontend]       at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6752:32)
+[frontend]       at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6752:32)
+[frontend]       at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6752:32)
+[frontend]       at TypeScriptParserMixin.jsxParseElement (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6803:17)
+[frontend]       at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6813:19)
+[frontend]       at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10615:23)
+[frontend]       at TypeScriptParserMixin.parseUpdate (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10600:21)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10580:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9489:18)
+[frontend] 
+[frontend]  ERROR(TypeScript)  ')' expected.
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentDetails.tsx:389:15
+[frontend] 
+[frontend]     387 |                   </div>
+[frontend]     388 |                 </div>
+[frontend]   > 389 |               </>
+[frontend]         |               ^^
+[frontend]     390 |             )}
+[frontend]     391 |
+[frontend]     392 |             <FormField
+[frontend] 
+[frontend]  ERROR(TypeScript)  Identifier expected.
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentDetails.tsx:389:17
+[frontend] 
+[frontend]     387 |                   </div>
+[frontend]     388 |                 </div>
+[frontend]   > 389 |               </>
+[frontend]         |                 ^
+[frontend]     390 |             )}
+[frontend]     391 |
+[frontend]     392 |             <FormField
+[frontend] 
+[frontend]  ERROR(TypeScript)  Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentDetails.tsx:390:14
+[frontend] 
+[frontend]     388 |                 </div>
+[frontend]     389 |               </>
+[frontend]   > 390 |             )}
+[frontend]         |              ^
+[frontend]     391 |
+[frontend]     392 |             <FormField
+[frontend]     393 |               control={form.control}
+[frontend] 
+[frontend]  ERROR(TypeScript)  Expected corresponding JSX closing tag for 'Form'.
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentDetails.tsx:429:13
+[frontend] 
+[frontend]     427 |               </Button>
+[frontend]     428 |             </div>
+[frontend]   > 429 |           </form>
+[frontend]         |             ^^^^
+[frontend]     430 |         </Form>
+[frontend]     431 |       </DialogContent>
+[frontend]     432 |     </Dialog>
+[frontend] 
+[frontend]  ERROR(TypeScript)  Expected corresponding JSX closing tag for 'DialogContent'.
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentDetails.tsx:430:11
+[frontend] 
+[frontend]     428 |             </div>
+[frontend]     429 |           </form>
+[frontend]   > 430 |         </Form>
+[frontend]         |           ^^^^
+[frontend]     431 |       </DialogContent>
+[frontend]     432 |     </Dialog>
+[frontend]     433 |   );
+[frontend] 
+[frontend]  ERROR(TypeScript)  Expected corresponding JSX closing tag for 'Dialog'.
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentDetails.tsx:431:9
+[frontend] 
+[frontend]     429 |           </form>
+[frontend]     430 |         </Form>
+[frontend]   > 431 |       </DialogContent>
+[frontend]         |         ^^^^^^^^^^^^^
+[frontend]     432 |     </Dialog>
+[frontend]     433 |   );
+[frontend]     434 | };
+[frontend] 
+[frontend]  ERROR(TypeScript)  ')' expected.
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentDetails.tsx:432:5
+[frontend] 
+[frontend]     430 |         </Form>
+[frontend]     431 |       </DialogContent>
+[frontend]   > 432 |     </Dialog>
+[frontend]         |     ^^
+[frontend]     433 |   );
+[frontend]     434 | };
+[frontend]     435 |
+[frontend] 
+[frontend]  ERROR(TypeScript)  Expression expected.
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentDetails.tsx:433:3
+[frontend] 
+[frontend]     431 |       </DialogContent>
+[frontend]     432 |     </Dialog>
+[frontend]   > 433 |   );
+[frontend]         |   ^
+[frontend]     434 | };
+[frontend]     435 |
+[frontend]     436 | export default AppointmentDetails;
+[frontend] 
+[frontend]  ERROR(TypeScript)  Declaration or statement expected.
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentDetails.tsx:434:1
+[frontend] 
+[frontend]     432 |     </Dialog>
+[frontend]     433 |   );
+[frontend]   > 434 | };
+[frontend]         | ^
+[frontend]     435 |
+[frontend]     436 | export default AppointmentDetails;
+[frontend] 
+[frontend] [TypeScript] Found 9 errors. Watching for file changes.
+[frontend] 11:58:12 AM [vite] Internal server error: /home/runner/workspace/client/src/components/AppointmentDetails.tsx: Adjacent JSX elements must be wrapped in an enclosing tag. Did you want a JSX fragment <>...</>? (389:14)
+[frontend] 
+[frontend]   387 |                   </div>
+[frontend]   388 |                 </div>
+[frontend] > 389 |               </>
+[frontend]       |               ^
+[frontend]   390 |             )}
+[frontend]   391 |
+[frontend]   392 |             <FormField
+[frontend]   Plugin: vite:react-babel
+[frontend]   File: /home/runner/workspace/client/src/components/AppointmentDetails.tsx:389:14
+[frontend]   387|                    </div>
+[frontend]   388|                  </div>
+[frontend]   389|                </>
+[frontend]      |                ^
+[frontend]   390|              )}
+[frontend]   391|  
+[frontend]       at constructor (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:359:19)
+[frontend]       at TypeScriptParserMixin.raise (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:3266:19)
+[frontend]       at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6796:18)
+[frontend]       at TypeScriptParserMixin.jsxParseElement (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6803:17)
+[frontend]       at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6813:19)
+[frontend]       at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10615:23)
+[frontend]       at TypeScriptParserMixin.parseUpdate (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10600:21)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10580:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9489:18)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10434:61)
+[frontend]       at TypeScriptParserMixin.parseExprOps (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10439:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeConditional (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10416:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10379:21)
+[frontend]       at /home/runner/workspace/node_modules/@babel/parser/lib/index.js:9427:39
+[frontend]       at TypeScriptParserMixin.tryParse (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:3604:20)
+[frontend]       at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9427:18)
+[frontend]       at /home/runner/workspace/node_modules/@babel/parser/lib/index.js:10349:39
+[frontend]       at TypeScriptParserMixin.allowInAnd (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:11951:12)
+[frontend]       at TypeScriptParserMixin.parseMaybeAssignAllowIn (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10349:17)
+[frontend]       at TypeScriptParserMixin.parseParenAndDistinguishExpression (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:11210:28)
+[frontend]       at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10863:23)
+[frontend]       at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6818:20)
+[frontend]       at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10615:23)
+[frontend]       at TypeScriptParserMixin.parseUpdate (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10600:21)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10580:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9489:18)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10434:61)
+[frontend]       at TypeScriptParserMixin.parseExprOpBaseRightExpr (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10520:34)
+[frontend]       at TypeScriptParserMixin.parseExprOpRightExpr (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10515:21)
+[frontend]       at TypeScriptParserMixin.parseExprOp (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10482:27)
+[frontend]       at TypeScriptParserMixin.parseExprOp (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9032:18)
+[frontend]       at TypeScriptParserMixin.parseExprOps (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10443:17)
+[frontend]       at TypeScriptParserMixin.parseMaybeConditional (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10416:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10379:21)
+[frontend]       at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9438:20)
+[frontend]       at TypeScriptParserMixin.parseExpressionBase (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10333:23)
+[frontend]       at /home/runner/workspace/node_modules/@babel/parser/lib/index.js:10329:39
+[frontend]       at TypeScriptParserMixin.allowInAnd (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:11951:12)
+[frontend]       at TypeScriptParserMixin.parseExpression (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10329:17)
+[frontend]       at TypeScriptParserMixin.jsxParseExpressionContainer (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6686:31)
+[frontend]       at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6765:36)
+[frontend]       at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6752:32)
+[frontend]       at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6752:32)
+[frontend]       at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6752:32)
+[frontend]       at TypeScriptParserMixin.jsxParseElement (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6803:17)
+[frontend]       at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6813:19)
+[frontend]       at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10615:23)
+[frontend]       at TypeScriptParserMixin.parseUpdate (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10600:21)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:10580:23)
+[frontend]       at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:9489:18)
