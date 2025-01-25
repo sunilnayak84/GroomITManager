@@ -315,32 +315,12 @@ const AppointmentDetails = ({
                 </div>
                 {appointment.beforeImage && (
                   <div className="mt-2">
-                    <div className="relative">
-                      <div className="relative">
-                        {appointment.beforeImage && (
-                          <>
-                            <img
-                              key={`before-image-${appointment.id}`}
-                              src={appointment.beforeImage}
-                              alt="Before grooming"
-                              className="h-32 w-32 object-cover rounded-md border border-gray-200"
-                              loading="eager"
-                              crossOrigin="anonymous"
-                              onError={(e) => {
-                                const img = e.target as HTMLImageElement;
-                                console.error('Image failed to load:', {
-                                  url: img.src,
-                                  error: e
-                                });
-                              }}
-                            />
-                            <div className="mt-1 text-xs text-gray-500 break-all">
-                              URL: {appointment.beforeImage}
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    </div>
+                    <img
+                      src={appointment.beforeImage}
+                      alt="Before grooming"
+                      className="h-32 w-32 object-cover rounded-md border border-gray-200"
+                      referrerPolicy="no-referrer"
+                    />
                   </div>
                 )}
               </div>
