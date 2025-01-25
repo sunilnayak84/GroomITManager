@@ -338,21 +338,25 @@ const AppointmentDetails = ({
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-4">
                   <div className="relative">
-                    {appointment.beforeImage ? (
+                    {appointment.beforeImage && appointment.beforeImage.length > 0 ? (
                       <>
                         <img
                           key={`before-image-${appointment.id}`}
                           src={appointment.beforeImage}
                           alt="Before grooming"
                           className="h-32 w-32 object-cover rounded-md border cursor-pointer"
-                          onClick={() => window.open(appointment.beforeImage, '_blank')}
-                          onLoad={() => console.log('DEBUG: Image loaded successfully:', appointment.beforeImage)}
+                          onClick={() => {
+                            if (appointment.beforeImage) {
+                              window.open(appointment.beforeImage, '_blank');
+                            }
+                          }}
                           onError={(e) => {
                             console.error('DEBUG: Image failed to load:', appointment.beforeImage);
                             const img = e.target as HTMLImageElement;
                             img.style.display = 'none';
                           }}
                           referrerPolicy="no-referrer"
+                          crossOrigin="anonymous"
                         />
                         <Button
                           variant="destructive"
