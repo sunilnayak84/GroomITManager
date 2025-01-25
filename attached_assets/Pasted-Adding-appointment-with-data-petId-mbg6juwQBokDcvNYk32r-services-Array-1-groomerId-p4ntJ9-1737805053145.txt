@@ -1,0 +1,103 @@
+Adding appointment with data: {petId: 'mbg6juwQBokDcvNYk32r', services: Array(1), groomerId: 'p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82', branchId: '1', date: '2025-01-28T06:00:00.000Z', …}
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 2 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: 2N0qWdTmR27FSjgKYLkD {groomerId: 'zjMezeDkskSz772Lxn7dHqkxuLV2', totalPrice: 999, status: 'in_progress', updatedAt: _Timestamp, inProgressAt: _Timestamp, …}
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: yOdVQgfRdEhpqA0c5CXA {petId: 'mbg6juwQBokDcvNYk32r', services: Array(1), groomerId: 'p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82', branchId: '1', date: _Timestamp, …}
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 2 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment 2N0qWdTmR27FSjgKYLkD
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment yOdVQgfRdEhpqA0c5CXA
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 2 appointments. Success: 2, Errors: 0
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '1'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '1'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST {type: 'REMOVE_TOAST', toastId: '1'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(0)}
+use-appointments.ts:408 Updating appointment: {id: 'yOdVQgfRdEhpqA0c5CXA', status: 'in_progress', cancellationReason: undefined, notes: undefined}
+use-appointments.ts:446 Appointment updated successfully
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 2 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: 2N0qWdTmR27FSjgKYLkD {groomerId: 'zjMezeDkskSz772Lxn7dHqkxuLV2', totalPrice: 999, status: 'in_progress', updatedAt: _Timestamp, inProgressAt: _Timestamp, …}
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: yOdVQgfRdEhpqA0c5CXA {petId: 'mbg6juwQBokDcvNYk32r', updatedAt: _Timestamp, services: Array(1), productsUsed: null, date: _Timestamp, …}
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 2 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment 2N0qWdTmR27FSjgKYLkD
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment yOdVQgfRdEhpqA0c5CXA
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 2 appointments. Success: 2, Errors: 0
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '2'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '2'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+AppointmentDetails.tsx:264 Starting image upload for appointment: yOdVQgfRdEhpqA0c5CXA
+AppointmentDetails.tsx:267 Upload path: appointments/yOdVQgfRdEhpqA0c5CXA/before-image.jpg
+storage.ts:6 Storage: Starting upload {path: 'appointments/yOdVQgfRdEhpqA0c5CXA/before-image.jpg', fileSize: 13005, fileType: 'image/jpeg'}
+storage.ts:14 Storage: Upload successful {path: 'appointments/yOdVQgfRdEhpqA0c5CXA/before-image.jpg', metadata: {…}}
+storage.ts:17 Download URL obtained: https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2FyOdVQgfRdEhpqA0c5CXA%2Fbefore-image.jpg?alt=media&token=978b3c51-ca93-4ba2-88bb-325f64c6dd9c
+AppointmentDetails.tsx:270 Image uploaded successfully, URL: https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2FyOdVQgfRdEhpqA0c5CXA%2Fbefore-image.jpg?alt=media&token=978b3c51-ca93-4ba2-88bb-325f64c6dd9c
+use-appointments.ts:408 Updating appointment: {id: 'yOdVQgfRdEhpqA0c5CXA', status: 'in_progress', cancellationReason: undefined, notes: undefined}
+use-appointments.ts:446 Appointment updated successfully
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 2 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: 2N0qWdTmR27FSjgKYLkD {groomerId: 'zjMezeDkskSz772Lxn7dHqkxuLV2', totalPrice: 999, status: 'in_progress', updatedAt: _Timestamp, inProgressAt: _Timestamp, …}
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: yOdVQgfRdEhpqA0c5CXA {date: _Timestamp, updatedAt: _Timestamp, notes: null, totalPrice: 999, totalDuration: 30, …}
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 2 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment 2N0qWdTmR27FSjgKYLkD
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment yOdVQgfRdEhpqA0c5CXA
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 2 appointments. Success: 2, Errors: 0
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST {type: 'REMOVE_TOAST', toastId: '2'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '3'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '3'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-appointments.ts:408 Updating appointment: {id: 'yOdVQgfRdEhpqA0c5CXA', status: 'in_progress', cancellationReason: undefined, notes: undefined}
+use-appointments.ts:446 Appointment updated successfully
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 2 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: 2N0qWdTmR27FSjgKYLkD {groomerId: 'zjMezeDkskSz772Lxn7dHqkxuLV2', totalPrice: 999, status: 'in_progress', updatedAt: _Timestamp, inProgressAt: _Timestamp, …}
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: yOdVQgfRdEhpqA0c5CXA {productsUsed: null, totalDuration: 30, petId: 'mbg6juwQBokDcvNYk32r', totalPrice: 999, createdAt: _Timestamp, …}
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 2 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment 2N0qWdTmR27FSjgKYLkD
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment yOdVQgfRdEhpqA0c5CXA
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 2 appointments. Success: 2, Errors: 0
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST {type: 'REMOVE_TOAST', toastId: '3'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
