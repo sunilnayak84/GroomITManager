@@ -336,7 +336,6 @@ const AppointmentDetails = ({
                 <div className="mt-2 text-xs text-gray-500 break-all">
                   Image URL: {appointment.beforeImage}
                 </div>
-              )}
             </div>
             )}
 
