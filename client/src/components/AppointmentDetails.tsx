@@ -338,10 +338,10 @@ const AppointmentDetails = ({
                   <div className="relative">
                     <img
                       key={`before-image-${appointment.id}`}
-                      src={appointment.beforeImage}
+                      src={appointment.beforeImage || ''}
                       alt="Before grooming"
                       className="h-32 w-32 object-cover rounded-md border cursor-pointer"
-                      onClick={() => window.open(appointment.beforeImage, '_blank')}
+                      onClick={() => appointment.beforeImage && window.open(appointment.beforeImage, '_blank')}
                       onError={(e) => {
                         console.error('Image failed to load:', appointment.beforeImage);
                         const img = e.target as HTMLImageElement;
@@ -358,7 +358,7 @@ const AppointmentDetails = ({
                         await updateAppointment({
                           id: appointment.id,
                           status: form.getValues("status"),
-                          beforeImage: null,
+                          beforeImage: '',
                         });
                         toast({
                           title: "Success",
