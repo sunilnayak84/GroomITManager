@@ -338,7 +338,7 @@ const AppointmentDetails = ({
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-4">
                   <div className="relative">
-                    {appointment.beforeImage && appointment.beforeImage.length > 0 ? (
+                    {appointment.beforeImage ? (
                       <>
                         <img
                           key={`before-image-${appointment.id}`}
@@ -349,11 +349,6 @@ const AppointmentDetails = ({
                             if (appointment.beforeImage) {
                               window.open(appointment.beforeImage, '_blank');
                             }
-                          }}
-                          onError={(e) => {
-                            console.error('DEBUG: Image failed to load:', appointment.beforeImage);
-                            const img = e.target as HTMLImageElement;
-                            img.style.display = 'none';
                           }}
                           referrerPolicy="no-referrer"
                           crossOrigin="anonymous"
@@ -387,15 +382,15 @@ const AppointmentDetails = ({
                         >
                           Remove Image
                         </Button>
-                        <div className="mt-2">
-                          <p className="text-xs text-gray-500 break-all">
-                            Image URL: {appointment.beforeImage}
-                          </p>
-                        </div>
                       </>
                     ) : (
                       <p className="text-sm text-gray-500">No before image available</p>
                     )}
+                    <div className="mt-2">
+                      <p className="text-xs text-gray-500 break-all">
+                        {appointment.beforeImage ? `Image URL: ${appointment.beforeImage}` : 'No URL available'}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
