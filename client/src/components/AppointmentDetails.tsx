@@ -346,14 +346,17 @@ const AppointmentDetails = ({
                             src={appointment.beforeImage}
                             alt="Before grooming"
                             className="h-32 w-32 object-cover rounded-md border"
-                            crossOrigin="anonymous"
+                            crossOrigin="use-credentials"
+                            style={{ display: 'block' }}
                             onError={(e) => {
                               const img = e.target as HTMLImageElement;
-                              console.error('Image load error:', e);
-                              // Retry with a cache-busting parameter
-                              if (!img.src.includes('?cache=')) {
-                                img.src = `${appointment.beforeImage}?cache=${Date.now()}`;
-                              }
+                              console.error('Image load error:', img.src);
+                              img.onerror = null; // Prevent infinite retry loop
+                              img.src = `${appointment.beforeImage}?t=${Date.now()}&auth=true`;
+                            }}
+                            onLoad={(e) => {
+                              const img = e.target as HTMLImageElement;
+                              console.log('Image loaded successfully:', img.src);
                             }}
                           />
                           <Button
