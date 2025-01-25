@@ -251,9 +251,6 @@ const AppointmentDetails = ({
 
             <div className="space-y-2">
               <h3 className="text-sm font-medium text-gray-500">Before Image</h3>
-              <div className="mt-2 p-2 bg-gray-50 rounded text-xs text-gray-600 break-all">
-                <span className="font-medium">Image URL:</span> {appointment.beforeImage || 'No image uploaded'}
-              </div>
               <div className="flex items-center gap-4">
                 {form.watch("status") === "in_progress" && (
                   <>
@@ -337,13 +334,9 @@ const AppointmentDetails = ({
               </div>
             </div>
             {appointment.beforeImage && (
-              <>
-                <div className="mt-2 text-xs text-gray-500 break-all">
-                  Image URL: {appointment.beforeImage}
-                </div>
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-gray-500">Current Before Image</h3>
-                  <div className="flex items-center gap-4">
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium text-gray-500">Current Before Image</h3>
+                <div className="flex items-center gap-4">
                     <div className="relative">
                       <img
                         key={`before-image-${appointment.id}-${Date.now()}`}
