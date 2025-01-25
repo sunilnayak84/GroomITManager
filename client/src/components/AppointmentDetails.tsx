@@ -320,35 +320,15 @@ const AppointmentDetails = ({
                         {appointment.beforeImage && (
                           <>
                             <img
-                              key={`before-image-${appointment.id}-${Date.now()}`}
-                              src={`${appointment.beforeImage}?t=${Date.now()}`}
+                              key={`before-image-${appointment.id}`}
+                              src={appointment.beforeImage}
                               alt="Before grooming"
                               className="h-32 w-32 object-cover rounded-md border border-gray-200"
                               loading="eager"
-                              onLoad={(e) => {
-                                const img = e.target as HTMLImageElement;
-                                img.style.display = 'block';
-                                console.log('Image loaded successfully:', {
-                                  id: appointment.id,
-                                  src: img.src,
-                                  naturalWidth: img.naturalWidth,
-                                  naturalHeight: img.naturalHeight
-                                });
-                              }}
                               onError={(e) => {
+                                console.error('Image failed to load:', appointment.beforeImage);
                                 const img = e.target as HTMLImageElement;
                                 img.style.display = 'none';
-                                console.error('Image failed to load:', {
-                                  id: appointment.id,
-                                  src: img.src,
-                                  error: e
-                                });
-                              }}
-                              style={{ 
-                                minHeight: '128px', 
-                                minWidth: '128px', 
-                                background: '#f3f4f6',
-                                display: 'none'
                               }}
                             />
                             <div className="mt-1 text-xs text-gray-500 break-all">
