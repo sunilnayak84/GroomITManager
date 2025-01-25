@@ -316,35 +316,47 @@ const AppointmentDetails = ({
                 {appointment.beforeImage && (
                   <div className="mt-2">
                     <div className="relative">
-                      <img
-                        key={`before-image-${appointment.id}-${Date.now()}`}
-                        src={appointment.beforeImage}
-                        alt="Before grooming"
-                        className="h-32 w-32 object-cover rounded-md border border-gray-200"
-                        loading="eager"
-                        onLoad={(e) => {
-                          const img = e.target as HTMLImageElement;
-                          console.log('Image loaded successfully:', {
-                            src: img.src,
-                            naturalWidth: img.naturalWidth,
-                            naturalHeight: img.naturalHeight,
-                            displayWidth: img.width,
-                            displayHeight: img.height
-                          });
-                        }}
-                        onError={(e) => {
-                          const img = e.target as HTMLImageElement;
-                          console.error('Image failed to load:', {
-                            src: img.src,
-                            error: e,
-                            currentTarget: e.currentTarget,
-                            timestamp: new Date().toISOString()
-                          });
-                        }}
-                        crossOrigin="anonymous"
-                        referrerPolicy="no-referrer"
-                        style={{ minHeight: '128px', minWidth: '128px', background: '#f3f4f6' }}
-                      />
+                      <div className="relative">
+                        {appointment.beforeImage && (
+                          <>
+                            <img
+                              key={`before-image-${appointment.id}-${Date.now()}`}
+                              src={appointment.beforeImage}
+                              alt="Before grooming"
+                              className="h-32 w-32 object-cover rounded-md border border-gray-200"
+                              loading="eager"
+                              onLoad={(e) => {
+                                const img = e.target as HTMLImageElement;
+                                console.log('Image loaded successfully:', {
+                                  id: appointment.id,
+                                  src: img.src,
+                                  naturalWidth: img.naturalWidth,
+                                  naturalHeight: img.naturalHeight
+                                });
+                              }}
+                              onError={(e) => {
+                                const img = e.target as HTMLImageElement;
+                                console.error('Image failed to load:', {
+                                  id: appointment.id,
+                                  src: img.src,
+                                  error: e
+                                });
+                                // Force reload on error
+                                img.src = `${appointment.beforeImage}?t=${Date.now()}`;
+                              }}
+                              style={{ 
+                                minHeight: '128px', 
+                                minWidth: '128px', 
+                                background: '#f3f4f6',
+                                display: 'block'
+                              }}
+                            />
+                            <div className="mt-1 text-xs text-gray-500 break-all">
+                              URL: {appointment.beforeImage}
+                            </div>
+                          </>
+                        )}
+                      </div>
                       {/* Fallback text for debugging */}
                       <div className="mt-1 text-xs text-gray-500">
                         Image URL: {appointment.beforeImage.substring(0, 50)}...
