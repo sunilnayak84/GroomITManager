@@ -350,14 +350,10 @@ const AppointmentDetails = ({
                               window.open(appointment.beforeImage, '_blank');
                             }
                           }}
-                          crossOrigin="use-credentials"
+                          crossOrigin="anonymous"
+                          loading="eager"
                           onError={(e) => {
-                            const img = e.target as HTMLImageElement;
-                            // Retry with anonymous if credentials fail
-                            if (img.crossOrigin === 'use-credentials') {
-                              img.crossOrigin = 'anonymous';
-                              img.src = appointment.beforeImage || '';
-                            }
+                            console.error('Image load error:', e);
                           }}
                         />
                         <Button
