@@ -333,13 +333,14 @@ const AppointmentDetails = ({
                 )}
               </div>
               {appointment.beforeImage && (
-                <div className="mt-2 text-xs text-gray-500 break-all">
-                  Image URL: {appointment.beforeImage}
-                </div>
-            </div>
-            )}
+                <>
+                  <div className="mt-2 text-xs text-gray-500 break-all">
+                    Image URL: {appointment.beforeImage}
+                  </div>
+                </>
+              )}
 
-            {appointment.beforeImage && (
+              {appointment.beforeImage && (
               <div className="space-y-2">
                 <h3 className="text-sm font-medium text-gray-500">Current Before Image</h3>
                 <div className="flex items-center gap-4">
