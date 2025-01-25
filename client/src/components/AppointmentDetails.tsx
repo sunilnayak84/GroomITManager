@@ -316,19 +316,23 @@ const AppointmentDetails = ({
                 {appointment.beforeImage && (
                   <div className="mt-2">
                     <div className="relative">
-                    <img
-                      key={appointment.beforeImage} // Force re-render on URL change
-                      src={appointment.beforeImage}
-                      alt="Before grooming"
-                      className="h-32 w-32 object-cover rounded-md"
-                      loading="lazy"
-                      onError={(e) => {
-                        const img = e.target as HTMLImageElement;
-                        console.error('Image failed to load:', img.src);
-                        img.style.display = 'none';
-                      }}
-                    />
-                  </div>
+                      <img
+                        key={`before-image-${appointment.id}-${Date.now()}`}
+                        src={appointment.beforeImage}
+                        alt="Before grooming"
+                        className="h-32 w-32 object-cover rounded-md"
+                        onLoad={() => {
+                          console.log('Before image loaded successfully:', appointment.beforeImage);
+                        }}
+                        onError={(e) => {
+                          const img = e.target as HTMLImageElement;
+                          console.error('Before image failed to load:', img.src);
+                          console.error('Error event:', e);
+                        }}
+                        crossOrigin="anonymous"
+                        referrerPolicy="no-referrer"
+                      />
+                    </div>
                   </div>
                 )}
               </div>
