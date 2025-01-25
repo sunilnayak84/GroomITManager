@@ -1,0 +1,36 @@
+[frontend]  ERROR(TypeScript)  Type 'void' is not assignable to type 'ReactNode'.
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentDetails.tsx:338:15
+[frontend] 
+[frontend]     336 |             <div className="space-y-2">
+[frontend]     337 |               <h3 className="text-sm font-medium text-gray-500">Current Before Image</h3>
+[frontend]   > 338 |               {console.log('DEBUG - Before Image URL:', appointment.beforeImage)}
+[frontend]         |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[frontend]     339 |               <div className="flex flex-col gap-2">
+[frontend]     340 |                 <div className="flex items-center gap-4">
+[frontend]     341 |                   <div className="relative">
+[frontend] 
+[frontend]  ERROR(TypeScript)  Type 'string | null | undefined' is not assignable to type 'string | undefined'.
+[frontend]   Type 'null' is not assignable to type 'string | undefined'.
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentDetails.tsx:344:23
+[frontend] 
+[frontend]     342 |                     <img
+[frontend]     343 |                       key={`before-image-${appointment.id}-${Date.now()}`}
+[frontend]   > 344 |                       src={appointment.beforeImage}
+[frontend]         |                       ^^^
+[frontend]     345 |                       alt="Before grooming"
+[frontend]     346 |                       className="h-32 w-32 object-cover rounded-md border cursor-pointer"
+[frontend]     347 |                       onClick={() => window.open(appointment.beforeImage, '_blank')}
+[frontend] 
+[frontend]  ERROR(TypeScript)  Argument of type 'string | null | undefined' is not assignable to parameter of type 'string | URL | undefined'.
+[frontend]   Type 'null' is not assignable to type 'string | URL | undefined'.
+[frontend]  FILE  /home/runner/workspace/client/src/components/AppointmentDetails.tsx:347:50
+[frontend] 
+[frontend]     345 |                       alt="Before grooming"
+[frontend]     346 |                       className="h-32 w-32 object-cover rounded-md border cursor-pointer"
+[frontend]   > 347 |                       onClick={() => window.open(appointment.beforeImage, '_blank')}
+[frontend]         |                                                  ^^^^^^^^^^^^^^^^^^^^^^^
+[frontend]     348 |                       onLoad={() => console.log('Image loaded successfully:', appointment.beforeImage)}
+[frontend]     349 |                       onError={(e) => {
+[frontend]     350 |                         console.error('Image failed to load:', appointment.beforeImage);
+[frontend] 
+[frontend] [TypeScript] Found 3 errors. Watching for file changes.
