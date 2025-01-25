@@ -249,10 +249,10 @@ const AppointmentDetails = ({
               />
             )}
 
-            {form.watch("status") === "in_progress" && (
-              <div className="space-y-2">
-                <h3 className="text-sm font-medium text-gray-500">Before Image</h3>
-                <div className="flex items-center gap-4">
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-gray-500">Before Image</h3>
+              <div className="flex items-center gap-4">
+                {form.watch("status") === "in_progress" && (
                   <input
                       type="file"
                       accept="image/*"
@@ -320,16 +320,22 @@ const AppointmentDetails = ({
                       alt="Before grooming"
                       className="h-32 w-32 object-cover rounded-md border border-gray-200"
                       referrerPolicy="no-referrer"
+                      crossOrigin="anonymous"
                       onError={(e) => {
                         console.error('Image load error:', e);
+                        const img = e.target as HTMLImageElement;
+                        img.style.display = 'none';
                       }}
                     />
-                    <div className="mt-2 text-xs text-gray-500 break-all">
-                      Image URL: {appointment.beforeImage}
-                    </div>
                   </div>
                 )}
               </div>
+              {appointment.beforeImage && (
+                <div className="mt-2 text-xs text-gray-500 break-all">
+                  Image URL: {appointment.beforeImage}
+                </div>
+              )}
+            </div>
             )}
 
             {appointment.beforeImage && (
