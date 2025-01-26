@@ -339,7 +339,8 @@ const AppointmentDetails = ({
                                 timestamp: new Date().toISOString()
                               });
                               // Log response headers if possible
-                              fetch(appointment.beforeImage, { method: 'HEAD' })
+                              if (appointment.beforeImage) {
+                                fetch(appointment.beforeImage, { method: 'HEAD' })
                                 .then(response => {
                                   console.log('Image URL headers:', {
                                     status: response.status,
@@ -350,6 +351,7 @@ const AppointmentDetails = ({
                                 .catch(fetchError => {
                                   console.error('Failed to fetch image headers:', fetchError);
                                 });
+                              }
                               const img = e.target as HTMLImageElement;
                               img.style.display = 'none';
                             }}
