@@ -369,27 +369,38 @@ const AppointmentDetails = ({
                 <div className="flex items-center gap-4">
                   <div className="relative">
                     <div className="flex flex-col gap-2">
-                      {appointment.beforeImage && (
+                      {appointment.beforeImage ? (
                         <>
-                          <img
-                            src={appointment.beforeImage}
-                            alt="Before grooming"
-                            className="h-32 w-32 object-cover rounded-md border"
-                          />
-                          <p className="text-xs text-gray-500 break-all">
-                            Image URL: {appointment.beforeImage}
-                          </p>
-                          <a 
-                            href={appointment.beforeImage}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-500 hover:underline"
-                          >
-                            Open Image in New Tab
-                          </a>
+                          <div className="relative">
+                            <img
+                              key={appointment.beforeImage}
+                              src={appointment.beforeImage}
+                              alt="Before grooming"
+                              className="h-32 w-32 object-cover rounded-md border"
+                              onError={(e) => {
+                                console.error('Image load error:', appointment.beforeImage);
+                                const img = e.target as HTMLImageElement;
+                                img.style.display = 'none';
+                                img.parentElement?.classList.add('error');
+                              }}
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-md opacity-0 transition-opacity error:opacity-100">
+                              <span className="text-sm text-gray-500">Failed to load image</span>
+                            </div>
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            <p className="break-all">URL: {appointment.beforeImage}</p>
+                            <a 
+                              href={appointment.beforeImage}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-500 hover:underline"
+                            >
+                              Open in New Tab
+                            </a>
+                          </div>
                         </>
-                      )}
-                      {!appointment.beforeImage && (
+                      ) : (
                         <p className="text-sm text-gray-500">No before image available</p>
                       )}
                     </div>
