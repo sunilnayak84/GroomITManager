@@ -265,26 +265,26 @@ const AppointmentDetails = ({
                             if (file.size > 5 * 1024 * 1024) {
                               throw new Error('File size must be less than 5MB');
                             }
-                            
+
                             setIsUpdating(true);
                             const timestamp = Date.now();
                             const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
                             const path = `appointments/${appointment.id}/before-image-${timestamp}.${extension}`;
-                            
+
                             // Compress image before upload if it's an image
                             let compressedFile = file;
                             if (file.type.startsWith('image/')) {
                               const img = new Image();
                               const canvas = document.createElement('canvas');
                               const ctx = canvas.getContext('2d');
-                              
+
                               await new Promise((resolve, reject) => {
                                 img.onload = () => {
                                   const maxWidth = 1200;
                                   const maxHeight = 1200;
                                   let width = img.width;
                                   let height = img.height;
-                                  
+
                                   if (width > height) {
                                     if (width > maxWidth) {
                                       height *= maxWidth / width;
@@ -296,11 +296,11 @@ const AppointmentDetails = ({
                                       height = maxHeight;
                                     }
                                   }
-                                  
+
                                   canvas.width = width;
                                   canvas.height = height;
                                   ctx?.drawImage(img, 0, 0, width, height);
-                                  
+
                                   canvas.toBlob((blob) => {
                                     if (blob) {
                                       compressedFile = new File([blob], file.name, {
@@ -344,7 +344,7 @@ const AppointmentDetails = ({
 
                               // Force refetch right after update
                               await queryClient.invalidateQueries({ queryKey: ["appointments"] });
-                              
+
                               toast({
                                 title: "Success",
                                 description: "Before image uploaded and appointment updated",
@@ -387,40 +387,16 @@ const AppointmentDetails = ({
                             <p>Attempting to load image from: {appointment.beforeImage}</p>
                           </div>
                           <img
-                            src={appointment.beforeImage}
+                            src={appointment.beforeImage + "&cors=true"}
                             alt="Before grooming"
                             className="h-32 w-32 object-cover rounded-md border border-gray-200"
                             referrerPolicy="no-referrer"
-                            crossOrigin="anonymous"
-                            onLoad={(e) => {
-                              console.log('Image loaded successfully:', {
-                                src: appointment.beforeImage,
-                                naturalWidth: (e.target as HTMLImageElement).naturalWidth,
-                                naturalHeight: (e.target as HTMLImageElement).naturalHeight
-                              });
-                            }}
                             onError={(e) => {
                               console.error('Image load error:', {
                                 src: appointment.beforeImage,
-                                error: e,
-                                timestamp: new Date().toISOString()
+                                error: e
                               });
-                              // Log response headers if possible
-                              if (appointment.beforeImage) {
-                                fetch(appointment.beforeImage, { method: 'HEAD' })
-                                .then(response => {
-                                  console.log('Image URL headers:', {
-                                    status: response.status,
-                                    statusText: response.statusText,
-                                    headers: Object.fromEntries(response.headers.entries())
-                                  });
-                                })
-                                .catch(fetchError => {
-                                  console.error('Failed to fetch image headers:', fetchError);
-                                });
-                              }
-                              const img = e.target as HTMLImageElement;
-                              img.style.display = 'none';
+                              (e.target as HTMLImageElement).style.display = 'none';
                             }}
                           />
                         </>
@@ -436,17 +412,10 @@ const AppointmentDetails = ({
                 {appointment.beforeImage ? (
                   <div className="relative w-32 h-32">
                     <img
-                      src={appointment.beforeImage}
+                      src={appointment.beforeImage + "&cors=true"}
                       alt="Before grooming"
                       className="w-full h-full object-cover rounded-md border"
                       referrerPolicy="no-referrer"
-                      onLoad={(e) => {
-                        console.log('Image loaded successfully:', {
-                          src: appointment.beforeImage,
-                          width: (e.target as HTMLImageElement).naturalWidth,
-                          height: (e.target as HTMLImageElement).naturalHeight
-                        });
-                      }}
                       onError={(e) => {
                         console.error('Image load error:', {
                           src: appointment.beforeImage,
