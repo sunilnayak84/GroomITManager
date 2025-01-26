@@ -422,23 +422,23 @@ const AppointmentDetails = ({
                 {appointment.beforeImage ? (
                   <div className="relative w-32 h-32">
                     <img
-                      src={`${appointment.beforeImage}&t=${Date.now()}`}
+                      src={appointment.beforeImage}
                       alt="Before grooming"
                       className="w-full h-full object-cover rounded-md border"
-                      crossOrigin="anonymous"
+                      referrerPolicy="no-referrer"
                       onLoad={(e) => {
-                        console.log('Image loaded successfully:', appointment.beforeImage);
+                        console.log('Image loaded successfully:', {
+                          src: appointment.beforeImage,
+                          width: (e.target as HTMLImageElement).naturalWidth,
+                          height: (e.target as HTMLImageElement).naturalHeight
+                        });
                       }}
                       onError={(e) => {
                         console.error('Image load error:', {
                           src: appointment.beforeImage,
                           error: e
                         });
-                        // Add cache-busting query param and retry
-                        const img = e.target as HTMLImageElement;
-                        if (!img.src.includes('&t=')) {
-                          img.src = `${appointment.beforeImage}&t=${Date.now()}`;
-                        }
+                        (e.target as HTMLImageElement).style.display = 'none';
                       }}
                     />
                   </div>
