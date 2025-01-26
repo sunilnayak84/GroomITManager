@@ -7,13 +7,17 @@ export async function uploadFile(file: File, path: string): Promise<string> {
     const storageRef = ref(storage, path);
     console.log('Storage: Setting up upload metadata and CORS headers');
     const metadata = {
-      cacheControl: 'public, max-age=3600',
+      cacheControl: 'public, max-age=3600, immutable',
       contentType: file.type,
+      contentDisposition: 'inline',
       customMetadata: {
         'access-control-allow-origin': '*',
         'access-control-allow-methods': 'GET, HEAD, OPTIONS',
         'access-control-max-age': '3600',
-        'access-control-expose-headers': 'Content-Length'
+        'access-control-expose-headers': 'Content-Length, Content-Type, Content-Disposition',
+        'original-filename': file.name,
+        'upload-timestamp': Date.now().toString(),
+        'public-access': 'true'
       }
     };
     const snapshot = await uploadBytes(storageRef, file, metadata);

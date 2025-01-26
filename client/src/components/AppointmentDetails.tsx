@@ -262,26 +262,80 @@ const AppointmentDetails = ({
                         const file = e.target.files?.[0];
                         if (file) {
                           try {
-                            console.log('Starting image upload for appointment:', appointment.id);
+                            if (file.size > 5 * 1024 * 1024) {
+                              throw new Error('File size must be less than 5MB');
+                            }
+                            
                             setIsUpdating(true);
-                            const path = `appointments/${appointment.id}/before-image.${file.name.split('.').pop()}`;
-                            console.log('Upload path:', path);
+                            const timestamp = Date.now();
+                            const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+                            const path = `appointments/${appointment.id}/before-image-${timestamp}.${extension}`;
+                            
+                            // Compress image before upload if it's an image
+                            let compressedFile = file;
+                            if (file.type.startsWith('image/')) {
+                              const img = new Image();
+                              const canvas = document.createElement('canvas');
+                              const ctx = canvas.getContext('2d');
+                              
+                              await new Promise((resolve, reject) => {
+                                img.onload = () => {
+                                  const maxWidth = 1200;
+                                  const maxHeight = 1200;
+                                  let width = img.width;
+                                  let height = img.height;
+                                  
+                                  if (width > height) {
+                                    if (width > maxWidth) {
+                                      height *= maxWidth / width;
+                                      width = maxWidth;
+                                    }
+                                  } else {
+                                    if (height > maxHeight) {
+                                      width *= maxHeight / height;
+                                      height = maxHeight;
+                                    }
+                                  }
+                                  
+                                  canvas.width = width;
+                                  canvas.height = height;
+                                  ctx?.drawImage(img, 0, 0, width, height);
+                                  
+                                  canvas.toBlob((blob) => {
+                                    if (blob) {
+                                      compressedFile = new File([blob], file.name, {
+                                        type: 'image/jpeg',
+                                        lastModified: Date.now(),
+                                      });
+                                      resolve(true);
+                                    } else {
+                                      reject(new Error('Failed to compress image'));
+                                    }
+                                  }, 'image/jpeg', 0.8);
+                                };
+                                img.onerror = () => reject(new Error('Failed to load image'));
+                                img.src = URL.createObjectURL(file);
+                              });
+                            }
+
                             const { uploadFile } = await import("@/lib/storage");
-                            const url = await uploadFile(file, path);
-                            console.log('Image uploaded successfully, URL:', url);
+                            const url = await uploadFile(compressedFile, path);
+
+                            // Verify the URL is accessible
+                            const response = await fetch(url, { method: 'HEAD' });
+                            if (!response.ok) {
+                              throw new Error('Unable to verify uploaded image');
+                            }
 
                             // Update local state immediately for better UX
-                            const currentData = queryClient.getQueryData<AppointmentWithRelations[]>(["appointments"]);
-                            if (currentData) {
-                              queryClient.setQueryData<AppointmentWithRelations[]>(
-                                ["appointments"],
-                                currentData.map((apt) =>
-                                  apt.id === appointment.id
-                                    ? { ...apt, beforeImage: url }
-                                    : apt
-                                )
-                              );
-                            }
+                            queryClient.setQueryData<AppointmentWithRelations[]>(
+                              ["appointments"],
+                              (old) => old?.map(apt => 
+                                apt.id === appointment.id
+                                  ? { ...apt, beforeImage: url }
+                                  : apt
+                              ) ?? []
+                            );
 
                             await updateAppointment({
                               id: appointment.id,
@@ -305,7 +359,6 @@ const AppointmentDetails = ({
                             queryClient.invalidateQueries({ queryKey: ["appointments"] });
                           } finally {
                             setIsUpdating(false);
-                            // Reset file input
                             const input = document.getElementById('before-image-upload') as HTMLInputElement;
                             if (input) input.value = '';
                           }
