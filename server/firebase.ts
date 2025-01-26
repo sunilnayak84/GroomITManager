@@ -111,12 +111,10 @@ export function getFirebaseAdmin(): admin.app.App {
     throw new Error('Missing Firebase credentials');
   }
 
+  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
+  
   firebaseApp = admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: privateKey
-    }),
+    credential: admin.credential.cert(serviceAccount),
     databaseURL: 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
   });
 
