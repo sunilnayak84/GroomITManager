@@ -47,6 +47,8 @@ try {
 
 export const auth = getAuth(app);
 export const storage = getStorage(app);
+storage.maxOperationRetryTime = 10000;
+storage.maxUploadRetryTime = 10000;
 
 // Initialize Firestore with persistence and settings
 export const db = initializeFirestore(app, {

@@ -369,19 +369,34 @@ const AppointmentDetails = ({
                 {appointment.beforeImage ? (
                   <div className="relative w-32 h-32">
                     <img
-                      key={appointment.beforeImage}
+                      key={`${appointment.beforeImage}?${Date.now()}`}
                       src={appointment.beforeImage}
                       alt="Before grooming"
                       className="absolute inset-0 w-full h-full object-cover rounded-md border"
-                      crossOrigin="anonymous"
+                      crossOrigin="use-credentials"
+                      loading="eager"
+                      onLoad={(e) => {
+                        console.log('Image loaded successfully:', appointment.beforeImage);
+                        const img = e.target as HTMLImageElement;
+                        img.style.opacity = '1';
+                      }}
                       onError={(e) => {
+                        console.error('Image load error:', {
+                          src: appointment.beforeImage,
+                          error: e
+                        });
                         const img = e.target as HTMLImageElement;
                         img.style.opacity = '0';
-                        img.parentElement?.querySelector('.error-message')?.classList.remove('hidden');
+                        // Attempt reload with cache-busting
+                        img.src = `${appointment.beforeImage}&t=${Date.now()}`;
+                      }}
+                      style={{
+                        opacity: 0,
+                        transition: 'opacity 0.3s ease-in-out'
                       }}
                     />
-                    <div className="error-message hidden absolute inset-0 flex items-center justify-center bg-gray-100 rounded-md">
-                      <span className="text-sm text-gray-500">Failed to load image</span>
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-md">
+                      <span className="text-sm text-gray-500">Loading image...</span>
                     </div>
                   </div>
                 ) : (

@@ -10,9 +10,10 @@ export async function uploadFile(file: File, path: string): Promise<string> {
       cacheControl: 'public, max-age=3600',
       contentType: file.type,
       customMetadata: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, HEAD',
-        'Access-Control-Max-Age': '3600'
+        'access-control-allow-origin': '*',
+        'access-control-allow-methods': 'GET, HEAD, OPTIONS',
+        'access-control-max-age': '3600',
+        'access-control-expose-headers': 'Content-Length'
       }
     };
     const snapshot = await uploadBytes(storageRef, file, metadata);
