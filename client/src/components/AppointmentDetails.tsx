@@ -366,46 +366,29 @@ const AppointmentDetails = ({
             <div className="space-y-2">
               <h3 className="text-sm font-medium text-gray-500">Current Before Image</h3>
               <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-4">
-                  <div className="relative">
-                    <div className="flex flex-col gap-2">
-                      {appointment.beforeImage ? (
-                        <>
-                          <div className="relative">
-                            <img
-                              key={appointment.beforeImage}
-                              src={appointment.beforeImage}
-                              alt="Before grooming"
-                              className="h-32 w-32 object-cover rounded-md border"
-                              onError={(e) => {
-                                console.error('Image load error:', appointment.beforeImage);
-                                const img = e.target as HTMLImageElement;
-                                img.style.display = 'none';
-                                img.parentElement?.classList.add('error');
-                              }}
-                            />
-                            <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-md opacity-0 transition-opacity error:opacity-100">
-                              <span className="text-sm text-gray-500">Failed to load image</span>
-                            </div>
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            <p className="break-all">URL: {appointment.beforeImage}</p>
-                            <a 
-                              href={appointment.beforeImage}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-500 hover:underline"
-                            >
-                              Open in New Tab
-                            </a>
-                          </div>
-                        </>
-                      ) : (
-                        <p className="text-sm text-gray-500">No before image available</p>
-                      )}
+                {appointment.beforeImage ? (
+                  <div className="relative w-32 h-32">
+                    <img
+                      key={appointment.beforeImage}
+                      src={appointment.beforeImage}
+                      alt="Before grooming"
+                      className="absolute inset-0 w-full h-full object-cover rounded-md border"
+                      crossOrigin="anonymous"
+                      onError={(e) => {
+                        const img = e.target as HTMLImageElement;
+                        img.style.opacity = '0';
+                        img.parentElement?.querySelector('.error-message')?.classList.remove('hidden');
+                      }}
+                    />
+                    <div className="error-message hidden absolute inset-0 flex items-center justify-center bg-gray-100 rounded-md">
+                      <span className="text-sm text-gray-500">Failed to load image</span>
                     </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="w-32 h-32 flex items-center justify-center bg-gray-100 rounded-md">
+                    <span className="text-sm text-gray-500">No image</span>
+                  </div>
+                )}
               </div>
             </div>
 
