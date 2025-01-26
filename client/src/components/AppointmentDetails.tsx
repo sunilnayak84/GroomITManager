@@ -386,20 +386,8 @@ const AppointmentDetails = ({
                           src={appointment.beforeImage}
                           alt="Before grooming"
                           className="h-32 w-32 object-cover rounded-md border border-gray-200"
+                          loading="lazy"
                           crossOrigin="anonymous"
-                          onError={(e) => {
-                            const img = e.target as HTMLImageElement;
-                            const retryUrl = appointment.beforeImage?.split('?')[0];
-                            if (retryUrl && img.src !== retryUrl) {
-                              img.src = retryUrl;
-                            } else {
-                              console.error('Final image load error:', {
-                                src: img.src,
-                                error: e
-                              });
-                              img.style.display = 'none';
-                            }
-                          }}
                         />
                       </div>
                     )}
