@@ -111,12 +111,22 @@ export function getFirebaseAdmin(): admin.app.App {
     throw new Error('Missing Firebase credentials');
   }
 
-  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
-  
-  firebaseApp = admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
-  });
+  try {
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
+    if (!serviceAccount.project_id) {
+      throw new Error('Invalid service account configuration');
+    }
+    
+    firebaseApp = admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+      databaseURL: 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
+    });
+    
+    console.log('Firebase Admin initialized successfully');
+  } catch (error) {
+    console.error('Failed to initialize Firebase Admin:', error);
+    throw error;
+  }
 
   return firebaseApp;
 }
