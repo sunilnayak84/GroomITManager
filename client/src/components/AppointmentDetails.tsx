@@ -337,12 +337,25 @@ const AppointmentDetails = ({
                               ) ?? []
                             );
 
-                            const result = await updateAppointment({
-                              id: appointment.id,
-                              status: form.getValues("status"),
-                              beforeImage: url,
-                            });
-                            console.log('Appointment update result:', result);
+                            try {
+                              const result = await updateAppointment({
+                                id: appointment.id,
+                                status: form.getValues("status"),
+                                beforeImage: url,
+                              });
+                              console.log('Appointment update result:', result);
+
+                              // Force refetch right after update
+                              await queryClient.invalidateQueries({ queryKey: ["appointments"] });
+                              
+                              toast({
+                                title: "Success",
+                                description: "Before image uploaded and appointment updated",
+                              });
+                            } catch (updateError) {
+                              console.error('Failed to update appointment:', updateError);
+                              throw new Error('Failed to update appointment with new image URL');
+                            }
 
                             // Force refetch to update UI
                             queryClient.invalidateQueries({ queryKey: ["appointments"] });
