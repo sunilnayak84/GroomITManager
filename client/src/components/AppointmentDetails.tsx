@@ -337,11 +337,15 @@ const AppointmentDetails = ({
                               ) ?? []
                             );
 
-                            await updateAppointment({
+                            const result = await updateAppointment({
                               id: appointment.id,
                               status: form.getValues("status"),
                               beforeImage: url,
                             });
+                            console.log('Appointment update result:', result);
+
+                            // Force refetch to update UI
+                            queryClient.invalidateQueries({ queryKey: ["appointments"] });
 
                             toast({
                               title: "Success",
