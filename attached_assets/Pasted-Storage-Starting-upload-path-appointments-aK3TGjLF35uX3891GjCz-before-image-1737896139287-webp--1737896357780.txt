@@ -1,0 +1,65 @@
+Storage: Starting upload {path: 'appointments/aK3TGjLF35uX3891GjCz/before-image-1737896139287.webp', fileSize: 105162, fileType: 'image/jpeg'}fileSize: 105162fileType: "image/jpeg"path: "appointments/aK3TGjLF35uX3891GjCz/before-image-1737896139287.webp"[[Prototype]]: Object
+storage.ts:8 Storage: Setting up upload metadata and CORS headers
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '3'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+storage.ts:24 Storage: Upload successful {path: 'appointments/aK3TGjLF35uX3891GjCz/before-image-1737896139287.webp', metadata: {…}}metadata: {type: 'file', bucket: 'replit-5ac6a.firebasestorage.app', generation: '1737896140856663', metageneration: '1', fullPath: 'appointments/aK3TGjLF35uX3891GjCz/before-image-1737896139287.webp', …}path: "appointments/aK3TGjLF35uX3891GjCz/before-image-1737896139287.webp"[[Prototype]]: Object
+storage.ts:27 Download URL obtained: https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2FaK3TGjLF35uX3891GjCz%2Fbefore-image-1737896139287.webp?alt=media&token=b0e1135f-d66e-4056-ae31-b02908afaf9b
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST {type: 'REMOVE_TOAST', toastId: '3'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(0)}
+AppointmentDetails.tsx:351 Image upload error: TypeError: Failed to fetch
+    at onChange (AppointmentDetails.tsx:325:52)
+onChange @ AppointmentDetails.tsx:351
+await in onChange
+callCallback2 @ chunk-GNC7SI6A.js?v=8ea920ea:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=8ea920ea:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=8ea920ea:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-GNC7SI6A.js?v=8ea920ea:3736
+executeDispatch @ chunk-GNC7SI6A.js?v=8ea920ea:7014
+processDispatchQueueItemsInOrder @ chunk-GNC7SI6A.js?v=8ea920ea:7034
+processDispatchQueue @ chunk-GNC7SI6A.js?v=8ea920ea:7043
+dispatchEventsForPlugins @ chunk-GNC7SI6A.js?v=8ea920ea:7051
+(anonymous) @ chunk-GNC7SI6A.js?v=8ea920ea:7174
+batchedUpdates$1 @ chunk-GNC7SI6A.js?v=8ea920ea:18913
+batchedUpdates @ chunk-GNC7SI6A.js?v=8ea920ea:3579
+dispatchEventForPluginEventSystem @ chunk-GNC7SI6A.js?v=8ea920ea:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-GNC7SI6A.js?v=8ea920ea:5478
+dispatchEvent @ chunk-GNC7SI6A.js?v=8ea920ea:5472
+dispatchDiscreteEvent @ chunk-GNC7SI6A.js?v=8ea920ea:5449Understand this errorAI
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 1 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: aK3TGjLF35uX3891GjCz {date: _Timestamp, totalDuration: 30, services: Array(1), updatedAt: null, groomerId: 'p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82', …}branchId: "1"createdAt: _Timestamp {seconds: 1737896128, nanoseconds: 640000000}date: _Timestamp {seconds: 1738043100, nanoseconds: 0}deletedAt: nullgroomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"notes: nullpetId: "mbg6juwQBokDcvNYk32r"productsUsed: nullservices: ['Jm2fkUCVsvF3yWeqwJ8a']status: "pending"totalDuration: 30totalPrice: 999updatedAt: null[[Prototype]]: Object
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 1 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment aK3TGjLF35uX3891GjCz
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]0: {name: 'Pack One', duration: 30, price: 999, description: 'Package including 1 services and 1 add-ons.', category: 'Package', …}length: 1[[Prototype]]: Array(0)
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
+use-appointments.ts:408 Updating appointment: {id: 'aK3TGjLF35uX3891GjCz', status: 'in_progress', cancellationReason: undefined, notes: undefined}cancellationReason: undefinedid: "aK3TGjLF35uX3891GjCz"notes: undefinedstatus: "in_progress"[[Prototype]]: Object
+use-appointments.ts:446 Appointment updated successfully
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 1 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: aK3TGjLF35uX3891GjCz {date: _Timestamp, totalDuration: 30, services: Array(1), updatedAt: _Timestamp, groomerId: 'p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82', …}branchId: "1"cancellationReason: nullcreatedAt: _Timestamp {seconds: 1737896128, nanoseconds: 640000000}date: _Timestamp {seconds: 1738043100, nanoseconds: 0}deletedAt: nullgroomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"inProgressAt: _Timestamp {seconds: 1737896162, nanoseconds: 246000000}notes: nullpetId: "mbg6juwQBokDcvNYk32r"productsUsed: nullservices: ['Jm2fkUCVsvF3yWeqwJ8a']status: "in_progress"totalDuration: 30totalPrice: 999updatedAt: _Timestamp {seconds: 1737896162, nanoseconds: 289000000}[[Prototype]]: Object
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 1 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment aK3TGjLF35uX3891GjCz
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}category: "Package"consumables: []created_at: "2025-01-22T07:46:33.460Z"description: "Package including 1 services and 1 add-ons."discount_percentage: 0duration: 30isActive: truename: "Pack One"price: 999selectedAddons: []selectedServices: [{…}]updated_at: "2025-01-22T11:37:02.280Z"[[Prototype]]: Object
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '4'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '4'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST {type: 'REMOVE_TOAST', toastId: '4'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '5'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST {type: 'REMOVE_TOAST', toastId: '5'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(0)}
