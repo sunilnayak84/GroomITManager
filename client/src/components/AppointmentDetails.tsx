@@ -382,24 +382,25 @@ const AppointmentDetails = ({
                     />
                     {appointment.beforeImage && (
                       <div className="mt-2">
-                        <>
-                          <div className="image-debug-info text-xs mb-2">
-                            <p>Attempting to load image from: {appointment.beforeImage}</p>
-                          </div>
-                          <img
-                            src={appointment.beforeImage + "&cors=true"}
-                            alt="Before grooming"
-                            className="h-32 w-32 object-cover rounded-md border border-gray-200"
-                            referrerPolicy="no-referrer"
-                            onError={(e) => {
-                              console.error('Image load error:', {
-                                src: appointment.beforeImage,
+                        <img
+                          src={appointment.beforeImage}
+                          alt="Before grooming"
+                          className="h-32 w-32 object-cover rounded-md border border-gray-200"
+                          crossOrigin="anonymous"
+                          onError={(e) => {
+                            const img = e.target as HTMLImageElement;
+                            const retryUrl = appointment.beforeImage?.split('?')[0];
+                            if (retryUrl && img.src !== retryUrl) {
+                              img.src = retryUrl;
+                            } else {
+                              console.error('Final image load error:', {
+                                src: img.src,
                                 error: e
                               });
-                              (e.target as HTMLImageElement).style.display = 'none';
-                            }}
-                          />
-                        </>
+                              img.style.display = 'none';
+                            }
+                          }}
+                        />
                       </div>
                     )}
                   </>
