@@ -5,9 +5,12 @@ export async function uploadFile(file: File, path: string): Promise<string> {
   try {
     console.log('Storage: Starting upload', { path, fileSize: file.size, fileType: file.type });
     const storageRef = ref(storage, path);
+    console.log('Storage: Setting up upload metadata and CORS headers');
     const metadata = {
       customMetadata: {
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET',
+        'Cache-Control': 'public, max-age=3600'
       }
     };
     const snapshot = await uploadBytes(storageRef, file, metadata);

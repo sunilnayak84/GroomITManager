@@ -315,18 +315,46 @@ const AppointmentDetails = ({
                     />
                     {appointment.beforeImage && (
                       <div className="mt-2">
-                        <img
-                          src={appointment.beforeImage}
-                          alt="Before grooming"
-                          className="h-32 w-32 object-cover rounded-md border border-gray-200"
-                          referrerPolicy="no-referrer"
-                          crossOrigin="anonymous"
-                          onError={(e) => {
-                            console.error('Image load error:', e);
-                            const img = e.target as HTMLImageElement;
-                            img.style.display = 'none';
-                          }}
-                        />
+                        <>
+                          <div className="image-debug-info text-xs mb-2">
+                            <p>Attempting to load image from: {appointment.beforeImage}</p>
+                          </div>
+                          <img
+                            src={appointment.beforeImage}
+                            alt="Before grooming"
+                            className="h-32 w-32 object-cover rounded-md border border-gray-200"
+                            referrerPolicy="no-referrer"
+                            crossOrigin="anonymous"
+                            onLoad={(e) => {
+                              console.log('Image loaded successfully:', {
+                                src: appointment.beforeImage,
+                                naturalWidth: (e.target as HTMLImageElement).naturalWidth,
+                                naturalHeight: (e.target as HTMLImageElement).naturalHeight
+                              });
+                            }}
+                            onError={(e) => {
+                              console.error('Image load error:', {
+                                src: appointment.beforeImage,
+                                error: e,
+                                timestamp: new Date().toISOString()
+                              });
+                              // Log response headers if possible
+                              fetch(appointment.beforeImage, { method: 'HEAD' })
+                                .then(response => {
+                                  console.log('Image URL headers:', {
+                                    status: response.status,
+                                    statusText: response.statusText,
+                                    headers: Object.fromEntries(response.headers.entries())
+                                  });
+                                })
+                                .catch(fetchError => {
+                                  console.error('Failed to fetch image headers:', fetchError);
+                                });
+                              const img = e.target as HTMLImageElement;
+                              img.style.display = 'none';
+                            }}
+                          />
+                        </>
                       </div>
                     )}
                   </>
