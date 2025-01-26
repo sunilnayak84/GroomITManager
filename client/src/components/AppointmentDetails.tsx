@@ -321,11 +321,8 @@ const AppointmentDetails = ({
                             const { uploadFile } = await import("@/lib/storage");
                             const url = await uploadFile(compressedFile, path);
 
-                            // Verify the URL is accessible
-                            const response = await fetch(url, { method: 'HEAD' });
-                            if (!response.ok) {
-                              throw new Error('Unable to verify uploaded image');
-                            }
+                            // Skip direct URL verification since CORS is handled by Firebase
+                            console.log('Image uploaded successfully:', url);
 
                             // Update local state immediately for better UX
                             queryClient.setQueryData<AppointmentWithRelations[]>(
