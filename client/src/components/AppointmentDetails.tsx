@@ -114,8 +114,8 @@ const AppointmentDetails = ({
       toast({
         variant: "destructive",
         title: "Error",
-        description: error instanceof Error 
-          ? `Failed to update appointment: ${error.message}` 
+        description: error instanceof Error
+          ? `Failed to update appointment: ${error.message}`
           : "Failed to update appointment status",
       });
     } finally {
@@ -327,7 +327,7 @@ const AppointmentDetails = ({
                             // Update local state immediately for better UX
                             queryClient.setQueryData<AppointmentWithRelations[]>(
                               ["appointments"],
-                              (old) => old?.map(apt => 
+                              (old) => old?.map(apt =>
                                 apt.id === appointment.id
                                   ? { ...apt, beforeImage: url }
                                   : apt
@@ -366,7 +366,7 @@ const AppointmentDetails = ({
                             toast({
                               variant: "destructive",
                               title: "Error",
-                              description: error instanceof Error 
+                              description: error instanceof Error
                                 ? `Failed to upload image: ${error.message}`
                                 : "Failed to upload image",
                             });
@@ -401,16 +401,18 @@ const AppointmentDetails = ({
                 {appointment.beforeImage ? (
                   <div className="relative w-32 h-32">
                     <img
-                      src={appointment.beforeImage + "&cors=true"}
+                      src={appointment.beforeImage}
                       alt="Before grooming"
                       className="w-full h-full object-cover rounded-md border"
-                      referrerPolicy="no-referrer"
+                      loading="lazy"
                       onError={(e) => {
                         console.error('Image load error:', {
                           src: appointment.beforeImage,
                           error: e
                         });
-                        (e.target as HTMLImageElement).style.display = 'none';
+                        const target = e.target as HTMLImageElement;
+                        target.onerror = null; // Prevent infinite error loop
+                        target.parentElement!.innerHTML = '<span class="text-sm text-gray-500">Failed to load image</span>';
                       }}
                     />
                   </div>
@@ -444,8 +446,8 @@ const AppointmentDetails = ({
               >
                 Cancel
               </Button>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={isUpdating}
                 className="min-w-[140px]"
               >
