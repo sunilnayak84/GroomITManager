@@ -58,6 +58,26 @@ const AppointmentDetails = ({
   const [isUpdating, setIsUpdating] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(false);
   const [imageLoadError, setImageLoadError] = useState(false);
+  const queryClient = useQueryClient();
+
+  const form = useForm<UpdateAppointmentForm>({
+    resolver: zodResolver(updateAppointmentSchema),
+    defaultValues: {
+      status: appointment.status,
+      cancellationReason: appointment.cancellationReason || undefined,
+      notes: appointment.notes || undefined,
+    },
+  });
+
+  // Reset form when appointment changes
+  useEffect(() => {
+    console.log('Resetting form with status:', appointment.status);
+    form.reset({
+      status: appointment.status,
+      cancellationReason: appointment.cancellationReason || undefined,
+      notes: appointment.notes || undefined,
+    });
+  }, [appointment.id, appointment.status, form]);
 
   // Effect to reset image states when appointment changes
   useEffect(() => {
@@ -84,35 +104,18 @@ const AppointmentDetails = ({
     setIsImageLoading(false);
   };
 
-  const queryClient = useQueryClient();
-  const form = useForm<UpdateAppointmentForm>({
-    resolver: zodResolver(updateAppointmentSchema),
-    defaultValues: {
-      status: appointment.status,
-      cancellationReason: appointment.cancellationReason || undefined,
-      notes: appointment.notes || undefined,
-    },
-  });
-
-  useEffect(() => {
-    if (open) {
-      form.reset({
-        status: appointment.status,
-        cancellationReason: appointment.cancellationReason || undefined,
-        notes: appointment.notes || undefined,
-      });
-    }
-  }, [open, appointment.id, form]);
-
   const onSubmit = async (data: UpdateAppointmentForm) => {
     try {
+      console.log('Submitting form with data:', data);
       setIsUpdating(true);
       await updateAppointment({
         id: appointment.id,
         status: data.status,
-        cancellationReason: data.status === 'cancelled' ? data.cancellationReason || undefined : undefined,
+        cancellationReason: data.status === 'cancelled' ? data.cancellationReason : undefined,
         notes: data.notes,
       });
+
+      await queryClient.invalidateQueries({ queryKey: ["appointments"] });
 
       toast({
         title: "Success",
@@ -121,6 +124,7 @@ const AppointmentDetails = ({
 
       onOpenChange(false);
     } catch (error) {
+      console.error('Form submission error:', error);
       toast({
         variant: "destructive",
         title: "Error",
@@ -131,6 +135,21 @@ const AppointmentDetails = ({
     } finally {
       setIsUpdating(false);
     }
+  };
+
+  const getAvailableStatuses = () => {
+    const currentStatus = form.getValues("status");
+
+    // Default status progression
+    const statusProgression = {
+      pending: ['confirmed', 'cancelled'],
+      confirmed: ['in_progress', 'cancelled'],
+      in_progress: ['completed', 'cancelled'],
+      completed: ['cancelled'],
+      cancelled: []
+    };
+
+    return statusProgression[currentStatus] || [];
   };
 
   return (
@@ -207,26 +226,25 @@ const AppointmentDetails = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Status</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    value={field.value}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue />
+                        <SelectValue placeholder="Select status" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {appointment.status !== 'in_progress' && (
-                        <>
-                          <SelectItem value="pending">Pending</SelectItem>
-                          <SelectItem value="confirmed">Confirmed</SelectItem>
-                          <SelectItem value="in_progress">In Progress</SelectItem>
-                        </>
-                      )}
-                      {(appointment.status === 'in_progress' || appointment.status === 'completed' || appointment.status === 'cancelled') && (
-                        <>
-                          <SelectItem value="completed">Completed</SelectItem>
-                          <SelectItem value="cancelled">Cancelled</SelectItem>
-                        </>
-                      )}
+                      <SelectItem value={field.value}>
+                        {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
+                      </SelectItem>
+                      {getAvailableStatuses().map((status) => (
+                        <SelectItem key={status} value={status}>
+                          {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
