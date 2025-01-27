@@ -69,15 +69,16 @@ const AppointmentDetails = ({
     },
   });
 
-  // Reset form when appointment changes
+  // Reset form only when the appointment ID changes or dialog opens
   useEffect(() => {
-    console.log('Resetting form with status:', appointment.status);
-    form.reset({
-      status: appointment.status,
-      cancellationReason: appointment.cancellationReason || undefined,
-      notes: appointment.notes || undefined,
-    });
-  }, [appointment.id, appointment.status, form]);
+    if (open) {
+      form.reset({
+        status: appointment.status,
+        cancellationReason: appointment.cancellationReason || undefined,
+        notes: appointment.notes || undefined,
+      });
+    }
+  }, [appointment.id, open]); 
 
   // Effect to reset image states when appointment changes
   useEffect(() => {
@@ -138,10 +139,10 @@ const AppointmentDetails = ({
   };
 
   const getAvailableStatuses = () => {
-    const currentStatus = form.getValues("status");
+    const currentStatus = appointment.status; 
 
-    // Default status progression
-    const statusProgression = {
+    // Define all possible transitions
+    const statusProgression: Record<string, string[]> = {
       pending: ['confirmed', 'cancelled'],
       confirmed: ['in_progress', 'cancelled'],
       in_progress: ['completed', 'cancelled'],
@@ -227,9 +228,11 @@ const AppointmentDetails = ({
                 <FormItem>
                   <FormLabel>Status</FormLabel>
                   <Select 
-                    onValueChange={field.onChange} 
+                    onValueChange={(value) => {
+                      console.log('Status changed to:', value);
+                      field.onChange(value);
+                    }}
                     value={field.value}
-                    defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
