@@ -79,52 +79,6 @@ const AppointmentDetails = ({
     }
   }, [open, appointment.id]);
 
-
-  const onSubmit = async (data: UpdateAppointmentForm) => {
-    try {
-      setIsUpdating(true);
-
-      const previousData = queryClient.getQueryData<AppointmentWithRelations[]>(["appointments"]);
-
-      if (previousData) {
-        queryClient.setQueryData<AppointmentWithRelations[]>(
-          ["appointments"],
-          previousData.map((apt) =>
-            apt.id === appointment.id
-              ? { ...apt, status: data.status, notes: data.notes || null }
-              : apt
-          )
-        );
-      }
-
-      await updateAppointment({
-        id: appointment.id,
-        status: data.status,
-        cancellationReason: data.status === 'cancelled' ? data.cancellationReason || undefined : undefined,
-        notes: data.notes,
-      });
-
-      toast({
-        title: "Success",
-        description: "Appointment status updated successfully",
-      });
-
-      onOpenChange(false);
-    } catch (error) {
-      queryClient.invalidateQueries({ queryKey: ["appointments"] });
-
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error instanceof Error
-          ? `Failed to update appointment: ${error.message}`
-          : "Failed to update appointment status",
-      });
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.error('Image load error:', {
       src: appointment.beforeImage,
@@ -169,6 +123,35 @@ const AppointmentDetails = ({
       img.src = appointment.beforeImage;
     }
   }, [appointment.beforeImage]);
+
+  const onSubmit = async (data: UpdateAppointmentForm) => {
+    try {
+      setIsUpdating(true);
+      await updateAppointment({
+        id: appointment.id,
+        status: data.status,
+        cancellationReason: data.status === 'cancelled' ? data.cancellationReason || undefined : undefined,
+        notes: data.notes,
+      });
+
+      toast({
+        title: "Success",
+        description: "Appointment status updated successfully",
+      });
+
+      onOpenChange(false);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error instanceof Error
+          ? `Failed to update appointment: ${error.message}`
+          : "Failed to update appointment status",
+      });
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
