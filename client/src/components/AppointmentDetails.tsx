@@ -60,20 +60,14 @@ const AppointmentDetails = ({
   const [imageLoadError, setImageLoadError] = useState(false);
   const queryClient = useQueryClient();
 
+  // Debug logging for appointment data
   useEffect(() => {
-    console.log('AppointmentDetails: Component mounted/updated', {
+    console.log('AppointmentDetails: Appointment data:', {
       id: appointment.id,
       beforeImage: appointment.beforeImage,
       status: appointment.status,
       timestamp: new Date().toISOString()
     });
-
-    return () => {
-      console.log('AppointmentDetails: Component cleanup', {
-        id: appointment.id,
-        timestamp: new Date().toISOString()
-      });
-    };
   }, [appointment]);
 
   useEffect(() => {
@@ -298,7 +292,7 @@ const AppointmentDetails = ({
                       }}
                     />
                     {/* Debug info for image URL */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-1">
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-1 break-all">
                       URL: {appointment.beforeImage}
                     </div>
                   </div>
