@@ -379,17 +379,6 @@ const AppointmentDetails = ({
                       }}
                       className="text-sm"
                     />
-                    {appointment.beforeImage && (
-                      <div className="mt-2">
-                        <img
-                          src={appointment.beforeImage}
-                          alt="Before grooming"
-                          className="h-32 w-32 object-cover rounded-md border border-gray-200"
-                          loading="lazy"
-                          crossOrigin="anonymous"
-                        />
-                      </div>
-                    )}
                   </>
                 )}
               </div>
@@ -403,7 +392,7 @@ const AppointmentDetails = ({
                     <img
                       src={appointment.beforeImage}
                       alt="Before grooming"
-                      className="w-full h-full object-cover rounded-md border"
+                      className="h-32 w-32 object-cover rounded-md border border-gray-200"
                       loading="lazy"
                       crossOrigin="anonymous"
                       onError={(e) => {
@@ -412,8 +401,8 @@ const AppointmentDetails = ({
                           error: e
                         });
                         const target = e.target as HTMLImageElement;
-                        target.onerror = null; // Prevent infinite error loop
-                        target.src = `https://api.dicebear.com/7.x/initials/svg?seed=Error`;
+                        target.onerror = null; 
+                        target.src = `https://api.dicebear.com/7.x/adventurer/svg?seed=Error`;
                         target.alt = "Failed to load image";
                       }}
                     />
