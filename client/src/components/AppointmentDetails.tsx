@@ -60,7 +60,6 @@ const AppointmentDetails = ({
   const [imageLoadError, setImageLoadError] = useState(false);
   const queryClient = useQueryClient();
 
-  // Add detailed debugging logs
   useEffect(() => {
     console.log('AppointmentDetails: Component mounted/updated', {
       id: appointment.id,
@@ -77,7 +76,6 @@ const AppointmentDetails = ({
     };
   }, [appointment]);
 
-  // Log when dialog opens/closes
   useEffect(() => {
     console.log('Dialog open state changed:', {
       open,
@@ -107,31 +105,9 @@ const AppointmentDetails = ({
     }
   }, [open, appointment]);
 
-  const getDecodedImageUrl = (url: string | null | undefined) => {
-    if (!url) return null;
-    try {
-      // Decode the URL to handle any encoding issues
-      return decodeURIComponent(url);
-    } catch (error) {
-      console.error('Error decoding URL:', error);
-      return url;
-    }
-  };
-
-  useEffect(() => {
-    if (appointment.beforeImage) {
-      console.log('Current image URL:', {
-        raw: appointment.beforeImage,
-        decoded: getDecodedImageUrl(appointment.beforeImage),
-        timestamp: new Date().toISOString()
-      });
-    }
-  }, [appointment.beforeImage]);
-
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.error('Image load error:', {
       url: appointment.beforeImage,
-      decodedUrl: getDecodedImageUrl(appointment.beforeImage),
       error: e,
       timestamp: new Date().toISOString()
     });
@@ -162,20 +138,9 @@ const AppointmentDetails = ({
         beforeImage: url,
       });
 
-      // Force immediate query invalidation and refetch with delay
       await queryClient.invalidateQueries({ 
         queryKey: ["appointments"],
         exact: true
-      });
-
-      // Add a small delay to ensure data is refreshed
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Force a refetch
-      await queryClient.refetchQueries({ 
-        queryKey: ["appointments"],
-        exact: true,
-        type: 'active'
       });
 
       toast({
@@ -188,9 +153,7 @@ const AppointmentDetails = ({
       toast({
         variant: "destructive",
         title: "Error",
-        description: error instanceof Error
-          ? `Failed to upload image: ${error.message}`
-          : "Failed to upload image",
+        description: error instanceof Error ? error.message : "Failed to upload image",
       });
     } finally {
       setIsUpdating(false);
@@ -310,29 +273,6 @@ const AppointmentDetails = ({
             </div>
 
             <div>
-              <h3 className="text-sm font-medium text-gray-500">Services</h3>
-              <div className="mt-1 space-y-2">
-                {appointment.services.map((serviceId, index) => (
-                  <div key={serviceId} className="border-b pb-2 last:border-b-0">
-                    <p className="text-sm font-medium">
-                      {appointment.service?.[index]?.name || 'Unknown Service'}
-                    </p>
-                    {appointment.service?.[index]?.price && (
-                      <p className="text-sm text-gray-500">
-                        Price: ₹{appointment.service[index].price}
-                      </p>
-                    )}
-                    {appointment.service?.[index]?.duration && (
-                      <p className="text-sm text-gray-500">
-                        Duration: {appointment.service[index].duration} minutes
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
               <h3 className="text-sm font-medium text-gray-500">Current Before Image</h3>
               <div className="relative h-48 w-48 border border-gray-200 rounded-md overflow-hidden bg-gray-50">
                 {appointment.beforeImage ? (
@@ -344,21 +284,23 @@ const AppointmentDetails = ({
                     )}
                     <img
                       key={`${appointment.id}-${appointment.beforeImage}-${Date.now()}`}
-                      src={getDecodedImageUrl(appointment.beforeImage)}
+                      src={appointment.beforeImage}
                       alt="Before grooming"
                       className={`w-full h-full object-cover ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
                       onError={handleImageError}
                       onLoad={() => {
                         console.log('Image loaded successfully:', {
                           url: appointment.beforeImage,
-                          decodedUrl: getDecodedImageUrl(appointment.beforeImage),
                           timestamp: new Date().toISOString()
                         });
                         setIsImageLoading(false);
                         setImageLoadError(false);
                       }}
-                      crossOrigin="anonymous"
                     />
+                    {/* Debug info for image URL */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-1">
+                      URL: {appointment.beforeImage}
+                    </div>
                   </div>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
@@ -396,10 +338,7 @@ const AppointmentDetails = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Status</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select status" />
