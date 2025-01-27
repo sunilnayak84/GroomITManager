@@ -60,37 +60,8 @@ const AppointmentDetails = ({
   const [imageLoadError, setImageLoadError] = useState(false);
   const queryClient = useQueryClient();
 
-  // Debug logging for appointment data
-  useEffect(() => {
-    console.log('AppointmentDetails: Appointment data:', {
-      id: appointment.id,
-      beforeImage: appointment.beforeImage,
-      status: appointment.status,
-      timestamp: new Date().toISOString()
-    });
-  }, [appointment]);
-
-  useEffect(() => {
-    console.log('Dialog open state changed:', {
-      open,
-      appointmentId: appointment.id,
-      beforeImage: appointment.beforeImage,
-      timestamp: new Date().toISOString()
-    });
-  }, [open, appointment]);
-
-  const form = useForm<UpdateAppointmentForm>({
-    resolver: zodResolver(updateAppointmentSchema),
-    defaultValues: {
-      status: appointment.status,
-      cancellationReason: appointment.cancellationReason || undefined,
-      notes: appointment.notes || undefined,
-    },
-  });
-
   useEffect(() => {
     if (open) {
-      console.log('Resetting form with status:', appointment.status);
       form.reset({
         status: appointment.status,
         cancellationReason: appointment.cancellationReason || undefined,
@@ -100,11 +71,7 @@ const AppointmentDetails = ({
   }, [open, appointment]);
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    console.error('Image load error:', {
-      url: appointment.beforeImage,
-      error: e,
-      timestamp: new Date().toISOString()
-    });
+    console.error('Error loading image:', e);
     setImageLoadError(true);
     setIsImageLoading(false);
   };
@@ -124,8 +91,6 @@ const AppointmentDetails = ({
       const { uploadFile } = await import("@/lib/storage");
       const url = await uploadFile(file, path);
 
-      console.log('Image uploaded successfully:', url);
-
       await updateAppointment({
         id: appointment.id,
         status: form.getValues("status"),
@@ -142,7 +107,6 @@ const AppointmentDetails = ({
         description: "Before image uploaded successfully",
       });
     } catch (error) {
-      console.error('Image upload error:', error);
       setImageLoadError(true);
       toast({
         variant: "destructive",
@@ -157,9 +121,17 @@ const AppointmentDetails = ({
     }
   };
 
+  const form = useForm<UpdateAppointmentForm>({
+    resolver: zodResolver(updateAppointmentSchema),
+    defaultValues: {
+      status: appointment.status,
+      cancellationReason: appointment.cancellationReason || undefined,
+      notes: appointment.notes || undefined,
+    },
+  });
+
   const onSubmit = async (data: UpdateAppointmentForm) => {
     try {
-      console.log('Submitting form with data:', data);
       setIsUpdating(true);
 
       await updateAppointment({
@@ -181,7 +153,6 @@ const AppointmentDetails = ({
 
       onOpenChange(false);
     } catch (error) {
-      console.error('Form submission error:', error);
       toast({
         variant: "destructive",
         title: "Error",
@@ -218,17 +189,6 @@ const AppointmentDetails = ({
             View and manage appointment information
           </DialogDescription>
         </DialogHeader>
-
-        {/* Debug Information */}
-        <div className="bg-yellow-50 p-2 mb-4 rounded text-xs">
-          <p>Debug Info:</p>
-          <p>Appointment ID: {appointment.id}</p>
-          <p>Status: {appointment.status}</p>
-          <p>Image URL: {appointment.beforeImage || 'No image'}</p>
-          <p>Image Loading: {isImageLoading ? 'Yes' : 'No'}</p>
-          <p>Image Error: {imageLoadError ? 'Yes' : 'No'}</p>
-          <p>Last Updated: {new Date().toISOString()}</p>
-        </div>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -283,18 +243,10 @@ const AppointmentDetails = ({
                       className={`w-full h-full object-cover ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
                       onError={handleImageError}
                       onLoad={() => {
-                        console.log('Image loaded successfully:', {
-                          url: appointment.beforeImage,
-                          timestamp: new Date().toISOString()
-                        });
                         setIsImageLoading(false);
                         setImageLoadError(false);
                       }}
                     />
-                    {/* Debug info for image URL */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-1 break-all">
-                      URL: {appointment.beforeImage}
-                    </div>
                   </div>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
