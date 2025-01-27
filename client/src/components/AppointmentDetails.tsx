@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -94,7 +94,7 @@ const AppointmentDetails = ({
   };
 
   // Monitor beforeImage changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (appointment.beforeImage) {
       console.log('BeforeImage URL changed:', {
         newUrl: appointment.beforeImage,
@@ -147,7 +147,7 @@ const AppointmentDetails = ({
     },
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (open) {
       form.reset({
         status: appointment.status,

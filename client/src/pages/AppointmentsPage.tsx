@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { doc, getDoc } from 'firebase/firestore';
 import { petsCollection } from "@/lib/firestore";
 import { db } from "@/lib/firebase";
@@ -118,6 +118,28 @@ export default function AppointmentsPage() {
   const [dateFilter, setDateFilter] = useState<'today' | 'week' | 'month' | 'past' | 'all'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled'>('all');
   const { data: appointments, isLoading, error } = useAppointments();
+
+  // Add logging when appointments data changes
+  useEffect(() => {
+    if (appointments) {
+      console.log('AppointmentsPage: Appointments data updated:', {
+        count: appointments.length,
+        appointmentsWithImages: appointments.filter(apt => apt.beforeImage).length,
+        timestamp: new Date().toISOString()
+      });
+    }
+  }, [appointments]);
+
+  // Add logging when selected appointment changes
+  useEffect(() => {
+    if (selectedAppointment) {
+      console.log('AppointmentsPage: Selected appointment changed:', {
+        id: selectedAppointment.id,
+        beforeImage: selectedAppointment.beforeImage,
+        timestamp: new Date().toISOString()
+      });
+    }
+  }, [selectedAppointment]);
 
   const filteredAppointments = useMemo(() => {
     if (!appointments) return [];
