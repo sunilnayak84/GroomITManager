@@ -321,7 +321,6 @@ const AppointmentDetails = ({
                             const { uploadFile } = await import("@/lib/storage");
                             const url = await uploadFile(compressedFile, path);
 
-                            // Skip direct URL verification since CORS is handled by Firebase
                             console.log('Image uploaded successfully:', url);
 
                             // Update local state immediately for better UX
@@ -395,6 +394,7 @@ const AppointmentDetails = ({
                 )}
               </div>
             </div>
+
             <div className="space-y-2">
               <h3 className="text-sm font-medium text-gray-500">Current Before Image</h3>
               <div className="flex flex-col gap-2">
@@ -405,6 +405,7 @@ const AppointmentDetails = ({
                       alt="Before grooming"
                       className="w-full h-full object-cover rounded-md border"
                       loading="lazy"
+                      crossOrigin="anonymous"
                       onError={(e) => {
                         console.error('Image load error:', {
                           src: appointment.beforeImage,
@@ -412,7 +413,8 @@ const AppointmentDetails = ({
                         });
                         const target = e.target as HTMLImageElement;
                         target.onerror = null; // Prevent infinite error loop
-                        target.parentElement!.innerHTML = '<span class="text-sm text-gray-500">Failed to load image</span>';
+                        target.src = `https://api.dicebear.com/7.x/initials/svg?seed=Error`;
+                        target.alt = "Failed to load image";
                       }}
                     />
                   </div>
