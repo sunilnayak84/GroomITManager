@@ -56,6 +56,7 @@ const AppointmentDetails = ({
   const { updateAppointment } = useAppointments();
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isImageLoading, setIsImageLoading] = useState(true);
   const [imageLoadError, setImageLoadError] = useState(false);
   const queryClient = useQueryClient();
 
@@ -127,15 +128,47 @@ const AppointmentDetails = ({
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.error('Image load error:', {
       src: appointment.beforeImage,
-      error: e
+      error: e,
+      complete: (e.target as HTMLImageElement).complete,
+      naturalHeight: (e.target as HTMLImageElement).naturalHeight,
+      naturalWidth: (e.target as HTMLImageElement).naturalWidth
     });
     setImageLoadError(true);
+    setIsImageLoading(false);
   };
 
   const handleImageLoad = () => {
-    console.log('Image loaded successfully:', appointment.beforeImage);
+    console.log('Image loaded successfully:', {
+      url: appointment.beforeImage,
+      timestamp: new Date().toISOString()
+    });
     setImageLoadError(false);
+    setIsImageLoading(false);
   };
+
+  // Add image preload effect
+  React.useEffect(() => {
+    if (appointment.beforeImage) {
+      setIsImageLoading(true);
+      setImageLoadError(false);
+
+      const img = new Image();
+      img.onload = () => {
+        console.log('Image preloaded successfully:', appointment.beforeImage);
+        setIsImageLoading(false);
+      };
+      img.onerror = (e) => {
+        console.error('Image preload failed:', {
+          url: appointment.beforeImage,
+          error: e
+        });
+        setImageLoadError(true);
+        setIsImageLoading(false);
+      };
+      img.crossOrigin = "anonymous";
+      img.src = appointment.beforeImage;
+    }
+  }, [appointment.beforeImage]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -385,16 +418,24 @@ const AppointmentDetails = ({
             <div className="space-y-2">
               <h3 className="text-sm font-medium text-gray-500">Current Before Image</h3>
               <div className="relative w-32 h-32 border border-gray-200 rounded-md overflow-hidden">
-                {appointment.beforeImage && !imageLoadError ? (
-                  <img
-                    key={appointment.beforeImage}
-                    src={appointment.beforeImage}
-                    alt="Before grooming"
-                    className="h-32 w-32 object-cover"
-                    onError={handleImageError}
-                    onLoad={handleImageLoad}
-                    crossOrigin="anonymous"
-                  />
+                {appointment.beforeImage ? (
+                  isImageLoading ? (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                      <span className="text-sm text-gray-500">Loading...</span>
+                    </div>
+                  ) : (
+                    <img
+                      key={appointment.beforeImage} // Force re-render on URL change
+                      src={appointment.beforeImage}
+                      alt="Before grooming"
+                      className="h-32 w-32 object-cover"
+                      onError={handleImageError}
+                      onLoad={handleImageLoad}
+                      crossOrigin="anonymous"
+                      referrerPolicy="no-referrer"
+                      style={{ visibility: isImageLoading ? 'hidden' : 'visible' }}
+                    />
+                  )
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-gray-100">
                     <span className="text-sm text-gray-500">

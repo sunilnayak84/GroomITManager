@@ -1,0 +1,76 @@
+[vite] connecting...
+client:614 [vite] connected.
+chunk-GNC7SI6A.js?v=8ea920ea:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:17 Checking Firebase environment variables...
+firebase.ts:37 FIREBASE_INIT: Initializing Firebase with config: ObjectapiKey: "***"appId: "1:194114432530:web:b07a6d50e1db9e5372f2cb"authDomain: "replit-5ac6a.firebaseapp.com"experimentalAutoDetectLongPolling: trueexperimentalForceLongPolling: truemessagingSenderId: "194114432530"projectId: "replit-5ac6a"storageBucket: "replit-5ac6a.firebasestorage.app"[[Prototype]]: Object
+firebase.ts:42 FIREBASE_INIT: Firebase initialized successfully
+content.js:1 CISPL SignerDigital Loaded
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-pets.ts:58 FETCH_PETS: Starting to fetch pets
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+use-staff.ts:14 FETCH_STAFF: Starting to fetch staff members
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 1 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: eWzQDYLg04ZjSlnes0LY Object
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 1 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment eWzQDYLg04ZjSlnes0LY
+use-staff.ts:26 FETCH_STAFF: Successfully fetched staff members: Array(2)0: {id: 'p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82', phone: '9856857854', createdAt: _Timestamp, schedule: {…}, isGroomer: false, …}1: {id: 'zjMezeDkskSz772Lxn7dHqkxuLV2', specialties: Array(1), email: 'groomer2@groomery.in', maxDailyAppointments: 8, isGroomer: false, …}length: 2[[Prototype]]: Array(0)
+use-pets.ts:108 FETCH_PETS: Completed fetching pets Objectpets: [{…}]totalPets: 1[[Prototype]]: Object
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: Objectcategory: "Package"consumables: []created_at: "2025-01-22T07:46:33.460Z"description: "Package including 1 services and 1 add-ons."discount_percentage: 0duration: 30isActive: truename: "Pack One"price: 999selectedAddons: []selectedServices: [{…}]updated_at: "2025-01-22T11:37:02.280Z"[[Prototype]]: Object
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: Array(1)0: {name: 'Pack One', duration: 30, price: 999, description: 'Package including 1 services and 1 add-ons.', category: 'Package', …}length: 1[[Prototype]]: Array(0)
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
+AppointmentDetails.tsx:336 Image uploaded successfully: https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2FeWzQDYLg04ZjSlnes0LY%2Fbefore-image-1737963721045.png?alt=media&token=4d9b0b87-616f-4461-9fdb-2d540921099b
+use-appointments.ts:408 Updating appointment: ObjectcancellationReason: undefinedid: "eWzQDYLg04ZjSlnes0LY"notes: undefinedstatus: "in_progress"[[Prototype]]: Object
+use-appointments.ts:446 Appointment updated successfully
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 1 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: eWzQDYLg04ZjSlnes0LY Object
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 1 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment eWzQDYLg04ZjSlnes0LY
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 1 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: eWzQDYLg04ZjSlnes0LY ObjectbeforeImage: "https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2FeWzQDYLg04ZjSlnes0LY%2Fbefore-image-1737963721045.png?alt=media&token=4d9b0b87-616f-4461-9fdb-2d540921099b"branchId: "1"cancellationReason: nullcreatedAt: _Timestamp {seconds: 1737962820, nanoseconds: 274000000}date: _Timestamp {seconds: 1738042200, nanoseconds: 0}deletedAt: nullgroomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"inProgressAt: _Timestamp {seconds: 1737962831, nanoseconds: 731000000}notes: nullpetId: "mbg6juwQBokDcvNYk32r"productsUsed: nullservices: ['Jm2fkUCVsvF3yWeqwJ8a']status: "in_progress"totalDuration: 30totalPrice: 999updatedAt: _Timestamp {seconds: 1737963723, nanoseconds: 166000000}[[Prototype]]: Object
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 1 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment eWzQDYLg04ZjSlnes0LY
+2use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: Objectcategory: "Package"consumables: []created_at: "2025-01-22T07:46:33.460Z"description: "Package including 1 services and 1 add-ons."discount_percentage: 0duration: 30isActive: truename: "Pack One"price: 999selectedAddons: []selectedServices: [{…}]updated_at: "2025-01-22T11:37:02.280Z"[[Prototype]]: Object
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: Array(1)0: {name: 'Pack One', duration: 30, price: 999, description: 'Package including 1 services and 1 add-ons.', category: 'Package', …}length: 1[[Prototype]]: Array(0)
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: Objectcategory: "Package"consumables: []created_at: "2025-01-22T07:46:33.460Z"description: "Package including 1 services and 1 add-ons."discount_percentage: 0duration: 30isActive: truename: "Pack One"price: 999selectedAddons: []selectedServices: [{…}]updated_at: "2025-01-22T11:37:02.280Z"[[Prototype]]: Object
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: Array(1)0: {name: 'Pack One', duration: 30, price: 999, description: 'Package including 1 services and 1 add-ons.', category: 'Package', …}length: 1[[Prototype]]: Array(0)
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
+use-toast.ts:132 Toast dispatch: ADD_TOAST Object
+use-toast.ts:134 Toast state after dispatch: Object
+use-appointments.ts:408 Updating appointment: Object
+use-appointments.ts:446 Appointment updated successfully
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-toast.ts:132 Toast dispatch: ADD_TOAST Object
+use-toast.ts:134 Toast state after dispatch: Object
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 1 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: eWzQDYLg04ZjSlnes0LY Object
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 1 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment eWzQDYLg04ZjSlnes0LY
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: Objectcategory: "Package"consumables: []created_at: "2025-01-22T07:46:33.460Z"description: "Package including 1 services and 1 add-ons."discount_percentage: 0duration: 30isActive: truename: "Pack One"price: 999selectedAddons: []selectedServices: [{…}]updated_at: "2025-01-22T11:37:02.280Z"[[Prototype]]: Object
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: Array(1)0: {name: 'Pack One', duration: 30, price: 999, description: 'Package including 1 services and 1 add-ons.', category: 'Package', …}length: 1[[Prototype]]: Array(0)
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST Object
+use-toast.ts:134 Toast state after dispatch: Object
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST Object
+use-toast.ts:134 Toast state after dispatch: Object
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST Object
+use-toast.ts:134 Toast state after dispatch: Object
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST Object
+use-toast.ts:134 Toast state after dispatch: Object
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST Object
+use-toast.ts:134 Toast state after dispatch: Object
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST Object
+use-toast.ts:134 Toast state after dispatch: Object
