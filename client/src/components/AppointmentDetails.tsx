@@ -140,11 +140,20 @@ const AppointmentDetails = ({
         beforeImage: url,
       });
 
-      // Force immediate query invalidation and refetch
+      // Force immediate query invalidation and refetch with delay
       await queryClient.invalidateQueries({ 
         queryKey: ["appointments"],
+        exact: true
+      });
+
+      // Add a small delay to ensure data is refreshed
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Force a refetch
+      await queryClient.refetchQueries({ 
+        queryKey: ["appointments"],
         exact: true,
-        refetchType: 'active'
+        type: 'active'
       });
 
       toast({
@@ -231,6 +240,17 @@ const AppointmentDetails = ({
           </DialogDescription>
         </DialogHeader>
 
+        {/* Debug Information */}
+        <div className="bg-yellow-50 p-2 mb-4 rounded text-xs">
+          <p>Debug Info:</p>
+          <p>Appointment ID: {appointment.id}</p>
+          <p>Status: {appointment.status}</p>
+          <p>Image URL: {appointment.beforeImage || 'No image'}</p>
+          <p>Image Loading: {isImageLoading ? 'Yes' : 'No'}</p>
+          <p>Image Error: {imageLoadError ? 'Yes' : 'No'}</p>
+          <p>Last Updated: {new Date().toISOString()}</p>
+        </div>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div>
@@ -301,24 +321,29 @@ const AppointmentDetails = ({
                       </div>
                     )}
                     <img
-                      key={`${appointment.id}-${appointment.beforeImage}`}
+                      key={`${appointment.id}-${appointment.beforeImage}-${Date.now()}`}
                       src={appointment.beforeImage}
                       alt="Before grooming"
                       className={`w-full h-full object-cover ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
                       onError={handleImageError}
-                      onLoad={() => setIsImageLoading(false)}
+                      onLoad={() => {
+                        console.log('Image loaded:', appointment.beforeImage);
+                        setIsImageLoading(false);
+                        setImageLoadError(false);
+                      }}
                       crossOrigin="anonymous"
                     />
                   </div>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <span className="text-sm text-gray-500">No image</span>
+                    <span className="text-sm text-gray-500">
+                      {imageLoadError ? "Failed to load image" : "No image"}
+                    </span>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* File input section */}
             <div className="space-y-2">
               <h3 className="text-sm font-medium text-gray-500">Upload Before Image</h3>
               <div className="flex items-center gap-4">
