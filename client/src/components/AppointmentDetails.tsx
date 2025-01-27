@@ -69,16 +69,17 @@ const AppointmentDetails = ({
     },
   });
 
-  // Reset form only when the appointment ID changes or dialog opens
+  // Reset form when appointment changes or dialog opens
   useEffect(() => {
     if (open) {
+      console.log('Resetting form with status:', appointment.status);
       form.reset({
         status: appointment.status,
         cancellationReason: appointment.cancellationReason || undefined,
         notes: appointment.notes || undefined,
       });
     }
-  }, [appointment.id, open]); 
+  }, [appointment.id, open, form, appointment.status, appointment.cancellationReason, appointment.notes]); 
 
   // Effect to reset image states when appointment changes
   useEffect(() => {
@@ -139,7 +140,7 @@ const AppointmentDetails = ({
   };
 
   const getAvailableStatuses = () => {
-    const currentStatus = appointment.status; 
+    const currentStatus = form.getValues("status");
 
     // Define all possible transitions
     const statusProgression: Record<string, string[]> = {
@@ -150,7 +151,7 @@ const AppointmentDetails = ({
       cancelled: []
     };
 
-    return statusProgression[currentStatus] || [];
+    return [currentStatus, ...statusProgression[currentStatus] || []];
   };
 
   return (
@@ -240,9 +241,6 @@ const AppointmentDetails = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value={field.value}>
-                        {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
-                      </SelectItem>
                       {getAvailableStatuses().map((status) => (
                         <SelectItem key={status} value={status}>
                           {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
