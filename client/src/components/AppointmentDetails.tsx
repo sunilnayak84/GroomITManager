@@ -69,23 +69,16 @@ const AppointmentDetails = ({
     },
   });
 
-  // Reset form when appointment changes or dialog opens
+  // Reset form when dialog opens
   useEffect(() => {
     if (open) {
-      console.log('Resetting form with status:', appointment.status);
       form.reset({
         status: appointment.status,
         cancellationReason: appointment.cancellationReason || undefined,
         notes: appointment.notes || undefined,
       });
     }
-  }, [appointment.id, open, form, appointment.status, appointment.cancellationReason, appointment.notes]); 
-
-  // Effect to reset image states when appointment changes
-  useEffect(() => {
-    setIsImageLoading(!!appointment.beforeImage);
-    setImageLoadError(false);
-  }, [appointment.id, appointment.beforeImage]);
+  }, [open]); // Only reset when dialog opens
 
   const handleImageError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.error('Image load error:', {
@@ -139,19 +132,19 @@ const AppointmentDetails = ({
     }
   };
 
-  const getAvailableStatuses = () => {
-    const currentStatus = form.getValues("status");
-
-    // Define all possible transitions
-    const statusProgression: Record<string, string[]> = {
-      pending: ['confirmed', 'cancelled'],
-      confirmed: ['in_progress', 'cancelled'],
-      in_progress: ['completed', 'cancelled'],
-      completed: ['cancelled'],
-      cancelled: []
-    };
-
-    return [currentStatus, ...statusProgression[currentStatus] || []];
+  const getStatusTransitions = (status: string): string[] => {
+    switch (status) {
+      case 'pending':
+        return ['confirmed', 'cancelled'];
+      case 'confirmed':
+        return ['in_progress', 'cancelled'];
+      case 'in_progress':
+        return ['completed', 'cancelled'];
+      case 'completed':
+        return ['cancelled'];
+      default:
+        return [];
+    }
   };
 
   return (
@@ -163,6 +156,7 @@ const AppointmentDetails = ({
             View and manage appointment information
           </DialogDescription>
         </DialogHeader>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div>
@@ -229,10 +223,7 @@ const AppointmentDetails = ({
                 <FormItem>
                   <FormLabel>Status</FormLabel>
                   <Select 
-                    onValueChange={(value) => {
-                      console.log('Status changed to:', value);
-                      field.onChange(value);
-                    }}
+                    onValueChange={field.onChange}
                     value={field.value}
                   >
                     <FormControl>
@@ -241,7 +232,12 @@ const AppointmentDetails = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {getAvailableStatuses().map((status) => (
+                      {/* Current status */}
+                      <SelectItem value={field.value}>
+                        {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
+                      </SelectItem>
+                      {/* Available transitions */}
+                      {getStatusTransitions(field.value).map((status) => (
                         <SelectItem key={status} value={status}>
                           {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
                         </SelectItem>
