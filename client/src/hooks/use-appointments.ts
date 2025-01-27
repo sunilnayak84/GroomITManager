@@ -25,6 +25,18 @@ interface FirestoreAppointmentData {
   deletedAt: Timestamp | null;
   cancellationReason?: "no_show" | "rescheduled" | "other" | null;
   beforeImage?: string | null;
+  beforeImages: Array<{
+    id: string;
+    url: string;
+    type: 'before';
+    timestamp: Timestamp;
+  }>;
+  afterImages: Array<{
+    id: string;
+    url: string;
+    type: 'after';
+    timestamp: Timestamp;
+  }>;
 }
 
 const timestampToISOString = (timestamp: Timestamp | null | undefined): string => {
@@ -60,7 +72,9 @@ const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppoi
       totalDuration: data.totalDuration || 30,
       createdAt: Timestamp.fromDate(new Date()),
       updatedAt: null,
-      deletedAt: null
+      deletedAt: null,
+      beforeImages: [],
+      afterImages: []
     };
   };
 
@@ -247,7 +261,19 @@ export function useAppointments() {
                 category: s.category,
                 discount_percentage: s.discount_percentage,
                 consumables: s.consumables
-              })) : undefined
+              })) : undefined,
+              beforeImages: (rawData.beforeImages || []).map(img => ({
+                id: img.id,
+                url: img.url,
+                type: img.type,
+                timestamp: timestampToISOString(img.timestamp),
+              })),
+              afterImages: (rawData.afterImages || []).map(img => ({
+                id: img.id,
+                url: img.url,
+                type: img.type,
+                timestamp: timestampToISOString(img.timestamp),
+              }))
             };
 
             appointments.push(appointment);

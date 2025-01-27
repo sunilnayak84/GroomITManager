@@ -291,6 +291,13 @@ export const editAppointmentSchema = z.object({
   cancellationReason: z.enum(["no_show", "rescheduled", "other"]).nullable().optional()
 });
 
+export type AppointmentImage = {
+  id: string;
+  url: string;
+  type: 'before' | 'after';
+  timestamp: string;
+};
+
 export type AppointmentWithRelations = {
   id: string;
   petId: string;
@@ -306,7 +313,8 @@ export type AppointmentWithRelations = {
   createdAt: string;
   updatedAt: string | null;
   cancellationReason?: "no_show" | "rescheduled" | "other" | null;
-  beforeImage: string | null;  
+  beforeImages: AppointmentImage[];
+  afterImages: AppointmentImage[];
   pet: {
     name: string;
     breed: string;
@@ -346,7 +354,8 @@ export type Appointment = {
   createdAt: string;
   updatedAt: string | null;
   cancellationReason?: "no_show" | "rescheduled" | "other" | null;
-  beforeImage?: string | null;
+  beforeImages: AppointmentImage[];
+  afterImages: AppointmentImage[];
 };
 
 export type InsertAppointment = {
