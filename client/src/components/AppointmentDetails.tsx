@@ -151,8 +151,11 @@ const AppointmentDetails = ({
         beforeImage: url,
       });
 
-      // Invalidate queries to refresh data
-      await queryClient.invalidateQueries({ queryKey: ["appointments"] });
+      // Force immediate query invalidation and refetch
+      await queryClient.invalidateQueries({ queryKey: ["appointments"], refetchType: 'active' });
+
+      // Force parent component to refresh appointment data
+      onEdit();
 
       toast({
         title: "Success",
