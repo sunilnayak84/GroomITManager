@@ -4,7 +4,7 @@ import { petsCollection } from "@/lib/firestore";
 import { db } from "@/lib/firebase";
 import { parseFirestorePet } from "@/hooks/use-pets";
 import { Button } from "@/components/ui/button";
-import { Plus, Calendar, List, Trash2, Pencil } from "lucide-react"; // Added Pencil icon
+import { Plus, Calendar, List, Trash2, Pencil } from "lucide-react";
 import { useUser } from "@/hooks/use-user";
 import { useToast } from "@/hooks/use-toast";
 import { useAppointments } from "../hooks/use-appointments";
@@ -17,19 +17,18 @@ import { z } from "zod";
 import { appointmentSchema, type Appointment, type AppointmentWithRelations } from "@/lib/schema";
 import AppointmentDetails from "../components/AppointmentDetails";
 import AppointmentCalendar from "../components/AppointmentCalendar";
-import AppointmentEditForm from "../components/AppointmentEditForm"; // Added import for edit form
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // Added Select component imports
-import { PetDetails } from "../components/PetDetails"; // Import PetDetails component
-
+import AppointmentEditForm from "../components/AppointmentEditForm";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { PetDetails } from "../components/PetDetails";
 
 // Get status type from the schema
 interface ActionButtonsProps {
   appointment: AppointmentWithRelations;
   onView: () => void;
-  onEdit: () => void; // Added onEdit prop
+  onEdit: () => void;
 }
 
-function ActionButtons({ appointment, onView, onEdit }: ActionButtonsProps) { // Added onEdit prop
+function ActionButtons({ appointment, onView, onEdit }: ActionButtonsProps) {
   const { user } = useUser();
   const { deleteAppointment } = useAppointments();
   const { toast } = useToast();
@@ -76,8 +75,8 @@ function ActionButtons({ appointment, onView, onEdit }: ActionButtonsProps) { //
           <Button
             variant="outline"
             size="sm"
-            onClick={onEdit} // Use onEdit prop
-            className="text-primary hover:text-primary" // Changed styling for edit button
+            onClick={onEdit}
+            className="text-primary hover:text-primary"
           >
             <Pencil className="h-4 w-4" />
           </Button>
@@ -95,6 +94,7 @@ function ActionButtons({ appointment, onView, onEdit }: ActionButtonsProps) { //
     </div>
   );
 }
+
 type AppointmentStatus = z.infer<typeof appointmentSchema>["status"];
 
 const statusColors: Record<AppointmentWithRelations["status"], string> = {
@@ -145,7 +145,6 @@ export default function AppointmentsPage() {
       });
     }
   }, [appointments]);
-
 
   const filteredAppointments = useMemo(() => {
     if (!appointments) return [];
@@ -247,7 +246,7 @@ export default function AppointmentsPage() {
           if (petDoc.exists()) {
             const petData = petDoc.data();
             const customerId = petData.customerId;
-            
+
             const customerDoc = await getDoc(doc(db, 'customers', customerId));
             if (customerDoc.exists()) {
               const customerData = customerDoc.data();
@@ -307,12 +306,20 @@ export default function AppointmentsPage() {
         <ActionButtons
           appointment={row}
           onView={() => {
-            setSelectedAppointment(row);
-            setOpenDetails(true);
+            // Update selected appointment directly from appointments data
+            const appointment = appointments?.find(apt => apt.id === row.id);
+            if (appointment) {
+              setSelectedAppointment(appointment);
+              setOpenDetails(true);
+            }
           }}
           onEdit={() => { 
-            setSelectedAppointment(row);
-            setOpenEdit(true); 
+            // Update selected appointment directly from appointments data
+            const appointment = appointments?.find(apt => apt.id === row.id);
+            if (appointment) {
+              setSelectedAppointment(appointment);
+              setOpenEdit(true);
+            }
           }}
         />
       ),
