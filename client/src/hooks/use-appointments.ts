@@ -225,6 +225,7 @@ export function useAppointments() {
               totalPrice: rawData.totalPrice || 0,
               totalDuration: rawData.totalDuration || 0,
               cancellationReason: rawData.cancellationReason || null,
+              beforeImage: rawData.beforeImage || null,
               pet: {
                 name: petData.name,
                 breed: petData.breed,
