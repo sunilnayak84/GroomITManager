@@ -32,13 +32,6 @@ import { useAppointments } from "@/hooks/use-appointments";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 
-interface AppointmentDetailsProps {
-  appointment: AppointmentWithRelations;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onEdit: () => void;
-}
-
 const updateAppointmentSchema = z.object({
   status: z.enum(['pending', 'confirmed', 'completed', 'cancelled', 'in_progress']),
   cancellationReason: z.enum(['no_show', 'rescheduled', 'other']).optional(),
@@ -46,6 +39,13 @@ const updateAppointmentSchema = z.object({
 });
 
 type UpdateAppointmentForm = z.infer<typeof updateAppointmentSchema>;
+
+interface AppointmentDetailsProps {
+  appointment: AppointmentWithRelations;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onEdit: () => void;
+}
 
 const AppointmentDetails = ({
   appointment,
@@ -56,23 +56,19 @@ const AppointmentDetails = ({
   const { updateAppointment } = useAppointments();
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
-  const [isImageLoading, setIsImageLoading] = useState(true);
+  const [isImageLoading, setIsImageLoading] = useState(false);
   const [imageLoadError, setImageLoadError] = useState(false);
 
-  // Add debugging log when component renders
-  console.log('AppointmentDetails: Rendering with beforeImage:', {
-    url: appointment.beforeImage,
-    appointmentId: appointment.id,
-    timestamp: new Date().toISOString()
-  });
+  // Effect to reset image states when appointment changes
+  useEffect(() => {
+    setIsImageLoading(!!appointment.beforeImage);
+    setImageLoadError(false);
+  }, [appointment.id, appointment.beforeImage]);
 
   const handleImageError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.error('Image load error:', {
-      src: appointment.beforeImage,
+      url: appointment.beforeImage,
       error: event,
-      complete: (event.target as HTMLImageElement).complete,
-      naturalHeight: (event.target as HTMLImageElement).naturalHeight,
-      naturalWidth: (event.target as HTMLImageElement).naturalWidth,
       timestamp: new Date().toISOString()
     });
     setImageLoadError(true);
@@ -82,60 +78,11 @@ const AppointmentDetails = ({
   const handleImageLoad = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.log('Image loaded successfully:', {
       url: appointment.beforeImage,
-      timestamp: new Date().toISOString(),
-      element: {
-        complete: (event.target as HTMLImageElement).complete,
-        naturalHeight: (event.target as HTMLImageElement).naturalHeight,
-        naturalWidth: (event.target as HTMLImageElement).naturalWidth
-      }
+      timestamp: new Date().toISOString()
     });
     setImageLoadError(false);
     setIsImageLoading(false);
   };
-
-  // Monitor beforeImage changes
-  useEffect(() => {
-    if (appointment.beforeImage) {
-      console.log('BeforeImage URL changed:', {
-        newUrl: appointment.beforeImage,
-        timestamp: new Date().toISOString()
-      });
-
-      setIsImageLoading(true);
-      setImageLoadError(false);
-
-      // Test image loading
-      const img = new Image();
-      img.onload = () => {
-        console.log('Image preload successful:', {
-          url: appointment.beforeImage,
-          naturalWidth: img.naturalWidth,
-          naturalHeight: img.naturalHeight,
-          timestamp: new Date().toISOString()
-        });
-        setIsImageLoading(false);
-      };
-      img.onerror = (e) => {
-        console.error('Image preload failed:', {
-          url: appointment.beforeImage,
-          error: e,
-          timestamp: new Date().toISOString()
-        });
-        setImageLoadError(true);
-        setIsImageLoading(false);
-      };
-      img.crossOrigin = "anonymous";
-      img.src = appointment.beforeImage;
-
-      return () => {
-        console.log('Cleaning up image load effect:', {
-          url: appointment.beforeImage,
-          timestamp: new Date().toISOString()
-        });
-        img.src = '';
-      };
-    }
-  }, [appointment.beforeImage]);
 
   const queryClient = useQueryClient();
   const form = useForm<UpdateAppointmentForm>({
@@ -155,7 +102,7 @@ const AppointmentDetails = ({
         notes: appointment.notes || undefined,
       });
     }
-  }, [open, appointment.id]);
+  }, [open, appointment.id, form]);
 
   const onSubmit = async (data: UpdateAppointmentForm) => {
     try {
@@ -333,75 +280,22 @@ const AppointmentDetails = ({
                           const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
                           const path = `appointments/${appointment.id}/before-image-${timestamp}.${extension}`;
 
-                          let compressedFile = file;
-                          if (file.type.startsWith('image/')) {
-                            const img = new Image();
-                            const canvas = document.createElement('canvas');
-                            const ctx = canvas.getContext('2d');
-
-                            await new Promise((resolve, reject) => {
-                              img.onload = () => {
-                                const maxWidth = 1200;
-                                const maxHeight = 1200;
-                                let width = img.width;
-                                let height = img.height;
-
-                                if (width > height) {
-                                  if (width > maxWidth) {
-                                    height *= maxWidth / width;
-                                    width = maxWidth;
-                                  }
-                                } else {
-                                  if (height > maxHeight) {
-                                    width *= maxHeight / height;
-                                    height = maxHeight;
-                                  }
-                                }
-
-                                canvas.width = width;
-                                canvas.height = height;
-                                ctx?.drawImage(img, 0, 0, width, height);
-
-                                canvas.toBlob((blob) => {
-                                  if (blob) {
-                                    compressedFile = new File([blob], file.name, {
-                                      type: 'image/jpeg',
-                                      lastModified: Date.now(),
-                                    });
-                                    resolve(true);
-                                  } else {
-                                    reject(new Error('Failed to compress image'));
-                                  }
-                                }, 'image/jpeg', 0.8);
-                              };
-                              img.onerror = () => reject(new Error('Failed to load image'));
-                              img.src = URL.createObjectURL(file);
-                            });
-                          }
-
                           const { uploadFile } = await import("@/lib/storage");
-                          const url = await uploadFile(compressedFile, path);
+                          const url = await uploadFile(file, path);
 
                           console.log('Image uploaded successfully:', url);
 
                           // Reset error state on new upload
                           setImageLoadError(false);
+                          setIsImageLoading(true);
 
-                          queryClient.setQueryData<AppointmentWithRelations[]>(
-                            ["appointments"],
-                            (old) => old?.map(apt =>
-                              apt.id === appointment.id
-                                ? { ...apt, beforeImage: url }
-                                : apt
-                            ) ?? []
-                          );
-
-                          const result = await updateAppointment({
+                          await updateAppointment({
                             id: appointment.id,
                             status: form.getValues("status"),
                             beforeImage: url,
                           });
 
+                          // Invalidate queries to refresh data
                           await queryClient.invalidateQueries({ queryKey: ["appointments"] });
 
                           toast({
@@ -417,7 +311,6 @@ const AppointmentDetails = ({
                               ? `Failed to upload image: ${error.message}`
                               : "Failed to upload image",
                           });
-                          queryClient.invalidateQueries({ queryKey: ["appointments"] });
                         } finally {
                           setIsUpdating(false);
                           const input = document.getElementById('before-image-upload') as HTMLInputElement;
@@ -433,25 +326,27 @@ const AppointmentDetails = ({
 
             <div className="space-y-2">
               <h3 className="text-sm font-medium text-gray-500">Current Before Image</h3>
-              <div className="relative w-32 h-32 border border-gray-200 rounded-md overflow-hidden">
+              <div className="relative w-32 h-32 border border-gray-200 rounded-md overflow-hidden bg-gray-50">
                 {appointment.beforeImage ? (
-                  isImageLoading ? (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                      <span className="text-sm text-gray-500">Loading...</span>
-                    </div>
-                  ) : (
+                  <>
+                    {isImageLoading && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                        <span className="text-sm text-gray-500">Loading...</span>
+                      </div>
+                    )}
                     <img
-                      key={appointment.beforeImage} // Force re-render on URL change
+                      key={`${appointment.id}-${appointment.beforeImage}`}
                       src={appointment.beforeImage}
                       alt="Before grooming"
-                      className="h-32 w-32 object-cover"
+                      className={`h-32 w-32 object-cover transition-opacity duration-200 ${
+                        isImageLoading ? 'opacity-0' : 'opacity-100'
+                      }`}
                       onError={handleImageError}
                       onLoad={handleImageLoad}
                       crossOrigin="anonymous"
                       referrerPolicy="no-referrer"
-                      style={{ visibility: isImageLoading ? 'hidden' : 'visible' }}
                     />
-                  )
+                  </>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-gray-100">
                     <span className="text-sm text-gray-500">

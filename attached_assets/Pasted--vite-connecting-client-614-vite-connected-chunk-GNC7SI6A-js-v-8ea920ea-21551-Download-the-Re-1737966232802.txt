@@ -1,0 +1,332 @@
+[vite] connecting...
+client:614 [vite] connected.
+chunk-GNC7SI6A.js?v=8ea920ea:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:17 Checking Firebase environment variables...
+firebase.ts:37 FIREBASE_INIT: Initializing Firebase with config: {apiKey: '***', authDomain: 'replit-5ac6a.firebaseapp.com', projectId: 'replit-5ac6a', storageBucket: 'replit-5ac6a.firebasestorage.app', messagingSenderId: '194114432530', …}
+firebase.ts:42 FIREBASE_INIT: Firebase initialized successfully
+content.js:1 CISPL SignerDigital Loaded
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-pets.ts:58 FETCH_PETS: Starting to fetch pets
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+use-staff.ts:14 FETCH_STAFF: Starting to fetch staff members
+use-appointments.ts:98 [2025-01-27T08:22:46.813Z]  @firebase/firestore: Firestore (11.0.2): BloomFilter error:  {"name":"BloomFilterError"}
+defaultLogHandler @ chunk-2LIWWRRO.js?v=8ea920ea:1378
+warn @ chunk-2LIWWRRO.js?v=8ea920ea:1442
+__PRIVATE_logWarn @ firebase_firestore.js?v=8ea920ea:2625
+Xe @ firebase_firestore.js?v=8ea920ea:6614
+Je @ firebase_firestore.js?v=8ea920ea:6566
+__PRIVATE_onWatchStreamChange @ firebase_firestore.js?v=8ea920ea:12910
+onNext @ firebase_firestore.js?v=8ea920ea:12565
+(anonymous) @ firebase_firestore.js?v=8ea920ea:12524
+(anonymous) @ firebase_firestore.js?v=8ea920ea:12544
+(anonymous) @ firebase_firestore.js?v=8ea920ea:15553
+(anonymous) @ firebase_firestore.js?v=8ea920ea:15584
+Promise.then
+yu @ firebase_firestore.js?v=8ea920ea:15584
+enqueue @ firebase_firestore.js?v=8ea920ea:15553
+enqueueAndForget @ firebase_firestore.js?v=8ea920ea:15535
+(anonymous) @ firebase_firestore.js?v=8ea920ea:12544
+(anonymous) @ firebase_firestore.js?v=8ea920ea:12524
+vo @ firebase_firestore.js?v=8ea920ea:12112
+(anonymous) @ firebase_firestore.js?v=8ea920ea:12298
+(anonymous) @ firebase_firestore.js?v=8ea920ea:12261
+ab @ firebase_firestore.js?v=8ea920ea:944
+F2 @ firebase_firestore.js?v=8ea920ea:914
+Z2.ta @ firebase_firestore.js?v=8ea920ea:2534
+Rb @ firebase_firestore.js?v=8ea920ea:1413
+M2.Y @ firebase_firestore.js?v=8ea920ea:1278
+M2.ca @ firebase_firestore.js?v=8ea920ea:1209
+ab @ firebase_firestore.js?v=8ea920ea:944
+F2 @ firebase_firestore.js?v=8ea920ea:914
+Wc @ firebase_firestore.js?v=8ea920ea:1948
+h.bb @ firebase_firestore.js?v=8ea920ea:1943
+h.Ea @ firebase_firestore.js?v=8ea920ea:1940
+Lc @ firebase_firestore.js?v=8ea920ea:1840
+h.Pa @ firebase_firestore.js?v=8ea920ea:1807
+Promise.then
+Nc @ firebase_firestore.js?v=8ea920ea:1798
+h.Pa @ firebase_firestore.js?v=8ea920ea:1808
+Promise.then
+Nc @ firebase_firestore.js?v=8ea920ea:1798
+h.Pa @ firebase_firestore.js?v=8ea920ea:1808
+Promise.then
+Nc @ firebase_firestore.js?v=8ea920ea:1798
+h.Sa @ firebase_firestore.js?v=8ea920ea:1794
+Promise.then
+h.send @ firebase_firestore.js?v=8ea920ea:1775
+h.ea @ firebase_firestore.js?v=8ea920ea:1916
+Jb @ firebase_firestore.js?v=8ea920ea:1202
+fd @ firebase_firestore.js?v=8ea920ea:2335
+h.Fa @ firebase_firestore.js?v=8ea920ea:2302
+Da @ firebase_firestore.js?v=8ea920ea:663
+Promise.then
+x2 @ firebase_firestore.js?v=8ea920ea:657
+ec @ firebase_firestore.js?v=8ea920ea:2288
+Rb @ firebase_firestore.js?v=8ea920ea:1410
+M2.Y @ firebase_firestore.js?v=8ea920ea:1278
+M2.ca @ firebase_firestore.js?v=8ea920ea:1209
+ab @ firebase_firestore.js?v=8ea920ea:944
+F2 @ firebase_firestore.js?v=8ea920ea:914
+Wc @ firebase_firestore.js?v=8ea920ea:1948
+h.bb @ firebase_firestore.js?v=8ea920ea:1943
+h.Ea @ firebase_firestore.js?v=8ea920ea:1940
+Lc @ firebase_firestore.js?v=8ea920ea:1840
+h.Pa @ firebase_firestore.js?v=8ea920ea:1807
+Promise.then
+Nc @ firebase_firestore.js?v=8ea920ea:1798
+h.Sa @ firebase_firestore.js?v=8ea920ea:1794
+Promise.then
+h.send @ firebase_firestore.js?v=8ea920ea:1775
+h.ea @ firebase_firestore.js?v=8ea920ea:1916
+Jb @ firebase_firestore.js?v=8ea920ea:1197
+Hb @ firebase_firestore.js?v=8ea920ea:1172
+h.Ga @ firebase_firestore.js?v=8ea920ea:2222
+Da @ firebase_firestore.js?v=8ea920ea:663
+Promise.then
+x2 @ firebase_firestore.js?v=8ea920ea:657
+fc @ firebase_firestore.js?v=8ea920ea:2166
+h.connect @ firebase_firestore.js?v=8ea920ea:2126
+Y2.m @ firebase_firestore.js?v=8ea920ea:2482
+Eo @ firebase_firestore.js?v=8ea920ea:12255
+send @ firebase_firestore.js?v=8ea920ea:12100
+c_ @ firebase_firestore.js?v=8ea920ea:12442
+V_ @ firebase_firestore.js?v=8ea920ea:12594
+__PRIVATE_sendWatchRequest @ firebase_firestore.js?v=8ea920ea:12848
+(anonymous) @ firebase_firestore.js?v=8ea920ea:12877
+__PRIVATE_onWatchStreamOpen @ firebase_firestore.js?v=8ea920ea:12876
+(anonymous) @ firebase_firestore.js?v=8ea920ea:12520
+(anonymous) @ firebase_firestore.js?v=8ea920ea:12544
+(anonymous) @ firebase_firestore.js?v=8ea920ea:15553
+(anonymous) @ firebase_firestore.js?v=8ea920ea:15584
+Promise.then
+yu @ firebase_firestore.js?v=8ea920ea:15584
+enqueue @ firebase_firestore.js?v=8ea920ea:15553
+enqueueAndForget @ firebase_firestore.js?v=8ea920ea:15535
+(anonymous) @ firebase_firestore.js?v=8ea920ea:12544
+(anonymous) @ firebase_firestore.js?v=8ea920ea:12520
+bo @ firebase_firestore.js?v=8ea920ea:12106
+(anonymous) @ firebase_firestore.js?v=8ea920ea:12303
+setTimeout
+qo @ firebase_firestore.js?v=8ea920ea:12302
+d_ @ firebase_firestore.js?v=8ea920ea:12553
+I_ @ firebase_firestore.js?v=8ea920ea:12517
+(anonymous) @ firebase_firestore.js?v=8ea920ea:12507
+Promise.then
+auth @ firebase_firestore.js?v=8ea920ea:12503
+start @ firebase_firestore.js?v=8ea920ea:12402
+__PRIVATE_startWatchStream @ firebase_firestore.js?v=8ea920ea:12858
+__PRIVATE_remoteStoreListen @ firebase_firestore.js?v=8ea920ea:12830
+__PRIVATE_allocateTargetAndMaybeListen @ firebase_firestore.js?v=8ea920ea:13874
+await in __PRIVATE_allocateTargetAndMaybeListen
+__PRIVATE_syncEngineListen @ firebase_firestore.js?v=8ea920ea:13852
+__PRIVATE_eventManagerListen @ firebase_firestore.js?v=8ea920ea:13336
+__PRIVATE_executeQueryViaSnapshotListener @ firebase_firestore.js?v=8ea920ea:15055
+(anonymous) @ firebase_firestore.js?v=8ea920ea:15056
+await in (anonymous)
+(anonymous) @ firebase_firestore.js?v=8ea920ea:15553
+(anonymous) @ firebase_firestore.js?v=8ea920ea:15584
+Promise.then
+yu @ firebase_firestore.js?v=8ea920ea:15584
+enqueue @ firebase_firestore.js?v=8ea920ea:15553
+enqueueAndForget @ firebase_firestore.js?v=8ea920ea:15535
+__PRIVATE_firestoreClientGetDocumentsViaSnapshotListener @ firebase_firestore.js?v=8ea920ea:15045
+getDocs @ firebase_firestore.js?v=8ea920ea:17224
+queryFn @ use-appointments.ts:98
+fetchFn @ @tanstack_react-query.js?v=8ea920ea:839
+run @ @tanstack_react-query.js?v=8ea920ea:493
+start @ @tanstack_react-query.js?v=8ea920ea:535
+fetch @ @tanstack_react-query.js?v=8ea920ea:925
+executeFetch_fn @ @tanstack_react-query.js?v=8ea920ea:2211
+onSubscribe @ @tanstack_react-query.js?v=8ea920ea:1898
+subscribe @ @tanstack_react-query.js?v=8ea920ea:24
+(anonymous) @ @tanstack_react-query.js?v=8ea920ea:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=8ea920ea:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=8ea920ea:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=8ea920ea:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=8ea920ea:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=8ea920ea:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=8ea920ea:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=8ea920ea:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=8ea920ea:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=8ea920ea:19416
+commitRoot @ chunk-GNC7SI6A.js?v=8ea920ea:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=8ea920ea:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=8ea920ea:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=8ea920ea:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=8ea920ea:554
+flush @ @tanstack_react-query.js?v=8ea920ea:568
+batch @ @tanstack_react-query.js?v=8ea920ea:586
+dispatch_fn @ @tanstack_react-query.js?v=8ea920ea:995
+setData @ @tanstack_react-query.js?v=8ea920ea:695
+onSuccess @ @tanstack_react-query.js?v=8ea920ea:896
+resolve @ @tanstack_react-query.js?v=8ea920ea:455
+Promise.then
+run @ @tanstack_react-query.js?v=8ea920ea:497
+start @ @tanstack_react-query.js?v=8ea920ea:535
+fetch @ @tanstack_react-query.js?v=8ea920ea:925
+executeFetch_fn @ @tanstack_react-query.js?v=8ea920ea:2211
+onSubscribe @ @tanstack_react-query.js?v=8ea920ea:1898
+subscribe @ @tanstack_react-query.js?v=8ea920ea:24
+(anonymous) @ @tanstack_react-query.js?v=8ea920ea:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=8ea920ea:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=8ea920ea:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=8ea920ea:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=8ea920ea:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=8ea920ea:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=8ea920ea:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=8ea920ea:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=8ea920ea:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=8ea920ea:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=8ea920ea:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=8ea920ea:19432
+commitRoot @ chunk-GNC7SI6A.js?v=8ea920ea:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=8ea920ea:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=8ea920ea:18718
+workLoop @ chunk-GNC7SI6A.js?v=8ea920ea:197
+flushWork @ chunk-GNC7SI6A.js?v=8ea920ea:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=8ea920ea:384Understand this warningAI
+use-staff.ts:26 FETCH_STAFF: Successfully fetched staff members: (2) [{…}, {…}]
+use-pets.ts:108 FETCH_PETS: Completed fetching pets {totalPets: 1, pets: Array(1)}
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 0 active appointments
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 0 active documents
+use-appointments.ts:108 FETCH_APPOINTMENTS: No appointments found
+AppointmentsPage.tsx:141 AppointmentsPage: Appointments data updated: {count: 0, appointmentsWithImages: 0, timestamp: '2025-01-27T08:22:47.114Z'}appointmentsWithImages: 0count: 0timestamp: "2025-01-27T08:22:47.114Z"[[Prototype]]: Object
+use-appointments.ts:274 Adding appointment with data: {petId: 'mbg6juwQBokDcvNYk32r', services: Array(1), groomerId: 'p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82', branchId: '1', date: '2025-01-27T12:30:00.000Z', …}
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 1 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: qMhvoVzQYoh4ixj31e29 {petId: 'mbg6juwQBokDcvNYk32r', services: Array(1), groomerId: 'p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82', branchId: '1', date: _Timestamp, …}
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 1 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment qMhvoVzQYoh4ixj31e29
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
+AppointmentsPage.tsx:141 AppointmentsPage: Appointments data updated: {count: 1, appointmentsWithImages: 0, timestamp: '2025-01-27T08:23:23.670Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:27.947Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:27.948Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:28.002Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:28.002Z'}
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '1'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '1'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:30.322Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:30.322Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:30.373Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:30.374Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:33.342Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:33.343Z'}
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST {type: 'REMOVE_TOAST', toastId: '1'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(0)}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:35.326Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:35.326Z'}
+AppointmentDetails.tsx:385 Image uploaded successfully: https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2FqMhvoVzQYoh4ixj31e29%2Fbefore-image-1737966213341.jpg?alt=media&token=ea639e1b-7e7b-4929-b4ad-2e99c5d97e47
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:35.481Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:35.481Z'}
+AppointmentsPage.tsx:128 Updating selected appointment with new data: {id: 'qMhvoVzQYoh4ixj31e29', oldImage: undefined, newImage: 'https://firebasestorage.googleapis.com/v0/b/replit…=media&token=ea639e1b-7e7b-4929-b4ad-2e99c5d97e47', timestamp: '2025-01-27T08:23:35.486Z'}
+AppointmentsPage.tsx:141 AppointmentsPage: Appointments data updated: {count: 1, appointmentsWithImages: 1, timestamp: '2025-01-27T08:23:35.486Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: 'https://firebasestorage.googleapis.com/v0/b/replit…=media&token=ea639e1b-7e7b-4929-b4ad-2e99c5d97e47', appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:35.494Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: 'https://firebasestorage.googleapis.com/v0/b/replit…=media&token=ea639e1b-7e7b-4929-b4ad-2e99c5d97e47', appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:35.495Z'}
+AppointmentDetails.tsx:99 BeforeImage URL changed: {newUrl: 'https://firebasestorage.googleapis.com/v0/b/replit…=media&token=ea639e1b-7e7b-4929-b4ad-2e99c5d97e47', timestamp: '2025-01-27T08:23:35.498Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: 'https://firebasestorage.googleapis.com/v0/b/replit…=media&token=ea639e1b-7e7b-4929-b4ad-2e99c5d97e47', appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:35.501Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: 'https://firebasestorage.googleapis.com/v0/b/replit…=media&token=ea639e1b-7e7b-4929-b4ad-2e99c5d97e47', appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:35.501Z'}
+use-appointments.ts:408 Updating appointment: {id: 'qMhvoVzQYoh4ixj31e29', status: 'in_progress', cancellationReason: undefined, notes: undefined}
+use-appointments.ts:446 Appointment updated successfully
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: 'https://firebasestorage.googleapis.com/v0/b/replit…=media&token=ea639e1b-7e7b-4929-b4ad-2e99c5d97e47', appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:35.643Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: 'https://firebasestorage.googleapis.com/v0/b/replit…=media&token=ea639e1b-7e7b-4929-b4ad-2e99c5d97e47', appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:35.644Z'}
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 1 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: qMhvoVzQYoh4ixj31e29 {createdAt: _Timestamp, branchId: '1', productsUsed: null, totalPrice: 999, updatedAt: _Timestamp, …}
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 1 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment qMhvoVzQYoh4ixj31e29
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 1 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: qMhvoVzQYoh4ixj31e29 {createdAt: _Timestamp, branchId: '1', productsUsed: null, totalPrice: 999, updatedAt: _Timestamp, …}
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 1 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment qMhvoVzQYoh4ixj31e29
+2use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: 'https://firebasestorage.googleapis.com/v0/b/replit…=media&token=ea639e1b-7e7b-4929-b4ad-2e99c5d97e47', appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:35.840Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: 'https://firebasestorage.googleapis.com/v0/b/replit…=media&token=ea639e1b-7e7b-4929-b4ad-2e99c5d97e47', appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:35.841Z'}
+AppointmentsPage.tsx:128 Updating selected appointment with new data: {id: 'qMhvoVzQYoh4ixj31e29', oldImage: 'https://firebasestorage.googleapis.com/v0/b/replit…=media&token=ea639e1b-7e7b-4929-b4ad-2e99c5d97e47', newImage: undefined, timestamp: '2025-01-27T08:23:35.844Z'}
+AppointmentsPage.tsx:141 AppointmentsPage: Appointments data updated: {count: 1, appointmentsWithImages: 0, timestamp: '2025-01-27T08:23:35.844Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:35.850Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:35.850Z'}
+AppointmentDetails.tsx:131 Cleaning up image load effect: {url: 'https://firebasestorage.googleapis.com/v0/b/replit…=media&token=ea639e1b-7e7b-4929-b4ad-2e99c5d97e47', timestamp: '2025-01-27T08:23:35.858Z'}
+AppointmentDetails.tsx:119 Image preload failed: {url: 'https://firebasestorage.googleapis.com/v0/b/replit…=media&token=ea639e1b-7e7b-4929-b4ad-2e99c5d97e47', error: Event, timestamp: '2025-01-27T08:23:35.890Z'}
+img.onerror @ AppointmentDetails.tsx:119
+error
+(anonymous) @ AppointmentDetails.tsx:118
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=8ea920ea:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=8ea920ea:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=8ea920ea:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=8ea920ea:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=8ea920ea:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=8ea920ea:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=8ea920ea:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=8ea920ea:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=8ea920ea:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=8ea920ea:19432
+commitRoot @ chunk-GNC7SI6A.js?v=8ea920ea:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=8ea920ea:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=8ea920ea:18718
+workLoop @ chunk-GNC7SI6A.js?v=8ea920ea:197
+flushWork @ chunk-GNC7SI6A.js?v=8ea920ea:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=8ea920ea:384Understand this errorAI
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:35.890Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:35.890Z'}
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '2'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '2'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:40.876Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:40.876Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:41.159Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:41.160Z'}
+use-appointments.ts:408 Updating appointment: {id: 'qMhvoVzQYoh4ixj31e29', status: 'in_progress', cancellationReason: undefined, notes: undefined}
+use-appointments.ts:446 Appointment updated successfully
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:41.314Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:41.314Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:41.322Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:41.322Z'}
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 1 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: qMhvoVzQYoh4ixj31e29 {productsUsed: null, createdAt: _Timestamp, updatedAt: _Timestamp, services: Array(1), deletedAt: null, …}
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 1 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment qMhvoVzQYoh4ixj31e29
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:41.638Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:41.639Z'}
+AppointmentsPage.tsx:128 Updating selected appointment with new data: {id: 'qMhvoVzQYoh4ixj31e29', oldImage: undefined, newImage: undefined, timestamp: '2025-01-27T08:23:41.640Z'}
+AppointmentsPage.tsx:141 AppointmentsPage: Appointments data updated: {count: 1, appointmentsWithImages: 0, timestamp: '2025-01-27T08:23:41.640Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:41.644Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:41.644Z'}
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST {type: 'REMOVE_TOAST', toastId: '2'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:45.883Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'qMhvoVzQYoh4ixj31e29', timestamp: '2025-01-27T08:23:45.884Z'}
