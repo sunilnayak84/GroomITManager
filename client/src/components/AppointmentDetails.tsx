@@ -58,8 +58,86 @@ const AppointmentDetails = ({
   const [isUpdating, setIsUpdating] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [imageLoadError, setImageLoadError] = useState(false);
-  const queryClient = useQueryClient();
 
+  // Add debugging log when component renders
+  console.log('AppointmentDetails: Rendering with beforeImage:', {
+    url: appointment.beforeImage,
+    appointmentId: appointment.id,
+    timestamp: new Date().toISOString()
+  });
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    console.error('Image load error:', {
+      src: appointment.beforeImage,
+      error: e,
+      complete: (e.target as HTMLImageElement).complete,
+      naturalHeight: (e.target as HTMLImageElement).naturalHeight,
+      naturalWidth: (e.target as HTMLImageElement).naturalWidth,
+      timestamp: new Date().toISOString()
+    });
+    setImageLoadError(true);
+    setIsImageLoading(false);
+  };
+
+  const handleImageLoad = () => {
+    console.log('Image loaded successfully:', {
+      url: appointment.beforeImage,
+      timestamp: new Date().toISOString(),
+      element: {
+        complete: (e.target as HTMLImageElement).complete,
+        naturalHeight: (e.target as HTMLImageElement).naturalHeight,
+        naturalWidth: (e.target as HTMLImageElement).naturalWidth
+      }
+    });
+    setImageLoadError(false);
+    setIsImageLoading(false);
+  };
+
+  // Monitor beforeImage changes
+  React.useEffect(() => {
+    if (appointment.beforeImage) {
+      console.log('BeforeImage URL changed:', {
+        newUrl: appointment.beforeImage,
+        timestamp: new Date().toISOString()
+      });
+
+      setIsImageLoading(true);
+      setImageLoadError(false);
+
+      // Test image loading
+      const img = new Image();
+      img.onload = () => {
+        console.log('Image preload successful:', {
+          url: appointment.beforeImage,
+          naturalWidth: img.naturalWidth,
+          naturalHeight: img.naturalHeight,
+          timestamp: new Date().toISOString()
+        });
+        setIsImageLoading(false);
+      };
+      img.onerror = (e) => {
+        console.error('Image preload failed:', {
+          url: appointment.beforeImage,
+          error: e,
+          timestamp: new Date().toISOString()
+        });
+        setImageLoadError(true);
+        setIsImageLoading(false);
+      };
+      img.crossOrigin = "anonymous";
+      img.src = appointment.beforeImage;
+
+      return () => {
+        console.log('Cleaning up image load effect:', {
+          url: appointment.beforeImage,
+          timestamp: new Date().toISOString()
+        });
+        img.src = '';
+      };
+    }
+  }, [appointment.beforeImage]);
+
+  const queryClient = useQueryClient();
   const form = useForm<UpdateAppointmentForm>({
     resolver: zodResolver(updateAppointmentSchema),
     defaultValues: {
@@ -79,50 +157,6 @@ const AppointmentDetails = ({
     }
   }, [open, appointment.id]);
 
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    console.error('Image load error:', {
-      src: appointment.beforeImage,
-      error: e,
-      complete: (e.target as HTMLImageElement).complete,
-      naturalHeight: (e.target as HTMLImageElement).naturalHeight,
-      naturalWidth: (e.target as HTMLImageElement).naturalWidth
-    });
-    setImageLoadError(true);
-    setIsImageLoading(false);
-  };
-
-  const handleImageLoad = () => {
-    console.log('Image loaded successfully:', {
-      url: appointment.beforeImage,
-      timestamp: new Date().toISOString()
-    });
-    setImageLoadError(false);
-    setIsImageLoading(false);
-  };
-
-  // Add image preload effect
-  React.useEffect(() => {
-    if (appointment.beforeImage) {
-      setIsImageLoading(true);
-      setImageLoadError(false);
-
-      const img = new Image();
-      img.onload = () => {
-        console.log('Image preloaded successfully:', appointment.beforeImage);
-        setIsImageLoading(false);
-      };
-      img.onerror = (e) => {
-        console.error('Image preload failed:', {
-          url: appointment.beforeImage,
-          error: e
-        });
-        setImageLoadError(true);
-        setIsImageLoading(false);
-      };
-      img.crossOrigin = "anonymous";
-      img.src = appointment.beforeImage;
-    }
-  }, [appointment.beforeImage]);
 
   const onSubmit = async (data: UpdateAppointmentForm) => {
     try {
