@@ -69,7 +69,6 @@ const AppointmentDetails = ({
       timestamp: new Date().toISOString()
     });
 
-    // Cleanup function to prevent stale renders
     return () => {
       console.log('AppointmentDetails: Component cleanup', {
         id: appointment.id,
@@ -97,7 +96,6 @@ const AppointmentDetails = ({
     },
   });
 
-  // Reset form when dialog opens
   useEffect(() => {
     if (open) {
       console.log('Resetting form with status:', appointment.status);
@@ -107,7 +105,7 @@ const AppointmentDetails = ({
         notes: appointment.notes || undefined,
       });
     }
-  }, [open, appointment]); // Re-run when appointment changes too
+  }, [open, appointment]);
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.error('Image load error:', {
@@ -116,15 +114,6 @@ const AppointmentDetails = ({
       timestamp: new Date().toISOString()
     });
     setImageLoadError(true);
-    setIsImageLoading(false);
-  };
-
-  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    console.log('Image loaded successfully:', {
-      url: appointment.beforeImage,
-      timestamp: new Date().toISOString()
-    });
-    setImageLoadError(false);
     setIsImageLoading(false);
   };
 
@@ -152,10 +141,11 @@ const AppointmentDetails = ({
       });
 
       // Force immediate query invalidation and refetch
-      await queryClient.invalidateQueries({ queryKey: ["appointments"], refetchType: 'active' });
-
-      // Force parent component to refresh appointment data
-      onEdit();
+      await queryClient.invalidateQueries({ 
+        queryKey: ["appointments"],
+        exact: true,
+        refetchType: 'active'
+      });
 
       toast({
         title: "Success",
@@ -173,6 +163,7 @@ const AppointmentDetails = ({
       });
     } finally {
       setIsUpdating(false);
+      setIsImageLoading(false);
       const input = document.getElementById('before-image-upload') as HTMLInputElement;
       if (input) input.value = '';
     }
@@ -182,6 +173,7 @@ const AppointmentDetails = ({
     try {
       console.log('Submitting form with data:', data);
       setIsUpdating(true);
+
       await updateAppointment({
         id: appointment.id,
         status: data.status,
@@ -189,7 +181,10 @@ const AppointmentDetails = ({
         notes: data.notes,
       });
 
-      await queryClient.invalidateQueries({ queryKey: ["appointments"] });
+      await queryClient.invalidateQueries({ 
+        queryKey: ["appointments"],
+        exact: true
+      });
 
       toast({
         title: "Success",
@@ -235,14 +230,6 @@ const AppointmentDetails = ({
             View and manage appointment information
           </DialogDescription>
         </DialogHeader>
-
-        {/* Debug Information */}
-        <div className="bg-yellow-50 p-2 mb-4 rounded text-xs">
-          <p>Debug Info:</p>
-          <p>Appointment ID: {appointment.id}</p>
-          <p>Status: {appointment.status}</p>
-          <p>Image URL: {appointment.beforeImage || 'No image'}</p>
-        </div>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -303,6 +290,55 @@ const AppointmentDetails = ({
               </div>
             </div>
 
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Current Before Image</h3>
+              <div className="relative h-48 w-48 border border-gray-200 rounded-md overflow-hidden bg-gray-50">
+                {appointment.beforeImage ? (
+                  <div className="relative w-full h-full">
+                    {isImageLoading && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                        <span className="text-sm text-gray-500">Loading...</span>
+                      </div>
+                    )}
+                    <img
+                      key={`${appointment.id}-${appointment.beforeImage}`}
+                      src={appointment.beforeImage}
+                      alt="Before grooming"
+                      className={`w-full h-full object-cover ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
+                      onError={handleImageError}
+                      onLoad={() => setIsImageLoading(false)}
+                      crossOrigin="anonymous"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <span className="text-sm text-gray-500">No image</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* File input section */}
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-gray-500">Upload Before Image</h3>
+              <div className="flex items-center gap-4">
+                {form.watch("status") === "in_progress" && (
+                  <input
+                    type="file"
+                    accept="image/*"
+                    id="before-image-upload"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        handleImageUpload(file);
+                      }
+                    }}
+                    className="text-sm"
+                  />
+                )}
+              </div>
+            </div>
+
             <FormField
               control={form.control}
               name="status"
@@ -319,11 +355,9 @@ const AppointmentDetails = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {/* Current status */}
                       <SelectItem value={field.value}>
                         {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
                       </SelectItem>
-                      {/* Available transitions */}
                       {getStatusTransitions(field.value).map((status) => (
                         <SelectItem key={status} value={status}>
                           {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
@@ -360,62 +394,6 @@ const AppointmentDetails = ({
                 )}
               />
             )}
-
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium text-gray-500">Current Before Image</h3>
-              <div className="relative h-48 w-48 border border-gray-200 rounded-md overflow-hidden bg-gray-50">
-                {appointment.beforeImage ? (
-                  <div className="relative w-full h-full">
-                    {isImageLoading && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                        <span className="text-sm text-gray-500">Loading...</span>
-                      </div>
-                    )}
-                    <img
-                      key={`${appointment.id}-${appointment.beforeImage}`}
-                      src={appointment.beforeImage}
-                      alt="Before grooming"
-                      className={`w-full h-full object-cover ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
-                      onError={handleImageError}
-                      onLoad={handleImageLoad}
-                      crossOrigin="anonymous"
-                    />
-                    {/* Debug info */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-1">
-                      URL: {appointment.beforeImage}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <span className="text-sm text-gray-500">
-                      {imageLoadError ? "Failed to load image" : "No image"}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* File input section */}
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium text-gray-500">Upload Before Image</h3>
-              <div className="flex items-center gap-4">
-                {form.watch("status") === "in_progress" && (
-                  <input
-                    type="file"
-                    accept="image/*"
-                    id="before-image-upload"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        handleImageUpload(file);
-                      }
-                    }}
-                    className="text-sm"
-                  />
-                )}
-              </div>
-            </div>
-
 
             <FormField
               control={form.control}
