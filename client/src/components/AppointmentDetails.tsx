@@ -107,9 +107,31 @@ const AppointmentDetails = ({
     }
   }, [open, appointment]);
 
+  const getDecodedImageUrl = (url: string | null | undefined) => {
+    if (!url) return null;
+    try {
+      // Decode the URL to handle any encoding issues
+      return decodeURIComponent(url);
+    } catch (error) {
+      console.error('Error decoding URL:', error);
+      return url;
+    }
+  };
+
+  useEffect(() => {
+    if (appointment.beforeImage) {
+      console.log('Current image URL:', {
+        raw: appointment.beforeImage,
+        decoded: getDecodedImageUrl(appointment.beforeImage),
+        timestamp: new Date().toISOString()
+      });
+    }
+  }, [appointment.beforeImage]);
+
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.error('Image load error:', {
       url: appointment.beforeImage,
+      decodedUrl: getDecodedImageUrl(appointment.beforeImage),
       error: e,
       timestamp: new Date().toISOString()
     });
@@ -322,12 +344,16 @@ const AppointmentDetails = ({
                     )}
                     <img
                       key={`${appointment.id}-${appointment.beforeImage}-${Date.now()}`}
-                      src={appointment.beforeImage}
+                      src={getDecodedImageUrl(appointment.beforeImage)}
                       alt="Before grooming"
                       className={`w-full h-full object-cover ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
                       onError={handleImageError}
                       onLoad={() => {
-                        console.log('Image loaded:', appointment.beforeImage);
+                        console.log('Image loaded successfully:', {
+                          url: appointment.beforeImage,
+                          decodedUrl: getDecodedImageUrl(appointment.beforeImage),
+                          timestamp: new Date().toISOString()
+                        });
                         setIsImageLoading(false);
                         setImageLoadError(false);
                       }}
