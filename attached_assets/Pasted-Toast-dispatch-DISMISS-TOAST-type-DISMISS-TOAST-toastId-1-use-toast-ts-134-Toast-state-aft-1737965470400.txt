@@ -1,0 +1,127 @@
+Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '1'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST {type: 'REMOVE_TOAST', toastId: '1'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(0)}
+use-appointments.ts:274 Adding appointment with data: {petId: 'mbg6juwQBokDcvNYk32r', services: Array(1), groomerId: 'p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82', branchId: '1', date: '2025-01-28T05:30:00.000Z', …}branchId: "1"date: "2025-01-28T05:30:00.000Z"groomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"notes: nullpetId: "mbg6juwQBokDcvNYk32r"productsUsed: nullservices: ['Jm2fkUCVsvF3yWeqwJ8a']status: "pending"time: "11:00"totalDuration: 30totalPrice: 999[[Prototype]]: Object
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 1 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: QGQtgyvyBIc886moVMay {petId: 'mbg6juwQBokDcvNYk32r', services: Array(1), groomerId: 'p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82', branchId: '1', date: _Timestamp, …}branchId: "1"createdAt: _Timestamp {seconds: 1737965354, nanoseconds: 654000000}date: _Timestamp {seconds: 1738042200, nanoseconds: 0}deletedAt: nullgroomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"notes: nullpetId: "mbg6juwQBokDcvNYk32r"productsUsed: nullservices: ['Jm2fkUCVsvF3yWeqwJ8a']status: "pending"totalDuration: 30totalPrice: 999updatedAt: null[[Prototype]]: Object
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 1 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment QGQtgyvyBIc886moVMay
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}category: "Package"consumables: []created_at: "2025-01-22T07:46:33.460Z"description: "Package including 1 services and 1 add-ons."discount_percentage: 0duration: 30isActive: truename: "Pack One"price: 999selectedAddons: []selectedServices: [{…}]updated_at: "2025-01-22T11:37:02.280Z"[[Prototype]]: Object
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
+AppointmentsPage.tsx:125 AppointmentsPage: Appointments data updated: {count: 1, appointmentsWithImages: 0, timestamp: '2025-01-27T08:09:15.112Z'}appointmentsWithImages: 0count: 1timestamp: "2025-01-27T08:09:15.112Z"[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:16.250Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:16.250Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:16.252Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:16.252Z"url: undefined[[Prototype]]: Object
+AppointmentsPage.tsx:136 AppointmentsPage: Selected appointment changed: {id: 'QGQtgyvyBIc886moVMay', beforeImage: undefined, timestamp: '2025-01-27T08:09:16.256Z'}beforeImage: undefinedid: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:16.256Z"[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:16.302Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:16.302Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:16.303Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:16.303Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:18.061Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:18.061Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:18.062Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:18.062Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:20.398Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:20.398Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:20.398Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:20.398Z"url: undefined[[Prototype]]: Object
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '2'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '2'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}toasts: [{…}][[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:21.371Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:21.371Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:21.372Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:21.372Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:385 Image uploaded successfully: https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2FQGQtgyvyBIc886moVMay%2Fbefore-image-1737965360397.jpg?alt=media&token=fad734d3-a5eb-4f7f-9378-e592bd49847d
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:21.684Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:21.684Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:21.685Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:21.685Z"url: undefined[[Prototype]]: Object
+AppointmentsPage.tsx:125 AppointmentsPage: Appointments data updated: {count: 1, appointmentsWithImages: 1, timestamp: '2025-01-27T08:09:21.689Z'}appointmentsWithImages: 1count: 1timestamp: "2025-01-27T08:09:21.689Z"[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:21.690Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:21.690Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:21.691Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:21.691Z"url: undefined[[Prototype]]: Object
+use-appointments.ts:408 Updating appointment: {id: 'QGQtgyvyBIc886moVMay', status: 'in_progress', cancellationReason: undefined, notes: undefined}cancellationReason: undefinedid: "QGQtgyvyBIc886moVMay"notes: undefinedstatus: "in_progress"[[Prototype]]: Object
+use-appointments.ts:446 Appointment updated successfully
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:21.877Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:21.877Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:21.878Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:21.878Z"url: undefined[[Prototype]]: Object
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 1 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: QGQtgyvyBIc886moVMay {status: 'in_progress', deletedAt: null, productsUsed: null, branchId: '1', petId: 'mbg6juwQBokDcvNYk32r', …}beforeImage: "https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2FQGQtgyvyBIc886moVMay%2Fbefore-image-1737965360397.jpg?alt=media&token=fad734d3-a5eb-4f7f-9378-e592bd49847d"branchId: "1"cancellationReason: nullcreatedAt: _Timestamp {seconds: 1737965354, nanoseconds: 654000000}date: _Timestamp {seconds: 1738042200, nanoseconds: 0}deletedAt: nullgroomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"inProgressAt: _Timestamp {seconds: 1737965361, nanoseconds: 723000000}notes: nullpetId: "mbg6juwQBokDcvNYk32r"productsUsed: nullservices: ['Jm2fkUCVsvF3yWeqwJ8a']status: "in_progress"totalDuration: 30totalPrice: 999updatedAt: _Timestamp {seconds: 1737965361, nanoseconds: 760000000}[[Prototype]]: Object
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 1 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment QGQtgyvyBIc886moVMay
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 1 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: QGQtgyvyBIc886moVMay {status: 'in_progress', deletedAt: null, productsUsed: null, branchId: '1', petId: 'mbg6juwQBokDcvNYk32r', …}beforeImage: "https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2FQGQtgyvyBIc886moVMay%2Fbefore-image-1737965360397.jpg?alt=media&token=fad734d3-a5eb-4f7f-9378-e592bd49847d"branchId: "1"cancellationReason: nullcreatedAt: _Timestamp {seconds: 1737965354, nanoseconds: 654000000}date: _Timestamp {seconds: 1738042200, nanoseconds: 0}deletedAt: nullgroomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"inProgressAt: _Timestamp {seconds: 1737965361, nanoseconds: 723000000}notes: nullpetId: "mbg6juwQBokDcvNYk32r"productsUsed: nullservices: ['Jm2fkUCVsvF3yWeqwJ8a']status: "in_progress"totalDuration: 30totalPrice: 999updatedAt: _Timestamp {seconds: 1737965361, nanoseconds: 760000000}[[Prototype]]: Object
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 1 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment QGQtgyvyBIc886moVMay
+2use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}category: "Package"consumables: []created_at: "2025-01-22T07:46:33.460Z"description: "Package including 1 services and 1 add-ons."discount_percentage: 0duration: 30isActive: truename: "Pack One"price: 999selectedAddons: []selectedServices: [{…}]updated_at: "2025-01-22T11:37:02.280Z"[[Prototype]]: Object
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}category: "Package"consumables: []created_at: "2025-01-22T07:46:33.460Z"description: "Package including 1 services and 1 add-ons."discount_percentage: 0duration: 30isActive: truename: "Pack One"price: 999selectedAddons: []selectedServices: [{…}]updated_at: "2025-01-22T11:37:02.280Z"[[Prototype]]: Object
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:22.053Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:22.053Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:22.053Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:22.053Z"url: undefined[[Prototype]]: Object
+AppointmentsPage.tsx:125 AppointmentsPage: Appointments data updated: {count: 1, appointmentsWithImages: 0, timestamp: '2025-01-27T08:09:22.057Z'}appointmentsWithImages: 0count: 1timestamp: "2025-01-27T08:09:22.057Z"[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:22.059Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:22.059Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:22.059Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:22.059Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:23.742Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:23.742Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:23.742Z"url: undefined[[Prototype]]: Object
+use-appointments.ts:408 Updating appointment: {id: 'QGQtgyvyBIc886moVMay', status: 'in_progress', cancellationReason: undefined, notes: undefined}cancellationReason: undefinedid: "QGQtgyvyBIc886moVMay"notes: undefinedstatus: "in_progress"[[Prototype]]: Object
+use-appointments.ts:446 Appointment updated successfully
+use-appointments.ts:79 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:87 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:90 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:23.973Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:23.973Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:23.973Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:23.973Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:23.982Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:23.982Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:23.983Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:23.983Z"url: undefined[[Prototype]]: Object
+use-appointments.ts:99 FETCH_APPOINTMENTS: Found 1 active appointments
+use-appointments.ts:103 FETCH_APPOINTMENTS: Active appointment: QGQtgyvyBIc886moVMay {branchId: '1', totalDuration: 30, deletedAt: null, services: Array(1), status: 'in_progress', …}beforeImage: "https://firebasestorage.googleapis.com/v0/b/replit-5ac6a.firebasestorage.app/o/appointments%2FQGQtgyvyBIc886moVMay%2Fbefore-image-1737965360397.jpg?alt=media&token=fad734d3-a5eb-4f7f-9378-e592bd49847d"branchId: "1"cancellationReason: nullcreatedAt: _Timestamp {seconds: 1737965354, nanoseconds: 654000000}date: _Timestamp {seconds: 1738042200, nanoseconds: 0}deletedAt: nullgroomerId: "p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82"inProgressAt: _Timestamp {seconds: 1737965361, nanoseconds: 723000000}notes: nullpetId: "mbg6juwQBokDcvNYk32r"productsUsed: nullservices: ['Jm2fkUCVsvF3yWeqwJ8a']status: "in_progress"totalDuration: 30totalPrice: 999updatedAt: _Timestamp {seconds: 1737965363, nanoseconds: 846000000}[[Prototype]]: Object
+use-appointments.ts:105 FETCH_APPOINTMENTS: Got snapshot with 1 active documents
+use-appointments.ts:118 FETCH_APPOINTMENTS: Processing appointment QGQtgyvyBIc886moVMay
+use-appointments.ts:187 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:192 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}category: "Package"consumables: []created_at: "2025-01-22T07:46:33.460Z"description: "Package including 1 services and 1 add-ons."discount_percentage: 0duration: 30isActive: truename: "Pack One"price: 999selectedAddons: []selectedServices: [{…}]updated_at: "2025-01-22T11:37:02.280Z"[[Prototype]]: Object
+use-appointments.ts:204 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:262 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:24.243Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:24.243Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:24.244Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:24.244Z"url: undefined[[Prototype]]: Object
+AppointmentsPage.tsx:125 AppointmentsPage: Appointments data updated: {count: 1, appointmentsWithImages: 0, timestamp: '2025-01-27T08:09:24.245Z'}appointmentsWithImages: 0count: 1timestamp: "2025-01-27T08:09:24.245Z"[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:25.633Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:25.633Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:25.634Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:25.634Z"url: undefined[[Prototype]]: Object
+AppointmentsPage.tsx:136 AppointmentsPage: Selected appointment changed: {id: 'QGQtgyvyBIc886moVMay', beforeImage: undefined, timestamp: '2025-01-27T08:09:25.635Z'}beforeImage: undefinedid: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:25.635Z"[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:25.678Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:25.678Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:25.679Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:25.679Z"url: undefined[[Prototype]]: Object
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST {type: 'REMOVE_TOAST', toastId: '2'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:26.385Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:26.385Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:26.385Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:26.385Z"url: undefined[[Prototype]]: Object
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '3'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '3'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:27.072Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:27.072Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:27.073Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:27.073Z"url: undefined[[Prototype]]: Object
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '4'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '4'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:28.999Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:28.999Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:29.000Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:29.000Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:30.011Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:30.011Z"url: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:30.011Z'}appointmentId: "QGQtgyvyBIc886moVMay"timestamp: "2025-01-27T08:09:30.011Z"url: undefined[[Prototype]]: Object
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST {type: 'REMOVE_TOAST', toastId: '3'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:32.078Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:32.079Z'}
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST {type: 'REMOVE_TOAST', toastId: '4'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(0)}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:34.004Z'}
+AppointmentDetails.tsx:63 AppointmentDetails: Rendering with beforeImage: {url: undefined, appointmentId: 'QGQtgyvyBIc886moVMay', timestamp: '2025-01-27T08:09:34.005Z'}

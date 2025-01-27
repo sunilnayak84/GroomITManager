@@ -108,18 +108,34 @@ const statusColors: Record<AppointmentWithRelations["status"], string> = {
 export default function AppointmentsPage() {
   const [openNewForm, setOpenNewForm] = useState(false);
   const [openDetails, setOpenDetails] = useState(false);
-  const [openEdit, setOpenEdit] = useState(false); // Added openEdit state
+  const [openEdit, setOpenEdit] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithRelations | null>(null);
-  const [selectedPet, setSelectedPet] = useState<any>(null); // State to hold selected pet
-  const [showPetDetails, setShowPetDetails] = useState(false); // State for PetDetails modal
-  const [selectedCustomer, setSelectedCustomer] = useState<any>(null); // State for Customer Details
-  const [showCustomerDetails, setShowCustomerDetails] = useState(false); // State for Customer Details modal
+  const [selectedPet, setSelectedPet] = useState<any>(null);
+  const [showPetDetails, setShowPetDetails] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+  const [showCustomerDetails, setShowCustomerDetails] = useState(false);
   const [view, setView] = useState<'list' | 'calendar'>('list');
   const [dateFilter, setDateFilter] = useState<'today' | 'week' | 'month' | 'past' | 'all'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled'>('all');
   const { data: appointments, isLoading, error } = useAppointments();
 
   // Add logging when appointments data changes
+  useEffect(() => {
+    if (appointments && selectedAppointment) {
+      // Find the updated version of the selected appointment
+      const updatedAppointment = appointments.find(apt => apt.id === selectedAppointment.id);
+      if (updatedAppointment && JSON.stringify(updatedAppointment) !== JSON.stringify(selectedAppointment)) {
+        console.log('Updating selected appointment with new data:', {
+          id: updatedAppointment.id,
+          oldImage: selectedAppointment.beforeImage,
+          newImage: updatedAppointment.beforeImage,
+          timestamp: new Date().toISOString()
+        });
+        setSelectedAppointment(updatedAppointment);
+      }
+    }
+  }, [appointments, selectedAppointment]);
+
   useEffect(() => {
     if (appointments) {
       console.log('AppointmentsPage: Appointments data updated:', {
@@ -130,16 +146,6 @@ export default function AppointmentsPage() {
     }
   }, [appointments]);
 
-  // Add logging when selected appointment changes
-  useEffect(() => {
-    if (selectedAppointment) {
-      console.log('AppointmentsPage: Selected appointment changed:', {
-        id: selectedAppointment.id,
-        beforeImage: selectedAppointment.beforeImage,
-        timestamp: new Date().toISOString()
-      });
-    }
-  }, [selectedAppointment]);
 
   const filteredAppointments = useMemo(() => {
     if (!appointments) return [];
@@ -304,9 +310,9 @@ export default function AppointmentsPage() {
             setSelectedAppointment(row);
             setOpenDetails(true);
           }}
-          onEdit={() => { // Added onEdit handler
+          onEdit={() => { 
             setSelectedAppointment(row);
-            setOpenEdit(true); // Open the edit dialog
+            setOpenEdit(true); 
           }}
         />
       ),
@@ -421,11 +427,11 @@ export default function AppointmentsPage() {
             onOpenChange={setOpenDetails}
             onEdit={() => setOpenEdit(true)}
           />
-          <Dialog open={openEdit} onOpenChange={setOpenEdit}> {/* Added Edit Dialog */}
+          <Dialog open={openEdit} onOpenChange={setOpenEdit}> 
             <DialogTrigger asChild>
               {/* This trigger is already handled in ActionButtons */}
             </DialogTrigger>
-            <AppointmentEditForm appointment={selectedAppointment} setOpen={setOpenEdit} /> {/* Added Edit Form */}
+            <AppointmentEditForm appointment={selectedAppointment} setOpen={setOpenEdit} /> 
           </Dialog>
         </>
       )}
