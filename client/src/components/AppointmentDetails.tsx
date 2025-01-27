@@ -56,6 +56,7 @@ const AppointmentDetails = ({
   const { updateAppointment } = useAppointments();
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
+  const [imageLoadError, setImageLoadError] = useState(false);
   const queryClient = useQueryClient();
 
   const form = useForm<UpdateAppointmentForm>({
@@ -121,6 +122,19 @@ const AppointmentDetails = ({
     } finally {
       setIsUpdating(false);
     }
+  };
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    console.error('Image load error:', {
+      src: appointment.beforeImage,
+      error: e
+    });
+    setImageLoadError(true);
+  };
+
+  const handleImageLoad = () => {
+    console.log('Image loaded successfully:', appointment.beforeImage);
+    setImageLoadError(false);
   };
 
   return (
@@ -253,163 +267,139 @@ const AppointmentDetails = ({
               <h3 className="text-sm font-medium text-gray-500">Before Image</h3>
               <div className="flex items-center gap-4">
                 {form.watch("status") === "in_progress" && (
-                  <>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      id="before-image-upload"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          try {
-                            if (file.size > 5 * 1024 * 1024) {
-                              throw new Error('File size must be less than 5MB');
-                            }
-
-                            setIsUpdating(true);
-                            const timestamp = Date.now();
-                            const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-                            const path = `appointments/${appointment.id}/before-image-${timestamp}.${extension}`;
-
-                            // Compress image before upload if it's an image
-                            let compressedFile = file;
-                            if (file.type.startsWith('image/')) {
-                              const img = new Image();
-                              const canvas = document.createElement('canvas');
-                              const ctx = canvas.getContext('2d');
-
-                              await new Promise((resolve, reject) => {
-                                img.onload = () => {
-                                  const maxWidth = 1200;
-                                  const maxHeight = 1200;
-                                  let width = img.width;
-                                  let height = img.height;
-
-                                  if (width > height) {
-                                    if (width > maxWidth) {
-                                      height *= maxWidth / width;
-                                      width = maxWidth;
-                                    }
-                                  } else {
-                                    if (height > maxHeight) {
-                                      width *= maxHeight / height;
-                                      height = maxHeight;
-                                    }
-                                  }
-
-                                  canvas.width = width;
-                                  canvas.height = height;
-                                  ctx?.drawImage(img, 0, 0, width, height);
-
-                                  canvas.toBlob((blob) => {
-                                    if (blob) {
-                                      compressedFile = new File([blob], file.name, {
-                                        type: 'image/jpeg',
-                                        lastModified: Date.now(),
-                                      });
-                                      resolve(true);
-                                    } else {
-                                      reject(new Error('Failed to compress image'));
-                                    }
-                                  }, 'image/jpeg', 0.8);
-                                };
-                                img.onerror = () => reject(new Error('Failed to load image'));
-                                img.src = URL.createObjectURL(file);
-                              });
-                            }
-
-                            const { uploadFile } = await import("@/lib/storage");
-                            const url = await uploadFile(compressedFile, path);
-
-                            console.log('Image uploaded successfully:', url);
-
-                            // Update local state immediately for better UX
-                            queryClient.setQueryData<AppointmentWithRelations[]>(
-                              ["appointments"],
-                              (old) => old?.map(apt =>
-                                apt.id === appointment.id
-                                  ? { ...apt, beforeImage: url }
-                                  : apt
-                              ) ?? []
-                            );
-
-                            try {
-                              const result = await updateAppointment({
-                                id: appointment.id,
-                                status: form.getValues("status"),
-                                beforeImage: url,
-                              });
-                              console.log('Appointment update result:', result);
-
-                              // Force refetch right after update
-                              await queryClient.invalidateQueries({ queryKey: ["appointments"] });
-
-                              toast({
-                                title: "Success",
-                                description: "Before image uploaded and appointment updated",
-                              });
-                            } catch (updateError) {
-                              console.error('Failed to update appointment:', updateError);
-                              throw new Error('Failed to update appointment with new image URL');
-                            }
-
-                            // Force refetch to update UI
-                            queryClient.invalidateQueries({ queryKey: ["appointments"] });
-
-                            toast({
-                              title: "Success",
-                              description: "Before image uploaded successfully",
-                            });
-                          } catch (error) {
-                            console.error('Image upload error:', error);
-                            toast({
-                              variant: "destructive",
-                              title: "Error",
-                              description: error instanceof Error
-                                ? `Failed to upload image: ${error.message}`
-                                : "Failed to upload image",
-                            });
-                            queryClient.invalidateQueries({ queryKey: ["appointments"] });
-                          } finally {
-                            setIsUpdating(false);
-                            const input = document.getElementById('before-image-upload') as HTMLInputElement;
-                            if (input) input.value = '';
+                  <input
+                    type="file"
+                    accept="image/*"
+                    id="before-image-upload"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        try {
+                          if (file.size > 5 * 1024 * 1024) {
+                            throw new Error('File size must be less than 5MB');
                           }
+
+                          setIsUpdating(true);
+                          const timestamp = Date.now();
+                          const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+                          const path = `appointments/${appointment.id}/before-image-${timestamp}.${extension}`;
+
+                          let compressedFile = file;
+                          if (file.type.startsWith('image/')) {
+                            const img = new Image();
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+
+                            await new Promise((resolve, reject) => {
+                              img.onload = () => {
+                                const maxWidth = 1200;
+                                const maxHeight = 1200;
+                                let width = img.width;
+                                let height = img.height;
+
+                                if (width > height) {
+                                  if (width > maxWidth) {
+                                    height *= maxWidth / width;
+                                    width = maxWidth;
+                                  }
+                                } else {
+                                  if (height > maxHeight) {
+                                    width *= maxHeight / height;
+                                    height = maxHeight;
+                                  }
+                                }
+
+                                canvas.width = width;
+                                canvas.height = height;
+                                ctx?.drawImage(img, 0, 0, width, height);
+
+                                canvas.toBlob((blob) => {
+                                  if (blob) {
+                                    compressedFile = new File([blob], file.name, {
+                                      type: 'image/jpeg',
+                                      lastModified: Date.now(),
+                                    });
+                                    resolve(true);
+                                  } else {
+                                    reject(new Error('Failed to compress image'));
+                                  }
+                                }, 'image/jpeg', 0.8);
+                              };
+                              img.onerror = () => reject(new Error('Failed to load image'));
+                              img.src = URL.createObjectURL(file);
+                            });
+                          }
+
+                          const { uploadFile } = await import("@/lib/storage");
+                          const url = await uploadFile(compressedFile, path);
+
+                          console.log('Image uploaded successfully:', url);
+
+                          // Reset error state on new upload
+                          setImageLoadError(false);
+
+                          queryClient.setQueryData<AppointmentWithRelations[]>(
+                            ["appointments"],
+                            (old) => old?.map(apt =>
+                              apt.id === appointment.id
+                                ? { ...apt, beforeImage: url }
+                                : apt
+                            ) ?? []
+                          );
+
+                          const result = await updateAppointment({
+                            id: appointment.id,
+                            status: form.getValues("status"),
+                            beforeImage: url,
+                          });
+
+                          await queryClient.invalidateQueries({ queryKey: ["appointments"] });
+
+                          toast({
+                            title: "Success",
+                            description: "Before image uploaded successfully",
+                          });
+                        } catch (error) {
+                          console.error('Image upload error:', error);
+                          toast({
+                            variant: "destructive",
+                            title: "Error",
+                            description: error instanceof Error
+                              ? `Failed to upload image: ${error.message}`
+                              : "Failed to upload image",
+                          });
+                          queryClient.invalidateQueries({ queryKey: ["appointments"] });
+                        } finally {
+                          setIsUpdating(false);
+                          const input = document.getElementById('before-image-upload') as HTMLInputElement;
+                          if (input) input.value = '';
                         }
-                      }}
-                      className="text-sm"
-                    />
-                  </>
+                      }
+                    }}
+                    className="text-sm"
+                  />
                 )}
               </div>
             </div>
 
             <div className="space-y-2">
               <h3 className="text-sm font-medium text-gray-500">Current Before Image</h3>
-              <div className="flex flex-col gap-2">
-                {appointment.beforeImage ? (
-                  <div className="relative w-32 h-32">
-                    <img
-                      src={appointment.beforeImage}
-                      alt="Before grooming"
-                      className="h-32 w-32 object-cover rounded-md border border-gray-200"
-                      loading="lazy"
-                      crossOrigin="anonymous"
-                      onError={(e) => {
-                        console.error('Image load error:', {
-                          src: appointment.beforeImage,
-                          error: e
-                        });
-                        const target = e.target as HTMLImageElement;
-                        target.onerror = null; 
-                        target.src = `https://api.dicebear.com/7.x/adventurer/svg?seed=Error`;
-                        target.alt = "Failed to load image";
-                      }}
-                    />
-                  </div>
+              <div className="relative w-32 h-32 border border-gray-200 rounded-md overflow-hidden">
+                {appointment.beforeImage && !imageLoadError ? (
+                  <img
+                    key={appointment.beforeImage}
+                    src={appointment.beforeImage}
+                    alt="Before grooming"
+                    className="h-32 w-32 object-cover"
+                    onError={handleImageError}
+                    onLoad={handleImageLoad}
+                    crossOrigin="anonymous"
+                  />
                 ) : (
-                  <div className="w-32 h-32 flex items-center justify-center bg-gray-100 rounded-md">
-                    <span className="text-sm text-gray-500">No image</span>
+                  <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                    <span className="text-sm text-gray-500">
+                      {imageLoadError ? "Failed to load image" : "No image"}
+                    </span>
                   </div>
                 )}
               </div>
