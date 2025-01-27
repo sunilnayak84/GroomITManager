@@ -80,23 +80,70 @@ const AppointmentDetails = ({
     }
   }, [open]); // Only reset when dialog opens
 
-  const handleImageError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.error('Image load error:', {
       url: appointment.beforeImage,
-      error: event,
+      error: e,
       timestamp: new Date().toISOString()
     });
     setImageLoadError(true);
     setIsImageLoading(false);
   };
 
-  const handleImageLoad = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.log('Image loaded successfully:', {
       url: appointment.beforeImage,
       timestamp: new Date().toISOString()
     });
     setImageLoadError(false);
     setIsImageLoading(false);
+  };
+
+  const handleImageUpload = async (file: File) => {
+    try {
+      if (file.size > 5 * 1024 * 1024) {
+        throw new Error('File size must be less than 5MB');
+      }
+
+      setIsUpdating(true);
+      setIsImageLoading(true);
+      const timestamp = Date.now();
+      const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+      const path = `appointments/${appointment.id}/before-image-${timestamp}.${extension}`;
+
+      const { uploadFile } = await import("@/lib/storage");
+      const url = await uploadFile(file, path);
+
+      console.log('Image uploaded successfully:', url);
+
+      await updateAppointment({
+        id: appointment.id,
+        status: form.getValues("status"),
+        beforeImage: url,
+      });
+
+      // Invalidate queries to refresh data
+      await queryClient.invalidateQueries({ queryKey: ["appointments"] });
+
+      toast({
+        title: "Success",
+        description: "Before image uploaded successfully",
+      });
+    } catch (error) {
+      console.error('Image upload error:', error);
+      setImageLoadError(true);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error instanceof Error
+          ? `Failed to upload image: ${error.message}`
+          : "Failed to upload image",
+      });
+    } finally {
+      setIsUpdating(false);
+      const input = document.getElementById('before-image-upload') as HTMLInputElement;
+      if (input) input.value = '';
+    }
   };
 
   const onSubmit = async (data: UpdateAppointmentForm) => {
@@ -222,7 +269,7 @@ const AppointmentDetails = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Status</FormLabel>
-                  <Select 
+                  <Select
                     onValueChange={field.onChange}
                     value={field.value}
                   >
@@ -275,62 +322,48 @@ const AppointmentDetails = ({
             )}
 
             <div className="space-y-2">
-              <h3 className="text-sm font-medium text-gray-500">Before Image</h3>
+              <h3 className="text-sm font-medium text-gray-500">Current Before Image</h3>
+              <div className="relative h-48 w-48 border border-gray-200 rounded-md overflow-hidden bg-gray-50">
+                {appointment.beforeImage ? (
+                  <div className="relative w-full h-full">
+                    {isImageLoading && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                        <span className="text-sm text-gray-500">Loading...</span>
+                      </div>
+                    )}
+                    <img
+                      key={appointment.beforeImage} // Force re-render when URL changes
+                      src={appointment.beforeImage}
+                      alt="Before grooming"
+                      className={`w-full h-full object-cover ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
+                      onError={handleImageError}
+                      onLoad={handleImageLoad}
+                      crossOrigin="anonymous"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <span className="text-sm text-gray-500">
+                      {imageLoadError ? "Failed to load image" : "No image"}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* File input section */}
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-gray-500">Upload Before Image</h3>
               <div className="flex items-center gap-4">
                 {form.watch("status") === "in_progress" && (
                   <input
                     type="file"
                     accept="image/*"
                     id="before-image-upload"
-                    onChange={async (e) => {
+                    onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) {
-                        try {
-                          if (file.size > 5 * 1024 * 1024) {
-                            throw new Error('File size must be less than 5MB');
-                          }
-
-                          setIsUpdating(true);
-                          const timestamp = Date.now();
-                          const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-                          const path = `appointments/${appointment.id}/before-image-${timestamp}.${extension}`;
-
-                          const { uploadFile } = await import("@/lib/storage");
-                          const url = await uploadFile(file, path);
-
-                          console.log('Image uploaded successfully:', url);
-
-                          // Reset error state on new upload
-                          setImageLoadError(false);
-                          setIsImageLoading(true);
-
-                          await updateAppointment({
-                            id: appointment.id,
-                            status: form.getValues("status"),
-                            beforeImage: url,
-                          });
-
-                          // Invalidate queries to refresh data
-                          await queryClient.invalidateQueries({ queryKey: ["appointments"] });
-
-                          toast({
-                            title: "Success",
-                            description: "Before image uploaded successfully",
-                          });
-                        } catch (error) {
-                          console.error('Image upload error:', error);
-                          toast({
-                            variant: "destructive",
-                            title: "Error",
-                            description: error instanceof Error
-                              ? `Failed to upload image: ${error.message}`
-                              : "Failed to upload image",
-                          });
-                        } finally {
-                          setIsUpdating(false);
-                          const input = document.getElementById('before-image-upload') as HTMLInputElement;
-                          if (input) input.value = '';
-                        }
+                        handleImageUpload(file);
                       }
                     }}
                     className="text-sm"
@@ -339,38 +372,6 @@ const AppointmentDetails = ({
               </div>
             </div>
 
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium text-gray-500">Current Before Image</h3>
-              <div className="relative w-32 h-32 border border-gray-200 rounded-md overflow-hidden bg-gray-50">
-                {appointment.beforeImage ? (
-                  <>
-                    {isImageLoading && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                        <span className="text-sm text-gray-500">Loading...</span>
-                      </div>
-                    )}
-                    <img
-                      key={`${appointment.id}-${appointment.beforeImage}`}
-                      src={appointment.beforeImage}
-                      alt="Before grooming"
-                      className={`h-32 w-32 object-cover transition-opacity duration-200 ${
-                        isImageLoading ? 'opacity-0' : 'opacity-100'
-                      }`}
-                      onError={handleImageError}
-                      onLoad={handleImageLoad}
-                      crossOrigin="anonymous"
-                      referrerPolicy="no-referrer"
-                    />
-                  </>
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                    <span className="text-sm text-gray-500">
-                      {imageLoadError ? "Failed to load image" : "No image"}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
 
             <FormField
               control={form.control}
