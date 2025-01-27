@@ -66,27 +66,27 @@ const AppointmentDetails = ({
     timestamp: new Date().toISOString()
   });
 
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+  const handleImageError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.error('Image load error:', {
       src: appointment.beforeImage,
-      error: e,
-      complete: (e.target as HTMLImageElement).complete,
-      naturalHeight: (e.target as HTMLImageElement).naturalHeight,
-      naturalWidth: (e.target as HTMLImageElement).naturalWidth,
+      error: event,
+      complete: (event.target as HTMLImageElement).complete,
+      naturalHeight: (event.target as HTMLImageElement).naturalHeight,
+      naturalWidth: (event.target as HTMLImageElement).naturalWidth,
       timestamp: new Date().toISOString()
     });
     setImageLoadError(true);
     setIsImageLoading(false);
   };
 
-  const handleImageLoad = () => {
+  const handleImageLoad = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.log('Image loaded successfully:', {
       url: appointment.beforeImage,
       timestamp: new Date().toISOString(),
       element: {
-        complete: (e.target as HTMLImageElement).complete,
-        naturalHeight: (e.target as HTMLImageElement).naturalHeight,
-        naturalWidth: (e.target as HTMLImageElement).naturalWidth
+        complete: (event.target as HTMLImageElement).complete,
+        naturalHeight: (event.target as HTMLImageElement).naturalHeight,
+        naturalWidth: (event.target as HTMLImageElement).naturalWidth
       }
     });
     setImageLoadError(false);
@@ -156,7 +156,6 @@ const AppointmentDetails = ({
       });
     }
   }, [open, appointment.id]);
-
 
   const onSubmit = async (data: UpdateAppointmentForm) => {
     try {
