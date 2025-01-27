@@ -60,6 +60,34 @@ const AppointmentDetails = ({
   const [imageLoadError, setImageLoadError] = useState(false);
   const queryClient = useQueryClient();
 
+  // Add detailed debugging logs
+  useEffect(() => {
+    console.log('AppointmentDetails: Component mounted/updated', {
+      id: appointment.id,
+      beforeImage: appointment.beforeImage,
+      status: appointment.status,
+      timestamp: new Date().toISOString()
+    });
+
+    // Cleanup function to prevent stale renders
+    return () => {
+      console.log('AppointmentDetails: Component cleanup', {
+        id: appointment.id,
+        timestamp: new Date().toISOString()
+      });
+    };
+  }, [appointment]);
+
+  // Log when dialog opens/closes
+  useEffect(() => {
+    console.log('Dialog open state changed:', {
+      open,
+      appointmentId: appointment.id,
+      beforeImage: appointment.beforeImage,
+      timestamp: new Date().toISOString()
+    });
+  }, [open, appointment]);
+
   const form = useForm<UpdateAppointmentForm>({
     resolver: zodResolver(updateAppointmentSchema),
     defaultValues: {
@@ -72,13 +100,14 @@ const AppointmentDetails = ({
   // Reset form when dialog opens
   useEffect(() => {
     if (open) {
+      console.log('Resetting form with status:', appointment.status);
       form.reset({
         status: appointment.status,
         cancellationReason: appointment.cancellationReason || undefined,
         notes: appointment.notes || undefined,
       });
     }
-  }, [open]); // Only reset when dialog opens
+  }, [open, appointment]); // Re-run when appointment changes too
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.error('Image load error:', {
@@ -203,6 +232,14 @@ const AppointmentDetails = ({
             View and manage appointment information
           </DialogDescription>
         </DialogHeader>
+
+        {/* Debug Information */}
+        <div className="bg-yellow-50 p-2 mb-4 rounded text-xs">
+          <p>Debug Info:</p>
+          <p>Appointment ID: {appointment.id}</p>
+          <p>Status: {appointment.status}</p>
+          <p>Image URL: {appointment.beforeImage || 'No image'}</p>
+        </div>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -332,7 +369,7 @@ const AppointmentDetails = ({
                       </div>
                     )}
                     <img
-                      key={appointment.beforeImage} // Force re-render when URL changes
+                      key={`${appointment.id}-${appointment.beforeImage}`}
                       src={appointment.beforeImage}
                       alt="Before grooming"
                       className={`w-full h-full object-cover ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
@@ -340,6 +377,10 @@ const AppointmentDetails = ({
                       onLoad={handleImageLoad}
                       crossOrigin="anonymous"
                     />
+                    {/* Debug info */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-1">
+                      URL: {appointment.beforeImage}
+                    </div>
                   </div>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
