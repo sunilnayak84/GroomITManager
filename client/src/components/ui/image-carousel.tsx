@@ -16,11 +16,15 @@ export function ImageCarousel({ images, type, onImageUpload, className }: ImageC
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
-  const scrollPrev = useCallback(() => {
+  const scrollPrev = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (emblaApi) emblaApi.scrollPrev();
   }, [emblaApi]);
 
-  const scrollNext = useCallback(() => {
+  const scrollNext = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (emblaApi) emblaApi.scrollNext();
   }, [emblaApi]);
 
@@ -87,6 +91,7 @@ export function ImageCarousel({ images, type, onImageUpload, className }: ImageC
               size="icon"
               className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white"
               onClick={scrollPrev}
+              type="button"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -95,6 +100,7 @@ export function ImageCarousel({ images, type, onImageUpload, className }: ImageC
               size="icon"
               className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white"
               onClick={scrollNext}
+              type="button"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
