@@ -294,7 +294,8 @@ const AppointmentDetails = ({
               />
             </div>
 
-            {appointment.status === 'completed' && (
+            {/* Conditionally rendered sections moved here */}
+            {form.watch("status") === "completed" && (
               <>
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">After Images</h3>
@@ -394,34 +395,6 @@ const AppointmentDetails = ({
               </>
             )}
 
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value={field.value}>
-                        {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
-                      </SelectItem>
-                      {getStatusTransitions(field.value).map((status) => (
-                        <SelectItem key={status} value={status}>
-                          {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             {form.watch("status") === "cancelled" && (
               <FormField
                 control={form.control}
@@ -459,6 +432,34 @@ const AppointmentDetails = ({
                   <FormControl>
                     <Input {...field} value={field.value || ''} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Status</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value={field.value}>
+                        {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
+                      </SelectItem>
+                      {getStatusTransitions(field.value).map((status) => (
+                        <SelectItem key={status} value={status}>
+                          {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
