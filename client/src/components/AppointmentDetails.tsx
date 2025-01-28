@@ -429,7 +429,10 @@ const AppointmentDetails = ({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Cancellation Reason</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value || ""}>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      value={field.value || "no_show"} 
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select reason for cancellation" />
