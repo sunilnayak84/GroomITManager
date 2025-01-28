@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from './use-user';
-import type { AppointmentWithRelations, InsertAppointment } from "@/lib/schema";
+import type { AppointmentWithRelations, InsertAppointment, AppointmentImage } from "@/lib/schema";
 import { 
   collection, doc, setDoc, getDoc, getDocs, query, 
   where, DocumentData, CollectionReference, runTransaction,
@@ -399,7 +399,9 @@ export function useAppointments() {
       groomerId,
       services,
       date,
-      beforeImage
+      beforeImage,
+      beforeImages,
+      afterImages
     }: { 
       id: string; 
       status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
@@ -409,30 +411,13 @@ export function useAppointments() {
       services?: string[];
       date?: string;
       beforeImage?: string;
+      beforeImages?: AppointmentImage[];
+      afterImages?: AppointmentImage[];
     }) => {
-      const appointmentRef = doc(db, 'appointments', id);
-      const appointmentSnap = await getDoc(appointmentRef);
-      
-      if (!appointmentSnap.exists()) {
-        throw new Error('Appointment not found');
-      }
-
-      const currentData = appointmentSnap.data();
-      const currentStatus = currentData.status;
-
-      // Validate status transitions
-      if (currentStatus === 'in_progress' && (status === 'pending' || status === 'confirmed')) {
-        throw new Error('Cannot change status back to pending or confirmed once in progress');
-      }
-
-      // Set inProgressAt timestamp when moving to in_progress
-      const inProgressAt = status === 'in_progress' && currentStatus !== 'in_progress'
-        ? Timestamp.fromDate(new Date())
-        : (currentData.inProgressAt || null);
       try {
-        console.log('Updating appointment:', { id, status, cancellationReason, notes });
+        console.log('Updating appointment:', { id, status, cancellationReason, notes, beforeImages, afterImages });
         const appointmentRef = doc(db, 'appointments', id);
-        
+
         // Get current appointment data
         const appointmentSnap = await getDoc(appointmentRef);
         if (!appointmentSnap.exists()) {
@@ -440,20 +425,9 @@ export function useAppointments() {
         }
 
         const currentData = appointmentSnap.data();
-        const updateData: {
-          status: string;
-          updatedAt: Timestamp;
-          notes: string | null;
-          cancellationReason: string | null;
-          groomerId: string;
-          services: string[];
-          date: Timestamp;
-          beforeImage?: string | null;
-          inProgressAt: Timestamp | null;
-        } = {
+        const updateData: Partial<FirestoreAppointmentData> = {
           ...currentData,
           status,
-          inProgressAt,
           updatedAt: Timestamp.fromDate(new Date()),
           notes: notes !== undefined ? notes : currentData.notes,
           cancellationReason: status === 'cancelled' ? (cancellationReason || currentData.cancellationReason) : null,
@@ -462,13 +436,27 @@ export function useAppointments() {
           date: date ? Timestamp.fromDate(new Date(date)) : currentData.date,
         };
 
-        // Handle beforeImage update
+        // Handle beforeImage/beforeImages update
         if (beforeImage !== undefined) {
           updateData.beforeImage = beforeImage;
         }
+        if (beforeImages !== undefined) {
+          updateData.beforeImages = beforeImages.map(img => ({
+            ...img,
+            timestamp: Timestamp.fromDate(new Date(img.timestamp))
+          }));
+        }
+
+        // Handle afterImages update
+        if (afterImages !== undefined) {
+          updateData.afterImages = afterImages.map(img => ({
+            ...img,
+            timestamp: Timestamp.fromDate(new Date(img.timestamp))
+          }));
+        }
 
         await setDoc(appointmentRef, updateData);
-        console.log('Appointment updated successfully');
+        console.log('Appointment updated successfully with images:', updateData);
         return true;
       } catch (error) {
         console.error('Error updating appointment:', error);
