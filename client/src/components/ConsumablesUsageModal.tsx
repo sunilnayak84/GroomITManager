@@ -39,6 +39,8 @@ interface ConsumablesUsageModalProps {
   itemName: string;
   currentQuantity: number;
   unit: string;
+  appointmentId?: string;
+  serviceId?: string;
 }
 
 export function ConsumablesUsageModal({
@@ -48,6 +50,8 @@ export function ConsumablesUsageModal({
   itemName,
   currentQuantity,
   unit,
+  appointmentId,
+  serviceId,
 }: ConsumablesUsageModalProps) {
   const { recordUsage } = useInventory();
   const { user } = useUser();
@@ -57,6 +61,8 @@ export function ConsumablesUsageModal({
     defaultValues: {
       quantity_used: 0,
       notes: "",
+      appointment_id: appointmentId,
+      service_id: serviceId,
     },
   });
 
@@ -87,10 +93,10 @@ export function ConsumablesUsageModal({
         appointment_id: data.appointment_id,
         used_by: user.id,
         notes: data.notes,
-        service_linked: !!data.service_id, // true if service_id is provided
-        auto_deducted: true // Since this is being recorded through the UI
+        service_linked: !!data.service_id,
+        auto_deducted: true
       });
-      
+
       onClose();
       form.reset();
     } catch (error) {

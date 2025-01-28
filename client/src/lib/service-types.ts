@@ -13,7 +13,14 @@ export const baseConsumableSchema = z.object({
   item_name: z.string().min(1, "Item name is required")
 });
 
-// Service consumable schema - using the base schema directly since we handle number conversion in the form
+// Required inventory category schema
+export const requiredInventoryCategorySchema = z.object({
+  category_id: z.string().min(1, "Category ID is required"),
+  category_name: z.string().min(1, "Category name is required"),
+  required: z.boolean().default(true)
+});
+
+// Service consumable schema
 export const serviceConsumableSchema = baseConsumableSchema;
 
 // Package item type
@@ -32,6 +39,7 @@ export const baseServiceSchema = {
   duration: z.number().min(15, "Duration must be at least 15 minutes"),
   price: z.number().min(0, "Price cannot be negative"),
   description: z.string().nullable().default(null),
+  required_categories: z.array(requiredInventoryCategorySchema).default([])
 };
 
 // Full service schema for database operations
@@ -39,13 +47,12 @@ export const serviceSchema = z.object({
   service_id: z.string(),
   ...baseServiceSchema,
   discount_percentage: z.number().min(0).max(100).optional().default(0),
-  required_categories: z.array(z.string()).optional().default([]),
   consumables: z.array(serviceConsumableSchema).optional().default([]),
   isActive: z.boolean().default(true),
-  created_at: z.date().or(z.string()).transform(val => 
+  created_at: z.date().or(z.string()).transform(val =>
     typeof val === 'string' ? new Date(val) : val
   ),
-  updated_at: z.date().or(z.string()).transform(val => 
+  updated_at: z.date().or(z.string()).transform(val =>
     typeof val === 'string' ? new Date(val) : val
   ),
   selectedServices: z.array(z.object({
@@ -91,6 +98,7 @@ export type ServiceConsumable = z.infer<typeof serviceConsumableSchema>;
 export type Service = z.infer<typeof serviceSchema>;
 export type InsertService = z.infer<typeof insertServiceSchema>;
 export type UpdateService = Partial<InsertService>;
+export type RequiredInventoryCategory = z.infer<typeof requiredInventoryCategorySchema>;
 
 // Update service schema
 export const updateServiceSchema = insertServiceSchema.partial();
