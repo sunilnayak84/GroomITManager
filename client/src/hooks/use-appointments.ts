@@ -77,7 +77,10 @@ const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppoi
       deletedAt: null,
       beforeImage: null,
       beforeImages: [],
-      afterImages: []
+      afterImages: [],
+      observations: null,
+      recommendations: null,
+      cancellationReason: null
     };
   };
 
