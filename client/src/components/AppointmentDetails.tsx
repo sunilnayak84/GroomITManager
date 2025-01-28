@@ -36,9 +36,9 @@ import { ImageCarousel } from './ui/image-carousel';
 const updateAppointmentSchema = z.object({
   status: z.enum(['pending', 'confirmed', 'completed', 'cancelled', 'in_progress']),
   cancellationReason: z.enum(['no_show', 'rescheduled', 'other']).optional(),
-  notes: z.string().optional(),
-  observations: z.string().optional(),
-  recommendations: z.string().optional(),
+  notes: z.string().nullable().optional(),
+  observations: z.string().nullable().optional(),
+  recommendations: z.string().nullable().optional(),
 });
 
 type UpdateAppointmentForm = z.infer<typeof updateAppointmentSchema>;
@@ -96,14 +96,25 @@ const AppointmentDetails = ({
     try {
       setIsUpdating(true);
 
-      await updateAppointment({
+      const updateData: Parameters<typeof updateAppointment>[0] = {
         id: appointment.id,
         status: data.status,
-        cancellationReason: data.status === 'cancelled' ? data.cancellationReason : undefined,
-        notes: data.notes,
-        observations: data.status === 'completed' ? data.observations : undefined,
-        recommendations: data.status === 'completed' ? data.recommendations : undefined,
-      });
+        notes: data.notes ?? null,
+      };
+
+      // Only add fields based on status
+      if (data.status === 'cancelled' && data.cancellationReason) {
+        updateData.cancellationReason = data.cancellationReason;
+      }
+
+      if (data.status === 'completed') {
+        updateData.observations = data.observations ?? null;
+        updateData.recommendations = data.recommendations ?? null;
+      }
+
+      console.log('Submitting appointment update:', updateData);
+
+      await updateAppointment(updateData);
 
       await queryClient.invalidateQueries({ 
         queryKey: ["appointments"],

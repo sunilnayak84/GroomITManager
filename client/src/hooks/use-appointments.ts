@@ -5,7 +5,7 @@ import {
   collection, doc, setDoc, getDoc, getDocs, query, 
   where, DocumentData, CollectionReference, runTransaction,
   QuerySnapshot, DocumentSnapshot, WithFieldValue, 
-  FieldValue, serverTimestamp, Timestamp
+  FieldValue, serverTimestamp, Timestamp, updateDoc
 } from 'firebase/firestore';
 import { db } from "../lib/firebase";
 
@@ -210,6 +210,7 @@ export function useAppointments() {
                   
                   // Map all required service fields
                   serviceData.push({
+                    service_id: serviceId, // Add service_id
                     name: rawServiceData.name || 'Unknown Service',
                     duration: rawServiceData.duration || 30,
                     price: rawServiceData.price || 0,
@@ -411,62 +412,69 @@ export function useAppointments() {
     }: { 
       id: string; 
       status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
-      cancellationReason?: string;
-      notes?: string;
+      cancellationReason?: "no_show" | "rescheduled" | "other" | null;
+      notes?: string | null;
       groomerId?: string;
       services?: string[];
       date?: string;
-      beforeImage?: string;
+      beforeImage?: string | null;
       beforeImages?: AppointmentImage[];
       afterImages?: AppointmentImage[];
-      observations?: string;
-      recommendations?: string;
+      observations?: string | null;
+      recommendations?: string | null;
     }) => {
       try {
         console.log('Updating appointment:', { id, status, cancellationReason, notes, beforeImages, afterImages, observations, recommendations });
         const appointmentRef = doc(db, 'appointments', id);
 
-        // Get current appointment data
-        const appointmentSnap = await getDoc(appointmentRef);
-        if (!appointmentSnap.exists()) {
-          throw new Error('Appointment not found');
-        }
-
-        const currentData = appointmentSnap.data();
+        // Create update object with only defined fields
         const updateData: Partial<FirestoreAppointmentData> = {
-          ...currentData,
           status,
-          updatedAt: Timestamp.fromDate(new Date()),
-          notes: notes !== undefined ? notes : currentData.notes,
-          cancellationReason: status === 'cancelled' ? (cancellationReason || currentData.cancellationReason) : null,
-          groomerId: groomerId || currentData.groomerId,
-          services: services || currentData.services,
-          date: date ? Timestamp.fromDate(new Date(date)) : currentData.date,
-          observations: observations !== undefined ? observations : currentData.observations,
-          recommendations: recommendations !== undefined ? recommendations : currentData.recommendations
+          updatedAt: Timestamp.fromDate(new Date())
         };
 
-        // Handle beforeImage/beforeImages update
-        if (beforeImage !== undefined) {
-          updateData.beforeImage = beforeImage;
+        // Only add fields that are explicitly provided (not undefined)
+        if (cancellationReason !== undefined) {
+          updateData.cancellationReason = cancellationReason;
+        }
+        if (notes !== undefined) {
+          updateData.notes = notes;
+        }
+        if (groomerId !== undefined) {
+          updateData.groomerId = groomerId;
+        }
+        if (services !== undefined) {
+          updateData.services = services;
+        }
+        if (date !== undefined) {
+          updateData.date = Timestamp.fromDate(new Date(date));
+        }
+        if (observations !== undefined) {
+          updateData.observations = observations;
+        }
+        if (recommendations !== undefined) {
+          updateData.recommendations = recommendations;
         }
         if (beforeImages !== undefined) {
           updateData.beforeImages = beforeImages.map(img => ({
-            ...img,
+            id: img.id,
+            url: img.url,
+            type: 'before' as const,
             timestamp: Timestamp.fromDate(new Date(img.timestamp))
           }));
         }
-
-        // Handle afterImages update
         if (afterImages !== undefined) {
           updateData.afterImages = afterImages.map(img => ({
-            ...img,
+            id: img.id,
+            url: img.url,
+            type: 'after' as const,
             timestamp: Timestamp.fromDate(new Date(img.timestamp))
           }));
         }
 
-        await setDoc(appointmentRef, updateData);
-        console.log('Appointment updated successfully with images:', updateData);
+        // Use updateDoc instead of setDoc to only update specified fields
+        await updateDoc(appointmentRef, updateData);
+        console.log('Appointment updated successfully:', updateData);
         return true;
       } catch (error) {
         console.error('Error updating appointment:', error);

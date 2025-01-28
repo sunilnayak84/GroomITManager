@@ -1,0 +1,63 @@
+Updating appointment: {id: 'ucL26Dg2CyJYA0MTwEjB', status: 'completed', cancellationReason: undefined, notes: undefined, beforeImages: undefined, …}afterImages: undefinedbeforeImages: undefinedcancellationReason: undefinedid: "ucL26Dg2CyJYA0MTwEjB"notes: undefinedobservations: undefinedrecommendations: undefinedstatus: "completed"[[Prototype]]: Object
+use-appointments.ts:472 Error updating appointment: FirebaseError: Function setDoc() called with invalid data. Unsupported field value: undefined (found in field observations in document appointments/ucL26Dg2CyJYA0MTwEjB)
+mutationFn @ use-appointments.ts:472
+await in mutationFn
+fn @ @tanstack_react-query.js?v=6ae3481a:1188
+run @ @tanstack_react-query.js?v=6ae3481a:493
+start @ @tanstack_react-query.js?v=6ae3481a:535
+execute @ @tanstack_react-query.js?v=6ae3481a:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=6ae3481a:2621
+onSubmit @ AppointmentDetails.tsx:99
+(anonymous) @ chunk-YGGBEVKP.js?v=6ae3481a:1694
+await in (anonymous)
+callCallback2 @ chunk-GNC7SI6A.js?v=6ae3481a:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=6ae3481a:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=6ae3481a:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-GNC7SI6A.js?v=6ae3481a:3736
+executeDispatch @ chunk-GNC7SI6A.js?v=6ae3481a:7014
+processDispatchQueueItemsInOrder @ chunk-GNC7SI6A.js?v=6ae3481a:7034
+processDispatchQueue @ chunk-GNC7SI6A.js?v=6ae3481a:7043
+dispatchEventsForPlugins @ chunk-GNC7SI6A.js?v=6ae3481a:7051
+(anonymous) @ chunk-GNC7SI6A.js?v=6ae3481a:7174
+batchedUpdates$1 @ chunk-GNC7SI6A.js?v=6ae3481a:18913
+batchedUpdates @ chunk-GNC7SI6A.js?v=6ae3481a:3579
+dispatchEventForPluginEventSystem @ chunk-GNC7SI6A.js?v=6ae3481a:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-GNC7SI6A.js?v=6ae3481a:5478
+dispatchEvent @ chunk-GNC7SI6A.js?v=6ae3481a:5472
+dispatchDiscreteEvent @ chunk-GNC7SI6A.js?v=6ae3481a:5449Understand this errorAI
+use-appointments.ts:426 Updating appointment: {id: 'ucL26Dg2CyJYA0MTwEjB', status: 'completed', cancellationReason: undefined, notes: undefined, beforeImages: undefined, …}afterImages: undefinedbeforeImages: undefinedcancellationReason: undefinedid: "ucL26Dg2CyJYA0MTwEjB"notes: undefinedobservations: undefinedrecommendations: undefinedstatus: "completed"[[Prototype]]: Object
+use-appointments.ts:472 Error updating appointment: FirebaseError: Function setDoc() called with invalid data. Unsupported field value: undefined (found in field observations in document appointments/ucL26Dg2CyJYA0MTwEjB)
+mutationFn @ use-appointments.ts:472
+await in mutationFn
+fn @ @tanstack_react-query.js?v=6ae3481a:1188
+run @ @tanstack_react-query.js?v=6ae3481a:493
+(anonymous) @ @tanstack_react-query.js?v=6ae3481a:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=6ae3481a:514
+Promise.catch
+run @ @tanstack_react-query.js?v=6ae3481a:497
+start @ @tanstack_react-query.js?v=6ae3481a:535
+execute @ @tanstack_react-query.js?v=6ae3481a:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=6ae3481a:2621
+onSubmit @ AppointmentDetails.tsx:99
+(anonymous) @ chunk-YGGBEVKP.js?v=6ae3481a:1694
+await in (anonymous)
+callCallback2 @ chunk-GNC7SI6A.js?v=6ae3481a:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=6ae3481a:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=6ae3481a:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-GNC7SI6A.js?v=6ae3481a:3736
+executeDispatch @ chunk-GNC7SI6A.js?v=6ae3481a:7014
+processDispatchQueueItemsInOrder @ chunk-GNC7SI6A.js?v=6ae3481a:7034
+processDispatchQueue @ chunk-GNC7SI6A.js?v=6ae3481a:7043
+dispatchEventsForPlugins @ chunk-GNC7SI6A.js?v=6ae3481a:7051
+(anonymous) @ chunk-GNC7SI6A.js?v=6ae3481a:7174
+batchedUpdates$1 @ chunk-GNC7SI6A.js?v=6ae3481a:18913
+batchedUpdates @ chunk-GNC7SI6A.js?v=6ae3481a:3579
+dispatchEventForPluginEventSystem @ chunk-GNC7SI6A.js?v=6ae3481a:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-GNC7SI6A.js?v=6ae3481a:5478
+dispatchEvent @ chunk-GNC7SI6A.js?v=6ae3481a:5472
+dispatchDiscreteEvent @ chunk-GNC7SI6A.js?v=6ae3481a:5449Understand this errorAI
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
