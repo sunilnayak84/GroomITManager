@@ -1,26 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
@@ -63,10 +44,21 @@ const AppointmentDetails = ({
   const [isImageLoading, setIsImageLoading] = useState(false);
   const [imageLoadError, setImageLoadError] = useState(false);
   const [inventoryUsageComplete, setInventoryUsageComplete] = useState(false);
+  const [isChangingToCompleted, setIsChangingToCompleted] = useState(false);
   const queryClient = useQueryClient();
 
   const isTerminalStatus = appointment.status === 'completed' || appointment.status === 'cancelled';
-  const isChangingToCompleted = form?.watch("status") === "completed" && appointment.status !== "completed";
+
+  const form = useForm<UpdateAppointmentForm>({
+    resolver: zodResolver(updateAppointmentSchema),
+    defaultValues: {
+      status: appointment.status,
+      cancellationReason: appointment.cancellationReason || undefined,
+      notes: appointment.notes || undefined,
+      observations: appointment.observations || undefined,
+      recommendations: appointment.recommendations || undefined,
+    },
+  });
 
   useEffect(() => {
     if (open) {
@@ -81,22 +73,21 @@ const AppointmentDetails = ({
     }
   }, [open, appointment]);
 
+  // Watch for status changes to determine if we're changing to completed
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === 'status') {
+        setIsChangingToCompleted(value.status === 'completed' && appointment.status !== 'completed');
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form.watch, appointment.status]);
+
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.error('Error loading image:', e);
     setImageLoadError(true);
     setIsImageLoading(false);
   };
-
-  const form = useForm<UpdateAppointmentForm>({
-    resolver: zodResolver(updateAppointmentSchema),
-    defaultValues: {
-      status: appointment.status,
-      cancellationReason: appointment.cancellationReason || undefined,
-      notes: appointment.notes || undefined,
-      observations: appointment.observations || undefined,
-      recommendations: appointment.recommendations || undefined,
-    },
-  });
 
   const onSubmit = async (data: UpdateAppointmentForm) => {
     try {
@@ -318,7 +309,7 @@ const AppointmentDetails = ({
             </div>
 
             {/* Inventory Usage Section */}
-            {isChangingToCompleted && !inventoryUsageComplete && (
+            {isChangingToCompleted && !inventoryUsageComplete && appointment.service && (
               <div className="border-t pt-4">
                 <h3 className="text-lg font-medium mb-4">Record Inventory Usage</h3>
                 <AppointmentInventoryUsage
