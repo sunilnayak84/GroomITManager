@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useInventory } from "@/hooks/use-inventory";
 import { useServices } from "@/hooks/use-services";
-import { Service, RequiredInventoryCategory } from "@/lib/service-types";
+import { Service } from "@/lib/service-types";
 import { ConsumablesUsageModal } from "./ConsumablesUsageModal";
 import {
   Accordion,
@@ -26,68 +26,74 @@ export function AppointmentInventoryUsage({
 }: AppointmentInventoryUsageProps) {
   const { inventory, isLoading: inventoryLoading } = useInventory();
   const { services: allServices, isLoading: servicesLoading } = useServices();
-  const [requiredCategories, setRequiredCategories] = useState<Map<string, RequiredInventoryCategory>>(new Map());
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [completedCategories, setCompletedCategories] = useState<Set<string>>(new Set());
+  const [completedItems, setCompletedItems] = useState<Set<string>>(new Set());
+  const [requiredItems, setRequiredItems] = useState<Map<string, {item_id: string, item_name: string, category: string}>>(new Map());
 
-  // Helper function to extract all services from a package
-  const extractAllServices = (service: Service): Service[] => {
-    const services: Service[] = [service];
+  // Helper function to extract all consumables from a service
+  const extractAllConsumables = (service: Service): Array<{item_id: string, item_name: string}> => {
+    const consumables: Array<{item_id: string, item_name: string}> = [...(service.consumables || [])];
 
-    // Add selected services if present
-    if (service.selectedServices && service.selectedServices.length > 0) {
+    // Add consumables from selected services
+    if (service.selectedServices) {
       service.selectedServices.forEach(subService => {
         const fullService = allServices.find(s => s.service_id === subService.service_id);
         if (fullService) {
-          services.push(...extractAllServices(fullService));
+          consumables.push(...extractAllConsumables(fullService));
         }
       });
     }
 
-    // Add selected addons if present
-    if (service.selectedAddons && service.selectedAddons.length > 0) {
+    // Add consumables from selected addons
+    if (service.selectedAddons) {
       service.selectedAddons.forEach(addon => {
         const fullService = allServices.find(s => s.service_id === addon.service_id);
         if (fullService) {
-          services.push(...extractAllServices(fullService));
+          consumables.push(...extractAllConsumables(fullService));
         }
       });
     }
 
-    return services;
+    return consumables;
   };
 
   useEffect(() => {
-    const categoriesMap = new Map<string, RequiredInventoryCategory>();
+    const itemsMap = new Map<string, {item_id: string, item_name: string, category: string}>();
 
     // Process all selected services
     services.forEach(serviceId => {
       const service = allServices.find(s => s.service_id === serviceId);
       if (service) {
-        // Get all services including nested ones
-        const allRelatedServices = extractAllServices(service);
+        // Get all consumables including from nested services
+        const allConsumables = extractAllConsumables(service);
 
-        // Process required categories from all related services
-        allRelatedServices.forEach(relatedService => {
-          if (relatedService.required_categories) {
-            relatedService.required_categories.forEach(category => {
-              // Only add if not already present or if marked as required
-              if (!categoriesMap.has(category.category_id) || category.required) {
-                categoriesMap.set(category.category_id, category);
-              }
+        // Add each consumable to the map
+        allConsumables.forEach(consumable => {
+          const inventoryItem = inventory.find(item => item.item_id === consumable.item_id);
+          if (inventoryItem) {
+            itemsMap.set(consumable.item_id, {
+              item_id: consumable.item_id,
+              item_name: consumable.item_name,
+              category: inventoryItem.category
             });
           }
         });
       }
     });
 
-    console.log('Required categories:', Array.from(categoriesMap.values()));
-    setRequiredCategories(categoriesMap);
-  }, [services, allServices]);
+    console.log('Required items:', Array.from(itemsMap.values()));
+    setRequiredItems(itemsMap);
+  }, [services, allServices, inventory]);
 
-  const getItemsByCategory = (categoryId: string) => {
-    return inventory.filter(item => item.category === categoryId && item.isActive);
+  const getItemsByCategory = (category: string) => {
+    return Array.from(requiredItems.values()).filter(item => item.category === category);
+  };
+
+  const getCategories = () => {
+    const categories = new Set<string>();
+    requiredItems.forEach(item => categories.add(item.category));
+    return Array.from(categories);
   };
 
   const handleItemSelect = (itemId: string) => {
@@ -95,11 +101,17 @@ export function AppointmentInventoryUsage({
     setIsModalOpen(true);
   };
 
-  const handleUsageRecorded = (categoryId: string) => {
-    setCompletedCategories(prev => new Set(prev).add(categoryId));
-    if (requiredCategories.size === completedCategories.size + 1) {
+  const handleUsageRecorded = (itemId: string) => {
+    setCompletedItems(prev => new Set(prev).add(itemId));
+
+    // Check if all items are completed
+    const allCompleted = Array.from(requiredItems.keys()).every(id => 
+      completedItems.has(id) || id === itemId
+    );
+
+    if (allCompleted) {
       toast({
-        title: "All categories completed",
+        title: "All items completed",
         description: "All required inventory usage has been recorded",
       });
       onComplete();
@@ -122,40 +134,42 @@ export function AppointmentInventoryUsage({
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-medium">Required Inventory Usage</h3>
         <div className="text-sm text-muted-foreground">
-          {completedCategories.size}/{requiredCategories.size} categories completed
+          {completedItems.size}/{requiredItems.size} items completed
         </div>
       </div>
 
       <Accordion type="single" collapsible className="w-full">
-        {Array.from(requiredCategories.values()).map((category) => {
-          const items = getItemsByCategory(category.category_id);
-          const isCategoryCompleted = completedCategories.has(category.category_id);
+        {getCategories().map((category) => {
+          const items = getItemsByCategory(category);
 
           return (
-            <AccordionItem key={category.category_id} value={category.category_id}>
+            <AccordionItem key={category} value={category}>
               <AccordionTrigger className="flex items-center justify-between">
-                <span>{category.category_name}</span>
-                <Badge variant={isCategoryCompleted ? "default" : "secondary"}>
-                  {isCategoryCompleted ? "Completed" : "Required"}
+                <span>{category}</span>
+                <Badge variant={items.every(item => completedItems.has(item.item_id)) ? "default" : "secondary"}>
+                  {items.every(item => completedItems.has(item.item_id)) ? "Completed" : "Required"}
                 </Badge>
               </AccordionTrigger>
               <AccordionContent>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-                  {items.map((item) => (
-                    <Button
-                      key={item.item_id}
-                      variant="outline"
-                      className="justify-start"
-                      onClick={() => handleItemSelect(item.item_id)}
-                    >
-                      <div className="flex flex-col items-start">
-                        <span>{item.name}</span>
-                        <span className="text-sm text-muted-foreground">
-                          Stock: {item.quantity} {item.unit}
-                        </span>
-                      </div>
-                    </Button>
-                  ))}
+                  {items.map((item) => {
+                    const inventoryItem = inventory.find(i => i.item_id === item.item_id);
+                    return (
+                      <Button
+                        key={item.item_id}
+                        variant="outline"
+                        className="justify-start"
+                        onClick={() => handleItemSelect(item.item_id)}
+                      >
+                        <div className="flex flex-col items-start">
+                          <span>{item.item_name}</span>
+                          <span className="text-sm text-muted-foreground">
+                            Stock: {inventoryItem?.quantity || 0} {inventoryItem?.unit}
+                          </span>
+                        </div>
+                      </Button>
+                    );
+                  })}
                 </div>
               </AccordionContent>
             </AccordionItem>
@@ -169,10 +183,9 @@ export function AppointmentInventoryUsage({
           onClose={() => {
             setIsModalOpen(false);
             setSelectedItemId(null);
-            // Mark the category as completed when modal is closed
-            const category = inventory.find(i => i.item_id === selectedItemId)?.category;
-            if (category) {
-              handleUsageRecorded(category);
+            // Mark the item as completed when modal is closed
+            if (selectedItemId) {
+              handleUsageRecorded(selectedItemId);
             }
           }}
           itemId={selectedItem.item_id}
