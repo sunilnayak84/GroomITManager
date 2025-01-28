@@ -136,6 +136,22 @@ const AppointmentDetails = ({
     }
   };
 
+  // Combine legacy single image with new image array
+  const allBeforeImages = React.useMemo(() => {
+    if (appointment.beforeImages?.length) {
+      return appointment.beforeImages;
+    }
+    if (appointment.beforeImage) {
+      return [{
+        id: 'legacy',
+        url: appointment.beforeImage,
+        type: 'before' as const,
+        timestamp: appointment.updatedAt || appointment.createdAt
+      }];
+    }
+    return [];
+  }, [appointment.beforeImages, appointment.beforeImage, appointment.updatedAt, appointment.createdAt]);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -185,7 +201,7 @@ const AppointmentDetails = ({
             <div>
               <h3 className="text-sm font-medium text-gray-500">Before Images</h3>
               <ImageCarousel
-                images={appointment.beforeImages || []}
+                images={allBeforeImages}
                 type="before"
                 onImageUpload={async (file) => {
                   try {
@@ -209,10 +225,12 @@ const AppointmentDetails = ({
                       timestamp: new Date().toISOString(),
                     };
 
+                    const updatedBeforeImages = [...allBeforeImages, newImage];
+
                     await updateAppointment({
                       id: appointment.id,
                       status: form.getValues("status"),
-                      beforeImages: [...(appointment.beforeImages || []), newImage],
+                      beforeImages: updatedBeforeImages,
                     });
 
                     await queryClient.invalidateQueries({ 

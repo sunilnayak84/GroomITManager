@@ -58,7 +58,7 @@ const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppoi
     if (isNaN(appointmentDate.getTime())) {
       throw new Error('Invalid appointment date');
     }
-    
+
     return {
       petId: data.petId,
       services: data.services,
@@ -73,6 +73,7 @@ const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppoi
       createdAt: Timestamp.fromDate(new Date()),
       updatedAt: null,
       deletedAt: null,
+      beforeImage: null,
       beforeImages: [],
       afterImages: []
     };
@@ -240,6 +241,24 @@ export function useAppointments() {
               totalDuration: rawData.totalDuration || 0,
               cancellationReason: rawData.cancellationReason || null,
               beforeImage: rawData.beforeImage || null,
+              // Convert legacy single image to array format if it exists and no array exists
+              beforeImages: rawData.beforeImages?.length ? rawData.beforeImages.map(img => ({
+                id: img.id,
+                url: img.url,
+                type: img.type,
+                timestamp: timestampToISOString(img.timestamp)
+              })) : (rawData.beforeImage ? [{
+                id: 'legacy',
+                url: rawData.beforeImage,
+                type: 'before',
+                timestamp: timestampToISOString(rawData.updatedAt || rawData.createdAt)
+              }] : []),
+              afterImages: (rawData.afterImages || []).map(img => ({
+                id: img.id,
+                url: img.url,
+                type: img.type,
+                timestamp: timestampToISOString(img.timestamp)
+              })),
               pet: {
                 name: petData.name,
                 breed: petData.breed,
@@ -252,28 +271,7 @@ export function useAppointments() {
               groomer: {
                 name: groomerData.name
               },
-              service: serviceData.length > 0 ? serviceData.map(s => ({
-                service_id: '',
-                name: s.name,
-                duration: s.duration,
-                price: s.price,
-                description: s.description,
-                category: s.category,
-                discount_percentage: s.discount_percentage,
-                consumables: s.consumables
-              })) : undefined,
-              beforeImages: (rawData.beforeImages || []).map(img => ({
-                id: img.id,
-                url: img.url,
-                type: img.type,
-                timestamp: timestampToISOString(img.timestamp),
-              })),
-              afterImages: (rawData.afterImages || []).map(img => ({
-                id: img.id,
-                url: img.url,
-                type: img.type,
-                timestamp: timestampToISOString(img.timestamp),
-              }))
+              service: serviceData.length > 0 ? serviceData : undefined
             };
 
             appointments.push(appointment);

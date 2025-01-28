@@ -313,6 +313,7 @@ export type AppointmentWithRelations = {
   createdAt: string;
   updatedAt: string | null;
   cancellationReason?: "no_show" | "rescheduled" | "other" | null;
+  beforeImage?: string | null; 
   beforeImages: AppointmentImage[];
   afterImages: AppointmentImage[];
   pet: {
