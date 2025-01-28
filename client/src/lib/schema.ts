@@ -280,6 +280,16 @@ export const inventoryUsageSchema = z.object({
 export type InventoryUsage = z.infer<typeof inventoryUsageSchema>;
 export type InsertInventoryUsage = Omit<InventoryUsage, "usage_id" | "used_at">;
 
+// Add inventory usage types to existing schema.ts
+export const inventoryItemUsageSchema = z.object({
+  itemId: z.string().min(1, "Item must be selected"),
+  quantity: z.number().min(0.1, "Quantity must be greater than 0"),
+  notes: z.string().nullable(),
+});
+
+export type InventoryItemUsage = z.infer<typeof inventoryItemUsageSchema>;
+
+// Update appointment schema to include inventory usage
 export const editAppointmentSchema = z.object({
   status: z.enum(["pending", "confirmed", "completed", "cancelled", "in_progress"]),
   notes: z.string().nullable(),
@@ -290,7 +300,8 @@ export const editAppointmentSchema = z.object({
   time: z.string(),
   cancellationReason: z.enum(["no_show", "rescheduled", "other"]).nullable().optional(),
   observations: z.string().nullable().optional(),
-  recommendations: z.string().nullable().optional()
+  recommendations: z.string().nullable().optional(),
+  inventoryUsage: z.array(inventoryItemUsageSchema).optional(),
 });
 
 export type AppointmentImage = {

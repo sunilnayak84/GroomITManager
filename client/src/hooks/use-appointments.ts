@@ -39,6 +39,11 @@ interface FirestoreAppointmentData {
   }>;
   observations?: string | null;
   recommendations?: string | null;
+  inventoryUsage?: Array<{
+    itemId: string;
+    quantity: number;
+    notes: string | null;
+  }>;
 }
 
 const timestampToISOString = (timestamp: Timestamp | null | undefined): string => {
@@ -398,6 +403,26 @@ export function useAppointments() {
     return !hasOverlap;
   };
 
+  type UpdateAppointmentParams = { 
+    id: string; 
+    status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
+    cancellationReason?: "no_show" | "rescheduled" | "other" | null;
+    notes?: string | null;
+    groomerId?: string;
+    services?: string[];
+    date?: string;
+    beforeImage?: string | null;
+    beforeImages?: AppointmentImage[];
+    afterImages?: AppointmentImage[];
+    observations?: string | null;
+    recommendations?: string | null;
+    inventoryUsage?: Array<{
+      itemId: string;
+      quantity: number;
+      notes: string | null;
+    }>;
+  };
+
   const updateAppointmentMutation = useMutation({
     mutationFn: async ({ 
       id, 
@@ -411,23 +436,11 @@ export function useAppointments() {
       beforeImages,
       afterImages,
       observations,
-      recommendations
-    }: { 
-      id: string; 
-      status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
-      cancellationReason?: "no_show" | "rescheduled" | "other" | null;
-      notes?: string | null;
-      groomerId?: string;
-      services?: string[];
-      date?: string;
-      beforeImage?: string | null;
-      beforeImages?: AppointmentImage[];
-      afterImages?: AppointmentImage[];
-      observations?: string | null;
-      recommendations?: string | null;
-    }) => {
+      recommendations,
+      inventoryUsage
+    }: UpdateAppointmentParams) => {
       try {
-        console.log('Updating appointment:', { id, status, cancellationReason, notes, beforeImages, afterImages, observations, recommendations });
+        console.log('Updating appointment:', { id, status, cancellationReason, notes, beforeImages, afterImages, observations, recommendations, inventoryUsage });
         const appointmentRef = doc(db, 'appointments', id);
 
         // Create update object with only defined fields
@@ -457,6 +470,9 @@ export function useAppointments() {
         }
         if (recommendations !== undefined) {
           updateData.recommendations = recommendations;
+        }
+        if (inventoryUsage !== undefined) {
+          updateData.inventoryUsage = inventoryUsage;
         }
         if (beforeImages !== undefined) {
           updateData.beforeImages = beforeImages.map(img => ({

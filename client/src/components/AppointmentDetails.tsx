@@ -32,6 +32,7 @@ import { useAppointments } from "@/hooks/use-appointments";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { ImageCarousel } from './ui/image-carousel';
+import { InventoryUsageForm } from "./InventoryUsageForm";
 
 const updateAppointmentSchema = z.object({
   status: z.enum(['pending', 'confirmed', 'completed', 'cancelled', 'in_progress']),
@@ -39,6 +40,7 @@ const updateAppointmentSchema = z.object({
   notes: z.string().nullable().optional(),
   observations: z.string().nullable().optional(),
   recommendations: z.string().nullable().optional(),
+  inventoryUsage: z.array(z.any()).optional(), //Added inventoryUsage to schema
 });
 
 type UpdateAppointmentForm = z.infer<typeof updateAppointmentSchema>;
@@ -73,6 +75,7 @@ const AppointmentDetails = ({
         notes: appointment.notes || undefined,
         observations: appointment.observations || undefined,
         recommendations: appointment.recommendations || undefined,
+        inventoryUsage: [], //Added inventoryUsage to default values
       });
     }
   }, [open, appointment]);
@@ -91,6 +94,7 @@ const AppointmentDetails = ({
       notes: appointment.notes || undefined,
       observations: appointment.observations || undefined,
       recommendations: appointment.recommendations || undefined,
+      inventoryUsage: [], //Added inventoryUsage to default values
     },
   });
 
@@ -112,6 +116,7 @@ const AppointmentDetails = ({
       if (data.status === 'completed') {
         updateData.observations = data.observations ?? null;
         updateData.recommendations = data.recommendations ?? null;
+        updateData.inventoryUsage = data.inventoryUsage; // Added inventoryUsage to updateData
       }
 
       console.log('Submitting appointment update:', updateData);
@@ -359,6 +364,8 @@ const AppointmentDetails = ({
                     className="mt-2"
                   />
                 </div>
+
+                <InventoryUsageForm /> {/* Added InventoryUsageForm */}
 
                 <FormField
                   control={form.control}
