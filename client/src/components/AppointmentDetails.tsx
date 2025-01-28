@@ -63,6 +63,8 @@ const AppointmentDetails = ({
   const [imageLoadError, setImageLoadError] = useState(false);
   const queryClient = useQueryClient();
 
+  const isTerminalStatus = appointment.status === 'completed' || appointment.status === 'cancelled';
+
   useEffect(() => {
     if (open) {
       form.reset({
@@ -177,7 +179,10 @@ const AppointmentDetails = ({
         <DialogHeader>
           <DialogTitle>Appointment Details</DialogTitle>
           <DialogDescription>
-            View and manage appointment information
+            {isTerminalStatus 
+              ? "This appointment is completed/cancelled and cannot be modified"
+              : "View and manage appointment information"
+            }
           </DialogDescription>
         </DialogHeader>
 
@@ -197,6 +202,7 @@ const AppointmentDetails = ({
                   src={appointment.pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${appointment.pet.name}`}
                   alt={appointment.pet.name}
                   className="h-10 w-10 rounded-full"
+                  onError={handleImageError}
                 />
                 <div>
                   <p className="text-sm font-medium">{appointment.pet.name}</p>
@@ -294,7 +300,6 @@ const AppointmentDetails = ({
               />
             </div>
 
-            {/* Conditionally rendered sections moved here */}
             {form.watch("status") === "completed" && (
               <>
                 <div>
@@ -443,7 +448,11 @@ const AppointmentDetails = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Status</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    value={field.value}
+                    disabled={isTerminalStatus}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select status" />
@@ -453,7 +462,7 @@ const AppointmentDetails = ({
                       <SelectItem value={field.value}>
                         {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
                       </SelectItem>
-                      {getStatusTransitions(field.value).map((status) => (
+                      {!isTerminalStatus && getStatusTransitions(field.value).map((status) => (
                         <SelectItem key={status} value={status}>
                           {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
                         </SelectItem>
@@ -471,22 +480,24 @@ const AppointmentDetails = ({
                 variant="outline"
                 onClick={() => onOpenChange(false)}
               >
-                Cancel
+                Close
               </Button>
-              <Button
-                type="submit"
-                disabled={isUpdating}
-                className="min-w-[140px]"
-              >
-                {isUpdating ? (
-                  <>
-                    <span className="mr-2">Updating...</span>
-                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                  </>
-                ) : (
-                  "Update Appointment"
-                )}
-              </Button>
+              {!isTerminalStatus && (
+                <Button
+                  type="submit"
+                  disabled={isUpdating || isTerminalStatus}
+                  className="min-w-[140px]"
+                >
+                  {isUpdating ? (
+                    <>
+                      <span className="mr-2">Updating...</span>
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    </>
+                  ) : (
+                    "Update Appointment"
+                  )}
+                </Button>
+              )}
             </div>
           </form>
         </Form>
