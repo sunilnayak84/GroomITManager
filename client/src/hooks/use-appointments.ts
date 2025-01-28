@@ -37,6 +37,8 @@ interface FirestoreAppointmentData {
     type: 'after';
     timestamp: Timestamp;
   }>;
+  observations?: string | null;
+  recommendations?: string | null;
 }
 
 const timestampToISOString = (timestamp: Timestamp | null | undefined): string => {
@@ -271,7 +273,9 @@ export function useAppointments() {
               groomer: {
                 name: groomerData.name
               },
-              service: serviceData.length > 0 ? serviceData : undefined
+              service: serviceData.length > 0 ? serviceData : undefined,
+              observations: rawData.observations,
+              recommendations: rawData.recommendations
             };
 
             appointments.push(appointment);
@@ -401,7 +405,9 @@ export function useAppointments() {
       date,
       beforeImage,
       beforeImages,
-      afterImages
+      afterImages,
+      observations,
+      recommendations
     }: { 
       id: string; 
       status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
@@ -413,9 +419,11 @@ export function useAppointments() {
       beforeImage?: string;
       beforeImages?: AppointmentImage[];
       afterImages?: AppointmentImage[];
+      observations?: string;
+      recommendations?: string;
     }) => {
       try {
-        console.log('Updating appointment:', { id, status, cancellationReason, notes, beforeImages, afterImages });
+        console.log('Updating appointment:', { id, status, cancellationReason, notes, beforeImages, afterImages, observations, recommendations });
         const appointmentRef = doc(db, 'appointments', id);
 
         // Get current appointment data
@@ -434,6 +442,8 @@ export function useAppointments() {
           groomerId: groomerId || currentData.groomerId,
           services: services || currentData.services,
           date: date ? Timestamp.fromDate(new Date(date)) : currentData.date,
+          observations: observations !== undefined ? observations : currentData.observations,
+          recommendations: recommendations !== undefined ? recommendations : currentData.recommendations
         };
 
         // Handle beforeImage/beforeImages update

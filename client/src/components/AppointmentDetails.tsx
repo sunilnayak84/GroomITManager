@@ -37,6 +37,8 @@ const updateAppointmentSchema = z.object({
   status: z.enum(['pending', 'confirmed', 'completed', 'cancelled', 'in_progress']),
   cancellationReason: z.enum(['no_show', 'rescheduled', 'other']).optional(),
   notes: z.string().optional(),
+  observations: z.string().optional(),
+  recommendations: z.string().optional(),
 });
 
 type UpdateAppointmentForm = z.infer<typeof updateAppointmentSchema>;
@@ -67,6 +69,8 @@ const AppointmentDetails = ({
         status: appointment.status,
         cancellationReason: appointment.cancellationReason || undefined,
         notes: appointment.notes || undefined,
+        observations: appointment.observations || undefined,
+        recommendations: appointment.recommendations || undefined,
       });
     }
   }, [open, appointment]);
@@ -83,6 +87,8 @@ const AppointmentDetails = ({
       status: appointment.status,
       cancellationReason: appointment.cancellationReason || undefined,
       notes: appointment.notes || undefined,
+      observations: appointment.observations || undefined,
+      recommendations: appointment.recommendations || undefined,
     },
   });
 
@@ -95,6 +101,8 @@ const AppointmentDetails = ({
         status: data.status,
         cancellationReason: data.status === 'cancelled' ? data.cancellationReason : undefined,
         notes: data.notes,
+        observations: data.status === 'completed' ? data.observations : undefined,
+        recommendations: data.status === 'completed' ? data.recommendations : undefined,
       });
 
       await queryClient.invalidateQueries({ 
@@ -259,63 +267,103 @@ const AppointmentDetails = ({
             </div>
 
             {appointment.status === 'completed' && (
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">After Images</h3>
-                <ImageCarousel
-                  images={appointment.afterImages || []}
-                  type="after"
-                  onImageUpload={async (file) => {
-                    try {
-                      if (file.size > 5 * 1024 * 1024) {
-                        throw new Error('File size must be less than 5MB');
+              <>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">After Images</h3>
+                  <ImageCarousel
+                    images={appointment.afterImages || []}
+                    type="after"
+                    onImageUpload={async (file) => {
+                      try {
+                        if (file.size > 5 * 1024 * 1024) {
+                          throw new Error('File size must be less than 5MB');
+                        }
+
+                        setIsUpdating(true);
+                        setIsImageLoading(true);
+                        const timestamp = Date.now();
+                        const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+                        const path = `appointments/${appointment.id}/after-image-${timestamp}.${extension}`;
+
+                        const { uploadFile } = await import("@/lib/storage");
+                        const url = await uploadFile(file, path);
+
+                        const newImage: AppointmentImage = {
+                          id: `${timestamp}`,
+                          url,
+                          type: 'after',
+                          timestamp: new Date().toISOString(),
+                        };
+
+                        await updateAppointment({
+                          id: appointment.id,
+                          status: form.getValues("status"),
+                          afterImages: [...(appointment.afterImages || []), newImage],
+                        });
+
+                        await queryClient.invalidateQueries({ 
+                          queryKey: ["appointments"],
+                          exact: true
+                        });
+
+                        toast({
+                          title: "Success",
+                          description: "After image uploaded successfully",
+                        });
+                      } catch (error) {
+                        setImageLoadError(true);
+                        toast({
+                          variant: "destructive",
+                          title: "Error",
+                          description: error instanceof Error ? error.message : "Failed to upload image",
+                        });
+                      } finally {
+                        setIsUpdating(false);
+                        setIsImageLoading(false);
                       }
+                    }}
+                    className="mt-2"
+                  />
+                </div>
 
-                      setIsUpdating(true);
-                      setIsImageLoading(true);
-                      const timestamp = Date.now();
-                      const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-                      const path = `appointments/${appointment.id}/after-image-${timestamp}.${extension}`;
-
-                      const { uploadFile } = await import("@/lib/storage");
-                      const url = await uploadFile(file, path);
-
-                      const newImage: AppointmentImage = {
-                        id: `${timestamp}`,
-                        url,
-                        type: 'after',
-                        timestamp: new Date().toISOString(),
-                      };
-
-                      await updateAppointment({
-                        id: appointment.id,
-                        status: form.getValues("status"),
-                        afterImages: [...(appointment.afterImages || []), newImage],
-                      });
-
-                      await queryClient.invalidateQueries({ 
-                        queryKey: ["appointments"],
-                        exact: true
-                      });
-
-                      toast({
-                        title: "Success",
-                        description: "After image uploaded successfully",
-                      });
-                    } catch (error) {
-                      setImageLoadError(true);
-                      toast({
-                        variant: "destructive",
-                        title: "Error",
-                        description: error instanceof Error ? error.message : "Failed to upload image",
-                      });
-                    } finally {
-                      setIsUpdating(false);
-                      setIsImageLoading(false);
-                    }
-                  }}
-                  className="mt-2"
+                <FormField
+                  control={form.control}
+                  name="observations"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Observations</FormLabel>
+                      <FormControl>
+                        <textarea
+                          {...field}
+                          value={field.value || ''}
+                          className="min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                          placeholder="Enter any observations about the pet's grooming session"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
+
+                <FormField
+                  control={form.control}
+                  name="recommendations"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Recommendations</FormLabel>
+                      <FormControl>
+                        <textarea
+                          {...field}
+                          value={field.value || ''}
+                          className="min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                          placeholder="Enter recommendations for future grooming"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
             )}
 
             <FormField
