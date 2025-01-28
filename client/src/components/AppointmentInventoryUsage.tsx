@@ -31,31 +31,58 @@ export function AppointmentInventoryUsage({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [completedCategories, setCompletedCategories] = useState<Set<string>>(new Set());
 
+  // Helper function to extract all services from a package
+  const extractAllServices = (service: Service): Service[] => {
+    const services: Service[] = [service];
+
+    // Add selected services if present
+    if (service.selectedServices && service.selectedServices.length > 0) {
+      service.selectedServices.forEach(subService => {
+        const fullService = allServices.find(s => s.service_id === subService.service_id);
+        if (fullService) {
+          services.push(...extractAllServices(fullService));
+        }
+      });
+    }
+
+    // Add selected addons if present
+    if (service.selectedAddons && service.selectedAddons.length > 0) {
+      service.selectedAddons.forEach(addon => {
+        const fullService = allServices.find(s => s.service_id === addon.service_id);
+        if (fullService) {
+          services.push(...extractAllServices(fullService));
+        }
+      });
+    }
+
+    return services;
+  };
+
   useEffect(() => {
     const categoriesMap = new Map<string, RequiredInventoryCategory>();
 
-    // Get all selected services including those in packages
-    const selectedServices = services.reduce((acc: Service[], serviceId) => {
+    // Process all selected services
+    services.forEach(serviceId => {
       const service = allServices.find(s => s.service_id === serviceId);
       if (service) {
-        acc.push(service);
-        if (service.selectedServices) {
-          acc.push(...service.selectedServices as Service[]);
-        }
-        if (service.selectedAddons) {
-          acc.push(...service.selectedAddons as Service[]);
-        }
-      }
-      return acc;
-    }, []);
+        // Get all services including nested ones
+        const allRelatedServices = extractAllServices(service);
 
-    // Aggregate required categories
-    selectedServices.forEach(service => {
-      service.required_categories?.forEach(category => {
-        categoriesMap.set(category.category_id, category);
-      });
+        // Process required categories from all related services
+        allRelatedServices.forEach(relatedService => {
+          if (relatedService.required_categories) {
+            relatedService.required_categories.forEach(category => {
+              // Only add if not already present or if marked as required
+              if (!categoriesMap.has(category.category_id) || category.required) {
+                categoriesMap.set(category.category_id, category);
+              }
+            });
+          }
+        });
+      }
     });
 
+    console.log('Required categories:', Array.from(categoriesMap.values()));
     setRequiredCategories(categoriesMap);
   }, [services, allServices]);
 
