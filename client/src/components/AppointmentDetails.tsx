@@ -206,6 +206,23 @@ const AppointmentDetails = ({
             </div>
 
             <div>
+              <h3 className="text-sm font-medium text-gray-500">Services</h3>
+              <div className="mt-1 space-y-2">
+                {appointment.service?.map((service) => (
+                  <div key={service.service_id} className="text-sm">
+                    <p className="font-medium">{service.name}</p>
+                    <p className="text-gray-500">
+                      Duration: {service.duration} minutes | Price: ₹{service.price}
+                    </p>
+                    {service.description && (
+                      <p className="text-gray-500">{service.description}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
               <h3 className="text-sm font-medium text-gray-500">Customer</h3>
               <p className="mt-1 text-sm">
                 {appointment.customer.firstName} {appointment.customer.lastName}
