@@ -69,9 +69,10 @@ const AppointmentDetails = ({
         observations: appointment.observations || undefined,
         recommendations: appointment.recommendations || undefined,
       });
+      setIsChangingToCompleted(false);
       setInventoryUsageComplete(false);
     }
-  }, [open, appointment]);
+  }, [open, appointment, form]);
 
   // Watch for status changes to determine if we're changing to completed
   useEffect(() => {
@@ -81,7 +82,7 @@ const AppointmentDetails = ({
       }
     });
     return () => subscription.unsubscribe();
-  }, [form.watch, appointment.status]);
+  }, [form, appointment.status]);
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.error('Error loading image:', e);
