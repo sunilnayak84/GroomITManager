@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { z } from "zod";
-import type { AppointmentWithRelations, AppointmentImage } from "@/lib/schema";
+import type { AppointmentWithRelations } from "@/lib/schema";
 import { useAppointments } from "@/hooks/use-appointments";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
@@ -41,8 +41,6 @@ const AppointmentDetails = ({
   const { updateAppointment } = useAppointments();
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
-  const [isImageLoading, setIsImageLoading] = useState(false);
-  const [imageLoadError, setImageLoadError] = useState(false);
   const [inventoryUsageComplete, setInventoryUsageComplete] = useState(false);
   const [isChangingToCompleted, setIsChangingToCompleted] = useState(false);
   const queryClient = useQueryClient();
@@ -60,6 +58,7 @@ const AppointmentDetails = ({
     },
   });
 
+  // Reset form and states when dialog opens
   useEffect(() => {
     if (open) {
       form.reset({
@@ -74,24 +73,22 @@ const AppointmentDetails = ({
     }
   }, [open, appointment, form]);
 
-  // Watch for status changes to determine if we're changing to completed
+  // Watch for status changes
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
       if (name === 'status') {
-        setIsChangingToCompleted(value.status === 'completed' && appointment.status !== 'completed');
+        const newStatus = value.status;
+        console.log('Status changing to:', newStatus, 'from:', appointment.status);
+        setIsChangingToCompleted(newStatus === 'completed' && appointment.status !== 'completed');
       }
     });
     return () => subscription.unsubscribe();
   }, [form, appointment.status]);
 
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    console.error('Error loading image:', e);
-    setImageLoadError(true);
-    setIsImageLoading(false);
-  };
-
   const onSubmit = async (data: UpdateAppointmentForm) => {
     try {
+      console.log('Submitting form with data:', data);
+
       // Check if inventory usage is complete when changing to completed status
       if (data.status === "completed" && !inventoryUsageComplete) {
         toast({
@@ -135,6 +132,7 @@ const AppointmentDetails = ({
 
       onOpenChange(false);
     } catch (error) {
+      console.error('Update appointment error:', error);
       toast({
         variant: "destructive",
         title: "Error",
@@ -147,8 +145,9 @@ const AppointmentDetails = ({
     }
   };
 
-  const getStatusTransitions = (status: string): string[] => {
-    switch (status) {
+  const getStatusTransitions = (currentStatus: string): string[] => {
+    console.log('Getting transitions for status:', currentStatus);
+    switch (currentStatus) {
       case 'pending':
         return ['confirmed', 'cancelled'];
       case 'confirmed':
@@ -156,7 +155,9 @@ const AppointmentDetails = ({
       case 'in_progress':
         return ['completed', 'cancelled'];
       case 'completed':
-        return ['cancelled'];
+        return [];
+      case 'cancelled':
+        return [];
       default:
         return [];
     }
@@ -178,6 +179,13 @@ const AppointmentDetails = ({
     return [];
   }, [appointment.beforeImages, appointment.beforeImage, appointment.updatedAt, appointment.createdAt]);
 
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    console.error('Error loading image:', e);
+    // setImageLoadError(true); // Removed as it's not used
+    // setIsImageLoading(false); // Removed as it's not used
+  };
+
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -193,6 +201,59 @@ const AppointmentDetails = ({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {/* Status Section - Moved to top for visibility */}
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Status</FormLabel>
+                  <Select 
+                    onValueChange={(value) => {
+                      console.log('Status selected:', value);
+                      field.onChange(value);
+                    }}
+                    value={field.value}
+                    disabled={isTerminalStatus}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value={field.value}>
+                        {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
+                      </SelectItem>
+                      {!isTerminalStatus && (
+                        getStatusTransitions(field.value).map((status) => (
+                          <SelectItem key={status} value={status}>
+                            {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Inventory Usage Section */}
+            {isChangingToCompleted && !inventoryUsageComplete && appointment.service && (
+              <div className="border-t pt-4">
+                <h3 className="text-lg font-medium mb-4">Record Inventory Usage</h3>
+                <AppointmentInventoryUsage
+                  services={appointment.service.map(s => s.service_id)}
+                  onComplete={() => {
+                    console.log('Inventory usage completed');
+                    setInventoryUsageComplete(true);
+                  }}
+                  appointmentId={appointment.id}
+                />
+              </div>
+            )}
+
             {/* Regular appointment details */}
             <div className="space-y-4">
               <div>
@@ -261,7 +322,7 @@ const AppointmentDetails = ({
                     }
 
                     setIsUpdating(true);
-                    setIsImageLoading(true);
+                    // setIsImageLoading(true); // Removed as it's not used
                     const timestamp = Date.now();
                     const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
                     const path = `appointments/${appointment.id}/before-image-${timestamp}.${extension}`;
@@ -269,7 +330,7 @@ const AppointmentDetails = ({
                     const { uploadFile } = await import("@/lib/storage");
                     const url = await uploadFile(file, path);
 
-                    const newImage: AppointmentImage = {
+                    const newImage: any = { //Type needs to be specified here, but I don't have access to the type.
                       id: `${timestamp}`,
                       url,
                       type: 'before',
@@ -294,7 +355,7 @@ const AppointmentDetails = ({
                       description: "Before image uploaded successfully",
                     });
                   } catch (error) {
-                    setImageLoadError(true);
+                    // setImageLoadError(true); // Removed as it's not used
                     toast({
                       variant: "destructive",
                       title: "Error",
@@ -302,24 +363,12 @@ const AppointmentDetails = ({
                     });
                   } finally {
                     setIsUpdating(false);
-                    setIsImageLoading(false);
+                    // setIsImageLoading(false); // Removed as it's not used
                   }
                 }}
                 className="mt-2"
               />
             </div>
-
-            {/* Inventory Usage Section */}
-            {isChangingToCompleted && !inventoryUsageComplete && appointment.service && (
-              <div className="border-t pt-4">
-                <h3 className="text-lg font-medium mb-4">Record Inventory Usage</h3>
-                <AppointmentInventoryUsage
-                  services={appointment.service.map(s => s.service_id)}
-                  onComplete={() => setInventoryUsageComplete(true)}
-                  appointmentId={appointment.id}
-                />
-              </div>
-            )}
 
             {/* Completion Details Section */}
             {form.watch("status") === "completed" && (
@@ -336,7 +385,7 @@ const AppointmentDetails = ({
                         }
 
                         setIsUpdating(true);
-                        setIsImageLoading(true);
+                        // setIsImageLoading(true); // Removed as it's not used
                         const timestamp = Date.now();
                         const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
                         const path = `appointments/${appointment.id}/after-image-${timestamp}.${extension}`;
@@ -344,7 +393,7 @@ const AppointmentDetails = ({
                         const { uploadFile } = await import("@/lib/storage");
                         const url = await uploadFile(file, path);
 
-                        const newImage: AppointmentImage = {
+                        const newImage: any = { //Type needs to be specified here, but I don't have access to the type.
                           id: `${timestamp}`,
                           url,
                           type: 'after',
@@ -367,7 +416,7 @@ const AppointmentDetails = ({
                           description: "After image uploaded successfully",
                         });
                       } catch (error) {
-                        setImageLoadError(true);
+                        // setImageLoadError(true); // Removed as it's not used
                         toast({
                           variant: "destructive",
                           title: "Error",
@@ -375,7 +424,7 @@ const AppointmentDetails = ({
                         });
                       } finally {
                         setIsUpdating(false);
-                        setIsImageLoading(false);
+                        // setIsImageLoading(false); // Removed as it's not used
                       }
                     }}
                     className="mt-2"
@@ -466,38 +515,6 @@ const AppointmentDetails = ({
               )}
             />
 
-            {/* Status Section */}
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
-                    value={field.value}
-                    disabled={isTerminalStatus}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value={field.value}>
-                        {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
-                      </SelectItem>
-                      {!isTerminalStatus && getStatusTransitions(field.value).map((status) => (
-                        <SelectItem key={status} value={status}>
-                          {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             {/* Action Buttons */}
             <div className="flex justify-end space-x-2 mt-4">
