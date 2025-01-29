@@ -1,7 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
@@ -13,7 +32,6 @@ import { useAppointments } from "@/hooks/use-appointments";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { ImageCarousel } from './ui/image-carousel';
-import { AppointmentInventoryUsage } from './AppointmentInventoryUsage';
 
 const updateAppointmentSchema = z.object({
   status: z.enum(['pending', 'confirmed', 'completed', 'cancelled', 'in_progress']),
@@ -43,11 +61,27 @@ const AppointmentDetails = ({
   const [isUpdating, setIsUpdating] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(false);
   const [imageLoadError, setImageLoadError] = useState(false);
-  const [inventoryUsageComplete, setInventoryUsageComplete] = useState(false);
-  const [isChangingToCompleted, setIsChangingToCompleted] = useState(false);
   const queryClient = useQueryClient();
 
   const isTerminalStatus = appointment.status === 'completed' || appointment.status === 'cancelled';
+
+  useEffect(() => {
+    if (open) {
+      form.reset({
+        status: appointment.status,
+        cancellationReason: appointment.cancellationReason || undefined,
+        notes: appointment.notes || undefined,
+        observations: appointment.observations || undefined,
+        recommendations: appointment.recommendations || undefined,
+      });
+    }
+  }, [open, appointment]);
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    console.error('Error loading image:', e);
+    setImageLoadError(true);
+    setIsImageLoading(false);
+  };
 
   const form = useForm<UpdateAppointmentForm>({
     resolver: zodResolver(updateAppointmentSchema),
@@ -60,48 +94,8 @@ const AppointmentDetails = ({
     },
   });
 
-  useEffect(() => {
-    if (open) {
-      form.reset({
-        status: appointment.status,
-        cancellationReason: appointment.cancellationReason || undefined,
-        notes: appointment.notes || undefined,
-        observations: appointment.observations || undefined,
-        recommendations: appointment.recommendations || undefined,
-      });
-      setIsChangingToCompleted(false);
-      setInventoryUsageComplete(false);
-    }
-  }, [open, appointment, form]);
-
-  // Watch for status changes to determine if we're changing to completed
-  useEffect(() => {
-    const subscription = form.watch((value, { name }) => {
-      if (name === 'status') {
-        setIsChangingToCompleted(value.status === 'completed' && appointment.status !== 'completed');
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [form, appointment.status]);
-
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    console.error('Error loading image:', e);
-    setImageLoadError(true);
-    setIsImageLoading(false);
-  };
-
   const onSubmit = async (data: UpdateAppointmentForm) => {
     try {
-      // Check if inventory usage is complete when changing to completed status
-      if (data.status === "completed" && !inventoryUsageComplete) {
-        toast({
-          title: "Error",
-          description: "Please complete inventory usage recording before marking the appointment as completed",
-          variant: "destructive",
-        });
-        return;
-      }
-
       setIsUpdating(true);
 
       const updateData: Parameters<typeof updateAppointment>[0] = {
@@ -110,6 +104,7 @@ const AppointmentDetails = ({
         notes: data.notes ?? null,
       };
 
+      // Only add fields based on status
       if (data.status === 'cancelled' && data.cancellationReason) {
         updateData.cancellationReason = data.cancellationReason;
       }
@@ -193,62 +188,58 @@ const AppointmentDetails = ({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {/* Regular appointment details */}
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">Date & Time</h3>
-                <p className="mt-1 text-sm">
-                  {format(new Date(appointment.date), "PPP p")}
-                </p>
-              </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Date & Time</h3>
+              <p className="mt-1 text-sm">
+                {format(new Date(appointment.date), "PPP p")}
+              </p>
+            </div>
 
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">Pet</h3>
-                <div className="mt-1 flex items-center gap-2">
-                  <img
-                    src={appointment.pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${appointment.pet.name}`}
-                    alt={appointment.pet.name}
-                    className="h-10 w-10 rounded-full"
-                    onError={handleImageError}
-                  />
-                  <div>
-                    <p className="text-sm font-medium">{appointment.pet.name}</p>
-                    <p className="text-sm text-gray-500">{appointment.pet.breed}</p>
-                  </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Pet</h3>
+              <div className="mt-1 flex items-center gap-2">
+                <img
+                  src={appointment.pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${appointment.pet.name}`}
+                  alt={appointment.pet.name}
+                  className="h-10 w-10 rounded-full"
+                  onError={handleImageError}
+                />
+                <div>
+                  <p className="text-sm font-medium">{appointment.pet.name}</p>
+                  <p className="text-sm text-gray-500">{appointment.pet.breed}</p>
                 </div>
-              </div>
-
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">Services</h3>
-                <div className="mt-1 space-y-2">
-                  {appointment.service?.map((service) => (
-                    <div key={service.service_id} className="text-sm">
-                      <p className="font-medium">{service.name}</p>
-                      <p className="text-gray-500">
-                        Duration: {service.duration} minutes | Price: ₹{service.price}
-                      </p>
-                      {service.description && (
-                        <p className="text-gray-500">{service.description}</p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">Customer</h3>
-                <p className="mt-1 text-sm">
-                  {appointment.customer.firstName} {appointment.customer.lastName}
-                </p>
-              </div>
-
-              <div>
-                <h3 className="text-sm font-medium text-gray-500">Groomer</h3>
-                <p className="mt-1 text-sm">{appointment.groomer.name}</p>
               </div>
             </div>
 
-            {/* Before Images Section */}
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Services</h3>
+              <div className="mt-1 space-y-2">
+                {appointment.service?.map((service) => (
+                  <div key={service.service_id} className="text-sm">
+                    <p className="font-medium">{service.name}</p>
+                    <p className="text-gray-500">
+                      Duration: {service.duration} minutes | Price: ₹{service.price}
+                    </p>
+                    {service.description && (
+                      <p className="text-gray-500">{service.description}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Customer</h3>
+              <p className="mt-1 text-sm">
+                {appointment.customer.firstName} {appointment.customer.lastName}
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-medium text-gray-500">Groomer</h3>
+              <p className="mt-1 text-sm">{appointment.groomer.name}</p>
+            </div>
+
             <div>
               <h3 className="text-sm font-medium text-gray-500">Before Images</h3>
               <ImageCarousel
@@ -309,19 +300,6 @@ const AppointmentDetails = ({
               />
             </div>
 
-            {/* Inventory Usage Section */}
-            {isChangingToCompleted && !inventoryUsageComplete && appointment.service && (
-              <div className="border-t pt-4">
-                <h3 className="text-lg font-medium mb-4">Record Inventory Usage</h3>
-                <AppointmentInventoryUsage
-                  services={appointment.service.map(s => s.service_id)}
-                  onComplete={() => setInventoryUsageComplete(true)}
-                  appointmentId={appointment.id}
-                />
-              </div>
-            )}
-
-            {/* Completion Details Section */}
             {form.watch("status") === "completed" && (
               <>
                 <div>
@@ -422,7 +400,6 @@ const AppointmentDetails = ({
               </>
             )}
 
-            {/* Cancellation Section */}
             {form.watch("status") === "cancelled" && (
               <FormField
                 control={form.control}
@@ -451,7 +428,6 @@ const AppointmentDetails = ({
               />
             )}
 
-            {/* Notes Section */}
             <FormField
               control={form.control}
               name="notes"
@@ -466,7 +442,6 @@ const AppointmentDetails = ({
               )}
             />
 
-            {/* Status Section */}
             <FormField
               control={form.control}
               name="status"
@@ -499,7 +474,6 @@ const AppointmentDetails = ({
               )}
             />
 
-            {/* Action Buttons */}
             <div className="flex justify-end space-x-2 mt-4">
               <Button
                 type="button"
@@ -511,7 +485,7 @@ const AppointmentDetails = ({
               {!isTerminalStatus && (
                 <Button
                   type="submit"
-                  disabled={isUpdating || isTerminalStatus || (isChangingToCompleted && !inventoryUsageComplete)}
+                  disabled={isUpdating || isTerminalStatus}
                   className="min-w-[140px]"
                 >
                   {isUpdating ? (
