@@ -66,10 +66,26 @@ const AppointmentDetails = ({
   // Only consider it a terminal status if the appointment is already in completed/cancelled state
   const isTerminalStatus = appointment.status === 'completed' || appointment.status === 'cancelled';
 
+  const getStatusTransitions = (currentStatus: string): string[] => {
+    switch (currentStatus) {
+      case 'pending':
+        return ['confirmed', 'cancelled'];
+      case 'confirmed':
+        return ['in_progress', 'cancelled'];
+      case 'in_progress':
+        return ['completed', 'cancelled'];
+      case 'completed':
+      case 'cancelled':
+        return [];
+      default:
+        return [];
+    }
+  };
+
   const form = useForm<UpdateAppointmentForm>({
     resolver: zodResolver(updateAppointmentSchema),
     defaultValues: {
-      status: appointment.status || 'pending', // Ensure we always have a valid status
+      status: appointment.status,
       cancellationReason: appointment.cancellationReason || undefined,
       notes: appointment.notes || undefined,
       observations: appointment.observations || undefined,
@@ -81,7 +97,7 @@ const AppointmentDetails = ({
   useEffect(() => {
     if (open) {
       form.reset({
-        status: appointment.status || 'pending',
+        status: appointment.status,
         cancellationReason: appointment.cancellationReason || undefined,
         notes: appointment.notes || undefined,
         observations: appointment.observations || undefined,
@@ -144,37 +160,6 @@ const AppointmentDetails = ({
     }
   };
 
-  const getStatusTransitions = (status: string): string[] => {
-    switch (status) {
-      case 'pending':
-        return ['confirmed', 'cancelled'];
-      case 'confirmed':
-        return ['in_progress', 'cancelled'];
-      case 'in_progress':
-        return ['completed', 'cancelled'];
-      case 'completed':
-        return ['cancelled'];
-      default:
-        return [];
-    }
-  };
-
-  // Combine legacy single image with new image array
-  const allBeforeImages = React.useMemo(() => {
-    if (appointment.beforeImages?.length) {
-      return appointment.beforeImages;
-    }
-    if (appointment.beforeImage) {
-      return [{
-        id: 'legacy',
-        url: appointment.beforeImage,
-        type: 'before' as const,
-        timestamp: appointment.updatedAt || appointment.createdAt
-      }];
-    }
-    return [];
-  }, [appointment.beforeImages, appointment.beforeImage, appointment.updatedAt, appointment.createdAt]);
-
   const handleBeforeImageUpload = async (file: File) => {
     try {
       if (file.size > 5 * 1024 * 1024) {
@@ -202,7 +187,7 @@ const AppointmentDetails = ({
 
       await updateAppointment({
         id: appointment.id,
-        status: form.getValues("status") || appointment.status,
+        status: appointment.status, // Keep current appointment status
         beforeImages: updatedBeforeImages,
       });
 
@@ -253,7 +238,7 @@ const AppointmentDetails = ({
 
       await updateAppointment({
         id: appointment.id,
-        status: form.getValues("status") || appointment.status,
+        status: appointment.status, // Keep current appointment status
         afterImages: [...(appointment.afterImages || []), newImage],
       });
 
@@ -278,6 +263,57 @@ const AppointmentDetails = ({
       setIsImageLoading(false);
     }
   };
+
+  // Combine legacy single image with new image array
+  const allBeforeImages = React.useMemo(() => {
+    if (appointment.beforeImages?.length) {
+      return appointment.beforeImages;
+    }
+    if (appointment.beforeImage) {
+      return [{
+        id: 'legacy',
+        url: appointment.beforeImage,
+        type: 'before' as const,
+        timestamp: appointment.updatedAt || appointment.createdAt
+      }];
+    }
+    return [];
+  }, [appointment.beforeImages, appointment.beforeImage, appointment.updatedAt, appointment.createdAt]);
+
+  // Status-related JSX
+  const statusField = (
+    <FormField
+      control={form.control}
+      name="status"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Status</FormLabel>
+          <Select 
+            onValueChange={field.onChange} 
+            value={field.value}
+            disabled={isTerminalStatus}
+          >
+            <FormControl>
+              <SelectTrigger>
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent>
+              <SelectItem value={field.value}>
+                {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
+              </SelectItem>
+              {getStatusTransitions(field.value).map((status) => (
+                <SelectItem key={status} value={status}>
+                  {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -450,38 +486,7 @@ const AppointmentDetails = ({
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
-                    value={field.value || appointment.status}
-                    disabled={isTerminalStatus}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value={field.value || appointment.status}>
-                        {(field.value || appointment.status).charAt(0).toUpperCase() + 
-                         (field.value || appointment.status).slice(1).replace('_', ' ')}
-                      </SelectItem>
-                      {!isTerminalStatus && getStatusTransitions(field.value || appointment.status).map((status) => (
-                        <SelectItem key={status} value={status}>
-                          {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {statusField}
 
             <div className="flex justify-end space-x-2 mt-4">
               <Button
