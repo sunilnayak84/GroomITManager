@@ -272,7 +272,6 @@ const AppointmentDetails = ({
 
                     await updateAppointment({
                       id: appointment.id,
-                      status: form.getValues("status"),
                       beforeImages: updatedBeforeImages,
                     });
 
@@ -332,7 +331,6 @@ const AppointmentDetails = ({
 
                         await updateAppointment({
                           id: appointment.id,
-                          status: form.getValues("status"),
                           afterImages: [...(appointment.afterImages || []), newImage],
                         });
 
