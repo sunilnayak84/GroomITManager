@@ -174,6 +174,109 @@ const AppointmentDetails = ({
     return [];
   }, [appointment.beforeImages, appointment.beforeImage, appointment.updatedAt, appointment.createdAt]);
 
+  // Update image upload handlers to include current status
+  const handleBeforeImageUpload = async (file: File) => {
+    try {
+      if (file.size > 5 * 1024 * 1024) {
+        throw new Error('File size must be less than 5MB');
+      }
+
+      setIsUpdating(true);
+      setIsImageLoading(true);
+      const timestamp = Date.now();
+      const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+      const path = `appointments/${appointment.id}/before-image-${timestamp}.${extension}`;
+
+      const { uploadFile } = await import("@/lib/storage");
+      const url = await uploadFile(file, path);
+
+      const newImage: AppointmentImage = {
+        id: `${timestamp}`,
+        url,
+        type: 'before',
+        timestamp: new Date().toISOString(),
+      };
+
+      const updatedBeforeImages = [...allBeforeImages, newImage];
+
+      await updateAppointment({
+        id: appointment.id,
+        status: appointment.status, // Keep existing status
+        beforeImages: updatedBeforeImages,
+      });
+
+      await queryClient.invalidateQueries({ 
+        queryKey: ["appointments"],
+        exact: true
+      });
+
+      toast({
+        title: "Success",
+        description: "Before image uploaded successfully",
+      });
+    } catch (error) {
+      setImageLoadError(true);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to upload image",
+      });
+    } finally {
+      setIsUpdating(false);
+      setIsImageLoading(false);
+    }
+  };
+
+  const handleAfterImageUpload = async (file: File) => {
+    try {
+      if (file.size > 5 * 1024 * 1024) {
+        throw new Error('File size must be less than 5MB');
+      }
+
+      setIsUpdating(true);
+      setIsImageLoading(true);
+      const timestamp = Date.now();
+      const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+      const path = `appointments/${appointment.id}/after-image-${timestamp}.${extension}`;
+
+      const { uploadFile } = await import("@/lib/storage");
+      const url = await uploadFile(file, path);
+
+      const newImage: AppointmentImage = {
+        id: `${timestamp}`,
+        url,
+        type: 'after',
+        timestamp: new Date().toISOString(),
+      };
+
+      await updateAppointment({
+        id: appointment.id,
+        status: appointment.status, // Keep existing status
+        afterImages: [...(appointment.afterImages || []), newImage],
+      });
+
+      await queryClient.invalidateQueries({ 
+        queryKey: ["appointments"],
+        exact: true
+      });
+
+      toast({
+        title: "Success",
+        description: "After image uploaded successfully",
+      });
+    } catch (error) {
+      setImageLoadError(true);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to upload image",
+      });
+    } finally {
+      setIsUpdating(false);
+      setIsImageLoading(false);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -246,56 +349,7 @@ const AppointmentDetails = ({
               <ImageCarousel
                 images={allBeforeImages}
                 type="before"
-                onImageUpload={async (file) => {
-                  try {
-                    if (file.size > 5 * 1024 * 1024) {
-                      throw new Error('File size must be less than 5MB');
-                    }
-
-                    setIsUpdating(true);
-                    setIsImageLoading(true);
-                    const timestamp = Date.now();
-                    const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-                    const path = `appointments/${appointment.id}/before-image-${timestamp}.${extension}`;
-
-                    const { uploadFile } = await import("@/lib/storage");
-                    const url = await uploadFile(file, path);
-
-                    const newImage: AppointmentImage = {
-                      id: `${timestamp}`,
-                      url,
-                      type: 'before',
-                      timestamp: new Date().toISOString(),
-                    };
-
-                    const updatedBeforeImages = [...allBeforeImages, newImage];
-
-                    await updateAppointment({
-                      id: appointment.id,
-                      beforeImages: updatedBeforeImages,
-                    });
-
-                    await queryClient.invalidateQueries({ 
-                      queryKey: ["appointments"],
-                      exact: true
-                    });
-
-                    toast({
-                      title: "Success",
-                      description: "Before image uploaded successfully",
-                    });
-                  } catch (error) {
-                    setImageLoadError(true);
-                    toast({
-                      variant: "destructive",
-                      title: "Error",
-                      description: error instanceof Error ? error.message : "Failed to upload image",
-                    });
-                  } finally {
-                    setIsUpdating(false);
-                    setIsImageLoading(false);
-                  }
-                }}
+                onImageUpload={handleBeforeImageUpload}
                 className="mt-2"
               />
             </div>
@@ -307,54 +361,7 @@ const AppointmentDetails = ({
                   <ImageCarousel
                     images={appointment.afterImages || []}
                     type="after"
-                    onImageUpload={async (file) => {
-                      try {
-                        if (file.size > 5 * 1024 * 1024) {
-                          throw new Error('File size must be less than 5MB');
-                        }
-
-                        setIsUpdating(true);
-                        setIsImageLoading(true);
-                        const timestamp = Date.now();
-                        const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-                        const path = `appointments/${appointment.id}/after-image-${timestamp}.${extension}`;
-
-                        const { uploadFile } = await import("@/lib/storage");
-                        const url = await uploadFile(file, path);
-
-                        const newImage: AppointmentImage = {
-                          id: `${timestamp}`,
-                          url,
-                          type: 'after',
-                          timestamp: new Date().toISOString(),
-                        };
-
-                        await updateAppointment({
-                          id: appointment.id,
-                          afterImages: [...(appointment.afterImages || []), newImage],
-                        });
-
-                        await queryClient.invalidateQueries({ 
-                          queryKey: ["appointments"],
-                          exact: true
-                        });
-
-                        toast({
-                          title: "Success",
-                          description: "After image uploaded successfully",
-                        });
-                      } catch (error) {
-                        setImageLoadError(true);
-                        toast({
-                          variant: "destructive",
-                          title: "Error",
-                          description: error instanceof Error ? error.message : "Failed to upload image",
-                        });
-                      } finally {
-                        setIsUpdating(false);
-                        setIsImageLoading(false);
-                      }
-                    }}
+                    onImageUpload={handleAfterImageUpload}
                     className="mt-2"
                   />
                 </div>
