@@ -50,7 +50,7 @@ interface AppointmentDetailsProps {
   onEdit: () => void;
 }
 
-const AppointmentDetails = ({
+export const AppointmentDetails = ({
   appointment,
   open,
   onOpenChange,
@@ -62,13 +62,12 @@ const AppointmentDetails = ({
   const [isImageLoading, setIsImageLoading] = useState(false);
   const [imageLoadError, setImageLoadError] = useState(false);
   const queryClient = useQueryClient();
-  const [currentStatus, setCurrentStatus] = useState(appointment.status);
 
   // Only consider it a terminal status if the appointment is already in completed/cancelled state
-  const isTerminalStatus = currentStatus === 'completed' || currentStatus === 'cancelled';
+  const isTerminalStatus = appointment.status === 'completed' || appointment.status === 'cancelled';
 
-  const getStatusTransitions = (status: string): string[] => {
-    switch (status) {
+  const getStatusTransitions = (currentStatus: string): string[] => {
+    switch (currentStatus) {
       case 'pending':
         return ['confirmed', 'cancelled'];
       case 'confirmed':
@@ -104,7 +103,6 @@ const AppointmentDetails = ({
         observations: appointment.observations || undefined,
         recommendations: appointment.recommendations || undefined,
       });
-      setCurrentStatus(appointment.status);
     }
   }, [open, appointment, form]);
 
@@ -206,7 +204,7 @@ const AppointmentDetails = ({
 
       await updateAppointment({
         id: appointment.id,
-        status: currentStatus,
+        status: appointment.status,
         beforeImages: updatedBeforeImages,
       });
 
@@ -257,7 +255,7 @@ const AppointmentDetails = ({
 
       await updateAppointment({
         id: appointment.id,
-        status: currentStatus,
+        status: appointment.status,
         afterImages: [...(appointment.afterImages || []), newImage],
       });
 
@@ -298,56 +296,6 @@ const AppointmentDetails = ({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {/* Status Field - Moved to top for visibility */}
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => {
-                console.log('Rendering status field:', {
-                  currentValue: field.value,
-                  currentStatus,
-                  possibleTransitions: getStatusTransitions(currentStatus)
-                });
-
-                return (
-                  <FormItem>
-                    <FormLabel>Status</FormLabel>
-                    <Select 
-                      onValueChange={(newStatus) => {
-                        console.log('Status changing from', field.value, 'to', newStatus);
-                        field.onChange(newStatus);
-                        setCurrentStatus(newStatus);
-                      }}
-                      value={field.value}
-                      disabled={isTerminalStatus}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue>
-                            {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
-                          </SelectValue>
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {/* Current status */}
-                        <SelectItem value={field.value}>
-                          {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
-                        </SelectItem>
-                        {/* Available transitions */}
-                        {getStatusTransitions(field.value).map((status) => (
-                          <SelectItem key={status} value={status}>
-                            {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                );
-              }}
-            />
-
-            {/* Rest of the form fields */}
             <div>
               <h3 className="text-sm font-medium text-gray-500">Date & Time</h3>
               <p className="mt-1 text-sm">
@@ -489,6 +437,41 @@ const AppointmentDetails = ({
                 )}
               />
             )}
+
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Status</FormLabel>
+                  <Select 
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    disabled={isTerminalStatus}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue>
+                          {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
+                        </SelectValue>
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value={field.value}>
+                        {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
+                      </SelectItem>
+                      {getStatusTransitions(field.value).map((status) => (
+                        <SelectItem key={status} value={status}>
+                          {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
 
             <FormField
               control={form.control}
