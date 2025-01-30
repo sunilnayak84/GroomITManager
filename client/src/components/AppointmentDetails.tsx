@@ -63,6 +63,7 @@ const AppointmentDetails = ({
   const [imageLoadError, setImageLoadError] = useState(false);
   const queryClient = useQueryClient();
 
+  // Only consider it a terminal status if the appointment is already in completed/cancelled state
   const isTerminalStatus = appointment.status === 'completed' || appointment.status === 'cancelled';
 
   useEffect(() => {
@@ -104,7 +105,7 @@ const AppointmentDetails = ({
         notes: data.notes ?? null,
       };
 
-      // Only add fields based on status
+      // Add fields based on status
       if (data.status === 'cancelled' && data.cancellationReason) {
         updateData.cancellationReason = data.cancellationReason;
       }
@@ -485,7 +486,7 @@ const AppointmentDetails = ({
               {!isTerminalStatus && (
                 <Button
                   type="submit"
-                  disabled={isUpdating || isTerminalStatus}
+                  disabled={isUpdating}
                   className="min-w-[140px]"
                 >
                   {isUpdating ? (
