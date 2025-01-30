@@ -66,34 +66,35 @@ const AppointmentDetails = ({
   // Only consider it a terminal status if the appointment is already in completed/cancelled state
   const isTerminalStatus = appointment.status === 'completed' || appointment.status === 'cancelled';
 
+  const form = useForm<UpdateAppointmentForm>({
+    resolver: zodResolver(updateAppointmentSchema),
+    defaultValues: {
+      status: appointment.status || 'pending', // Ensure we always have a valid status
+      cancellationReason: appointment.cancellationReason || undefined,
+      notes: appointment.notes || undefined,
+      observations: appointment.observations || undefined,
+      recommendations: appointment.recommendations || undefined,
+    }
+  });
+
+  // Reset form when appointment changes or dialog opens
   useEffect(() => {
     if (open) {
       form.reset({
-        status: appointment.status,
+        status: appointment.status || 'pending',
         cancellationReason: appointment.cancellationReason || undefined,
         notes: appointment.notes || undefined,
         observations: appointment.observations || undefined,
         recommendations: appointment.recommendations || undefined,
       });
     }
-  }, [open, appointment]);
+  }, [open, appointment, form]);
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.error('Error loading image:', e);
     setImageLoadError(true);
     setIsImageLoading(false);
   };
-
-  const form = useForm<UpdateAppointmentForm>({
-    resolver: zodResolver(updateAppointmentSchema),
-    defaultValues: {
-      status: appointment.status,
-      cancellationReason: appointment.cancellationReason || undefined,
-      notes: appointment.notes || undefined,
-      observations: appointment.observations || undefined,
-      recommendations: appointment.recommendations || undefined,
-    },
-  });
 
   const onSubmit = async (data: UpdateAppointmentForm) => {
     try {
@@ -174,7 +175,6 @@ const AppointmentDetails = ({
     return [];
   }, [appointment.beforeImages, appointment.beforeImage, appointment.updatedAt, appointment.createdAt]);
 
-  // Update image upload handlers to include current status
   const handleBeforeImageUpload = async (file: File) => {
     try {
       if (file.size > 5 * 1024 * 1024) {
@@ -183,6 +183,7 @@ const AppointmentDetails = ({
 
       setIsUpdating(true);
       setIsImageLoading(true);
+
       const timestamp = Date.now();
       const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
       const path = `appointments/${appointment.id}/before-image-${timestamp}.${extension}`;
@@ -201,7 +202,7 @@ const AppointmentDetails = ({
 
       await updateAppointment({
         id: appointment.id,
-        status: appointment.status, // Keep existing status
+        status: form.getValues("status") || appointment.status,
         beforeImages: updatedBeforeImages,
       });
 
@@ -235,6 +236,7 @@ const AppointmentDetails = ({
 
       setIsUpdating(true);
       setIsImageLoading(true);
+
       const timestamp = Date.now();
       const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
       const path = `appointments/${appointment.id}/after-image-${timestamp}.${extension}`;
@@ -251,7 +253,7 @@ const AppointmentDetails = ({
 
       await updateAppointment({
         id: appointment.id,
-        status: appointment.status, // Keep existing status
+        status: form.getValues("status") || appointment.status,
         afterImages: [...(appointment.afterImages || []), newImage],
       });
 
@@ -456,7 +458,7 @@ const AppointmentDetails = ({
                   <FormLabel>Status</FormLabel>
                   <Select 
                     onValueChange={field.onChange} 
-                    value={field.value}
+                    value={field.value || appointment.status}
                     disabled={isTerminalStatus}
                   >
                     <FormControl>
@@ -465,10 +467,11 @@ const AppointmentDetails = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value={field.value}>
-                        {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
+                      <SelectItem value={field.value || appointment.status}>
+                        {(field.value || appointment.status).charAt(0).toUpperCase() + 
+                         (field.value || appointment.status).slice(1).replace('_', ' ')}
                       </SelectItem>
-                      {!isTerminalStatus && getStatusTransitions(field.value).map((status) => (
+                      {!isTerminalStatus && getStatusTransitions(field.value || appointment.status).map((status) => (
                         <SelectItem key={status} value={status}>
                           {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
                         </SelectItem>
