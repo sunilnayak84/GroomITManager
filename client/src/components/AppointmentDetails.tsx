@@ -62,12 +62,13 @@ const AppointmentDetails = ({
   const [isImageLoading, setIsImageLoading] = useState(false);
   const [imageLoadError, setImageLoadError] = useState(false);
   const queryClient = useQueryClient();
+  const [currentStatus, setCurrentStatus] = useState(appointment.status);
 
   // Only consider it a terminal status if the appointment is already in completed/cancelled state
-  const isTerminalStatus = appointment.status === 'completed' || appointment.status === 'cancelled';
+  const isTerminalStatus = currentStatus === 'completed' || currentStatus === 'cancelled';
 
-  const getStatusTransitions = (currentStatus: string): string[] => {
-    switch (currentStatus) {
+  const getStatusTransitions = (status: string): string[] => {
+    switch (status) {
       case 'pending':
         return ['confirmed', 'cancelled'];
       case 'confirmed':
@@ -90,7 +91,7 @@ const AppointmentDetails = ({
       notes: appointment.notes || undefined,
       observations: appointment.observations || undefined,
       recommendations: appointment.recommendations || undefined,
-    }
+    },
   });
 
   // Reset form when appointment changes or dialog opens
@@ -103,6 +104,7 @@ const AppointmentDetails = ({
         observations: appointment.observations || undefined,
         recommendations: appointment.recommendations || undefined,
       });
+      setCurrentStatus(appointment.status);
     }
   }, [open, appointment, form]);
 
@@ -204,7 +206,7 @@ const AppointmentDetails = ({
 
       await updateAppointment({
         id: appointment.id,
-        status: appointment.status,
+        status: currentStatus,
         beforeImages: updatedBeforeImages,
       });
 
@@ -255,7 +257,7 @@ const AppointmentDetails = ({
 
       await updateAppointment({
         id: appointment.id,
-        status: appointment.status,
+        status: currentStatus,
         afterImages: [...(appointment.afterImages || []), newImage],
       });
 
@@ -296,7 +298,56 @@ const AppointmentDetails = ({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {/* Date & Time */}
+            {/* Status Field - Moved to top for visibility */}
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => {
+                console.log('Rendering status field:', {
+                  currentValue: field.value,
+                  currentStatus,
+                  possibleTransitions: getStatusTransitions(currentStatus)
+                });
+
+                return (
+                  <FormItem>
+                    <FormLabel>Status</FormLabel>
+                    <Select 
+                      onValueChange={(newStatus) => {
+                        console.log('Status changing from', field.value, 'to', newStatus);
+                        field.onChange(newStatus);
+                        setCurrentStatus(newStatus);
+                      }}
+                      value={field.value}
+                      disabled={isTerminalStatus}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue>
+                            {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
+                          </SelectValue>
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {/* Current status */}
+                        <SelectItem value={field.value}>
+                          {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
+                        </SelectItem>
+                        {/* Available transitions */}
+                        {getStatusTransitions(field.value).map((status) => (
+                          <SelectItem key={status} value={status}>
+                            {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+
+            {/* Rest of the form fields */}
             <div>
               <h3 className="text-sm font-medium text-gray-500">Date & Time</h3>
               <p className="mt-1 text-sm">
@@ -304,7 +355,6 @@ const AppointmentDetails = ({
               </p>
             </div>
 
-            {/* Pet Information */}
             <div>
               <h3 className="text-sm font-medium text-gray-500">Pet</h3>
               <div className="mt-1 flex items-center gap-2">
@@ -321,7 +371,6 @@ const AppointmentDetails = ({
               </div>
             </div>
 
-            {/* Services */}
             <div>
               <h3 className="text-sm font-medium text-gray-500">Services</h3>
               <div className="mt-1 space-y-2">
@@ -339,7 +388,6 @@ const AppointmentDetails = ({
               </div>
             </div>
 
-            {/* Customer Information */}
             <div>
               <h3 className="text-sm font-medium text-gray-500">Customer</h3>
               <p className="mt-1 text-sm">
@@ -347,13 +395,11 @@ const AppointmentDetails = ({
               </p>
             </div>
 
-            {/* Groomer Information */}
             <div>
               <h3 className="text-sm font-medium text-gray-500">Groomer</h3>
               <p className="mt-1 text-sm">{appointment.groomer.name}</p>
             </div>
 
-            {/* Before Images */}
             <div>
               <h3 className="text-sm font-medium text-gray-500">Before Images</h3>
               <ImageCarousel
@@ -364,7 +410,6 @@ const AppointmentDetails = ({
               />
             </div>
 
-            {/* After Images (Only shown for completed appointments) */}
             {form.watch("status") === "completed" && (
               <>
                 <div>
@@ -377,7 +422,6 @@ const AppointmentDetails = ({
                   />
                 </div>
 
-                {/* Observations Field */}
                 <FormField
                   control={form.control}
                   name="observations"
@@ -397,7 +441,6 @@ const AppointmentDetails = ({
                   )}
                 />
 
-                {/* Recommendations Field */}
                 <FormField
                   control={form.control}
                   name="recommendations"
@@ -419,7 +462,6 @@ const AppointmentDetails = ({
               </>
             )}
 
-            {/* Cancellation Reason (Only shown for cancelled appointments) */}
             {form.watch("status") === "cancelled" && (
               <FormField
                 control={form.control}
@@ -448,7 +490,6 @@ const AppointmentDetails = ({
               />
             )}
 
-            {/* Notes Field */}
             <FormField
               control={form.control}
               name="notes"
@@ -463,37 +504,6 @@ const AppointmentDetails = ({
               )}
             />
 
-            {/* Status Field */}
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
-                    value={field.value}
-                    disabled={isTerminalStatus}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {[field.value, ...getStatusTransitions(field.value)].map((status) => (
-                        <SelectItem key={status} value={status}>
-                          {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Action Buttons */}
             <div className="flex justify-end space-x-2 mt-4">
               <Button
                 type="button"
