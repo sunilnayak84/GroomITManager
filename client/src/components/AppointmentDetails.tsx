@@ -115,6 +115,7 @@ const AppointmentDetails = ({
   const onSubmit = async (data: UpdateAppointmentForm) => {
     try {
       setIsUpdating(true);
+      console.log('Submitting form data:', data);
 
       const updateData: Parameters<typeof updateAppointment>[0] = {
         id: appointment.id,
@@ -160,6 +161,22 @@ const AppointmentDetails = ({
     }
   };
 
+  // Combine legacy single image with new image array
+  const allBeforeImages = React.useMemo(() => {
+    if (appointment.beforeImages?.length) {
+      return appointment.beforeImages;
+    }
+    if (appointment.beforeImage) {
+      return [{
+        id: 'legacy',
+        url: appointment.beforeImage,
+        type: 'before' as const,
+        timestamp: appointment.updatedAt || appointment.createdAt
+      }];
+    }
+    return [];
+  }, [appointment.beforeImages, appointment.beforeImage, appointment.updatedAt, appointment.createdAt]);
+
   const handleBeforeImageUpload = async (file: File) => {
     try {
       if (file.size > 5 * 1024 * 1024) {
@@ -187,7 +204,7 @@ const AppointmentDetails = ({
 
       await updateAppointment({
         id: appointment.id,
-        status: appointment.status, // Keep current appointment status
+        status: appointment.status,
         beforeImages: updatedBeforeImages,
       });
 
@@ -238,7 +255,7 @@ const AppointmentDetails = ({
 
       await updateAppointment({
         id: appointment.id,
-        status: appointment.status, // Keep current appointment status
+        status: appointment.status,
         afterImages: [...(appointment.afterImages || []), newImage],
       });
 
@@ -264,57 +281,6 @@ const AppointmentDetails = ({
     }
   };
 
-  // Combine legacy single image with new image array
-  const allBeforeImages = React.useMemo(() => {
-    if (appointment.beforeImages?.length) {
-      return appointment.beforeImages;
-    }
-    if (appointment.beforeImage) {
-      return [{
-        id: 'legacy',
-        url: appointment.beforeImage,
-        type: 'before' as const,
-        timestamp: appointment.updatedAt || appointment.createdAt
-      }];
-    }
-    return [];
-  }, [appointment.beforeImages, appointment.beforeImage, appointment.updatedAt, appointment.createdAt]);
-
-  // Status-related JSX
-  const statusField = (
-    <FormField
-      control={form.control}
-      name="status"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Status</FormLabel>
-          <Select 
-            onValueChange={field.onChange} 
-            value={field.value}
-            disabled={isTerminalStatus}
-          >
-            <FormControl>
-              <SelectTrigger>
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-            </FormControl>
-            <SelectContent>
-              <SelectItem value={field.value}>
-                {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
-              </SelectItem>
-              {getStatusTransitions(field.value).map((status) => (
-                <SelectItem key={status} value={status}>
-                  {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <FormMessage />
-        </FormItem>
-      )}
-    />
-  );
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -330,6 +296,7 @@ const AppointmentDetails = ({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {/* Date & Time */}
             <div>
               <h3 className="text-sm font-medium text-gray-500">Date & Time</h3>
               <p className="mt-1 text-sm">
@@ -337,6 +304,7 @@ const AppointmentDetails = ({
               </p>
             </div>
 
+            {/* Pet Information */}
             <div>
               <h3 className="text-sm font-medium text-gray-500">Pet</h3>
               <div className="mt-1 flex items-center gap-2">
@@ -353,6 +321,7 @@ const AppointmentDetails = ({
               </div>
             </div>
 
+            {/* Services */}
             <div>
               <h3 className="text-sm font-medium text-gray-500">Services</h3>
               <div className="mt-1 space-y-2">
@@ -370,6 +339,7 @@ const AppointmentDetails = ({
               </div>
             </div>
 
+            {/* Customer Information */}
             <div>
               <h3 className="text-sm font-medium text-gray-500">Customer</h3>
               <p className="mt-1 text-sm">
@@ -377,11 +347,13 @@ const AppointmentDetails = ({
               </p>
             </div>
 
+            {/* Groomer Information */}
             <div>
               <h3 className="text-sm font-medium text-gray-500">Groomer</h3>
               <p className="mt-1 text-sm">{appointment.groomer.name}</p>
             </div>
 
+            {/* Before Images */}
             <div>
               <h3 className="text-sm font-medium text-gray-500">Before Images</h3>
               <ImageCarousel
@@ -392,6 +364,7 @@ const AppointmentDetails = ({
               />
             </div>
 
+            {/* After Images (Only shown for completed appointments) */}
             {form.watch("status") === "completed" && (
               <>
                 <div>
@@ -404,6 +377,7 @@ const AppointmentDetails = ({
                   />
                 </div>
 
+                {/* Observations Field */}
                 <FormField
                   control={form.control}
                   name="observations"
@@ -423,6 +397,7 @@ const AppointmentDetails = ({
                   )}
                 />
 
+                {/* Recommendations Field */}
                 <FormField
                   control={form.control}
                   name="recommendations"
@@ -444,6 +419,7 @@ const AppointmentDetails = ({
               </>
             )}
 
+            {/* Cancellation Reason (Only shown for cancelled appointments) */}
             {form.watch("status") === "cancelled" && (
               <FormField
                 control={form.control}
@@ -472,6 +448,7 @@ const AppointmentDetails = ({
               />
             )}
 
+            {/* Notes Field */}
             <FormField
               control={form.control}
               name="notes"
@@ -486,8 +463,37 @@ const AppointmentDetails = ({
               )}
             />
 
-            {statusField}
+            {/* Status Field */}
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Status</FormLabel>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    value={field.value}
+                    disabled={isTerminalStatus}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {[field.value, ...getStatusTransitions(field.value)].map((status) => (
+                        <SelectItem key={status} value={status}>
+                          {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
+            {/* Action Buttons */}
             <div className="flex justify-end space-x-2 mt-4">
               <Button
                 type="button"
