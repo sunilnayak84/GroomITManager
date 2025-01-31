@@ -50,7 +50,7 @@ interface AppointmentDetailsProps {
   onEdit: () => void;
 }
 
-export const AppointmentDetails = ({
+const AppointmentDetails = ({
   appointment,
   open,
   onOpenChange,
@@ -63,23 +63,24 @@ export const AppointmentDetails = ({
   const [imageLoadError, setImageLoadError] = useState(false);
   const queryClient = useQueryClient();
 
-  // Only consider it a terminal status if the appointment is already in completed/cancelled state
   const isTerminalStatus = appointment.status === 'completed' || appointment.status === 'cancelled';
 
-  const getStatusTransitions = (currentStatus: string): string[] => {
-    switch (currentStatus) {
-      case 'pending':
-        return ['confirmed', 'cancelled'];
-      case 'confirmed':
-        return ['in_progress', 'cancelled'];
-      case 'in_progress':
-        return ['completed', 'cancelled'];
-      case 'completed':
-      case 'cancelled':
-        return [];
-      default:
-        return [];
+  useEffect(() => {
+    if (open) {
+      form.reset({
+        status: appointment.status,
+        cancellationReason: appointment.cancellationReason || undefined,
+        notes: appointment.notes || undefined,
+        observations: appointment.observations || undefined,
+        recommendations: appointment.recommendations || undefined,
+      });
     }
+  }, [open, appointment]);
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    console.error('Error loading image:', e);
+    setImageLoadError(true);
+    setIsImageLoading(false);
   };
 
   const form = useForm<UpdateAppointmentForm>({
@@ -93,29 +94,9 @@ export const AppointmentDetails = ({
     },
   });
 
-  // Reset form when appointment changes or dialog opens
-  useEffect(() => {
-    if (open) {
-      form.reset({
-        status: appointment.status,
-        cancellationReason: appointment.cancellationReason || undefined,
-        notes: appointment.notes || undefined,
-        observations: appointment.observations || undefined,
-        recommendations: appointment.recommendations || undefined,
-      });
-    }
-  }, [open, appointment, form]);
-
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    console.error('Error loading image:', e);
-    setImageLoadError(true);
-    setIsImageLoading(false);
-  };
-
   const onSubmit = async (data: UpdateAppointmentForm) => {
     try {
       setIsUpdating(true);
-      console.log('Submitting form data:', data);
 
       const updateData: Parameters<typeof updateAppointment>[0] = {
         id: appointment.id,
@@ -123,7 +104,7 @@ export const AppointmentDetails = ({
         notes: data.notes ?? null,
       };
 
-      // Add fields based on status
+      // Only add fields based on status
       if (data.status === 'cancelled' && data.cancellationReason) {
         updateData.cancellationReason = data.cancellationReason;
       }
@@ -161,6 +142,21 @@ export const AppointmentDetails = ({
     }
   };
 
+  const getStatusTransitions = (status: string): string[] => {
+    switch (status) {
+      case 'pending':
+        return ['confirmed', 'cancelled'];
+      case 'confirmed':
+        return ['in_progress', 'cancelled'];
+      case 'in_progress':
+        return ['completed', 'cancelled'];
+      case 'completed':
+        return ['cancelled'];
+      default:
+        return [];
+    }
+  };
+
   // Combine legacy single image with new image array
   const allBeforeImages = React.useMemo(() => {
     if (appointment.beforeImages?.length) {
@@ -176,110 +172,6 @@ export const AppointmentDetails = ({
     }
     return [];
   }, [appointment.beforeImages, appointment.beforeImage, appointment.updatedAt, appointment.createdAt]);
-
-  const handleBeforeImageUpload = async (file: File) => {
-    try {
-      if (file.size > 5 * 1024 * 1024) {
-        throw new Error('File size must be less than 5MB');
-      }
-
-      setIsUpdating(true);
-      setIsImageLoading(true);
-
-      const timestamp = Date.now();
-      const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-      const path = `appointments/${appointment.id}/before-image-${timestamp}.${extension}`;
-
-      const { uploadFile } = await import("@/lib/storage");
-      const url = await uploadFile(file, path);
-
-      const newImage: AppointmentImage = {
-        id: `${timestamp}`,
-        url,
-        type: 'before',
-        timestamp: new Date().toISOString(),
-      };
-
-      const updatedBeforeImages = [...allBeforeImages, newImage];
-
-      await updateAppointment({
-        id: appointment.id,
-        status: appointment.status,
-        beforeImages: updatedBeforeImages,
-      });
-
-      await queryClient.invalidateQueries({ 
-        queryKey: ["appointments"],
-        exact: true
-      });
-
-      toast({
-        title: "Success",
-        description: "Before image uploaded successfully",
-      });
-    } catch (error) {
-      setImageLoadError(true);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to upload image",
-      });
-    } finally {
-      setIsUpdating(false);
-      setIsImageLoading(false);
-    }
-  };
-
-  const handleAfterImageUpload = async (file: File) => {
-    try {
-      if (file.size > 5 * 1024 * 1024) {
-        throw new Error('File size must be less than 5MB');
-      }
-
-      setIsUpdating(true);
-      setIsImageLoading(true);
-
-      const timestamp = Date.now();
-      const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-      const path = `appointments/${appointment.id}/after-image-${timestamp}.${extension}`;
-
-      const { uploadFile } = await import("@/lib/storage");
-      const url = await uploadFile(file, path);
-
-      const newImage: AppointmentImage = {
-        id: `${timestamp}`,
-        url,
-        type: 'after',
-        timestamp: new Date().toISOString(),
-      };
-
-      await updateAppointment({
-        id: appointment.id,
-        status: appointment.status,
-        afterImages: [...(appointment.afterImages || []), newImage],
-      });
-
-      await queryClient.invalidateQueries({ 
-        queryKey: ["appointments"],
-        exact: true
-      });
-
-      toast({
-        title: "Success",
-        description: "After image uploaded successfully",
-      });
-    } catch (error) {
-      setImageLoadError(true);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to upload image",
-      });
-    } finally {
-      setIsUpdating(false);
-      setIsImageLoading(false);
-    }
-  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -353,7 +245,57 @@ export const AppointmentDetails = ({
               <ImageCarousel
                 images={allBeforeImages}
                 type="before"
-                onImageUpload={handleBeforeImageUpload}
+                onImageUpload={async (file) => {
+                  try {
+                    if (file.size > 5 * 1024 * 1024) {
+                      throw new Error('File size must be less than 5MB');
+                    }
+
+                    setIsUpdating(true);
+                    setIsImageLoading(true);
+                    const timestamp = Date.now();
+                    const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+                    const path = `appointments/${appointment.id}/before-image-${timestamp}.${extension}`;
+
+                    const { uploadFile } = await import("@/lib/storage");
+                    const url = await uploadFile(file, path);
+
+                    const newImage: AppointmentImage = {
+                      id: `${timestamp}`,
+                      url,
+                      type: 'before',
+                      timestamp: new Date().toISOString(),
+                    };
+
+                    const updatedBeforeImages = [...allBeforeImages, newImage];
+
+                    await updateAppointment({
+                      id: appointment.id,
+                      status: form.getValues("status"),
+                      beforeImages: updatedBeforeImages,
+                    });
+
+                    await queryClient.invalidateQueries({ 
+                      queryKey: ["appointments"],
+                      exact: true
+                    });
+
+                    toast({
+                      title: "Success",
+                      description: "Before image uploaded successfully",
+                    });
+                  } catch (error) {
+                    setImageLoadError(true);
+                    toast({
+                      variant: "destructive",
+                      title: "Error",
+                      description: error instanceof Error ? error.message : "Failed to upload image",
+                    });
+                  } finally {
+                    setIsUpdating(false);
+                    setIsImageLoading(false);
+                  }
+                }}
                 className="mt-2"
               />
             </div>
@@ -365,7 +307,55 @@ export const AppointmentDetails = ({
                   <ImageCarousel
                     images={appointment.afterImages || []}
                     type="after"
-                    onImageUpload={handleAfterImageUpload}
+                    onImageUpload={async (file) => {
+                      try {
+                        if (file.size > 5 * 1024 * 1024) {
+                          throw new Error('File size must be less than 5MB');
+                        }
+
+                        setIsUpdating(true);
+                        setIsImageLoading(true);
+                        const timestamp = Date.now();
+                        const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+                        const path = `appointments/${appointment.id}/after-image-${timestamp}.${extension}`;
+
+                        const { uploadFile } = await import("@/lib/storage");
+                        const url = await uploadFile(file, path);
+
+                        const newImage: AppointmentImage = {
+                          id: `${timestamp}`,
+                          url,
+                          type: 'after',
+                          timestamp: new Date().toISOString(),
+                        };
+
+                        await updateAppointment({
+                          id: appointment.id,
+                          status: form.getValues("status"),
+                          afterImages: [...(appointment.afterImages || []), newImage],
+                        });
+
+                        await queryClient.invalidateQueries({ 
+                          queryKey: ["appointments"],
+                          exact: true
+                        });
+
+                        toast({
+                          title: "Success",
+                          description: "After image uploaded successfully",
+                        });
+                      } catch (error) {
+                        setImageLoadError(true);
+                        toast({
+                          variant: "destructive",
+                          title: "Error",
+                          description: error instanceof Error ? error.message : "Failed to upload image",
+                        });
+                      } finally {
+                        setIsUpdating(false);
+                        setIsImageLoading(false);
+                      }
+                    }}
                     className="mt-2"
                   />
                 </div>
@@ -440,76 +430,6 @@ export const AppointmentDetails = ({
 
             <FormField
               control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <Select 
-                    onValueChange={async (newStatus) => {
-                      try {
-                        setIsUpdating(true);
-
-                        // Update the appointment status immediately
-                        await updateAppointment({
-                          id: appointment.id,
-                          status: newStatus as typeof field.value,
-                          notes: form.getValues("notes"),
-                          cancellationReason: newStatus === "cancelled" ? form.getValues("cancellationReason") : undefined,
-                          observations: newStatus === "completed" ? form.getValues("observations") : undefined,
-                          recommendations: newStatus === "completed" ? form.getValues("recommendations") : undefined,
-                        });
-
-                        // Update form state after successful API update
-                        field.onChange(newStatus);
-
-                        // Invalidate queries to refetch data
-                        await queryClient.invalidateQueries({ 
-                          queryKey: ["appointments"],
-                          exact: true
-                        });
-
-                        toast({
-                          title: "Success",
-                          description: "Appointment status updated successfully",
-                        });
-                      } catch (error) {
-                        console.error('Error updating status:', error);
-                        toast({
-                          variant: "destructive",
-                          title: "Error",
-                          description: "Failed to update appointment status",
-                        });
-                      } finally {
-                        setIsUpdating(false);
-                      }
-                    }}
-                    value={field.value}
-                    disabled={isTerminalStatus || isUpdating}
-                  >
-                    <FormControl>
-                      <SelectTrigger className={isUpdating ? "opacity-50 cursor-not-allowed" : ""}>
-                        <SelectValue>
-                          {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
-                        </SelectValue>
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {/* Show available transitions */}
-                      {getStatusTransitions(field.value).map((status) => (
-                        <SelectItem key={status} value={status}>
-                          {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-
-            <FormField
-              control={form.control}
               name="notes"
               render={({ field }) => (
                 <FormItem>
@@ -517,6 +437,38 @@ export const AppointmentDetails = ({
                   <FormControl>
                     <Input {...field} value={field.value || ''} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Status</FormLabel>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    value={field.value}
+                    disabled={isTerminalStatus}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value={field.value}>
+                        {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
+                      </SelectItem>
+                      {!isTerminalStatus && getStatusTransitions(field.value).map((status) => (
+                        <SelectItem key={status} value={status}>
+                          {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -533,7 +485,7 @@ export const AppointmentDetails = ({
               {!isTerminalStatus && (
                 <Button
                   type="submit"
-                  disabled={isUpdating}
+                  disabled={isUpdating || isTerminalStatus}
                   className="min-w-[140px]"
                 >
                   {isUpdating ? (
