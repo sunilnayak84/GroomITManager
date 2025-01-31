@@ -364,11 +364,14 @@ const AppointmentDetails = ({
                           timestamp: new Date().toISOString(),
                         };
 
-                        // Keep the current status when updating images
+                        // Only update afterImages, preserve form values
                         await updateAppointment({
                           id: appointment.id,
-                          status: appointment.status,
+                          status: form.getValues("status"),
                           afterImages: [...(appointment.afterImages || []), newImage],
+                          observations: form.getValues("observations"),
+                          recommendations: form.getValues("recommendations"),
+                          notes: form.getValues("notes")
                         });
 
                         await queryClient.invalidateQueries({ 
