@@ -240,12 +240,13 @@ const AppointmentDetails = ({
               <p className="mt-1 text-sm">{appointment.groomer.name}</p>
             </div>
 
-            <div>
-              <h3 className="text-sm font-medium text-gray-500">Before Images</h3>
-              <ImageCarousel
-                images={allBeforeImages}
-                type="before"
-                onImageUpload={async (file) => {
+            {form.watch("status") === "in_progress" && (
+              <div>
+                <h3 className="text-sm font-medium text-gray-500">Before Images</h3>
+                <ImageCarousel
+                  images={allBeforeImages}
+                  type="before"
+                  onImageUpload={async (file) => {
                   try {
                     if (file.size > 5 * 1024 * 1024) {
                       throw new Error('File size must be less than 5MB');
@@ -298,7 +299,8 @@ const AppointmentDetails = ({
                 }}
                 className="mt-2"
               />
-            </div>
+              </div>
+            )}
 
             {form.watch("status") === "completed" && (
               <>
