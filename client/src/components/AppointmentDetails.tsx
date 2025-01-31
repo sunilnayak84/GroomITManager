@@ -42,7 +42,7 @@ const updateAppointmentSchema = z.object({
   afterImages: z.array(z.object({
     id: z.string(),
     url: z.string(),
-    type: z.literal('after'),
+    type: z.enum(['after', 'before']),
     timestamp: z.string(),
   })).optional(),
 });
