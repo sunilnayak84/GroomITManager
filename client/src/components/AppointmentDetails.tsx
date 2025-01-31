@@ -364,11 +364,15 @@ const AppointmentDetails = ({
                           timestamp: new Date().toISOString(),
                         };
 
+                        // Keep status as in_progress during image upload
                         await updateAppointment({
                           id: appointment.id,
-                          status: form.getValues("status"),
+                          status: "in_progress",
                           afterImages: [...(appointment.afterImages || []), newImage],
                         });
+
+                        // Reset form status back to in_progress
+                        form.setValue("status", "in_progress");
 
                         await queryClient.invalidateQueries({ 
                           queryKey: ["appointments"],
