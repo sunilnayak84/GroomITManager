@@ -258,6 +258,9 @@ const AppointmentDetails = ({
                       await queryClient.invalidateQueries({ 
                         queryKey: ["appointments"],
                         exact: true
+                      }, {
+                        exact: true,
+                        refetchType: "all"
                       });
                       toast({
                         title: "Success",
