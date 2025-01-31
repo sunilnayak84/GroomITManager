@@ -366,7 +366,7 @@ const AppointmentDetails = ({
                         <h4 className="font-medium">{service.name}</h4>
                         {service.consumables?.map((category) => (
                           <div key={category} className="mt-2">
-                            <h5 className="text-sm text-gray-600">{category} Items</h5>
+                            <h5 className="text-sm text-gray-600">{typeof category === 'object' ? (category as any).item_name : category} Items</h5>
                             <Button
                               type="button"
                               variant="outline"
