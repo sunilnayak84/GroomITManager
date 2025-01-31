@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useInventory } from "@/hooks/use-inventory";
+import { useUser } from "@/hooks/use-user";
 import {
   Dialog,
   DialogContent,
@@ -62,6 +64,8 @@ const AppointmentDetails = ({
   onOpenChange,
   onEdit,
 }: AppointmentDetailsProps): React.ReactElement => {
+  const { inventory } = useInventory();
+  const { user } = useUser();
   const { updateAppointment } = useAppointments();
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
