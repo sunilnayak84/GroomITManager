@@ -256,9 +256,6 @@ const AppointmentDetails = ({
                         beforeImages: updatedImages,
                       });
                       
-                      // Don't close the dialog
-                      onOpenChange(true);
-                      
                       toast({
                         title: "Success",
                         description: "Image deleted successfully",
@@ -267,7 +264,7 @@ const AppointmentDetails = ({
                       // Refresh data without closing dialog
                       await queryClient.invalidateQueries({ 
                         queryKey: ["appointments"],
-                        refetchType: "all",
+                        exact: false,
                         type: "active"
                       });
                     } catch (error) {
