@@ -55,7 +55,9 @@ export function ConsumablesUsageModal({
   const { user } = useUser();
   const [selectedItem, setSelectedItem] = useState<any>(null);
 
-  const filteredItems = inventory || [];
+  const filteredItems = category ? 
+    (inventory || []).filter(item => item.category.toLowerCase() === category.toLowerCase()) : 
+    (inventory || []);
 
   const form = useForm<UsageFormData>({
     resolver: zodResolver(usageFormSchema),

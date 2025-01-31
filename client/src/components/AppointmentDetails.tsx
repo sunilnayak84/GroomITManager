@@ -364,23 +364,26 @@ const AppointmentDetails = ({
                     {appointment.service?.map((service) => (
                       <div key={service.service_id} className="border rounded-lg p-4">
                         <h4 className="font-medium">{service.name}</h4>
-                        {service.consumables?.map((category) => (
-                          <div key={category} className="mt-2">
-                            <h5 className="text-sm text-gray-600">{typeof category === 'object' ? (category as any).item_name : category} Items</h5>
-                            <Button
-                              type="button"
-                              variant="outline"
-                              onClick={() => {
-                                setSelectedService(service);
-                                setSelectedCategory(category);
-                                setIsUsageModalOpen(true);
-                              }}
-                              className="mt-1"
-                            >
-                              Record Usage
-                            </Button>
-                          </div>
-                        ))}
+                        {service.consumables?.map((category) => {
+                          const categoryName = typeof category === 'object' ? (category as any).item_name : category;
+                          return (
+                            <div key={categoryName} className="mt-2">
+                              <h5 className="text-sm text-gray-600">{categoryName} Items</h5>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => {
+                                  setSelectedService(service);
+                                  setSelectedCategory(categoryName);
+                                  setIsUsageModalOpen(true);
+                                }}
+                                className="mt-1"
+                              >
+                                Record Usage
+                              </Button>
+                            </div>
+                          );
+                        })}
                       </div>
                     ))}
                     <Button
