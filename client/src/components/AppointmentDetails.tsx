@@ -261,12 +261,12 @@ const AppointmentDetails = ({
                                 status: form.getValues("status"),
                                 beforeImages: updatedImages,
                               });
-                              
+
                               toast({
                                 title: "Success",
                                 description: "Image deleted successfully",
                               });
-                              
+
                               await queryClient.invalidateQueries({ 
                                 queryKey: ["appointments"]
                               });
@@ -274,7 +274,7 @@ const AppointmentDetails = ({
                               toast({
                                 variant: "destructive",
                                 title: "Error",
-                                description: "Failed to delete image"
+                                description: error instanceof Error ? error.message : "Failed to delete image"
                               });
                             } finally {
                               setIsUpdating(false);
@@ -299,7 +299,7 @@ const AppointmentDetails = ({
                       toast({
                         variant: "destructive",
                         title: "Error",
-                        description: error instanceof Error ? error.message : "Failed to delete image",
+                        description: error instanceof Error ? error.message : "Failed to delete image"
                       });
                     } finally {
                       setIsUpdating(false);
