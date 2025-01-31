@@ -36,7 +36,7 @@ interface ConsumablesUsageModalProps {
   isOpen: boolean;
   onClose: () => void;
   itemId?: string;
-  itemName?: string;
+  itemName?: string | object; // Changed to accept object or string
   currentQuantity?: number;
   unit?: string;
   category?: string; // Added category prop
@@ -65,6 +65,8 @@ export function ConsumablesUsageModal({
       item_id: itemId || ""
     },
   });
+
+  const safeItemName = typeof itemName === 'object' ? (itemName as any)?.item_name || '' : itemName || ''; //Safely handles object or string
 
   async function onSubmit(data: UsageFormData) {
     if (!user) {
@@ -122,7 +124,7 @@ export function ConsumablesUsageModal({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {category ? `Record ${category} Usage` : 'Record Usage'} {itemName ? `- ${itemName}` : ''}
+            {category ? `Record ${category} Usage` : 'Record Usage'} {safeItemName ? `- ${safeItemName}` : ''} {/* Use safeItemName */}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
