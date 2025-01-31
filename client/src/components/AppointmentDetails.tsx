@@ -370,7 +370,7 @@ const AppointmentDetails = ({
                       const allConsumables = service.pack 
                         ? [...(service.consumables || []), ...(service.pack.services?.flatMap(s => s.consumables || []) || [])]
                         : service.consumables || [];
-                      
+
                       return (
                         <div key={service.service_id} className="border rounded-lg p-4">
                           <h4 className="font-medium">{service.name}</h4>
@@ -380,7 +380,7 @@ const AppointmentDetails = ({
                               item.category.toLowerCase() === categoryName.toLowerCase() && 
                               item.quantity > 0
                             ) || [];
-                            
+
                             return (
                               <div key={categoryName} className="mt-2">
                                 <h5 className="text-sm text-gray-600">{categoryName}</h5>
@@ -389,7 +389,7 @@ const AppointmentDetails = ({
                                     onValueChange={async (itemId) => {
                                       const item = inventory?.find(i => i.item_id === itemId);
                                       if (!item || !user?.id) return;
-                                      
+
                                       try {
                                         const quantity = Number(prompt(`Enter quantity (default: ${item.quantity_per_use})`) || item.quantity_per_use);
                                         if (isNaN(quantity) || quantity <= 0) {
@@ -400,7 +400,7 @@ const AppointmentDetails = ({
                                           });
                                           return;
                                         }
-                                        
+
                                         await recordUsage({
                                           item_id: itemId,
                                           quantity_used: quantity,
@@ -411,39 +411,41 @@ const AppointmentDetails = ({
                                           service_linked: true,
                                           auto_deducted: true
                                         });
-                                    
-                                    toast({
-                                      title: "Success",
-                                      description: `Recorded usage of ${item.name}`,
-                                    });
-                                  } catch (error) {
-                                    toast({
-                                      variant: "destructive",
-                                      title: "Error",
-                                      description: error instanceof Error ? error.message : "Failed to record usage",
-                                    });
-                                  }
-                                }}
-                              >
-                                <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="Select item to use" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {items.map((item) => (
-                                    <SelectItem 
-                                      key={item.item_id} 
-                                      value={item.item_id}
-                                    >
-                                      {item.name} ({item.quantity} {item.unit} available)
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    ))}
+
+                                        toast({
+                                          title: "Success",
+                                          description: `Recorded usage of ${item.name}`,
+                                        });
+                                      } catch (error) {
+                                        toast({
+                                          variant: "destructive",
+                                          title: "Error",
+                                          description: error instanceof Error ? error.message : "Failed to record usage",
+                                        });
+                                      }
+                                    }}
+                                  >
+                                    <SelectTrigger className="w-full">
+                                      <SelectValue placeholder="Select item to use" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {items.map((item) => (
+                                        <SelectItem 
+                                          key={item.item_id} 
+                                          value={item.item_id}
+                                        >
+                                          {item.name} ({item.quantity} {item.unit} available)
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
