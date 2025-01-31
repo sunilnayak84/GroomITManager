@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -38,27 +37,26 @@ type UsageFormData = z.infer<typeof usageFormSchema>;
 interface ConsumablesUsageModalProps {
   isOpen: boolean;
   onClose: () => void;
+  selectedService?: any;
+  selectedCategory?: string;
   appointmentId: string;
   serviceId?: string;
-  serviceName?: string;
-  category?: string;
-  categories?: string[];
 }
 
 export function ConsumablesUsageModal({
   isOpen,
   onClose,
+  selectedService,
+  selectedCategory,
   appointmentId,
-  serviceId,
-  serviceName,
-  category
+  serviceId
 }: ConsumablesUsageModalProps) {
   const { inventory, recordUsage } = useInventory();
   const { user } = useUser();
   const [selectedItem, setSelectedItem] = useState<any>(null);
 
   const filteredItems = inventory?.filter(item => 
-    !category || item.category === category
+    !selectedCategory || item.category === selectedCategory
   ) || [];
 
   const form = useForm<UsageFormData>({
@@ -109,7 +107,7 @@ export function ConsumablesUsageModal({
         service_linked: !!serviceId,
         auto_deducted: true
       });
-      
+
       onClose();
       form.reset();
     } catch (error) {
@@ -127,8 +125,8 @@ export function ConsumablesUsageModal({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            Record Usage {serviceName ? `- ${serviceName}` : ''} 
-            {category ? ` (${category})` : ''}
+            Record Usage {selectedService ? `- ${selectedService.name}` : ''} 
+            {selectedCategory ? ` (${selectedCategory})` : ''}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
