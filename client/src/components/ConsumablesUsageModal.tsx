@@ -41,6 +41,7 @@ interface ConsumablesUsageModalProps {
   appointmentId: string;
   serviceId?: string;
   serviceName?: string;
+  category?: string;
   categories?: string[];
 }
 
@@ -57,7 +58,7 @@ export function ConsumablesUsageModal({
   const [selectedItem, setSelectedItem] = useState<any>(null);
 
   const filteredItems = inventory?.filter(item => 
-    !categories?.length || categories.includes(item.category)
+    !category || item.category === category
   ) || [];
 
   const form = useForm<UsageFormData>({
