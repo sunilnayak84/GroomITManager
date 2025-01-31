@@ -256,8 +256,8 @@ const AppointmentDetails = ({
                         beforeImages: updatedImages,
                       });
                       
-                      // Keep dialog open by preventing default event
-                      e?.preventDefault?.();
+                      // Don't close the dialog
+                      onOpenChange(true);
                       
                       toast({
                         title: "Success",
