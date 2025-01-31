@@ -299,7 +299,7 @@ const AppointmentDetails = ({
                       toast({
                         variant: "destructive",
                         title: "Error",
-                        description: error instanceof Error ? error.message : "Failed to delete image",
+                        description: error instanceof Error ? error.message : "Failed to delete image"
                       });
                     } finally {
                       setIsUpdating(false);
