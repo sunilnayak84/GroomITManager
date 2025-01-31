@@ -64,7 +64,7 @@ const AppointmentDetails = ({
   onOpenChange,
   onEdit,
 }: AppointmentDetailsProps): React.ReactElement => {
-  const { inventory } = useInventory();
+  const { inventory, recordUsage } = useInventory();
   const { user } = useUser();
   const { updateAppointment } = useAppointments();
   const { toast } = useToast();
