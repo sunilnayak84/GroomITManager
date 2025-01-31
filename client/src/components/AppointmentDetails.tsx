@@ -364,9 +364,10 @@ const AppointmentDetails = ({
                           timestamp: new Date().toISOString(),
                         };
 
-                        // Only update the afterImages array, leave status unchanged
+                        // Keep the current status when updating images
                         await updateAppointment({
                           id: appointment.id,
+                          status: appointment.status,
                           afterImages: [...(appointment.afterImages || []), newImage],
                         });
 
