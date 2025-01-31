@@ -61,8 +61,7 @@ export function ImageCarousel({ images, type, onImageUpload, onImageDelete, clas
 
   const handleDeleteImage = async (e: React.MouseEvent, imageId: string) => {
     e.stopPropagation();
-    e.preventDefault();
-    if (onImageDelete) {
+    if (onImageDelete && confirm('Are you sure you want to delete this image?')) {
       try {
         await onImageDelete(imageId);
       } catch (error) {
