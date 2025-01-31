@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,7 +28,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 const usageFormSchema = z.object({
   quantity_used: z.number().min(0, "Usage quantity must be positive"),
   notes: z.string().optional(),
-  item_id: z.string(),
+  item_id: z.string().min(1, "Please select an item"),
 });
 
 type UsageFormData = z.infer<typeof usageFormSchema>;
@@ -36,10 +37,10 @@ interface ConsumablesUsageModalProps {
   isOpen: boolean;
   onClose: () => void;
   itemId?: string;
-  itemName?: string | object; // Changed to accept object or string
+  itemName?: string | object;
   currentQuantity?: number;
   unit?: string;
-  category?: string; // Added category prop
+  category?: string;
 }
 
 export function ConsumablesUsageModal({
@@ -49,15 +50,15 @@ export function ConsumablesUsageModal({
   itemName,
   currentQuantity,
   unit,
-  category // Added category prop
+  category
 }: ConsumablesUsageModalProps) {
   const { inventory, recordUsage } = useInventory();
   const { user } = useUser();
   const [selectedItem, setSelectedItem] = useState<any>(null);
 
   const filteredItems = category ? 
-    (inventory || []).filter(item => item.category.toLowerCase() === category.toLowerCase()) : 
-    (inventory || []);
+    inventory?.filter(item => item.category?.toLowerCase() === category.toLowerCase()) : 
+    inventory || [];
 
   const form = useForm<UsageFormData>({
     resolver: zodResolver(usageFormSchema),
@@ -68,7 +69,7 @@ export function ConsumablesUsageModal({
     },
   });
 
-  const safeItemName = typeof itemName === 'object' ? (itemName as any)?.item_name || '' : itemName || ''; //Safely handles object or string
+  const safeItemName = typeof itemName === 'object' ? (itemName as any)?.item_name || '' : itemName || '';
 
   async function onSubmit(data: UsageFormData) {
     if (!user) {
@@ -104,11 +105,16 @@ export function ConsumablesUsageModal({
         item_id: data.item_id,
         quantity_used: data.quantity_used,
         used_by: user.id,
-        notes: data.notes,
-        service_linked: false,
+        notes: data.notes || "",
+        service_linked: true,
         auto_deducted: true
       });
 
+      toast({
+        title: "Success",
+        description: "Usage recorded successfully",
+      });
+      
       onClose();
       form.reset();
     } catch (error) {
@@ -126,7 +132,7 @@ export function ConsumablesUsageModal({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {category ? `Record ${category} Usage` : 'Record Usage'} {safeItemName ? `- ${safeItemName}` : ''} {/* Use safeItemName */}
+            {category ? `Record ${category} Usage` : 'Record Usage'} {safeItemName ? `- ${safeItemName}` : ''}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -140,13 +146,16 @@ export function ConsumablesUsageModal({
                   <Select
                     onValueChange={(value) => {
                       field.onChange(value);
-                      setSelectedItem(inventory?.find(item => item.item_id === value));
+                      const item = inventory?.find(i => i.item_id === value);
+                      setSelectedItem(item);
                     }}
                     value={field.value}
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select an item" />
-                    </SelectTrigger>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select an item" />
+                      </SelectTrigger>
+                    </FormControl>
                     <SelectContent>
                       {filteredItems.map((item) => (
                         <SelectItem key={item.item_id} value={item.item_id}>
@@ -164,13 +173,13 @@ export function ConsumablesUsageModal({
               name="quantity_used"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Quantity Used {unit ? `(${unit})` : ''}</FormLabel>
+                  <FormLabel>Quantity Used {selectedItem?.unit ? `(${selectedItem.unit})` : ''}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       min="0"
                       step="0.01"
-                      max={currentQuantity}
+                      max={selectedItem?.quantity}
                       {...field}
                       onChange={(e) => field.onChange(Number(e.target.value))}
                     />
