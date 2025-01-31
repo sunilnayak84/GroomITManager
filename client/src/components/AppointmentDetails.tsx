@@ -39,6 +39,12 @@ const updateAppointmentSchema = z.object({
   notes: z.string().nullable().optional(),
   observations: z.string().nullable().optional(),
   recommendations: z.string().nullable().optional(),
+  afterImages: z.array(z.object({
+    id: z.string(),
+    url: z.string(),
+    type: z.literal('after'),
+    timestamp: z.string(),
+  })).optional(),
 });
 
 type UpdateAppointmentForm = z.infer<typeof updateAppointmentSchema>;
@@ -73,6 +79,7 @@ const AppointmentDetails = ({
         notes: appointment.notes || undefined,
         observations: appointment.observations || undefined,
         recommendations: appointment.recommendations || undefined,
+        afterImages: appointment.afterImages || undefined,
       });
     }
   }, [open, appointment]);
@@ -91,6 +98,7 @@ const AppointmentDetails = ({
       notes: appointment.notes || undefined,
       observations: appointment.observations || undefined,
       recommendations: appointment.recommendations || undefined,
+      afterImages: appointment.afterImages || undefined,
     },
   });
 
@@ -102,16 +110,14 @@ const AppointmentDetails = ({
         id: appointment.id,
         status: data.status,
         notes: data.notes ?? null,
+        afterImages: data.afterImages,
+        observations: data.observations ?? null,
+        recommendations: data.recommendations ?? null,
       };
 
       // Only add fields based on status
       if (data.status === 'cancelled' && data.cancellationReason) {
         updateData.cancellationReason = data.cancellationReason;
-      }
-
-      if (data.status === 'completed') {
-        updateData.observations = data.observations ?? null;
-        updateData.recommendations = data.recommendations ?? null;
       }
 
       console.log('Submitting appointment update:', updateData);
@@ -255,15 +261,15 @@ const AppointmentDetails = ({
                         status: form.getValues("status"),
                         beforeImages: updatedImages,
                       });
-                      
+
                       // Force dialog to stay open
                       onOpenChange(true);
-                      
+
                       toast({
                         title: "Success",
                         description: "Image deleted successfully",
                       });
-                      
+
                       // Refresh data without closing dialog
                       await queryClient.invalidateQueries({ 
                         queryKey: ["appointments"],
@@ -340,7 +346,7 @@ const AppointmentDetails = ({
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">After Images</h3>
                   <ImageCarousel
-                    images={appointment.afterImages || []}
+                    images={form.watch("afterImages") || []}
                     type="after"
                     onImageUpload={async (file) => {
                       try {
@@ -348,7 +354,6 @@ const AppointmentDetails = ({
                           throw new Error('File size must be less than 5MB');
                         }
 
-                        setIsUpdating(true);
                         setIsImageLoading(true);
                         const timestamp = Date.now();
                         const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
@@ -364,24 +369,12 @@ const AppointmentDetails = ({
                           timestamp: new Date().toISOString(),
                         };
 
-                        // Only update afterImages, preserve form values
-                        await updateAppointment({
-                          id: appointment.id,
-                          status: form.getValues("status"),
-                          afterImages: [...(appointment.afterImages || []), newImage],
-                          observations: form.getValues("observations"),
-                          recommendations: form.getValues("recommendations"),
-                          notes: form.getValues("notes")
-                        });
-
-                        await queryClient.invalidateQueries({ 
-                          queryKey: ["appointments"],
-                          exact: true
-                        });
+                        // Update form state without saving to database
+                        form.setValue("afterImages", [...(form.watch("afterImages") || []), newImage]);
 
                         toast({
                           title: "Success",
-                          description: "After image uploaded successfully",
+                          description: "After image uploaded successfully. Don't forget to click Update Appointment to save all changes.",
                         });
                       } catch (error) {
                         setImageLoadError(true);
@@ -391,7 +384,6 @@ const AppointmentDetails = ({
                           description: error instanceof Error ? error.message : "Failed to upload image",
                         });
                       } finally {
-                        setIsUpdating(false);
                         setIsImageLoading(false);
                       }
                     }}
