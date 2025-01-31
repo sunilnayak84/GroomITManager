@@ -415,20 +415,21 @@ const AppointmentDetails = ({
                                   />
                                   <Select
                                     onValueChange={async (itemId) => {
-                                      const item = inventory?.find(i => i.item_id === itemId);
-                                      if (!item || !user?.id) return;
+                                      try {
+                                        const item = inventory?.find(i => i.item_id === itemId);
+                                        if (!item || !user?.id) return;
 
-                                      const quantityInputRef = document.getElementById(`quantity-${itemId}`) as HTMLInputElement;
-                                      const quantity = Number(quantityInputRef?.value || item.quantity_per_use);
-                                      
-                                      if (isNaN(quantity) || quantity <= 0) {
-                                        toast({
-                                          title: "Invalid quantity",
-                                          description: "Please enter a valid positive number",
-                                          variant: "destructive"
-                                        });
-                                        return;
-                                      }
+                                        const quantityInputRef = document.getElementById(`quantity-${itemId}`) as HTMLInputElement;
+                                        const quantity = Number(quantityInputRef?.value || item.quantity_per_use);
+                                        
+                                        if (isNaN(quantity) || quantity <= 0) {
+                                          toast({
+                                            title: "Invalid quantity",
+                                            description: "Please enter a valid positive number",
+                                            variant: "destructive"
+                                          });
+                                          return;
+                                        }
 
                                         await recordUsage({
                                           item_id: itemId,
