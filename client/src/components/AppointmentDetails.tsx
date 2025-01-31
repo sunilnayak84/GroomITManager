@@ -47,6 +47,14 @@ const updateAppointmentSchema = z.object({
     type: z.enum(['after', 'before']),
     timestamp: z.string(),
   })).optional(),
+  inventoryUsage: z.array(z.object({
+    item_id: z.string(),
+    quantity_used: z.number(),
+    service_id: z.string(),
+    notes: z.string(),
+    service_linked: z.boolean(),
+    auto_deducted: z.boolean()
+  })).optional()
 });
 
 type UpdateAppointmentForm = z.infer<typeof updateAppointmentSchema>;
@@ -113,6 +121,17 @@ const AppointmentDetails = ({
   const onSubmit = async (data: UpdateAppointmentForm) => {
     try {
       setIsUpdating(true);
+
+      // Record inventory usage if any
+      if (data.inventoryUsage && user?.id) {
+        for (const usage of data.inventoryUsage) {
+          await recordUsage({
+            ...usage,
+            used_by: user.id,
+            appointment_id: appointment.id,
+          });
+        }
+      }
 
       const updateData: Parameters<typeof updateAppointment>[0] = {
         id: appointment.id,
@@ -414,45 +433,35 @@ const AppointmentDetails = ({
                                     className="w-20 h-9 rounded-md border border-input px-3 py-1 text-sm shadow-sm"
                                   />
                                   <Select
-                                    onValueChange={async (itemId) => {
-                                      try {
-                                        const item = inventory?.find(i => i.item_id === itemId);
-                                        if (!item || !user?.id) return;
+                                    onValueChange={(itemId) => {
+                                      const item = inventory?.find(i => i.item_id === itemId);
+                                      if (!item) return;
 
-                                        const quantityInputRef = document.getElementById(`quantity-${itemId}`) as HTMLInputElement;
-                                        const quantity = Number(quantityInputRef?.value || item.quantity_per_use);
-                                        
-                                        if (isNaN(quantity) || quantity <= 0) {
-                                          toast({
-                                            title: "Invalid quantity",
-                                            description: "Please enter a valid positive number",
-                                            variant: "destructive"
-                                          });
-                                          return;
-                                        }
+                                      const quantityInputRef = document.getElementById(`quantity-${item.item_id}`) as HTMLInputElement;
+                                      const quantity = Number(quantityInputRef?.value || item.quantity_per_use);
 
-                                        await recordUsage({
-                                          item_id: itemId,
-                                          quantity_used: quantity,
-                                          used_by: user.id,
-                                          appointment_id: appointment.id,
-                                          service_id: service.service_id,
-                                          notes: `Used for ${service.name}`,
-                                          service_linked: true,
-                                          auto_deducted: true
-                                        });
-
+                                      if (isNaN(quantity) || quantity <= 0) {
                                         toast({
-                                          title: "Success",
-                                          description: `Recorded usage of ${item.name}`,
+                                          title: "Invalid quantity",
+                                          description: "Please enter a valid positive number",
+                                          variant: "destructive"
                                         });
-                                      } catch (error) {
-                                        toast({
-                                          variant: "destructive",
-                                          title: "Error",
-                                          description: error instanceof Error ? error.message : "Failed to record usage",
-                                        });
+                                        return;
                                       }
+
+                                      // Store usage data to be submitted with form
+                                      const usageData = {
+                                        item_id: itemId,
+                                        quantity_used: quantity,
+                                        service_id: service.service_id,
+                                        notes: `Used for ${service.name}`,
+                                        service_linked: true,
+                                        auto_deducted: true
+                                      };
+                                      
+                                      // Store in form state
+                                      const currentUsages = form.getValues("inventoryUsage") || [];
+                                      form.setValue("inventoryUsage", [...currentUsages, usageData]);
                                     }}
                                   >
                                     <SelectTrigger className="w-full">
