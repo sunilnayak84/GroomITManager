@@ -366,7 +366,7 @@ const AppointmentDetails = ({
 
                         await updateAppointment({
                           id: appointment.id,
-                          status: form.getValues("status"),
+                          status: appointment.status, // Keep existing status
                           afterImages: [...(appointment.afterImages || []), newImage],
                         });
 
