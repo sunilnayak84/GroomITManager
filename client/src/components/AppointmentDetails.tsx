@@ -364,10 +364,9 @@ const AppointmentDetails = ({
                           timestamp: new Date().toISOString(),
                         };
 
-                        // Keep existing appointment status during image upload
+                        // Only update the afterImages array, leave status unchanged
                         await updateAppointment({
                           id: appointment.id,
-                          status: appointment.status,
                           afterImages: [...(appointment.afterImages || []), newImage],
                         });
 
@@ -495,8 +494,8 @@ const AppointmentDetails = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value={field.value}>
-                        {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
+                      <SelectItem value={field.value || 'pending'}>
+                        {(field.value || 'pending').charAt(0).toUpperCase() + (field.value || 'pending').slice(1).replace('_', ' ')}
                       </SelectItem>
                       {!isTerminalStatus && getStatusTransitions(field.value).map((status) => (
                         <SelectItem key={status} value={status}>
