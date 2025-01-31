@@ -367,9 +367,30 @@ const AppointmentDetails = ({
                   <div className="mt-2 space-y-4">
                     {appointment.service?.map((service) => {
                       // Get consumables from both service and its package services if any
-                      const allConsumables = service.pack 
-                        ? [...(service.consumables || []), ...(service.pack.services?.flatMap(s => s.consumables || []) || [])]
-                        : service.consumables || [];
+                      const allConsumables = [];
+                      
+                      // Add service's own consumables
+                      if (service.consumables?.length) {
+                        allConsumables.push(...service.consumables);
+                      }
+                      
+                      // Add consumables from package services if it's a package
+                      if (service.selectedServices?.length) {
+                        service.selectedServices.forEach(subService => {
+                          if (subService.consumables?.length) {
+                            allConsumables.push(...subService.consumables);
+                          }
+                        });
+                      }
+                      
+                      // Add consumables from package addons
+                      if (service.selectedAddons?.length) {
+                        service.selectedAddons.forEach(addon => {
+                          if (addon.consumables?.length) {
+                            allConsumables.push(...addon.consumables);
+                          }
+                        });
+                      }
 
                       return (
                         <div key={service.service_id} className="border rounded-lg p-4">
@@ -385,21 +406,29 @@ const AppointmentDetails = ({
                               <div key={categoryName} className="mt-2">
                                 <h5 className="text-sm text-gray-600">{categoryName}</h5>
                                 <div className="flex gap-2">
+                                  <input
+                                    type="number"
+                                    id={`quantity-${categoryName}`}
+                                    defaultValue="1"
+                                    min="1"
+                                    className="w-20 h-9 rounded-md border border-input px-3 py-1 text-sm shadow-sm"
+                                  />
                                   <Select
                                     onValueChange={async (itemId) => {
                                       const item = inventory?.find(i => i.item_id === itemId);
                                       if (!item || !user?.id) return;
 
-                                      try {
-                                        const quantity = Number(prompt(`Enter quantity (default: ${item.quantity_per_use})`) || item.quantity_per_use);
-                                        if (isNaN(quantity) || quantity <= 0) {
-                                          toast({
-                                            title: "Invalid quantity",
-                                            description: "Please enter a valid positive number",
-                                            variant: "destructive"
-                                          });
-                                          return;
-                                        }
+                                      const quantityInputRef = document.getElementById(`quantity-${itemId}`) as HTMLInputElement;
+                                      const quantity = Number(quantityInputRef?.value || item.quantity_per_use);
+                                      
+                                      if (isNaN(quantity) || quantity <= 0) {
+                                        toast({
+                                          title: "Invalid quantity",
+                                          description: "Please enter a valid positive number",
+                                          variant: "destructive"
+                                        });
+                                        return;
+                                      }
 
                                         await recordUsage({
                                           item_id: itemId,
