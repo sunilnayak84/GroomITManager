@@ -156,6 +156,17 @@ const AppointmentDetails = ({
         }
       }
 
+      // Prepare inventory usage data from selectedItems
+      const inventoryUsage = Object.entries(selectedItems).map(([serviceId, item]) => ({
+        item_id: item.itemId,
+        quantity_used: item.quantity,
+        service_id: serviceId,
+        used_by: user?.id || '',
+        notes: '',
+        service_linked: true,
+        auto_deducted: true
+      }));
+
       const updateData: Parameters<typeof updateAppointment>[0] = {
         id: appointment.id,
         status: data.status,
@@ -163,7 +174,7 @@ const AppointmentDetails = ({
         afterImages: data.afterImages,
         observations: data.observations ?? null,
         recommendations: data.recommendations ?? null,
-        inventoryUsage: data.inventoryUsage
+        inventoryUsage: inventoryUsage
       };
 
       // Only add fields based on status
