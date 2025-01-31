@@ -364,10 +364,10 @@ const AppointmentDetails = ({
                           timestamp: new Date().toISOString(),
                         };
 
-                        // Keep current form status during image upload
+                        // Keep existing appointment status during image upload
                         await updateAppointment({
                           id: appointment.id,
-                          status: form.getValues("status"),
+                          status: appointment.status,
                           afterImages: [...(appointment.afterImages || []), newImage],
                         });
 
