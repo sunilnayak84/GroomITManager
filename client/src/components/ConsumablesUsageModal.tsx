@@ -1,10 +1,10 @@
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
 import {
@@ -22,12 +22,15 @@ import { z } from "zod";
 import { useInventory } from "@/hooks/use-inventory";
 import { useUser } from "@/hooks/use-user";
 import { toast } from "@/components/ui/use-toast";
+import { useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const usageFormSchema = z.object({
   quantity_used: z.number().min(0, "Usage quantity must be positive"),
   service_id: z.string().optional(),
   appointment_id: z.string().optional(),
   notes: z.string().optional(),
+  item_id: z.string(),
 });
 
 type UsageFormData = z.infer<typeof usageFormSchema>;
@@ -75,10 +78,20 @@ export function ConsumablesUsageModal({
       return;
     }
 
-    if (data.quantity_used > currentQuantity) {
+    const selectedItem = inventory?.find(item => item.item_id === data.item_id);
+    if (!selectedItem) {
       toast({
         title: "Error",
-        description: `Cannot use more than available quantity (${currentQuantity} ${unit})`,
+        description: "Selected item not found",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (data.quantity_used > selectedItem.quantity) {
+      toast({
+        title: "Error",
+        description: `Cannot use more than available quantity (${selectedItem.quantity} ${selectedItem.unit})`,
         variant: "destructive",
       });
       return;
@@ -86,14 +99,14 @@ export function ConsumablesUsageModal({
 
     try {
       await recordUsage({
-        item_id: itemId,
+        item_id: data.item_id,
         quantity_used: data.quantity_used,
-        service_id: data.service_id,
-        appointment_id: data.appointment_id,
+        service_id: serviceId,
+        appointment_id: appointmentId,
         used_by: user.id,
         notes: data.notes,
-        service_linked: !!data.service_id, // true if service_id is provided
-        auto_deducted: true // Since this is being recorded through the UI
+        service_linked: !!serviceId,
+        auto_deducted: true
       });
       
       onClose();
@@ -147,20 +160,18 @@ export function ConsumablesUsageModal({
                 </FormItem>
               )}
             />
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="quantity_used"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Quantity Used ({unit})</FormLabel>
+                  <FormLabel>Quantity Used {selectedItem?.unit ? `(${selectedItem.unit})` : ''}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       min="0"
                       step="0.01"
-                      max={currentQuantity}
+                      max={selectedItem?.quantity}
                       {...field}
                       onChange={(e) => field.onChange(Number(e.target.value))}
                     />
