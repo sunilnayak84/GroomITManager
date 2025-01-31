@@ -1,20 +1,24 @@
+
 import React, { useState, useCallback } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { Button } from './button';
+import { Dialog, DialogContent } from './dialog';
 import type { AppointmentImage } from '@/lib/schema';
 
 interface ImageCarouselProps {
   images: AppointmentImage[];
   type: 'before' | 'after';
   onImageUpload?: (file: File) => Promise<void>;
+  onImageDelete?: (imageId: string) => Promise<void>;
   className?: string;
 }
 
-export function ImageCarousel({ images, type, onImageUpload, className }: ImageCarouselProps) {
+export function ImageCarousel({ images, type, onImageUpload, onImageDelete, className }: ImageCarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false });
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [previewImage, setPreviewImage] = useState<AppointmentImage | null>(null);
 
   const scrollPrev = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -55,56 +59,46 @@ export function ImageCarousel({ images, type, onImageUpload, className }: ImageC
     }
   };
 
+  const handleDeleteImage = async (e: React.MouseEvent, imageId: string) => {
+    e.stopPropagation();
+    if (onImageDelete && confirm('Are you sure you want to delete this image?')) {
+      try {
+        await onImageDelete(imageId);
+      } catch (error) {
+        console.error('Error deleting image:', error);
+      }
+    }
+  };
+
   return (
     <div className={`space-y-2 ${className}`}>
-      <div className="relative">
-        <div className="overflow-hidden rounded-lg" ref={emblaRef}>
-          <div className="flex">
-            {images.length > 0 ? (
-              images.map((image, index) => (
-                <div
-                  key={image.id}
-                  className="relative flex-[0_0_100%] min-w-0"
+      <div className="grid grid-cols-4 gap-2">
+        {images.length > 0 ? (
+          images.map((image) => (
+            <div
+              key={image.id}
+              className="relative cursor-pointer"
+              onClick={() => setPreviewImage(image)}
+            >
+              <img
+                src={image.url}
+                alt={`${type} image`}
+                className="w-20 h-20 object-cover rounded-md"
+              />
+              {onImageDelete && (
+                <button
+                  onClick={(e) => handleDeleteImage(e, image.id)}
+                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
                 >
-                  <img
-                    src={image.url}
-                    alt={`${type} image ${index + 1}`}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
-                    {index + 1} / {images.length}
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="flex-[0_0_100%] h-48 flex items-center justify-center bg-gray-100 text-gray-500">
-                No images
-              </div>
-            )}
+                  <X className="h-3 w-3" />
+                </button>
+              )}
+            </div>
+          ))
+        ) : (
+          <div className="col-span-4 h-20 flex items-center justify-center bg-gray-100 text-gray-500 rounded-md">
+            No images
           </div>
-        </div>
-
-        {images.length > 1 && (
-          <>
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white"
-              onClick={scrollPrev}
-              type="button"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white"
-              onClick={scrollNext}
-              type="button"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </>
         )}
       </div>
 
@@ -125,6 +119,18 @@ export function ImageCarousel({ images, type, onImageUpload, className }: ImageC
           )}
         </div>
       )}
+
+      <Dialog open={!!previewImage} onOpenChange={() => setPreviewImage(null)}>
+        <DialogContent className="max-w-3xl">
+          {previewImage && (
+            <img
+              src={previewImage.url}
+              alt={`${type} image preview`}
+              className="w-full h-auto"
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -246,6 +246,33 @@ const AppointmentDetails = ({
                 <ImageCarousel
                   images={allBeforeImages}
                   type="before"
+                  onImageDelete={async (imageId) => {
+                    try {
+                      setIsUpdating(true);
+                      const updatedImages = allBeforeImages.filter(img => img.id !== imageId);
+                      await updateAppointment({
+                        id: appointment.id,
+                        status: form.getValues("status"),
+                        beforeImages: updatedImages,
+                      });
+                      await queryClient.invalidateQueries({ 
+                        queryKey: ["appointments"],
+                        exact: true
+                      });
+                      toast({
+                        title: "Success",
+                        description: "Image deleted successfully",
+                      });
+                    } catch (error) {
+                      toast({
+                        variant: "destructive",
+                        title: "Error",
+                        description: error instanceof Error ? error.message : "Failed to delete image",
+                      });
+                    } finally {
+                      setIsUpdating(false);
+                    }
+                  }}
                   onImageUpload={async (file) => {
                   try {
                     if (file.size > 5 * 1024 * 1024) {
