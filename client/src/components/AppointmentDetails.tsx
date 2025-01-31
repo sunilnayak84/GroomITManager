@@ -445,21 +445,56 @@ export const AppointmentDetails = ({
                 <FormItem>
                   <FormLabel>Status</FormLabel>
                   <Select 
-                    onValueChange={field.onChange}
+                    onValueChange={async (newStatus) => {
+                      try {
+                        setIsUpdating(true);
+
+                        // Update the appointment status immediately
+                        await updateAppointment({
+                          id: appointment.id,
+                          status: newStatus as typeof field.value,
+                          notes: form.getValues("notes"),
+                          cancellationReason: newStatus === "cancelled" ? form.getValues("cancellationReason") : undefined,
+                          observations: newStatus === "completed" ? form.getValues("observations") : undefined,
+                          recommendations: newStatus === "completed" ? form.getValues("recommendations") : undefined,
+                        });
+
+                        // Update form state after successful API update
+                        field.onChange(newStatus);
+
+                        // Invalidate queries to refetch data
+                        await queryClient.invalidateQueries({ 
+                          queryKey: ["appointments"],
+                          exact: true
+                        });
+
+                        toast({
+                          title: "Success",
+                          description: "Appointment status updated successfully",
+                        });
+                      } catch (error) {
+                        console.error('Error updating status:', error);
+                        toast({
+                          variant: "destructive",
+                          title: "Error",
+                          description: "Failed to update appointment status",
+                        });
+                      } finally {
+                        setIsUpdating(false);
+                      }
+                    }}
                     value={field.value}
-                    disabled={isTerminalStatus}
+                    disabled={isTerminalStatus || isUpdating}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className={isUpdating ? "opacity-50 cursor-not-allowed" : ""}>
                         <SelectValue>
                           {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
                         </SelectValue>
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value={field.value}>
-                        {field.value.charAt(0).toUpperCase() + field.value.slice(1).replace('_', ' ')}
-                      </SelectItem>
+                      {/* Show available transitions */}
                       {getStatusTransitions(field.value).map((status) => (
                         <SelectItem key={status} value={status}>
                           {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
