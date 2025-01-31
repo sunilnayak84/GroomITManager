@@ -365,35 +365,52 @@ const AppointmentDetails = ({
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">Inventory Usage</h3>
                   <div className="mt-2 space-y-4">
-                    {appointment.service?.map((service) => (
-                      <div key={service.service_id} className="border rounded-lg p-4">
-                        <h4 className="font-medium">{service.name}</h4>
-                        {service.consumables?.map((category) => {
-                          const categoryName = typeof category === 'object' ? (category as any).item_name : category;
-                          const items = inventory?.filter(item => 
-                            item.category.toLowerCase() === categoryName.toLowerCase() && 
-                            item.quantity > 0
-                          ) || [];
-                          
-                          return (
-                            <div key={categoryName} className="mt-2">
-                              <h5 className="text-sm text-gray-600">{categoryName}</h5>
-                              <Select
-                                onValueChange={async (itemId) => {
-                                  const item = inventory?.find(i => i.item_id === itemId);
-                                  if (!item || !user?.id) return;
-                                  
-                                  try {
-                                    await recordUsage({
-                                      item_id: itemId,
-                                      quantity_used: item.quantity_per_use,
-                                      used_by: user.id,
-                                      appointment_id: appointment.id,
-                                      service_id: service.service_id,
-                                      notes: `Used for ${service.name}`,
-                                      service_linked: true,
-                                      auto_deducted: true
-                                    });
+                    {appointment.service?.map((service) => {
+                      // Get consumables from both service and its package services if any
+                      const allConsumables = service.pack 
+                        ? [...(service.consumables || []), ...(service.pack.services?.flatMap(s => s.consumables || []) || [])]
+                        : service.consumables || [];
+                      
+                      return (
+                        <div key={service.service_id} className="border rounded-lg p-4">
+                          <h4 className="font-medium">{service.name}</h4>
+                          {allConsumables.map((category) => {
+                            const categoryName = typeof category === 'object' ? (category as any).item_name : category;
+                            const items = inventory?.filter(item => 
+                              item.category.toLowerCase() === categoryName.toLowerCase() && 
+                              item.quantity > 0
+                            ) || [];
+                            
+                            return (
+                              <div key={categoryName} className="mt-2">
+                                <h5 className="text-sm text-gray-600">{categoryName}</h5>
+                                <div className="flex gap-2">
+                                  <Select
+                                    onValueChange={async (itemId) => {
+                                      const item = inventory?.find(i => i.item_id === itemId);
+                                      if (!item || !user?.id) return;
+                                      
+                                      try {
+                                        const quantity = Number(prompt(`Enter quantity (default: ${item.quantity_per_use})`) || item.quantity_per_use);
+                                        if (isNaN(quantity) || quantity <= 0) {
+                                          toast({
+                                            title: "Invalid quantity",
+                                            description: "Please enter a valid positive number",
+                                            variant: "destructive"
+                                          });
+                                          return;
+                                        }
+                                        
+                                        await recordUsage({
+                                          item_id: itemId,
+                                          quantity_used: quantity,
+                                          used_by: user.id,
+                                          appointment_id: appointment.id,
+                                          service_id: service.service_id,
+                                          notes: `Used for ${service.name}`,
+                                          service_linked: true,
+                                          auto_deducted: true
+                                        });
                                     
                                     toast({
                                       title: "Success",
