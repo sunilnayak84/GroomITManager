@@ -37,19 +37,19 @@ type UsageFormData = z.infer<typeof usageFormSchema>;
 interface ConsumablesUsageModalProps {
   isOpen: boolean;
   onClose: () => void;
-  selectedService?: any;
-  selectedCategory?: string;
-  appointmentId: string;
-  serviceId?: string;
+  itemId?: string;
+  itemName?: string;
+  currentQuantity?: number;
+  unit?: string;
 }
 
 export function ConsumablesUsageModal({
   isOpen,
   onClose,
-  selectedService,
-  selectedCategory,
-  appointmentId,
-  serviceId
+  itemId,
+  itemName,
+  currentQuantity,
+  unit
 }: ConsumablesUsageModalProps) {
   const { inventory, recordUsage } = useInventory();
   const { user } = useUser();
