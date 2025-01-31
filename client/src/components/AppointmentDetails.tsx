@@ -247,30 +247,55 @@ const AppointmentDetails = ({
                   images={allBeforeImages}
                   type="before"
                   onImageDelete={async (imageId) => {
-                    try {
-                      setIsUpdating(true);
-                      const updatedImages = allBeforeImages.filter(img => img.id !== imageId);
-                      await updateAppointment({
-                        id: appointment.id,
-                        status: form.getValues("status"),
-                        beforeImages: updatedImages,
-                      });
-                      
-                      // Don't close the dialog
-                      onOpenChange(true);
-                      
-                      toast({
-                        title: "Success",
-                        description: "Image deleted successfully",
-                      });
-                      
-                      // Refresh data without closing dialog
-                      await queryClient.invalidateQueries({ 
-                        queryKey: ["appointments"],
-                        refetchType: "all",
-                        type: "active"
-                      });
-                    } catch (error) {
+                    const toastId = toast({
+                      title: "Confirm Delete",
+                      description: "Are you sure you want to delete this image?",
+                      action: (
+                        <div className="flex gap-2">
+                          <Button variant="destructive" size="sm" onClick={async () => {
+                            try {
+                              setIsUpdating(true);
+                              const updatedImages = allBeforeImages.filter(img => img.id !== imageId);
+                              await updateAppointment({
+                                id: appointment.id,
+                                status: form.getValues("status"),
+                                beforeImages: updatedImages,
+                              });
+                              
+                              toast({
+                                title: "Success",
+                                description: "Image deleted successfully",
+                              });
+                              
+                              await queryClient.invalidateQueries({ 
+                                queryKey: ["appointments"]
+                              });
+                            } catch (error) {
+                              toast({
+                                variant: "destructive",
+                                title: "Error",
+                                description: "Failed to delete image"
+                              });
+                            } finally {
+                              setIsUpdating(false);
+                            }
+                          }}>
+                            Delete
+                          </Button>
+                          <Button variant="outline" size="sm" onClick={() => toast.dismiss(toastId)}>
+                            Cancel
+                          </Button>
+                        </div>
+                      ),
+                      duration: 5000,
+                    });
+                  }}
+                  className="mt-2"
+                />
+              </div>
+            )}
+
+            {form.watch("status") === "completed" && (
                       toast({
                         variant: "destructive",
                         title: "Error",
