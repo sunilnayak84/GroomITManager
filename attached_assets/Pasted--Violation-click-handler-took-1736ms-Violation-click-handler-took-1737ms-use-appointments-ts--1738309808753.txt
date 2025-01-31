@@ -1,0 +1,75 @@
+[Violation] 'click' handler took 1736ms
+[Violation] 'click' handler took 1737ms
+use-appointments.ts:430 Updating appointment: {id: 'SdtLIRlotbI6oD6G7q7x', status: 'in_progress', cancellationReason: undefined, notes: undefined, beforeImages: Array(0), …}
+AppointmentDetails.tsx:117 Submitting appointment update: {id: 'SdtLIRlotbI6oD6G7q7x', status: 'in_progress', notes: null}
+use-appointments.ts:430 Updating appointment: {id: 'SdtLIRlotbI6oD6G7q7x', status: 'in_progress', cancellationReason: undefined, notes: null, beforeImages: undefined, …}
+use-appointments.ts:480 Appointment updated successfully: {status: 'in_progress', updatedAt: _Timestamp, beforeImages: Array(0)}
+use-appointments.ts:99 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:107 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:110 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-appointments.ts:99 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:107 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:110 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-appointments.ts:480 Appointment updated successfully: {status: 'in_progress', updatedAt: _Timestamp, notes: null}
+use-appointments.ts:99 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:107 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:110 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-appointments.ts:99 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:107 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:110 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-appointments.ts:119 FETCH_APPOINTMENTS: Found 2 active appointments
+use-appointments.ts:123 FETCH_APPOINTMENTS: Active appointment: 6bXNdS4e061ioyzRl0At {totalPrice: 999, totalDuration: 30, deletedAt: null, beforeImages: Array(1), afterImages: Array(0), …}
+use-appointments.ts:123 FETCH_APPOINTMENTS: Active appointment: SdtLIRlotbI6oD6G7q7x {date: _Timestamp, beforeImages: Array(0), recommendations: null, notes: null, productsUsed: null, …}
+use-appointments.ts:125 FETCH_APPOINTMENTS: Got snapshot with 2 active documents
+use-appointments.ts:138 FETCH_APPOINTMENTS: Processing appointment 6bXNdS4e061ioyzRl0At
+use-appointments.ts:119 FETCH_APPOINTMENTS: Found 2 active appointments
+use-appointments.ts:123 FETCH_APPOINTMENTS: Active appointment: 6bXNdS4e061ioyzRl0At {totalPrice: 999, totalDuration: 30, deletedAt: null, beforeImages: Array(1), afterImages: Array(0), …}
+use-appointments.ts:123 FETCH_APPOINTMENTS: Active appointment: SdtLIRlotbI6oD6G7q7x {date: _Timestamp, beforeImages: Array(0), recommendations: null, notes: null, productsUsed: null, …}
+use-appointments.ts:125 FETCH_APPOINTMENTS: Got snapshot with 2 active documents
+use-appointments.ts:138 FETCH_APPOINTMENTS: Processing appointment 6bXNdS4e061ioyzRl0At
+use-appointments.ts:119 FETCH_APPOINTMENTS: Found 2 active appointments
+use-appointments.ts:123 FETCH_APPOINTMENTS: Active appointment: 6bXNdS4e061ioyzRl0At {totalPrice: 999, totalDuration: 30, deletedAt: null, beforeImages: Array(1), afterImages: Array(0), …}
+use-appointments.ts:123 FETCH_APPOINTMENTS: Active appointment: SdtLIRlotbI6oD6G7q7x {date: _Timestamp, beforeImages: Array(0), recommendations: null, notes: null, productsUsed: null, …}
+use-appointments.ts:125 FETCH_APPOINTMENTS: Got snapshot with 2 active documents
+use-appointments.ts:138 FETCH_APPOINTMENTS: Processing appointment 6bXNdS4e061ioyzRl0At
+use-appointments.ts:119 FETCH_APPOINTMENTS: Found 2 active appointments
+use-appointments.ts:123 FETCH_APPOINTMENTS: Active appointment: 6bXNdS4e061ioyzRl0At {totalPrice: 999, totalDuration: 30, deletedAt: null, beforeImages: Array(1), afterImages: Array(0), …}
+use-appointments.ts:123 FETCH_APPOINTMENTS: Active appointment: SdtLIRlotbI6oD6G7q7x {date: _Timestamp, beforeImages: Array(0), recommendations: null, notes: null, productsUsed: null, …}
+use-appointments.ts:125 FETCH_APPOINTMENTS: Got snapshot with 2 active documents
+use-appointments.ts:138 FETCH_APPOINTMENTS: Processing appointment 6bXNdS4e061ioyzRl0At
+4use-appointments.ts:207 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:212 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:138 FETCH_APPOINTMENTS: Processing appointment SdtLIRlotbI6oD6G7q7x
+use-appointments.ts:212 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:138 FETCH_APPOINTMENTS: Processing appointment SdtLIRlotbI6oD6G7q7x
+use-appointments.ts:212 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:138 FETCH_APPOINTMENTS: Processing appointment SdtLIRlotbI6oD6G7q7x
+use-appointments.ts:212 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:138 FETCH_APPOINTMENTS: Processing appointment SdtLIRlotbI6oD6G7q7x
+4use-appointments.ts:207 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:212 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:295 FETCH_APPOINTMENTS: Processed 2 appointments. Success: 2, Errors: 0
+use-appointments.ts:212 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:295 FETCH_APPOINTMENTS: Processed 2 appointments. Success: 2, Errors: 0
+use-appointments.ts:212 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:295 FETCH_APPOINTMENTS: Processed 2 appointments. Success: 2, Errors: 0
+use-appointments.ts:212 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:295 FETCH_APPOINTMENTS: Processed 2 appointments. Success: 2, Errors: 0
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+AppointmentsPage.tsx:128 Updating selected appointment with new data: {id: 'SdtLIRlotbI6oD6G7q7x', oldImage: null, newImage: null, timestamp: '2025-01-31T07:49:56.352Z'}
+AppointmentsPage.tsx:141 AppointmentsPage: Appointments data updated: {count: 2, appointmentsWithImages: 0, timestamp: '2025-01-31T07:49:56.352Z'}
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '6'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST {type: 'REMOVE_TOAST', toastId: '6'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
