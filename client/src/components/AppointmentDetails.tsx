@@ -366,37 +366,63 @@ const AppointmentDetails = ({
                         <h4 className="font-medium">{service.name}</h4>
                         {service.consumables?.map((category) => {
                           const categoryName = typeof category === 'object' ? (category as any).item_name : category;
+                          const items = inventory?.filter(item => 
+                            item.category.toLowerCase() === categoryName.toLowerCase() && 
+                            item.quantity > 0
+                          ) || [];
+                          
                           return (
                             <div key={categoryName} className="mt-2">
-                              <h5 className="text-sm text-gray-600">{categoryName} Items</h5>
-                              <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => {
-                                  setSelectedService(service);
-                                  setSelectedCategory(categoryName);
-                                  setIsUsageModalOpen(true);
+                              <h5 className="text-sm text-gray-600">{categoryName}</h5>
+                              <Select
+                                onValueChange={async (itemId) => {
+                                  const item = inventory?.find(i => i.item_id === itemId);
+                                  if (!item || !user?.id) return;
+                                  
+                                  try {
+                                    await recordUsage({
+                                      item_id: itemId,
+                                      quantity_used: item.quantity_per_use,
+                                      used_by: user.id,
+                                      appointment_id: appointment.id,
+                                      service_id: service.service_id,
+                                      notes: `Used for ${service.name}`,
+                                      service_linked: true,
+                                      auto_deducted: true
+                                    });
+                                    
+                                    toast({
+                                      title: "Success",
+                                      description: `Recorded usage of ${item.name}`,
+                                    });
+                                  } catch (error) {
+                                    toast({
+                                      variant: "destructive",
+                                      title: "Error",
+                                      description: error instanceof Error ? error.message : "Failed to record usage",
+                                    });
+                                  }
                                 }}
-                                className="mt-1"
                               >
-                                Record Usage
-                              </Button>
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Select item to use" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {items.map((item) => (
+                                    <SelectItem 
+                                      key={item.item_id} 
+                                      value={item.item_id}
+                                    >
+                                      {item.name} ({item.quantity} {item.unit} available)
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
                             </div>
                           );
                         })}
                       </div>
                     ))}
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => {
-                        setSelectedService(null);
-                        setSelectedCategory(null);
-                        setIsUsageModalOpen(true);
-                      }}
-                    >
-                      Record Additional Items
-                    </Button>
                   </div>
                 </div>
 
