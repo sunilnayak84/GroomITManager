@@ -1,9 +1,9 @@
+
 import React, { useState, useCallback } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { Button } from './button';
 import { Dialog, DialogContent } from './dialog';
-import { AlertDialog, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogAction } from './alert-dialog'; // Import AlertDialog component
 import type { AppointmentImage } from '@/lib/schema';
 
 interface ImageCarouselProps {
@@ -19,7 +19,6 @@ export function ImageCarousel({ images, type, onImageUpload, onImageDelete, clas
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState<AppointmentImage | null>(null);
-  const [imageToDelete, setImageToDelete] = useState<string | null>(null); // Added state for AlertDialog
 
   const scrollPrev = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -60,27 +59,16 @@ export function ImageCarousel({ images, type, onImageUpload, onImageDelete, clas
     }
   };
 
-  const handleDeleteImage = (e: React.MouseEvent, imageId: string) => {
+  const handleDeleteImage = async (e: React.MouseEvent, imageId: string) => {
     e.stopPropagation();
-    setImageToDelete(imageId); // Open AlertDialog instead of using confirm
-  };
-
-  const handleDeleteConfirmation = async () => {
-    if (onImageDelete && imageToDelete) {
+    if (onImageDelete && confirm('Are you sure you want to delete this image?')) {
       try {
-        await onImageDelete(imageToDelete);
-        setImageToDelete(null); // Close AlertDialog after successful deletion
+        await onImageDelete(imageId);
       } catch (error) {
         console.error('Error deleting image:', error);
-        setImageToDelete(null); // Close AlertDialog on error
       }
     }
   };
-
-  const handleCancelDelete = () => {
-    setImageToDelete(null); // Close AlertDialog on cancel
-  };
-
 
   return (
     <div className={`space-y-2 ${className}`}>
@@ -143,16 +131,6 @@ export function ImageCarousel({ images, type, onImageUpload, onImageDelete, clas
           )}
         </DialogContent>
       </Dialog>
-      <AlertDialog open={!!imageToDelete} onClose={() => handleCancelDelete()}> {/* AlertDialog for image deletion */}
-        <AlertDialogHeader>
-          <AlertDialogTitle>Delete Image?</AlertDialogTitle>
-        </AlertDialogHeader>
-        <AlertDialogContent>Are you sure you want to delete this image?</AlertDialogContent>
-        <AlertDialogFooter>
-          <AlertDialogAction onClick={handleCancelDelete}>Cancel</AlertDialogAction>
-          <AlertDialogAction onClick={handleDeleteConfirmation}>Delete</AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialog>
     </div>
   );
 }
