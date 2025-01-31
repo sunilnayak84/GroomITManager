@@ -184,9 +184,8 @@ const AppointmentDetails = ({
   }, [appointment.beforeImages, appointment.beforeImage, appointment.updatedAt, appointment.createdAt]);
 
   const getServiceCategories = (service: any) => {
-    //Implementation for aggregating categories from services within a package.  This is a placeholder and needs to be replaced with actual implementation based on your data structure.
     if(service && service.pack){
-        return service.pack.services.flatMap(s => s.consumables || []);
+        return service.pack.services.flatMap((s: any) => s.consumables || []);
     } else if (service){
         return service.consumables || [];
     } else {
