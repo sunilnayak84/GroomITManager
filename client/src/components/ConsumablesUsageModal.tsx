@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -26,8 +27,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 const usageFormSchema = z.object({
   quantity_used: z.number().min(0, "Usage quantity must be positive"),
-  service_id: z.string().optional(),
-  appointment_id: z.string().optional(),
   notes: z.string().optional(),
   item_id: z.string(),
 });
@@ -55,15 +54,14 @@ export function ConsumablesUsageModal({
   const { user } = useUser();
   const [selectedItem, setSelectedItem] = useState<any>(null);
 
-  const filteredItems = inventory?.filter(item => 
-    !selectedCategory || item.category === selectedCategory
-  ) || [];
+  const filteredItems = inventory || [];
 
   const form = useForm<UsageFormData>({
     resolver: zodResolver(usageFormSchema),
     defaultValues: {
       quantity_used: 0,
       notes: "",
+      item_id: itemId || ""
     },
   });
 
@@ -77,8 +75,8 @@ export function ConsumablesUsageModal({
       return;
     }
 
-    const selectedItem = inventory?.find(item => item.item_id === data.item_id);
-    if (!selectedItem) {
+    const selected = inventory?.find(item => item.item_id === data.item_id);
+    if (!selected) {
       toast({
         title: "Error",
         description: "Selected item not found",
@@ -87,10 +85,10 @@ export function ConsumablesUsageModal({
       return;
     }
 
-    if (data.quantity_used > selectedItem.quantity) {
+    if (data.quantity_used > selected.quantity) {
       toast({
         title: "Error",
-        description: `Cannot use more than available quantity (${selectedItem.quantity} ${selectedItem.unit})`,
+        description: `Cannot use more than available quantity (${selected.quantity} ${selected.unit})`,
         variant: "destructive",
       });
       return;
@@ -100,11 +98,9 @@ export function ConsumablesUsageModal({
       await recordUsage({
         item_id: data.item_id,
         quantity_used: data.quantity_used,
-        service_id: serviceId,
-        appointment_id: appointmentId,
         used_by: user.id,
         notes: data.notes,
-        service_linked: !!serviceId,
+        service_linked: false,
         auto_deducted: true
       });
 
@@ -125,8 +121,7 @@ export function ConsumablesUsageModal({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            Record Usage {selectedService ? `- ${selectedService.name}` : ''} 
-            {selectedCategory ? ` (${selectedCategory})` : ''}
+            Record Usage {itemName ? `- ${itemName}` : ''}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -164,13 +159,13 @@ export function ConsumablesUsageModal({
               name="quantity_used"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Quantity Used {selectedItem?.unit ? `(${selectedItem.unit})` : ''}</FormLabel>
+                  <FormLabel>Quantity Used {unit ? `(${unit})` : ''}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       min="0"
                       step="0.01"
-                      max={selectedItem?.quantity}
+                      max={currentQuantity}
                       {...field}
                       onChange={(e) => field.onChange(Number(e.target.value))}
                     />
