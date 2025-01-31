@@ -35,22 +35,27 @@ type UsageFormData = z.infer<typeof usageFormSchema>;
 interface ConsumablesUsageModalProps {
   isOpen: boolean;
   onClose: () => void;
-  itemId: string;
-  itemName: string;
-  currentQuantity: number;
-  unit: string;
+  appointmentId: string;
+  serviceId?: string;
+  serviceName?: string;
+  category?: string;
 }
 
 export function ConsumablesUsageModal({
   isOpen,
   onClose,
-  itemId,
-  itemName,
-  currentQuantity,
-  unit,
+  appointmentId,
+  serviceId,
+  serviceName,
+  category
 }: ConsumablesUsageModalProps) {
-  const { recordUsage } = useInventory();
+  const { inventory, recordUsage } = useInventory();
   const { user } = useUser();
+  const [selectedItem, setSelectedItem] = useState<any>(null);
+
+  const filteredItems = inventory?.filter(item => 
+    !category || item.category === category
+  ) || [];
 
   const form = useForm<UsageFormData>({
     resolver: zodResolver(usageFormSchema),
@@ -107,11 +112,41 @@ export function ConsumablesUsageModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Record Usage - {itemName}</DialogTitle>
-          <DialogDescription>
-            Current stock: {currentQuantity} {unit}
-          </DialogDescription>
+          <DialogTitle>
+            Record Usage {serviceName ? `- ${serviceName}` : ''} 
+            {category ? ` (${category})` : ''}
+          </DialogTitle>
         </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="item_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Select Item</FormLabel>
+                  <Select
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      setSelectedItem(inventory?.find(item => item.item_id === value));
+                    }}
+                    value={field.value}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select an item" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {filteredItems.map((item) => (
+                        <SelectItem key={item.item_id} value={item.item_id}>
+                          {item.name} ({item.quantity} {item.unit} available)
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField

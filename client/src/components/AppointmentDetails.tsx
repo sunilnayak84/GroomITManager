@@ -68,6 +68,10 @@ const AppointmentDetails = ({
   const [isImageLoading, setIsImageLoading] = useState(false);
   const [imageLoadError, setImageLoadError] = useState(false);
   const queryClient = useQueryClient();
+  const [selectedService, setSelectedService] = useState<null | any>(null);
+  const [selectedCategory, setSelectedCategory] = useState<null | string>(null);
+  const [isUsageModalOpen, setIsUsageModalOpen] = useState(false);
+
 
   const isTerminalStatus = appointment.status === 'completed' || appointment.status === 'cancelled';
 
@@ -343,6 +347,45 @@ const AppointmentDetails = ({
 
             {form.watch("status") === "completed" && (
               <>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Inventory Usage</h3>
+                  <div className="mt-2 space-y-4">
+                    {appointment.service?.map((service) => (
+                      <div key={service.service_id} className="border rounded-lg p-4">
+                        <h4 className="font-medium">{service.name}</h4>
+                        {service.consumables?.map((category) => (
+                          <div key={category} className="mt-2">
+                            <h5 className="text-sm text-gray-600">{category} Items</h5>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => {
+                                setSelectedService(service);
+                                setSelectedCategory(category);
+                                setIsUsageModalOpen(true);
+                              }}
+                              className="mt-1"
+                            >
+                              Record Usage
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setSelectedService(null);
+                        setSelectedCategory(null);
+                        setIsUsageModalOpen(true);
+                      }}
+                    >
+                      Record Additional Items
+                    </Button>
+                  </div>
+                </div>
+
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">After Images</h3>
                   <ImageCarousel
