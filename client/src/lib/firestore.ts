@@ -249,7 +249,9 @@ export async function createAppointment(appointment: Omit<Appointment, 'id' | 'c
       totalPrice: appointment.totalPrice || 0,
       totalDuration: appointment.totalDuration || 30,
       createdAt: timestamp,
-      updatedAt: null
+      updatedAt: null,
+      beforeImages: [],
+      afterImages: []
     };
 
     await setDoc(appointmentRef, appointmentData);
