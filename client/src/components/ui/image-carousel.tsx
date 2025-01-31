@@ -4,6 +4,7 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { Button } from './button';
 import { Dialog, DialogContent } from './dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from './alert-dialog';
 import type { AppointmentImage } from '@/lib/schema';
 
 interface ImageCarouselProps {
@@ -19,6 +20,8 @@ export function ImageCarousel({ images, type, onImageUpload, onImageDelete, clas
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState<AppointmentImage | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [imageToDelete, setImageToDelete] = useState<string | null>(null);
 
   const scrollPrev = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -61,13 +64,20 @@ export function ImageCarousel({ images, type, onImageUpload, onImageDelete, clas
 
   const handleDeleteImage = async (e: React.MouseEvent, imageId: string) => {
     e.stopPropagation();
-    if (onImageDelete && confirm('Are you sure you want to delete this image?')) {
+    setImageToDelete(imageId);
+    setShowDeleteDialog(true);
+  };
+
+  const confirmDelete = async () => {
+    if (imageToDelete && onImageDelete) {
       try {
-        await onImageDelete(imageId);
+        await onImageDelete(imageToDelete);
       } catch (error) {
         console.error('Error deleting image:', error);
       }
     }
+    setShowDeleteDialog(false);
+    setImageToDelete(null);
   };
 
   return (
@@ -131,6 +141,21 @@ export function ImageCarousel({ images, type, onImageUpload, onImageDelete, clas
           )}
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Image</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this image? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
