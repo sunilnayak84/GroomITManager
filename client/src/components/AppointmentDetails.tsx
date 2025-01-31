@@ -83,6 +83,7 @@ const AppointmentDetails = ({
   const [selectedService, setSelectedService] = useState<null | any>(null);
   const [selectedCategory, setSelectedCategory] = useState<null | string>(null);
   const [isUsageModalOpen, setIsUsageModalOpen] = useState(false);
+  const [selectedItems, setSelectedItems] = useState<Record<string, { itemId: string; quantity: number }>>({});
 
 
   const isTerminalStatus = appointment.status === 'completed' || appointment.status === 'cancelled';
@@ -96,7 +97,18 @@ const AppointmentDetails = ({
         observations: appointment.observations || undefined,
         recommendations: appointment.recommendations || undefined,
         afterImages: appointment.afterImages || undefined,
+        inventoryUsage: appointment.inventoryUsage
       });
+      if (appointment.status === 'completed' && appointment.inventoryUsage) {
+        const itemState: Record<string, { itemId: string; quantity: number }> = {};
+        appointment.inventoryUsage.forEach(usage => {
+          itemState[usage.service_id] = {
+            itemId: usage.item_id,
+            quantity: usage.quantity_used
+          };
+        });
+        setSelectedItems(itemState);
+      }
     }
   }, [open, appointment]);
 
@@ -115,6 +127,7 @@ const AppointmentDetails = ({
       observations: appointment.observations || undefined,
       recommendations: appointment.recommendations || undefined,
       afterImages: appointment.afterImages || undefined,
+      inventoryUsage: appointment.inventoryUsage || []
     },
   });
 
@@ -140,6 +153,7 @@ const AppointmentDetails = ({
         afterImages: data.afterImages,
         observations: data.observations ?? null,
         recommendations: data.recommendations ?? null,
+        inventoryUsage: data.inventoryUsage
       };
 
       // Only add fields based on status
@@ -267,6 +281,11 @@ const AppointmentDetails = ({
                     {service.description && (
                       <p className="text-gray-500">{service.description}</p>
                     )}
+                    {appointment.status === 'completed' && service.selectedItem && (
+                      <p className="text-gray-500">
+                        Inventory Used: {service.selectedItem.itemId} - {service.selectedItem.quantity}
+                      </p>
+                    )}
                   </div>
                 ))}
               </div>
@@ -387,12 +406,12 @@ const AppointmentDetails = ({
                     {appointment.service?.map((service) => {
                       // Get consumables from both service and its package services if any
                       const allConsumables = [];
-                      
+
                       // Add service's own consumables
                       if (service.consumables?.length) {
                         allConsumables.push(...service.consumables);
                       }
-                      
+
                       // Add consumables from package services if it's a package
                       if (service.selectedServices?.length) {
                         service.selectedServices.forEach(subService => {
@@ -401,7 +420,7 @@ const AppointmentDetails = ({
                           }
                         });
                       }
-                      
+
                       // Add consumables from package addons
                       if (service.selectedAddons?.length) {
                         service.selectedAddons.forEach(addon => {
@@ -427,17 +446,22 @@ const AppointmentDetails = ({
                                 <div className="flex gap-2">
                                   <input
                                     type="number"
-                                    id={`quantity-${categoryName}`}
-                                    defaultValue="1"
+                                    id={`quantity-${categoryName}-${service.service_id}`}
+                                    defaultValue={selectedItems[service.service_id]?.quantity || "1"}
                                     min="1"
+                                    onChange={(e) => {
+                                      const quantity = parseInt(e.target.value, 10);
+                                      handleItemSelect(service.service_id, selectedItems[service.service_id]?.itemId || '', quantity);
+                                    }}
                                     className="w-20 h-9 rounded-md border border-input px-3 py-1 text-sm shadow-sm"
                                   />
                                   <Select
+                                    value={selectedItems[service.service_id]?.itemId || ''}
                                     onValueChange={(itemId) => {
                                       const item = inventory?.find(i => i.item_id === itemId);
                                       if (!item) return;
 
-                                      const quantityInputRef = document.getElementById(`quantity-${item.item_id}`) as HTMLInputElement;
+                                      const quantityInputRef = document.getElementById(`quantity-${item.item_id}-${service.service_id}`) as HTMLInputElement;
                                       const quantity = Number(quantityInputRef?.value || item.quantity_per_use);
 
                                       if (isNaN(quantity) || quantity <= 0) {
@@ -449,19 +473,7 @@ const AppointmentDetails = ({
                                         return;
                                       }
 
-                                      // Store usage data to be submitted with form
-                                      const usageData = {
-                                        item_id: itemId,
-                                        quantity_used: quantity,
-                                        service_id: service.service_id,
-                                        notes: `Used for ${service.name}`,
-                                        service_linked: true,
-                                        auto_deducted: true
-                                      };
-                                      
-                                      // Store in form state
-                                      const currentUsages = form.getValues("inventoryUsage") || [];
-                                      form.setValue("inventoryUsage", [...currentUsages, usageData]);
+                                      handleItemSelect(service.service_id, itemId, quantity);
                                     }}
                                   >
                                     <SelectTrigger className="w-full">

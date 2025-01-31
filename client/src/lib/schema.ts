@@ -342,6 +342,14 @@ export type AppointmentWithRelations = {
     discount_percentage: number;
     consumables: string[];
   }>;
+  inventoryUsage?: {
+    item_id: string;
+    quantity_used: number;
+    service_id: string;
+    notes: string;
+    service_linked: boolean;
+    auto_deducted: boolean;
+  }[];
 };
 
 export type Appointment = {
