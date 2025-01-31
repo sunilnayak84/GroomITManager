@@ -240,7 +240,7 @@ const AppointmentDetails = ({
               <p className="mt-1 text-sm">{appointment.groomer.name}</p>
             </div>
 
-            {form.watch("status") === "in_progress" && (
+            {(form.watch("status") === "in_progress" || form.watch("status") === "completed") && (
               <div>
                 <h3 className="text-sm font-medium text-gray-500">Before Images</h3>
                 <ImageCarousel
