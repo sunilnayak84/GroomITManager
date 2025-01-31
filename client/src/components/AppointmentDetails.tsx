@@ -183,6 +183,18 @@ const AppointmentDetails = ({
     return [];
   }, [appointment.beforeImages, appointment.beforeImage, appointment.updatedAt, appointment.createdAt]);
 
+  const getServiceCategories = (service: any) => {
+    //Implementation for aggregating categories from services within a package.  This is a placeholder and needs to be replaced with actual implementation based on your data structure.
+    if(service && service.pack){
+        return service.pack.services.flatMap(s => s.consumables || []);
+    } else if (service){
+        return service.consumables || [];
+    } else {
+        return [];
+    }
+  };
+
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
