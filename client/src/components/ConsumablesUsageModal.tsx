@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -40,6 +39,7 @@ interface ConsumablesUsageModalProps {
   itemName?: string;
   currentQuantity?: number;
   unit?: string;
+  category?: string; // Added category prop
 }
 
 export function ConsumablesUsageModal({
@@ -48,7 +48,8 @@ export function ConsumablesUsageModal({
   itemId,
   itemName,
   currentQuantity,
-  unit
+  unit,
+  category // Added category prop
 }: ConsumablesUsageModalProps) {
   const { inventory, recordUsage } = useInventory();
   const { user } = useUser();
@@ -121,7 +122,7 @@ export function ConsumablesUsageModal({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            Record Usage {itemName ? `- ${itemName}` : ''}
+            {category ? `Record ${category} Usage` : 'Record Usage'} {itemName ? `- ${itemName}` : ''}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
