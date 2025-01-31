@@ -85,6 +85,16 @@ const AppointmentDetails = ({
   const [isUsageModalOpen, setIsUsageModalOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState<Record<string, { itemId: string; quantity: number }>>({});
 
+  const handleItemSelect = (serviceId: string, itemId: string, quantity: number) => {
+    setSelectedItems(prev => ({
+      ...prev,
+      [serviceId]: {
+        itemId,
+        quantity
+      }
+    }));
+  };
+
 
   const isTerminalStatus = appointment.status === 'completed' || appointment.status === 'cancelled';
 
