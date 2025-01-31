@@ -1,0 +1,246 @@
+Updating appointment: {id: '4h9qBGguV4Rn4asHpdHM', status: 'in_progress', cancellationReason: undefined, notes: undefined, beforeImages: undefined, …}
+use-appointments.ts:480 Appointment updated successfully: {status: 'in_progress', updatedAt: _Timestamp, afterImages: Array(2)}
+use-appointments.ts:99 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:107 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:110 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-appointments.ts:99 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:107 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:110 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+main.tsx:68 Global error: {message: 'Uncaught Error: A <Select.Item /> must have a valu… to clear the selection and show the placeholder.', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-34…s/.vite/deps/@radix-ui_react-select.js?v=0caa062f', lineno: 873, colno: 13, error: Error: A <Select.Item /> must have a value prop that is not an empty string. This is because the Se…}
+window.onerror @ main.tsx:68
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=0caa062f:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=0caa062f:3733
+beginWork$1 @ chunk-GNC7SI6A.js?v=0caa062f:19765
+performUnitOfWork @ chunk-GNC7SI6A.js?v=0caa062f:19198
+workLoopSync @ chunk-GNC7SI6A.js?v=0caa062f:19137
+renderRootSync @ chunk-GNC7SI6A.js?v=0caa062f:19116
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=0caa062f:18874
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=0caa062f:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=0caa062f:19432
+commitRoot @ chunk-GNC7SI6A.js?v=0caa062f:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=0caa062f:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=0caa062f:18718
+workLoop @ chunk-GNC7SI6A.js?v=0caa062f:197
+flushWork @ chunk-GNC7SI6A.js?v=0caa062f:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=0caa062f:384Understand this errorAI
+@radix-ui_react-select.js?v=0caa062f:873 Uncaught Error: A <Select.Item /> must have a value prop that is not an empty string. This is because the Select value can be set to an empty string to clear the selection and show the placeholder.
+    at @radix-ui_react-select.js?v=0caa062f:873:13
+    at renderWithHooks (chunk-GNC7SI6A.js?v=0caa062f:11548:26)
+    at updateForwardRef (chunk-GNC7SI6A.js?v=0caa062f:14325:28)
+    at beginWork (chunk-GNC7SI6A.js?v=0caa062f:15946:22)
+    at HTMLUnknownElement.callCallback2 (chunk-GNC7SI6A.js?v=0caa062f:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-GNC7SI6A.js?v=0caa062f:3699:24)
+    at invokeGuardedCallback (chunk-GNC7SI6A.js?v=0caa062f:3733:39)
+    at beginWork$1 (chunk-GNC7SI6A.js?v=0caa062f:19765:15)
+    at performUnitOfWork (chunk-GNC7SI6A.js?v=0caa062f:19198:20)
+    at workLoopSync (chunk-GNC7SI6A.js?v=0caa062f:19137:13)
+(anonymous) @ @radix-ui_react-select.js?v=0caa062f:873
+renderWithHooks @ chunk-GNC7SI6A.js?v=0caa062f:11548
+updateForwardRef @ chunk-GNC7SI6A.js?v=0caa062f:14325
+beginWork @ chunk-GNC7SI6A.js?v=0caa062f:15946
+callCallback2 @ chunk-GNC7SI6A.js?v=0caa062f:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=0caa062f:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=0caa062f:3733
+beginWork$1 @ chunk-GNC7SI6A.js?v=0caa062f:19765
+performUnitOfWork @ chunk-GNC7SI6A.js?v=0caa062f:19198
+workLoopSync @ chunk-GNC7SI6A.js?v=0caa062f:19137
+renderRootSync @ chunk-GNC7SI6A.js?v=0caa062f:19116
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=0caa062f:18874
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=0caa062f:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=0caa062f:19432
+commitRoot @ chunk-GNC7SI6A.js?v=0caa062f:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=0caa062f:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=0caa062f:18718
+workLoop @ chunk-GNC7SI6A.js?v=0caa062f:197
+flushWork @ chunk-GNC7SI6A.js?v=0caa062f:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=0caa062f:384Understand this errorAI
+main.tsx:68 Global error: {message: 'Uncaught Error: A <Select.Item /> must have a valu… to clear the selection and show the placeholder.', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-34…s/.vite/deps/@radix-ui_react-select.js?v=0caa062f', lineno: 873, colno: 13, error: Error: A <Select.Item /> must have a value prop that is not an empty string. This is because the Se…}
+window.onerror @ main.tsx:68
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=0caa062f:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=0caa062f:3733
+beginWork$1 @ chunk-GNC7SI6A.js?v=0caa062f:19765
+performUnitOfWork @ chunk-GNC7SI6A.js?v=0caa062f:19198
+workLoopSync @ chunk-GNC7SI6A.js?v=0caa062f:19137
+renderRootSync @ chunk-GNC7SI6A.js?v=0caa062f:19116
+recoverFromConcurrentError @ chunk-GNC7SI6A.js?v=0caa062f:18736
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=0caa062f:18879
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=0caa062f:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=0caa062f:19432
+commitRoot @ chunk-GNC7SI6A.js?v=0caa062f:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=0caa062f:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=0caa062f:18718
+workLoop @ chunk-GNC7SI6A.js?v=0caa062f:197
+flushWork @ chunk-GNC7SI6A.js?v=0caa062f:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=0caa062f:384Understand this errorAI
+@radix-ui_react-select.js?v=0caa062f:873 Uncaught Error: A <Select.Item /> must have a value prop that is not an empty string. This is because the Select value can be set to an empty string to clear the selection and show the placeholder.
+    at @radix-ui_react-select.js?v=0caa062f:873:13
+    at renderWithHooks (chunk-GNC7SI6A.js?v=0caa062f:11548:26)
+    at updateForwardRef (chunk-GNC7SI6A.js?v=0caa062f:14325:28)
+    at beginWork (chunk-GNC7SI6A.js?v=0caa062f:15946:22)
+    at HTMLUnknownElement.callCallback2 (chunk-GNC7SI6A.js?v=0caa062f:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-GNC7SI6A.js?v=0caa062f:3699:24)
+    at invokeGuardedCallback (chunk-GNC7SI6A.js?v=0caa062f:3733:39)
+    at beginWork$1 (chunk-GNC7SI6A.js?v=0caa062f:19765:15)
+    at performUnitOfWork (chunk-GNC7SI6A.js?v=0caa062f:19198:20)
+    at workLoopSync (chunk-GNC7SI6A.js?v=0caa062f:19137:13)
+(anonymous) @ @radix-ui_react-select.js?v=0caa062f:873
+renderWithHooks @ chunk-GNC7SI6A.js?v=0caa062f:11548
+updateForwardRef @ chunk-GNC7SI6A.js?v=0caa062f:14325
+beginWork @ chunk-GNC7SI6A.js?v=0caa062f:15946
+callCallback2 @ chunk-GNC7SI6A.js?v=0caa062f:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=0caa062f:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=0caa062f:3733
+beginWork$1 @ chunk-GNC7SI6A.js?v=0caa062f:19765
+performUnitOfWork @ chunk-GNC7SI6A.js?v=0caa062f:19198
+workLoopSync @ chunk-GNC7SI6A.js?v=0caa062f:19137
+renderRootSync @ chunk-GNC7SI6A.js?v=0caa062f:19116
+recoverFromConcurrentError @ chunk-GNC7SI6A.js?v=0caa062f:18736
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=0caa062f:18879
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=0caa062f:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=0caa062f:19432
+commitRoot @ chunk-GNC7SI6A.js?v=0caa062f:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=0caa062f:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=0caa062f:18718
+workLoop @ chunk-GNC7SI6A.js?v=0caa062f:197
+flushWork @ chunk-GNC7SI6A.js?v=0caa062f:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=0caa062f:384Understand this errorAI
+chunk-GNC7SI6A.js?v=0caa062f:14032 The above error occurred in the <SelectItem> component:
+
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-select.js?v=0caa062f:846:7
+    at _c11 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/select.tsx:195:13)
+    at div
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-SUKFQWCK.js?v=0caa062f:41:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-F6RPDMKS.js?v=0caa062f:52:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-F6RPDMKS.js?v=0caa062f:33:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-EPPGSGCN.js?v=0caa062f:98:15
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-select.js?v=0caa062f:757:13
+    at div
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-F6RPDMKS.js?v=0caa062f:52:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-F6RPDMKS.js?v=0caa062f:33:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-EPPGSGCN.js?v=0caa062f:98:15
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DCAJILPT.js?v=0caa062f:38:15)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-select.js?v=0caa062f:301:58
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-F6RPDMKS.js?v=0caa062f:52:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-F6RPDMKS.js?v=0caa062f:33:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-SUKFQWCK.js?v=0caa062f:41:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-T6KFSME4.js?v=0caa062f:260:22
+    at SelectPortal
+    at _c7 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/select.tsx:116:12)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DCAJILPT.js?v=0caa062f:38:15)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-EPPGSGCN.js?v=0caa062f:28:15)
+    at CollectionProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-EPPGSGCN.js?v=0caa062f:89:13)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DCAJILPT.js?v=0caa062f:38:15)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-KP6VORXF.js?v=0caa062f:1915:15)
+    at Popper (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-KP6VORXF.js?v=0caa062f:1972:11)
+    at Select (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-select.js?v=0caa062f:89:5)
+    at div
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/form.tsx:71:6
+    at Controller (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-YGGBEVKP.js?v=0caa062f:323:35)
+    at FormField (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/form.tsx:32:6)
+    at form
+    at FormProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-YGGBEVKP.js?v=0caa062f:103:11)
+    at div
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-SUKFQWCK.js?v=0caa062f:41:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-T6KFSME4.js?v=0caa062f:61:7
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-F6RPDMKS.js?v=0caa062f:52:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-F6RPDMKS.js?v=0caa062f:33:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-SUKFQWCK.js?v=0caa062f:41:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-JP33WBFB.js?v=0caa062f:62:5
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-4ZV4PFJT.js?v=0caa062f:232:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-4ZV4PFJT.js?v=0caa062f:155:58
+    at Presence (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-RTCF5CPQ.js?v=0caa062f:24:11)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-4ZV4PFJT.js?v=0caa062f:146:64
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-F6RPDMKS.js?v=0caa062f:52:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-F6RPDMKS.js?v=0caa062f:33:11
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-SUKFQWCK.js?v=0caa062f:41:13
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-T6KFSME4.js?v=0caa062f:260:22
+    at Presence (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-RTCF5CPQ.js?v=0caa062f:24:11)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DCAJILPT.js?v=0caa062f:38:15)
+    at DialogPortal (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-4ZV4PFJT.js?v=0caa062f:109:11)
+    at _c3 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/dialog.tsx:49:12)
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DCAJILPT.js?v=0caa062f:38:15)
+    at Dialog (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-4ZV4PFJT.js?v=0caa062f:50:5)
+    at AppointmentDetails (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/AppointmentDetails.tsx:59:3)
+    at div
+    at AppointmentsPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/AppointmentsPage.tsx:157:41)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=0caa062f:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=0caa062f:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=0caa062f:18:5)
+    at div
+    at main
+    at main
+    at _c9 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:398:48)
+    at div
+    at div
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-DCAJILPT.js?v=0caa062f:38:15)
+    at TooltipProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=0caa062f:61:5)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:54:7
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:26:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:135:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=0caa062f:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=0caa062f:18:5)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+logCapturedError @ chunk-GNC7SI6A.js?v=0caa062f:14032
+callback @ chunk-GNC7SI6A.js?v=0caa062f:14078
+callCallback @ chunk-GNC7SI6A.js?v=0caa062f:11248
+commitUpdateQueue @ chunk-GNC7SI6A.js?v=0caa062f:11265
+commitLayoutEffectOnFiber @ chunk-GNC7SI6A.js?v=0caa062f:17075
+commitLayoutMountEffects_complete @ chunk-GNC7SI6A.js?v=0caa062f:17980
+commitLayoutEffects_begin @ chunk-GNC7SI6A.js?v=0caa062f:17969
+commitLayoutEffects_begin @ chunk-GNC7SI6A.js?v=0caa062f:17950
+commitLayoutEffects @ chunk-GNC7SI6A.js?v=0caa062f:17920
+commitRootImpl @ chunk-GNC7SI6A.js?v=0caa062f:19353
+commitRoot @ chunk-GNC7SI6A.js?v=0caa062f:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=0caa062f:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=0caa062f:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=0caa062f:19432
+commitRoot @ chunk-GNC7SI6A.js?v=0caa062f:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=0caa062f:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=0caa062f:18718
+workLoop @ chunk-GNC7SI6A.js?v=0caa062f:197
+flushWork @ chunk-GNC7SI6A.js?v=0caa062f:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=0caa062f:384Understand this errorAI
+use-appointments.ts:119 FETCH_APPOINTMENTS: Found 3 active appointments
+use-appointments.ts:123 FETCH_APPOINTMENTS: Active appointment: 4h9qBGguV4Rn4asHpdHM {petId: 'ClaJvM4zMJ3Ka1PwAgNa', totalDuration: 30, beforeImage: null, date: _Timestamp, createdAt: _Timestamp, …}
+use-appointments.ts:123 FETCH_APPOINTMENTS: Active appointment: 6bXNdS4e061ioyzRl0At {petId: 'ClaJvM4zMJ3Ka1PwAgNa', branchId: '1', beforeImages: Array(1), totalDuration: 30, createdAt: _Timestamp, …}
+use-appointments.ts:123 FETCH_APPOINTMENTS: Active appointment: SdtLIRlotbI6oD6G7q7x {cancellationReason: null, status: 'completed', services: Array(1), totalPrice: 999, petId: 'mbg6juwQBokDcvNYk32r', …}
+use-appointments.ts:125 FETCH_APPOINTMENTS: Got snapshot with 3 active documents
+use-appointments.ts:138 FETCH_APPOINTMENTS: Processing appointment 4h9qBGguV4Rn4asHpdHM
+use-appointments.ts:119 FETCH_APPOINTMENTS: Found 3 active appointments
+use-appointments.ts:123 FETCH_APPOINTMENTS: Active appointment: 4h9qBGguV4Rn4asHpdHM {petId: 'ClaJvM4zMJ3Ka1PwAgNa', totalDuration: 30, beforeImage: null, date: _Timestamp, createdAt: _Timestamp, …}
+use-appointments.ts:123 FETCH_APPOINTMENTS: Active appointment: 6bXNdS4e061ioyzRl0At {petId: 'ClaJvM4zMJ3Ka1PwAgNa', branchId: '1', beforeImages: Array(1), totalDuration: 30, createdAt: _Timestamp, …}
+use-appointments.ts:123 FETCH_APPOINTMENTS: Active appointment: SdtLIRlotbI6oD6G7q7x {cancellationReason: null, status: 'completed', services: Array(1), totalPrice: 999, petId: 'mbg6juwQBokDcvNYk32r', …}
+use-appointments.ts:125 FETCH_APPOINTMENTS: Got snapshot with 3 active documents
+use-appointments.ts:138 FETCH_APPOINTMENTS: Processing appointment 4h9qBGguV4Rn4asHpdHM
+2use-appointments.ts:207 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:212 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:138 FETCH_APPOINTMENTS: Processing appointment 6bXNdS4e061ioyzRl0At
+use-appointments.ts:212 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:138 FETCH_APPOINTMENTS: Processing appointment 6bXNdS4e061ioyzRl0At
+2use-appointments.ts:207 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:212 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:138 FETCH_APPOINTMENTS: Processing appointment SdtLIRlotbI6oD6G7q7x
+use-appointments.ts:212 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:138 FETCH_APPOINTMENTS: Processing appointment SdtLIRlotbI6oD6G7q7x
+2use-appointments.ts:207 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:212 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:295 FETCH_APPOINTMENTS: Processed 3 appointments. Success: 3, Errors: 0
+use-appointments.ts:212 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:295 FETCH_APPOINTMENTS: Processed 3 appointments. Success: 3, Errors: 0
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '5'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '5'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST {type: 'REMOVE_TOAST', toastId: '5'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(0)}
