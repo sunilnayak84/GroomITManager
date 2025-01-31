@@ -255,19 +255,20 @@ const AppointmentDetails = ({
                         status: form.getValues("status"),
                         beforeImages: updatedImages,
                       });
-                      await queryClient.invalidateQueries({ 
-                        queryKey: ["appointments"]
-                      });
                       
-                      // Don't close the form, just show success message
+                      // Keep dialog open by preventing default event
+                      e?.preventDefault?.();
+                      
                       toast({
                         title: "Success",
                         description: "Image deleted successfully",
                       });
                       
-                      // Refetch the appointment data
-                      await queryClient.refetchQueries({
-                        queryKey: ["appointments"]
+                      // Refresh data without closing dialog
+                      await queryClient.invalidateQueries({ 
+                        queryKey: ["appointments"],
+                        refetchType: "all",
+                        type: "active"
                       });
                     } catch (error) {
                       toast({
