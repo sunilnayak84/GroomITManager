@@ -62,8 +62,9 @@ export function ImageCarousel({ images, type, onImageUpload, onImageDelete, clas
     }
   };
 
-  const handleDeleteImage = async (e: React.MouseEvent, imageId: string) => {
+  const handleDeleteImage = (e: React.MouseEvent, imageId: string) => {
     e.stopPropagation();
+    e.preventDefault();
     setImageToDelete(imageId);
     setShowDeleteDialog(true);
   };
@@ -72,12 +73,12 @@ export function ImageCarousel({ images, type, onImageUpload, onImageDelete, clas
     if (imageToDelete && onImageDelete) {
       try {
         await onImageDelete(imageToDelete);
+        setShowDeleteDialog(false);
+        setImageToDelete(null);
       } catch (error) {
         console.error('Error deleting image:', error);
       }
     }
-    setShowDeleteDialog(false);
-    setImageToDelete(null);
   };
 
   return (
@@ -142,7 +143,12 @@ export function ImageCarousel({ images, type, onImageUpload, onImageDelete, clas
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+      <AlertDialog open={showDeleteDialog} onOpenChange={(open) => {
+        if (!open) {
+          setShowDeleteDialog(false);
+          setImageToDelete(null);
+        }
+      }}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Image</AlertDialogTitle>
