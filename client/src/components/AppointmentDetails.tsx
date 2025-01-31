@@ -256,12 +256,18 @@ const AppointmentDetails = ({
                         beforeImages: updatedImages,
                       });
                       await queryClient.invalidateQueries({ 
-                        queryKey: ["appointments"],
-                        type: 'all'
+                        queryKey: ["appointments"]
                       });
+                      
+                      // Don't close the form, just show success message
                       toast({
                         title: "Success",
                         description: "Image deleted successfully",
+                      });
+                      
+                      // Refetch the appointment data
+                      await queryClient.refetchQueries({
+                        queryKey: ["appointments"]
                       });
                     } catch (error) {
                       toast({
