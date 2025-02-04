@@ -242,6 +242,12 @@ const AppointmentDetails = ({
   }, [appointment.beforeImages, appointment.beforeImage, appointment.updatedAt, appointment.createdAt]);
 
   const getServiceCategories = (service: any) => {
+    console.log('DEBUG: Service object structure:', {
+      service,
+      category: service.category,
+      consumables: service.consumables,
+      selectedServices: service.selectedServices
+    });
     const categories: string[] = [];
     
     // Handle both Package and regular services
