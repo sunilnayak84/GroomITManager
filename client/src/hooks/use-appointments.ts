@@ -105,7 +105,7 @@ interface InventoryUsageData {
 export function useAppointments() {
   const queryClient = useQueryClient();
   const { user: currentUser } = useUser();
-  
+
   if (!currentUser) {
     throw new Error('Authentication required');
   }
@@ -115,7 +115,7 @@ export function useAppointments() {
     queryFn: async () => {
       try {
         console.log('FETCH_APPOINTMENTS: Starting appointment fetch');
-        
+
         if (!db) {
           console.error('FETCH_APPOINTMENTS: Firebase not initialized');
           throw new Error('Firebase not initialized');
@@ -135,7 +135,7 @@ export function useAppointments() {
         // Get all active appointments
         const querySnapshot = await getDocs(appointmentsQuery);
         console.log('FETCH_APPOINTMENTS: Found', querySnapshot.size, 'active appointments');
-        
+
         // Debug: Log all appointments
         querySnapshot.forEach(doc => {
           console.log('FETCH_APPOINTMENTS: Active appointment:', doc.id, doc.data());
@@ -155,7 +155,7 @@ export function useAppointments() {
           try {
             console.log('FETCH_APPOINTMENTS: Processing appointment', appointmentDoc.id);
             const rawData = appointmentDoc.data() as FirestoreAppointmentData;
-            
+
             if (!rawData.petId || !rawData.groomerId) {
               console.error('FETCH_APPOINTMENTS: Missing required fields in appointment:', appointmentDoc.id);
               errorCount++;
@@ -165,7 +165,7 @@ export function useAppointments() {
             // Get pet data
             const petDocRef = doc(db, 'pets', rawData.petId);
             const petDoc = await getDoc(petDocRef);
-            
+
             let petData = {
               name: 'Unknown Pet',
               breed: 'Unknown Breed',
@@ -224,11 +224,11 @@ export function useAppointments() {
               for (const serviceId of rawData.services) {
                 console.log('FETCH_APPOINTMENTS: Fetching service data for ID:', serviceId);
                 const serviceDoc = await getDoc(doc(db, 'services', serviceId));
-                
+
                 if (serviceDoc.exists()) {
                   const rawServiceData = serviceDoc.data();
                   console.log('FETCH_APPOINTMENTS: Raw service data:', rawServiceData);
-                  
+
                   // Map all required service fields
                   serviceData.push({
                     service_id: serviceId,
@@ -351,12 +351,12 @@ export function useAppointments() {
 
   const isTimeSlotAvailable = (date: Date, groomerId: string, duration: number = 60): boolean => {
     if (!appointments) return true;
-    
+
     // Convert input date to start of 15-min slot
     const slotStart = new Date(date);
     slotStart.setSeconds(0);
     slotStart.setMilliseconds(0);
-    
+
     // Calculate end time based on service duration
     const slotEnd = new Date(slotStart);
     slotEnd.setMinutes(slotEnd.getMinutes() + duration);
@@ -365,7 +365,7 @@ export function useAppointments() {
     const hasOverlap = appointments.some(appointment => {
       // Skip if not the same groomer or if appointment is cancelled
       if (appointment.groomerId !== groomerId || appointment.status === 'cancelled') return false;
-      
+
       const appointmentStart = new Date(appointment.date);
       const appointmentEnd = new Date(appointmentStart);
       // Use the existing appointment's service duration, default to 60 minutes
@@ -440,7 +440,8 @@ export function useAppointments() {
       beforeImages,
       afterImages,
       observations,
-      recommendations
+      recommendations,
+      inventoryUsageData
     }: { 
       id: string; 
       status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
@@ -454,15 +455,25 @@ export function useAppointments() {
       afterImages?: AppointmentImage[];
       observations?: string | null;
       recommendations?: string | null;
+      inventoryUsageData?: Array<{
+        item_id: string;
+        quantity_used: number;
+        service_id: string;
+        notes: string;
+        service_linked: boolean;
+        auto_deducted: boolean;
+        service_name: string;
+      }>;
     }) => {
       try {
-        console.log('Updating appointment:', { id, status, cancellationReason, notes, beforeImages, afterImages, observations, recommendations });
+        console.log('Updating appointment:', { id, status, cancellationReason, notes, beforeImages, afterImages, observations, recommendations, inventoryUsageData });
         const appointmentRef = doc(db, 'appointments', id);
 
         // Create update object with only defined fields
         const updateData: Partial<FirestoreAppointmentData> = {
           status,
-          updatedAt: Timestamp.fromDate(new Date())
+          updatedAt: Timestamp.fromDate(new Date()),
+          inventoryUsage: inventoryUsageData || []
         };
 
         // Only add fields that are explicitly provided (not undefined)
@@ -534,7 +545,7 @@ export function useAppointments() {
       try {
         console.log('Soft deleting appointment:', appointmentId);
         const appointmentRef = doc(db, 'appointments', appointmentId);
-        
+
         // Get current appointment data
         const appointmentSnap = await getDoc(appointmentRef);
         if (!appointmentSnap.exists()) {
