@@ -242,13 +242,33 @@ const AppointmentDetails = ({
   }, [appointment.beforeImages, appointment.beforeImage, appointment.updatedAt, appointment.createdAt]);
 
   const getServiceCategories = (service: any) => {
-    if(service && service.pack){
-        return service.pack.services.flatMap((s: any) => s.consumables || []);
-    } else if (service){
-        return service.consumables || [];
-    } else {
-        return [];
+    const categories: string[] = [];
+    
+    // Get categories from the service's own consumables
+    if (service?.consumables) {
+      categories.push(...service.consumables);
     }
+
+    // Get categories from selected services in package
+    if (service?.selectedServices) {
+      service.selectedServices.forEach((subService: any) => {
+        if (subService.consumables) {
+          categories.push(...subService.consumables);
+        }
+      });
+    }
+
+    // Get categories from selected addons in package
+    if (service?.selectedAddons) {
+      service.selectedAddons.forEach((addon: any) => {
+        if (addon.consumables) {
+          categories.push(...addon.consumables);
+        }
+      });
+    }
+
+    // Remove duplicates and return
+    return [...new Set(categories)];
   };
 
 
