@@ -120,21 +120,14 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
                     <TableCell className="capitalize">{appointment.status}</TableCell>
                     <TableCell>
                       <div className="flex flex-col gap-1">
-                        {appointment.services?.map((serviceId: string) => {
-                          const serviceInfo = appointment.service?.find((s: { service_id: string; name: string; description: string }) => 
-                            s.service_id === serviceId
-                          );
-                          return serviceInfo ? (
-                            <div key={serviceId} className="space-y-1">
-                              <div className="font-medium">{serviceInfo.name}</div>
-                              {serviceInfo.description && (
-                                <div className="text-sm text-muted-foreground">{serviceInfo.description}</div>
-                              )}
-                            </div>
-                          ) : (
-                            <div key={serviceId} className="text-sm text-muted-foreground">Loading service details...</div>
-                          );
-                        }) || '-'}
+                        {appointment.service?.map((service: { service_id: string; name: string; description: string }) => (
+                        <div key={service.service_id} className="space-y-1">
+                          <div className="font-medium">{service.name}</div>
+                          {service.description && (
+                            <div className="text-sm text-muted-foreground">{service.description}</div>
+                          )}
+                        </div>
+                      )) || '-'}
                       </div>
                     </TableCell>
                     <TableCell>{appointment.notes || '-'}</TableCell>
