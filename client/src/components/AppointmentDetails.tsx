@@ -245,13 +245,6 @@ const AppointmentDetails = ({
   }, [appointment.beforeImages, appointment.beforeImage, appointment.updatedAt, appointment.createdAt]);
 
   const getServiceCategories = (service: any) => {
-    console.log('DEBUG: Service object structure:', {
-      service,
-      category: service.category,
-      consumables: service.consumables,
-      selectedServices: service.selectedServices,
-      selectedAddons: service.selectedAddons
-    });
     const categories: string[] = [];
 
     // Handle direct service consumables
@@ -261,25 +254,32 @@ const AppointmentDetails = ({
       ));
     }
 
-    // For packages, get consumables from both selectedServices and selectedAddons
-    if (ServiceCategory.PACKAGE === service.category) {
-      // Get consumables from selected services
-      service.selectedServices?.forEach((subService: any) => {
-        if (subService.consumables?.length) {
-          categories.push(...subService.consumables.map((c: any) => 
-            typeof c === 'string' ? c : c.item_name
-          ));
-        }
-      });
+    // For packages, get consumables from included services and addons
+    if (service.category === ServiceCategory.PACKAGE) {
+      // Access package details directly from the service object
+      const packageDetails = service.package || {};
+      
+      // Get consumables from included services
+      if (packageDetails.services?.length) {
+        packageDetails.services.forEach((subService: any) => {
+          if (subService.consumables?.length) {
+            categories.push(...subService.consumables.map((c: any) => 
+              typeof c === 'string' ? c : c.item_name
+            ));
+          }
+        });
+      }
 
-      // Get consumables from selected addons
-      service.selectedAddons?.forEach((addon: any) => {
-        if (addon.consumables?.length) {
-          categories.push(...addon.consumables.map((c: any) => 
-            typeof c === 'string' ? c : c.item_name
-          ));
-        }
-      });
+      // Get consumables from included addons
+      if (packageDetails.addons?.length) {
+        packageDetails.addons.forEach((addon: any) => {
+          if (addon.consumables?.length) {
+            categories.push(...addon.consumables.map((c: any) => 
+              typeof c === 'string' ? c : c.item_name
+            ));
+          }
+        });
+      }
     }
 
     // Remove duplicates and undefined values
