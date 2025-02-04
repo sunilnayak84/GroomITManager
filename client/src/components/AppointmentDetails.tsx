@@ -244,43 +244,27 @@ const AppointmentDetails = ({
   const getServiceCategories = (service: any) => {
     const categories: string[] = [];
     
-    if (service.category === 'Package') {
-      // For packages, get categories from selected services and addons
-      if (service.selectedServices) {
-        service.selectedServices.forEach((subService: any) => {
-          if (subService.consumables) {
-            subService.consumables.forEach((consumable: any) => {
-              if (consumable.item_name) {
-                categories.push(consumable.item_name);
-              }
-            });
-          }
-        });
-      }
-      if (service.selectedAddons) {
-        service.selectedAddons.forEach((addon: any) => {
-          if (addon.consumables) {
-            addon.consumables.forEach((consumable: any) => {
-              if (consumable.item_name) {
-                categories.push(consumable.item_name);
-              }
-            });
-          }
-        });
-      }
-    } else {
-      // For regular services, get their own consumables
-      if (service.consumables) {
-        service.consumables.forEach((consumable: any) => {
-          if (consumable.item_name) {
-            categories.push(consumable.item_name);
-          }
-        });
-      }
+    // Handle both Package and regular services
+    if (service.consumables) {
+      service.consumables.forEach((consumable: string) => {
+        categories.push(consumable);
+      });
+    }
+
+    // For packages, also get consumables from selected services
+    if (service.category === 'Package' || service.selectedServices) {
+      const services = service.selectedServices || [];
+      services.forEach((subService: any) => {
+        if (subService.consumables) {
+          subService.consumables.forEach((consumable: string) => {
+            categories.push(consumable);
+          });
+        }
+      });
     }
     
-    // Remove duplicates and return
-    return [...new Set(categories)];
+    // Remove duplicates and undefined values
+    return [...new Set(categories.filter(Boolean))];
   };
 
 
