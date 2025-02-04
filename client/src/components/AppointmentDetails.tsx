@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useInventory } from "@/hooks/use-inventory";
 import { useUser } from "@/hooks/use-user";
+import { ServiceCategory } from "@/lib/service-types";
 import {
   Dialog,
   DialogContent,
