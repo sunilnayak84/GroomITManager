@@ -424,7 +424,7 @@ const AppointmentDetails = ({
                 <ImageCarousel
                   images={allBeforeImages}
                   type="before"
-                  onImageDelete={async (imageId) => {
+                  onImageDelete={isTerminalStatus ? undefined : async (imageId) => {
                     try {
                       setIsUpdating(true);
                       const updatedImages = allBeforeImages.filter(img => img.id !== imageId);
@@ -457,7 +457,7 @@ const AppointmentDetails = ({
                       setIsUpdating(false);
                     }
                   }}
-                  onImageUpload={async (file) => {
+                  onImageUpload={isTerminalStatus ? undefined : async (file) => {
                   try {
                     if (file.size > 5 * 1024 * 1024) {
                       throw new Error('File size must be less than 5MB');
@@ -597,7 +597,7 @@ const AppointmentDetails = ({
                   <ImageCarousel
                     images={form.watch("afterImages") || []}
                     type="after"
-                    onImageUpload={async (file) => {
+                    onImageUpload={isTerminalStatus ? undefined : async (file) => {
                       try {
                         if (file.size > 5 * 1024 * 1024) {
                           throw new Error('File size must be less than 5MB');
