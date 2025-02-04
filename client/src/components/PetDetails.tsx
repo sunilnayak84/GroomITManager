@@ -122,7 +122,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
                       <div className="flex flex-col gap-1">
                         {appointment.services?.map((serviceId: string) => {
                           const serviceInfo = appointment.service?.find((s: { service_id: string; name: string; description: string }) => 
-                            s.service_id === serviceId || s.name === serviceId
+                            s.service_id === serviceId
                           );
                           return serviceInfo ? (
                             <div key={serviceId} className="space-y-1">
@@ -132,7 +132,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
                               )}
                             </div>
                           ) : (
-                            serviceId ? <div key={serviceId}>Service ID: {serviceId}</div> : '-'
+                            <div key={serviceId} className="text-sm text-muted-foreground">Loading service details...</div>
                           );
                         }) || '-'}
                       </div>
