@@ -651,7 +651,7 @@ const AppointmentDetails = ({
                         <textarea
                           {...field}
                           value={field.value || ''}
-                          className="min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                          className="min-h-[100px] w-full rounded-lg border border-input bg-background px-4 py-3 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                           placeholder="Enter any observations about the pet's grooming session"
                           disabled={isTerminalStatus}
                         />
@@ -671,7 +671,7 @@ const AppointmentDetails = ({
                         <textarea
                           {...field}
                           value={field.value || ''}
-                          className="min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                          className="min-h-[100px] w-full rounded-lg border border-input bg-background px-4 py-3 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                           placeholder="Enter recommendations for future grooming"
                           disabled={isTerminalStatus}
                         />
