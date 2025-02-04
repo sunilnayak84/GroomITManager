@@ -105,14 +105,18 @@ const AppointmentDetails = ({
     fetchAllCategories();
   }, [appointment.service]);
 
-  const handleItemSelect = (serviceId: string, itemId: string, quantity: number) => {
+  const handleItemSelect = (serviceId: string, category: string, itemId: string, quantity: number) => {
     setSelectedItems(prev => ({
       ...prev,
-      [serviceId]: {
+      [`${serviceId}-${category}`]: {
         itemId,
         quantity
       }
     }));
+  };
+
+  const getSelectedItem = (serviceId: string, category: string) => {
+    return selectedItems[`${serviceId}-${category}`] || { itemId: '', quantity: 1 };
   };
 
 
@@ -500,7 +504,7 @@ const AppointmentDetails = ({
                                   <input
                                     type="number"
                                     id={`quantity-${categoryName}-${service.service_id}`}
-                                    defaultValue={selectedItems[service.service_id]?.quantity || "1"}
+                                    defaultValue={getSelectedItem(service.service_id, categoryName).quantity}
                                     min="1"
                                     onChange={(e) => {
                                       const quantity = parseInt(e.target.value, 10);
@@ -509,12 +513,12 @@ const AppointmentDetails = ({
                                     className="w-20 h-9 rounded-md border border-input px-3 py-1 text-sm shadow-sm"
                                   />
                                   <Select
-                                    value={selectedItems[service.service_id]?.itemId || ''}
+                                    value={getSelectedItem(service.service_id, categoryName).itemId}
                                     onValueChange={(itemId) => {
                                       const item = inventory?.find(i => i.item_id === itemId);
                                       if (!item) return;
 
-                                      const quantityInputRef = document.getElementById(`quantity-${item.item_id}-${service.service_id}`) as HTMLInputElement;
+                                      const quantityInputRef = document.getElementById(`quantity-${categoryName}-${service.service_id}`) as HTMLInputElement;
                                       const quantity = Number(quantityInputRef?.value || item.quantity_per_use);
 
                                       if (isNaN(quantity) || quantity <= 0) {
@@ -526,7 +530,7 @@ const AppointmentDetails = ({
                                         return;
                                       }
 
-                                      handleItemSelect(service.service_id, itemId, quantity);
+                                      handleItemSelect(service.service_id, categoryName, itemId, quantity);
                                     }}
                                   >
                                     <SelectTrigger className="w-full">
