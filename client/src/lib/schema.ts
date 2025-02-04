@@ -323,11 +323,19 @@ export type AppointmentWithRelations = {
   createdAt: string;
   updatedAt: string | null;
   cancellationReason?: "no_show" | "rescheduled" | "other" | null;
-  beforeImage?: string | null; 
+  beforeImage?: string | null;
   beforeImages: AppointmentImage[];
   afterImages: AppointmentImage[];
   observations?: string | null;
   recommendations?: string | null;
+  inventoryUsage?: Array<{
+    item_id: string;
+    quantity_used: number;
+    service_id: string;
+    notes: string;
+    service_linked: boolean;
+    auto_deducted: boolean;
+  }>;
   pet: {
     name: string;
     breed: string;
@@ -365,14 +373,6 @@ export type AppointmentWithRelations = {
       }>;
     };
   }>;
-  inventoryUsage?: {
-    item_id: string;
-    quantity_used: number;
-    service_id: string;
-    notes: string;
-    service_linked: boolean;
-    auto_deducted: boolean;
-  }[];
 };
 
 export type Appointment = {

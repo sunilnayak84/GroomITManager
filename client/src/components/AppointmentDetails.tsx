@@ -245,7 +245,7 @@ const AppointmentDetails = ({
     const categories: string[] = [];
     
     if (service.category === 'Package') {
-      // For packages, get consumables from selected services and addons
+      // For packages, get categories from selected services and addons
       if (service.selectedServices) {
         service.selectedServices.forEach((subService: any) => {
           if (subService.consumables) {
@@ -279,29 +279,6 @@ const AppointmentDetails = ({
       }
     }
     
-    return [...new Set(categories)]; // Remove duplicates
-    if (service?.consumables) {
-      categories.push(...service.consumables);
-    }
-
-    // Handle pack services and addons
-    if (service?.pack) {
-      if (service.pack.services) {
-        service.pack.services.forEach((subService: any) => {
-          if (subService.consumables) {
-            categories.push(...subService.consumables);
-          }
-        });
-      }
-      if (service.pack.addons) {
-        service.pack.addons.forEach((addon: any) => {
-          if (addon.consumables) {
-            categories.push(...addon.consumables);
-          }
-        });
-      }
-    }
-
     // Remove duplicates and return
     return [...new Set(categories)];
   };
