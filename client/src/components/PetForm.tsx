@@ -305,7 +305,7 @@ export function PetForm({
             control={form.control}
             name="type"
             render={({ field }) => {
-              const uniqueTypes = [...new Set(breeds?.map(breed => breed.type) || [])];
+              const uniqueTypes = [...new Set(breeds?.map(breed => breed.type) || [])].sort();
               return (
                 <FormItem>
                   <FormLabel>Pet Type*</FormLabel>
@@ -324,7 +324,6 @@ export function PetForm({
                           {type.charAt(0).toUpperCase() + type.slice(1)}
                         </SelectItem>
                       ))}
-                      <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
                 </FormItem>
@@ -337,31 +336,26 @@ export function PetForm({
             name="breed"
             render={({ field }) => {
               const selectedType = form.watch('type');
-              const filteredBreeds = breeds?.filter(breed => breed.type === selectedType) || [];
+              const filteredBreeds = (breeds?.filter(breed => breed.type === selectedType) || [])
+                .sort((a, b) => a.name.localeCompare(b.name));
               
               return (
                 <FormItem>
                   <FormLabel>Breed*</FormLabel>
-                  {selectedType === 'other' ? (
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <Input {...field} />
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select breed" />
+                      </SelectTrigger>
                     </FormControl>
-                  ) : (
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select breed" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {filteredBreeds.map((breed) => (
-                          <SelectItem key={breed.id} value={breed.name}>
-                            {breed.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
+                    <SelectContent>
+                      {filteredBreeds.map((breed) => (
+                        <SelectItem key={breed.id} value={breed.name}>
+                          {breed.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </FormItem>
               );
             }}
