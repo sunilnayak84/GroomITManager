@@ -1,3 +1,4 @@
+
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -119,21 +120,14 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
                     <TableCell className="capitalize">{appointment.status}</TableCell>
                     <TableCell>
                       <div className="flex flex-col gap-1">
-                        {appointment.services?.length > 0 ? (
-                        <div className="flex flex-col gap-1">
-                          {(() => {
-                            const service = appointment.service?.[0];
-                            return service ? (
-                              <div key={service.service_id} className="space-y-1">
-                                <div className="font-medium">{service.name}</div>
-                                {service.description && (
-                                  <div className="text-sm text-muted-foreground">{service.description}</div>
-                                )}
-                              </div>
-                            ) : '-'
-                          })()}
+                        {appointment.service?.map((service: { service_id: string; name: string; description: string }) => (
+                        <div key={service.service_id} className="space-y-1">
+                          <div className="font-medium">{service.name}</div>
+                          {service.description && (
+                            <div className="text-sm text-muted-foreground">{service.description}</div>
+                          )}
                         </div>
-                      ) : '-'}
+                      )) || '-'}
                       </div>
                     </TableCell>
                     <TableCell>{appointment.notes || '-'}</TableCell>
@@ -147,7 +141,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
                             <p className="text-sm text-muted-foreground">{appointment.observations}</p>
                           </div>
                         )}
-
+                        
                         {appointment.recommendations && (
                           <div>
                             <h4 className="font-medium mb-1">Recommendations</h4>
