@@ -207,7 +207,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
                       </div>
                     </TableCell>
                   </TableRow>
-                </>
+                </React.Fragment>
               ))}
             </TableBody>
           </Table>
