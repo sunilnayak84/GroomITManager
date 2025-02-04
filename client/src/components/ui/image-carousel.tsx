@@ -13,6 +13,7 @@ interface ImageCarouselProps {
   onImageUpload?: (file: File) => Promise<void>;
   onImageDelete?: (imageId: string) => Promise<void>;
   className?: string;
+  disabled?: boolean;
 }
 
 export function ImageCarousel({ images, type, onImageUpload, onImageDelete, className }: ImageCarouselProps) {
