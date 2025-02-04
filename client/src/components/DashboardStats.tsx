@@ -5,12 +5,14 @@ import { useCustomers } from '@/hooks/use-customers';
 import { useServices } from '@/hooks/use-services';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useMemo } from 'react';
+import { useInventory } from '@/hooks/use-inventory';
 import { startOfMonth, endOfMonth, eachDayOfInterval, format, parseISO } from 'date-fns';
 
 export default function DashboardStats() {
   const { data: appointments = [] } = useAppointments();
   const { customers } = useCustomers();
   const { services } = useServices();
+  const { inventory } = useInventory();
 
   // Calculate total appointments this month
   const totalAppointments = useMemo(() => {
@@ -205,6 +207,49 @@ export default function DashboardStats() {
                 <Line type="monotone" dataKey="customers" stroke="#82ca9d" />
               </LineChart>
             </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Inventory Alerts</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {inventory?.filter(item => 
+              item.quantity <= item.minimum_quantity || 
+              (item.reorder_point > 0 && item.quantity <= item.reorder_point)
+            ).map(item => (
+              <div 
+                key={item.item_id} 
+                className={`p-3 rounded-lg ${
+                  item.quantity <= item.minimum_quantity 
+                    ? 'bg-destructive/10 text-destructive' 
+                    : 'bg-orange-100 text-orange-700'
+                }`}
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h4 className="font-medium">{item.name}</h4>
+                    <p className="text-sm">
+                      Current stock: {item.quantity} {item.unit}
+                      {item.quantity <= item.minimum_quantity 
+                        ? ` (Below minimum of ${item.minimum_quantity})`
+                        : ` (Below reorder point of ${item.reorder_point})`
+                      }
+                    </p>
+                  </div>
+                  <div className="text-sm font-medium">
+                    Reorder: {item.reorder_quantity} {item.unit}
+                  </div>
+                </div>
+              </div>
+            ))}
+            {inventory?.filter(item => 
+              item.quantity <= item.minimum_quantity || 
+              (item.reorder_point > 0 && item.quantity <= item.reorder_point)
+            ).length === 0 && (
+              <p className="text-sm text-muted-foreground">No inventory alerts at this time</p>
+            )}
           </CardContent>
         </Card>
       </div>
