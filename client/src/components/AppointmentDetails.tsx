@@ -466,14 +466,21 @@ const AppointmentDetails = ({
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">Inventory Usage</h3>
                   <div className="mt-2 space-y-4">
-                    {appointment.service?.map(async (service) => {
-                      // Get consumables from both service and its package services if any
-                      const allConsumables = await getServiceCategories(service);
+                    {appointment.service?.map((service) => {
+                      const [categories, setCategories] = useState<string[]>([]);
+                      
+                      useEffect(() => {
+                        const fetchCategories = async () => {
+                          const allConsumables = await getServiceCategories(service);
+                          setCategories(allConsumables);
+                        };
+                        fetchCategories();
+                      }, [service]);
 
                       return (
                         <div key={service.service_id} className="border rounded-lg p-4">
                           <h4 className="font-medium">{service.name}</h4>
-                          {allConsumables.map((category) => {
+                          {categories.map((category) => {
                             const categoryName = typeof category === 'object' ? (category as any).item_name : category;
                             const items = inventory?.filter(item => 
                               item.category.toLowerCase() === categoryName.toLowerCase() && 
