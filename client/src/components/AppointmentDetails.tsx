@@ -221,7 +221,14 @@ const AppointmentDetails = ({
         afterImages: data.afterImages,
         observations: data.observations ?? null,
         recommendations: data.recommendations ?? null,
-        inventoryUsage: inventoryUsageData
+        inventoryUsage: Object.entries(selectedItems).map(([serviceId, item]) => ({
+          item_id: item.itemId,
+          quantity_used: item.quantity,
+          service_id: serviceId,
+          notes: '',
+          service_linked: true,
+          auto_deducted: true
+        }))
       };
 
       // Only add fields based on status
