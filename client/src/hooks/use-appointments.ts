@@ -46,6 +46,7 @@ interface FirestoreAppointmentData {
     notes: string;
     service_linked: boolean;
     auto_deducted: boolean;
+    service_name?: string;
   }>;
 }
 

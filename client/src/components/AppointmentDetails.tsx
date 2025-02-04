@@ -222,7 +222,7 @@ const AppointmentDetails = ({
         afterImages: data.afterImages,
         observations: data.observations ?? null,
         recommendations: data.recommendations ?? null,
-        inventoryUsage: Object.entries(selectedItems).map(([serviceId, item]) => {
+        inventoryUsageData: Object.entries(selectedItems).map(([serviceId, item]) => {
           const service = appointment.service?.find(s => s.service_id === serviceId);
           return {
             item_id: item.itemId,
