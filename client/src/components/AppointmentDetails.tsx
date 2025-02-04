@@ -233,18 +233,6 @@ const AppointmentDetails = ({
             auto_deducted: true,
             service_name: service?.name || ''
           };
-        }),
-        inventoryUsageData: Object.entries(selectedItems).map(([serviceId, item]) => {
-          const service = appointment.service?.find(s => s.service_id === serviceId);
-          return {
-            item_id: item.itemId,
-            quantity_used: item.quantity,
-            service_id: serviceId,
-            notes: '',
-            service_linked: true,
-            auto_deducted: true,
-            service_name: service?.name || ''
-          };
         })
       };
 
