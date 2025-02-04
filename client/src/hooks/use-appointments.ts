@@ -299,7 +299,16 @@ export function useAppointments() {
               },
               service: serviceData.length > 0 ? serviceData : undefined,
               observations: rawData.observations,
-              recommendations: rawData.recommendations
+              recommendations: rawData.recommendations,
+              inventoryUsage: rawData.inventoryUsage?.map(usage => ({
+                item_id: usage.item_id,
+                quantity_used: usage.quantity_used,
+                service_id: usage.service_id,
+                notes: usage.notes || '',
+                service_linked: usage.service_linked,
+                auto_deducted: usage.auto_deducted,
+                service_name: usage.service_name || ''
+              }))
             };
 
             appointments.push(appointment);
