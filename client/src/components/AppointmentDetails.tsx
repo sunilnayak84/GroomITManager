@@ -180,18 +180,30 @@ const AppointmentDetails = ({
         }
       }
 
-      // Prepare inventory usage data from selectedItems
-      const inventoryUsage = Object.entries(selectedItems)
+      // Process inventory usage
+      const usagePromises = Object.entries(selectedItems)
         .filter(([_, item]) => item.itemId && item.quantity > 0)
-        .map(([serviceId, item]) => ({
-          item_id: item.itemId,
-          quantity_used: item.quantity,
-          service_id: serviceId,
-          used_by: user?.id || '',
-          notes: '',
-          service_linked: true,
-          auto_deducted: true
-        }));
+        .map(async ([serviceId, item]) => {
+          try {
+            await recordUsage({
+              item_id: item.itemId,
+              quantity_used: item.quantity,
+              service_id: serviceId,
+              appointment_id: appointment.id,
+              used_by: user?.id || '',
+              notes: '',
+              service_linked: true,
+              auto_deducted: true
+            });
+            return true;
+          } catch (error) {
+            console.error('Error recording usage:', error);
+            throw error;
+          }
+        });
+
+      // Wait for all usage records to be processed
+      await Promise.all(usagePromises);
 
       const updateData: Parameters<typeof updateAppointment>[0] = {
         id: appointment.id,
@@ -199,8 +211,7 @@ const AppointmentDetails = ({
         notes: data.notes ?? null,
         afterImages: data.afterImages,
         observations: data.observations ?? null,
-        recommendations: data.recommendations ?? null,
-        inventoryUsage
+        recommendations: data.recommendations ?? null
       };
 
       // Only add fields based on status
