@@ -89,6 +89,21 @@ const AppointmentDetails = ({
   const [selectedCategory, setSelectedCategory] = useState<null | string>(null);
   const [isUsageModalOpen, setIsUsageModalOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState<Record<string, { itemId: string; quantity: number }>>({});
+  const [selectedCategories, setSelectedCategories] = useState<Record<string, string[]>>({});
+
+  useEffect(() => {
+    const fetchAllCategories = async () => {
+      const categoriesMap: Record<string, string[]> = {};
+      if (appointment.service) {
+        for (const service of appointment.service) {
+          const categories = await getServiceCategories(service);
+          categoriesMap[service.service_id] = categories;
+        }
+        setSelectedCategories(categoriesMap);
+      }
+    };
+    fetchAllCategories();
+  }, [appointment.service]);
 
   const handleItemSelect = (serviceId: string, itemId: string, quantity: number) => {
     setSelectedItems(prev => ({
@@ -467,16 +482,7 @@ const AppointmentDetails = ({
                   <h3 className="text-sm font-medium text-gray-500">Inventory Usage</h3>
                   <div className="mt-2 space-y-4">
                     {appointment.service?.map((service) => {
-                      const [categories, setCategories] = useState<string[]>([]);
-                      
-                      useEffect(() => {
-                        const fetchCategories = async () => {
-                          const allConsumables = await getServiceCategories(service);
-                          setCategories(allConsumables);
-                        };
-                        fetchCategories();
-                      }, [service]);
-
+                      const categories = selectedCategories[service.service_id] || [];
                       return (
                         <div key={service.service_id} className="border rounded-lg p-4">
                           <h4 className="font-medium">{service.name}</h4>
