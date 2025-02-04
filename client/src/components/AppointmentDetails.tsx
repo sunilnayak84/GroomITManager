@@ -35,6 +35,10 @@ import { useAppointments } from "@/hooks/use-appointments";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { ImageCarousel } from './ui/image-carousel';
+import { collection, doc, getDoc, getFirestore } from "firebase/firestore";
+
+
+const db = getFirestore(); // Initialize Firestore
 
 const updateAppointmentSchema = z.object({
   status: z.enum(['pending', 'confirmed', 'completed', 'cancelled', 'in_progress']),
@@ -244,41 +248,44 @@ const AppointmentDetails = ({
     return [];
   }, [appointment.beforeImages, appointment.beforeImage, appointment.updatedAt, appointment.createdAt]);
 
-  const getServiceCategories = (service: any) => {
+  const getServiceCategories = async (service: any) => {
     const categories: string[] = [];
 
-    // Handle direct service consumables
-    if (service.consumables?.length) {
-      categories.push(...service.consumables.map((c: any) => 
-        typeof c === 'string' ? c : c.item_name
-      ));
-    }
-
-    // For packages, get consumables from included services and addons
+    // For packages, fetch and aggregate consumables from included services
     if (service.category === ServiceCategory.PACKAGE) {
-      // Access package details directly from the service object
-      const packageDetails = service.package || {};
-      
-      // Get consumables from included services
-      if (packageDetails.services?.length) {
-        packageDetails.services.forEach((subService: any) => {
-          if (subService.consumables?.length) {
-            categories.push(...subService.consumables.map((c: any) => 
+      const servicesRef = collection(db, 'services');
+
+      // Get services included in the package
+      for (const includedService of service.selectedServices || []) {
+        const serviceDoc = await getDoc(doc(servicesRef, includedService.service_id));
+        if (serviceDoc.exists()) {
+          const serviceData = serviceDoc.data();
+          if (serviceData.consumables?.length) {
+            categories.push(...serviceData.consumables.map((c: any) => 
               typeof c === 'string' ? c : c.item_name
             ));
           }
-        });
+        }
       }
 
-      // Get consumables from included addons
-      if (packageDetails.addons?.length) {
-        packageDetails.addons.forEach((addon: any) => {
-          if (addon.consumables?.length) {
-            categories.push(...addon.consumables.map((c: any) => 
+      // Get addons included in the package
+      for (const includedAddon of service.selectedAddons || []) {
+        const addonDoc = await getDoc(doc(servicesRef, includedAddon.service_id));
+        if (addonDoc.exists()) {
+          const addonData = addonDoc.data();
+          if (addonData.consumables?.length) {
+            categories.push(...addonData.consumables.map((c: any) => 
               typeof c === 'string' ? c : c.item_name
             ));
           }
-        });
+        }
+      }
+    } else {
+      // Handle direct service consumables
+      if (service.consumables?.length) {
+        categories.push(...service.consumables.map((c: any) => 
+          typeof c === 'string' ? c : c.item_name
+        ));
       }
     }
 
@@ -459,9 +466,9 @@ const AppointmentDetails = ({
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">Inventory Usage</h3>
                   <div className="mt-2 space-y-4">
-                    {appointment.service?.map((service) => {
+                    {appointment.service?.map(async (service) => {
                       // Get consumables from both service and its package services if any
-                      const allConsumables = getServiceCategories(service);
+                      const allConsumables = await getServiceCategories(service);
 
                       return (
                         <div key={service.service_id} className="border rounded-lg p-4">
