@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { type InsertPet, type Customer } from "@/lib/types";
+import { usePets } from "@/hooks/use-pets";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -49,6 +50,7 @@ interface PetFormProps {
 }
 
 export function PetForm({
+  const { breeds } = usePets();
   handleSubmit: submitForm,
   onSuccess,
   onError,
@@ -302,38 +304,67 @@ export function PetForm({
           <FormField
             control={form.control}
             name="type"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Pet Type*</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select pet type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="dog">Dog</SelectItem>
-                    <SelectItem value="cat">Cat</SelectItem>
-                    <SelectItem value="bird">Bird</SelectItem>
-                    <SelectItem value="fish">Fish</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </FormItem>
-            )}
+            render={({ field }) => {
+              const uniqueTypes = [...new Set(breeds?.map(breed => breed.type) || [])];
+              return (
+                <FormItem>
+                  <FormLabel>Pet Type*</FormLabel>
+                  <Select onValueChange={(value) => {
+                    field.onChange(value);
+                    form.setValue('breed', ''); // Reset breed when type changes
+                  }} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select pet type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {uniqueTypes.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type.charAt(0).toUpperCase() + type.slice(1)}
+                        </SelectItem>
+                      ))}
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              );
+            }}
           />
 
           <FormField
             control={form.control}
             name="breed"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Breed*</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-              </FormItem>
-            )}
+            render={({ field }) => {
+              const selectedType = form.watch('type');
+              const filteredBreeds = breeds?.filter(breed => breed.type === selectedType) || [];
+              
+              return (
+                <FormItem>
+                  <FormLabel>Breed*</FormLabel>
+                  {selectedType === 'other' ? (
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                  ) : (
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select breed" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {filteredBreeds.map((breed) => (
+                          <SelectItem key={breed.id} value={breed.name}>
+                            {breed.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                </FormItem>
+              );
+            }}
           />
 
           <FormField
