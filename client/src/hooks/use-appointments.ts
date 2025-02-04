@@ -233,7 +233,7 @@ export function useAppointments() {
                   // Map all required service fields
                   serviceData.push({
                     service_id: serviceId,
-                    name: rawServiceData.name || serviceId,
+                    name: rawServiceData.name || 'Unknown Service',
                     duration: rawServiceData.duration || 30,
                     price: rawServiceData.price || 0,
                     description: rawServiceData.description || null,
