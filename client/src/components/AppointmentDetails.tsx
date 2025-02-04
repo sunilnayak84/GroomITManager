@@ -242,18 +242,44 @@ const AppointmentDetails = ({
   }, [appointment.beforeImages, appointment.beforeImage, appointment.updatedAt, appointment.createdAt]);
 
   const getServiceCategories = (service: any) => {
-    console.log('Service data:', {
-      name: service.name,
-      category: service.category,
-      consumables: service.consumables,
-      pack: service.pack,
-      selectedServices: service.selectedServices,
-      selectedAddons: service.selectedAddons
-    });
-    
     const categories: string[] = [];
     
-    // Get categories from the service's own consumables
+    if (service.category === 'Package') {
+      // For packages, get consumables from selected services and addons
+      if (service.selectedServices) {
+        service.selectedServices.forEach((subService: any) => {
+          if (subService.consumables) {
+            subService.consumables.forEach((consumable: any) => {
+              if (consumable.item_name) {
+                categories.push(consumable.item_name);
+              }
+            });
+          }
+        });
+      }
+      if (service.selectedAddons) {
+        service.selectedAddons.forEach((addon: any) => {
+          if (addon.consumables) {
+            addon.consumables.forEach((consumable: any) => {
+              if (consumable.item_name) {
+                categories.push(consumable.item_name);
+              }
+            });
+          }
+        });
+      }
+    } else {
+      // For regular services, get their own consumables
+      if (service.consumables) {
+        service.consumables.forEach((consumable: any) => {
+          if (consumable.item_name) {
+            categories.push(consumable.item_name);
+          }
+        });
+      }
+    }
+    
+    return [...new Set(categories)]; // Remove duplicates
     if (service?.consumables) {
       categories.push(...service.consumables);
     }
