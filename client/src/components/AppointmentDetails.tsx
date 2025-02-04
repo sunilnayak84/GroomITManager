@@ -205,6 +205,15 @@ const AppointmentDetails = ({
       // Wait for all usage records to be processed
       await Promise.all(usagePromises);
 
+      const inventoryUsageData = Object.entries(selectedItems).map(([serviceId, item]) => ({
+        item_id: item.itemId,
+        quantity_used: item.quantity,
+        service_id: serviceId,
+        notes: '',
+        service_linked: true,
+        auto_deducted: true
+      }));
+
       const updateData: Parameters<typeof updateAppointment>[0] = {
         id: appointment.id,
         status: data.status,
@@ -212,14 +221,7 @@ const AppointmentDetails = ({
         afterImages: data.afterImages,
         observations: data.observations ?? null,
         recommendations: data.recommendations ?? null,
-        inventoryUsage: Object.entries(selectedItems).map(([serviceId, item]) => ({
-          item_id: item.itemId,
-          quantity_used: item.quantity,
-          service_id: serviceId,
-          notes: '',
-          service_linked: true,
-          auto_deducted: true
-        }))
+        inventoryUsage: inventoryUsageData
       };
 
       // Only add fields based on status

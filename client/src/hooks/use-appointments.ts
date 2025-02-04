@@ -470,6 +470,17 @@ export function useAppointments() {
         if (recommendations !== undefined) {
           updateData.recommendations = recommendations;
         }
+        if (updateData.inventoryUsage) {
+          updateData.inventoryUsage = updateData.inventoryUsage.map(usage => ({
+            item_id: usage.item_id,
+            quantity_used: usage.quantity_used,
+            service_id: usage.service_id,
+            notes: usage.notes || '',
+            service_linked: usage.service_linked,
+            auto_deducted: usage.auto_deducted,
+            service_name: usage.service_name || ''
+          }));
+        }
         if (beforeImages !== undefined) {
           updateData.beforeImages = beforeImages.map(img => ({
             id: img.id,
