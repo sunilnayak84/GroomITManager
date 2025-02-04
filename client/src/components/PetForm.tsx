@@ -50,7 +50,6 @@ interface PetFormProps {
 }
 
 export function PetForm({
-  const { breeds } = usePets();
   handleSubmit: submitForm,
   onSuccess,
   onError,
@@ -61,6 +60,7 @@ export function PetForm({
   hideCustomerField = false,
   isEditing = false,
 }: PetFormProps) {
+  const { breeds } = usePets();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(
