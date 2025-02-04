@@ -357,7 +357,7 @@ export function useInventory() {
         used_at: timestamp,
         auto_deducted: true,
         service_linked: !!usageData.service_id,
-        service_name: usageData.service_id ? await getServiceName(usageData.service_id) : undefined
+        service_name: usageData.service_id ? await getServiceName(usageData.service_id.split('-')[0]) : ''
       };
 
       console.log('RECORD_USAGE: Recording usage:', usage);

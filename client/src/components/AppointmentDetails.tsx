@@ -519,7 +519,7 @@ const AppointmentDetails = ({
                                     min="1"
                                     onChange={(e) => {
                                       const quantity = parseInt(e.target.value, 10);
-                                      handleItemSelect(service.service_id, selectedItems[service.service_id]?.itemId || '', quantity);
+                                      handleItemSelect(service.service_id, categoryName, getSelectedItem(service.service_id, categoryName).itemId, quantity);
                                     }}
                                     className="w-20 h-9 rounded-md border border-input px-3 py-1 text-sm shadow-sm"
                                   />
