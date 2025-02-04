@@ -212,6 +212,31 @@ export default function DashboardStats() {
 
         <Card>
           <CardHeader>
+            <CardTitle>Popular Inventory Items</CardTitle>
+          </CardHeader>
+          <CardContent className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={inventory?.sort((a, b) => 
+                (b.quantity_per_use || 0) * (b.cost_per_unit || 0) - 
+                (a.quantity_per_use || 0) * (a.cost_per_unit || 0)
+              ).slice(0, 5).map(item => ({
+                name: item.name,
+                value: (item.quantity_per_use || 0) * (item.cost_per_unit || 0),
+                stock: item.quantity
+              }))}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="value" fill="#8884d8" name="Usage Value" />
+                <Bar dataKey="stock" fill="#82ca9d" name="Current Stock" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
             <CardTitle>Inventory Alerts</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
