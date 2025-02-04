@@ -7,6 +7,7 @@ import type { Pet } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { calculateAge } from "@/lib/utils";
 
 interface PetDetailsProps {
   pet: Pet;
@@ -69,7 +70,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
             <p><span className="text-muted-foreground">Type:</span> {pet.type}</p>
             <p><span className="text-muted-foreground">Breed:</span> {pet.breed}</p>
             <p><span className="text-muted-foreground">Gender:</span> {pet.gender || 'Not specified'}</p>
-            <p><span className="text-muted-foreground">Age:</span> {pet.age || 'Not specified'}</p>
+            <p><span className="text-muted-foreground">Age:</span> {calculateAge(pet.dateOfBirth)}</p>
           </div>
         </div>
 
