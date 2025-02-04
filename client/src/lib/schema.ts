@@ -308,6 +308,16 @@ export type AppointmentImage = {
   timestamp: string;
 };
 
+export interface AppointmentInventoryUsage {
+  item_id: string;
+  quantity_used: number;
+  service_id: string;
+  notes: string;
+  service_linked: boolean;
+  auto_deducted: boolean;
+  service_name: string;
+}
+
 export type AppointmentWithRelations = {
   id: string;
   petId: string;

@@ -84,6 +84,16 @@ const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppoi
     };
   };
 
+interface InventoryUsageData {
+  item_id: string;
+  quantity_used: number;
+  service_id: string;
+  notes: string;
+  service_linked: boolean;
+  auto_deducted: boolean;
+  service_name: string;
+}
+
 export function useAppointments() {
   const queryClient = useQueryClient();
   const { user: currentUser } = useUser();
