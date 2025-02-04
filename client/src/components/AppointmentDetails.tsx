@@ -157,15 +157,17 @@ const AppointmentDetails = ({
       }
 
       // Prepare inventory usage data from selectedItems
-      const inventoryUsage = Object.entries(selectedItems).map(([serviceId, item]) => ({
-        item_id: item.itemId,
-        quantity_used: item.quantity,
-        service_id: serviceId,
-        used_by: user?.id || '',
-        notes: '',
-        service_linked: true,
-        auto_deducted: true
-      }));
+      const inventoryUsage = Object.entries(selectedItems)
+        .filter(([_, item]) => item.itemId && item.quantity > 0)
+        .map(([serviceId, item]) => ({
+          item_id: item.itemId,
+          quantity_used: item.quantity,
+          service_id: serviceId,
+          used_by: user?.id || '',
+          notes: '',
+          service_linked: true,
+          auto_deducted: true
+        }));
 
       const updateData: Parameters<typeof updateAppointment>[0] = {
         id: appointment.id,
@@ -174,7 +176,7 @@ const AppointmentDetails = ({
         afterImages: data.afterImages,
         observations: data.observations ?? null,
         recommendations: data.recommendations ?? null,
-        inventoryUsage: inventoryUsage
+        inventoryUsage
       };
 
       // Only add fields based on status
@@ -249,7 +251,7 @@ const AppointmentDetails = ({
       selectedServices: service.selectedServices
     });
     const categories: string[] = [];
-    
+
     // Handle both Package and regular services
     if (service.consumables) {
       service.consumables.forEach((consumable: string) => {
@@ -268,7 +270,7 @@ const AppointmentDetails = ({
         }
       });
     }
-    
+
     // Remove duplicates and undefined values
     return [...new Set(categories.filter(Boolean))];
   };
