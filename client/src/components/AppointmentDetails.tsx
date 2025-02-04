@@ -248,20 +248,35 @@ const AppointmentDetails = ({
       service,
       category: service.category,
       consumables: service.consumables,
-      selectedServices: service.selectedServices
+      selectedServices: service.selectedServices,
+      selectedAddons: service.selectedAddons
     });
     const categories: string[] = [];
 
     // Handle direct service consumables
     if (service.consumables?.length) {
-      categories.push(...service.consumables);
+      categories.push(...service.consumables.map((c: any) => 
+        typeof c === 'string' ? c : c.item_name
+      ));
     }
 
-    // For packages, get consumables from selectedServices
-    if (service.selectedServices?.length) {
-      service.selectedServices.forEach((subService: any) => {
+    // For packages, get consumables from both selectedServices and selectedAddons
+    if (ServiceCategory.PACKAGE === service.category) {
+      // Get consumables from selected services
+      service.selectedServices?.forEach((subService: any) => {
         if (subService.consumables?.length) {
-          categories.push(...subService.consumables);
+          categories.push(...subService.consumables.map((c: any) => 
+            typeof c === 'string' ? c : c.item_name
+          ));
+        }
+      });
+
+      // Get consumables from selected addons
+      service.selectedAddons?.forEach((addon: any) => {
+        if (addon.consumables?.length) {
+          categories.push(...addon.consumables.map((c: any) => 
+            typeof c === 'string' ? c : c.item_name
+          ));
         }
       });
     }
