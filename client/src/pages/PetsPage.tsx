@@ -26,8 +26,9 @@ import {
 import { Search, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { PetDetails } from "@/components/PetDetails"; // Added import
+import { PetDetails } from "@/components/PetDetails";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { calculateAge } from "@/lib/utils";
 
 import type { InsertPet, Pet } from "@/lib/types";
 
