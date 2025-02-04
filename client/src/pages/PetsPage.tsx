@@ -310,73 +310,18 @@ export default function PetsPage() {
             }
           }}
         >
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Pet Details</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                {selectedPet.image ? (
-                  <img
-                    src={selectedPet.image}
-                    alt={selectedPet.name}
-                    className="w-16 h-16 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center">
-                    <span className="text-xl font-semibold">
-                      {(selectedPet.name || 'UN').substring(0, 2).toUpperCase()}
-                    </span>
-                  </div>
-                )}
-                <div>
-                  <h2 className="text-xl font-bold">{selectedPet.name}</h2>
-                  <p className="text-sm text-muted-foreground">
-                    {selectedPet.type} • {selectedPet.breed}
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-semibold mb-2">Basic Information</h3>
-                  <div className="grid gap-2 text-sm">
-                    <p><span className="text-muted-foreground">Type:</span> {selectedPet.type}</p>
-                    <p><span className="text-muted-foreground">Breed:</span> {selectedPet.breed}</p>
-                    <p><span className="text-muted-foreground">Gender:</span> {selectedPet.gender || 'Not specified'}</p>
-                    <p><span className="text-muted-foreground">Age:</span> {selectedPet.age || 'Not specified'}</p>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold mb-2">Additional Information</h3>
-                  <div className="grid gap-2 text-sm">
-                    <p><span className="text-muted-foreground">Date of Birth:</span> {formatDate(selectedPet.dateOfBirth)}</p>
-                    <p><span className="text-muted-foreground">Weight:</span> {selectedPet.weight ? `${selectedPet.weight} ${selectedPet.weightUnit}` : 'Not specified'}</p>
-                    <p><span className="text-muted-foreground">Owner:</span> {selectedPet.owner?.name || 'Not specified'}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-center gap-2 mt-6">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setShowDeleteConfirm(true);
-                  }}
-                >
-                  Delete
-                </Button>
-                <Button
-                  onClick={() => {
-                    setShowEditModal(true);
-                    setShowPetModal(false);
-                  }}
-                >
-                  Edit
-                </Button>
-              </div>
-            </div>
+          <DialogContent className="sm:max-w-[625px]">
+            <PetDetails 
+              pet={selectedPet}
+              formatDate={formatDate}
+              onEdit={() => {
+                setShowEditModal(true);
+                setShowPetModal(false);
+              }}
+              onDelete={() => {
+                setShowDeleteConfirm(true);
+              }}
+            />
           </DialogContent>
         </Dialog>
       )}
