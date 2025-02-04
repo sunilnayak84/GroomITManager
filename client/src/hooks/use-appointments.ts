@@ -213,14 +213,16 @@ export function useAppointments() {
                   
                   // Map all required service fields
                   serviceData.push({
-                    service_id: serviceId, // Add service_id
+                    service_id: serviceId,
                     name: rawServiceData.name || 'Unknown Service',
                     duration: rawServiceData.duration || 30,
                     price: rawServiceData.price || 0,
                     description: rawServiceData.description || null,
                     category: rawServiceData.category || 'Service',
                     discount_percentage: rawServiceData.discount_percentage || 0,
-                    consumables: rawServiceData.consumables || []
+                    consumables: rawServiceData.consumables || [],
+                    selectedServices: rawServiceData.selectedServices || [],
+                    selectedAddons: rawServiceData.selectedAddons || []
                   });
                   console.log('FETCH_APPOINTMENTS: Processed service data:', serviceData);
                 } else {
