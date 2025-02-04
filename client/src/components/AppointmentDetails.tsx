@@ -249,22 +249,22 @@ const AppointmentDetails = ({
       categories.push(...service.consumables);
     }
 
-    // Get categories from selected services in package
-    if (service?.selectedServices) {
-      service.selectedServices.forEach((subService: any) => {
-        if (subService.consumables) {
-          categories.push(...subService.consumables);
-        }
-      });
-    }
-
-    // Get categories from selected addons in package
-    if (service?.selectedAddons) {
-      service.selectedAddons.forEach((addon: any) => {
-        if (addon.consumables) {
-          categories.push(...addon.consumables);
-        }
-      });
+    // Handle pack services and addons
+    if (service?.pack) {
+      if (service.pack.services) {
+        service.pack.services.forEach((subService: any) => {
+          if (subService.consumables) {
+            categories.push(...subService.consumables);
+          }
+        });
+      }
+      if (service.pack.addons) {
+        service.pack.addons.forEach((addon: any) => {
+          if (addon.consumables) {
+            categories.push(...addon.consumables);
+          }
+        });
+      }
     }
 
     // Remove duplicates and return
@@ -446,30 +446,7 @@ const AppointmentDetails = ({
                   <div className="mt-2 space-y-4">
                     {appointment.service?.map((service) => {
                       // Get consumables from both service and its package services if any
-                      const allConsumables = [];
-
-                      // Add service's own consumables
-                      if (service.consumables?.length) {
-                        allConsumables.push(...service.consumables);
-                      }
-
-                      // Add consumables from package services if it's a package
-                      if (service.selectedServices?.length) {
-                        service.selectedServices.forEach(subService => {
-                          if (subService.consumables?.length) {
-                            allConsumables.push(...subService.consumables);
-                          }
-                        });
-                      }
-
-                      // Add consumables from package addons
-                      if (service.selectedAddons?.length) {
-                        service.selectedAddons.forEach(addon => {
-                          if (addon.consumables?.length) {
-                            allConsumables.push(...addon.consumables);
-                          }
-                        });
-                      }
+                      const allConsumables = getServiceCategories(service);
 
                       return (
                         <div key={service.service_id} className="border rounded-lg p-4">
