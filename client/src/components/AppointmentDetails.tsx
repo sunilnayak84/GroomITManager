@@ -252,21 +252,16 @@ const AppointmentDetails = ({
     });
     const categories: string[] = [];
 
-    // Handle both Package and regular services
-    if (service.consumables) {
-      service.consumables.forEach((consumable: string) => {
-        categories.push(consumable);
-      });
+    // Handle direct service consumables
+    if (service.consumables?.length) {
+      categories.push(...service.consumables);
     }
 
-    // For packages, also get consumables from selected services
-    if (service.category === 'Package' || service.selectedServices) {
-      const services = service.selectedServices || [];
-      services.forEach((subService: any) => {
-        if (subService.consumables) {
-          subService.consumables.forEach((consumable: string) => {
-            categories.push(consumable);
-          });
+    // For packages, get consumables from selectedServices
+    if (service.selectedServices?.length) {
+      service.selectedServices.forEach((subService: any) => {
+        if (subService.consumables?.length) {
+          categories.push(...subService.consumables);
         }
       });
     }
