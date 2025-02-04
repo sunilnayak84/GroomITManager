@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { calculateAge } from "@/lib/utils";
+import { useInventory } from "@/hooks/use-inventory";
 
 interface PetDetailsProps {
   pet: Pet;
@@ -17,6 +18,7 @@ interface PetDetailsProps {
 }
 
 export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProps) {
+  const { inventory } = useInventory();
   const { data: appointments = [], isLoading } = useQuery({
     queryKey: ['petAppointments', pet.id],
     queryFn: async () => {
@@ -147,11 +149,14 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
                           <div>
                             <h4 className="font-medium mb-2">Products Used</h4>
                             <ul className="list-disc list-inside text-sm text-muted-foreground">
-                              {appointment.inventoryUsage.map((usage: any, index: number) => (
-                                <li key={index}>
-                                  {usage.service_name}: {usage.quantity_used} units
-                                </li>
-                              ))}
+                              {appointment.inventoryUsage.map((usage: any, index: number) => {
+                                const item = inventory?.find(i => i.item_id === usage.item_id);
+                                return (
+                                  <li key={index}>
+                                    {item?.name || 'Unknown Product'}: {usage.quantity_used} {item?.unit || 'units'}
+                                  </li>
+                                );
+                              })}
                             </ul>
                           </div>
                         )}
