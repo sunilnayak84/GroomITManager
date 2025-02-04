@@ -26,6 +26,8 @@ import {
 import { Search, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PetDetails } from "@/components/PetDetails"; // Added import
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 import type { InsertPet, Pet } from "@/lib/types";
 
@@ -91,7 +93,7 @@ export default function PetsPage() {
         petId: selectedPet.id, 
         updateData: formData
       });
-      
+
       setOptimisticPets(prev => {
         const { [selectedPet.id]: _, ...rest } = prev;
         return rest;
