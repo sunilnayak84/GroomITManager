@@ -341,6 +341,21 @@ export type AppointmentWithRelations = {
     category: string;
     discount_percentage: number;
     consumables: string[];
+    selectedItem?: {
+      itemId: string;
+      quantity: number;
+    };
+    selectedServices?: Array<{
+      consumables?: string[];
+    }>;
+    selectedAddons?: Array<{
+      consumables?: string[];
+    }>;
+    pack?: {
+      services: Array<{
+        consumables?: string[];
+      }>;
+    };
   }>;
   inventoryUsage?: {
     item_id: string;
