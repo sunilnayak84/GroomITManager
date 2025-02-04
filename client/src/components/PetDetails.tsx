@@ -119,23 +119,12 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
                     <TableCell>{format(appointment.date, 'PPp')}</TableCell>
                     <TableCell className="capitalize">{appointment.status}</TableCell>
                     <TableCell>
-                      <div className="flex flex-col gap-1">
-                        {appointment.services?.map((serviceId: string) => {
-                          const serviceInfo = appointment.service?.find((s: { service_id: string; name: string; description: string }) => 
-                            s.service_id === serviceId
-                          );
-                          return serviceInfo ? (
-                            <div key={serviceId} className="space-y-1">
-                              <div className="font-medium">{serviceInfo.name}</div>
-                              {serviceInfo.description && (
-                                <div className="text-sm text-muted-foreground">{serviceInfo.description}</div>
-                              )}
-                            </div>
-                          ) : (
-                            <div key={serviceId}>Unknown Service</div>
-                          );
-                        }) || '-'}
-                      </div>
+                      {appointment.services?.map((serviceId: string, index: number) => (
+                        <span key={serviceId}>
+                          {index > 0 ? ', ' : ''}
+                          {appointment.service?.find((s: { service_id: string; name: string }) => s.service_id === serviceId)?.name || serviceId}
+                        </span>
+                      )) || '-'}
                     </TableCell>
                     <TableCell>{appointment.notes || '-'}</TableCell>
                   </TableRow>
