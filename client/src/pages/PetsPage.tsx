@@ -220,8 +220,7 @@ export default function PetsPage() {
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-col">
-                    <span className="font-medium">{pet.age || 'N/A'}</span>
-                    <span className="text-sm text-muted-foreground">Years old</span>
+                    <span className="font-medium">{calculateAge(pet.dateOfBirth)}</span>
                   </div>
                 </TableCell>
                 <TableCell>

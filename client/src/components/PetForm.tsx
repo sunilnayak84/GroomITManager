@@ -379,23 +379,7 @@ export function PetForm({
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="age"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Age</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="number"
-                    {...field}
-                    value={field.value ?? ''}
-                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+          
 
           <FormField
             control={form.control}
