@@ -122,7 +122,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
                       {appointment.services?.map((serviceId: string, index: number) => (
                         <span key={serviceId}>
                           {index > 0 ? ', ' : ''}
-                          {appointment.service?.find(s => s.service_id === serviceId)?.name || serviceId}
+                          {appointment.service?.find((s: { service_id: string; name: string }) => s.service_id === serviceId)?.name || serviceId}
                         </span>
                       )) || '-'}
                     </TableCell>
