@@ -1,7 +1,12 @@
 
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { format } from "date-fns";
 import type { Pet } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 interface PetDetailsProps {
   pet: Pet;
@@ -11,6 +16,24 @@ interface PetDetailsProps {
 }
 
 export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProps) {
+  const { data: appointments = [], isLoading } = useQuery({
+    queryKey: ['petAppointments', pet.id],
+    queryFn: async () => {
+      const appointmentsRef = collection(db, 'appointments');
+      const q = query(
+        appointmentsRef, 
+        where('petId', '==', pet.id),
+        where('deletedAt', '==', null)
+      );
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        date: doc.data().date?.toDate()
+      }));
+    }
+  });
+
   return (
     <div className="space-y-6 p-6">
       <DialogHeader>
@@ -66,6 +89,36 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
           <p className="text-sm text-muted-foreground">{pet.notes}</p>
         </div>
       )}
+
+      <div className="space-y-4">
+        <h3 className="font-semibold text-lg">Appointment History</h3>
+        {isLoading ? (
+          <p>Loading appointments...</p>
+        ) : appointments.length > 0 ? (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Date</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Services</TableHead>
+                <TableHead>Notes</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {appointments.map((appointment: any) => (
+                <TableRow key={appointment.id}>
+                  <TableCell>{format(appointment.date, 'PPp')}</TableCell>
+                  <TableCell className="capitalize">{appointment.status}</TableCell>
+                  <TableCell>{appointment.services?.length || 0} services</TableCell>
+                  <TableCell>{appointment.notes || '-'}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        ) : (
+          <p className="text-muted-foreground">No appointment history found</p>
+        )}
+      </div>
 
       {onEdit && onDelete && (
         <div className="flex justify-end gap-2 mt-6 pt-4 border-t">
