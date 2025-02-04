@@ -544,6 +544,7 @@ const AppointmentDetails = ({
                                       handleItemSelect(service.service_id, categoryName, getSelectedItem(service.service_id, categoryName).itemId, quantity);
                                     }}
                                     className="w-20 h-9 rounded-md border border-input px-3 py-1 text-sm shadow-sm"
+                                    disabled={isTerminalStatus}
                                   />
                                   <Select
                                     value={getSelectedItem(service.service_id, categoryName).itemId}
@@ -565,6 +566,7 @@ const AppointmentDetails = ({
 
                                       handleItemSelect(service.service_id, categoryName, itemId, quantity);
                                     }}
+                                    disabled={isTerminalStatus}
                                   >
                                     <SelectTrigger className="w-full">
                                       <SelectValue placeholder="Select item to use" />
@@ -635,6 +637,7 @@ const AppointmentDetails = ({
                       }
                     }}
                     className="mt-2"
+                    disabled={isTerminalStatus}
                   />
                 </div>
 
@@ -650,6 +653,7 @@ const AppointmentDetails = ({
                           value={field.value || ''}
                           className="min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                           placeholder="Enter any observations about the pet's grooming session"
+                          disabled={isTerminalStatus}
                         />
                       </FormControl>
                       <FormMessage />
@@ -669,6 +673,7 @@ const AppointmentDetails = ({
                           value={field.value || ''}
                           className="min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                           placeholder="Enter recommendations for future grooming"
+                          disabled={isTerminalStatus}
                         />
                       </FormControl>
                       <FormMessage />
@@ -688,6 +693,7 @@ const AppointmentDetails = ({
                     <Select 
                       onValueChange={field.onChange} 
                       value={field.value || "no_show"} 
+                      disabled={isTerminalStatus}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -713,7 +719,7 @@ const AppointmentDetails = ({
                 <FormItem>
                   <FormLabel>Notes</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value || ''} />
+                    <Input {...field} value={field.value || ''} disabled={isTerminalStatus} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
