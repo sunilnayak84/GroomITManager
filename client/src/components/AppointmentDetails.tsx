@@ -242,6 +242,15 @@ const AppointmentDetails = ({
   }, [appointment.beforeImages, appointment.beforeImage, appointment.updatedAt, appointment.createdAt]);
 
   const getServiceCategories = (service: any) => {
+    console.log('Service data:', {
+      name: service.name,
+      category: service.category,
+      consumables: service.consumables,
+      pack: service.pack,
+      selectedServices: service.selectedServices,
+      selectedAddons: service.selectedAddons
+    });
+    
     const categories: string[] = [];
     
     // Get categories from the service's own consumables
