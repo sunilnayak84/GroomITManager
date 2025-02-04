@@ -290,7 +290,15 @@ export const editAppointmentSchema = z.object({
   time: z.string(),
   cancellationReason: z.enum(["no_show", "rescheduled", "other"]).nullable().optional(),
   observations: z.string().nullable().optional(),
-  recommendations: z.string().nullable().optional()
+  recommendations: z.string().nullable().optional(),
+  inventoryUsage: z.array(z.object({
+    item_id: z.string(),
+    quantity_used: z.number(),
+    service_id: z.string(),
+    notes: z.string(),
+    service_linked: z.boolean(),
+    auto_deducted: z.boolean()
+  })).optional()
 });
 
 export type AppointmentImage = {
