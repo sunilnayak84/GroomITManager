@@ -107,12 +107,85 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
             </TableHeader>
             <TableBody>
               {appointments.map((appointment: any) => (
-                <TableRow key={appointment.id}>
-                  <TableCell>{format(appointment.date, 'PPp')}</TableCell>
-                  <TableCell className="capitalize">{appointment.status}</TableCell>
-                  <TableCell>{appointment.services?.length || 0} services</TableCell>
-                  <TableCell>{appointment.notes || '-'}</TableCell>
-                </TableRow>
+                <>
+                  <TableRow key={appointment.id} className="cursor-pointer hover:bg-muted/50" onClick={() => {
+                    const row = document.getElementById(`expand-${appointment.id}`);
+                    if (row) {
+                      row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+                    }
+                  }}>
+                    <TableCell>{format(appointment.date, 'PPp')}</TableCell>
+                    <TableCell className="capitalize">{appointment.status}</TableCell>
+                    <TableCell>{appointment.service?.map(s => s.name).join(', ') || '-'}</TableCell>
+                    <TableCell>{appointment.notes || '-'}</TableCell>
+                  </TableRow>
+                  <TableRow id={`expand-${appointment.id}`} style={{ display: 'none' }}>
+                    <TableCell colSpan={4}>
+                      <div className="p-4 space-y-4">
+                        {appointment.observations && (
+                          <div>
+                            <h4 className="font-medium mb-1">Observations</h4>
+                            <p className="text-sm text-muted-foreground">{appointment.observations}</p>
+                          </div>
+                        )}
+                        
+                        {appointment.recommendations && (
+                          <div>
+                            <h4 className="font-medium mb-1">Recommendations</h4>
+                            <p className="text-sm text-muted-foreground">{appointment.recommendations}</p>
+                          </div>
+                        )}
+
+                        {appointment.inventoryUsage && appointment.inventoryUsage.length > 0 && (
+                          <div>
+                            <h4 className="font-medium mb-2">Products Used</h4>
+                            <ul className="list-disc list-inside text-sm text-muted-foreground">
+                              {appointment.inventoryUsage.map((usage: any, index: number) => (
+                                <li key={index}>
+                                  {usage.service_name}: {usage.quantity_used} units
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        <div className="grid grid-cols-2 gap-4 mt-4">
+                          {appointment.beforeImages && appointment.beforeImages.length > 0 && (
+                            <div>
+                              <h4 className="font-medium mb-2">Before Images</h4>
+                              <div className="grid grid-cols-2 gap-2">
+                                {appointment.beforeImages.map((image: any) => (
+                                  <img
+                                    key={image.id}
+                                    src={image.url}
+                                    alt="Before grooming"
+                                    className="rounded-md w-full h-32 object-cover"
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {appointment.afterImages && appointment.afterImages.length > 0 && (
+                            <div>
+                              <h4 className="font-medium mb-2">After Images</h4>
+                              <div className="grid grid-cols-2 gap-2">
+                                {appointment.afterImages.map((image: any) => (
+                                  <img
+                                    key={image.id}
+                                    src={image.url}
+                                    alt="After grooming"
+                                    className="rounded-md w-full h-32 object-cover"
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                </>
               ))}
             </TableBody>
           </Table>
