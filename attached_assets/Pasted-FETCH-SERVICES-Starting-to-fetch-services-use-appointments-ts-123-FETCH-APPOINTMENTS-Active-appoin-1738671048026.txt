@@ -1,0 +1,29 @@
+FETCH_SERVICES: Starting to fetch services
+use-appointments.ts:123 FETCH_APPOINTMENTS: Active appointment: B8p0bsrkZRX10r0JVZeD {totalPrice: 999, createdAt: _Timestamp, petId: 'ClaJvM4zMJ3Ka1PwAgNa', observations: null, productsUsed: null, …}
+use-appointments.ts:207 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:212 FETCH_APPOINTMENTS: Raw service data: {consumables: Array(0), discount_percentage: 0, duration: 30, name: 'Pack One', created_at: '2025-01-22T07:46:33.460Z', …}category: "Package"consumables: []created_at: "2025-01-22T07:46:33.460Z"description: "Package including 1 services and 1 add-ons."discount_percentage: 0duration: 30isActive: truename: "Pack One"price: 999selectedAddons: []length: 0[[Prototype]]: Array(0)selectedServices: Array(1)0: category: "Service"duration: 30name: "Service One"price: 999service_id: "scG1CGWPQ8VjMbXZBCAj"[[Prototype]]: Objectconstructor: ƒ Object()hasOwnProperty: ƒ hasOwnProperty()isPrototypeOf: ƒ isPrototypeOf()propertyIsEnumerable: ƒ propertyIsEnumerable()toLocaleString: ƒ toLocaleString()toString: ƒ toString()valueOf: ƒ valueOf()__defineGetter__: ƒ __defineGetter__()__defineSetter__: ƒ __defineSetter__()__lookupGetter__: ƒ __lookupGetter__()__lookupSetter__: ƒ __lookupSetter__()__proto__: (...)get __proto__: ƒ __proto__()set __proto__: ƒ __proto__()length: 1[[Prototype]]: Array(0)updated_at: "2025-01-22T11:37:02.280Z"[[Prototype]]: Object
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processed service data: [{…}]0: category: "Package"consumables: []description: "Package including 1 services and 1 add-ons."discount_percentage: 0duration: 30name: "Pack One"price: 999service_id: "Jm2fkUCVsvF3yWeqwJ8a"[[Prototype]]: Objectlength: 1[[Prototype]]: Array(0)
+use-appointments.ts:207 FETCH_APPOINTMENTS: Fetching service data for ID: mGfPDXbrIpr0RlzVdLl3
+use-appointments.ts:212 FETCH_APPOINTMENTS: Raw service data: {created_at: '2025-01-22T07:45:24.027Z', updated_at: '2025-01-22T07:45:24.027Z', selectedAddons: Array(0), consumables: Array(3), discount_percentage: 0, …}category: "Service"consumables: (3) [{…}, {…}, {…}]created_at: "2025-01-22T07:45:24.027Z"description: "2"discount_percentage: 0duration: 60isActive: truename: "Service Two"price: 1199selectedAddons: []selectedServices: Array(0)length: 0[[Prototype]]: Array(0)updated_at: "2025-01-22T07:45:24.027Z"[[Prototype]]: Object
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processed service data: [{…}]
+AppointmentDetails.tsx:245 Service data: {name: 'Pack One', category: 'Package', consumables: Array(0), pack: undefined, selectedServices: undefined, …}category: "Package"consumables: []name: "Pack One"pack: undefinedselectedAddons: undefinedselectedServices: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:245 Service data: {name: 'Pack One', category: 'Package', consumables: Array(0), pack: undefined, selectedServices: undefined, …}category: "Package"consumables: []name: "Pack One"pack: undefinedselectedAddons: undefinedselectedServices: undefined[[Prototype]]: Object
+AppointmentDetails.tsx:245 Service data: {name: 'Pack One', category: 'Package', consumables: Array(0), pack: undefined, selectedServices: undefined, …}
+AppointmentDetails.tsx:245 Service data: {name: 'Pack One', category: 'Package', consumables: Array(0), pack: undefined, selectedServices: undefined, …}
+ServicesPage.tsx:317 Loading service with consumables: []
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+use-toast.tsx:72 Toast action: ADD_TOAST Toast data: {title: 'Success', description: 'Service updated successfully', variant: 'default', id: '1', open: true, …}
+AppointmentDetails.tsx:185 Submitting appointment update: {id: 'B8p0bsrkZRX10r0JVZeD', status: 'in_progress', notes: null, afterImages: Array(0), observations: null, …}
+use-appointments.ts:480 Appointment updated successfully: {status: 'in_progress', updatedAt: _Timestamp, notes: null, observations: null, recommendations: null, …}
+use-appointments.ts:123 FETCH_APPOINTMENTS: Active appointment: B8p0bsrkZRX10r0JVZeD {totalPrice: 999, createdAt: _Timestamp, petId: 'ClaJvM4zMJ3Ka1PwAgNa', observations: null, productsUsed: null, …}
+use-appointments.ts:123 FETCH_APPOINTMENTS: Active appointment: B8p0bsrkZRX10r0JVZeD {totalPrice: 999, createdAt: _Timestamp, petId: 'ClaJvM4zMJ3Ka1PwAgNa', observations: null, productsUsed: null, …}
+2use-appointments.ts:207 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:212 FETCH_APPOINTMENTS: Raw service data: {duration: 90, category: 'Package', updated_at: '2025-02-04T12:08:27.105Z', price: 2198, selectedServices: Array(2), …}
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:212 FETCH_APPOINTMENTS: Raw service data: {duration: 90, category: 'Package', updated_at: '2025-02-04T12:08:27.105Z', price: 2198, selectedServices: Array(2), …}
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processed service data: [{…}]
+2use-appointments.ts:207 FETCH_APPOINTMENTS: Fetching service data for ID: mGfPDXbrIpr0RlzVdLl3
+use-appointments.ts:212 FETCH_APPOINTMENTS: Raw service data: {created_at: '2025-01-22T07:45:24.027Z', updated_at: '2025-01-22T07:45:24.027Z', selectedAddons: Array(0), consumables: Array(3), discount_percentage: 0, …}
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processed service data: [{…}]
+use-appointments.ts:212 FETCH_APPOINTMENTS: Raw service data: {created_at: '2025-01-22T07:45:24.027Z', updated_at: '2025-01-22T07:45:24.027Z', selectedAddons: Array(0), consumables: Array(3), discount_percentage: 0, …}
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processed service data: [{…}]
