@@ -58,7 +58,8 @@ const updateAppointmentSchema = z.object({
     service_id: z.string(),
     notes: z.string(),
     service_linked: z.boolean(),
-    auto_deducted: z.boolean()
+    auto_deducted: z.boolean(),
+    service_name: z.string()
   })).optional()
 });
 
@@ -221,14 +222,18 @@ const AppointmentDetails = ({
         afterImages: data.afterImages,
         observations: data.observations ?? null,
         recommendations: data.recommendations ?? null,
-        inventoryUsage: Object.entries(selectedItems).map(([serviceId, item]) => ({
-          item_id: item.itemId,
-          quantity_used: item.quantity,
-          service_id: serviceId,
-          notes: '',
-          service_linked: true,
-          auto_deducted: true
-        }))
+        inventoryUsage: Object.entries(selectedItems).map(([serviceId, item]) => {
+          const service = appointment.service?.find(s => s.service_id === serviceId);
+          return {
+            item_id: item.itemId,
+            quantity_used: item.quantity,
+            service_id: serviceId,
+            notes: '',
+            service_linked: true,
+            auto_deducted: true,
+            service_name: service?.name || ''
+          };
+        })
       };
 
       // Only add fields based on status
