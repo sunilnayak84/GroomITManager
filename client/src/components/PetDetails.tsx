@@ -116,7 +116,14 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
                   }}>
                     <TableCell>{format(appointment.date, 'PPp')}</TableCell>
                     <TableCell className="capitalize">{appointment.status}</TableCell>
-                    <TableCell>{appointment.service?.map(s => s.name).join(', ') || '-'}</TableCell>
+                    <TableCell>
+                      {appointment.services?.map((serviceId: string, index: number) => (
+                        <span key={serviceId}>
+                          {index > 0 ? ', ' : ''}
+                          {appointment.service?.find(s => s.service_id === serviceId)?.name || serviceId}
+                        </span>
+                      )) || '-'}
+                    </TableCell>
                     <TableCell>{appointment.notes || '-'}</TableCell>
                   </TableRow>
                   <TableRow id={`expand-${appointment.id}`} style={{ display: 'none' }}>

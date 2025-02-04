@@ -76,7 +76,7 @@ export default function DashboardStats() {
     });
 
     return Array.from(stats.entries()).map(([serviceId, count]) => ({
-      name: services?.find(s => s.id === serviceId)?.name || serviceId,
+      name: services?.find(s => s.service_id === serviceId)?.name || serviceId,
       count
     }));
   }, [appointments, services]);
