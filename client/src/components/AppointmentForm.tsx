@@ -352,7 +352,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
   }
 
   return (
-    <DialogContent>
+    <DialogContent className="sm:max-w-[800px]">
       <DialogHeader>
         <DialogTitle>Schedule Appointment</DialogTitle>
         <DialogDescription>
@@ -365,7 +365,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
         </Alert>
       )}
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 grid-cols-1 sm:grid sm:grid-cols-2 sm:gap-4">
           <FormField
             control={form.control}
             name="petId"
@@ -485,7 +485,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
             />
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-4 col-span-full">
             <FormField
               control={form.control}
               name="services"
@@ -591,7 +591,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
           {/* Customer ID is now handled in form's defaultValues */}
           <Button 
             type="submit" 
-            className="w-full"
+            className="w-full col-span-full"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Scheduling..." : "Schedule Appointment"}
