@@ -68,6 +68,13 @@ export default function DogWalkingPage() {
 
   const onSubmit = async (data: any) => {
     try {
+      console.log("Form submitted with data:", data);
+
+      // Validate required fields
+      if (!data.petId || !data.walkerId || !data.scheduledStartTime || !data.duration) {
+        throw new Error("Please fill in all required fields");
+      }
+
       // Get the pet's customer ID
       const pet = pets?.find(p => p.id === data.petId);
       if (!pet) {
@@ -82,11 +89,13 @@ export default function DogWalkingPage() {
         ...data,
         customerId: pet.customerId,
         scheduledEndTime: endTime.toISOString(),
+        scheduledStartTime: startTime.toISOString(),
         status: "scheduled" as const,
       };
 
       console.log("Submitting walk data:", walkData);
-      await addWalkSession(walkData);
+      const walkId = await addWalkSession(walkData);
+      console.log("Walk scheduled successfully with ID:", walkId);
 
       toast({
         title: "Success",
@@ -106,20 +115,6 @@ export default function DogWalkingPage() {
 
   return (
     <div className="container mx-auto max-w-7xl space-y-6 px-6">
-      <div className="relative h-48 rounded-xl overflow-hidden mb-6">
-        <img
-          src="https://images.unsplash.com/photo-1601758174114-e711c0cbaa69"
-          alt="Dog Walking"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-transparent flex items-center p-8">
-          <div className="text-white">
-            <h2 className="text-2xl font-bold">Dog Walking Service</h2>
-            <p>Schedule and manage dog walking sessions</p>
-          </div>
-        </div>
-      </div>
-
       <div className="flex justify-between items-center mb-6">
         <Button
           onClick={() => {

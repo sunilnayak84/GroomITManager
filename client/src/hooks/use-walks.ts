@@ -25,7 +25,7 @@ export function useWalks() {
       queryFn: async () => {
         try {
           let q = query(collection(db, WALKS_COLLECTION));
-          
+
           // Apply filters
           if (walkerId) {
             q = query(q, where('walkerId', '==', walkerId));
@@ -64,8 +64,14 @@ export function useWalks() {
         updatedAt: null
       };
 
-      const docRef = await addDoc(collection(db, WALKS_COLLECTION), walkData);
-      return docRef.id;
+      try {
+        const docRef = await addDoc(collection(db, WALKS_COLLECTION), walkData);
+        console.log('Walk session added successfully with ID:', docRef.id);
+        return docRef.id;
+      } catch (error) {
+        console.error('Error adding walk session:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['walks'] });
@@ -76,7 +82,7 @@ export function useWalks() {
   const updateWalkSession = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: UpdateWalkSession }) => {
       console.log('Updating walk session:', id, 'with data:', data);
-      
+
       const updateData = {
         ...data,
         updatedAt: new Date().toISOString()
@@ -146,9 +152,9 @@ export function useWalks() {
 
   return {
     useWalkSessions,
-    addWalkSession: addWalkSession.mutateAsync,
-    updateWalkSession: updateWalkSession.mutateAsync,
-    deleteWalkSession: deleteWalkSession.mutateAsync,
-    updateWalkProgress: updateWalkProgress.mutateAsync
+    addWalkSession: addWalkSession.mutate,
+    updateWalkSession: updateWalkSession.mutate,
+    deleteWalkSession: deleteWalkSession.mutate,
+    updateWalkProgress: updateWalkProgress.mutate
   };
 }
