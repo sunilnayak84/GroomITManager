@@ -320,6 +320,8 @@ export function useCustomers() {
             address: customerData.address as string | null,
             gender: (customerData.gender as "male" | "female" | "other" | null) || null,
             petCount: Number(customerData.petCount || 0),
+            loyaltyPoints: Number(customerData.loyaltyPoints || 0),
+            loyaltyTier: (customerData.loyaltyTier as "bronze" | "silver" | "gold" | "platinum") || "bronze",
             createdAt: processTimestamp(customerData.createdAt as FirestoreTimestamp) || new Date().toISOString(),
             updatedAt: processTimestamp(customerData.updatedAt as FirestoreTimestamp)
           };
