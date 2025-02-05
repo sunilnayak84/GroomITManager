@@ -60,7 +60,7 @@ export default function LoyaltyProgramPage() {
         const configSnap = await getDoc(configRef);
         if (configSnap.exists()) {
           const data = configSnap.data();
-          form.reset({
+          const defaultValues = {
             tierThresholds: {
               bronze: 0,
               silver: data.tierThresholds?.silver ?? 2000,
@@ -68,7 +68,11 @@ export default function LoyaltyProgramPage() {
               platinum: data.tierThresholds?.platinum ?? 7500,
             },
             pointsPerSpend: data.pointsPerSpend ?? 1,
-          });
+          };
+          
+          if (!form.formState.isDirty) {
+            form.reset(defaultValues);
+          }
         }
       } catch (error) {
         console.error("Error fetching loyalty config:", error);
@@ -81,7 +85,7 @@ export default function LoyaltyProgramPage() {
     };
 
     fetchLoyaltyConfig();
-  }, [form, toast]);
+  }, [toast]); // Remove form from dependencies
 
   const onSubmit = async (data: LoyaltyConfig) => {
     try {
