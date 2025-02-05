@@ -128,7 +128,10 @@ export default function LoyaltyProgramPage() {
                           <Input 
                             type="number"
                             {...field}
-                            onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : '')}
+                            onChange={(e) => {
+                              const value = e.target.value ? parseInt(e.target.value) : '';
+                              field.onChange(value);
+                            }}
                             disabled
                           />
                         </FormControl>
@@ -149,7 +152,10 @@ export default function LoyaltyProgramPage() {
                           <Input 
                             type="number"
                             {...field}
-                            onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : '')}
+                            onChange={(e) => {
+                              const value = e.target.value ? parseInt(e.target.value) : '';
+                              field.onChange(value);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -166,7 +172,10 @@ export default function LoyaltyProgramPage() {
                           <Input 
                             type="number"
                             {...field}
-                            onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : '')}
+                            onChange={(e) => {
+                              const value = e.target.value ? parseInt(e.target.value) : '';
+                              field.onChange(value);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -183,7 +192,10 @@ export default function LoyaltyProgramPage() {
                           <Input 
                             type="number"
                             {...field}
-                            onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : '')}
+                            onChange={(e) => {
+                              const value = e.target.value ? parseInt(e.target.value) : '';
+                              field.onChange(value);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
