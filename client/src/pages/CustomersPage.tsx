@@ -209,6 +209,17 @@ export default function CustomersPage() {
       ),
     },
     {
+      header: "Loyalty",
+      cell: (row: Customer) => (
+        <div className="flex items-center gap-2">
+          <span className="font-medium">{row.loyaltyPoints || 0} pts</span>
+          <Badge className={`bg-${row.loyaltyTier || 'bronze'}`}>
+            {(row.loyaltyTier || 'bronze').toUpperCase()}
+          </Badge>
+        </div>
+      ),
+    },
+    {
       header: "Actions",
       cell: (row: Customer) => (
         <Button 
