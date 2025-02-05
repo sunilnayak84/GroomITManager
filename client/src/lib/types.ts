@@ -154,11 +154,25 @@ export type FirestoreCustomerData = Omit<Customer, "id" | "createdAt" | "updated
   id?: string;
   createdAt: FirestoreTimestamp | string;
   updatedAt: FirestoreTimestamp | string | null;
+  pointsHistory: Array<{
+    points: number;
+    type: "earned" | "redeemed";
+    source: string;
+    timestamp: string;
+  }>;
+  loyaltyTier: "bronze" | "silver" | "gold" | "platinum";
 };
 
 export type CustomerWithTimestamp = Omit<Customer, "createdAt" | "updatedAt"> & {
   createdAt: FirestoreTimestamp | string;
   updatedAt: FirestoreTimestamp | string | null;
+  pointsHistory: Array<{
+    points: number;
+    type: "earned" | "redeemed";
+    source: string;
+    timestamp: string;
+  }>;
+  loyaltyTier: "bronze" | "silver" | "gold" | "platinum";
 };
 
 export type PetType = "dog" | "cat" | "bird" | "fish" | "other";

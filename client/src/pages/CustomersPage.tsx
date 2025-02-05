@@ -474,6 +474,7 @@ export default function CustomersPage() {
                       <FormControl>
                         <Input {...field} type="email" />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -491,6 +492,7 @@ export default function CustomersPage() {
                           <Input className="rounded-l-none" {...field} placeholder="Enter phone number" />
                         </div>
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -536,6 +538,7 @@ export default function CustomersPage() {
                           <span className="ml-2">Other</span>
                         </label>
                       </div>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -548,6 +551,7 @@ export default function CustomersPage() {
                       <FormControl>
                         <Input {...field} value={field.value?.toString() || ''} />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -764,6 +768,7 @@ export default function CustomersPage() {
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
+                            <FormMessage />
                           </FormItem>
                         )}
                       />
@@ -776,6 +781,7 @@ export default function CustomersPage() {
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
+                            <FormMessage />
                           </FormItem>
                         )}
                       />
@@ -789,6 +795,7 @@ export default function CustomersPage() {
                           <FormControl>
                             <Input {...field} type="email" />
                           </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -801,6 +808,7 @@ export default function CustomersPage() {
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -845,6 +853,7 @@ export default function CustomersPage() {
                               <span className="ml-2">Other</span>
                             </label>
                           </div>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -857,6 +866,7 @@ export default function CustomersPage() {
                           <FormControl>
                             <Input {...field} value={field.value || ''} />
                           </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -881,92 +891,160 @@ export default function CustomersPage() {
                   </form>
                 </Form>
               ) : (
-                <div>
-                  <div className="flex items-center gap-4">
-                    <img
-                      src={`https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(`${selectedCustomer.firstName} ${selectedCustomer.lastName}`)}`}
-                      alt={`${selectedCustomer.firstName} ${selectedCustomer.lastName}`}
-                      className="w-20 h-20 rounded-full bg-primary/10"
-                    />
-                    <div>
-                      <h2 className="text-2xl font-bold">{`${selectedCustomer.firstName} ${selectedCustomer.lastName}`}</h2>
-                      <p className="text-muted-foreground">{selectedCustomer.email}</p>
+                <div className="space-y-8">
+                  {/* Basic Info Section */}
+                  <div>
+                    <h3 className="font-semibold mb-4">Basic Information</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-muted-foreground">First Name</p>
+                        <p className="font-medium">{selectedCustomer.firstName}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Last Name</p>
+                        <p className="font-medium">{selectedCustomer.lastName}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Email</p>
+                        <p className="font-medium">{selectedCustomer.email}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Phone</p>
+                        <p className="font-medium">{selectedCustomer.phone}</p>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <h3 className="font-semibold">Contact Information</h3>
-                      <p><span className="text-muted-foreground">Phone:</span> {selectedCustomer.phone}</p>
-                      <p><span className="text-muted-foreground">Email:</span> {selectedCustomer.email}</p>
-                      <p><span className="text-muted-foreground">Address:</span> {selectedCustomer.address || 'N/A'}</p>
-                    </div>
-
-                    <div className="space-y-2">
-                      <h3 className="font-semibold">Additional Information</h3>
-                      <p><span className="text-muted-foreground">Gender:</span> {selectedCustomer.gender}</p>
-                      <p><span className="text-muted-foreground">Member Since:</span> {
-                        selectedCustomer.createdAt
-                          ? new Date(selectedCustomer.createdAt).toLocaleDateString()
-                          : 'N/A'
-                      }</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {!isEditing && (
-                <div className="flex justify-center gap-2 mt-6">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIsEditing(true)}
-                  >
-                    Edit
-                  </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                      >
-                        Delete
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently delete the customer andall associated data.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={async () => {
-                            if (!selectedCustomer) return;
-                            try {
-                              await deleteCustomerMutationHook.mutateAsync(selectedCustomer.id);
-                              setShowCustomerDetails(false);
-                              toast({
-                                title: "Success",
-                                description: "Customer deleted successfully",
-                              });
-                            } catch (error) {
-                              toast({
-                                variant: "destructive",
-                                title: "Error",
-                                description: "Failed to delete customer",
-                              });
-                            }
-                          }}
-                          className="bg-red-500 hover:bg-red-600"
+                  {/* Loyalty Section */}
+                  <div>
+                    <h3 className="font-semibold mb-4">Loyalty Program</h3>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between bg-accent/50 p-4 rounded-lg">
+                        <div>
+                          <p className="text-sm text-muted-foreground">Current Points</p>
+                          <p className="text-2xl font-bold">
+                            {selectedCustomer.pointsHistory.reduce((total, record) => {
+                              return record.type === 'earned' ? total + record.points : total - record.points;
+                            }, 0)} pts
+                          </p>
+                        </div>
+                        <Badge
+                          variant={selectedCustomer.loyaltyTier}
+                          className="text-lg py-2 px-4"
                         >
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                          {selectedCustomer.loyaltyTier.toUpperCase()}
+                        </Badge>
+                      </div>
+
+                                            <div>
+                        <h4 className="text-sm font-medium mb-2">Points History</h4>
+                        <div className="space-y-2 max-h-64 overflow-y-auto">
+                          {selectedCustomer.pointsHistory.length === 0 ? (
+                            <p className="text-sm text-muted-foreground">No points history yet</p>
+                          ) : (
+                            selectedCustomer.pointsHistory
+                              .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+                              .map((record, index) => (
+                                <div
+                                  key={index}
+                                  className="flex items-center justify-between p-2 bg-background rounded border"
+                                >
+                                  <div>
+                                    <p className="font-medium">
+                                      {record.type === 'earned' ? '+' : '-'}{record.points} points
+                                    </p>
+                                    <p className="text-sm text-muted-foreground capitalize">
+                                      {record.source}
+                                    </p>
+                                  </div>
+                                  <p className="text-sm text-muted-foreground">
+                                    {new Date(record.timestamp).toLocaleDateString()}
+                                  </p>
+                                </div>
+                              ))
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Additional Info Section */}
+                  <div>
+                    <h3 className="font-semibold mb-4">Additional Information</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Gender</p>
+                        <p className="font-medium capitalize">{selectedCustomer.gender || 'Not specified'}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Member Since</p>
+                        <p className="font-medium">
+                          {selectedCustomer.createdAt
+                            ? new Date(selectedCustomer.createdAt).toLocaleDateString()
+                            : 'N/A'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Address</p>
+                        <p className="font-medium">{selectedCustomer.address || 'Not provided'}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {!isEditing && (
+                    <div className="flex justify-center gap-2 mt-6">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setIsEditing(true)}
+                      >
+                        Edit
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                          >
+                            Delete
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will permanently delete the customer and all associated data.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={async () => {
+                                if (!selectedCustomer) return;
+                                try {
+                                  await deleteCustomerMutationHook.mutateAsync(selectedCustomer.id);
+                                  setShowCustomerDetails(false);
+                                  toast({
+                                    title: "Success",
+                                    description: "Customer deleted successfully",
+                                  });
+                                } catch (error) {
+                                  toast({
+                                    variant: "destructive",
+                                    title: "Error",
+                                    description: "Failed to delete customer",
+                                  });
+                                }
+                              }}
+                              className="bg-red-500 hover:bg-red-600"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

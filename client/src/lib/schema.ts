@@ -13,7 +13,6 @@ export const customerSchema = z.object({
   address: z.string().nullable(),
   gender: z.enum(["male", "female", "other"]).nullable(),
   petCount: z.number().default(0),
-  loyaltyPoints: z.number().default(0),
   loyaltyTier: z.enum(["bronze", "silver", "gold", "platinum"]).default("bronze"),
   pointsHistory: z.array(z.object({
     points: z.number(),
@@ -35,6 +34,7 @@ export const customerSchema = z.object({
     z.date(),
     z.null()
   ]).transform(val => {
+    if (!val) return null;
     if (val instanceof Date) return val.toISOString();
     return toISOString(val);
   }).nullable(),
@@ -47,15 +47,6 @@ export const insertCustomerSchema = customerSchema.omit({
   petCount: true,
   createdAt: true,
   updatedAt: true
-}).extend({
-  loyaltyPoints: z.number().default(0),
-  loyaltyTier: z.enum(["bronze", "silver", "gold", "platinum"]).default("bronze"),
-  pointsHistory: z.array(z.object({
-    points: z.number(),
-    type: z.enum(["earned", "redeemed"]),
-    source: z.string(),
-    timestamp: z.string()
-  })).default([])
 });
 
 // Customer interface
@@ -68,25 +59,19 @@ export interface Customer {
   address: string | null;
   gender: "male" | "female" | "other" | null;
   petCount: number;
-  loyaltyPoints: number;
-  loyaltyTier: "bronze" | "silver" | "gold" | "platinum";
+  createdAt: string;
+  updatedAt: string | null;
+  firebaseId: string | null;
+  name?: string;
   pointsHistory: Array<{
     points: number;
     type: "earned" | "redeemed";
     source: string;
     timestamp: string;
   }>;
-  createdAt: string;
-  updatedAt: string | null;
-  firebaseId: string | null;
-  name?: string;
+  loyaltyTier: "bronze" | "silver" | "gold" | "platinum";
 }
 
-// Export type for insert operations
-export type InsertCustomer = Omit<Customer, 'id' | 'firebaseId' | 'petCount' | 'createdAt' | 'updatedAt'>;
-
-// Re-export types from types.ts for convenience
-export type { FirestoreTimestamp, FirestoreDate, WithFirestoreTimestamp, FirestoreData } from './types';
 
 // Schema for Pet
 export const petSchema = z.object({
@@ -251,7 +236,6 @@ export interface ToastProps {
   error: (message: string) => void;
 }
 
-export type InsertCustomer = Omit<Customer, 'id' | 'firebaseId' | 'petCount' | 'createdAt' | 'updatedAt'>;
 export type Pet = z.infer<typeof petSchema>;
 export type InsertPet = z.infer<typeof insertPetSchema>;
 export type User = z.infer<typeof userSchema>;
