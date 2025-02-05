@@ -87,6 +87,8 @@ export const customerSchema = z.object({
   petCount: z.number().default(0),
   loyaltyPoints: z.number().default(0),
   loyaltyTier: z.enum(["bronze", "silver", "gold", "platinum"]).default("bronze"),
+  loyaltyPoints: z.number().default(0),
+  loyaltyTier: z.enum(["bronze", "silver", "gold", "platinum"]).default("bronze"),
   createdAt: z.union([
     z.string(),
     z.custom<FirestoreTimestamp>((data) => data instanceof Timestamp),
