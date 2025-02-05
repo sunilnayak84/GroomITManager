@@ -48,6 +48,7 @@ type LoyaltyConfig = z.infer<typeof loyaltyConfigSchema>;
 export default function LoyaltyProgramPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const [initialLoad, setInitialLoad] = useState(true);
 
   const form = useForm<LoyaltyConfig>({
     resolver: zodResolver(loyaltyConfigSchema),
@@ -65,6 +66,8 @@ export default function LoyaltyProgramPage() {
 
   useEffect(() => {
     const fetchLoyaltyConfig = async () => {
+      if (!initialLoad) return;
+
       try {
         setIsLoading(true);
         const configRef = doc(db, "settings", "loyalty");
@@ -74,7 +77,7 @@ export default function LoyaltyProgramPage() {
           const data = configSnap.data();
           form.reset({
             tierThresholds: {
-              bronze: 0, // Bronze is always 0
+              bronze: 0,
               silver: data.tierThresholds?.silver ?? 2000,
               gold: data.tierThresholds?.gold ?? 5000,
               platinum: data.tierThresholds?.platinum ?? 7500,
@@ -91,11 +94,12 @@ export default function LoyaltyProgramPage() {
         });
       } finally {
         setIsLoading(false);
+        setInitialLoad(false);
       }
     };
 
     fetchLoyaltyConfig();
-  }, [toast, form]);
+  }, [toast, form, initialLoad]);
 
   const onSubmit = async (data: LoyaltyConfig) => {
     try {
@@ -164,7 +168,12 @@ export default function LoyaltyProgramPage() {
                           <Input
                             type="number"
                             {...field}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            onChange={(e) => {
+                              const value = Number(e.target.value);
+                              if (!isNaN(value)) {
+                                field.onChange(value);
+                              }
+                            }}
                           />
                         </FormControl>
                         <FormDescription>
@@ -184,7 +193,12 @@ export default function LoyaltyProgramPage() {
                           <Input
                             type="number"
                             {...field}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            onChange={(e) => {
+                              const value = Number(e.target.value);
+                              if (!isNaN(value)) {
+                                field.onChange(value);
+                              }
+                            }}
                           />
                         </FormControl>
                         <FormDescription>
@@ -204,7 +218,12 @@ export default function LoyaltyProgramPage() {
                           <Input
                             type="number"
                             {...field}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            onChange={(e) => {
+                              const value = Number(e.target.value);
+                              if (!isNaN(value)) {
+                                field.onChange(value);
+                              }
+                            }}
                           />
                         </FormControl>
                         <FormDescription>
@@ -228,7 +247,12 @@ export default function LoyaltyProgramPage() {
                         type="number"
                         step="0.01"
                         {...field}
-                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        onChange={(e) => {
+                          const value = Number(e.target.value);
+                          if (!isNaN(value)) {
+                            field.onChange(value);
+                          }
+                        }}
                       />
                     </FormControl>
                     <FormDescription>

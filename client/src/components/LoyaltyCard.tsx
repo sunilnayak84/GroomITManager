@@ -62,6 +62,11 @@ export function LoyaltyCard({ customer }: LoyaltyCardProps) {
     fetchConfig();
   }, []);
 
+  // Calculate total points from pointsHistory
+  const totalPoints = customer.pointsHistory.reduce((total, record) => {
+    return record.type === 'earned' ? total + record.points : total - record.points;
+  }, 0);
+
   const calculateTier = (points: number): "bronze" | "silver" | "gold" | "platinum" => {
     if (points >= config.tierThresholds.platinum) return "platinum";
     if (points >= config.tierThresholds.gold) return "gold";
@@ -69,13 +74,13 @@ export function LoyaltyCard({ customer }: LoyaltyCardProps) {
     return "bronze";
   };
 
-  const currentTier = calculateTier(customer.loyaltyPoints);
+  const currentTier = calculateTier(totalPoints);
   const nextTier = currentTier === "platinum" ? null : 
     currentTier === "gold" ? "platinum" :
     currentTier === "silver" ? "gold" : "silver";
 
   const progress = nextTier ? 
-    ((customer.loyaltyPoints - config.tierThresholds[currentTier]) / 
+    ((totalPoints - config.tierThresholds[currentTier]) / 
     (config.tierThresholds[nextTier] - config.tierThresholds[currentTier])) * 100 : 100;
 
   if (loading) {
@@ -126,7 +131,7 @@ export function LoyaltyCard({ customer }: LoyaltyCardProps) {
           <div>
             <div className="flex justify-between mb-2 text-sm">
               <span>Current Points</span>
-              <span className="font-medium">{customer.loyaltyPoints}</span>
+              <span className="font-medium">{totalPoints}</span>
             </div>
             {nextTier && (
               <>
@@ -136,7 +141,7 @@ export function LoyaltyCard({ customer }: LoyaltyCardProps) {
                   <span>{config.tierThresholds[nextTier]}</span>
                 </div>
                 <p className="text-sm mt-2">
-                  {config.tierThresholds[nextTier] - customer.loyaltyPoints} points needed for {nextTier}
+                  {config.tierThresholds[nextTier] - totalPoints} points needed for {nextTier}
                 </p>
               </>
             )}
