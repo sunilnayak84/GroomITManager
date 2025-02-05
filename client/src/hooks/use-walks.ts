@@ -25,7 +25,6 @@ export function useWalks() {
         try {
           let q = query(collection(db, WALKS_COLLECTION));
 
-          // Apply filters
           if (walkerId) {
             q = query(q, where('walkerId', '==', walkerId));
           }
@@ -52,20 +51,18 @@ export function useWalks() {
     });
   };
 
-  // Add a new walk session
   const addWalkSession = useMutation({
-    mutationFn: async (data: InsertWalkSession) => {
-      console.log('Adding walk session with data:', data);
-
-      const walkData = {
-        ...data,
-        createdAt: new Date().toISOString(),
-        updatedAt: null
-      };
-
+    mutationFn: async (data: InsertWalkSession): Promise<string> => {
       try {
+        console.log('Adding walk session with data:', data);
+        const walkData = {
+          ...data,
+          createdAt: new Date().toISOString(),
+          updatedAt: null
+        };
+
         const docRef = await addDoc(collection(db, WALKS_COLLECTION), walkData);
-        console.log('Walk session added successfully with ID:', docRef.id);
+        console.log('Walk session added with ID:', docRef.id);
         return docRef.id;
       } catch (error) {
         console.error('Error adding walk session:', error);
@@ -74,10 +71,12 @@ export function useWalks() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['walks'] });
+    },
+    onError: (error) => {
+      console.error('Mutation error:', error);
     }
   });
 
-  // Update a walk session
   const updateWalkSession = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: UpdateWalkSession }) => {
       const updateData = {
@@ -93,7 +92,6 @@ export function useWalks() {
     }
   });
 
-  // Delete a walk session
   const deleteWalkSession = useMutation({
     mutationFn: async (id: string) => {
       const docRef = doc(db, WALKS_COLLECTION, id);
@@ -106,7 +104,7 @@ export function useWalks() {
 
   return {
     useWalkSessions,
-    addWalkSession: addWalkSession.mutate,
+    addWalkSession: addWalkSession.mutateAsync,
     updateWalkSession: updateWalkSession.mutate,
     deleteWalkSession: deleteWalkSession.mutate
   };
