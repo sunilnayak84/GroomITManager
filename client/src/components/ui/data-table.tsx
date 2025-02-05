@@ -10,7 +10,7 @@ import {
 import { Loader2 } from "lucide-react";
 
 interface Column<T> {
-  header: string;
+  header: string | (() => React.ReactNode);
   cell: (row: T) => React.ReactNode;
 }
 
@@ -34,7 +34,9 @@ export function DataTable<T>({ columns, data, isLoading }: DataTableProps<T>) {
       <TableHeader>
         <TableRow>
           {columns.map((column) => (
-            <TableHead key={column.header}>{column.header}</TableHead>
+            <TableHead key={typeof column.header === 'string' ? column.header : 'header'}>
+              {typeof column.header === 'function' ? column.header() : column.header}
+            </TableHead>
           ))}
         </TableRow>
       </TableHeader>
