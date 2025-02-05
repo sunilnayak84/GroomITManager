@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -128,8 +127,8 @@ export default function LoyaltyProgramPage() {
                         <FormControl>
                           <Input 
                             type="number"
-                            value={field.value}
-                            onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                            {...field}
+                            onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : '')}
                             disabled
                           />
                         </FormControl>
@@ -149,8 +148,8 @@ export default function LoyaltyProgramPage() {
                         <FormControl>
                           <Input 
                             type="number"
-                            value={field.value}
-                            onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                            {...field}
+                            onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : '')}
                           />
                         </FormControl>
                         <FormMessage />
@@ -166,8 +165,8 @@ export default function LoyaltyProgramPage() {
                         <FormControl>
                           <Input 
                             type="number"
-                            value={field.value}
-                            onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                            {...field}
+                            onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : '')}
                           />
                         </FormControl>
                         <FormMessage />
@@ -183,8 +182,8 @@ export default function LoyaltyProgramPage() {
                         <FormControl>
                           <Input 
                             type="number"
-                            value={field.value}
-                            onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                            {...field}
+                            onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : '')}
                           />
                         </FormControl>
                         <FormMessage />
@@ -204,7 +203,7 @@ export default function LoyaltyProgramPage() {
                       <Input 
                         type="number" 
                         step="0.01" 
-                        value={field.value}
+                        {...field}
                         onChange={(e) => field.onChange(Number(e.target.value))}
                       />
                     </FormControl>
