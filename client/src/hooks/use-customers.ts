@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getDocs, onSnapshot, query, deleteDoc, doc, where, collection, Timestamp } from "firebase/firestore";
+import { getDocs, onSnapshot, query, deleteDoc, doc, where, collection, Timestamp, getDoc } from "firebase/firestore";
 import { customersCollection, createCustomer, updateCustomer as updateCustomerDoc, deleteCustomerAndRelated } from "../lib/firestore";
 import { useEffect } from "react";
 import { db } from "../lib/firebase";
@@ -15,6 +15,69 @@ import {
 
 export function useCustomers() {
   const queryClient = useQueryClient();
+
+  // Calculate total points from pointsHistory
+  const calculateTotalPoints = (pointsHistory: Array<{points: number; type: string}>) => {
+    return pointsHistory.reduce((total, record) => {
+      return record.type === 'earned' ? total + record.points : total - record.points;
+    }, 0);
+  };
+
+  // Calculate loyalty tier based on total points
+  const calculateTier = async (points: number): Promise<"bronze" | "silver" | "gold" | "platinum"> => {
+    try {
+      const configRef = doc(db, "settings", "loyalty");
+      const configSnap = await getDoc(configRef);
+      const config = configSnap.exists() ? configSnap.data() : {
+        tierThresholds: {
+          bronze: 0,
+          silver: 2000,
+          gold: 5000,
+          platinum: 7500
+        }
+      };
+
+      if (points >= config.tierThresholds.platinum) return "platinum";
+      if (points >= config.tierThresholds.gold) return "gold";
+      if (points >= config.tierThresholds.silver) return "silver";
+      return "bronze";
+    } catch (error) {
+      console.error("Error calculating tier:", error);
+      return "bronze";
+    }
+  };
+
+  const processCustomerData = async (doc: any) => {
+    const customerData = doc.data();
+    const processTimestamp = (timestamp: FirestoreTimestamp | string | null | undefined): string | null => {
+      if (!timestamp) return null;
+      if (typeof timestamp === 'string') return timestamp;
+      if (timestamp instanceof Timestamp) {
+        return timestamp.toDate().toISOString();
+      }
+      return null;
+    };
+
+    const pointsHistory = customerData.pointsHistory || [];
+    const totalPoints = calculateTotalPoints(pointsHistory);
+    const currentTier = await calculateTier(totalPoints);
+
+    return {
+      id: doc.id,
+      firebaseId: doc.id,
+      firstName: customerData.firstName as string,
+      lastName: customerData.lastName as string,
+      email: customerData.email as string,
+      phone: customerData.phone as string,
+      address: customerData.address as string | null,
+      gender: (customerData.gender as "male" | "female" | "other" | null) || null,
+      petCount: Number(customerData.petCount || 0),
+      pointsHistory,
+      loyaltyTier: currentTier,
+      createdAt: processTimestamp(customerData.createdAt as FirestoreTimestamp) || new Date().toISOString(),
+      updatedAt: processTimestamp(customerData.updatedAt as FirestoreTimestamp)
+    } as CustomerType;
+  };
 
   const addCustomerMutation = useMutation({
     mutationFn: async (customer: InsertCustomer) => {
@@ -80,7 +143,9 @@ export function useCustomers() {
           ...customer,
           petCount: 0,
           createdAt: timestamp,
-          updatedAt: null
+          updatedAt: null,
+          pointsHistory: [],
+          loyaltyTier: "bronze"
         };
       } catch (error) {
         // Log the full error details
@@ -227,31 +292,7 @@ export function useCustomers() {
     // Listen for customer updates
     const customerQuery = query(customersCollection);
     const customerUnsubscribe = onSnapshot(customerQuery, async (snapshot) => {
-      const customers = snapshot.docs.map(doc => {
-        const data = doc.data();
-        const processTimestamp = (timestamp: FirestoreTimestamp | string | null | undefined): string | null => {
-          if (!timestamp) return null;
-          if (typeof timestamp === 'string') return timestamp;
-          if (timestamp instanceof Timestamp) {
-            return timestamp.toDate().toISOString();
-          }
-          return null;
-        };
-
-        return {
-          id: doc.id,
-          firebaseId: doc.id,
-          firstName: data.firstName as string,
-          lastName: data.lastName as string,
-          email: data.email as string,
-          phone: data.phone as string,
-          address: data.address as string | null,
-          gender: (data.gender as "male" | "female" | "other" | null) ?? null,
-          petCount: Number(data.petCount || 0),
-          createdAt: processTimestamp(data.createdAt as FirestoreTimestamp) || new Date().toISOString(),
-          updatedAt: processTimestamp(data.updatedAt as FirestoreTimestamp)
-        } as CustomerType;
-      });
+      const customers = await Promise.all(snapshot.docs.map(async (doc) => await processCustomerData(doc)));
 
       // Update customers in cache
       queryClient.setQueryData(["customers"], customers);
@@ -299,40 +340,7 @@ export function useCustomers() {
       try {
         console.log('FETCH_CUSTOMERS: Starting customer fetch');
         const querySnapshot = await getDocs(customersCollection);
-        const customers = querySnapshot.docs.map(doc => {
-          const customerData = doc.data();
-          const processTimestamp = (timestamp: FirestoreTimestamp | string | null | undefined): string | null => {
-            if (!timestamp) return null;
-            if (typeof timestamp === 'string') return timestamp;
-            if (timestamp instanceof Timestamp) {
-              return timestamp.toDate().toISOString();
-            }
-            return null;
-          };
-
-          const customer: CustomerType = {
-            id: doc.id,
-            firebaseId: doc.id,
-            firstName: customerData.firstName as string,
-            lastName: customerData.lastName as string,
-            email: customerData.email as string,
-            phone: customerData.phone as string,
-            address: customerData.address as string | null,
-            gender: (customerData.gender as "male" | "female" | "other" | null) || null,
-            petCount: Number(customerData.petCount || 0),
-            loyaltyPoints: Number(customerData.loyaltyPoints || 0),
-            loyaltyTier: (customerData.loyaltyTier as "bronze" | "silver" | "gold" | "platinum") || "bronze",
-            pointsHistory: customerData.pointsHistory || [],
-            createdAt: processTimestamp(customerData.createdAt as FirestoreTimestamp) || new Date().toISOString(),
-            updatedAt: processTimestamp(customerData.updatedAt as FirestoreTimestamp)
-          };
-          console.log('FETCH_CUSTOMERS: Processed customer:', {
-            id: customer.id,
-            firebaseId: customer.firebaseId,
-            name: `${customer.firstName} ${customer.lastName}`
-          });
-          return customer;
-        });
+        const customers = await Promise.all(querySnapshot.docs.map(async (doc) => await processCustomerData(doc)));
 
         console.log('USE CUSTOMERS: Fetched customers', {
           customerCount: customers.length,

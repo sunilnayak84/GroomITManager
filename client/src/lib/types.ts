@@ -85,7 +85,6 @@ export const customerSchema = z.object({
   address: z.string().nullable(),
   gender: z.enum(["male", "female", "other"]).nullable(),
   petCount: z.number().default(0),
-  loyaltyPoints: z.number().default(0),
   loyaltyTier: z.enum(["bronze", "silver", "gold", "platinum"]).default("bronze"),
   pointsHistory: z.array(z.object({
     points: z.number(),
@@ -128,28 +127,27 @@ export interface Customer {
   updatedAt: string | null;
   firebaseId: string | null;
   name?: string;
-  loyaltyPoints: number;
-  loyaltyTier: "bronze" | "silver" | "gold" | "platinum";
   pointsHistory: Array<{
     points: number;
     type: "earned" | "redeemed";
     source: string;
     timestamp: string;
   }>;
+  loyaltyTier: "bronze" | "silver" | "gold" | "platinum";
 }
 
+// Update WithFieldValue type to use pointsHistory for calculations
 export type WithFieldValue<T> = T & {
-  loyaltyPoints?: number;
-  loyaltyTier?: "bronze" | "silver" | "gold" | "platinum";
-  pointsHistory?: Array<{
+  pointsHistory: Array<{
     points: number;
     type: "earned" | "redeemed";
     source: string;
     timestamp: string;
   }>;
+  loyaltyTier: "bronze" | "silver" | "gold" | "platinum";
 };
 
-export type InsertCustomer = Omit<Customer, "id" | "firebaseId" | "petCount" | "createdAt" | "updatedAt" | "loyaltyPoints" | "loyaltyTier" | "pointsHistory">;
+export type InsertCustomer = Omit<Customer, "id" | "firebaseId" | "petCount" | "createdAt" | "updatedAt" | "loyaltyTier" | "pointsHistory">;
 
 // Helper type for Firestore data with proper timestamp handling
 export type FirestoreCustomerData = Omit<Customer, "id" | "createdAt" | "updatedAt"> & {
