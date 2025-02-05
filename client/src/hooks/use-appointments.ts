@@ -221,17 +221,28 @@ export function useAppointments() {
             // Get service data
             let serviceData = [];
 
-            if (rawData.services) {
+            if (rawData.services && Array.isArray(rawData.services)) {
+              console.log('FETCH_APPOINTMENTS: Processing services for appointment:', appointmentDoc.id, 'Services:', rawData.services);
+              
               for (const serviceId of rawData.services) {
+                if (!serviceId) {
+                  console.error('FETCH_APPOINTMENTS: Invalid service ID in array');
+                  continue;
+                }
+
                 console.log('FETCH_APPOINTMENTS: Fetching service data for ID:', serviceId);
                 const serviceDoc = await getDoc(doc(db, 'services', serviceId));
 
                 if (serviceDoc.exists()) {
                   const rawServiceData = serviceDoc.data();
-                  console.log('FETCH_APPOINTMENTS: Raw service data:', rawServiceData);
+                  console.log('FETCH_APPOINTMENTS: Raw service data for', serviceId, ':', rawServiceData);
+
+                  if (!rawServiceData.name) {
+                    console.error('FETCH_APPOINTMENTS: Service name missing for ID:', serviceId);
+                  }
 
                   // Map all required service fields
-                  serviceData.push({
+                  const processedService = {
                     service_id: serviceId,
                     name: rawServiceData.name || 'Unknown Service',
                     duration: rawServiceData.duration || 30,
@@ -242,14 +253,16 @@ export function useAppointments() {
                     consumables: rawServiceData.consumables || [],
                     selectedServices: rawServiceData.selectedServices || [],
                     selectedAddons: rawServiceData.selectedAddons || []
-                  });
-                  console.log('FETCH_APPOINTMENTS: Processed service data:', serviceData);
+                  };
+                  
+                  serviceData.push(processedService);
+                  console.log('FETCH_APPOINTMENTS: Processed service:', processedService);
                 } else {
                   console.error('FETCH_APPOINTMENTS: Service not found for ID:', serviceId);
                 }
               }
             } else {
-              console.log('FETCH_APPOINTMENTS: No serviceId provided for appointment');
+              console.warn('FETCH_APPOINTMENTS: No services array for appointment:', appointmentDoc.id);
             }
 
             const appointment: AppointmentWithRelations = {
