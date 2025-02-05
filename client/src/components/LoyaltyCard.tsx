@@ -67,6 +67,7 @@ export function LoyaltyCard({ customer }: LoyaltyCardProps) {
     return record.type === 'earned' ? total + record.points : total - record.points;
   }, 0);
 
+  // Calculate tier based on total points
   const calculateTier = (points: number): "bronze" | "silver" | "gold" | "platinum" => {
     if (points >= config.tierThresholds.platinum) return "platinum";
     if (points >= config.tierThresholds.gold) return "gold";
@@ -118,7 +119,7 @@ export function LoyaltyCard({ customer }: LoyaltyCardProps) {
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle>Loyalty Status</CardTitle>
-          <Badge className={`${tierColors[currentTier]} text-white inline-flex`}>
+          <Badge className={`${tierColors[currentTier]} text-white inline-flex display-block`}>
             {currentTier.charAt(0).toUpperCase() + currentTier.slice(1)}
           </Badge>
         </div>
