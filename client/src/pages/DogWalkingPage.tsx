@@ -53,7 +53,7 @@ export default function DogWalkingPage() {
   const { data: walkSessions = [], isLoading } = useWalkSessions();
 
   // Filter staff members to get only walkers
-  const walkers = staffMembers?.filter(staff => staff.role === 'walker') ?? [];
+  const walkers = staffMembers?.filter(staff => staff.role === 'pet_walker') ?? [];
 
   const form = useForm({
     resolver: zodResolver(insertWalkSessionSchema),
