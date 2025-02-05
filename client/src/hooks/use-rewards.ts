@@ -35,11 +35,12 @@ export function useRewards() {
   const addRewardMutation = useMutation({
     mutationFn: async (rewardData: InsertReward) => {
       try {
-        // Handle image upload if present and is File object
         let imageUrl = rewardData.image;
-        if (typeof imageUrl === 'object' && 'name' in imageUrl) {
+
+        // Only process image if it's a File object
+        if (imageUrl instanceof File) {
           const path = `rewards/${Date.now()}_${imageUrl.name}`;
-          imageUrl = await uploadFile(imageUrl as File, path);
+          imageUrl = await uploadFile(imageUrl, path);
         }
 
         const docRef = await addDoc(rewardsCollection, {
@@ -65,8 +66,16 @@ export function useRewards() {
   const updateRewardMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<InsertReward> }) => {
       const rewardRef = doc(rewardsCollection, id);
+
+      // Handle image update if present
+      let updatedData = { ...data };
+      if (data.image instanceof File) {
+        const path = `rewards/${Date.now()}_${data.image.name}`;
+        updatedData.image = await uploadFile(data.image, path);
+      }
+
       await updateDoc(rewardRef, {
-        ...data,
+        ...updatedData,
         updatedAt: serverTimestamp()
       });
       return { id };

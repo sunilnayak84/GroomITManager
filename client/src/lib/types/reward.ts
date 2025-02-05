@@ -8,7 +8,7 @@ export const rewardSchema = z.object({
   category: z.enum(["service", "product", "discount"]),
   discountValue: z.number().optional(),
   discountType: z.enum(["percentage", "fixed"]).optional(),
-  image: z.string().nullable(),
+  image: z.union([z.string(), z.instanceof(File), z.null()]),
   validUntil: z.string().nullable(),
   quantity: z.number().min(0).optional(),
   isActive: z.boolean(),
