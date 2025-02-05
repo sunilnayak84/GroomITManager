@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -96,7 +95,11 @@ export default function LoyaltyProgramPage() {
                       <FormItem>
                         <FormLabel>Silver Tier (points)</FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} />
+                          <Input 
+                            type="number" 
+                            {...field} 
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -109,7 +112,11 @@ export default function LoyaltyProgramPage() {
                       <FormItem>
                         <FormLabel>Gold Tier (points)</FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} />
+                          <Input 
+                            type="number" 
+                            {...field} 
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -122,7 +129,11 @@ export default function LoyaltyProgramPage() {
                       <FormItem>
                         <FormLabel>Platinum Tier (points)</FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} />
+                          <Input 
+                            type="number" 
+                            {...field} 
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
