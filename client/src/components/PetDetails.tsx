@@ -108,8 +108,8 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
             </TableHeader>
             <TableBody>
               {appointments.map((appointment: any) => (
-                <>
-                  <TableRow key={appointment.id} className="cursor-pointer hover:bg-muted/50" onClick={() => {
+                <React.Fragment key={appointment.id}>
+                  <TableRow className="cursor-pointer hover:bg-muted/50" onClick={() => {
                     const row = document.getElementById(`expand-${appointment.id}`);
                     if (row) {
                       row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
@@ -203,7 +203,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
                       </div>
                     </TableCell>
                   </TableRow>
-                </>
+                </React.Fragment>
               ))}
             </TableBody>
           </Table>
