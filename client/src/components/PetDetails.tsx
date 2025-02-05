@@ -118,17 +118,19 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
                     <TableCell>{format(appointment.date, 'PPp')}</TableCell>
                     <TableCell className="capitalize">{appointment.status}</TableCell>
                     <TableCell>
-                      {appointment.service?.map((service, index) => (
-                        <span key={service.service_id} className="group relative">
-                          {index > 0 ? ', ' : ''}
-                          <span className="cursor-help underline decoration-dotted">
-                            {service.name}
+                      {appointment.service && appointment.service.length > 0 ? 
+                        appointment.service.map((service: { service_id: string; name: string; description?: string }, index: number) => (
+                          <span key={service.service_id} className="group relative">
+                            {index > 0 ? ', ' : ''}
+                            <span className="cursor-help underline decoration-dotted">
+                              {service.name}
+                            </span>
+                            <span className="invisible group-hover:visible absolute left-0 top-full mt-1 w-48 rounded bg-black p-2 text-sm text-white z-50">
+                              {service.description || 'No description available'}
+                            </span>
                           </span>
-                          <span className="invisible group-hover:visible absolute left-0 top-full mt-1 w-48 rounded bg-black p-2 text-sm text-white z-50">
-                            {service.description || 'No description available'}
-                          </span>
-                        </span>
-                      )) || '-'}
+                        )) 
+                        : '-'}
                     </TableCell>
                     <TableCell>{appointment.notes || '-'}</TableCell>
                   </TableRow>
