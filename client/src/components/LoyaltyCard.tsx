@@ -5,6 +5,7 @@ import { Customer } from "@/lib/types";
 import { Badge } from "./ui/badge";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { Skeleton } from "./ui/skeleton";
 
 interface LoyaltyCardProps {
   customer: Customer;
@@ -37,10 +38,13 @@ export function LoyaltyCard({ customer }: LoyaltyCardProps) {
     },
     pointsPerSpend: 1
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchConfig = async () => {
       try {
+        setLoading(true);
         const configRef = doc(db, "settings", "loyalty");
         const configSnap = await getDoc(configRef);
         if (configSnap.exists()) {
@@ -49,13 +53,23 @@ export function LoyaltyCard({ customer }: LoyaltyCardProps) {
         }
       } catch (error) {
         console.error("Error fetching loyalty config:", error);
+        setError("Failed to load loyalty program configuration");
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchConfig();
   }, []);
 
-  const currentTier = customer.loyaltyTier;
+  const calculateTier = (points: number): "bronze" | "silver" | "gold" | "platinum" => {
+    if (points >= config.tierThresholds.platinum) return "platinum";
+    if (points >= config.tierThresholds.gold) return "gold";
+    if (points >= config.tierThresholds.silver) return "silver";
+    return "bronze";
+  };
+
+  const currentTier = calculateTier(customer.loyaltyPoints);
   const nextTier = currentTier === "platinum" ? null : 
     currentTier === "gold" ? "platinum" :
     currentTier === "silver" ? "gold" : "silver";
@@ -64,12 +78,42 @@ export function LoyaltyCard({ customer }: LoyaltyCardProps) {
     ((customer.loyaltyPoints - config.tierThresholds[currentTier]) / 
     (config.tierThresholds[nextTier] - config.tierThresholds[currentTier])) * 100 : 100;
 
+  if (loading) {
+    return (
+      <Card className="w-full">
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <Skeleton className="h-8 w-32" />
+            <Skeleton className="h-6 w-24" />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-2 w-full" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>Loyalty Status</CardTitle>
+          <CardDescription className="text-red-500">{error}</CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
+
   return (
     <Card className="w-full">
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle>Loyalty Status</CardTitle>
-          <Badge className={`${tierColors[currentTier]} text-white`}>
+          <Badge className={`${tierColors[currentTier]} text-white inline-flex`}>
             {currentTier.charAt(0).toUpperCase() + currentTier.slice(1)}
           </Badge>
         </div>

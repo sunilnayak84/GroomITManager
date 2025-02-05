@@ -60,18 +60,21 @@ export default function LoyaltyProgramPage() {
       },
       pointsPerSpend: 1,
     },
+    mode: "onChange"
   });
 
   useEffect(() => {
     const fetchLoyaltyConfig = async () => {
       try {
+        setIsLoading(true);
         const configRef = doc(db, "settings", "loyalty");
         const configSnap = await getDoc(configRef);
+
         if (configSnap.exists()) {
           const data = configSnap.data();
           form.reset({
             tierThresholds: {
-              bronze: 0,
+              bronze: 0, // Bronze is always 0
               silver: data.tierThresholds?.silver ?? 2000,
               gold: data.tierThresholds?.gold ?? 5000,
               platinum: data.tierThresholds?.platinum ?? 7500,
@@ -86,6 +89,8 @@ export default function LoyaltyProgramPage() {
           description: "Failed to fetch loyalty program settings",
           variant: "destructive",
         });
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -137,8 +142,9 @@ export default function LoyaltyProgramPage() {
                         <FormControl>
                           <Input
                             type="number"
-                            value={field.value}
+                            value={0}
                             disabled
+                            className="bg-gray-100"
                           />
                         </FormControl>
                         <FormDescription>
