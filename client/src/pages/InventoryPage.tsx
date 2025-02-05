@@ -249,7 +249,12 @@ export default function InventoryPage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleEdit(item)}
+                          onClick={() => {
+                            if (item.item_id) {
+                              handleEdit(item);
+                              setShowItemDialog(true);
+                            }
+                          }}
                           title="Edit"
                         >
                           <Edit className="h-4 w-4" />
@@ -580,7 +585,7 @@ export default function InventoryPage() {
           </Dialog>
 
           <ConsumablesUsageModal
-            isOpen={!!selectedItem}
+            isOpen={false}
             onClose={() => setSelectedItem(null)}
             itemId={selectedItem?.id ?? ''}
             itemName={selectedItem?.name ?? ''}
