@@ -81,6 +81,52 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
         </div>
 
         <div className="space-y-4">
+          <h3 className="font-semibold text-lg">Grooming Temperament</h3>
+          <div className="space-y-2">
+            <p>
+              <span className="text-muted-foreground">Category:</span>{' '}
+              {pet.temperamentCategory ? (
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                  {
+                    'easy_to_groom': 'bg-green-100 text-green-800',
+                    'mildly_challenging': 'bg-yellow-100 text-yellow-800',
+                    'anxiety_fear': 'bg-orange-100 text-orange-800',
+                    'difficult_to_handle': 'bg-red-100 text-red-800',
+                    'aggression': 'bg-red-200 text-red-900',
+                    'special_case': 'bg-purple-100 text-purple-800'
+                  }[pet.temperamentCategory]
+                }`}>
+                  {pet.temperamentCategory.split('_').map(word => 
+                    word.charAt(0).toUpperCase() + word.slice(1)
+                  ).join(' ')}
+                </span>
+              ) : 'Not specified'}
+            </p>
+            {pet.temperamentTags && pet.temperamentTags.length > 0 && (
+              <p>
+                <span className="text-muted-foreground">Behaviors:</span>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {pet.temperamentTags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </p>
+            )}
+            {pet.temperamentNotes && (
+              <p>
+                <span className="text-muted-foreground">Additional Notes:</span>
+                <div className="mt-1 text-sm">{pet.temperamentNotes}</div>
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-4">
           <h3 className="font-semibold text-lg">Additional Information</h3>
           <div className="space-y-2">
             <p><span className="text-muted-foreground">Date of Birth:</span> {formatDate(pet.dateOfBirth)}</p>
