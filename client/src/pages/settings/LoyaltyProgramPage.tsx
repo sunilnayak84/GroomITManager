@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -148,7 +147,7 @@ export default function LoyaltyProgramPage() {
                         <FormControl>
                           <Input
                             type="number"
-                            value={field.value}
+                            {...field}
                             onChange={(e) => field.onChange(Number(e.target.value))}
                           />
                         </FormControl>
@@ -165,7 +164,7 @@ export default function LoyaltyProgramPage() {
                         <FormControl>
                           <Input
                             type="number"
-                            value={field.value}
+                            {...field}
                             onChange={(e) => field.onChange(Number(e.target.value))}
                           />
                         </FormControl>
@@ -182,7 +181,7 @@ export default function LoyaltyProgramPage() {
                         <FormControl>
                           <Input
                             type="number"
-                            value={field.value}
+                            {...field}
                             onChange={(e) => field.onChange(Number(e.target.value))}
                           />
                         </FormControl>
