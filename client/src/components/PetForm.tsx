@@ -10,6 +10,10 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import React, { useState, useEffect, useCallback } from "react";
 import { Upload } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { X } from "lucide-react";
+
 
 const petSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -33,6 +37,9 @@ const petSchema = z.object({
   }).default("kg"),
   image: z.union([z.string(), z.instanceof(File), z.null()]).nullable(),
   notes: z.string().nullable(),
+  temperamentCategory: z.string().nullable(),
+  temperamentTags: z.array(z.string()).nullable(),
+  temperamentNotes: z.string().nullable(),
 });
 
 type FormData = z.infer<typeof petSchema>;
@@ -81,6 +88,9 @@ export function PetForm({
       weightUnit: defaultValues?.weightUnit ?? "kg",
       image: defaultValues?.image ?? null,
       notes: defaultValues?.notes ?? null,
+      temperamentCategory: defaultValues?.temperamentCategory ?? null,
+      temperamentTags: defaultValues?.temperamentTags ?? [],
+      temperamentNotes: defaultValues?.temperamentNotes ?? null,
     },
   });
 
@@ -133,7 +143,7 @@ export function PetForm({
 
   const onSubmit = useCallback(async (data: FormData) => {
     if (isSubmitting) return;
-    
+
     setIsSubmitting(true);
 
     try {
@@ -144,13 +154,13 @@ export function PetForm({
             (c.firebaseId && c.firebaseId === data.customerId) || 
             (c.id && c.id.toString() === data.customerId)
           );
-      
+
       if (!selectedCustomer?.id) {
         throw new Error("Selected customer not found or invalid customer ID");
       }
 
       const effectiveCustomerId = selectedCustomer.id.toString();
-      
+
       const ownerData = hideCustomerField
         ? (defaultValues?.owner ?? null)
         : {
@@ -158,7 +168,7 @@ export function PetForm({
             name: `${selectedCustomer.firstName || ''} ${selectedCustomer.lastName || ''}`.trim() || 'Unknown',
             email: selectedCustomer.email ?? null
           };
-      
+
       const petData: InsertPet = {
         name: data.name,
         type: data.type,
@@ -171,7 +181,10 @@ export function PetForm({
         weightUnit: data.weightUnit,
         notes: data.notes || null,
         image: data.image,
-        owner: ownerData
+        owner: ownerData,
+        temperamentCategory: data.temperamentCategory,
+        temperamentTags: data.temperamentTags || [],
+        temperamentNotes: data.temperamentNotes,
       };
 
       const result = await submitForm(petData);
@@ -179,12 +192,12 @@ export function PetForm({
       if (result) {
         setImagePreview(null);
         form.reset();
-        
+
         toast({
           title: "Success",
           description: isEditing ? "Pet updated successfully" : "Pet added successfully",
         });
-        
+
         onSuccess?.(petData);
       }
     } catch (error) {
@@ -338,7 +351,7 @@ export function PetForm({
               const selectedType = form.watch('type');
               const filteredBreeds = (breeds?.filter(breed => breed.type === selectedType) || [])
                 .sort((a, b) => a.name.localeCompare(b.name));
-              
+
               return (
                 <FormItem>
                   <FormLabel>Breed*</FormLabel>
@@ -379,7 +392,7 @@ export function PetForm({
             )}
           />
 
-          
+
 
           <FormField
             control={form.control}
@@ -456,6 +469,113 @@ export function PetForm({
                 <FormLabel>Additional Notes</FormLabel>
                 <FormControl>
                   <Input {...field} value={field.value ?? ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="temperamentCategory"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Temperament Category</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value || ''}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select temperament category" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="easy_to_groom">Easy to Groom</SelectItem>
+                    <SelectItem value="mildly_challenging">Mildly Challenging</SelectItem>
+                    <SelectItem value="anxiety_fear">Anxiety / Fear-Based</SelectItem>
+                    <SelectItem value="difficult_to_handle">Difficult to Handle</SelectItem>
+                    <SelectItem value="aggression">Aggression & Special Handling</SelectItem>
+                    <SelectItem value="special_case">Special Case</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="temperamentTags"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Behaviors</FormLabel>
+                <Select
+                  onValueChange={(value) => {
+                    const currentTags = field.value || [];
+                    if (!currentTags.includes(value)) {
+                      field.onChange([...currentTags, value]);
+                    }
+                  }}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Add behavior tags" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="calm_cooperative">Calm & Cooperative</SelectItem>
+                    <SelectItem value="tolerates_grooming">Tolerates Grooming Well</SelectItem>
+                    <SelectItem value="loves_grooming">Loves Grooming</SelectItem>
+                    <SelectItem value="sensitive_touch">Sensitive to Touch</SelectItem>
+                    <SelectItem value="wiggles_moves">Wiggles & Moves a Lot</SelectItem>
+                    <SelectItem value="nervous_manageable">Nervous but Manageable</SelectItem>
+                    <SelectItem value="anxious">Anxious During Grooming</SelectItem>
+                    <SelectItem value="fearful_tools">Fearful of Tools</SelectItem>
+                    <SelectItem value="startles_easily">Startles Easily</SelectItem>
+                    <SelectItem value="separation_anxiety">Separation Anxiety</SelectItem>
+                    <SelectItem value="resists_grooming">Resists Grooming</SelectItem>
+                    <SelectItem value="requires_restraint">Requires Extra Restraint</SelectItem>
+                    <SelectItem value="avoids_water">Avoids Water/Bathing</SelectItem>
+                    <SelectItem value="growls_hisses">Growls or Hisses</SelectItem>
+                    <SelectItem value="may_bite">May Bite or Scratch</SelectItem>
+                    <SelectItem value="requires_muzzle">Requires Muzzle</SelectItem>
+                    <SelectItem value="severe_aggression">Severe Aggression</SelectItem>
+                    <SelectItem value="senior_pet">Senior Pet</SelectItem>
+                    <SelectItem value="puppy_kitten">Puppy/Kitten in Training</SelectItem>
+                    <SelectItem value="medical_condition">Medical Condition</SelectItem>
+                    <SelectItem value="matted_sensitive">Matting/Skin Sensitivity</SelectItem>
+                  </SelectContent>
+                </Select>
+                {field.value && field.value.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {field.value.map((tag, index) => (
+                      <Badge
+                        key={index}
+                        variant="secondary"
+                        className="cursor-pointer"
+                        onClick={() => {
+                          const newTags = field.value?.filter((t) => t !== tag) || [];
+                          field.onChange(newTags);
+                        }}
+                      >
+                        {tag.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                        <X className="w-3 h-3 ml-1" />
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="temperamentNotes"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Temperament Notes</FormLabel>
+                <FormControl>
+                  <Textarea 
+                    {...field} 
+                    placeholder="Add any specific notes about the pet's temperament"
+                    value={field.value || ''}
+                  />
                 </FormControl>
               </FormItem>
             )}
