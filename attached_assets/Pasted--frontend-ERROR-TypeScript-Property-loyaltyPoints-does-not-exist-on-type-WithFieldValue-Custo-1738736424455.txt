@@ -1,0 +1,70 @@
+[frontend]  ERROR(TypeScript)  Property 'loyaltyPoints' does not exist on type 'WithFieldValue<Customer>'.
+[frontend]   Property 'loyaltyPoints' does not exist on type 'Customer'.
+[frontend]  FILE  /home/runner/workspace/client/src/hooks/use-customers.ts:323:48
+[frontend] 
+[frontend]     321 |             gender: (customerData.gender as "male" | "female" | "other" | null) || null,
+[frontend]     322 |             petCount: Number(customerData.petCount || 0),
+[frontend]   > 323 |             loyaltyPoints: Number(customerData.loyaltyPoints || 0),
+[frontend]         |                                                ^^^^^^^^^^^^^
+[frontend]     324 |             loyaltyTier: (customerData.loyaltyTier as "bronze" | "silver" | "gold" | "platinum") || "bronze",
+[frontend]     325 |             pointsHistory: customerData.pointsHistory || [],
+[frontend]     326 |             createdAt: processTimestamp(customerData.createdAt as FirestoreTimestamp) || new Date().toISOString(),
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'loyaltyTier' does not exist on type 'WithFieldValue<Customer>'.
+[frontend]   Property 'loyaltyTier' does not exist on type 'Customer'.
+[frontend]  FILE  /home/runner/workspace/client/src/hooks/use-customers.ts:324:40
+[frontend] 
+[frontend]     322 |             petCount: Number(customerData.petCount || 0),
+[frontend]     323 |             loyaltyPoints: Number(customerData.loyaltyPoints || 0),
+[frontend]   > 324 |             loyaltyTier: (customerData.loyaltyTier as "bronze" | "silver" | "gold" | "platinum") || "bronze",
+[frontend]         |                                        ^^^^^^^^^^^
+[frontend]     325 |             pointsHistory: customerData.pointsHistory || [],
+[frontend]     326 |             createdAt: processTimestamp(customerData.createdAt as FirestoreTimestamp) || new Date().toISOString(),
+[frontend]     327 |             updatedAt: processTimestamp(customerData.updatedAt as FirestoreTimestamp)
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'pointsHistory' does not exist on type 'WithFieldValue<Customer>'.
+[frontend]   Property 'pointsHistory' does not exist on type 'Customer'.
+[frontend]  FILE  /home/runner/workspace/client/src/hooks/use-customers.ts:325:41
+[frontend] 
+[frontend]     323 |             loyaltyPoints: Number(customerData.loyaltyPoints || 0),
+[frontend]     324 |             loyaltyTier: (customerData.loyaltyTier as "bronze" | "silver" | "gold" | "platinum") || "bronze",
+[frontend]   > 325 |             pointsHistory: customerData.pointsHistory || [],
+[frontend]         |                                         ^^^^^^^^^^^^^
+[frontend]     326 |             createdAt: processTimestamp(customerData.createdAt as FirestoreTimestamp) || new Date().toISOString(),
+[frontend]     327 |             updatedAt: processTimestamp(customerData.updatedAt as FirestoreTimestamp)
+[frontend]     328 |           };
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'loyaltyPoints' does not exist on type 'Customer'.
+[frontend]  FILE  /home/runner/workspace/client/src/pages/CustomersPage.tsx:216:46
+[frontend] 
+[frontend]     214 |       cell: (row: Customer) => (
+[frontend]     215 |         <div className="flex items-center gap-2">
+[frontend]   > 216 |           <span className="font-medium">{row.loyaltyPoints || 0} pts</span>
+[frontend]         |                                              ^^^^^^^^^^^^^
+[frontend]     217 |           <Badge className={`bg-${row.loyaltyTier || 'bronze'}`}>
+[frontend]     218 |             {(row.loyaltyTier || 'bronze').toUpperCase()}
+[frontend]     219 |           </Badge>
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'loyaltyTier' does not exist on type 'Customer'.
+[frontend]  FILE  /home/runner/workspace/client/src/pages/CustomersPage.tsx:217:39
+[frontend] 
+[frontend]     215 |         <div className="flex items-center gap-2">
+[frontend]     216 |           <span className="font-medium">{row.loyaltyPoints || 0} pts</span>
+[frontend]   > 217 |           <Badge className={`bg-${row.loyaltyTier || 'bronze'}`}>
+[frontend]         |                                       ^^^^^^^^^^^
+[frontend]     218 |             {(row.loyaltyTier || 'bronze').toUpperCase()}
+[frontend]     219 |           </Badge>
+[frontend]     220 |         </div>
+[frontend] 
+[frontend]  ERROR(TypeScript)  Property 'loyaltyTier' does not exist on type 'Customer'.
+[frontend]  FILE  /home/runner/workspace/client/src/pages/CustomersPage.tsx:218:19
+[frontend] 
+[frontend]     216 |           <span className="font-medium">{row.loyaltyPoints || 0} pts</span>
+[frontend]     217 |           <Badge className={`bg-${row.loyaltyTier || 'bronze'}`}>
+[frontend]   > 218 |             {(row.loyaltyTier || 'bronze').toUpperCase()}
+[frontend]         |                   ^^^^^^^^^^^
+[frontend]     219 |           </Badge>
+[frontend]     220 |         </div>
+[frontend]     221 |       ),
+[frontend] 
+[frontend] [TypeScript] Found 6 errors. Watching for file changes.
