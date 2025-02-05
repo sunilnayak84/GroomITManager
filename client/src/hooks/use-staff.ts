@@ -36,7 +36,7 @@ export function useStaff() {
     mutationFn: async (data: InsertUser) => {
       console.log('Adding staff member with data:', data);
 
-      // Add walking preferences if role is pet_walker
+      // Ensure walkingPreferences is properly structured for pet walkers
       const staffData = {
         ...data,
         createdAt: new Date().toISOString(),
@@ -45,9 +45,10 @@ export function useStaff() {
           preferredAreas: data.walkingPreferences?.preferredAreas || [],
           availableTimeSlots: data.walkingPreferences?.availableTimeSlots || [],
           simultaneousWalks: data.walkingPreferences?.simultaneousWalks || 1
-        } : undefined
+        } : null
       };
 
+      console.log('Final staff data being saved:', staffData);
       const docRef = await addDoc(collection(db, STAFF_COLLECTION), staffData);
       return docRef.id;
     },
@@ -69,7 +70,7 @@ export function useStaff() {
           preferredAreas: data.walkingPreferences?.preferredAreas || [],
           availableTimeSlots: data.walkingPreferences?.availableTimeSlots || [],
           simultaneousWalks: data.walkingPreferences?.simultaneousWalks || 1
-        } : undefined
+        } : null
       };
 
       await updateDoc(docRef, updateData);

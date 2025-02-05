@@ -47,40 +47,8 @@ export function useCustomers() {
     }
   };
 
-  const processCustomerData = async (doc: any) => {
-    const customerData = doc.data();
-    const processTimestamp = (timestamp: FirestoreTimestamp | string | null | undefined): string | null => {
-      if (!timestamp) return null;
-      if (typeof timestamp === 'string') return timestamp;
-      if (timestamp instanceof Timestamp) {
-        return timestamp.toDate().toISOString();
-      }
-      return null;
-    };
-
-    const pointsHistory = customerData.pointsHistory || [];
-    const totalPoints = calculateTotalPoints(pointsHistory);
-    const currentTier = await calculateTier(totalPoints);
-
-    return {
-      id: doc.id,
-      firebaseId: doc.id,
-      firstName: customerData.firstName as string,
-      lastName: customerData.lastName as string,
-      email: customerData.email as string,
-      phone: customerData.phone as string,
-      address: customerData.address as string | null,
-      gender: (customerData.gender as "male" | "female" | "other" | null) || null,
-      petCount: Number(customerData.petCount || 0),
-      pointsHistory,
-      loyaltyTier: currentTier,
-      createdAt: processTimestamp(customerData.createdAt as FirestoreTimestamp) || new Date().toISOString(),
-      updatedAt: processTimestamp(customerData.updatedAt as FirestoreTimestamp)
-    } as CustomerType;
-  };
-
   const addCustomerMutation = useMutation({
-    mutationFn: async (customer: InsertCustomer) => {
+    mutationFn: async (customer: Omit<CustomerType, "id" | "createdAt" | "updatedAt" | "firebaseId" | "petCount" | "pointsHistory" | "loyaltyTier">) => {
       // Detailed validation and logging
       const validationErrors: string[] = [];
 
@@ -129,10 +97,17 @@ export function useCustomers() {
         // Create timestamp for consistent date handling
         const timestamp = new Date().toISOString();
 
-        const id = await createCustomer({
-          ...customer
-          // petCount will be initialized in createCustomer function
-        });
+        // Initialize customer with required loyalty fields
+        const customerData = {
+          ...customer,
+          pointsHistory: [],
+          loyaltyTier: "bronze",
+          petCount: 0,
+          createdAt: timestamp,
+          updatedAt: null
+        };
+
+        const id = await createCustomer(customerData);
 
         // Log successful creation
         console.log('ADD_CUSTOMER: Customer created successfully', { id });
@@ -140,12 +115,7 @@ export function useCustomers() {
         return {
           id,
           firebaseId: id,
-          ...customer,
-          petCount: 0,
-          createdAt: timestamp,
-          updatedAt: null,
-          pointsHistory: [],
-          loyaltyTier: "bronze"
+          ...customerData
         };
       } catch (error) {
         // Log the full error details
@@ -355,6 +325,38 @@ export function useCustomers() {
       }
     },
   });
+
+  const processCustomerData = async (doc: any) => {
+    const customerData = doc.data();
+    const processTimestamp = (timestamp: FirestoreTimestamp | string | null | undefined): string | null => {
+      if (!timestamp) return null;
+      if (typeof timestamp === 'string') return timestamp;
+      if (timestamp instanceof Timestamp) {
+        return timestamp.toDate().toISOString();
+      }
+      return null;
+    };
+
+    const pointsHistory = customerData.pointsHistory || [];
+    const totalPoints = calculateTotalPoints(pointsHistory);
+    const currentTier = await calculateTier(totalPoints);
+
+    return {
+      id: doc.id,
+      firebaseId: doc.id,
+      firstName: customerData.firstName as string,
+      lastName: customerData.lastName as string,
+      email: customerData.email as string,
+      phone: customerData.phone as string,
+      address: customerData.address as string | null,
+      gender: (customerData.gender as "male" | "female" | "other" | null) || null,
+      petCount: Number(customerData.petCount || 0),
+      pointsHistory,
+      loyaltyTier: currentTier,
+      createdAt: processTimestamp(customerData.createdAt as FirestoreTimestamp) || new Date().toISOString(),
+      updatedAt: processTimestamp(customerData.updatedAt as FirestoreTimestamp)
+    } as CustomerType;
+  };
 
   return {
     customers: customersQuery.data || [],

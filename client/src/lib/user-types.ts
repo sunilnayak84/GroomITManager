@@ -24,7 +24,7 @@ export const insertUserSchema = z.object({
   availability: z.string().optional(),
   maxDailyAppointments: z.number().min(1).optional(),
   isActive: z.boolean().default(true),
-  walkingPreferences: walkingPreferencesSchema.optional()
+  walkingPreferences: walkingPreferencesSchema.nullable().default(null)
 });
 
 export type User = {
@@ -49,7 +49,7 @@ export type User = {
     preferredAreas: string[];
     availableTimeSlots: string[];
     simultaneousWalks: number;
-  };
+  } | null;
 };
 
 export type InsertUser = z.infer<typeof insertUserSchema>;

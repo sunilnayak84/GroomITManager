@@ -80,7 +80,7 @@ export default function StaffPage() {
   const onSubmit = async (data: InsertUser) => {
     try {
       // Always ensure isGroomer is set based on role and include all required fields
-      const role = data.role === 'groomer' ? 'groomer' as const : 'staff' as const;
+      const role = data.role === 'groomer' ? 'groomer' as const : data.role;
       const staffData = {
         ...data,
         isActive: true,
@@ -88,7 +88,13 @@ export default function StaffPage() {
         petTypePreferences: data.petTypePreferences || [],
         experienceYears: data.experienceYears || 0,
         maxDailyAppointments: data.maxDailyAppointments || 8,
-        role
+        role,
+        walkingPreferences: data.role === 'pet_walker' ? {
+          maxDistance: data.walkingPreferences?.maxDistance || 5,
+          preferredAreas: data.walkingPreferences?.preferredAreas || [],
+          availableTimeSlots: data.walkingPreferences?.availableTimeSlots || [],
+          simultaneousWalks: data.walkingPreferences?.simultaneousWalks || 1
+        } : null
       };
 
       console.log('Submitting staff data:', staffData);
