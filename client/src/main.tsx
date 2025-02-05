@@ -17,6 +17,9 @@ import { useUser } from "./hooks/use-user";
 import Layout from "./components/Layout";
 import { ErrorBoundary } from "react-error-boundary";
 import { Button } from "@/components/ui/button";
+import RoleManagementPage from "./pages/RoleManagementPage";
+import WorkingHoursPage from "./pages/WorkingHoursPage";
+import LoyaltyProgramPage from "./pages/settings/LoyaltyProgramPage";
 
 // Loading component for suspense fallback
 function LoadingSpinner() {
@@ -103,6 +106,7 @@ function Router() {
             <Route path="/settings/categories" component={lazy(() => import('./pages/settings/CategoriesPage'))} />
             <Route path="/settings/breeds" component={lazy(() => import('./pages/settings/BreedsPage'))} />
             <Route path="/settings/roles" component={lazy(() => import('./pages/RoleManagementPage'))} />
+            <Route path="/settings/loyalty" element={<LoyaltyProgramPage />} />
             <Route>404 Page Not Found</Route>
           </Switch>
         </Suspense>
