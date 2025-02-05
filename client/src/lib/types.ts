@@ -136,6 +136,14 @@ export interface Customer {
     source: string;
     timestamp: string;
   }>;
+  loyaltyPoints: number;
+  loyaltyTier: "bronze" | "silver" | "gold" | "platinum";
+  pointsHistory: Array<{
+    points: number;
+    type: "earned" | "redeemed";
+    source: string;
+    timestamp: string;
+  }>;
 }
 
 export type WithFieldValue<T> = T;
