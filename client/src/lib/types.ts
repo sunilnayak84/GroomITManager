@@ -197,6 +197,9 @@ export interface PetInput {
     name: string;
     email: string | null;
   } | null;
+  temperamentCategory?: "easy_to_groom" | "mildly_challenging" | "anxiety_fear" | "difficult_to_handle" | "aggression" | "special_case" | null;
+  temperamentTags?: string[];
+  temperamentNotes?: string | null;
 }
 
 export const petSchema = z.object({
@@ -235,6 +238,9 @@ export type InsertPet = Omit<PetInput, "id" | "submissionId"> & {
   submissionId?: string;
   firebaseId?: string | null;
   deletedAt?: string | null;
+  temperamentCategory?: "easy_to_groom" | "mildly_challenging" | "anxiety_fear" | "difficult_to_handle" | "aggression" | "special_case" | null;
+  temperamentTags?: string[];
+  temperamentNotes?: string | null;
 };
 
 export type FirestorePet = {
