@@ -9,6 +9,7 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { calculateAge } from "@/lib/utils";
 import { useInventory } from "@/hooks/use-inventory";
+import { useServices } from "@/hooks/use-services";
 
 interface PetDetailsProps {
   pet: Pet;
@@ -37,14 +38,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
     }
   });
 
-  // Placeholder for fetching services data.  Replace with actual implementation.
-  const services = useQuery({
-    queryKey: ['services'],
-    queryFn: () => {
-      // Fetch services data here.  This is a placeholder and needs to be replaced.
-      return Promise.resolve([]); // Replace with actual service data fetch.
-    }
-  }).data || [];
+  const { services } = useServices();
 
 
   return (
