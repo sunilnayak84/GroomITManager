@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -20,7 +21,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { doc, setDoc, getDoc, Timestamp } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 
@@ -52,6 +53,36 @@ export default function LoyaltyProgramPage() {
       pointsPerSpend: 1,
     },
   });
+
+  useEffect(() => {
+    const fetchLoyaltyConfig = async () => {
+      try {
+        const configRef = doc(db, "settings", "loyalty");
+        const configSnap = await getDoc(configRef);
+        if (configSnap.exists()) {
+          const data = configSnap.data();
+          form.reset({
+            tierThresholds: {
+              bronze: data.tierThresholds?.bronze ?? 0,
+              silver: data.tierThresholds?.silver ?? 2000,
+              gold: data.tierThresholds?.gold ?? 5000,
+              platinum: data.tierThresholds?.platinum ?? 7500,
+            },
+            pointsPerSpend: data.pointsPerSpend ?? 1,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching loyalty config:", error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch loyalty program settings",
+          variant: "destructive",
+        });
+      }
+    };
+
+    fetchLoyaltyConfig();
+  }, [form, toast]);
 
   const onSubmit = async (data: LoyaltyConfig) => {
     try {
@@ -114,7 +145,7 @@ export default function LoyaltyProgramPage() {
                         <FormControl>
                           <Input 
                             type="number" 
-                            {...field} 
+                            {...field}
                             onChange={(e) => field.onChange(Number(e.target.value))}
                           />
                         </FormControl>
@@ -131,7 +162,7 @@ export default function LoyaltyProgramPage() {
                         <FormControl>
                           <Input 
                             type="number" 
-                            {...field} 
+                            {...field}
                             onChange={(e) => field.onChange(Number(e.target.value))}
                           />
                         </FormControl>
@@ -149,7 +180,12 @@ export default function LoyaltyProgramPage() {
                   <FormItem>
                     <FormLabel>Points per ₹1 spent</FormLabel>
                     <FormControl>
-                      <Input type="number" step="0.01" {...field} />
+                      <Input 
+                        type="number" 
+                        step="0.01" 
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
                     </FormControl>
                     <FormDescription>
                       How many points customers earn per rupee spent
