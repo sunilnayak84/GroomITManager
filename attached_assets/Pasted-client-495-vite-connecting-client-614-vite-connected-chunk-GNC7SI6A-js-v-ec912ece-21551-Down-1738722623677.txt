@@ -1,0 +1,52 @@
+client:495 [vite] connecting...
+client:614 [vite] connected.
+chunk-GNC7SI6A.js?v=ec912ece:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:17 Checking Firebase environment variables...
+firebase.ts:37 FIREBASE_INIT: Initializing Firebase with config: {apiKey: '***', authDomain: 'replit-5ac6a.firebaseapp.com', projectId: 'replit-5ac6a', storageBucket: 'replit-5ac6a.firebasestorage.app', messagingSenderId: '194114432530', …}
+firebase.ts:42 FIREBASE_INIT: Firebase initialized successfully
+content.js:1 CISPL SignerDigital Loaded
+use-pets.ts:58 FETCH_PETS: Starting to fetch pets
+use-customers.ts:300 FETCH_CUSTOMERS: Starting customer fetch
+use-customers.ts:326 FETCH_CUSTOMERS: Processed customer: {id: 'CA6Bd09SzND7J1UEfLRo', firebaseId: 'CA6Bd09SzND7J1UEfLRo', name: 'Sam Smith'}firebaseId: "CA6Bd09SzND7J1UEfLRo"id: "CA6Bd09SzND7J1UEfLRo"name: "Sam Smith"[[Prototype]]: Object
+use-customers.ts:326 FETCH_CUSTOMERS: Processed customer: {id: 'r9TVApy9xQ2Sz45PkZwb', firebaseId: 'r9TVApy9xQ2Sz45PkZwb', name: 'Sunil Nayak'}
+use-customers.ts:334 USE CUSTOMERS: Fetched customers {customerCount: 2, customerIds: Array(2), customerNames: Array(2)}customerCount: 2customerIds: (2) ['CA6Bd09SzND7J1UEfLRo', 'r9TVApy9xQ2Sz45PkZwb']customerNames: (2) ['Sam Smith', 'Sunil Nayak'][[Prototype]]: Object
+use-pets.ts:108 FETCH_PETS: Completed fetching pets {totalPets: 2, pets: Array(2)}pets: (2) [{…}, {…}]totalPets: 2[[Prototype]]: Object
+use-inventory.ts:101 FETCH_INVENTORY: Starting to fetch inventory items
+chunk-ADWFGMML.js?v=ec912ece:336 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-ADWFGMML.js?v=ec912ece:336
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=ec912ece:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=ec912ece:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=ec912ece:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=ec912ece:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=ec912ece:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=ec912ece:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=ec912ece:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=ec912ece:19416
+commitRoot @ chunk-GNC7SI6A.js?v=ec912ece:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=ec912ece:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=ec912ece:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=ec912ece:18627Understand this warningAI
+chunk-ADWFGMML.js?v=ec912ece:336 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-ADWFGMML.js?v=ec912ece:336
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=ec912ece:16915
+invokePassiveEffectMountInDEV @ chunk-GNC7SI6A.js?v=ec912ece:18324
+invokeEffectsInDev @ chunk-GNC7SI6A.js?v=ec912ece:19701
+commitDoubleInvokeEffectsInDEV @ chunk-GNC7SI6A.js?v=ec912ece:19686
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=ec912ece:19503
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=ec912ece:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=ec912ece:19416
+commitRoot @ chunk-GNC7SI6A.js?v=ec912ece:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=ec912ece:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=ec912ece:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=ec912ece:18627Understand this warningAI
+use-inventory.ts:112 FETCH_INVENTORY: Processing item data: {id: 'IctkQ7zzpjxCQOHJAAOo', data: {…}}data: {last_used: _Timestamp, quantity_per_use: 1, category: 'Shampoo', name: 'Hydra - Volumizing', location: null, …}id: "IctkQ7zzpjxCQOHJAAOo"[[Prototype]]: Object
+use-inventory.ts:148 FETCH_INVENTORY: Successfully parsed item: {id: 'IctkQ7zzpjxCQOHJAAOo', item: {…}}id: "IctkQ7zzpjxCQOHJAAOo"item: {item_id: 'IctkQ7zzpjxCQOHJAAOo', name: 'Hydra - Volumizing', description: null, quantity: 3700, minimum_quantity: 5, …}[[Prototype]]: Object
+use-inventory.ts:112 FETCH_INVENTORY: Processing item data: {id: 'MQi1SkpPh24rshGBvNmn', data: {…}}
+use-inventory.ts:148 FETCH_INVENTORY: Successfully parsed item: {id: 'MQi1SkpPh24rshGBvNmn', item: {…}}
+use-inventory.ts:112 FETCH_INVENTORY: Processing item data: {id: 'onJwWC0j8rH1rMA1fP1d', data: {…}}
+use-inventory.ts:148 FETCH_INVENTORY: Successfully parsed item: {id: 'onJwWC0j8rH1rMA1fP1d', item: {…}}
+use-inventory.ts:112 FETCH_INVENTORY: Processing item data: {id: 'uVNWcTeIO76b6V8eC7CU', data: {…}}
+use-inventory.ts:148 FETCH_INVENTORY: Successfully parsed item: {id: 'uVNWcTeIO76b6V8eC7CU', item: {…}}
+use-inventory.ts:112 FETCH_INVENTORY: Processing item data: {id: 'wxRzDdBN1HaHGbZHZvOV', data: {…}}
+use-inventory.ts:148 FETCH_INVENTORY: Successfully parsed item: {id: 'wxRzDdBN1HaHGbZHZvOV', item: {…}}
+use-inventory.ts:156 FETCH_INVENTORY: Successfully fetched inventory {count: 5}
