@@ -138,6 +138,17 @@ export interface Customer {
   }>;
 }
 
+export interface WithFieldValue<T> extends Customer {
+  loyaltyPoints: number;
+  loyaltyTier: "bronze" | "silver" | "gold" | "platinum";
+  pointsHistory: Array<{
+    points: number;
+    type: "earned" | "redeemed";
+    source: string;
+    timestamp: string;
+  }>;
+}
+
 export type InsertCustomer = Omit<Customer, "id" | "firebaseId" | "petCount" | "createdAt" | "updatedAt" | "loyaltyPoints" | "loyaltyTier" | "pointsHistory">;
 
 // Helper type for Firestore data with proper timestamp handling
