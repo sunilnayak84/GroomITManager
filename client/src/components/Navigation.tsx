@@ -1,4 +1,4 @@
-import { Home, Calendar, Users, PawPrint, LogOut, Package, Shield, Settings } from "lucide-react";
+import { Home, Calendar, Users, PawPrint, LogOut, Package, Shield, Settings, Gift } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useUser } from "../hooks/use-user";
 import { Button } from "./ui/button";
@@ -26,6 +26,7 @@ export default function Navigation() {
     { href: "/staff", icon: Users, label: "Staff" },
     { href: "/pets", icon: PawPrint, label: "Pets" },
     { href: "/inventory", icon: Package, label: "Inventory" },
+    { href: "/marketplace", icon: Gift, label: "Rewards" },
   ];
 
   const settingsLinks = [
