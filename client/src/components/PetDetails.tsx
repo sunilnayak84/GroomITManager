@@ -1,4 +1,3 @@
-
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -119,10 +118,15 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
                     <TableCell>{format(appointment.date, 'PPp')}</TableCell>
                     <TableCell className="capitalize">{appointment.status}</TableCell>
                     <TableCell>
-                      {appointment.services?.map((serviceId: string, index: number) => (
-                        <span key={serviceId}>
+                      {appointment.service?.map((service, index) => (
+                        <span key={service.service_id} className="group relative">
                           {index > 0 ? ', ' : ''}
-                          {appointment.service?.find((s: { service_id: string; name: string }) => s.service_id === serviceId)?.name || serviceId}
+                          <span className="cursor-help underline decoration-dotted">
+                            {service.name}
+                          </span>
+                          <span className="invisible group-hover:visible absolute left-0 top-full mt-1 w-48 rounded bg-black p-2 text-sm text-white z-50">
+                            {service.description || 'No description available'}
+                          </span>
                         </span>
                       )) || '-'}
                     </TableCell>
@@ -137,7 +141,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
                             <p className="text-sm text-muted-foreground">{appointment.observations}</p>
                           </div>
                         )}
-                        
+
                         {appointment.recommendations && (
                           <div>
                             <h4 className="font-medium mb-1">Recommendations</h4>
