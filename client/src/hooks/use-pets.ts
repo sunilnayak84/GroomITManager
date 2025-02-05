@@ -45,7 +45,10 @@ export function parseFirestorePet(id: string, data: any): Pet {
     createdAt: timestampToString(data.createdAt) ?? new Date().toISOString(),
     updatedAt: timestampToString(data.updatedAt),
     owner: data.owner || null,
-    deletedAt: timestampToString(data.deletedAt)
+    deletedAt: timestampToString(data.deletedAt),
+    temperamentCategory: data.temperamentCategory || null,
+    temperamentTags: data.temperamentTags || [],
+    temperamentNotes: data.temperamentNotes || null
   };
 }
 
