@@ -32,7 +32,7 @@ const loyaltyConfigSchema = z.object({
     gold: z.number().min(1, "Gold threshold must be greater than 0"),
     platinum: z.number().min(1, "Platinum threshold must be greater than 0"),
   }),
-  pointsPerSpend: z.number().min(0.1, "Points per spend must be greater than 0"),
+  pointsPerSpend: z.number().min(0.01, "Points per spend must be greater than 0"),
 });
 
 type LoyaltyConfig = z.infer<typeof loyaltyConfigSchema>;
@@ -136,12 +136,12 @@ export default function LoyaltyProgramPage() {
                 name="pointsPerSpend"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Points per $1 spent</FormLabel>
+                    <FormLabel>Points per ₹1 spent</FormLabel>
                     <FormControl>
-                      <Input type="number" step="0.1" {...field} />
+                      <Input type="number" step="0.01" {...field} />
                     </FormControl>
                     <FormDescription>
-                      How many points customers earn per dollar spent
+                      How many points customers earn per rupee spent
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
