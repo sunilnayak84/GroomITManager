@@ -223,7 +223,7 @@ export function useAppointments() {
 
             if (rawData.services && Array.isArray(rawData.services)) {
               console.log('FETCH_APPOINTMENTS: Processing services for appointment:', appointmentDoc.id, 'Services:', rawData.services);
-              
+
               for (const serviceId of rawData.services) {
                 if (!serviceId) {
                   console.error('FETCH_APPOINTMENTS: Invalid service ID in array');
@@ -254,7 +254,7 @@ export function useAppointments() {
                     selectedServices: rawServiceData.selectedServices || [],
                     selectedAddons: rawServiceData.selectedAddons || []
                   };
-                  
+
                   serviceData.push(processedService);
                   console.log('FETCH_APPOINTMENTS: Processed service:', processedService);
                 } else {
@@ -541,6 +541,62 @@ export function useAppointments() {
         }
 
         // Use updateDoc instead of setDoc to only update specified fields
+        // If appointment is being marked as completed, handle loyalty points
+        if (status === 'completed') {
+          try {
+            // Get the appointment to access total price
+            const appointmentRef = doc(db, 'appointments', id);
+            const appointmentSnap = await getDoc(appointmentRef);
+            const appointmentData = appointmentSnap.data();
+
+            if (appointmentData) {
+              // Get loyalty program settings
+              const loyaltyConfigRef = doc(db, 'settings', 'loyalty');
+              const loyaltyConfigSnap = await getDoc(loyaltyConfigRef);
+              const loyaltyConfig = loyaltyConfigSnap.data();
+
+              if (loyaltyConfig && appointmentData.totalPrice) {
+                // Calculate earned points
+                const earnedPoints = Math.floor(appointmentData.totalPrice * (loyaltyConfig.pointsPerSpend || 1));
+
+                // Get pet's customer
+                const petRef = doc(db, 'pets', appointmentData.petId);
+                const petSnap = await getDoc(petRef);
+                const petData = petSnap.data();
+
+                if (petData?.customerId) {
+                  // Update customer's loyalty points
+                  const customerRef = doc(db, 'customers', petData.customerId);
+                  const customerSnap = await getDoc(customerRef);
+                  const customerData = customerSnap.data();
+
+                  if (customerData) {
+                    const newTotalPoints = (customerData.loyaltyPoints || 0) + earnedPoints;
+
+                    // Determine new tier based on points
+                    let newTier = 'bronze';
+                    if (newTotalPoints >= loyaltyConfig.tierThresholds.platinum) {
+                      newTier = 'platinum';
+                    } else if (newTotalPoints >= loyaltyConfig.tierThresholds.gold) {
+                      newTier = 'gold';
+                    } else if (newTotalPoints >= loyaltyConfig.tierThresholds.silver) {
+                      newTier = 'silver';
+                    }
+
+                    // Update customer document
+                    await updateDoc(customerRef, {
+                      loyaltyPoints: newTotalPoints,
+                      loyaltyTier: newTier,
+                      updatedAt: Timestamp.fromDate(new Date())
+                    });
+                  }
+                }
+              }
+            }
+          } catch (error) {
+            console.error('Error updating loyalty points:', error);
+          }
+        }
         await updateDoc(appointmentRef, updateData);
         console.log('Appointment updated successfully:', updateData);
         return true;
