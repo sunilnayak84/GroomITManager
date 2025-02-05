@@ -45,9 +45,9 @@ export default function LoyaltyProgramPage() {
     defaultValues: {
       tierThresholds: {
         bronze: 0,
-        silver: 100,
-        gold: 500,
-        platinum: 1000,
+        silver: 2000,
+        gold: 5000,
+        platinum: 7500,
       },
       pointsPerSpend: 1,
     },
