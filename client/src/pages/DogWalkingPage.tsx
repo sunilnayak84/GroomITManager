@@ -3,7 +3,7 @@ import { useWalks } from "@/hooks/use-walks";
 import { useStaff } from "@/hooks/use-staff";
 import { useCustomers } from "@/hooks/use-customers";
 import { usePets } from "@/hooks/use-pets";
-import type { WalkSession } from "@/lib/walking-types";
+import type { WalkSession, InsertWalkSession } from "@/lib/walking-types";
 import {
   Table,
   TableBody,
@@ -40,10 +40,12 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertWalkSessionSchema } from "@/lib/walking-types";
+import { Loader2 } from "lucide-react";
 
 export default function DogWalkingPage() {
   const { toast } = useToast();
   const [showScheduleDialog, setShowScheduleDialog] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { useWalkSessions, addWalkSession } = useWalks();
   const { staffMembers } = useStaff();
   const { pets } = usePets();
@@ -55,7 +57,7 @@ export default function DogWalkingPage() {
   // Filter staff members to get only walkers
   const walkers = staffMembers?.filter(staff => staff.role === 'pet_walker') ?? [];
 
-  const form = useForm({
+  const form = useForm<InsertWalkSession>({
     resolver: zodResolver(insertWalkSessionSchema),
     defaultValues: {
       petId: "",
@@ -66,14 +68,10 @@ export default function DogWalkingPage() {
     },
   });
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: InsertWalkSession) => {
     try {
+      setIsSubmitting(true);
       console.log("Form submitted with data:", data);
-
-      // Validate required fields
-      if (!data.petId || !data.walkerId || !data.scheduledStartTime || !data.duration) {
-        throw new Error("Please fill in all required fields");
-      }
 
       // Get the pet's customer ID
       const pet = pets?.find(p => p.id === data.petId);
@@ -83,7 +81,7 @@ export default function DogWalkingPage() {
 
       // Calculate end time based on start time and duration
       const startTime = new Date(data.scheduledStartTime);
-      const endTime = new Date(startTime.getTime() + data.duration * 60000); // Convert minutes to milliseconds
+      const endTime = new Date(startTime.getTime() + data.duration * 60000);
 
       const walkData = {
         ...data,
@@ -110,6 +108,8 @@ export default function DogWalkingPage() {
         description: error instanceof Error ? error.message : "Failed to schedule walk",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -186,9 +186,10 @@ export default function DogWalkingPage() {
                       <Select
                         onValueChange={field.onChange}
                         value={field.value}
+                        disabled={isSubmitting}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a pet" />
+                          <SelectValue placeholder="Select pet" />
                         </SelectTrigger>
                         <SelectContent>
                           {pets?.map((pet) => (
@@ -214,9 +215,10 @@ export default function DogWalkingPage() {
                       <Select
                         onValueChange={field.onChange}
                         value={field.value}
+                        disabled={isSubmitting}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a walker" />
+                          <SelectValue placeholder="Select walker" />
                         </SelectTrigger>
                         <SelectContent>
                           {walkers?.map((walker) => (
@@ -239,7 +241,11 @@ export default function DogWalkingPage() {
                   <FormItem>
                     <FormLabel>Start Time</FormLabel>
                     <FormControl>
-                      <Input type="datetime-local" {...field} />
+                      <Input 
+                        type="datetime-local" 
+                        {...field} 
+                        disabled={isSubmitting}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -259,6 +265,7 @@ export default function DogWalkingPage() {
                         max="120"
                         step="15"
                         {...field}
+                        disabled={isSubmitting}
                         onChange={(e) => field.onChange(parseInt(e.target.value))}
                       />
                     </FormControl>
@@ -275,10 +282,20 @@ export default function DogWalkingPage() {
                     setShowScheduleDialog(false);
                     form.reset();
                   }}
+                  disabled={isSubmitting}
                 >
                   Cancel
                 </Button>
-                <Button type="submit">Schedule Walk</Button>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Scheduling...
+                    </>
+                  ) : (
+                    'Schedule Walk'
+                  )}
+                </Button>
               </div>
             </form>
           </Form>

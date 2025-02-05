@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { collection, getDocs, addDoc, updateDoc, doc, deleteDoc, query, where, Timestamp } from 'firebase/firestore';
+import { collection, getDocs, addDoc, updateDoc, doc, deleteDoc, query, where } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import type { WalkSession, InsertWalkSession, UpdateWalkSession } from '@/lib/walking-types';
 
@@ -108,53 +108,10 @@ export function useWalks() {
     }
   });
 
-  // Update walk status and route
-  const updateWalkProgress = useMutation({
-    mutationFn: async ({ 
-      id, 
-      status, 
-      routePoint,
-      distance 
-    }: { 
-      id: string; 
-      status: 'in_progress' | 'completed'; 
-      routePoint?: { lat: number; lng: number; timestamp: Date };
-      distance?: number;
-    }) => {
-      const docRef = doc(db, WALKS_COLLECTION, id);
-      const updateData: any = {
-        status,
-        updatedAt: new Date().toISOString()
-      };
-
-      if (status === 'in_progress' && !updateData.actualStartTime) {
-        updateData.actualStartTime = new Date().toISOString();
-      }
-
-      if (status === 'completed') {
-        updateData.actualEndTime = new Date().toISOString();
-      }
-
-      if (routePoint) {
-        updateData.route = routePoint;
-      }
-
-      if (distance) {
-        updateData.distance = distance;
-      }
-
-      await updateDoc(docRef, updateData);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['walks'] });
-    }
-  });
-
   return {
     useWalkSessions,
-    addWalkSession: addWalkSession.mutate,
-    updateWalkSession: updateWalkSession.mutate,
-    deleteWalkSession: deleteWalkSession.mutate,
-    updateWalkProgress: updateWalkProgress.mutate
+    addWalkSession: addWalkSession.mutateAsync,
+    updateWalkSession: updateWalkSession.mutateAsync,
+    deleteWalkSession: deleteWalkSession.mutateAsync
   };
 }
