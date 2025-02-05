@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -62,7 +63,7 @@ export default function LoyaltyProgramPage() {
           const data = configSnap.data();
           form.reset({
             tierThresholds: {
-              bronze: data.tierThresholds?.bronze ?? 0,
+              bronze: 0,
               silver: data.tierThresholds?.silver ?? 2000,
               gold: data.tierThresholds?.gold ?? 5000,
               platinum: data.tierThresholds?.platinum ?? 7500,
@@ -125,13 +126,9 @@ export default function LoyaltyProgramPage() {
                       <FormItem>
                         <FormLabel>Bronze Tier (points)</FormLabel>
                         <FormControl>
-                          <Input 
+                          <Input
                             type="number"
-                            {...field}
-                            onChange={(e) => {
-                              const value = e.target.value ? parseInt(e.target.value) : '';
-                              field.onChange(value);
-                            }}
+                            value={field.value}
                             disabled
                           />
                         </FormControl>
@@ -149,13 +146,10 @@ export default function LoyaltyProgramPage() {
                       <FormItem>
                         <FormLabel>Silver Tier (points)</FormLabel>
                         <FormControl>
-                          <Input 
+                          <Input
                             type="number"
-                            {...field}
-                            onChange={(e) => {
-                              const value = e.target.value ? parseInt(e.target.value) : '';
-                              field.onChange(value);
-                            }}
+                            value={field.value}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
                           />
                         </FormControl>
                         <FormMessage />
@@ -169,13 +163,10 @@ export default function LoyaltyProgramPage() {
                       <FormItem>
                         <FormLabel>Gold Tier (points)</FormLabel>
                         <FormControl>
-                          <Input 
+                          <Input
                             type="number"
-                            {...field}
-                            onChange={(e) => {
-                              const value = e.target.value ? parseInt(e.target.value) : '';
-                              field.onChange(value);
-                            }}
+                            value={field.value}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
                           />
                         </FormControl>
                         <FormMessage />
@@ -189,13 +180,10 @@ export default function LoyaltyProgramPage() {
                       <FormItem>
                         <FormLabel>Platinum Tier (points)</FormLabel>
                         <FormControl>
-                          <Input 
+                          <Input
                             type="number"
-                            {...field}
-                            onChange={(e) => {
-                              const value = e.target.value ? parseInt(e.target.value) : '';
-                              field.onChange(value);
-                            }}
+                            value={field.value}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
                           />
                         </FormControl>
                         <FormMessage />
@@ -212,10 +200,10 @@ export default function LoyaltyProgramPage() {
                   <FormItem>
                     <FormLabel>Points per ₹1 spent</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
-                        step="0.01" 
-                        {...field}
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={field.value}
                         onChange={(e) => field.onChange(Number(e.target.value))}
                       />
                     </FormControl>
