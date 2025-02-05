@@ -28,11 +28,37 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
         where('deletedAt', '==', null)
       );
       const snapshot = await getDocs(q);
-      return snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        date: doc.data().date?.toDate()
-      }));
+      
+      const appointments = [];
+      for (const doc of snapshot.docs) {
+        const appointmentData = doc.data();
+        const services = [];
+        
+        if (appointmentData.services && appointmentData.services.length > 0) {
+          for (const serviceId of appointmentData.services) {
+            const serviceDoc = await getDoc(doc(db, 'services', serviceId));
+            if (serviceDoc.exists()) {
+              const serviceData = serviceDoc.data();
+              services.push({
+                service_id: serviceId,
+                name: serviceData.name,
+                description: serviceData.description,
+                duration: serviceData.duration,
+                price: serviceData.price
+              });
+            }
+          }
+        }
+
+        appointments.push({
+          id: doc.id,
+          ...appointmentData,
+          date: appointmentData.date?.toDate(),
+          service: services
+        });
+      }
+      
+      return appointments;
     }
   });
 
@@ -108,7 +134,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
             </TableHeader>
             <TableBody>
               {appointments.map((appointment: any) => (
-                <>
+                <React.Fragment key={appointment.id}>
                   <TableRow key={appointment.id} className="cursor-pointer hover:bg-muted/50" onClick={() => {
                     const row = document.getElementById(`expand-${appointment.id}`);
                     if (row) {
