@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useWalks } from "@/hooks/use-walks";
 import { useStaff } from "@/hooks/use-staff";
 import { useCustomers } from "@/hooks/use-customers";
+import { usePets } from "@/hooks/use-pets";
 import type { WalkSession } from "@/lib/walking-types";
 import {
   Table,
@@ -28,6 +29,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,10 +46,14 @@ export default function DogWalkingPage() {
   const [showScheduleDialog, setShowScheduleDialog] = useState(false);
   const { useWalkSessions, addWalkSession } = useWalks();
   const { staffMembers } = useStaff();
+  const { pets } = usePets();
   const { customers } = useCustomers();
 
   // Get all walk sessions
   const { data: walkSessions = [], isLoading } = useWalkSessions();
+
+  // Filter staff members to get only walkers
+  const walkers = staffMembers?.filter(staff => staff.role === 'walker') ?? [];
 
   const form = useForm({
     resolver: zodResolver(insertWalkSessionSchema),
@@ -116,22 +128,27 @@ export default function DogWalkingPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {walkSessions.map((session: WalkSession) => (
-              <TableRow key={session.id}>
-                <TableCell>{session.petId}</TableCell>
-                <TableCell>{session.walkerId}</TableCell>
-                <TableCell>{session.scheduledStartTime}</TableCell>
-                <TableCell>{session.duration} minutes</TableCell>
-                <TableCell>{session.status}</TableCell>
-                <TableCell>
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
-                      View Details
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
+            {walkSessions.map((session: WalkSession) => {
+              const pet = pets?.find(p => p.id === session.petId);
+              const walker = walkers?.find(w => w.id === session.walkerId);
+
+              return (
+                <TableRow key={session.id}>
+                  <TableCell>{pet?.name ?? session.petId}</TableCell>
+                  <TableCell>{walker?.name ?? session.walkerId}</TableCell>
+                  <TableCell>{new Date(session.scheduledStartTime).toLocaleString()}</TableCell>
+                  <TableCell>{session.duration} minutes</TableCell>
+                  <TableCell>{session.status}</TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm">
+                        View Details
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>
@@ -154,7 +171,21 @@ export default function DogWalkingPage() {
                   <FormItem>
                     <FormLabel>Pet</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Select pet" />
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a pet" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {pets?.map((pet) => (
+                            <SelectItem key={pet.id} value={pet.id}>
+                              {pet.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -168,7 +199,21 @@ export default function DogWalkingPage() {
                   <FormItem>
                     <FormLabel>Walker</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Select walker" />
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a walker" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {walkers?.map((walker) => (
+                            <SelectItem key={walker.id} value={walker.id}>
+                              {walker.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
