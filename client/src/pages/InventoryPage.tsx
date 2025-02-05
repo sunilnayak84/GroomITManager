@@ -165,7 +165,7 @@ export default function InventoryPage() {
       supplier: item.supplier || null,
       description: item.description || null,
       minimum_quantity: item.minimum_quantity,
-      cost_per_unit: 0,
+      cost_per_unit: Number(item.cost_per_unit) || 0,
       category: item.category || "",
       last_restock_date: null,
       isActive: item.isActive ?? true,
