@@ -71,7 +71,7 @@ export default function DogWalkingPage() {
   const onSubmit = async (data: InsertWalkSession) => {
     try {
       setIsSubmitting(true);
-      console.log("Form submitted with data:", data);
+      console.log('Starting walk session scheduling with data:', data);
 
       // Get the pet's customer ID
       const pet = pets?.find(p => p.id === data.petId);
@@ -91,9 +91,9 @@ export default function DogWalkingPage() {
         status: "scheduled" as const,
       };
 
-      console.log("Submitting walk data:", walkData);
-      const walkId = await addWalkSession(walkData);
-      console.log("Walk scheduled successfully with ID:", walkId);
+      console.log('Submitting walk data:', walkData);
+      await addWalkSession(walkData);
+      console.log('Walk scheduled successfully');
 
       toast({
         title: "Success",
@@ -286,7 +286,15 @@ export default function DogWalkingPage() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isSubmitting}>
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    console.log('Submit button clicked');
+                    form.handleSubmit(onSubmit)(e);
+                  }}
+                >
                   {isSubmitting ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />

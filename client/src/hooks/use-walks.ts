@@ -8,7 +8,6 @@ const WALKS_COLLECTION = 'walks';
 export function useWalks() {
   const queryClient = useQueryClient();
 
-  // Fetch walks based on different filters
   const useWalkSessions = ({
     walkerId,
     petId,
@@ -81,8 +80,6 @@ export function useWalks() {
   // Update a walk session
   const updateWalkSession = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: UpdateWalkSession }) => {
-      console.log('Updating walk session:', id, 'with data:', data);
-
       const updateData = {
         ...data,
         updatedAt: new Date().toISOString()
@@ -99,7 +96,6 @@ export function useWalks() {
   // Delete a walk session
   const deleteWalkSession = useMutation({
     mutationFn: async (id: string) => {
-      console.log('Deleting walk session:', id);
       const docRef = doc(db, WALKS_COLLECTION, id);
       await deleteDoc(docRef);
     },
@@ -110,8 +106,8 @@ export function useWalks() {
 
   return {
     useWalkSessions,
-    addWalkSession: addWalkSession.mutateAsync,
-    updateWalkSession: updateWalkSession.mutateAsync,
-    deleteWalkSession: deleteWalkSession.mutateAsync
+    addWalkSession: addWalkSession.mutate,
+    updateWalkSession: updateWalkSession.mutate,
+    deleteWalkSession: deleteWalkSession.mutate
   };
 }
