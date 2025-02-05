@@ -138,18 +138,7 @@ export interface Customer {
   }>;
 }
 
-export type WithFieldValue<T> = T & {
-  loyaltyPoints: number;
-  loyaltyTier: "bronze" | "silver" | "gold" | "platinum";
-  pointsHistory: Array<{
-    points: number;
-    type: "earned" | "redeemed";
-    source: string;
-    timestamp: string;
-  }>;
-};
-
-export interface WithFieldValue<T> extends Customer {}
+export type WithFieldValue<T> = T;
 
 export type InsertCustomer = Omit<Customer, "id" | "firebaseId" | "petCount" | "createdAt" | "updatedAt" | "loyaltyPoints" | "loyaltyTier" | "pointsHistory">;
 
