@@ -5,7 +5,7 @@ export const ServiceCategory = {
   SERVICE: 'Service',
   ADDON: 'Addon',
   PACKAGE: 'Package',
-  WALKING: 'Walking'  // Add walking category
+  WALKING: 'Walking'
 } as const;
 
 // Base consumable schema for form validation and service operations
@@ -26,7 +26,7 @@ export type PackageItem = {
   category: typeof ServiceCategory[keyof typeof ServiceCategory];
 };
 
-// Walking service specific schema
+// Enhanced walking service schema with route tracking
 export const walkingServiceSchema = z.object({
   duration: z.number().min(15, "Walk must be at least 15 minutes"),
   distance: z.number().optional(),
@@ -44,6 +44,21 @@ export const walkingServiceSchema = z.object({
     lat: z.number(),
     lng: z.number(),
     address: z.string()
+  }).optional(),
+  status: z.enum(['scheduled', 'in_progress', 'completed', 'cancelled']).default('scheduled'),
+  walkerId: z.string().optional(),
+  petId: z.string(),
+  customerId: z.string(),
+  scheduledTime: z.string(),
+  actualStartTime: z.string().optional(),
+  actualEndTime: z.string().optional(),
+  notes: z.string().optional(),
+  recurring: z.boolean().default(false),
+  recurringPattern: z.object({
+    frequency: z.enum(['daily', 'weekly', 'monthly']),
+    dayOfWeek: z.array(z.number()).optional(), // 0-6 for weekly
+    dayOfMonth: z.number().optional(), // 1-31 for monthly
+    endDate: z.string().optional()
   }).optional()
 });
 
@@ -116,6 +131,16 @@ export type Service = z.infer<typeof serviceSchema>;
 export type InsertService = z.infer<typeof insertServiceSchema>;
 export type UpdateService = Partial<InsertService>;
 export type WalkingService = z.infer<typeof walkingServiceSchema>;
+export type WalkingServiceStatus = 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
 
 // Update service schema
 export const updateServiceSchema = insertServiceSchema.partial();
+
+// Walking specific schemas
+export const walkingRoutePointSchema = z.object({
+  lat: z.number(),
+  lng: z.number(),
+  timestamp: z.date()
+});
+
+export type WalkingRoutePoint = z.infer<typeof walkingRoutePointSchema>;
