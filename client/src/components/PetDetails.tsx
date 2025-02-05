@@ -123,20 +123,22 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
                     <TableCell>{format(appointment.date, 'PPp')}</TableCell>
                     <TableCell className="capitalize">{appointment.status}</TableCell>
                     <TableCell>
-                      {appointment.service && appointment.service.length > 0 ? 
-                        appointment.service.map((service: { service_id: string; name: string; description?: string; duration?: number; price?: number }, index: number) => {
-                          const serviceId = service.service_id; // Added serviceId variable
+                      {appointment.services && appointment.services.length > 0 ? 
+                        appointment.services.map((serviceId: string, index: number) => {
+                          const serviceDetails = services?.find(s => s.service_id === serviceId);
+                          if (!serviceDetails) return null;
+                          
                           return (
                             <span key={serviceId} className="group relative">
                               {index > 0 ? ', ' : ''}
                               <span className="cursor-help underline decoration-dotted">
-                                {service.name}
+                                {serviceDetails.name}
                               </span>
                               <span className="invisible group-hover:visible absolute left-0 top-full mt-1 w-64 rounded bg-black p-2 text-sm text-white z-50">
-                                <p className="font-semibold mb-1">{service.name}</p>
-                                <p className="text-xs text-gray-300">{service.description || 'No description available'}</p>
-                                {service.duration && <p className="text-xs mt-1">Duration: {service.duration} mins</p>}
-                                {service.price && <p className="text-xs">Price: ₹{service.price}</p>}
+                                <p className="font-semibold mb-1">{serviceDetails.name}</p>
+                                <p className="text-xs text-gray-300">{serviceDetails.description || 'No description available'}</p>
+                                <p className="text-xs mt-1">Duration: {serviceDetails.duration} mins</p>
+                                <p className="text-xs">Price: ₹{serviceDetails.price}</p>
                               </span>
                             </span>
                           );
