@@ -98,14 +98,14 @@ export const petSchema = z.object({
   }).nullable(),
   temperamentCategory: z.enum([
     "easy_to_groom",
-    "mildly_challenging",
+    "mildly_challenging", 
     "anxiety_fear",
     "difficult_to_handle",
     "aggression",
     "special_case"
   ]).nullable(),
   temperamentTags: z.array(z.string()).default([]),
-  temperamentNotes: z.string().nullable(),
+  temperamentNotes: z.string().nullable()
 });
 
 export const insertPetSchema = petSchema.omit({

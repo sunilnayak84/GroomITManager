@@ -227,6 +227,9 @@ export const petSchema = z.object({
 
 export type Pet = z.infer<typeof petSchema> & {
   deletedAt?: string | null;
+  temperamentCategory?: "easy_to_groom" | "mildly_challenging" | "anxiety_fear" | "difficult_to_handle" | "aggression" | "special_case" | null;
+  temperamentTags?: string[];
+  temperamentNotes?: string | null;
 };
 export type InsertPet = Omit<PetInput, "id" | "submissionId"> & {
   submissionId?: string;
