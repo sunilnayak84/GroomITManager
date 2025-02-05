@@ -419,6 +419,7 @@ export default function InventoryPage() {
                               min="0"
                               step="0.01"
                               {...field}
+                              value={field.value.toFixed(2)}
                               onChange={(e) => field.onChange(parseFloat(e.target.value))}
                             />
                           </FormControl>
