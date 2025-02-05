@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -20,7 +21,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 
@@ -182,7 +183,7 @@ export default function LoyaltyProgramPage() {
                       <Input 
                         type="number" 
                         step="0.01" 
-                        {...field}
+                        value={field.value}
                         onChange={(e) => field.onChange(Number(e.target.value))}
                       />
                     </FormControl>
