@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -127,9 +126,9 @@ export default function LoyaltyProgramPage() {
                         <FormLabel>Silver Tier (points)</FormLabel>
                         <FormControl>
                           <Input 
-                            type="number" 
-                            {...field} 
-                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            type="number"
+                            value={field.value}
+                            onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                           />
                         </FormControl>
                         <FormMessage />
@@ -144,9 +143,9 @@ export default function LoyaltyProgramPage() {
                         <FormLabel>Gold Tier (points)</FormLabel>
                         <FormControl>
                           <Input 
-                            type="number" 
-                            {...field}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            type="number"
+                            value={field.value}
+                            onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                           />
                         </FormControl>
                         <FormMessage />
@@ -161,9 +160,9 @@ export default function LoyaltyProgramPage() {
                         <FormLabel>Platinum Tier (points)</FormLabel>
                         <FormControl>
                           <Input 
-                            type="number" 
-                            {...field}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            type="number"
+                            value={field.value}
+                            onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                           />
                         </FormControl>
                         <FormMessage />
