@@ -12,6 +12,7 @@ import CustomersPage from "./pages/CustomersPage";
 import PetsPage from "./pages/PetsPage";
 import ServicesPage from "./pages/ServicesPage";
 import InventoryPage from "./pages/InventoryPage";
+import MarketplacePage from "./pages/MarketplacePage";
 import { AlertTriangle, Loader2, RefreshCw } from "lucide-react";
 import { useUser } from "./hooks/use-user";
 import Layout from "./components/Layout";
@@ -102,6 +103,7 @@ function Router() {
             <Route path="/services" component={ServicesPage} />
             <Route path="/staff" component={lazy(() => import('./pages/StaffPage'))} />
             <Route path="/inventory" component={InventoryPage} />
+            <Route path="/marketplace" component={MarketplacePage} />
             <Route path="/settings/working-hours" component={lazy(() => import('./pages/WorkingHoursPage'))} />
             <Route path="/settings/categories" component={lazy(() => import('./pages/settings/CategoriesPage'))} />
             <Route path="/settings/breeds" component={lazy(() => import('./pages/settings/BreedsPage'))} />
