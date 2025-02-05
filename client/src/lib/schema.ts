@@ -40,13 +40,50 @@ export const customerSchema = z.object({
   }).nullable(),
 });
 
+// Schema for creating/updating customers
 export const insertCustomerSchema = customerSchema.omit({
   id: true,
   firebaseId: true,
   petCount: true,
   createdAt: true,
   updatedAt: true
+}).extend({
+  loyaltyPoints: z.number().default(0),
+  loyaltyTier: z.enum(["bronze", "silver", "gold", "platinum"]).default("bronze"),
+  pointsHistory: z.array(z.object({
+    points: z.number(),
+    type: z.enum(["earned", "redeemed"]),
+    source: z.string(),
+    timestamp: z.string()
+  })).default([])
 });
+
+// Customer interface
+export interface Customer {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string | null;
+  gender: "male" | "female" | "other" | null;
+  petCount: number;
+  loyaltyPoints: number;
+  loyaltyTier: "bronze" | "silver" | "gold" | "platinum";
+  pointsHistory: Array<{
+    points: number;
+    type: "earned" | "redeemed";
+    source: string;
+    timestamp: string;
+  }>;
+  createdAt: string;
+  updatedAt: string | null;
+  firebaseId: string | null;
+  name?: string;
+}
+
+// Export type for insert operations
+export type InsertCustomer = Omit<Customer, 'id' | 'firebaseId' | 'petCount' | 'createdAt' | 'updatedAt'>;
 
 // Re-export types from types.ts for convenience
 export type { FirestoreTimestamp, FirestoreDate, WithFirestoreTimestamp, FirestoreData } from './types';
@@ -199,6 +236,14 @@ export interface Customer {
   updatedAt: string | null;
   firebaseId: string | null;
   name?: string;
+  loyaltyPoints: number;
+  loyaltyTier: "bronze" | "silver" | "gold" | "platinum";
+  pointsHistory: Array<{
+    points: number;
+    type: "earned" | "redeemed";
+    source: string;
+    timestamp: string;
+  }>;
 }
 
 export interface ToastProps {
@@ -206,7 +251,7 @@ export interface ToastProps {
   error: (message: string) => void;
 }
 
-export type InsertCustomer = Omit<Customer, 'id' | 'createdAt' | 'updatedAt' | 'firebaseId' | 'petCount'>;
+export type InsertCustomer = Omit<Customer, 'id' | 'firebaseId' | 'petCount' | 'createdAt' | 'updatedAt'>;
 export type Pet = z.infer<typeof petSchema>;
 export type InsertPet = z.infer<typeof insertPetSchema>;
 export type User = z.infer<typeof userSchema>;

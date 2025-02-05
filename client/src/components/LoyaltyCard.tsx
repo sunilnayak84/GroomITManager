@@ -1,19 +1,24 @@
-
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Customer } from "@/lib/types";
 import { Badge } from "./ui/badge";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 interface LoyaltyCardProps {
   customer: Customer;
 }
 
-const tierThresholds = {
-  bronze: 0,
-  silver: 2000,
-  gold: 5000,
-  platinum: 7500
-};
+interface LoyaltyConfig {
+  tierThresholds: {
+    bronze: number;
+    silver: number;
+    gold: number;
+    platinum: number;
+  };
+  pointsPerSpend: number;
+}
 
 const tierColors = {
   bronze: "bg-orange-600",
@@ -23,14 +28,41 @@ const tierColors = {
 };
 
 export function LoyaltyCard({ customer }: LoyaltyCardProps) {
+  const [config, setConfig] = useState<LoyaltyConfig>({
+    tierThresholds: {
+      bronze: 0,
+      silver: 2000,
+      gold: 5000,
+      platinum: 7500
+    },
+    pointsPerSpend: 1
+  });
+
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const configRef = doc(db, "settings", "loyalty");
+        const configSnap = await getDoc(configRef);
+        if (configSnap.exists()) {
+          const data = configSnap.data() as LoyaltyConfig;
+          setConfig(data);
+        }
+      } catch (error) {
+        console.error("Error fetching loyalty config:", error);
+      }
+    };
+
+    fetchConfig();
+  }, []);
+
   const currentTier = customer.loyaltyTier;
   const nextTier = currentTier === "platinum" ? null : 
     currentTier === "gold" ? "platinum" :
     currentTier === "silver" ? "gold" : "silver";
-  
+
   const progress = nextTier ? 
-    ((customer.loyaltyPoints - tierThresholds[currentTier]) / 
-    (tierThresholds[nextTier] - tierThresholds[currentTier])) * 100 : 100;
+    ((customer.loyaltyPoints - config.tierThresholds[currentTier]) / 
+    (config.tierThresholds[nextTier] - config.tierThresholds[currentTier])) * 100 : 100;
 
   return (
     <Card className="w-full">
@@ -54,16 +86,19 @@ export function LoyaltyCard({ customer }: LoyaltyCardProps) {
             </div>
             {nextTier && (
               <>
-                <Progress value={progress} className="h-2" />
+                <Progress value={Math.min(100, Math.max(0, progress))} className="h-2" />
                 <div className="flex justify-between mt-1 text-xs text-muted-foreground">
-                  <span>{tierThresholds[currentTier]}</span>
-                  <span>{tierThresholds[nextTier]}</span>
+                  <span>{config.tierThresholds[currentTier]}</span>
+                  <span>{config.tierThresholds[nextTier]}</span>
                 </div>
                 <p className="text-sm mt-2">
-                  {tierThresholds[nextTier] - customer.loyaltyPoints} points needed for {nextTier}
+                  {config.tierThresholds[nextTier] - customer.loyaltyPoints} points needed for {nextTier}
                 </p>
               </>
             )}
+            <div className="mt-4 text-sm text-muted-foreground">
+              <p>Earn {config.pointsPerSpend} points per ₹1 spent</p>
+            </div>
           </div>
         </div>
       </CardContent>

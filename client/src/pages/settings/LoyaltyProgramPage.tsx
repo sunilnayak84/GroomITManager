@@ -30,6 +30,15 @@ const loyaltyConfigSchema = z.object({
     silver: z.number().min(1, "Silver threshold must be greater than 0"),
     gold: z.number().min(1, "Gold threshold must be greater than 0"),
     platinum: z.number().min(1, "Platinum threshold must be greater than 0"),
+  }).refine(data => data.silver > data.bronze, {
+    message: "Silver threshold must be greater than bronze",
+    path: ["silver"]
+  }).refine(data => data.gold > data.silver, {
+    message: "Gold threshold must be greater than silver",
+    path: ["gold"]
+  }).refine(data => data.platinum > data.gold, {
+    message: "Platinum threshold must be greater than gold",
+    path: ["platinum"]
   }),
   pointsPerSpend: z.number().min(0.01, "Points per spend must be greater than 0"),
 });
@@ -60,7 +69,7 @@ export default function LoyaltyProgramPage() {
         const configSnap = await getDoc(configRef);
         if (configSnap.exists()) {
           const data = configSnap.data();
-          const defaultValues = {
+          form.reset({
             tierThresholds: {
               bronze: 0,
               silver: data.tierThresholds?.silver ?? 2000,
@@ -68,11 +77,7 @@ export default function LoyaltyProgramPage() {
               platinum: data.tierThresholds?.platinum ?? 7500,
             },
             pointsPerSpend: data.pointsPerSpend ?? 1,
-          };
-          
-          if (!form.formState.isDirty) {
-            form.reset(defaultValues);
-          }
+          });
         }
       } catch (error) {
         console.error("Error fetching loyalty config:", error);
@@ -85,7 +90,7 @@ export default function LoyaltyProgramPage() {
     };
 
     fetchLoyaltyConfig();
-  }, [toast]); // Remove form from dependencies
+  }, [toast, form]);
 
   const onSubmit = async (data: LoyaltyConfig) => {
     try {
@@ -97,6 +102,7 @@ export default function LoyaltyProgramPage() {
         description: "Loyalty program settings updated successfully",
       });
     } catch (error) {
+      console.error("Error updating loyalty config:", error);
       toast({
         title: "Error",
         description: "Failed to update loyalty program settings",
@@ -155,6 +161,9 @@ export default function LoyaltyProgramPage() {
                             onChange={(e) => field.onChange(Number(e.target.value))}
                           />
                         </FormControl>
+                        <FormDescription>
+                          Must be greater than Bronze tier (0 points)
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -172,6 +181,9 @@ export default function LoyaltyProgramPage() {
                             onChange={(e) => field.onChange(Number(e.target.value))}
                           />
                         </FormControl>
+                        <FormDescription>
+                          Must be greater than Silver tier
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -189,6 +201,9 @@ export default function LoyaltyProgramPage() {
                             onChange={(e) => field.onChange(Number(e.target.value))}
                           />
                         </FormControl>
+                        <FormDescription>
+                          Must be greater than Gold tier
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -206,7 +221,7 @@ export default function LoyaltyProgramPage() {
                       <Input
                         type="number"
                         step="0.01"
-                        value={field.value}
+                        {...field}
                         onChange={(e) => field.onChange(Number(e.target.value))}
                       />
                     </FormControl>
