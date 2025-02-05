@@ -571,22 +571,17 @@ export function useAppointments() {
                   const customerData = customerSnap.data();
 
                   if (customerData) {
-                    const newTotalPoints = (customerData.loyaltyPoints || 0) + earnedPoints;
+                    // Add points history entry
+                    const pointsEntry = {
+                      points: earnedPoints,
+                      type: "earned",
+                      source: "appointment",
+                      timestamp: new Date().toISOString()
+                    };
 
-                    // Determine new tier based on points
-                    let newTier = 'bronze';
-                    if (newTotalPoints >= loyaltyConfig.tierThresholds.platinum) {
-                      newTier = 'platinum';
-                    } else if (newTotalPoints >= loyaltyConfig.tierThresholds.gold) {
-                      newTier = 'gold';
-                    } else if (newTotalPoints >= loyaltyConfig.tierThresholds.silver) {
-                      newTier = 'silver';
-                    }
-
-                    // Update customer document
+                    // Update customer document - let backend calculate tier
                     await updateDoc(customerRef, {
-                      loyaltyPoints: newTotalPoints,
-                      loyaltyTier: newTier,
+                      pointsHistory: arrayUnion(pointsEntry),
                       updatedAt: Timestamp.fromDate(new Date())
                     });
                   }

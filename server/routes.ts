@@ -1,3 +1,40 @@
+
+import { onDocumentUpdated } from "firebase-functions/v2/firestore";
+
+// Loyalty points calculation
+export const calculateLoyaltyTier = onDocumentUpdated("customers/{customerId}", async (event) => {
+  const customer = event.data?.after.data();
+  if (!customer) return;
+
+  // Calculate total points from history
+  const totalPoints = customer.pointsHistory?.reduce((acc, entry) => {
+    return entry.type === "earned" ? acc + entry.points : acc - entry.points;
+  }, 0) || 0;
+
+  // Get loyalty config
+  const configSnap = await db.collection("settings").doc("loyalty").get();
+  const config = configSnap.data();
+  if (!config) return;
+
+  // Calculate tier
+  let newTier = 'bronze';
+  if (totalPoints >= config.tierThresholds.platinum) {
+    newTier = 'platinum';
+  } else if (totalPoints >= config.tierThresholds.gold) {
+    newTier = 'gold';
+  } else if (totalPoints >= config.tierThresholds.silver) {
+    newTier = 'silver';
+  }
+
+  // Update customer if tier changed
+  if (newTier !== customer.loyaltyTier) {
+    await event.data?.after.ref.update({
+      loyaltyPoints: totalPoints,
+      loyaltyTier: newTier
+    });
+  }
+});
+
 import { type Express } from "express";
 import { authenticateFirebase, requireRole } from "./middleware/auth";
 import path from "path";
