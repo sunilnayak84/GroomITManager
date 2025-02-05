@@ -445,7 +445,7 @@ export function useInventory() {
         try {
           console.log('FETCH_USAGE_HISTORY: Starting fetch for item:', itemId);
           const q = query(
-            collection(db, 'inventory_usage_history'),
+            collection(db, 'inventory_usage'),
             where('item_id', '==', itemId),
             orderBy('used_at', 'desc')
           );
