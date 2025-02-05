@@ -6,11 +6,10 @@ import {
 } from 'firebase/firestore';
 import { db } from "@/lib/firebase";
 import { uploadFile } from "@/lib/storage";
-import type { Reward, InsertReward, RewardRedemption } from "@/lib/reward-types";
+import type { Reward, InsertReward } from "@/lib/types/reward";
 
 // Collection references
 const rewardsCollection = collection(db, 'rewards');
-const redemptionsCollection = collection(db, 'reward_redemptions');
 
 export function useRewards() {
   const queryClient = useQueryClient();
@@ -19,12 +18,15 @@ export function useRewards() {
   const { data: rewards = [], isLoading, error } = useQuery({
     queryKey: ['rewards'],
     queryFn: async () => {
-      const q = query(rewardsCollection, where('is_active', '==', true));
+      const q = query(rewardsCollection, where('isActive', '==', true));
       const querySnapshot = await getDocs(q);
-      
+
       return querySnapshot.docs.map(doc => ({
-        reward_id: doc.id,
+        id: doc.id,
         ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate().toISOString() || new Date().toISOString(),
+        updatedAt: doc.data().updatedAt?.toDate()?.toISOString() || null,
+        validUntil: doc.data().validUntil?.toDate()?.toISOString() || null,
       })) as Reward[];
     }
   });
@@ -33,21 +35,22 @@ export function useRewards() {
   const addRewardMutation = useMutation({
     mutationFn: async (rewardData: InsertReward) => {
       try {
-        // Handle image upload if present
-        let imageUrl = rewardData.image_url;
-        if (imageUrl instanceof File) {
+        // Handle image upload if present and is File object
+        let imageUrl = rewardData.image;
+        if (typeof imageUrl === 'object' && 'name' in imageUrl) {
           const path = `rewards/${Date.now()}_${imageUrl.name}`;
-          imageUrl = await uploadFile(imageUrl, path);
+          imageUrl = await uploadFile(imageUrl as File, path);
         }
 
         const docRef = await addDoc(rewardsCollection, {
           ...rewardData,
-          image_url: imageUrl,
-          created_at: serverTimestamp(),
-          updated_at: null,
+          image: imageUrl,
+          createdAt: serverTimestamp(),
+          updatedAt: null,
+          isActive: true
         });
 
-        return { reward_id: docRef.id };
+        return { id: docRef.id };
       } catch (error) {
         console.error('Error adding reward:', error);
         throw error;
@@ -58,19 +61,34 @@ export function useRewards() {
     },
   });
 
+  // Update reward
+  const updateRewardMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<InsertReward> }) => {
+      const rewardRef = doc(rewardsCollection, id);
+      await updateDoc(rewardRef, {
+        ...data,
+        updatedAt: serverTimestamp()
+      });
+      return { id };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['rewards'] });
+    },
+  });
+
   // Redeem reward
   const redeemRewardMutation = useMutation({
     mutationFn: async ({ 
-      reward_id, 
-      customer_id, 
-      points_spent 
+      rewardId, 
+      customerId,
+      pointsSpent 
     }: { 
-      reward_id: string; 
-      customer_id: string; 
-      points_spent: number; 
+      rewardId: string; 
+      customerId: string;
+      pointsSpent: number;
     }) => {
-      const rewardRef = doc(rewardsCollection, reward_id);
-      const customerRef = doc(db, 'customers', customer_id);
+      const rewardRef = doc(rewardsCollection, rewardId);
+      const customerRef = doc(db, 'customers', customerId);
 
       await runTransaction(db, async (transaction) => {
         // Get reward and customer data
@@ -84,53 +102,54 @@ export function useRewards() {
         const rewardData = rewardDoc.data() as Reward;
         const customerData = customerDoc.data();
 
-        // Verify reward is available and customer has enough points
-        if (rewardData.quantity_available <= 0) {
+        // Verify reward is available
+        if (rewardData.quantity !== undefined && rewardData.quantity <= 0) {
           throw new Error('Reward out of stock');
         }
 
+        // Calculate current points
         const currentPoints = customerData.pointsHistory.reduce(
           (total: number, record: { type: string; points: number; }) => 
             record.type === 'earned' ? total + record.points : total - record.points, 
           0
         );
 
-        if (currentPoints < points_spent) {
+        if (currentPoints < pointsSpent) {
           throw new Error('Insufficient points');
         }
 
-        // Create redemption record
-        const redemptionData: RewardRedemption = {
-          reward_id,
-          customer_id,
-          points_spent,
-          redemption_date: new Date(),
-          status: 'completed',
-          notes: null,
-        };
-
-        // Update reward quantity
-        transaction.update(rewardRef, {
-          quantity_available: rewardData.quantity_available - 1,
-          updated_at: serverTimestamp(),
-        });
+        // Update reward quantity if applicable
+        if (rewardData.quantity !== undefined) {
+          transaction.update(rewardRef, {
+            quantity: rewardData.quantity - 1,
+            updatedAt: serverTimestamp(),
+          });
+        }
 
         // Update customer points
         transaction.update(customerRef, {
           pointsHistory: [
             ...customerData.pointsHistory,
             {
-              points: points_spent,
+              points: pointsSpent,
               type: 'redeemed',
-              source: `Reward: ${rewardData.name}`,
+              source: `Reward: ${rewardData.title}`,
               timestamp: new Date().toISOString(),
-            },
+            }
           ],
+          updatedAt: serverTimestamp()
         });
 
         // Create redemption record
         const redemptionRef = collection(db, 'reward_redemptions');
-        transaction.set(doc(redemptionRef), redemptionData);
+        transaction.set(doc(redemptionRef), {
+          rewardId,
+          customerId,
+          pointsSpent,
+          redemptionDate: serverTimestamp(),
+          status: 'completed',
+          notes: null,
+        });
       });
 
       return { success: true };
@@ -146,6 +165,7 @@ export function useRewards() {
     isLoading,
     error,
     addReward: addRewardMutation.mutateAsync,
+    updateReward: updateRewardMutation.mutateAsync,
     redeemReward: redeemRewardMutation.mutateAsync,
   };
 }

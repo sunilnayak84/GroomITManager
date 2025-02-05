@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RewardCategory } from "@/lib/reward-types";
+import { Reward } from "@/lib/types/reward";
 
 export default function MarketplacePage() {
   const { rewards, isLoading, redeemReward } = useRewards();
@@ -41,7 +41,7 @@ export default function MarketplacePage() {
     0
   ) ?? 0;
 
-  const handleRedeem = async (rewardId: string, pointsRequired: number) => {
+  const handleRedeem = async (rewardId: string, pointsCost: number) => {
     try {
       if (!currentCustomer) {
         toast({
@@ -53,9 +53,9 @@ export default function MarketplacePage() {
       }
 
       await redeemReward({
-        reward_id: rewardId,
-        customer_id: currentCustomer.id,
-        points_spent: pointsRequired,
+        rewardId,
+        customerId: currentCustomer.id,
+        pointsSpent: pointsCost,
       });
 
       toast({
@@ -95,13 +95,13 @@ export default function MarketplacePage() {
           <TabsTrigger value="all" onClick={() => setSelectedCategory("all")}>
             All Rewards
           </TabsTrigger>
-          {Object.values(RewardCategory).map(category => (
+          {["service", "product", "discount"].map(category => (
             <TabsTrigger
               key={category}
               value={category}
               onClick={() => setSelectedCategory(category)}
             >
-              {category}s
+              {category.charAt(0).toUpperCase() + category.slice(1)}s
             </TabsTrigger>
           ))}
         </TabsList>
@@ -121,37 +121,44 @@ export default function MarketplacePage() {
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredRewards.map(reward => (
-            <Card key={reward.reward_id}>
-              {reward.image_url && (
+          {filteredRewards.map((reward: Reward) => (
+            <Card key={reward.id}>
+              {reward.image && (
                 <div className="aspect-video relative overflow-hidden rounded-t-lg">
                   <img
-                    src={reward.image_url}
-                    alt={reward.name}
+                    src={reward.image}
+                    alt={reward.title}
                     className="object-cover w-full h-full"
                   />
                 </div>
               )}
               <CardHeader>
                 <div className="flex justify-between items-start">
-                  <CardTitle>{reward.name}</CardTitle>
+                  <CardTitle>{reward.title}</CardTitle>
                   <Badge variant="secondary">
-                    {reward.points_required} pts
+                    {reward.pointsCost} pts
                   </Badge>
                 </div>
                 <CardDescription>{reward.description}</CardDescription>
               </CardHeader>
               <CardContent>
-                {reward.terms_conditions && (
-                  <p className="text-sm text-muted-foreground">
-                    {reward.terms_conditions}
-                  </p>
-                )}
-                {reward.quantity_available <= 5 && (
-                  <p className="text-sm text-orange-600 mt-2">
-                    Only {reward.quantity_available} left!
-                  </p>
-                )}
+                <div className="space-y-2">
+                  {reward.validUntil && (
+                    <p className="text-sm text-muted-foreground">
+                      Valid until: {new Date(reward.validUntil).toLocaleDateString()}
+                    </p>
+                  )}
+                  {reward.quantity !== undefined && reward.quantity <= 5 && reward.quantity > 0 && (
+                    <p className="text-sm text-orange-600">
+                      Only {reward.quantity} left!
+                    </p>
+                  )}
+                  {reward.discountValue && reward.discountType && (
+                    <p className="text-sm font-medium">
+                      {reward.discountType === 'percentage' ? `${reward.discountValue}% off` : `₹${reward.discountValue} off`}
+                    </p>
+                  )}
+                </div>
               </CardContent>
               <CardFooter>
                 <AlertDialog>
@@ -159,13 +166,13 @@ export default function MarketplacePage() {
                     <Button
                       className="w-full"
                       disabled={
-                        currentPoints < reward.points_required ||
-                        reward.quantity_available === 0
+                        currentPoints < reward.pointsCost ||
+                        (reward.quantity !== undefined && reward.quantity <= 0)
                       }
                     >
-                      {currentPoints < reward.points_required
+                      {currentPoints < reward.pointsCost
                         ? "Insufficient Points"
-                        : reward.quantity_available === 0
+                        : reward.quantity !== undefined && reward.quantity <= 0
                         ? "Out of Stock"
                         : "Redeem Reward"}
                     </Button>
@@ -174,14 +181,14 @@ export default function MarketplacePage() {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Confirm Redemption</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Are you sure you want to redeem {reward.name} for{" "}
-                        {reward.points_required} points?
+                        Are you sure you want to redeem {reward.title} for{" "}
+                        {reward.pointsCost} points?
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
                       <AlertDialogAction
-                        onClick={() => handleRedeem(reward.reward_id, reward.points_required)}
+                        onClick={() => handleRedeem(reward.id, reward.pointsCost)}
                       >
                         Confirm Redemption
                       </AlertDialogAction>
