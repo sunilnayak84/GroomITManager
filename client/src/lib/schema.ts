@@ -1,4 +1,3 @@
-<replit_final_file>
 import { z } from "zod";
 import { Timestamp } from 'firebase/firestore';
 import { FirestoreTimestamp, toISOString } from './types';
@@ -71,7 +70,6 @@ export interface Customer {
     timestamp: string;
   }>;
   loyaltyTier: "bronze" | "silver" | "gold" | "platinum";
-  loyaltyPoints?: number;
 }
 
 
@@ -100,7 +98,7 @@ export const petSchema = z.object({
   }).nullable(),
   temperamentCategory: z.enum([
     "easy_to_groom",
-    "mildly_challenging",
+    "mildly_challenging", 
     "anxiety_fear",
     "difficult_to_handle",
     "aggression",
@@ -117,17 +115,7 @@ export const insertPetSchema = petSchema.omit({
   updatedAt: true
 }).extend({
   submissionId: z.string().optional(),
-  image: z.union([z.string(), z.instanceof(File)]).nullable(),
-  temperamentCategory: z.enum([
-    "easy_to_groom",
-    "mildly_challenging",
-    "anxiety_fear",
-    "difficult_to_handle",
-    "aggression",
-    "special_case"
-  ]).nullable(),
-  temperamentTags: z.array(z.string()).default([]),
-  temperamentNotes: z.string().nullable()
+  image: z.union([z.string(), z.instanceof(File)]).nullable()
 });
 
 // Schema for Appointment
@@ -243,7 +231,7 @@ export interface Customer {
   updatedAt: string | null;
   firebaseId: string | null;
   name?: string;
-  loyaltyPoints?: number;
+  loyaltyPoints: number;
   loyaltyTier: "bronze" | "silver" | "gold" | "platinum";
   pointsHistory: Array<{
     points: number;
@@ -478,41 +466,3 @@ export type InsertAppointment = {
   totalPrice?: number;
   totalDuration?: number;
 };
-
-export type FirestorePet = {
-  id: string;
-  firebaseId: string | null;
-  name: string;
-  type: PetType;
-  breed: string;
-  customerId: string;
-  dateOfBirth: string | null;
-  age: number | null;
-  gender: Gender | null;
-  weight: number | null;
-  weightUnit: WeightUnit;
-  notes: string | null;
-  image: string | null;
-  createdAt: FirestoreTimestamp;
-  updatedAt: FirestoreTimestamp | null;
-  submissionId?: string;
-  owner: {
-    id: string;
-    name: string;
-    email: string | null;
-  } | null;
-  temperamentCategory?: "easy_to_groom" | "mildly_challenging" | "anxiety_fear" | "difficult_to_handle" | "aggression" | "special_case" | null;
-  temperamentTags?: string[];
-  temperamentNotes?: string | null;
-};
-
-export type InsertCustomer = Omit<Customer, 
-  "id" | 
-  "firebaseId" | 
-  "petCount" | 
-  "createdAt" | 
-  "updatedAt" | 
-  "loyaltyTier" | 
-  "pointsHistory" | 
-  "loyaltyPoints"
->;

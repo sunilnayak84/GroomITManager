@@ -27,7 +27,6 @@ export function useRewards() {
         createdAt: doc.data().createdAt?.toDate().toISOString() || new Date().toISOString(),
         updatedAt: doc.data().updatedAt?.toDate()?.toISOString() || null,
         validUntil: doc.data().validUntil?.toDate()?.toISOString() || null,
-        image: doc.data().image || null,
       })) as Reward[];
     }
   });
@@ -36,11 +35,11 @@ export function useRewards() {
   const addRewardMutation = useMutation({
     mutationFn: async (rewardData: InsertReward) => {
       try {
-        // Handle image upload if present
+        // Handle image upload if present and is File object
         let imageUrl = rewardData.image;
-        if (imageUrl instanceof File) {
+        if (typeof imageUrl === 'object' && 'name' in imageUrl) {
           const path = `rewards/${Date.now()}_${imageUrl.name}`;
-          imageUrl = await uploadFile(imageUrl, path);
+          imageUrl = await uploadFile(imageUrl as File, path);
         }
 
         const docRef = await addDoc(rewardsCollection, {

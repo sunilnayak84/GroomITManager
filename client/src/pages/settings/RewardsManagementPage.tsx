@@ -58,7 +58,7 @@ export default function RewardsManagementPage() {
       discountValue: undefined,
       discountType: undefined,
       image: null,
-      validUntil: undefined,
+      validUntil: null,
     },
   });
 
@@ -177,7 +177,6 @@ export default function RewardsManagementPage() {
                         <Input 
                           type="number" 
                           {...field}
-                          value={field.value ?? ""}
                           onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
                         />
                       </FormControl>
@@ -197,10 +196,10 @@ export default function RewardsManagementPage() {
                       <FormControl>
                         <Input 
                           type="date"
-                          value={field.value ? new Date(field.value).toISOString().split('T')[0] : ""}
+                          {...field}
                           onChange={(e) => {
-                            const date = e.target.value ? new Date(e.target.value) : undefined;
-                            field.onChange(date?.toISOString());
+                            const date = e.target.value ? new Date(e.target.value) : null;
+                            field.onChange(date?.toISOString() || null);
                           }}
                         />
                       </FormControl>
@@ -208,55 +207,6 @@ export default function RewardsManagementPage() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="discountType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Discount Type (Optional)</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        value={field.value ?? ""} 
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select discount type" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="">None</SelectItem>
-                          <SelectItem value="percentage">Percentage</SelectItem>
-                          <SelectItem value="fixed">Fixed Amount</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                {form.watch("discountType") && (
-                  <FormField
-                    control={form.control}
-                    name="discountValue"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {form.watch("discountType") === "percentage" 
-                            ? "Discount Percentage" 
-                            : "Discount Amount (₹)"}
-                        </FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="number"
-                            {...field}
-                            value={field.value ?? ""}
-                            onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
                 <FormField
                   control={form.control}
                   name="isActive"
