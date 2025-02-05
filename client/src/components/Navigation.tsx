@@ -34,6 +34,7 @@ export default function Navigation() {
     { href: "/settings/categories", icon: Package, label: "Inventory Categories" },
     { href: "/settings/breeds", icon: PawPrint, label: "Pet Breeds" },
     { href: "/settings/loyalty", icon: Users, label: "Loyalty Program" },
+    { href: "/settings/rewards", icon: Gift, label: "Rewards Management" },
     ...(user?.role === 'admin' || user?.role === 'manager' ? [
       { href: "/settings/roles", icon: Shield, label: "Role Management" }
     ] : []),
