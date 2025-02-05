@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { format } from "date-fns";
 import type { Pet } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
-import { collection, query, where, getDocs, getDoc, doc } from "firebase/firestore";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { calculateAge } from "@/lib/utils";
 import { useInventory } from "@/hooks/use-inventory";
@@ -28,12 +28,12 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
         where('deletedAt', '==', null)
       );
       const snapshot = await getDocs(q);
-
+      
       const appointments = [];
       for (const doc of snapshot.docs) {
         const appointmentData = doc.data();
         const services = [];
-
+        
         if (appointmentData.services && appointmentData.services.length > 0) {
           for (const serviceId of appointmentData.services) {
             const serviceDoc = await getDoc(doc(db, 'services', serviceId));
@@ -57,7 +57,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
           service: services
         });
       }
-
+      
       return appointments;
     }
   });
@@ -135,7 +135,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
             <TableBody>
               {appointments.map((appointment: any) => (
                 <React.Fragment key={appointment.id}>
-                  <TableRow className="cursor-pointer hover:bg-muted/50" onClick={() => {
+                  <TableRow key={appointment.id} className="cursor-pointer hover:bg-muted/50" onClick={() => {
                     const row = document.getElementById(`expand-${appointment.id}`);
                     if (row) {
                       row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
@@ -229,7 +229,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
                       </div>
                     </TableCell>
                   </TableRow>
-                </React.Fragment>
+                </>
               ))}
             </TableBody>
           </Table>
