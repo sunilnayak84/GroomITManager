@@ -61,16 +61,33 @@ export default function DogWalkingPage() {
       petId: "",
       walkerId: "",
       scheduledStartTime: "",
-      scheduledEndTime: "",
       duration: 30,
       status: "scheduled" as const,
-      recurring: false,
     },
   });
 
   const onSubmit = async (data: any) => {
     try {
-      await addWalkSession(data);
+      // Get the pet's customer ID
+      const pet = pets?.find(p => p.id === data.petId);
+      if (!pet) {
+        throw new Error("Selected pet not found");
+      }
+
+      // Calculate end time based on start time and duration
+      const startTime = new Date(data.scheduledStartTime);
+      const endTime = new Date(startTime.getTime() + data.duration * 60000); // Convert minutes to milliseconds
+
+      const walkData = {
+        ...data,
+        customerId: pet.customerId,
+        scheduledEndTime: endTime.toISOString(),
+        status: "scheduled" as const,
+      };
+
+      console.log("Submitting walk data:", walkData);
+      await addWalkSession(walkData);
+
       toast({
         title: "Success",
         description: "Walk scheduled successfully",
@@ -81,7 +98,7 @@ export default function DogWalkingPage() {
       console.error("Error scheduling walk:", error);
       toast({
         title: "Error",
-        description: "Failed to schedule walk",
+        description: error instanceof Error ? error.message : "Failed to schedule walk",
         variant: "destructive",
       });
     }
