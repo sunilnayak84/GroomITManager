@@ -62,29 +62,29 @@ export default function CustomersPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const { 
-    customersQuery, 
-    updateCustomerMutation, 
-    deleteCustomerMutationHook, 
-    addCustomerMutation 
+  const {
+    customersQuery,
+    updateCustomerMutation,
+    deleteCustomerMutationHook,
+    addCustomerMutation
   } = useCustomers();
   const { pets = [], isLoading: isPetsLoading, addPet, updatePet, deletePet } = usePets();
   const queryClient = useQueryClient();
-  
+
   // Convert pets to proper type
-  const typedPets = useMemo(() => 
+  const typedPets = useMemo(() =>
     pets.map(pet => ({
       ...pet,
       type: pet.type as "dog" | "cat" | "bird" | "fish" | "other",
       gender: pet.gender as "male" | "female" | "unknown" | null
-    })), 
+    })),
     [pets]
   );
 
   // Type guard for Pet type
   const isPet = (pet: any): pet is Pet => {
-    return pet && 
-      typeof pet.id === 'string' && 
+    return pet &&
+      typeof pet.id === 'string' &&
       typeof pet.name === 'string' &&
       ['dog', 'cat', 'bird', 'fish', 'other'].includes(pet.type);
   };
@@ -211,20 +211,27 @@ export default function CustomersPage() {
     },
     {
       header: "Loyalty",
-      cell: (row: Customer) => (
-        <div className="flex items-center gap-2">
-          <span className="font-medium">{row.loyaltyPoints || 0} pts</span>
-          <Badge className={`bg-${row.loyaltyTier || 'bronze'}`}>
-            {(row.loyaltyTier || 'bronze').toUpperCase()}
-          </Badge>
-        </div>
-      ),
+      cell: (row: Customer) => {
+        // Calculate total points from pointsHistory
+        const totalPoints = row.pointsHistory.reduce((total, record) => {
+          return record.type === 'earned' ? total + record.points : total - record.points;
+        }, 0);
+
+        return (
+          <div className="flex items-center gap-2">
+            <span className="font-medium">{totalPoints} pts</span>
+            <Badge className="inline-block" variant={row.loyaltyTier}>
+              {row.loyaltyTier.toUpperCase()}
+            </Badge>
+          </div>
+        );
+      },
     },
     {
       header: "Actions",
       cell: (row: Customer) => (
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           size="sm"
           onClick={() => {
             setSelectedCustomer(row);
@@ -250,8 +257,8 @@ export default function CustomersPage() {
         image: pet.image ? String(pet.image) : null,
         gender: (pet.gender || 'unknown') as Pet['gender'],
         customerId: String(pet.customerId),
-        createdAt: typeof pet.createdAt === 'string' 
-          ? pet.createdAt 
+        createdAt: typeof pet.createdAt === 'string'
+          ? pet.createdAt
           : new Date().toISOString(),
         updatedAt: null
       }));
@@ -329,7 +336,7 @@ export default function CustomersPage() {
       });
     } catch (error) {
       // Log the full error details
-      console.error('ADD_CUSTOMER: Error in onSubmit', { 
+      console.error('ADD_CUSTOMER: Error in onSubmit', {
         error,
         errorMessage: error instanceof Error ? error.message : 'Unknown error',
         customerData: data
@@ -339,8 +346,8 @@ export default function CustomersPage() {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error instanceof Error 
-          ? error.message 
+        description: error instanceof Error
+          ? error.message
           : "Failed to add customer. Please check your input and try again."
       });
     } finally {
@@ -355,21 +362,21 @@ export default function CustomersPage() {
       if (!selectedCustomer?.id) {
         throw new Error('No customer selected for update');
       }
-      
-      await updateCustomerMutation.mutateAsync({ 
-        id: selectedCustomer.id, 
+
+      await updateCustomerMutation.mutateAsync({
+        id: selectedCustomer.id,
         data: {
           ...data
         } as InsertCustomer
       });
-      
+
       // Update the selected customer with type casting for gender
       setSelectedCustomer(prev => prev ? {
         ...prev,
         ...data,
         gender: data.gender as "male" | "female" | "other" | null
       } : null);
-      
+
       setIsSubmitting(false);
       setIsEditing(false);
       toast({
@@ -487,7 +494,7 @@ export default function CustomersPage() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="gender"
@@ -560,8 +567,8 @@ export default function CustomersPage() {
           </div>
         ) : (
           <div className="p-1">
-            <DataTable 
-              columns={columns} 
+            <DataTable
+              columns={columns}
               data={customersData as Customer[]}
             />
           </div>
@@ -671,7 +678,7 @@ export default function CustomersPage() {
               <PetForm
                 handleSubmit={async (data) => {
                   if (!selectedCustomer) return false;
-                  
+
                   try {
                     // Ensure proper type conversion and validation
                     const petData: InsertPet = {
@@ -695,18 +702,18 @@ export default function CustomersPage() {
 
                     console.log('Submitting pet data:', petData);
                     await addPet(petData);
-                    
+
                     // Refresh both pets and customers data
                     await Promise.all([
                       queryClient.invalidateQueries({ queryKey: ['pets'] }),
                       queryClient.invalidateQueries({ queryKey: ['customers'] })
                     ]);
-                    
+
                     toast({
                       title: "Success",
                       description: "Pet added successfully",
                     });
-                    
+
                     setShowAddPet(false);
                     return true;
                   } catch (error) {
@@ -899,7 +906,7 @@ export default function CustomersPage() {
                       <h3 className="font-semibold">Additional Information</h3>
                       <p><span className="text-muted-foreground">Gender:</span> {selectedCustomer.gender}</p>
                       <p><span className="text-muted-foreground">Member Since:</span> {
-                        selectedCustomer.createdAt 
+                        selectedCustomer.createdAt
                           ? new Date(selectedCustomer.createdAt).toLocaleDateString()
                           : 'N/A'
                       }</p>
@@ -910,8 +917,8 @@ export default function CustomersPage() {
 
               {!isEditing && (
                 <div className="flex justify-center gap-2 mt-6">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="sm"
                     onClick={() => setIsEditing(true)}
                   >
@@ -919,8 +926,8 @@ export default function CustomersPage() {
                   </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button 
-                        variant="destructive" 
+                      <Button
+                        variant="destructive"
                         size="sm"
                       >
                         Delete
@@ -930,21 +937,30 @@ export default function CustomersPage() {
                       <AlertDialogHeader>
                         <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          This action cannot be undone. This will permanently delete the customer and all associated data.
+                          This action cannot be undone. This will permanently delete the customer andall associated data.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction
-                          onClick={() => {
+                          onClick={async () => {
                             if (!selectedCustomer) return;
-                            deleteCustomerMutationHook.mutate(selectedCustomer.id, {
-                              onSuccess: () => {
-                                setShowCustomerDetails(false);
-                                setSelectedCustomer(null);
-                              }
-                            });
+                            try {
+                              await deleteCustomerMutationHook.mutateAsync(selectedCustomer.id);
+                              setShowCustomerDetails(false);
+                              toast({
+                                title: "Success",
+                                description: "Customer deleted successfully",
+                              });
+                            } catch (error) {
+                              toast({
+                                variant: "destructive",
+                                title: "Error",
+                                description: "Failed to delete customer",
+                              });
+                            }
                           }}
+                          className="bg-red-500 hover:bg-red-600"
                         >
                           Delete
                         </AlertDialogAction>
@@ -967,7 +983,7 @@ export default function CustomersPage() {
           </DialogHeader>
           {selectedPet && (
             <div className="space-y-6">
-              <PetDetails 
+              <PetDetails
                 pet={selectedPet}
                 formatDate={formatDate}
                 onEdit={() => {
@@ -998,9 +1014,9 @@ export default function CustomersPage() {
           {selectedPet && <PetForm
             handleSubmit={async (data) => {
               try {
-                await updatePet({ 
-                  petId: selectedPet.id, 
-                  updateData: data 
+                await updatePet({
+                  petId: selectedPet.id,
+                  updateData: data
                 });
                 await queryClient.invalidateQueries({ queryKey: ['pets'] });
                 setShowEditModal(false);

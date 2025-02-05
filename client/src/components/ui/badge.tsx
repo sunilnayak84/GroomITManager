@@ -15,6 +15,11 @@ const badgeVariants = cva(
         destructive:
           "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
         outline: "text-foreground",
+        // Add loyalty tier variants
+        bronze: "border-transparent bg-orange-600 text-white",
+        silver: "border-transparent bg-gray-400 text-white",
+        gold: "border-transparent bg-yellow-500 text-white",
+        platinum: "border-transparent bg-purple-600 text-white"
       },
     },
     defaultVariants: {
