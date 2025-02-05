@@ -258,6 +258,9 @@ export function usePets() {
           ...(updateData.weightUnit && { weightUnit: updateData.weightUnit }),
           ...(('notes' in updateData) && { notes: updateData.notes }),
           ...(imageUrl && { image: imageUrl }),
+          ...(('temperamentCategory' in updateData) && { temperamentCategory: updateData.temperamentCategory }),
+          ...(('temperamentTags' in updateData) && { temperamentTags: updateData.temperamentTags }),
+          ...(('temperamentNotes' in updateData) && { temperamentNotes: updateData.temperamentNotes }),
           updatedAt: timestamp
         };
 
