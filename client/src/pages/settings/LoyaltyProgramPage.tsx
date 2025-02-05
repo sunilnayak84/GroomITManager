@@ -23,7 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const loyaltyConfigSchema = z.object({
   tierThresholds: z.object({
