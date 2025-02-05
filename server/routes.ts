@@ -5,7 +5,9 @@ const db = getFirestore();
 
 // Loyalty points calculation
 export const calculateLoyaltyTier = async (customerId: string) => {
-  const customer = event.data?.after.data();
+  const customerRef = db.collection('customers').doc(customerId);
+  const customerSnap = await customerRef.get();
+  const customer = customerSnap.data();
   if (!customer) return;
 
   // Calculate total points from history
@@ -30,12 +32,12 @@ export const calculateLoyaltyTier = async (customerId: string) => {
 
   // Update customer if tier changed
   if (newTier !== customer.loyaltyTier) {
-    await event.data?.after.ref.update({
+    await customerRef.update({
       loyaltyPoints: totalPoints,
       loyaltyTier: newTier
     });
   }
-});
+};
 
 import { type Express } from "express";
 import { authenticateFirebase, requireRole } from "./middleware/auth";
