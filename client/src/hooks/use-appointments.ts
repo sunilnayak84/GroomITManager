@@ -5,7 +5,7 @@ import {
   collection, doc, setDoc, getDoc, getDocs, query, 
   where, DocumentData, CollectionReference, runTransaction,
   QuerySnapshot, DocumentSnapshot, WithFieldValue, 
-  FieldValue, serverTimestamp, Timestamp, updateDoc
+  FieldValue, serverTimestamp, Timestamp, updateDoc, arrayUnion
 } from 'firebase/firestore';
 import { db } from "../lib/firebase";
 

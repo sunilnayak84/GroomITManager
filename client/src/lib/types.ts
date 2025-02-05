@@ -248,3 +248,26 @@ export type AppointmentWithRelations = {
   updatedAt: string | null;
   inProgressAt?: string | null;
 };
+
+export interface Customer {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string | null;
+  gender: "male" | "female" | "other" | null;
+  petCount: number;
+  createdAt: string;
+  updatedAt: string | null;
+  firebaseId: string | null;
+  name?: string;
+  loyaltyPoints: number;
+  loyaltyTier: "bronze" | "silver" | "gold" | "platinum";
+  pointsHistory: Array<{
+    points: number;
+    type: "earned" | "redeemed";
+    source: string;
+    timestamp: string;
+  }>;
+}

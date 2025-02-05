@@ -1,8 +1,10 @@
 
-import { onDocumentUpdated } from "firebase-functions/v2/firestore";
+import { getFirestore } from 'firebase-admin/firestore';
+
+const db = getFirestore();
 
 // Loyalty points calculation
-export const calculateLoyaltyTier = onDocumentUpdated("customers/{customerId}", async (event) => {
+export const calculateLoyaltyTier = async (customerId: string) => {
   const customer = event.data?.after.data();
   if (!customer) return;
 
