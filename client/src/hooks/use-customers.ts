@@ -322,6 +322,7 @@ export function useCustomers() {
             petCount: Number(customerData.petCount || 0),
             loyaltyPoints: Number(customerData.loyaltyPoints || 0),
             loyaltyTier: (customerData.loyaltyTier as "bronze" | "silver" | "gold" | "platinum") || "bronze",
+            pointsHistory: customerData.pointsHistory || [],
             createdAt: processTimestamp(customerData.createdAt as FirestoreTimestamp) || new Date().toISOString(),
             updatedAt: processTimestamp(customerData.updatedAt as FirestoreTimestamp)
           };

@@ -115,8 +115,30 @@ export const customerSchema = z.object({
   }).nullable(),
 });
 
-export type Customer = z.infer<typeof customerSchema>;
-export type InsertCustomer = Omit<Customer, "id" | "firebaseId" | "petCount" | "createdAt" | "updatedAt">;
+export interface Customer {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string | null;
+  gender: "male" | "female" | "other" | null;
+  petCount: number;
+  createdAt: string;
+  updatedAt: string | null;
+  firebaseId: string | null;
+  name?: string;
+  loyaltyPoints: number;
+  loyaltyTier: "bronze" | "silver" | "gold" | "platinum";
+  pointsHistory: Array<{
+    points: number;
+    type: "earned" | "redeemed";
+    source: string;
+    timestamp: string;
+  }>;
+}
+
+export type InsertCustomer = Omit<Customer, "id" | "firebaseId" | "petCount" | "createdAt" | "updatedAt" | "loyaltyPoints" | "loyaltyTier" | "pointsHistory">;
 
 // Helper type for Firestore data with proper timestamp handling
 export type FirestoreCustomerData = Omit<Customer, "id" | "createdAt" | "updatedAt"> & {
@@ -248,26 +270,3 @@ export type AppointmentWithRelations = {
   updatedAt: string | null;
   inProgressAt?: string | null;
 };
-
-export interface Customer {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  address: string | null;
-  gender: "male" | "female" | "other" | null;
-  petCount: number;
-  createdAt: string;
-  updatedAt: string | null;
-  firebaseId: string | null;
-  name?: string;
-  loyaltyPoints: number;
-  loyaltyTier: "bronze" | "silver" | "gold" | "platinum";
-  pointsHistory: Array<{
-    points: number;
-    type: "earned" | "redeemed";
-    source: string;
-    timestamp: string;
-  }>;
-}

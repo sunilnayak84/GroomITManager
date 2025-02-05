@@ -11,7 +11,7 @@ export const calculateLoyaltyTier = async (customerId: string) => {
   if (!customer) return;
 
   // Calculate total points from history
-  const totalPoints = customer.pointsHistory?.reduce((acc, entry) => {
+  const totalPoints = customer.pointsHistory?.reduce((acc: number, entry: { type: string; points: number }) => {
     return entry.type === "earned" ? acc + entry.points : acc - entry.points;
   }, 0) || 0;
 
