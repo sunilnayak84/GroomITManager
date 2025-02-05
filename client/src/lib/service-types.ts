@@ -4,7 +4,8 @@ import { z } from "zod";
 export const ServiceCategory = {
   SERVICE: 'Service',
   ADDON: 'Addon',
-  PACKAGE: 'Package'
+  PACKAGE: 'Package',
+  WALKING: 'Walking'  // Add walking category
 } as const;
 
 // Base consumable schema for form validation and service operations
@@ -13,7 +14,7 @@ export const baseConsumableSchema = z.object({
   item_name: z.string().min(1, "Item name is required")
 });
 
-// Service consumable schema - using the base schema directly since we handle number conversion in the form
+// Service consumable schema
 export const serviceConsumableSchema = baseConsumableSchema;
 
 // Package item type
@@ -25,10 +26,31 @@ export type PackageItem = {
   category: typeof ServiceCategory[keyof typeof ServiceCategory];
 };
 
+// Walking service specific schema
+export const walkingServiceSchema = z.object({
+  duration: z.number().min(15, "Walk must be at least 15 minutes"),
+  distance: z.number().optional(),
+  route: z.array(z.object({
+    lat: z.number(),
+    lng: z.number(),
+    timestamp: z.date()
+  })).optional(),
+  startLocation: z.object({
+    lat: z.number(),
+    lng: z.number(),
+    address: z.string()
+  }).optional(),
+  endLocation: z.object({
+    lat: z.number(),
+    lng: z.number(),
+    address: z.string()
+  }).optional()
+});
+
 // Base service schema with essential fields
 export const baseServiceSchema = {
   name: z.string().min(2, "Service name must be at least 2 characters"),
-  category: z.enum([ServiceCategory.SERVICE, ServiceCategory.ADDON, ServiceCategory.PACKAGE]),
+  category: z.enum([ServiceCategory.SERVICE, ServiceCategory.ADDON, ServiceCategory.PACKAGE, ServiceCategory.WALKING]),
   duration: z.number().min(15, "Duration must be at least 15 minutes"),
   price: z.number().min(0, "Price cannot be negative"),
   description: z.string().nullable().default(null),
@@ -53,15 +75,16 @@ export const serviceSchema = z.object({
     name: z.string(),
     duration: z.number(),
     price: z.number(),
-    category: z.enum([ServiceCategory.SERVICE, ServiceCategory.ADDON, ServiceCategory.PACKAGE])
+    category: z.enum([ServiceCategory.SERVICE, ServiceCategory.ADDON, ServiceCategory.PACKAGE, ServiceCategory.WALKING])
   })).optional(),
   selectedAddons: z.array(z.object({
     service_id: z.string(),
     name: z.string(),
     duration: z.number(),
     price: z.number(),
-    category: z.enum([ServiceCategory.SERVICE, ServiceCategory.ADDON, ServiceCategory.PACKAGE])
-  })).optional()
+    category: z.enum([ServiceCategory.SERVICE, ServiceCategory.ADDON, ServiceCategory.PACKAGE, ServiceCategory.WALKING])
+  })).optional(),
+  walkingDetails: walkingServiceSchema.optional()
 });
 
 // Schema for creating a new service
@@ -75,15 +98,16 @@ export const insertServiceSchema = z.object({
     name: z.string(),
     duration: z.number(),
     price: z.number(),
-    category: z.enum([ServiceCategory.SERVICE, ServiceCategory.ADDON, ServiceCategory.PACKAGE])
+    category: z.enum([ServiceCategory.SERVICE, ServiceCategory.ADDON, ServiceCategory.PACKAGE, ServiceCategory.WALKING])
   })).optional(),
   selectedAddons: z.array(z.object({
     service_id: z.string(),
     name: z.string(),
     duration: z.number(),
     price: z.number(),
-    category: z.enum([ServiceCategory.SERVICE, ServiceCategory.ADDON, ServiceCategory.PACKAGE])
-  })).optional()
+    category: z.enum([ServiceCategory.SERVICE, ServiceCategory.ADDON, ServiceCategory.PACKAGE, ServiceCategory.WALKING])
+  })).optional(),
+  walkingDetails: walkingServiceSchema.optional()
 });
 
 // Export types
@@ -91,6 +115,7 @@ export type ServiceConsumable = z.infer<typeof serviceConsumableSchema>;
 export type Service = z.infer<typeof serviceSchema>;
 export type InsertService = z.infer<typeof insertServiceSchema>;
 export type UpdateService = Partial<InsertService>;
+export type WalkingService = z.infer<typeof walkingServiceSchema>;
 
 // Update service schema
 export const updateServiceSchema = insertServiceSchema.partial();

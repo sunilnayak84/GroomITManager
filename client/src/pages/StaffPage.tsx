@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Users } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useStaff } from "@/hooks/use-staff";
 import {
   Dialog,
@@ -67,7 +67,13 @@ export default function StaffPage() {
       petTypePreferences: [],
       experienceYears: 0,
       maxDailyAppointments: 8,
-      isActive: true
+      isActive: true,
+      walkingPreferences: {
+        maxDistance: 5, // Default 5km
+        preferredAreas: [],
+        availableTimeSlots: [],
+        simultaneousWalks: 1
+      }
     },
   });
 
@@ -127,7 +133,13 @@ export default function StaffPage() {
       petTypePreferences: staff.petTypePreferences || [],
       experienceYears: staff.experienceYears || 0,
       maxDailyAppointments: staff.maxDailyAppointments || 8,
-      isActive: staff.isActive
+      isActive: staff.isActive,
+      walkingPreferences: staff.walkingPreferences || {
+          maxDistance: 5,
+          preferredAreas: [],
+          availableTimeSlots: [],
+          simultaneousWalks: 1
+      }
     });
     setShowStaffDialog(true);
   };
@@ -216,7 +228,13 @@ export default function StaffPage() {
               petTypePreferences: [],
               experienceYears: 0,
               maxDailyAppointments: 8,
-              isActive: true
+              isActive: true,
+              walkingPreferences: {
+                maxDistance: 5,
+                preferredAreas: [],
+                availableTimeSlots: [],
+                simultaneousWalks: 1
+              }
             });
             setShowStaffDialog(true);
           }}
@@ -309,14 +327,15 @@ export default function StaffPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Role</FormLabel>
-                    <Select 
+                    <Select
                       onValueChange={(value) => {
                         field.onChange(value);
-                        // Update specialties when role changes to include groomer
-                        if (value === 'groomer') {
-                          form.setValue('specialties', ['groomer']);
+                        if (value === 'pet_walker') {
+                          form.setValue('specialties', ['dog_walking']);
+                        } else {
+                          form.setValue('specialties', []); //Clear specialties if not pet_walker
                         }
-                      }} 
+                      }}
                       defaultValue={field.value}
                     >
                       <FormControl>
@@ -327,6 +346,7 @@ export default function StaffPage() {
                       <SelectContent>
                         <SelectItem value="staff">Staff Member</SelectItem>
                         <SelectItem value="groomer">Pet Groomer</SelectItem>
+                        <SelectItem value="pet_walker">Pet Walker</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -353,6 +373,50 @@ export default function StaffPage() {
                   </FormItem>
                 )}
               />
+
+              {form.watch('role') === 'pet_walker' && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="walkingPreferences.maxDistance"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Maximum Walking Distance (km)</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            min="1"
+                            max="20"
+                            {...field}
+                            onChange={(e) => field.onChange(parseInt(e.target.value))}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="walkingPreferences.simultaneousWalks"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Maximum Simultaneous Walks</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            min="1"
+                            max="5"
+                            {...field}
+                            onChange={(e) => field.onChange(parseInt(e.target.value))}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
 
               <div className="flex justify-end gap-2">
                 <Button

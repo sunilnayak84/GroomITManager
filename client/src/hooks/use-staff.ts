@@ -15,14 +15,14 @@ export function useStaff() {
       try {
         const q = query(
           collection(db, STAFF_COLLECTION),
-          where('role', 'in', ['staff', 'groomer'])
+          where('role', 'in', ['staff', 'groomer', 'pet_walker'])
         );
         const snapshot = await getDocs(q);
         const staff = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
         })) as User[];
-        
+
         console.log('FETCH_STAFF: Successfully fetched staff members:', staff);
         return staff;
       } catch (error) {
@@ -35,10 +35,20 @@ export function useStaff() {
   const addStaffMember = useMutation({
     mutationFn: async (data: InsertUser) => {
       console.log('Adding staff member with data:', data);
-      const docRef = await addDoc(collection(db, STAFF_COLLECTION), {
+
+      // Add walking preferences if role is pet_walker
+      const staffData = {
         ...data,
-        createdAt: new Date().toISOString()
-      });
+        createdAt: new Date().toISOString(),
+        walkingPreferences: data.role === 'pet_walker' ? {
+          maxDistance: data.walkingPreferences?.maxDistance || 5,
+          preferredAreas: data.walkingPreferences?.preferredAreas || [],
+          availableTimeSlots: data.walkingPreferences?.availableTimeSlots || [],
+          simultaneousWalks: data.walkingPreferences?.simultaneousWalks || 1
+        } : undefined
+      };
+
+      const docRef = await addDoc(collection(db, STAFF_COLLECTION), staffData);
       return docRef.id;
     },
     onSuccess: () => {
@@ -50,10 +60,19 @@ export function useStaff() {
     mutationFn: async ({ id, data }: { id: string; data: Partial<User> }) => {
       console.log('Updating staff member:', id, 'with data:', data);
       const docRef = doc(db, STAFF_COLLECTION, id);
-      await updateDoc(docRef, {
+
+      const updateData = {
         ...data,
-        updatedAt: new Date().toISOString()
-      });
+        updatedAt: new Date().toISOString(),
+        walkingPreferences: data.role === 'pet_walker' ? {
+          maxDistance: data.walkingPreferences?.maxDistance || 5,
+          preferredAreas: data.walkingPreferences?.preferredAreas || [],
+          availableTimeSlots: data.walkingPreferences?.availableTimeSlots || [],
+          simultaneousWalks: data.walkingPreferences?.simultaneousWalks || 1
+        } : undefined
+      };
+
+      await updateDoc(docRef, updateData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['staff'] });
