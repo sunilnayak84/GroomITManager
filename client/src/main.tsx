@@ -52,7 +52,7 @@ function ErrorFallback({ error, resetErrorBoundary }: { error: Error; resetError
           </pre>
         </div>
         <div className="flex justify-center">
-          <Button 
+          <Button
             onClick={resetErrorBoundary}
             className="flex items-center gap-2"
           >
@@ -109,6 +109,7 @@ function Router() {
             <Route path="/settings/breeds" component={lazy(() => import('./pages/settings/BreedsPage'))} />
             <Route path="/settings/roles" component={lazy(() => import('./pages/RoleManagementPage'))} />
             <Route path="/settings/loyalty" component={lazy(() => import('./pages/settings/LoyaltyProgramPage'))} />
+            <Route path="/settings/rewards" component={lazy(() => import('./pages/settings/RewardsManagementPage'))} />
             <Route>404 Page Not Found</Route>
           </Switch>
         </Suspense>
@@ -123,7 +124,7 @@ setupErrorHandlers();
 // Create root and render app
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ErrorBoundary 
+    <ErrorBoundary
       FallbackComponent={ErrorFallback}
       onReset={() => {
         // Reset app state here if needed
