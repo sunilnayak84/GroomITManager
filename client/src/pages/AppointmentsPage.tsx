@@ -186,9 +186,41 @@ export default function AppointmentsPage() {
     });
   }, [appointments, dateFilter, statusFilter]);
 
+  const [sortConfig, setSortConfig] = useState<{
+    key: 'date';
+    direction: 'asc' | 'desc' | null;
+  }>({ key: 'date', direction: null });
+
+  const sortedAppointments = useMemo(() => {
+    if (!filteredAppointments || !sortConfig.direction) return filteredAppointments;
+    
+    return [...filteredAppointments].sort((a, b) => {
+      const dateA = new Date(a[sortConfig.key]).getTime();
+      const dateB = new Date(b[sortConfig.key]).getTime();
+      return sortConfig.direction === 'asc' ? dateA - dateB : dateB - dateA;
+    });
+  }, [filteredAppointments, sortConfig]);
+
   const columns = [
     {
-      header: "Date",
+      header: () => (
+        <div
+          className="flex items-center cursor-pointer"
+          onClick={() => {
+            setSortConfig({
+              key: 'date',
+              direction: sortConfig.direction === 'asc' ? 'desc' : 'asc',
+            });
+          }}
+        >
+          Date
+          {sortConfig.direction && (
+            <span className="ml-2">
+              {sortConfig.direction === 'asc' ? '↑' : '↓'}
+            </span>
+          )}
+        </div>
+      ),
       cell: ({ date }: AppointmentWithRelations) => format(new Date(date), "PPp"),
     },
     {
@@ -415,7 +447,7 @@ export default function AppointmentsPage() {
         <div className="bg-white rounded-lg border shadow-sm">
           <DataTable
             columns={columns}
-            data={filteredAppointments as AppointmentWithRelations[]}
+            data={sortedAppointments as AppointmentWithRelations[]}
             isLoading={isLoading}
           />
         </div>
