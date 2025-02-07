@@ -114,9 +114,28 @@ export default function AppointmentsPage() {
   const [showPetDetails, setShowPetDetails] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
-  const [view, setView] = useState<'list' | 'calendar'>('list');
-  const [dateFilter, setDateFilter] = useState<'today' | 'week' | 'month' | 'past' | 'all'>('all');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled'>('all');
+  const [view, setView] = useState<'list' | 'calendar'>(() => {
+    return localStorage.getItem('appointmentView') as 'list' | 'calendar' || 'list'
+  });
+  const [dateFilter, setDateFilter] = useState<'today' | 'week' | 'month' | 'past' | 'all'>(() => {
+    return localStorage.getItem('appointmentDateFilter') as 'today' | 'week' | 'month' | 'past' | 'all' || 'all'
+  });
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled'>(() => {
+    return localStorage.getItem('appointmentStatusFilter') as 'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled' || 'all'
+  });
+
+  // Save preferences when they change
+  useEffect(() => {
+    localStorage.setItem('appointmentView', view);
+  }, [view]);
+
+  useEffect(() => {
+    localStorage.setItem('appointmentDateFilter', dateFilter);
+  }, [dateFilter]);
+
+  useEffect(() => {
+    localStorage.setItem('appointmentStatusFilter', statusFilter);
+  }, [statusFilter]);
   const { data: appointments, isLoading, error } = useAppointments();
 
   // Add logging when appointments data changes

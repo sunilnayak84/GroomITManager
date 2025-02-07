@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import type { CalendarApi } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -31,7 +31,9 @@ interface AppointmentCalendarProps {
 }
 
 export default function AppointmentCalendar({ setSelectedAppointment, setOpenDetails }: AppointmentCalendarProps) {
-  const [currentView, setCurrentView] = useState<'dayGridMonth' | 'timeGridWeek' | 'timeGridDay'>('timeGridWeek');
+  const [currentView, setCurrentView] = useState<string>(() => {
+    return localStorage.getItem('calendarView') || 'timeGridWeek'
+  });
   const [openNewForm, setOpenNewForm] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const calendarRef = useRef<FullCalendar | null>(null);
@@ -123,6 +125,11 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
     setSelectedDate(selectedStart);
     setOpenNewForm(true);
   }, []);
+
+  // Save calendar view preference
+  useEffect(() => {
+    localStorage.setItem('calendarView', currentView);
+  }, [currentView]);
 
   return (
     <div className="space-y-4">
