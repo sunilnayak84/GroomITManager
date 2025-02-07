@@ -94,7 +94,7 @@ export function ImageCarousel({ images, type, onImageUpload, onImageDelete, clas
               <img
                 src={image.url}
                 alt={`${type} image`}
-                className="w-20 h-20 object-cover rounded-md"
+                className="w-[80px] h-[80px] object-cover rounded-md"
               />
               {onImageDelete && (
                 <button
