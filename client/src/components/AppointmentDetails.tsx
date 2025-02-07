@@ -520,6 +520,26 @@ const AppointmentDetails = ({
                   <ImageCarousel
                     images={form.watch("afterImages") || []}
                     type="after"
+                    onImageDelete={isTerminalStatus ? undefined : async (imageId) => {
+                      try {
+                        setIsUpdating(true);
+                        const updatedImages = (form.watch("afterImages") || []).filter(img => img.id !== imageId);
+                        form.setValue("afterImages", updatedImages);
+                        
+                        toast({
+                          title: "Success",
+                          description: "Image deleted. Don't forget to click Update Appointment to save all changes.",
+                        });
+                      } catch (error) {
+                        toast({
+                          variant: "destructive",
+                          title: "Error",
+                          description: error instanceof Error ? error.message : "Failed to delete image",
+                        });
+                      } finally {
+                        setIsUpdating(false);
+                      }
+                    }}
                     onImageUpload={isTerminalStatus ? undefined : async (file) => {
                       try {
                         if (file.size > 5 * 1024 * 1024) {
