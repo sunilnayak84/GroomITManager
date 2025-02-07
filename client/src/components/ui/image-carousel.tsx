@@ -1,39 +1,62 @@
-import React, { useState, useCallback } from 'react';
-import useEmblaCarousel from 'embla-carousel-react';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
-import { Button } from './button';
-import { Dialog, DialogContent } from './dialog';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from './alert-dialog';
-import type { AppointmentImage } from '@/lib/schema';
+import React, { useState, useCallback } from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Button } from "./button";
+import { Dialog, DialogContent } from "./dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "./alert-dialog";
+import type { AppointmentImage } from "@/lib/schema";
 
 interface ImageCarouselProps {
   images: AppointmentImage[];
-  type: 'before' | 'after';
+  type: "before" | "after";
   onImageUpload?: (file: File) => Promise<void>;
   onImageDelete?: (imageId: string) => Promise<void>;
   className?: string;
   disabled?: boolean;
 }
 
-export function ImageCarousel({ images, type, onImageUpload, onImageDelete, className }: ImageCarouselProps) {
+export function ImageCarousel({
+  images,
+  type,
+  onImageUpload,
+  onImageDelete,
+  className,
+}: ImageCarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false });
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [previewImage, setPreviewImage] = useState<AppointmentImage | null>(null);
+  const [previewImage, setPreviewImage] = useState<AppointmentImage | null>(
+    null,
+  );
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [imageToDelete, setImageToDelete] = useState<string | null>(null);
 
-  const scrollPrev = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (emblaApi) emblaApi.scrollPrev();
-  }, [emblaApi]);
+  const scrollPrev = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (emblaApi) emblaApi.scrollPrev();
+    },
+    [emblaApi],
+  );
 
-  const scrollNext = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (emblaApi) emblaApi.scrollNext();
-  }, [emblaApi]);
+  const scrollNext = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (emblaApi) emblaApi.scrollNext();
+    },
+    [emblaApi],
+  );
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
@@ -43,9 +66,9 @@ export function ImageCarousel({ images, type, onImageUpload, onImageDelete, clas
   React.useEffect(() => {
     if (!emblaApi) return;
     onSelect();
-    emblaApi.on('select', onSelect);
+    emblaApi.on("select", onSelect);
     return () => {
-      emblaApi.off('select', onSelect);
+      emblaApi.off("select", onSelect);
     };
   }, [emblaApi, onSelect]);
 
@@ -57,7 +80,7 @@ export function ImageCarousel({ images, type, onImageUpload, onImageDelete, clas
         await onImageUpload(file);
       } finally {
         setIsLoading(false);
-        e.target.value = '';
+        e.target.value = "";
       }
     }
   };
@@ -76,31 +99,31 @@ export function ImageCarousel({ images, type, onImageUpload, onImageDelete, clas
         setShowDeleteDialog(false);
         setImageToDelete(null);
       } catch (error) {
-        console.error('Error deleting image:', error);
+        console.error("Error deleting image:", error);
       }
     }
   };
 
   return (
     <div className={`space-y-4 ${className}`}>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-0 !important">
         {images.length > 0 ? (
           images.map((image) => (
             <div
               key={image.id}
-              className="relative cursor-pointer"
+              className="relative w-20 h-20 cursor-pointer"
               onClick={() => setPreviewImage(image)}
             >
-              <div className="relative">
+              <div className="relative w-20 h-20">
                 <img
                   src={image.url}
                   alt={`${type} image`}
-                  className="w-20 h-20 object-cover rounded-md"
+                  className="w-full h-full object-cover rounded-md"
                 />
                 {onImageDelete && (
                   <button
                     onClick={(e) => handleDeleteImage(e, image.id)}
-                    className="absolute -top-2 -right-2 z-10 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center hover:bg-red-600 shadow-md"
+                    className="absolute top-0 right-0 z-10 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center hover:bg-red-600 shadow-md"
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -145,22 +168,28 @@ export function ImageCarousel({ images, type, onImageUpload, onImageDelete, clas
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={showDeleteDialog} onOpenChange={(open) => {
-        if (!open) {
-          setShowDeleteDialog(false);
-          setImageToDelete(null);
-        }
-      }}>
+      <AlertDialog
+        open={showDeleteDialog}
+        onOpenChange={(open) => {
+          if (!open) {
+            setShowDeleteDialog(false);
+            setImageToDelete(null);
+          }
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Image</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this image? This action cannot be undone.
+              Are you sure you want to delete this image? This action cannot be
+              undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete}>Delete</AlertDialogAction>
+            <AlertDialogAction onClick={confirmDelete}>
+              Delete
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
