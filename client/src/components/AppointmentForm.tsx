@@ -83,42 +83,42 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
     const slots: string[] = [];
     const [openHour, openMinute] = openingTime.split(':').map(Number);
     const [closeHour, closeMinute] = closingTime.split(':').map(Number);
-    
+
     let currentMinutes = openMinute;
     let currentHour = openHour;
-    
+
     currentMinutes = Math.ceil(currentMinutes / 15) * 15;
     if (currentMinutes >= 60) {
       currentHour += Math.floor(currentMinutes / 60);
       currentMinutes = currentMinutes % 60;
     }
-    
+
     const breakStartMinutes = breakStart ? 
       (parseInt(breakStart.split(':')[0]) * 60 + parseInt(breakStart.split(':')[1])) : null;
     const breakEndMinutes = breakEnd ?
       (parseInt(breakEnd.split(':')[0]) * 60 + parseInt(breakEnd.split(':')[1])) : null;
-    
+
     while (currentHour < closeHour || (currentHour === closeHour && currentMinutes < closeMinute)) {
       const currentTimeMinutes = currentHour * 60 + currentMinutes;
       const slotEndMinutes = currentTimeMinutes + serviceDuration;
-      
+
       if (slotEndMinutes <= (closeHour * 60 + closeMinute)) {
         const isInBreakTime = breakStartMinutes !== null && breakEndMinutes !== null &&
           currentTimeMinutes >= breakStartMinutes && currentTimeMinutes < breakEndMinutes;
-        
+
         if (!isInBreakTime) {
           const timeString = `${String(currentHour).padStart(2, '0')}:${String(currentMinutes).padStart(2, '0')}`;
           slots.push(timeString);
         }
       }
-      
+
       currentMinutes += 15;
       if (currentMinutes >= 60) {
         currentHour += Math.floor(currentMinutes / 60);
         currentMinutes = currentMinutes % 60;
       }
     }
-    
+
     return slots;
   };
 
@@ -177,7 +177,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
       const appointmentEndTime = new Date(appointmentStartTime);
       appointmentEndTime.setMinutes(appointmentEndTime.getMinutes() + selectedService.duration);
       const endTimeStr = `${String(appointmentEndTime.getHours()).padStart(2, '0')}:${String(appointmentEndTime.getMinutes()).padStart(2, '0')}`;
-        
+
       if (endTimeStr > daySchedule.closingTime) {
         return {
           isValid: false,
@@ -204,11 +204,11 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
           const breakEndTime = daySchedule.breakEnd.split(':')
             .map(n => parseInt(n))
             .reduce((acc, n, i) => i === 0 ? n : acc + (n/60), 0);
-            
+
           const breakDuration = breakEndTime - breakStartTime;
           const breakEndHour = Math.floor(breakEndTime);
           const breakEndMinute = Math.round((breakEndTime - breakEndHour) * 60);
-            
+
           return {
             isValid: false,
             error: `This time conflicts with our ${breakDuration === 1 ? '1 hour' : `${breakDuration} hours`} break period (until ${breakEndHour}:${String(breakEndMinute).padStart(2, '0')})`
@@ -225,7 +225,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
           const existingEnd = new Date(existingStart);
           const existingDuration = a.service?.[0]?.duration || 60;
           existingEnd.setMinutes(existingEnd.getMinutes() + existingDuration);
-            
+
           return (
             // New appointment starts during existing appointment
             (appointmentStartTime >= existingStart && appointmentStartTime < existingEnd) ||
@@ -237,7 +237,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
             (existingStart <= appointmentStartTime && existingEnd >= appointmentEndTime)
           );
         });
-          
+
         return {
           isValid: false,
           error: conflictingAppointment 
@@ -256,10 +256,10 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
 
   async function onSubmit(data: z.infer<typeof insertAppointmentSchema>) {
     if (isSubmitting) return;
-    
+
     setIsSubmitting(true);
     setValidationError(null);
-    
+
     try {
       if (!data.petId || !data.services || data.services.length === 0) {
         throw new Error("Please select both pet and at least one service");
@@ -271,7 +271,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
 
       const formDate = form.getValues('date');
       const formTime = form.getValues('time');
-      
+
       if (!formDate || !formTime) {
         throw new Error("Please select both date and time");
       }
@@ -279,7 +279,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
       const appointmentDateTime = new Date(formDate);
       const [timeHours, timeMinutes] = formTime.split(':').map(Number);
       appointmentDateTime.setHours(timeHours, timeMinutes, 0, 0);
-      
+
       if (isNaN(appointmentDateTime.getTime())) {
         throw new Error("Invalid appointment date and time");
       }
@@ -298,26 +298,26 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
       const validation = validateTimeSlot(formDate, formTime, daySchedule, data.groomerId);
       if (!validation.isValid) {
         const errorMessage = validation.error || "This time slot is not available";
-        
+
         setValidationError(errorMessage);
-        
+
         form.setError('time', {
           type: 'manual',
           message: errorMessage
         });
-        
+
         form.setError('groomerId', {
           type: 'manual',
           message: "Groomer is not available at this time"
         });
-        
+
         toast({
           variant: "destructive",
           title: "Scheduling Error",
           description: errorMessage,
           duration: 5000,
         });
-        
+
         setIsSubmitting(false);
         return;
       }
@@ -330,12 +330,12 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
 
       await addAppointment(appointmentData);
       setOpen(false);
-      
+
       toast({
         title: "Success",
         description: "Appointment scheduled successfully",
       });
-      
+
       form.reset();
     } catch (error) {
       console.error('Failed to schedule appointment:', error);
@@ -365,7 +365,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
         </Alert>
       )}
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 grid-cols-1 sm:grid sm:grid-cols-2 sm:gap-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 grid grid-cols-1 sm:grid sm:grid-cols-2 sm:gap-4">
           <FormField
             control={form.control}
             name="petId"
@@ -393,9 +393,8 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
               </FormItem>
             )}
           />
-          
-          <div className="grid grid-cols-2 gap-4">
-            <FormField
+
+          <FormField
               control={form.control}
               name="date"
               render={({ field }) => (
@@ -410,11 +409,11 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                         field.onChange(e.target.value);
                         const selectedDate = new Date(e.target.value);
                         const dayOfWeek = selectedDate.getDay();
-                        
+
                         const daySchedule = workingHours?.find(
                           (schedule) => schedule.dayOfWeek === dayOfWeek
                         );
-                        
+
                         if (!daySchedule) {
                           toast({
                             title: "Invalid Day Selected",
@@ -426,7 +425,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                           form.setValue('time', '');
                           return;
                         }
-                        
+
                         if (!daySchedule.isOpen) {
                           toast({
                             title: "Business Closed",
@@ -438,7 +437,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                           form.setValue('time', '');
                           return;
                         }
-                        
+
                         const slots = generateTimeSlots(
                           daySchedule.openingTime,
                           daySchedule.closingTime,
@@ -446,7 +445,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                           daySchedule.breakEnd || null,
                           selectedService?.duration || 30
                         );
-                        
+
                         setAvailableTimeSlots(slots);
                       }}
                     />
@@ -455,7 +454,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="time"
@@ -483,7 +482,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                 </FormItem>
               )}
             />
-          </div>
+          
 
           <div className="space-y-4 col-span-full">
             <FormField
@@ -503,7 +502,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                               ? [...field.value, serviceId]
                               : field.value.filter((id) => id !== serviceId);
                             field.onChange(updatedServices);
-                            
+
                             // Calculate total duration and price
                             const selectedServices = services.filter((s) => 
                               updatedServices.includes(String(s.service_id))
@@ -516,7 +515,7 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                               (sum, s) => sum + (s.price || 0), 
                               0
                             );
-                            
+
                             form.setValue('totalDuration', totalDuration);
                             form.setValue('totalPrice', totalPrice);
                           }}
