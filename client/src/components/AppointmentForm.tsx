@@ -71,6 +71,10 @@ export default function AppointmentForm({ setOpen, selectedDate }: AppointmentFo
       totalPrice: 0,
       totalDuration: 0
     },
+    values: {
+      date: selectedDate ? format(selectedDate, "yyyy-MM-dd") : "",
+      time: selectedDate ? format(selectedDate, "HH:mm") : "",
+    }
   });
 
   // Helper function to generate time slots
