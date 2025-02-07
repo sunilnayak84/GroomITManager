@@ -91,19 +91,21 @@ export function ImageCarousel({ images, type, onImageUpload, onImageDelete, clas
               className="relative cursor-pointer"
               onClick={() => setPreviewImage(image)}
             >
-              <img
-                src={image.url}
-                alt={`${type} image`}
-                className="w-[80px] h-[80px] object-cover rounded-md"
-              />
-              {onImageDelete && (
-                <button
-                  onClick={(e) => handleDeleteImage(e, image.id)}
-                  className="absolute top-0 right-0 m-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center hover:bg-red-600 z-10"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              )}
+              <div className="relative">
+                <img
+                  src={image.url}
+                  alt={`${type} image`}
+                  className="w-20 h-20 object-cover rounded-md"
+                />
+                {onImageDelete && (
+                  <button
+                    onClick={(e) => handleDeleteImage(e, image.id)}
+                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center hover:bg-red-600"
+                  >
+                    <X className="h-2 w-2" />
+                  </button>
+                )}
+              </div>
             </div>
           ))
         ) : (
