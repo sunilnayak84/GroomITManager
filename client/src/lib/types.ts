@@ -236,6 +236,9 @@ export type InsertPet = Omit<PetInput, "id" | "submissionId"> & {
   submissionId?: string;
   firebaseId?: string | null;
   deletedAt?: string | null;
+  temperamentCategory?: string | null;
+  temperamentTags?: string[];
+  temperamentNotes?: string | null;
 };
 
 export type FirestorePet = {
@@ -252,14 +255,17 @@ export type FirestorePet = {
   weightUnit: WeightUnit;
   notes: string | null;
   image: string | null;
-  createdAt: FirestoreTimestamp;
-  updatedAt: FirestoreTimestamp | null;
+  createdAt: FirestoreTimestamp | string;
+  updatedAt: FirestoreTimestamp | string | null;
   submissionId?: string;
   owner: {
     id: string;
     name: string;
     email: string | null;
   } | null;
+  temperamentCategory?: string | null;
+  temperamentTags?: string[];
+  temperamentNotes?: string | null;
 };
 
 export type FirestoreCustomer = {
