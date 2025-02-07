@@ -20,7 +20,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
-import { insertCustomerSchema, type InsertCustomer } from "@/lib/schema";
+import { insertCustomerSchema } from "@/lib/schema";
+import type { InsertCustomer } from "@/lib/types";
 import type { Customer } from "@/lib/schema";
 import type { Pet, InsertPet, FirestoreDate } from "@/lib/types";
 import { useForm } from "react-hook-form";

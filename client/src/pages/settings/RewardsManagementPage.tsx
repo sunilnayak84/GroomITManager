@@ -196,7 +196,7 @@ export default function RewardsManagementPage() {
                       <FormControl>
                         <Input 
                           type="date"
-                          {...field}
+                          value={field.value || ''}
                           onChange={(e) => {
                             const date = e.target.value ? new Date(e.target.value) : null;
                             field.onChange(date?.toISOString() || null);

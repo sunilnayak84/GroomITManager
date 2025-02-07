@@ -134,6 +134,7 @@ export interface Customer {
     timestamp: string;
   }>;
   loyaltyTier: "bronze" | "silver" | "gold" | "platinum";
+  loyaltyPoints?: number;
 }
 
 // Update WithFieldValue type to use pointsHistory for calculations
