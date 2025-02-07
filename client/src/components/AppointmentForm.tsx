@@ -43,7 +43,7 @@ interface AppointmentFormProps {
   selectedDate?: Date | null;
 }
 
-export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
+export default function AppointmentForm({ setOpen, selectedDate }: AppointmentFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const { data: appointments, addAppointment, isTimeSlotAvailable } = useAppointments();
