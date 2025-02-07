@@ -70,10 +70,6 @@ export default function AppointmentForm({ setOpen, selectedDate }: AppointmentFo
       time: selectedDate ? format(selectedDate, "HH:mm") : "",
       totalPrice: 0,
       totalDuration: 0
-    },
-    values: {
-      date: selectedDate ? format(selectedDate, "yyyy-MM-dd") : "",
-      time: selectedDate ? format(selectedDate, "HH:mm") : "",
     }
   });
 
