@@ -491,44 +491,127 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
               name="services"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Services</FormLabel>
-                  <div className="space-y-2">
-                    {(services || []).map((service) => (
-                      <div key={service.service_id} className="flex items-center space-x-2">
-                        <Checkbox
-                          checked={field.value.includes(String(service.service_id))}
-                          onCheckedChange={(checked) => {
-                            const serviceId = String(service.service_id);
-                            const updatedServices = checked
-                              ? [...field.value, serviceId]
-                              : field.value.filter((id) => id !== serviceId);
-                            field.onChange(updatedServices);
+                  <FormLabel>Select Services</FormLabel>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Services Column */}
+                    <div className="space-y-2">
+                      <h3 className="font-semibold mb-4">Services</h3>
+                      {(services || [])
+                        .filter(service => service.category === 'Service')
+                        .map((service) => (
+                          <div key={service.service_id} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded-lg">
+                            <Checkbox
+                              checked={field.value.includes(String(service.service_id))}
+                              onCheckedChange={(checked) => {
+                                const serviceId = String(service.service_id);
+                                const updatedServices = checked
+                                  ? [...field.value, serviceId]
+                                  : field.value.filter((id) => id !== serviceId);
+                                field.onChange(updatedServices);
 
-                            // Calculate total duration and price
-                            const selectedServices = services.filter((s) => 
-                              updatedServices.includes(String(s.service_id))
-                            );
-                            const totalDuration = selectedServices.reduce(
-                              (sum, s) => sum + (s.duration || 0), 
-                              0
-                            );
-                            const totalPrice = selectedServices.reduce(
-                              (sum, s) => sum + (s.price || 0), 
-                              0
-                            );
+                                const selectedServices = services.filter((s) => 
+                                  updatedServices.includes(String(s.service_id))
+                                );
+                                const totalDuration = selectedServices.reduce(
+                                  (sum, s) => sum + (s.duration || 0), 
+                                  0
+                                );
+                                const totalPrice = selectedServices.reduce(
+                                  (sum, s) => sum + (s.price || 0), 
+                                  0
+                                );
 
-                            form.setValue('totalDuration', totalDuration);
-                            form.setValue('totalPrice', totalPrice);
-                          }}
-                        />
-                        <div className="flex-1">
-                          <div className="font-medium">{service.name}</div>
-                          <div className="text-sm text-gray-500">
-                            ₹{service.price} • {service.duration} minutes
+                                form.setValue('totalDuration', totalDuration);
+                                form.setValue('totalPrice', totalPrice);
+                              }}
+                            />
+                            <div>
+                              <p className="font-medium">{service.name}</p>
+                              <p className="text-sm text-gray-500">₹{service.price} • {service.duration} minutes</p>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                    ))}
+                        ))}
+                    </div>
+
+                    {/* Add-ons Column */}
+                    <div className="space-y-2">
+                      <h3 className="font-semibold mb-4">Add-ons</h3>
+                      {(services || [])
+                        .filter(service => service.category === 'Addon')
+                        .map((service) => (
+                          <div key={service.service_id} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded-lg">
+                            <Checkbox
+                              checked={field.value.includes(String(service.service_id))}
+                              onCheckedChange={(checked) => {
+                                const serviceId = String(service.service_id);
+                                const updatedServices = checked
+                                  ? [...field.value, serviceId]
+                                  : field.value.filter((id) => id !== serviceId);
+                                field.onChange(updatedServices);
+
+                                const selectedServices = services.filter((s) => 
+                                  updatedServices.includes(String(s.service_id))
+                                );
+                                const totalDuration = selectedServices.reduce(
+                                  (sum, s) => sum + (s.duration || 0), 
+                                  0
+                                );
+                                const totalPrice = selectedServices.reduce(
+                                  (sum, s) => sum + (s.price || 0), 
+                                  0
+                                );
+
+                                form.setValue('totalDuration', totalDuration);
+                                form.setValue('totalPrice', totalPrice);
+                              }}
+                            />
+                            <div>
+                              <p className="font-medium">{service.name}</p>
+                              <p className="text-sm text-gray-500">₹{service.price} • {service.duration} minutes</p>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+
+                    {/* Packages Column */}
+                    <div className="space-y-2">
+                      <h3 className="font-semibold mb-4">Packages</h3>
+                      {(services || [])
+                        .filter(service => service.category === 'Package')
+                        .map((service) => (
+                          <div key={service.service_id} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded-lg">
+                            <Checkbox
+                              checked={field.value.includes(String(service.service_id))}
+                              onCheckedChange={(checked) => {
+                                const serviceId = String(service.service_id);
+                                const updatedServices = checked
+                                  ? [...field.value, serviceId]
+                                  : field.value.filter((id) => id !== serviceId);
+                                field.onChange(updatedServices);
+
+                                const selectedServices = services.filter((s) => 
+                                  updatedServices.includes(String(s.service_id))
+                                );
+                                const totalDuration = selectedServices.reduce(
+                                  (sum, s) => sum + (s.duration || 0), 
+                                  0
+                                );
+                                const totalPrice = selectedServices.reduce(
+                                  (sum, s) => sum + (s.price || 0), 
+                                  0
+                                );
+
+                                form.setValue('totalDuration', totalDuration);
+                                form.setValue('totalPrice', totalPrice);
+                              }}
+                            />
+                            <div>
+                              <p className="font-medium">{service.name}</p>
+                              <p className="text-sm text-gray-500">₹{service.price} • {service.duration} minutes</p>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
                   </div>
                   {field.value.length > 0 && (
                     <div className="mt-4 p-4 bg-gray-50 rounded-lg">
