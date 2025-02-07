@@ -208,7 +208,15 @@ export default function AppointmentsPage() {
   const [sortConfig, setSortConfig] = useState<{
     key: 'date';
     direction: 'asc' | 'desc' | null;
-  }>({ key: 'date', direction: null });
+  }>(() => {
+    const savedConfig = localStorage.getItem('appointmentSortConfig');
+    return savedConfig ? JSON.parse(savedConfig) : { key: 'date', direction: null };
+  });
+
+  // Save sort config when it changes
+  useEffect(() => {
+    localStorage.setItem('appointmentSortConfig', JSON.stringify(sortConfig));
+  }, [sortConfig]);
 
   const sortedAppointments = useMemo(() => {
     if (!filteredAppointments || !sortConfig.direction) return filteredAppointments;
