@@ -106,19 +106,18 @@ export function ImageCarousel({
 
   return (
     <div className={`space-y-4 ${className}`}>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-[2px] p-0">
+      <div className="!grid !grid-cols-2 sm:!grid-cols-4 !gap-0.5 !p-0">
         {images.length > 0 ? (
           images.map((image) => (
             <div
               key={image.id}
-              className="cursor-pointer"
+              className="relative w-20 h-20 cursor-pointer"
               onClick={() => setPreviewImage(image)}
             >
-              <div className="aspect-square w-[72px]">
+              <div className="relative w-20 h-20">
                 <img
                   src={image.url}
                   alt={`${type} image`}
-                  className="w-full h-full object-cover"
                   className="w-full h-full object-cover rounded-md"
                 />
                 {onImageDelete && (
