@@ -78,13 +78,31 @@ export default function AppointmentForm({ setOpen, selectedDate }: AppointmentFo
     if (selectedDate) {
       const formattedDate = format(selectedDate, "yyyy-MM-dd");
       const formattedTime = format(selectedDate, "HH:mm");
+      
+      // Get the day of week for the selected date
+      const dayOfWeek = selectedDate.getDay();
+      const daySchedule = workingHours?.find(
+        (schedule) => schedule.dayOfWeek === dayOfWeek
+      );
+
+      if (daySchedule) {
+        const slots = generateTimeSlots(
+          daySchedule.openingTime,
+          daySchedule.closingTime,
+          daySchedule.breakStart || null,
+          daySchedule.breakEnd || null,
+          selectedService?.duration || 30
+        );
+        setAvailableTimeSlots(slots);
+      }
+
       form.reset({
         ...form.getValues(),
         date: formattedDate,
         time: formattedTime
       });
     }
-  }, [selectedDate]);
+  }, [selectedDate, workingHours, selectedService]);
 
   // Helper function to generate time slots
   const generateTimeSlots = (
