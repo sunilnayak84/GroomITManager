@@ -365,36 +365,37 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
         </Alert>
       )}
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 grid grid-cols-1 sm:grid sm:grid-cols-2 sm:gap-4">
-          <FormField
-            control={form.control}
-            name="petId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Pet</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a pet" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {(pets || []).map((pet) => (
-                      <SelectItem 
-                        key={String(pet.id)} 
-                        value={String(pet.id)}
-                      >
-                        {pet.name} - {pet.breed}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <FormField
+              control={form.control}
+              name="petId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Pet</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a pet" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {(pets || []).map((pet) => (
+                        <SelectItem 
+                          key={String(pet.id)} 
+                          value={String(pet.id)}
+                        >
+                          {pet.name} - {pet.breed}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
+            <FormField
               control={form.control}
               name="date"
               render={({ field }) => (
@@ -482,9 +483,9 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
                 </FormItem>
               )}
             />
-          
+          </div>
 
-          <div className="space-y-4 col-span-full">
+          <div className="space-y-4">
             <FormField
               control={form.control}
               name="services"
