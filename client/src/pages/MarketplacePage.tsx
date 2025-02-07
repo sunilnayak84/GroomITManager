@@ -123,7 +123,7 @@ export default function MarketplacePage() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredRewards.map((reward: Reward) => (
             <Card key={reward.id}>
-              {reward.image && (
+              {typeof reward.image === 'string' && (
                 <div className="aspect-video relative overflow-hidden rounded-t-lg">
                   <img
                     src={reward.image}

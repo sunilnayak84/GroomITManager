@@ -95,6 +95,7 @@ export async function createCustomer(customer: Omit<Customer, 'id' | 'createdAt'
       gender: customer.gender || null,
       petCount: 0,
       firebaseId: null,
+      loyaltyPoints: 0,
       createdAt: timestamp,
       updatedAt: null
     };
