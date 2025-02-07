@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
@@ -100,7 +99,7 @@ export function ImageCarousel({ images, type, onImageUpload, onImageDelete, clas
               {onImageDelete && (
                 <button
                   onClick={(e) => handleDeleteImage(e, image.id)}
-                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                  className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center hover:bg-red-600"
                 >
                   <X className="h-3 w-3" />
                 </button>
