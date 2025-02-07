@@ -100,9 +100,9 @@ export function ImageCarousel({ images, type, onImageUpload, onImageDelete, clas
                 {onImageDelete && (
                   <button
                     onClick={(e) => handleDeleteImage(e, image.id)}
-                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center hover:bg-red-600 shadow-sm"
+                    className="absolute -top-2 -right-2 z-10 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center hover:bg-red-600 shadow-md"
                   >
-                    <X className="h-2 w-2" />
+                    <X className="h-3 w-3" />
                   </button>
                 )}
               </div>
