@@ -106,7 +106,7 @@ export function ImageCarousel({
 
   return (
     <div className={`space-y-4 ${className}`}>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-0 !important">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-1 !important">
         {images.length > 0 ? (
           images.map((image) => (
             <div
