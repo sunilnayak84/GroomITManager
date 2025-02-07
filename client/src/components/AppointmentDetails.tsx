@@ -516,6 +516,54 @@ const AppointmentDetails = ({
             {form.watch("status") === "completed" && (
               <>
                 <div>
+                  <h3 className="text-sm font-medium text-gray-500">After Images</h3>
+                  <ImageCarousel
+                    images={form.watch("afterImages") || []}
+                    type="after"
+                    onImageUpload={isTerminalStatus ? undefined : async (file) => {
+                      try {
+                        if (file.size > 5 * 1024 * 1024) {
+                          throw new Error('File size must be less than 5MB');
+                        }
+
+                        setIsImageLoading(true);
+                        const timestamp = Date.now();
+                        const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+                        const path = `appointments/${appointment.id}/after-image-${timestamp}.${extension}`;
+
+                        const { uploadFile } = await import("@/lib/storage");
+                        const url = await uploadFile(file, path);
+
+                        const newImage: AppointmentImage = {
+                          id: `${timestamp}`,
+                          url,
+                          type: 'after',
+                          timestamp: new Date().toISOString(),
+                        };
+
+                        form.setValue("afterImages", [...(form.watch("afterImages") || []), newImage]);
+
+                        toast({
+                          title: "Success",
+                          description: "After image uploaded successfully. Don't forget to click Update Appointment to save all changes.",
+                        });
+                      } catch (error) {
+                        setImageLoadError(true);
+                        toast({
+                          variant: "destructive",
+                          title: "Error",
+                          description: error instanceof Error ? error.message : "Failed to upload image",
+                        });
+                      } finally {
+                        setIsImageLoading(false);
+                      }
+                    }}
+                    className="mt-2"
+                    disabled={isTerminalStatus}
+                  />
+                </div>
+
+                <div>
                   <h3 className="text-sm font-medium text-gray-500">Inventory Usage</h3>
                   <div className="mt-2 space-y-4">
                     {appointment.service?.map((service) => {
@@ -592,54 +640,7 @@ const AppointmentDetails = ({
                   </div>
                 </div>
 
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">After Images</h3>
-                  <ImageCarousel
-                    images={form.watch("afterImages") || []}
-                    type="after"
-                    onImageUpload={isTerminalStatus ? undefined : async (file) => {
-                      try {
-                        if (file.size > 5 * 1024 * 1024) {
-                          throw new Error('File size must be less than 5MB');
-                        }
-
-                        setIsImageLoading(true);
-                        const timestamp = Date.now();
-                        const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-                        const path = `appointments/${appointment.id}/after-image-${timestamp}.${extension}`;
-
-                        const { uploadFile } = await import("@/lib/storage");
-                        const url = await uploadFile(file, path);
-
-                        const newImage: AppointmentImage = {
-                          id: `${timestamp}`,
-                          url,
-                          type: 'after',
-                          timestamp: new Date().toISOString(),
-                        };
-
-                        // Update form state without saving to database
-                        form.setValue("afterImages", [...(form.watch("afterImages") || []), newImage]);
-
-                        toast({
-                          title: "Success",
-                          description: "After image uploaded successfully. Don't forget to click Update Appointment to save all changes.",
-                        });
-                      } catch (error) {
-                        setImageLoadError(true);
-                        toast({
-                          variant: "destructive",
-                          title: "Error",
-                          description: error instanceof Error ? error.message : "Failed to upload image",
-                        });
-                      } finally {
-                        setIsImageLoading(false);
-                      }
-                    }}
-                    className="mt-2"
-                    disabled={isTerminalStatus}
-                  />
-                </div>
+                
 
                 <FormField
                   control={form.control}
