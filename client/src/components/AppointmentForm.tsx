@@ -73,6 +73,14 @@ export default function AppointmentForm({ setOpen, selectedDate }: AppointmentFo
     }
   });
 
+  // Update form when selectedDate changes
+  React.useEffect(() => {
+    if (selectedDate) {
+      form.setValue('date', format(selectedDate, "yyyy-MM-dd"));
+      form.setValue('time', format(selectedDate, "HH:mm"));
+    }
+  }, [selectedDate, form]);
+
   // Helper function to generate time slots
   const generateTimeSlots = (
     openingTime: string,

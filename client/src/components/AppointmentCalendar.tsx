@@ -122,7 +122,7 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
     const selectedStart = new Date(selectionInfo.start);
     setSelectedDate(selectedStart);
     setOpenNewForm(true);
-  }, []);
+  }, [setSelectedDate, setOpenNewForm]);
 
   return (
     <div className="space-y-4">
