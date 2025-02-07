@@ -83,10 +83,12 @@ export async function createCustomer(customer: Omit<Customer, 'id' | 'createdAt'
     const timestamp = new Date().toISOString();
     
     // Prepare customer data for Firestore with proper types
-    const customerData: WithFieldValue<Customer> = {
+    const customerData = {
       id: customerRef.id,
       firstName: customer.firstName,
       lastName: customer.lastName,
+      pointsHistory: [],
+      loyaltyTier: "bronze" as const,
       email: customer.email,
       phone: customer.phone,
       address: customer.address || null,

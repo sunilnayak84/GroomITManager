@@ -101,7 +101,7 @@ export function useCustomers() {
         const customerData = {
           ...customer,
           pointsHistory: [],
-          loyaltyTier: "bronze",
+          loyaltyTier: "bronze" as const,
           petCount: 0,
           createdAt: timestamp,
           updatedAt: null
