@@ -412,14 +412,16 @@ export default function AppointmentForm({ setOpen, selectedDate }: AppointmentFo
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {(pets || []).map((pet) => (
-                        <SelectItem 
-                          key={String(pet.id)} 
-                          value={String(pet.id)}
-                        >
-                          {pet.name} - {pet.breed}
-                        </SelectItem>
-                      ))}
+                      {(pets || [])
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map((pet) => (
+                          <SelectItem 
+                            key={String(pet.id)} 
+                            value={String(pet.id)}
+                          >
+                            {pet.name} - {pet.breed}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
