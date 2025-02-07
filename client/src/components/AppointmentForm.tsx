@@ -77,7 +77,10 @@ export default function AppointmentForm({ setOpen, selectedDate }: AppointmentFo
   React.useEffect(() => {
     if (selectedDate) {
       form.setValue('date', format(selectedDate, "yyyy-MM-dd"));
-      form.setValue('time', format(selectedDate, "HH:mm"));
+      form.setValue('time', format(selectedDate, "HH:mm"), {
+        shouldValidate: true,
+        shouldDirty: true
+      });
     }
   }, [selectedDate, form]);
 

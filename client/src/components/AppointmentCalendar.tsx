@@ -120,7 +120,8 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
 
   const handleSlotSelect = useCallback((selectionInfo: { start: Date; end: Date }) => {
     const selectedStart = new Date(selectionInfo.start);
-    setSelectedDate(selectedStart);
+    const localizedDate = new Date(selectedStart.getTime() - selectedStart.getTimezoneOffset() * 60000);
+    setSelectedDate(localizedDate);
     setOpenNewForm(true);
   }, [setSelectedDate, setOpenNewForm]);
 
