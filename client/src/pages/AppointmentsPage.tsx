@@ -224,7 +224,7 @@ export default function AppointmentsPage() {
     {
       header: () => (
         <div
-          className="flex items-center cursor-pointer"
+          className="flex items-center cursor-pointer hover:text-primary transition-colors"
           onClick={() => {
             setSortConfig({
               key: 'date',
@@ -232,12 +232,21 @@ export default function AppointmentsPage() {
             });
           }}
         >
-          Date
-          {sortConfig.direction && (
-            <span className="ml-2">
-              {sortConfig.direction === 'asc' ? '↑' : '↓'}
-            </span>
-          )}
+          <span>Date</span>
+          <svg
+            className={`w-4 h-4 ml-1 transform transition-transform ${
+              sortConfig.direction === 'asc' ? 'rotate-180' : ''
+            } ${!sortConfig.direction ? 'opacity-0' : 'opacity-100'}`}
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
         </div>
       ),
       cell: ({ date }: AppointmentWithRelations) => format(new Date(date), "PPp"),
