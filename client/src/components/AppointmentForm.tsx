@@ -40,6 +40,7 @@ import { format } from 'date-fns';
 
 interface AppointmentFormProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  selectedDate?: Date | null;
 }
 
 export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
@@ -62,11 +63,11 @@ export default function AppointmentForm({ setOpen }: AppointmentFormProps) {
       services: [],
       groomerId: "",
       branchId: "1",
-      date: "",
+      date: selectedDate ? format(selectedDate, "yyyy-MM-dd") : "",
       status: "pending" as const,
       notes: null,
       productsUsed: null,
-      time: "",
+      time: selectedDate ? format(selectedDate, "HH:mm") : "",
       totalPrice: 0,
       totalDuration: 0
     },

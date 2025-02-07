@@ -150,6 +150,7 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
           </DialogTrigger>
           <AppointmentForm
             setOpen={setOpenNewForm}
+            selectedDate={selectedDate}
           />
         </Dialog>
       </div>
