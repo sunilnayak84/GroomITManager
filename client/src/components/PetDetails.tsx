@@ -281,14 +281,11 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
           </DialogTrigger>
           <AppointmentForm 
             setOpen={(value) => {
+              // This will close both dialogs when appointment is created
               if (!value) {
-                const dialogElements = document.querySelectorAll('[role="dialog"]');
-                if (dialogElements.length > 0) {
-                  // Close in reverse order to handle nested dialogs properly
-                  for (let i = dialogElements.length - 1; i >= 0; i--) {
-                    const dialog = dialogElements[i] as HTMLDialogElement;
-                    dialog.close();
-                  }
+                const closeButton = document.querySelector('[aria-label="Close"]');
+                if (closeButton instanceof HTMLButtonElement) {
+                  closeButton.click();
                 }
               }
             }} 
