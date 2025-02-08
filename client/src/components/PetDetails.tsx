@@ -174,7 +174,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
                         appointment.services.map((serviceId: string, index: number) => {
                           const serviceDetails = services?.find(s => s.service_id === serviceId);
                           if (!serviceDetails) return null;
-                          
+
                           return (
                             <span key={serviceId} className="group relative">
                               {index > 0 ? ', ' : ''}
@@ -281,11 +281,16 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
           </DialogTrigger>
           <AppointmentForm 
             setOpen={(value) => {
-              // This will close both dialogs when appointment is created
               if (!value) {
-                const closeButton = document.querySelector('[aria-label="Close"]');
-                if (closeButton instanceof HTMLButtonElement) {
-                  closeButton.click();
+                // Close appointment form dialog
+                const dialogElement = document.querySelector('[role="dialog"]');
+                if (dialogElement) {
+                  const closeButtons = dialogElement.querySelectorAll('[aria-label="Close"]');
+                  closeButtons.forEach(button => {
+                    if (button instanceof HTMLButtonElement) {
+                      button.click();
+                    }
+                  });
                 }
               }
             }} 
