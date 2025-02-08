@@ -1,0 +1,225 @@
+[vite] connecting...
+client:614 [vite] connected.
+chunk-GNC7SI6A.js?v=f0a13cd5:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:17 Checking Firebase environment variables...
+firebase.ts:37 FIREBASE_INIT: Initializing Firebase with config: {apiKey: '***', authDomain: 'replit-5ac6a.firebaseapp.com', projectId: 'replit-5ac6a', storageBucket: 'replit-5ac6a.firebasestorage.app', messagingSenderId: '194114432530', …}
+firebase.ts:42 FIREBASE_INIT: Firebase initialized successfully
+content.js:1 CISPL SignerDigital Loaded
+use-pets.ts:61 FETCH_PETS: Starting to fetch pets
+use-customers.ts:311 FETCH_CUSTOMERS: Starting customer fetch
+use-pets.ts:111 FETCH_PETS: Completed fetching pets {totalPets: 3, pets: Array(3)}
+use-customers.ts:315 USE CUSTOMERS: Fetched customers {customerCount: 2, customerIds: Array(2), customerNames: Array(2)}
+use-appointments.ts:118 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:126 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:129 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+use-staff.ts:14 FETCH_STAFF: Starting to fetch staff members
+use-inventory.ts:101 FETCH_INVENTORY: Starting to fetch inventory items
+chunk-MRX5GIZV.js?v=f0a13cd5:336 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-MRX5GIZV.js?v=f0a13cd5:336
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=f0a13cd5:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=f0a13cd5:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=f0a13cd5:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=f0a13cd5:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=f0a13cd5:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=f0a13cd5:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=f0a13cd5:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=f0a13cd5:19416
+commitRoot @ chunk-GNC7SI6A.js?v=f0a13cd5:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=f0a13cd5:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=f0a13cd5:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=f0a13cd5:18627Understand this warningAI
+chunk-MRX5GIZV.js?v=f0a13cd5:336 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-MRX5GIZV.js?v=f0a13cd5:336
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=f0a13cd5:16915
+invokePassiveEffectMountInDEV @ chunk-GNC7SI6A.js?v=f0a13cd5:18324
+invokeEffectsInDev @ chunk-GNC7SI6A.js?v=f0a13cd5:19701
+commitDoubleInvokeEffectsInDEV @ chunk-GNC7SI6A.js?v=f0a13cd5:19686
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=f0a13cd5:19503
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=f0a13cd5:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=f0a13cd5:19416
+commitRoot @ chunk-GNC7SI6A.js?v=f0a13cd5:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=f0a13cd5:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=f0a13cd5:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=f0a13cd5:18627Understand this warningAI
+use-appointments.ts:138 FETCH_APPOINTMENTS: Found 10 active appointments
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: 1xNGD98oo9jOdwuP2GTT {totalPrice: 2198, afterImages: Array(0), updatedAt: null, groomerId: 'zjMezeDkskSz772Lxn7dHqkxuLV2', beforeImage: null, …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: 57L4iEjru6ErR9wATbqI {recommendations: null, services: Array(1), createdAt: _Timestamp, productsUsed: null, branchId: '1', …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: ERzVJWYIiu0QP3Lmuxsa {productsUsed: null, deletedAt: null, recommendations: null, petId: 'ClaJvM4zMJ3Ka1PwAgNa', totalDuration: 60, …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: ONiQ8oVv4YVZnMMuw90Q {date: _Timestamp, notes: null, updatedAt: null, afterImages: Array(0), status: 'pending', …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: P4AC45l2Jk7GlSoc8qen {services: Array(1), petId: '2ZZWR51Bs9T8zAInnUId', beforeImage: null, recommendations: null, totalPrice: 2198, …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: SUg8vHCrrJzh1lcuEqpQ {cancellationReason: null, status: 'pending', beforeImage: null, createdAt: _Timestamp, services: Array(1), …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: TgdRm1gctX5J02su2aT2 {status: 'pending', observations: null, totalDuration: 60, cancellationReason: null, afterImages: Array(0), …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: fu4FPAuYDawi2vKydmPM {services: Array(1), afterImages: Array(0), totalDuration: 30, updatedAt: null, totalPrice: 999, …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: hCgDTBkkL6ptYQPMa7CY {totalPrice: 1199, createdAt: _Timestamp, afterImages: Array(0), services: Array(1), productsUsed: null, …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: lW2V70bWcBf1jtVcQMiW {petId: '2ZZWR51Bs9T8zAInnUId', date: _Timestamp, deletedAt: null, beforeImage: null, status: 'pending', …}
+use-appointments.ts:144 FETCH_APPOINTMENTS: Got snapshot with 10 active documents
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment 1xNGD98oo9jOdwuP2GTT
+use-staff.ts:26 FETCH_STAFF: Successfully fetched staff members: (3) [{…}, {…}, {…}]
+use-inventory.ts:112 FETCH_INVENTORY: Processing item data: {id: 'IctkQ7zzpjxCQOHJAAOo', data: {…}}
+use-inventory.ts:148 FETCH_INVENTORY: Successfully parsed item: {id: 'IctkQ7zzpjxCQOHJAAOo', item: {…}}
+use-inventory.ts:112 FETCH_INVENTORY: Processing item data: {id: 'MQi1SkpPh24rshGBvNmn', data: {…}}
+use-inventory.ts:148 FETCH_INVENTORY: Successfully parsed item: {id: 'MQi1SkpPh24rshGBvNmn', item: {…}}
+use-inventory.ts:112 FETCH_INVENTORY: Processing item data: {id: 'onJwWC0j8rH1rMA1fP1d', data: {…}}
+use-inventory.ts:148 FETCH_INVENTORY: Successfully parsed item: {id: 'onJwWC0j8rH1rMA1fP1d', item: {…}}
+use-inventory.ts:112 FETCH_INVENTORY: Processing item data: {id: 'uVNWcTeIO76b6V8eC7CU', data: {…}}
+use-inventory.ts:148 FETCH_INVENTORY: Successfully parsed item: {id: 'uVNWcTeIO76b6V8eC7CU', item: {…}}
+use-inventory.ts:112 FETCH_INVENTORY: Processing item data: {id: 'wxRzDdBN1HaHGbZHZvOV', data: {…}}
+use-inventory.ts:148 FETCH_INVENTORY: Successfully parsed item: {id: 'wxRzDdBN1HaHGbZHZvOV', item: {…}}
+use-inventory.ts:156 FETCH_INVENTORY: Successfully fetched inventory {count: 5}
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: 1xNGD98oo9jOdwuP2GTT Services: ['Jm2fkUCVsvF3yWeqwJ8a']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for Jm2fkUCVsvF3yWeqwJ8a : {duration: 90, category: 'Package', updated_at: '2025-02-04T12:08:27.105Z', price: 2198, selectedServices: Array(2), …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'Jm2fkUCVsvF3yWeqwJ8a', name: 'Pack One', duration: 90, price: 2198, description: 'Package including 1 services and 1 add-ons.', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment 57L4iEjru6ErR9wATbqI
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: 57L4iEjru6ErR9wATbqI Services: ['mGfPDXbrIpr0RlzVdLl3']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: mGfPDXbrIpr0RlzVdLl3
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for mGfPDXbrIpr0RlzVdLl3 : {updated_at: '2025-02-04T13:02:51.530Z', consumables: Array(2), discount_percentage: 0, created_at: '2025-01-22T07:45:24.027Z', isActive: true, …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'mGfPDXbrIpr0RlzVdLl3', name: 'Service Two', duration: 60, price: 1199, description: '2', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment ERzVJWYIiu0QP3Lmuxsa
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: ERzVJWYIiu0QP3Lmuxsa Services: ['mGfPDXbrIpr0RlzVdLl3']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: mGfPDXbrIpr0RlzVdLl3
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for mGfPDXbrIpr0RlzVdLl3 : {updated_at: '2025-02-04T13:02:51.530Z', consumables: Array(2), discount_percentage: 0, created_at: '2025-01-22T07:45:24.027Z', isActive: true, …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'mGfPDXbrIpr0RlzVdLl3', name: 'Service Two', duration: 60, price: 1199, description: '2', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment ONiQ8oVv4YVZnMMuw90Q
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: ONiQ8oVv4YVZnMMuw90Q Services: ['KBLvbaMCaz8uRMXutcrz']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: KBLvbaMCaz8uRMXutcrz
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for KBLvbaMCaz8uRMXutcrz : {selectedServices: Array(0), isActive: true, duration: 15, created_at: '2025-01-22T07:46:06.044Z', selectedAddons: Array(0), …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'KBLvbaMCaz8uRMXutcrz', name: 'Trim', duration: 15, price: 200, description: 'Add On', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment P4AC45l2Jk7GlSoc8qen
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: P4AC45l2Jk7GlSoc8qen Services: ['Jm2fkUCVsvF3yWeqwJ8a']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for Jm2fkUCVsvF3yWeqwJ8a : {duration: 90, category: 'Package', updated_at: '2025-02-04T12:08:27.105Z', price: 2198, selectedServices: Array(2), …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'Jm2fkUCVsvF3yWeqwJ8a', name: 'Pack One', duration: 90, price: 2198, description: 'Package including 1 services and 1 add-ons.', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment SUg8vHCrrJzh1lcuEqpQ
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: SUg8vHCrrJzh1lcuEqpQ Services: ['mGfPDXbrIpr0RlzVdLl3']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: mGfPDXbrIpr0RlzVdLl3
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for mGfPDXbrIpr0RlzVdLl3 : {updated_at: '2025-02-04T13:02:51.530Z', consumables: Array(2), discount_percentage: 0, created_at: '2025-01-22T07:45:24.027Z', isActive: true, …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'mGfPDXbrIpr0RlzVdLl3', name: 'Service Two', duration: 60, price: 1199, description: '2', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment TgdRm1gctX5J02su2aT2
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: TgdRm1gctX5J02su2aT2 Services: ['mGfPDXbrIpr0RlzVdLl3']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: mGfPDXbrIpr0RlzVdLl3
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for mGfPDXbrIpr0RlzVdLl3 : {updated_at: '2025-02-04T13:02:51.530Z', consumables: Array(2), discount_percentage: 0, created_at: '2025-01-22T07:45:24.027Z', isActive: true, …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'mGfPDXbrIpr0RlzVdLl3', name: 'Service Two', duration: 60, price: 1199, description: '2', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment fu4FPAuYDawi2vKydmPM
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: fu4FPAuYDawi2vKydmPM Services: ['scG1CGWPQ8VjMbXZBCAj']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: scG1CGWPQ8VjMbXZBCAj
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for scG1CGWPQ8VjMbXZBCAj : {selectedServices: Array(0), name: 'Service One', discount_percentage: 0, price: 999, consumables: Array(1), …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'scG1CGWPQ8VjMbXZBCAj', name: 'Service One', duration: 30, price: 999, description: 'One', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment hCgDTBkkL6ptYQPMa7CY
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: hCgDTBkkL6ptYQPMa7CY Services: ['mGfPDXbrIpr0RlzVdLl3']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: mGfPDXbrIpr0RlzVdLl3
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for mGfPDXbrIpr0RlzVdLl3 : {updated_at: '2025-02-04T13:02:51.530Z', consumables: Array(2), discount_percentage: 0, created_at: '2025-01-22T07:45:24.027Z', isActive: true, …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'mGfPDXbrIpr0RlzVdLl3', name: 'Service Two', duration: 60, price: 1199, description: '2', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment lW2V70bWcBf1jtVcQMiW
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: lW2V70bWcBf1jtVcQMiW Services: ['mGfPDXbrIpr0RlzVdLl3']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: mGfPDXbrIpr0RlzVdLl3
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for mGfPDXbrIpr0RlzVdLl3 : {updated_at: '2025-02-04T13:02:51.530Z', consumables: Array(2), discount_percentage: 0, created_at: '2025-01-22T07:45:24.027Z', isActive: true, …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'mGfPDXbrIpr0RlzVdLl3', name: 'Service Two', duration: 60, price: 1199, description: '2', …}
+use-appointments.ts:338 FETCH_APPOINTMENTS: Processed 10 appointments. Success: 10, Errors: 0
+use-appointments.ts:350 Adding appointment with data: {petId: 'ClaJvM4zMJ3Ka1PwAgNa', services: Array(1), groomerId: 'p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82', branchId: '1', date: '2025-03-04T06:30:00.000Z', …}
+use-appointments.ts:118 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:126 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:129 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+AppointmentForm.tsx:376 Failed to schedule appointment: TypeError: dialog.close is not a function
+    at setOpen (PetDetails.tsx:290:28)
+    at onSubmit (AppointmentForm.tsx:372:7)
+    at async chunk-YGGBEVKP.js?v=f0a13cd5:1694:9
+onSubmit @ AppointmentForm.tsx:376
+await in onSubmit
+(anonymous) @ chunk-YGGBEVKP.js?v=f0a13cd5:1694
+await in (anonymous)
+callCallback2 @ chunk-GNC7SI6A.js?v=f0a13cd5:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=f0a13cd5:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=f0a13cd5:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-GNC7SI6A.js?v=f0a13cd5:3736
+executeDispatch @ chunk-GNC7SI6A.js?v=f0a13cd5:7014
+processDispatchQueueItemsInOrder @ chunk-GNC7SI6A.js?v=f0a13cd5:7034
+processDispatchQueue @ chunk-GNC7SI6A.js?v=f0a13cd5:7043
+dispatchEventsForPlugins @ chunk-GNC7SI6A.js?v=f0a13cd5:7051
+(anonymous) @ chunk-GNC7SI6A.js?v=f0a13cd5:7174
+batchedUpdates$1 @ chunk-GNC7SI6A.js?v=f0a13cd5:18913
+batchedUpdates @ chunk-GNC7SI6A.js?v=f0a13cd5:3579
+dispatchEventForPluginEventSystem @ chunk-GNC7SI6A.js?v=f0a13cd5:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-GNC7SI6A.js?v=f0a13cd5:5478
+dispatchEvent @ chunk-GNC7SI6A.js?v=f0a13cd5:5472
+dispatchDiscreteEvent @ chunk-GNC7SI6A.js?v=f0a13cd5:5449Understand this errorAI
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-appointments.ts:138 FETCH_APPOINTMENTS: Found 11 active appointments
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: 1xNGD98oo9jOdwuP2GTT {totalPrice: 2198, afterImages: Array(0), updatedAt: null, groomerId: 'zjMezeDkskSz772Lxn7dHqkxuLV2', beforeImage: null, …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: 57L4iEjru6ErR9wATbqI {recommendations: null, services: Array(1), createdAt: _Timestamp, productsUsed: null, branchId: '1', …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: ERzVJWYIiu0QP3Lmuxsa {productsUsed: null, deletedAt: null, recommendations: null, petId: 'ClaJvM4zMJ3Ka1PwAgNa', totalDuration: 60, …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: ONiQ8oVv4YVZnMMuw90Q {date: _Timestamp, notes: null, updatedAt: null, afterImages: Array(0), status: 'pending', …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: P4AC45l2Jk7GlSoc8qen {services: Array(1), petId: '2ZZWR51Bs9T8zAInnUId', beforeImage: null, recommendations: null, totalPrice: 2198, …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: SUg8vHCrrJzh1lcuEqpQ {cancellationReason: null, status: 'pending', beforeImage: null, createdAt: _Timestamp, services: Array(1), …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: TgdRm1gctX5J02su2aT2 {status: 'pending', observations: null, totalDuration: 60, cancellationReason: null, afterImages: Array(0), …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: fu4FPAuYDawi2vKydmPM {services: Array(1), afterImages: Array(0), totalDuration: 30, updatedAt: null, totalPrice: 999, …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: hCgDTBkkL6ptYQPMa7CY {totalPrice: 1199, createdAt: _Timestamp, afterImages: Array(0), services: Array(1), productsUsed: null, …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: lW2V70bWcBf1jtVcQMiW {petId: '2ZZWR51Bs9T8zAInnUId', date: _Timestamp, deletedAt: null, beforeImage: null, status: 'pending', …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: oGNqJIdUnUnft8iaIgED {petId: 'ClaJvM4zMJ3Ka1PwAgNa', services: Array(1), groomerId: 'p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82', branchId: '1', date: _Timestamp, …}
+use-appointments.ts:144 FETCH_APPOINTMENTS: Got snapshot with 11 active documents
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment 1xNGD98oo9jOdwuP2GTT
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: 1xNGD98oo9jOdwuP2GTT Services: ['Jm2fkUCVsvF3yWeqwJ8a']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for Jm2fkUCVsvF3yWeqwJ8a : {duration: 90, category: 'Package', updated_at: '2025-02-04T12:08:27.105Z', price: 2198, selectedServices: Array(2), …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'Jm2fkUCVsvF3yWeqwJ8a', name: 'Pack One', duration: 90, price: 2198, description: 'Package including 1 services and 1 add-ons.', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment 57L4iEjru6ErR9wATbqI
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: 57L4iEjru6ErR9wATbqI Services: ['mGfPDXbrIpr0RlzVdLl3']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: mGfPDXbrIpr0RlzVdLl3
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for mGfPDXbrIpr0RlzVdLl3 : {updated_at: '2025-02-04T13:02:51.530Z', consumables: Array(2), discount_percentage: 0, created_at: '2025-01-22T07:45:24.027Z', isActive: true, …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'mGfPDXbrIpr0RlzVdLl3', name: 'Service Two', duration: 60, price: 1199, description: '2', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment ERzVJWYIiu0QP3Lmuxsa
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: ERzVJWYIiu0QP3Lmuxsa Services: ['mGfPDXbrIpr0RlzVdLl3']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: mGfPDXbrIpr0RlzVdLl3
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for mGfPDXbrIpr0RlzVdLl3 : {updated_at: '2025-02-04T13:02:51.530Z', consumables: Array(2), discount_percentage: 0, created_at: '2025-01-22T07:45:24.027Z', isActive: true, …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'mGfPDXbrIpr0RlzVdLl3', name: 'Service Two', duration: 60, price: 1199, description: '2', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment ONiQ8oVv4YVZnMMuw90Q
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: ONiQ8oVv4YVZnMMuw90Q Services: ['KBLvbaMCaz8uRMXutcrz']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: KBLvbaMCaz8uRMXutcrz
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for KBLvbaMCaz8uRMXutcrz : {selectedServices: Array(0), isActive: true, duration: 15, created_at: '2025-01-22T07:46:06.044Z', selectedAddons: Array(0), …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'KBLvbaMCaz8uRMXutcrz', name: 'Trim', duration: 15, price: 200, description: 'Add On', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment P4AC45l2Jk7GlSoc8qen
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: P4AC45l2Jk7GlSoc8qen Services: ['Jm2fkUCVsvF3yWeqwJ8a']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for Jm2fkUCVsvF3yWeqwJ8a : {duration: 90, category: 'Package', updated_at: '2025-02-04T12:08:27.105Z', price: 2198, selectedServices: Array(2), …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'Jm2fkUCVsvF3yWeqwJ8a', name: 'Pack One', duration: 90, price: 2198, description: 'Package including 1 services and 1 add-ons.', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment SUg8vHCrrJzh1lcuEqpQ
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: SUg8vHCrrJzh1lcuEqpQ Services: ['mGfPDXbrIpr0RlzVdLl3']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: mGfPDXbrIpr0RlzVdLl3
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for mGfPDXbrIpr0RlzVdLl3 : {updated_at: '2025-02-04T13:02:51.530Z', consumables: Array(2), discount_percentage: 0, created_at: '2025-01-22T07:45:24.027Z', isActive: true, …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'mGfPDXbrIpr0RlzVdLl3', name: 'Service Two', duration: 60, price: 1199, description: '2', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment TgdRm1gctX5J02su2aT2
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: TgdRm1gctX5J02su2aT2 Services: ['mGfPDXbrIpr0RlzVdLl3']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: mGfPDXbrIpr0RlzVdLl3
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for mGfPDXbrIpr0RlzVdLl3 : {updated_at: '2025-02-04T13:02:51.530Z', consumables: Array(2), discount_percentage: 0, created_at: '2025-01-22T07:45:24.027Z', isActive: true, …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'mGfPDXbrIpr0RlzVdLl3', name: 'Service Two', duration: 60, price: 1199, description: '2', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment fu4FPAuYDawi2vKydmPM
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: fu4FPAuYDawi2vKydmPM Services: ['scG1CGWPQ8VjMbXZBCAj']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: scG1CGWPQ8VjMbXZBCAj
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for scG1CGWPQ8VjMbXZBCAj : {selectedServices: Array(0), name: 'Service One', discount_percentage: 0, price: 999, consumables: Array(1), …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'scG1CGWPQ8VjMbXZBCAj', name: 'Service One', duration: 30, price: 999, description: 'One', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment hCgDTBkkL6ptYQPMa7CY
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: hCgDTBkkL6ptYQPMa7CY Services: ['mGfPDXbrIpr0RlzVdLl3']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: mGfPDXbrIpr0RlzVdLl3
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for mGfPDXbrIpr0RlzVdLl3 : {updated_at: '2025-02-04T13:02:51.530Z', consumables: Array(2), discount_percentage: 0, created_at: '2025-01-22T07:45:24.027Z', isActive: true, …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'mGfPDXbrIpr0RlzVdLl3', name: 'Service Two', duration: 60, price: 1199, description: '2', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment lW2V70bWcBf1jtVcQMiW
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: lW2V70bWcBf1jtVcQMiW Services: ['mGfPDXbrIpr0RlzVdLl3']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: mGfPDXbrIpr0RlzVdLl3
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for mGfPDXbrIpr0RlzVdLl3 : {updated_at: '2025-02-04T13:02:51.530Z', consumables: Array(2), discount_percentage: 0, created_at: '2025-01-22T07:45:24.027Z', isActive: true, …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'mGfPDXbrIpr0RlzVdLl3', name: 'Service Two', duration: 60, price: 1199, description: '2', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment oGNqJIdUnUnft8iaIgED
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: oGNqJIdUnUnft8iaIgED Services: ['KBLvbaMCaz8uRMXutcrz']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: KBLvbaMCaz8uRMXutcrz
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for KBLvbaMCaz8uRMXutcrz : {selectedServices: Array(0), isActive: true, duration: 15, created_at: '2025-01-22T07:46:06.044Z', selectedAddons: Array(0), …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'KBLvbaMCaz8uRMXutcrz', name: 'Trim', duration: 15, price: 200, description: 'Add On', …}
+use-appointments.ts:338 FETCH_APPOINTMENTS: Processed 11 appointments. Success: 11, Errors: 0
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '2'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '2'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST {type: 'REMOVE_TOAST', toastId: '2'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(0)}
