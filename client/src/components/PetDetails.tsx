@@ -280,9 +280,12 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
             </Button>
           </DialogTrigger>
           <AppointmentForm setOpen={value => {
-            const dialog = document.querySelector(`dialog[role="dialog"]`);
-            if (!value && dialog) {
-              (dialog as any).close();
+            if (!value) {
+              // Find and close both dialogs - the appointment form and pet details
+              const dialogs = document.querySelectorAll(`dialog[role="dialog"]`);
+              dialogs.forEach(dialog => {
+                (dialog as any).close();
+              });
             }
           }} selectedPet={pet} />
         </Dialog>
