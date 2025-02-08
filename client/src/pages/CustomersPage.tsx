@@ -916,6 +916,27 @@ export default function CustomersPage() {
                     </div>
                   </div>
 
+                  {/* Additional Information */}
+                  <div>
+                    <h3 className="font-semibold mb-4">Additional Information</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Gender</p>
+                        <p className="text-sm font-medium">{selectedCustomer.gender}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Member Since</p>
+                        <p className="text-sm font-medium">
+                          {format(new Date(selectedCustomer.createdAt), 'MM/dd/yyyy')}
+                        </p>
+                      </div>
+                      <div className="col-span-2">
+                        <p className="text-sm text-muted-foreground">Address</p>
+                        <p className="text-sm font-medium">{selectedCustomer.address}</p>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Loyalty Section */}
                   <div>
                     <h3 className="font-semibold mb-4">Loyalty Program</h3>
