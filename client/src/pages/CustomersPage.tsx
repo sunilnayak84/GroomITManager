@@ -32,6 +32,7 @@ import { useToast } from "@/hooks/use-toast";
 import { PetForm } from "@/components/PetForm";
 import { useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
+import { format } from 'date-fns';
 
 export default function CustomersPage() {
   const [open, setOpen] = useState(false);
@@ -958,7 +959,7 @@ export default function CustomersPage() {
                         </Badge>
                       </div>
 
-                                            <div>
+                      <div>
                         <h4 className="text-sm font-medium mb-2">Points History</h4>
                         <div className="space-y-2 max-h-64 overflow-y-auto">
                           {selectedCustomer.pointsHistory.length === 0 ? (
@@ -1002,7 +1003,7 @@ export default function CustomersPage() {
                         <p className="text-sm text-muted-foreground">Member Since</p>
                         <p className="font-medium">
                           {selectedCustomer.createdAt
-                            ? new Date(selectedCustomer.createdAt).toLocaleDateString()
+                            ? format(new Date(selectedCustomer.createdAt), 'MM/dd/yyyy')
                             : 'N/A'}
                         </p>
                       </div>
