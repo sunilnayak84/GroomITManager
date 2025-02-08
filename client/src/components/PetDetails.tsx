@@ -282,16 +282,13 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
           <AppointmentForm 
             setOpen={(value) => {
               if (!value) {
-                // Close appointment form dialog
-                const dialogElement = document.querySelector('[role="dialog"]');
-                if (dialogElement) {
-                  const closeButtons = dialogElement.querySelectorAll('[aria-label="Close"]');
-                  closeButtons.forEach(button => {
-                    if (button instanceof HTMLButtonElement) {
-                      button.click();
-                    }
-                  });
-                }
+                const dialogElements = document.querySelectorAll('[role="dialog"]');
+                dialogElements.forEach(dialogElement => {
+                  const closeButton = dialogElement.querySelector('[aria-label="Close"]');
+                  if (closeButton instanceof HTMLButtonElement) {
+                    closeButton.click();
+                  }
+                });
               }
             }} 
             selectedPet={pet} 
