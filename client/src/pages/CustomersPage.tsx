@@ -991,29 +991,6 @@ export default function CustomersPage() {
                     </div>
                   </div>
 
-                  {/* Additional Info Section */}
-                  <div>
-                    <h3 className="font-semibold mb-4">Additional Information</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm text-muted-foreground">Gender</p>
-                        <p className="font-medium capitalize">{selectedCustomer.gender || 'Not specified'}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Member Since</p>
-                        <p className="font-medium">
-                          {selectedCustomer.createdAt
-                            ? format(new Date(selectedCustomer.createdAt), 'MM/dd/yyyy')
-                            : 'N/A'}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Address</p>
-                        <p className="font-medium">{selectedCustomer.address || 'Not provided'}</p>
-                      </div>
-                    </div>
-                  </div>
-
                   {!isEditing && (
                     <div className="flex justify-center gap-2 mt-6">
                       <Button
