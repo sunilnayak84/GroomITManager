@@ -271,16 +271,26 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
         )}
       </div>
 
-      {onEdit && onDelete && (
-        <div className="flex justify-end gap-2 mt-6 pt-4 border-t">
-          <Button variant="outline" onClick={onDelete}>
-            Delete
-          </Button>
-          <Button onClick={onEdit}>
-            Edit
-          </Button>
-        </div>
-      )}
+      <div className="flex justify-end gap-2 mt-6 pt-4 border-t">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="mr-auto">
+              Schedule Appointment
+            </Button>
+          </DialogTrigger>
+          <AppointmentForm setOpen={(open) => {}} selectedPet={pet} />
+        </Dialog>
+        {onEdit && onDelete && (
+          <>
+            <Button variant="outline" onClick={onDelete}>
+              Delete
+            </Button>
+            <Button onClick={onEdit}>
+              Edit
+            </Button>
+          </>
+        )}
+      </div>
     </div>
   );
 }

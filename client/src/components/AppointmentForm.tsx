@@ -41,6 +41,7 @@ import { format } from 'date-fns';
 interface AppointmentFormProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   selectedDate?: Date | null;
+  selectedPet?: Pet;
 }
 
 export default function AppointmentForm({ setOpen, selectedDate }: AppointmentFormProps) {
@@ -59,7 +60,7 @@ export default function AppointmentForm({ setOpen, selectedDate }: AppointmentFo
   const form = useForm<z.infer<typeof insertAppointmentSchema>>({
     resolver: zodResolver(insertAppointmentSchema),
     defaultValues: {
-      petId: "",
+      petId: selectedPet?.id || "",
       services: [],
       groomerId: "",
       branchId: "1",
