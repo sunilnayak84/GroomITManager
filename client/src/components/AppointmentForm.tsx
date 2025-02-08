@@ -369,11 +369,6 @@ export default function AppointmentForm({ setOpen, selectedDate, selectedPet }: 
         description: "Appointment scheduled successfully",
       });
 
-      // Close the dialog using the DOM API since the form is in a portal
-      const dialog = document.querySelector(`dialog[role="dialog"]`);
-      if (dialog) {
-        (dialog as any).close();
-      }
       setOpen(false);
 
       form.reset();

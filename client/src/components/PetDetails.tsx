@@ -279,15 +279,21 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
               Schedule Appointment
             </Button>
           </DialogTrigger>
-          <AppointmentForm setOpen={value => {
-            if (!value) {
-              // Find and close both dialogs - the appointment form and pet details
-              const dialogs = document.querySelectorAll(`dialog[role="dialog"]`);
-              dialogs.forEach(dialog => {
-                (dialog as any).close();
-              });
-            }
-          }} selectedPet={pet} />
+          <AppointmentForm 
+            setOpen={(value) => {
+              if (!value) {
+                const dialogElements = document.querySelectorAll('[role="dialog"]');
+                if (dialogElements.length > 0) {
+                  // Close in reverse order to handle nested dialogs properly
+                  for (let i = dialogElements.length - 1; i >= 0; i--) {
+                    const dialog = dialogElements[i] as HTMLDialogElement;
+                    dialog.close();
+                  }
+                }
+              }
+            }} 
+            selectedPet={pet} 
+          />
         </Dialog>
         {onEdit && onDelete && (
           <>
