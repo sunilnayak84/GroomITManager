@@ -1,5 +1,5 @@
 import React from "react";
-import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { calculateAge } from "@/lib/utils";
+import AppointmentForm from "./AppointmentForm";
 import { useInventory } from "@/hooks/use-inventory";
 import { useServices } from "@/hooks/use-services";
 

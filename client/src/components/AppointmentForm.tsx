@@ -37,6 +37,7 @@ import { useWorkingHours } from '../hooks/use-working-hours';
 import type { WorkingDays } from "@/lib/schema";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { format } from 'date-fns';
+import type { Pet } from "@/lib/types";
 
 interface AppointmentFormProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -44,7 +45,7 @@ interface AppointmentFormProps {
   selectedPet?: Pet;
 }
 
-export default function AppointmentForm({ setOpen, selectedDate }: AppointmentFormProps) {
+export default function AppointmentForm({ setOpen, selectedDate, selectedPet }: AppointmentFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const { data: appointments, addAppointment, isTimeSlotAvailable } = useAppointments();
@@ -79,7 +80,7 @@ export default function AppointmentForm({ setOpen, selectedDate }: AppointmentFo
     if (selectedDate) {
       const formattedDate = format(selectedDate, "yyyy-MM-dd");
       const formattedTime = format(selectedDate, "HH:mm");
-      
+
       // Get the day of week for the selected date
       const dayOfWeek = selectedDate.getDay();
       const daySchedule = workingHours?.find(
