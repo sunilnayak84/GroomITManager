@@ -376,7 +376,7 @@ export default function AppointmentForm({ setOpen, selectedDate, selectedPet }: 
         
         const confirmDialog = new Promise((resolve) => {
           const dialog = document.createElement('dialog');
-          dialog.className = 'fixed inset-0 z-50 flex items-center justify-center';
+          dialog.className = 'fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50';
           
           dialog.innerHTML = `
             <div class="bg-white rounded-lg p-6 shadow-lg max-w-md w-full">
@@ -390,7 +390,7 @@ export default function AppointmentForm({ setOpen, selectedDate, selectedPet }: 
                 <p><span class="font-medium">Total Price:</span> ₹${form.getValues('totalPrice')}</p>
               </div>
               <button class="w-full bg-primary text-white px-4 py-2 rounded hover:bg-primary/90">
-                Close
+                Okay
               </button>
             </div>
           `;
