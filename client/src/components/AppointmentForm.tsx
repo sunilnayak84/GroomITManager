@@ -373,12 +373,43 @@ export default function AppointmentForm({ setOpen, selectedDate, selectedPet }: 
           .join(', ');
         const appointmentDateTime = new Date(appointmentData.date);
         const formattedDateTime = format(appointmentDateTime, "PPP 'at' p");
-
-        toast({
-          title: "Appointment Scheduled",
-          description: `Successfully scheduled appointment for ${selectedPetDetails?.name} with ${selectedGroomer?.name} on ${formattedDateTime}.\nServices: ${selectedServiceDetails}`,
+        
+        const confirmDialog = new Promise((resolve) => {
+          const dialog = document.createElement('dialog');
+          dialog.className = 'fixed inset-0 z-50 flex items-center justify-center';
+          
+          dialog.innerHTML = `
+            <div class="bg-white rounded-lg p-6 shadow-lg max-w-md w-full">
+              <h2 class="text-xl font-semibold mb-4">Appointment Scheduled Successfully</h2>
+              <div class="space-y-3 mb-6">
+                <p><span class="font-medium">Pet:</span> ${selectedPetDetails?.name}</p>
+                <p><span class="font-medium">Groomer:</span> ${selectedGroomer?.name}</p>
+                <p><span class="font-medium">Date & Time:</span> ${formattedDateTime}</p>
+                <p><span class="font-medium">Services:</span> ${selectedServiceDetails}</p>
+                <p><span class="font-medium">Total Duration:</span> ${form.getValues('totalDuration')} minutes</p>
+                <p><span class="font-medium">Total Price:</span> ₹${form.getValues('totalPrice')}</p>
+              </div>
+              <button class="w-full bg-primary text-white px-4 py-2 rounded hover:bg-primary/90">
+                Close
+              </button>
+            </div>
+          `;
+          
+          document.body.appendChild(dialog);
+          dialog.showModal();
+          
+          dialog.querySelector('button').onclick = () => {
+            dialog.close();
+            resolve(true);
+          };
+          
+          dialog.addEventListener('close', () => {
+            document.body.removeChild(dialog);
+            setOpen(false);
+          });
         });
-        setOpen(false);
+        
+        await confirmDialog;
       } else {
         throw new Error("Failed to schedule appointment");
       }
