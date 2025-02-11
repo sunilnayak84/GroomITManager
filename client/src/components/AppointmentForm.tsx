@@ -376,7 +376,7 @@ export default function AppointmentForm({ setOpen, selectedDate, selectedPet }: 
         
         const confirmDialog = new Promise((resolve) => {
           const dialog = document.createElement('dialog');
-          dialog.className = 'fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50';
+          dialog.className = 'fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999]';
           
           dialog.innerHTML = `
             <div class="bg-white rounded-lg p-6 shadow-lg max-w-md w-full">
@@ -398,10 +398,15 @@ export default function AppointmentForm({ setOpen, selectedDate, selectedPet }: 
           document.body.appendChild(dialog);
           dialog.showModal();
           
-          dialog.querySelector('button').onclick = () => {
-            dialog.close();
-            resolve(true);
-          };
+          const button = dialog.querySelector('button');
+          if (button) {
+            button.onclick = () => {
+              dialog.close();
+              document.body.removeChild(dialog);
+              resolve(true);
+              setOpen(false);
+            };
+          }
           
           dialog.addEventListener('close', () => {
             document.body.removeChild(dialog);
