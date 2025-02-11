@@ -57,6 +57,15 @@ interface AppointmentFormProps {
 export default function AppointmentForm({ setOpen, selectedDate, selectedPet }: AppointmentFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [confirmationData, setConfirmationData] = useState<{
+    petName?: string;
+    groomerName?: string;
+    dateTime?: string;
+    services?: string;
+    duration?: number;
+    price?: number;
+  }>({});
   const { data: appointments, addAppointment, isTimeSlotAvailable } = useAppointments();
   const { pets } = usePets();
   const { services } = useServices();
@@ -383,40 +392,16 @@ export default function AppointmentForm({ setOpen, selectedDate, selectedPet }: 
         const appointmentDateTime = new Date(appointmentData.date);
         const formattedDateTime = format(appointmentDateTime, "PPP 'at' p");
 
-        const [showConfirmation, setShowConfirmation] = useState(false);
-
-        await new Promise((resolve) => {
-          setShowConfirmation(true);
-
-          const handleClose = () => {
-            setShowConfirmation(false);
-            setOpen(false);
-            resolve(true);
-          };
-
-          return (
-            <AlertDialog open={showConfirmation} onOpenChange={setShowConfirmation}>
-              <AlertDialogContent className="sm:max-w-md">
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Appointment Scheduled Successfully</AlertDialogTitle>
-                  <div className="space-y-3">
-                    <p><span className="font-medium">Pet:</span> {selectedPetDetails?.name}</p>
-                    <p><span className="font-medium">Groomer:</span> {selectedGroomer?.name}</p>
-                    <p><span className="font-medium">Date & Time:</span> {formattedDateTime}</p>
-                    <p><span className="font-medium">Services:</span> {selectedServiceDetails}</p>
-                    <p><span className="font-medium">Total Duration:</span> {form.getValues('totalDuration')} minutes</p>
-                    <p><span className="font-medium">Total Price:</span> ₹{form.getValues('totalPrice')}</p>
-                  </div>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogAction onClick={handleClose} className="w-full">
-                    Okay
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          );
+        setConfirmationData({
+          petName: selectedPetDetails?.name,
+          groomerName: selectedGroomer?.name,
+          dateTime: formattedDateTime,
+          services: selectedServiceDetails,
+          duration: form.getValues('totalDuration'),
+          price: form.getValues('totalPrice')
         });
+        setShowConfirmation(true);
+        form.reset();
       } else {
         throw new Error("Failed to schedule appointment");
       }
@@ -437,7 +422,49 @@ export default function AppointmentForm({ setOpen, selectedDate, selectedPet }: 
   }
 
   return (
-    <DialogContent className="sm:max-w-[800px]">
+    <>
+      <AlertDialog open={showConfirmation} onOpenChange={setShowConfirmation}>
+        <AlertDialogContent className="sm:max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Appointment Scheduled Successfully</AlertDialogTitle>
+            <div className="space-y-3">
+              <p className="flex justify-between">
+                <span className="font-medium">Pet:</span> 
+                <span>{confirmationData.petName}</span>
+              </p>
+              <p className="flex justify-between">
+                <span className="font-medium">Groomer:</span> 
+                <span>{confirmationData.groomerName}</span>
+              </p>
+              <p className="flex justify-between">
+                <span className="font-medium">Date & Time:</span> 
+                <span>{confirmationData.dateTime}</span>
+              </p>
+              <p className="flex justify-between">
+                <span className="font-medium">Services:</span> 
+                <span>{confirmationData.services}</span>
+              </p>
+              <p className="flex justify-between">
+                <span className="font-medium">Total Duration:</span> 
+                <span>{confirmationData.duration} minutes</span>
+              </p>
+              <p className="flex justify-between">
+                <span className="font-medium">Total Price:</span> 
+                <span>₹{confirmationData.price}</span>
+              </p>
+            </div>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => {
+              setShowConfirmation(false);
+              setOpen(false);
+            }} className="w-full">
+              Okay
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <DialogContent className="sm:max-w-[800px]">
       <DialogHeader>
         <DialogTitle>Schedule Appointment</DialogTitle>
         <DialogDescription>
@@ -769,5 +796,6 @@ export default function AppointmentForm({ setOpen, selectedDate, selectedPet }: 
         </form>
       </Form>
     </DialogContent>
+    </>
   );
 }
