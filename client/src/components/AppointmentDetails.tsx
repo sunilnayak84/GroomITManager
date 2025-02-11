@@ -735,20 +735,6 @@ const AppointmentDetails = ({
 
             <FormField
               control={form.control}
-              name="notes"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Notes</FormLabel>
-                  <FormControl>
-                    <Input {...field} value={field.value || ''} disabled={isTerminalStatus} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
               name="status"
               render={({ field }) => (
                 <FormItem>
@@ -774,6 +760,49 @@ const AppointmentDetails = ({
                       ))}
                     </SelectContent>
                   </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {form.watch("status") === "cancelled" && (
+              <FormField
+                control={form.control}
+                name="cancellationReason"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Cancellation Reason</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      value={field.value || "no_show"} 
+                      disabled={isTerminalStatus}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select reason for cancellation" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="no_show">No Show</SelectItem>
+                        <SelectItem value="rescheduled">Rescheduled</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
+            <FormField
+              control={form.control}
+              name="notes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Notes</FormLabel>
+                  <FormControl>
+                    <Input {...field} value={field.value || ''} disabled={isTerminalStatus} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
