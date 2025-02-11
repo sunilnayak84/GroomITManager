@@ -36,7 +36,7 @@ export function useStaff() {
     mutationFn: async (data: InsertUser) => {
       console.log('Adding staff member with data:', data);
 
-      // First create Firebase Auth user with a default password
+      // Create Firebase Auth user with role
       const response = await fetch('/api/staff/create', {
         method: 'POST',
         headers: {
@@ -46,29 +46,40 @@ export function useStaff() {
           email: data.email,
           name: data.name,
           role: data.role,
-          password: 'Welcome123!' // Default password that user should change
+          phone: data.phone,
+          password: 'Welcome123!'
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create staff member in Firebase Auth');
+        throw new Error(errorData.message || 'Failed to create staff member');
       }
 
       const { uid } = await response.json();
 
-      // Then create Firestore record
+      // Create Firestore record with role-specific data
       const staffData = {
-        ...data,
         id: uid,
-        createdAt: new Date().toISOString(),
+        email: data.email,
+        name: data.name,
+        phone: data.phone,
+        role: data.role,
+        specialties: data.specialties || [],
+        experienceYears: data.experienceYears || 0,
+        maxDailyAppointments: data.maxDailyAppointments || 8,
         isActive: true,
+        createdAt: new Date().toISOString(),
         walkingPreferences: data.role === 'pet_walker' ? {
           maxDistance: data.walkingPreferences?.maxDistance || 5,
           preferredAreas: data.walkingPreferences?.preferredAreas || [],
           availableTimeSlots: data.walkingPreferences?.availableTimeSlots || [],
           simultaneousWalks: data.walkingPreferences?.simultaneousWalks || 1
-        } : null
+        } : null,
+        appointments: [],
+        rating: 0,
+        reviews: [],
+        updatedAt: new Date().toISOString()
       };
 
       console.log('Final staff data being saved:', staffData);
