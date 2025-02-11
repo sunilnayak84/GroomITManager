@@ -38,6 +38,15 @@ import type { WorkingDays } from "@/lib/schema";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { format } from 'date-fns';
 import type { Pet } from "@/lib/types";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogFooter,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
+
 
 interface AppointmentFormProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -363,7 +372,7 @@ export default function AppointmentForm({ setOpen, selectedDate, selectedPet }: 
       };
 
       const result = await addAppointment(appointmentData);
-      
+
       if (result) {
         const selectedPetDetails = pets.find(p => p.id === appointmentData.petId);
         const selectedGroomer = availableGroomers.find(g => g.id === appointmentData.groomerId);
@@ -373,48 +382,41 @@ export default function AppointmentForm({ setOpen, selectedDate, selectedPet }: 
           .join(', ');
         const appointmentDateTime = new Date(appointmentData.date);
         const formattedDateTime = format(appointmentDateTime, "PPP 'at' p");
-        
-        const confirmDialog = new Promise((resolve) => {
-          const dialog = document.createElement('dialog');
-          dialog.className = 'fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999]';
-          
-          dialog.innerHTML = `
-            <div class="bg-white rounded-lg p-6 shadow-lg max-w-md w-full">
-              <h2 class="text-xl font-semibold mb-4">Appointment Scheduled Successfully</h2>
-              <div class="space-y-3 mb-6">
-                <p><span class="font-medium">Pet:</span> ${selectedPetDetails?.name}</p>
-                <p><span class="font-medium">Groomer:</span> ${selectedGroomer?.name}</p>
-                <p><span class="font-medium">Date & Time:</span> ${formattedDateTime}</p>
-                <p><span class="font-medium">Services:</span> ${selectedServiceDetails}</p>
-                <p><span class="font-medium">Total Duration:</span> ${form.getValues('totalDuration')} minutes</p>
-                <p><span class="font-medium">Total Price:</span> ₹${form.getValues('totalPrice')}</p>
-              </div>
-              <button class="w-full bg-primary text-white px-4 py-2 rounded hover:bg-primary/90">
-                Okay
-              </button>
-            </div>
-          `;
-          
-          document.body.appendChild(dialog);
-          dialog.showModal();
-          
-          const button = dialog.querySelector('button');
-          if (button) {
-            button.onclick = () => {
-              dialog.close();
-              document.body.removeChild(dialog);
-              resolve(true);
-              setOpen(false);
-            };
-          }
-          
-          dialog.addEventListener('close', () => {
-            document.body.removeChild(dialog);
+
+        const [showConfirmation, setShowConfirmation] = useState(false);
+
+        await new Promise((resolve) => {
+          setShowConfirmation(true);
+
+          const handleClose = () => {
+            setShowConfirmation(false);
             setOpen(false);
-          });
+            resolve(true);
+          };
+
+          return (
+            <AlertDialog open={showConfirmation} onOpenChange={setShowConfirmation}>
+              <AlertDialogContent className="sm:max-w-md">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Appointment Scheduled Successfully</AlertDialogTitle>
+                  <div className="space-y-3">
+                    <p><span className="font-medium">Pet:</span> {selectedPetDetails?.name}</p>
+                    <p><span className="font-medium">Groomer:</span> {selectedGroomer?.name}</p>
+                    <p><span className="font-medium">Date & Time:</span> {formattedDateTime}</p>
+                    <p><span className="font-medium">Services:</span> {selectedServiceDetails}</p>
+                    <p><span className="font-medium">Total Duration:</span> {form.getValues('totalDuration')} minutes</p>
+                    <p><span className="font-medium">Total Price:</span> ₹{form.getValues('totalPrice')}</p>
+                  </div>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogAction onClick={handleClose} className="w-full">
+                    Okay
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          );
         });
-        
-        await confirmDialog;
       } else {
         throw new Error("Failed to schedule appointment");
       }
