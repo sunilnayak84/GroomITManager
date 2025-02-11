@@ -365,9 +365,18 @@ export default function AppointmentForm({ setOpen, selectedDate, selectedPet }: 
       const result = await addAppointment(appointmentData);
       
       if (result) {
+        const selectedPetDetails = pets.find(p => p.id === appointmentData.petId);
+        const selectedGroomer = availableGroomers.find(g => g.id === appointmentData.groomerId);
+        const selectedServiceDetails = services
+          .filter(s => appointmentData.services.includes(String(s.service_id)))
+          .map(s => s.name)
+          .join(', ');
+        const appointmentDateTime = new Date(appointmentData.date);
+        const formattedDateTime = format(appointmentDateTime, "PPP 'at' p");
+
         toast({
-          title: "Success",
-          description: "Appointment scheduled successfully",
+          title: "Appointment Scheduled",
+          description: `Successfully scheduled appointment for ${selectedPetDetails?.name} with ${selectedGroomer?.name} on ${formattedDateTime}.\nServices: ${selectedServiceDetails}`,
         });
         setOpen(false);
       } else {
