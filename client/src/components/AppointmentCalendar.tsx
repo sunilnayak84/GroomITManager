@@ -58,6 +58,7 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
         case 'confirmed': return '#60a5fa'; // Blue
         case 'completed': return '#34d399'; // Green
         case 'cancelled': return '#ef4444'; // Red
+        case 'in_progress': return '#8b5cf6'; // Purple
         default: return '#6b7280'; // Gray
       }
     })(),
