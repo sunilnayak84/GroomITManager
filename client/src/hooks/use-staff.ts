@@ -36,9 +36,29 @@ export function useStaff() {
     mutationFn: async (data: InsertUser) => {
       console.log('Adding staff member with data:', data);
 
-      // Ensure walkingPreferences is properly structured for pet walkers
+      // First create Firebase Auth user
+      const response = await fetch('/api/staff/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: data.email,
+          name: data.name,
+          role: data.role
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create staff member in Firebase Auth');
+      }
+
+      const { uid } = await response.json();
+
+      // Then create Firestore record
       const staffData = {
         ...data,
+        id: uid,
         createdAt: new Date().toISOString(),
         walkingPreferences: data.role === 'pet_walker' ? {
           maxDistance: data.walkingPreferences?.maxDistance || 5,
@@ -49,8 +69,9 @@ export function useStaff() {
       };
 
       console.log('Final staff data being saved:', staffData);
-      const docRef = await addDoc(collection(db, STAFF_COLLECTION), staffData);
-      return docRef.id;
+      const docRef = doc(db, STAFF_COLLECTION, uid);
+      await setDoc(docRef, staffData);
+      return uid;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['staff'] });
