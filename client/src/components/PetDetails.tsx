@@ -104,9 +104,9 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
               ) : 'Not specified'}
             </p>
             {pet.temperamentTags && pet.temperamentTags.length > 0 && (
-              <p>
+              <div className="space-y-1">
                 <span className="text-muted-foreground">Behaviors:</span>
-                <div className="flex flex-wrap gap-1 mt-1">
+                <div className="flex flex-wrap gap-1">
                   {pet.temperamentTags.map((tag, index) => (
                     <span
                       key={index}
@@ -116,7 +116,7 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
                     </span>
                   ))}
                 </div>
-              </p>
+              </div>
             )}
             {pet.temperamentNotes && (
               <p>
