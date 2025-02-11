@@ -23,7 +23,7 @@ router.post('/api/staff/create', async (req, res) => {
     res.json({ uid: userRecord.uid });
   } catch (error) {
     console.error('Error creating staff:', error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error instanceof Error ? error.message : 'Unknown error occurred' });
   }
 });
 

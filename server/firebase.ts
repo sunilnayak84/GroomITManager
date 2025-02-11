@@ -99,6 +99,7 @@ export const InitialRoleConfigs = {
 
 let firebaseApp: admin.app.App | null = null;
 export const db = getFirestore(getFirebaseAdmin());
+export const auth = getAuth(getFirebaseAdmin());
 
 export function getFirebaseAdmin(): admin.app.App {
   if (firebaseApp) {
