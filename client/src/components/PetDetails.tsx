@@ -289,6 +289,8 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
                     closeButton.click();
                   }
                 });
+                // Refetch appointments data after scheduling
+                window.location.reload();
               }
             }} 
             selectedPet={pet} 

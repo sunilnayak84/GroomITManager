@@ -362,14 +362,17 @@ export default function AppointmentForm({ setOpen, selectedDate, selectedPet }: 
         status: "pending" as const,
       };
 
-      await addAppointment(appointmentData);
+      const result = await addAppointment(appointmentData);
       
-      toast({
-        title: "Success",
-        description: "Appointment scheduled successfully",
-      });
-
-      setOpen(false);
+      if (result) {
+        toast({
+          title: "Success",
+          description: "Appointment scheduled successfully",
+        });
+        setOpen(false);
+      } else {
+        throw new Error("Failed to schedule appointment");
+      }
 
       form.reset();
     } catch (error) {
