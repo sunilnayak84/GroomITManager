@@ -5,21 +5,41 @@ const router = Router();
 
 router.post('/api/staff/create', async (req, res) => {
   try {
-    const { email, password, name, role } = req.body;
+    const { email, password, name, role, phone } = req.body;
     
+    // Validate required fields
+    if (!email || !name || !role) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
     // Create user in Firebase Auth
     const userRecord = await auth.createUser({
       email,
-      password,
+      password: password || 'Welcome123!',
       displayName: name,
+      phoneNumber: phone,
     });
 
-    // Set custom claims based on role
+    // Get role permissions
+    const rolePermissions = RolePermissions[role] || [];
+
+    // Set custom claims with role and permissions
     await auth.setCustomUserClaims(userRecord.uid, {
       role,
-      isStaff: true
+      isStaff: true,
+      permissions: rolePermissions,
+      createdAt: new Date().toISOString()
     });
 
+    // Add role to realtime database for faster queries
+    const db = admin.database();
+    await db.ref(`roles/${userRecord.uid}`).set({
+      role,
+      permissions: rolePermissions,
+      updatedAt: Date.now()
+    });
+
+    console.log(`Created staff member ${name} (${email}) with role ${role}`);
     res.json({ uid: userRecord.uid });
   } catch (error) {
     console.error('Error creating staff:', error);
