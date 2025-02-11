@@ -36,7 +36,7 @@ export function useStaff() {
     mutationFn: async (data: InsertUser) => {
       console.log('Adding staff member with data:', data);
 
-      // First create Firebase Auth user
+      // First create Firebase Auth user with a default password
       const response = await fetch('/api/staff/create', {
         method: 'POST',
         headers: {
@@ -45,12 +45,14 @@ export function useStaff() {
         body: JSON.stringify({
           email: data.email,
           name: data.name,
-          role: data.role
+          role: data.role,
+          password: 'Welcome123!' // Default password that user should change
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create staff member in Firebase Auth');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create staff member in Firebase Auth');
       }
 
       const { uid } = await response.json();
@@ -60,6 +62,7 @@ export function useStaff() {
         ...data,
         id: uid,
         createdAt: new Date().toISOString(),
+        isActive: true,
         walkingPreferences: data.role === 'pet_walker' ? {
           maxDistance: data.walkingPreferences?.maxDistance || 5,
           preferredAreas: data.walkingPreferences?.preferredAreas || [],
@@ -71,6 +74,13 @@ export function useStaff() {
       console.log('Final staff data being saved:', staffData);
       const docRef = doc(db, STAFF_COLLECTION, uid);
       await setDoc(docRef, staffData);
+      
+      // Verify the document was created
+      const docSnap = await getDoc(docRef);
+      if (!docSnap.exists()) {
+        throw new Error('Failed to create staff document in Firestore');
+      }
+      
       return uid;
     },
     onSuccess: () => {
