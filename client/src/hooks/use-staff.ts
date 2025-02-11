@@ -36,7 +36,7 @@ export function useStaff() {
     mutationFn: async (data: InsertUser) => {
       console.log('Adding staff member with data:', data);
 
-      // Create Firebase Auth user and set role
+      // First create Firebase Auth user with a default password
       const response = await fetch('/api/staff/create', {
         method: 'POST',
         headers: {
@@ -46,49 +46,41 @@ export function useStaff() {
           email: data.email,
           name: data.name,
           role: data.role,
-          phone: data.phone,
-          password: 'Welcome123!' // Default password
+          password: 'Welcome123!' // Default password that user should change
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create staff member');
+        throw new Error(errorData.message || 'Failed to create staff member in Firebase Auth');
       }
 
       const { uid } = await response.json();
 
-      // Create Firestore record with role-specific data
+      // Then create Firestore record
       const staffData = {
+        ...data,
         id: uid,
-        email: data.email,
-        name: data.name,
-        phone: data.phone,
-        role: data.role,
-        specialties: data.specialties || [],
-        experienceYears: data.experienceYears || 0,
-        maxDailyAppointments: data.maxDailyAppointments || 8,
-        isActive: true,
         createdAt: new Date().toISOString(),
+        isActive: true,
         walkingPreferences: data.role === 'pet_walker' ? {
           maxDistance: data.walkingPreferences?.maxDistance || 5,
           preferredAreas: data.walkingPreferences?.preferredAreas || [],
           availableTimeSlots: data.walkingPreferences?.availableTimeSlots || [],
           simultaneousWalks: data.walkingPreferences?.simultaneousWalks || 1
-        } : null,
-        updatedAt: new Date().toISOString()
+        } : null
       };
 
-      // Save to Firestore
+      console.log('Final staff data being saved:', staffData);
       const docRef = doc(db, STAFF_COLLECTION, uid);
       await setDoc(docRef, staffData);
       
-      // Verify creation
+      // Verify the document was created
       const docSnap = await getDoc(docRef);
       if (!docSnap.exists()) {
-        throw new Error('Failed to create staff document');
+        throw new Error('Failed to create staff document in Firestore');
       }
-
+      
       return uid;
     },
     onSuccess: () => {
