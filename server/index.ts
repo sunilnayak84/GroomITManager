@@ -9,6 +9,7 @@ import fs from "fs";
 // Configure Express app
 const app = express();
 app.use(express.json());
+registerRoutes(app);
 app.use(express.urlencoded({ extended: true }));
 app.set('trust proxy', 1);
 
