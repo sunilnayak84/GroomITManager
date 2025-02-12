@@ -50,4 +50,5 @@ router.post('/staff/create', async (req: Request, res: Response) => {
 
 export const registerRoutes = (app: any) => {
   app.use('/api', router);
+  console.log('Server routes registered successfully');
 };

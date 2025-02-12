@@ -37,7 +37,7 @@ export function useStaff() {
       console.log('Adding staff member with data:', data);
 
       // Create Firebase Auth user with role
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/staff/create`, {
+      const response = await fetch('/api/staff/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -51,10 +51,12 @@ export function useStaff() {
         }),
       });
 
-      const errorData = await response.text();
       if (!response.ok) {
-        throw new Error(errorData || 'Failed to create staff member');
+        const errorData = await response.text();
+        console.error('Staff creation failed:', response.status, errorData);
+        throw new Error(errorData || `Failed to create staff member (${response.status})`);
       }
+      const responseData = await response.json();
 
       const { uid } = JSON.parse(errorData);
 
