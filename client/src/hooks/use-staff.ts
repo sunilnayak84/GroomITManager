@@ -51,8 +51,15 @@ export function useStaff() {
         }),
       });
 
-      const responseData = await response.json();
-      
+      let responseData;
+      try {
+        const text = await response.text();
+        responseData = text ? JSON.parse(text) : {};
+      } catch (e) {
+        console.error('Failed to parse response:', e);
+        throw new Error(`Server error (${response.status})`);
+      }
+
       if (!response.ok) {
         console.error('Staff creation failed:', response.status, responseData);
         throw new Error(responseData.message || `Failed to create staff member (${response.status})`);

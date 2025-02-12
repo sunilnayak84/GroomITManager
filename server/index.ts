@@ -5,6 +5,9 @@ import { terminateProcessOnPort } from "./utils/port_cleanup.js";
 import { initializeFirebaseAdmin } from "./firebase.js";
 import path from "path";
 import fs from "fs";
+import cors from 'cors';
+import { json } from 'express';
+
 
 // Configure Express app
 const app = express();
@@ -13,7 +16,6 @@ app.use(express.urlencoded({ extended: true }));
 app.set('trust proxy', 1);
 
 // CORS configuration
-import cors from 'cors';
 const corsOptions = {
   origin: process.env.NODE_ENV === 'development'
     ? ['http://localhost:5174', 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev', 'http://0.0.0.0:5174']
