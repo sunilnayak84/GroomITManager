@@ -16,37 +16,29 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.set('trust proxy', 1);
 
-// Request logging middleware with detailed information
-app.use((req, res, next) => {
-  const start = Date.now();
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  console.log('[REQUEST] Headers:', req.headers);
-  console.log('[REQUEST] Body:', req.body);
-  console.log('[REQUEST] Query:', req.query);
-
-  res.on("finish", () => {
-    const duration = Date.now() - start;
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url} ${res.statusCode} ${duration}ms`);
-  });
-  next();
-});
-
 // CORS configuration - must come before routes
 const corsOptions = {
-  origin: true,
-  credentials: true,
+  origin: '*', // For development - adjust in production
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
-  exposedHeaders: ['Content-Range', 'X-Content-Range']
+  allowedHeaders: ['Content-Type', 'Authorization'],
 };
 app.use(cors(corsOptions));
 
-// JSON parsing error handler
+// Request logging middleware
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  console.log('Headers:', req.headers);
+  console.log('Body:', req.body);
+  next();
+});
+
+// Error handling middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error('Error:', err);
   if (err instanceof SyntaxError && 'body' in err) {
     return res.status(400).json({ message: 'Invalid JSON' });
   }
-  next();
+  next(err);
 });
 
 async function startServer(port: number) {
@@ -62,15 +54,21 @@ async function startServer(port: number) {
     await setupAuth(app);
     console.log('Authentication setup completed');
 
-    // Register routes - this includes all API routes
+    // Register API routes
     registerRoutes(app);
+    console.log('Routes registered successfully');
 
-    // Create HTTP server
+    // Start server
     const server = createServer(app);
-
-    // Start listening
     server.listen(port, '0.0.0.0', () => {
       console.log(`Server started on port ${port}`);
+
+      // Log all registered routes
+      app._router.stack.forEach((r: any) => {
+        if (r.route && r.route.path) {
+          console.log(`Route registered: ${Object.keys(r.route.methods).join(',')} ${r.route.path}`);
+        }
+      });
     });
 
     // Handle server errors
