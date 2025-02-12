@@ -124,7 +124,7 @@ router.post('/staff/create', async (req: Request, res: Response) => {
 });
 
 export function registerRoutes(app: Express.Application) {
-  // Mount staff management routes first to ensure proper routing
+  // Mount staff management routes first
   app.use('/api/staff-management', staffManagementRouter);
 
   // Mount the main router after specific routes
