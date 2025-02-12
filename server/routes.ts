@@ -11,11 +11,23 @@ router.use((req, res, next) => {
 router.post('/staff/create', async (req: Request, res: Response) => {
   try {
     const { email, password, name, role, phone } = req.body;
+    console.log('Attempting to create staff member:', { email, name, role, phone });
+
+    // Validate required fields
+    if (!email || !name || !role) {
+      return res.status(400).json({ 
+        message: 'Missing required fields', 
+        details: { email: !email, name: !name, role: !role } 
+      });
+    }
 
     // Validate role
     const validRoles = ['staff', 'groomer', 'pet_walker', 'receptionist'];
     if (!validRoles.includes(role)) {
-      return res.status(400).json({ message: 'Invalid role specified' });
+      return res.status(400).json({ 
+        message: 'Invalid role specified',
+        validRoles 
+      });
     }
 
     // Create user in Firebase Auth
@@ -25,6 +37,9 @@ router.post('/staff/create', async (req: Request, res: Response) => {
       displayName: name,
       phoneNumber: phone,
       disabled: false
+    }).catch(error => {
+      console.error('Firebase Auth user creation failed:', error);
+      throw new Error(`Auth creation failed: ${error.message}`);
     });
 
     // Get role permissions from roles collection
@@ -42,10 +57,16 @@ router.post('/staff/create', async (req: Request, res: Response) => {
       permissions,
       isStaff: true,
       createdAt: new Date().toISOString()
+    }).catch(error => {
+      console.error('Setting custom claims failed:', error);
+      throw new Error(`Failed to set role permissions: ${error.message}`);
     });
 
-    console.log(`Created staff member ${name} with role ${role} and permissions:`, permissions);
-    res.json({ uid: userRecord.uid });
+    console.log(`Successfully created staff member ${name} with role ${role} and permissions:`, permissions);
+    res.json({ 
+      uid: userRecord.uid,
+      message: 'Staff member created successfully'
+    });
   } catch (error) {
     console.error('Error creating staff:', error);
     if (error instanceof Error) {
