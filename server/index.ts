@@ -25,10 +25,13 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// Request logging middleware
+// Request logging middleware with detailed information
 app.use((req, res, next) => {
   const start = Date.now();
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  console.log('[REQUEST] Headers:', req.headers);
+  console.log('[REQUEST] Body:', req.body);
+  console.log('[REQUEST] Query:', req.query);
 
   res.on("finish", () => {
     const duration = Date.now() - start;

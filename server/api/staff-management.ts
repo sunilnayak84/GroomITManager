@@ -3,6 +3,18 @@ import * as admin from 'firebase-admin';
 
 const router = Router();
 
+// Add debug logging middleware for this router
+router.use((req: Request, res: Response, next) => {
+  console.log('[STAFF-MGMT] Incoming request:', {
+    method: req.method,
+    path: req.path,
+    body: req.body,
+    baseUrl: req.baseUrl,
+    originalUrl: req.originalUrl
+  });
+  next();
+});
+
 // Create staff member
 router.post('/create', async (req: Request, res: Response) => {
   console.log('[STAFF-MGMT] Creation request received:', req.body);
