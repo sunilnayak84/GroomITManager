@@ -3,8 +3,8 @@ import * as admin from 'firebase-admin';
 
 const router = Router();
 
-// Add debug logging middleware for this router
-router.use((req: Request, res: Response, next) => {
+// Request logging middleware specific to staff management
+router.use((req, res, next) => {
   console.log('[STAFF-MGMT] Incoming request:', {
     method: req.method,
     path: req.path,
@@ -16,7 +16,7 @@ router.use((req: Request, res: Response, next) => {
   next();
 });
 
-// Create staff member
+// Create staff member endpoint
 router.post('/create', async (req: Request, res: Response) => {
   console.log('[STAFF-MGMT] Creation request received:', req.body);
 

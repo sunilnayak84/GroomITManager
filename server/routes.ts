@@ -6,7 +6,7 @@ import staffManagementRouter from './api/staff-management';
 
 const router = Router();
 
-// Request logging middleware
+// Global API request logging middleware
 router.use((req, res, next) => {
   console.log('API Request:', {
     method: req.method,
@@ -125,17 +125,11 @@ router.post('/staff/create', async (req: Request, res: Response) => {
 
 export function registerRoutes(app: Express.Application) {
   try {
-    // Staff management routes - mount first
-    console.log('[ROUTES] Mounting staff management routes at /api/staff-management');
+    // Mount API routes with proper prefixes
     app.use('/api/staff-management', staffManagementRouter);
-    console.log('[ROUTES] Staff management routes mounted successfully');
-
-    // Main API router
-    console.log('[ROUTES] Mounting main API router');
     app.use('/api', router);
-    console.log('[ROUTES] Main API router mounted successfully');
 
-    // Get list of available routes for debugging
+    // Log available routes for debugging
     const routesList = [
       ...staffManagementRouter.stack
         .filter((r: any) => r.route)
@@ -147,7 +141,7 @@ export function registerRoutes(app: Express.Application) {
 
     console.log('[ROUTES] Available API routes:', routesList);
 
-    // API 404 handler
+    // 404 handler for API routes - must be last
     app.use('/api/*', (req: Request, res: Response) => {
       console.log('[404] Not Found:', req.method, req.url);
       res.status(404).json({ 
