@@ -3,6 +3,10 @@ import { auth, db } from './firebase';
 import * as admin from 'firebase-admin';
 
 const router = Router();
+router.use((req, res, next) => {
+  console.log('API Request:', req.method, req.url);
+  next();
+});
 
 router.post('/staff/create', async (req: Request, res: Response) => {
   try {
