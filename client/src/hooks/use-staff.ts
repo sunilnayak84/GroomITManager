@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { collection, getDocs, updateDoc, doc, deleteDoc, query, where, setDoc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, updateDoc, doc, deleteDoc, query, where } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import type { User, InsertUser } from '@/lib/user-types';
 
@@ -36,7 +36,7 @@ export function useStaff() {
     mutationFn: async (data: InsertUser) => {
       console.log('Adding staff member with data:', data);
 
-      // Create staff member through new staff management endpoint
+      // Make the API call to create staff member
       const response = await fetch('/api/staff-management/create', {
         method: 'POST',
         headers: {
@@ -61,9 +61,8 @@ export function useStaff() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('Staff creation failed:', response.status, errorData);
-        throw new Error(errorData.message || `Failed to create staff member (${response.status})`);
+        console.error('Staff creation failed:', response.status, await response.json().catch(() => ({})));
+        throw new Error(`Failed to create staff member (${response.status})`);
       }
 
       const { uid, userData } = await response.json();

@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes.js";
 import { createServer } from "http";
 import { terminateProcessOnPort } from "./utils/port_cleanup.js";
 import { initializeFirebaseAdmin } from "./firebase.js";
+import { setupAuth } from "./auth.js";
 import path from "path";
 import fs from "fs";
 import cors from 'cors';
@@ -49,6 +50,10 @@ async function startServer(port: number) {
     // Initialize Firebase
     await initializeFirebaseAdmin();
     console.log('Firebase Admin initialized successfully');
+
+    // Setup authentication
+    await setupAuth(app);
+    console.log('Authentication setup completed');
 
     // Register routes
     registerRoutes(app);

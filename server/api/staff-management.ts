@@ -77,7 +77,7 @@ router.post('/create', async (req: Request, res: Response) => {
     console.log('[STAFF-MGMT] Saving to Firestore');
     await admin.firestore().collection('users').doc(userRecord.uid).set(userData);
 
-    console.log('[STAFF-MGMT] Staff member created successfully:', { uid: userRecord.uid, name, role });
+    console.log('[STAFF-MGMT] Successfully created staff member:', { name, role, uid: userRecord.uid });
     res.status(201).json({
       message: 'Staff member created successfully',
       uid: userRecord.uid,
@@ -86,7 +86,7 @@ router.post('/create', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('[STAFF-MGMT] Error creating staff:', error);
-    
+
     if (error instanceof Error) {
       if (error.message.includes('auth/email-already-exists')) {
         return res.status(400).json({
