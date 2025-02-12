@@ -28,11 +28,10 @@ app.use(cors(corsOptions));
 // Request logging middleware
 app.use((req, res, next) => {
   const start = Date.now();
+  console.log(`Incoming request: ${req.method} ${req.path}`);
   res.on("finish", () => {
     const duration = Date.now() - start;
-    if (req.path.startsWith("/api")) {
-      console.log(`${req.method} ${req.path} ${res.statusCode} ${duration}ms`);
-    }
+    console.log(`${req.method} ${req.path} ${res.statusCode} ${duration}ms`);
   });
   next();
 });

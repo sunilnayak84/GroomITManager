@@ -85,6 +85,13 @@ router.post('/staff/create', async (req: Request, res: Response) => {
 });
 
 export const registerRoutes = (app: any) => {
+  // Register routes with base path
   app.use('/api', router);
-  console.log('Server routes registered successfully');
+  
+  // Log available routes
+  const routes = router.stack
+    .filter((r: any) => r.route)
+    .map((r: any) => `${Object.keys(r.route.methods).join(',')} ${r.route.path}`);
+  
+  console.log('Available API routes:', routes);
 };
