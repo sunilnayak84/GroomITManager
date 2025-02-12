@@ -12,13 +12,13 @@ router.use((req, res, next) => {
     method: req.method,
     url: req.url,
     body: req.body,
-    path: req.path,
-    baseUrl: req.baseUrl
+    baseUrl: req.baseUrl,
+    path: req.path
   });
   next();
 });
 
-// Staff creation endpoint
+// Legacy staff creation endpoint - will be deprecated
 router.post('/staff/create', async (req: Request, res: Response) => {
   console.log('[STAFF] Creation request received:', req.body);
 
@@ -124,29 +124,36 @@ router.post('/staff/create', async (req: Request, res: Response) => {
 });
 
 export function registerRoutes(app: Express.Application) {
-  // Debug logging to verify router mounting
-  console.log('[ROUTES] Mounting staff management routes...');
-  app.use('/api/staff-management', staffManagementRouter);
-  console.log('[ROUTES] Staff management routes mounted');
+  // Mount routes with debug logging
+  try {
+    // Staff management routes
+    console.log('[ROUTES] Mounting staff management routes at /api/staff-management');
+    app.use('/api/staff-management', staffManagementRouter);
+    console.log('[ROUTES] Staff management routes mounted successfully');
 
-  // Mount the main router
-  console.log('[ROUTES] Mounting main API router...');
-  app.use('/api', router);
-  console.log('[ROUTES] Main API router mounted');
+    // Main API router
+    console.log('[ROUTES] Mounting main API router');
+    app.use('/api', router);
+    console.log('[ROUTES] Main API router mounted successfully');
 
-  // Debug log available routes
-  const availableRoutes = [
-    ...staffManagementRouter.stack
-      .filter((r: any) => r.route)
-      .map((r: any) => `${Object.keys(r.route.methods).join(',')} /api/staff-management${r.route.path}`),
-    ...router.stack
-      .filter((r: any) => r.route)
-      .map((r: any) => `${Object.keys(r.route.methods).join(',')} /api${r.route.path}`)
-  ];
+    // Log available routes for debugging
+    const availableRoutes = [
+      ...staffManagementRouter.stack
+        .filter((r: any) => r.route)
+        .map((r: any) => `${Object.keys(r.route.methods).join(',')} /api/staff-management${r.route.path}`),
+      ...router.stack
+        .filter((r: any) => r.route)
+        .map((r: any) => `${Object.keys(r.route.methods).join(',')} /api${r.route.path}`)
+    ];
 
-  console.log('[ROUTES] Available API routes:', availableRoutes);
+    console.log('[ROUTES] Available API routes:', availableRoutes);
 
-  // API 404 handler - move this after all route registrations
+  } catch (error) {
+    console.error('[ROUTES] Error mounting routes:', error);
+    throw error;
+  }
+
+  // API 404 handler
   app.use('/api/*', (req: Request, res: Response) => {
     console.log('[404] Not Found:', req.method, req.url);
     res.status(404).json({ 

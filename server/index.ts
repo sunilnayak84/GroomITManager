@@ -22,6 +22,7 @@ const corsOptions = {
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range']
 };
 app.use(cors(corsOptions));
 
@@ -62,8 +63,14 @@ async function startServer(port: number) {
     registerRoutes(app);
 
     // Start server
-    app.listen(port, '0.0.0.0', () => {
+    const server = app.listen(port, '0.0.0.0', () => {
       console.log(`Server started on port ${port}`);
+    });
+
+    // Handle server errors
+    server.on('error', (error: any) => {
+      console.error('Server error:', error);
+      process.exit(1);
     });
 
   } catch (error) {
