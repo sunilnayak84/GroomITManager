@@ -36,8 +36,8 @@ export function useStaff() {
     mutationFn: async (data: InsertUser) => {
       console.log('Adding staff member with data:', data);
 
-      // Create Firebase Auth user with role
-      const response = await fetch('/api/staff/create', {
+      // Create staff member through new staff management endpoint
+      const response = await fetch('/api/staff-management/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -47,60 +47,28 @@ export function useStaff() {
           name: data.name,
           role: data.role,
           phone: data.phone,
+          specialties: data.specialties || [],
+          experienceYears: data.experienceYears || 0,
+          maxDailyAppointments: data.maxDailyAppointments || 8,
+          walkingPreferences: data.role === 'pet_walker' ? {
+            maxDistance: data.walkingPreferences?.maxDistance || 5,
+            preferredAreas: data.walkingPreferences?.preferredAreas || [],
+            availableTimeSlots: data.walkingPreferences?.availableTimeSlots || [],
+            simultaneousWalks: data.walkingPreferences?.simultaneousWalks || 1
+          } : null,
           password: 'Welcome123!'
         }),
       });
 
-      let responseData;
-      try {
-        const text = await response.text();
-        responseData = text ? JSON.parse(text) : {};
-      } catch (e) {
-        console.error('Failed to parse response:', e);
-        throw new Error(`Server error (${response.status})`);
-      }
-
       if (!response.ok) {
-        console.error('Staff creation failed:', response.status, responseData);
-        throw new Error(responseData.message || `Failed to create staff member (${response.status})`);
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Staff creation failed:', response.status, errorData);
+        throw new Error(errorData.message || `Failed to create staff member (${response.status})`);
       }
 
-      const { uid } = responseData;
+      const { uid, userData } = await response.json();
+      console.log('Staff member created successfully:', { uid, userData });
 
-      // Create Firestore record with role-specific data
-      const staffData = {
-        id: uid,
-        email: data.email,
-        name: data.name,
-        phone: data.phone,
-        role: data.role,
-        specialties: data.specialties || [],
-        experienceYears: data.experienceYears || 0,
-        maxDailyAppointments: data.maxDailyAppointments || 8,
-        isActive: true,
-        createdAt: new Date().toISOString(),
-        walkingPreferences: data.role === 'pet_walker' ? {
-          maxDistance: data.walkingPreferences?.maxDistance || 5,
-          preferredAreas: data.walkingPreferences?.preferredAreas || [],
-          availableTimeSlots: data.walkingPreferences?.availableTimeSlots || [],
-          simultaneousWalks: data.walkingPreferences?.simultaneousWalks || 1
-        } : null,
-        appointments: [],
-        rating: 0,
-        reviews: [],
-        updatedAt: new Date().toISOString()
-      };
-
-      console.log('Final staff data being saved:', staffData);
-      const docRef = doc(db, STAFF_COLLECTION, uid);
-      await setDoc(docRef, staffData);
-      
-      // Verify the document was created
-      const docSnap = await getDoc(docRef);
-      if (!docSnap.exists()) {
-        throw new Error('Failed to create staff document in Firestore');
-      }
-      
       return uid;
     },
     onSuccess: () => {
