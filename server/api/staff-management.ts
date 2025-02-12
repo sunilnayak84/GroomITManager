@@ -1,10 +1,11 @@
 import { Router, Request, Response } from 'express';
 import * as admin from 'firebase-admin';
 
-const router = Router();
+// Create and export the router
+export const staffManagementRouter = Router();
 
 // Request logging middleware specific to staff management
-router.use((req, res, next) => {
+staffManagementRouter.use((req, res, next) => {
   console.log('[STAFF-MGMT] Incoming request:', {
     method: req.method,
     path: req.path,
@@ -17,7 +18,7 @@ router.use((req, res, next) => {
 });
 
 // Create staff member endpoint
-router.post('/create', async (req: Request, res: Response) => {
+staffManagementRouter.post('/create', async (req: Request, res: Response) => {
   console.log('[STAFF-MGMT] Creation request received:', req.body);
 
   try {
@@ -128,4 +129,5 @@ router.post('/create', async (req: Request, res: Response) => {
   }
 });
 
-export default router;
+// Export default router
+export default staffManagementRouter;

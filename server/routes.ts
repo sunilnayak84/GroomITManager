@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import { auth, db } from './firebase';
 import * as admin from 'firebase-admin';
 import * as Express from 'express';
-import staffManagementRouter from './api/staff-management';
+import { staffManagementRouter } from './api/staff-management';
 
 const router = Router();
 
