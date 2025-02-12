@@ -4,7 +4,13 @@ import * as admin from 'firebase-admin';
 
 const router = Router();
 router.use((req, res, next) => {
-  console.log('API Request:', req.method, req.url);
+  console.log('API Request:', {
+    method: req.method,
+    url: req.url,
+    body: req.body,
+    path: req.path,
+    baseUrl: req.baseUrl
+  });
   next();
 });
 

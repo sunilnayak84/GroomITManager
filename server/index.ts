@@ -54,8 +54,15 @@ async function startServer(port: number) {
     // Create HTTP server
     const server = createServer(app);
 
-    // Register routes  (Assuming registerRoutes now correctly handles the routes)
+    // Register routes with base path
+    app.use('/api', (req, res, next) => {
+      console.log('API Base Path Hit:', req.path);
+      next();
+    });
     registerRoutes(app);
+    console.log('Available routes:', app._router.stack
+      .filter(r => r.route)
+      .map(r => `${Object.keys(r.route.methods)} ${r.route.path}`));
 
     // API endpoints will be registered by registerRoutes
     console.log('Server routes registered successfully');
