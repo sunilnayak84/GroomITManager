@@ -10,7 +10,8 @@ router.use((req: Request, res: Response, next) => {
     path: req.path,
     body: req.body,
     baseUrl: req.baseUrl,
-    originalUrl: req.originalUrl
+    originalUrl: req.originalUrl,
+    url: req.url
   });
   next();
 });

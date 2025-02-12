@@ -52,7 +52,10 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 async function startServer(port: number) {
   try {
     // Initialize Firebase
-    await initializeFirebaseAdmin();
+    const firebaseApp = await initializeFirebaseAdmin();
+    if (!firebaseApp) {
+      throw new Error('Failed to initialize Firebase Admin');
+    }
     console.log('Firebase Admin initialized successfully');
 
     // Setup authentication
@@ -63,7 +66,8 @@ async function startServer(port: number) {
     registerRoutes(app);
 
     // Start server
-    const server = app.listen(port, '0.0.0.0', () => {
+    const server = createServer(app);
+    server.listen(port, '0.0.0.0', () => {
       console.log(`Server started on port ${port}`);
     });
 

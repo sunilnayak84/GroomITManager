@@ -36,39 +36,45 @@ export function useStaff() {
     mutationFn: async (data: InsertUser) => {
       console.log('Adding staff member with data:', data);
 
-      // Make the API call to create staff member
-      const response = await fetch(`${window.location.origin}/api/staff-management/create`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: data.email,
-          name: data.name,
-          role: data.role,
-          phone: data.phone,
-          specialties: data.specialties || [],
-          experienceYears: data.experienceYears || 0,
-          maxDailyAppointments: data.maxDailyAppointments || 8,
-          walkingPreferences: data.role === 'pet_walker' ? {
-            maxDistance: data.walkingPreferences?.maxDistance || 5,
-            preferredAreas: data.walkingPreferences?.preferredAreas || [],
-            availableTimeSlots: data.walkingPreferences?.availableTimeSlots || [],
-            simultaneousWalks: data.walkingPreferences?.simultaneousWalks || 1
-          } : null,
-          password: 'Welcome123!'
-        }),
-      });
+      try {
+        // Make the API call to create staff member
+        const response = await fetch(`/api/staff-management/create`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: data.email,
+            name: data.name,
+            role: data.role,
+            phone: data.phone,
+            specialties: data.specialties || [],
+            experienceYears: data.experienceYears || 0,
+            maxDailyAppointments: data.maxDailyAppointments || 8,
+            walkingPreferences: data.role === 'pet_walker' ? {
+              maxDistance: data.walkingPreferences?.maxDistance || 5,
+              preferredAreas: data.walkingPreferences?.preferredAreas || [],
+              availableTimeSlots: data.walkingPreferences?.availableTimeSlots || [],
+              simultaneousWalks: data.walkingPreferences?.simultaneousWalks || 1
+            } : null,
+            password: 'Welcome123!'
+          }),
+        });
 
-      if (!response.ok) {
-        console.error('Staff creation failed:', response.status, await response.json().catch(() => ({})));
-        throw new Error(`Failed to create staff member (${response.status})`);
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          console.error('Staff creation failed:', response.status, errorData);
+          throw new Error(errorData.message || `Failed to create staff member (${response.status})`);
+        }
+
+        const { uid, userData } = await response.json();
+        console.log('Staff member created successfully:', { uid, userData });
+
+        return userData;
+      } catch (error) {
+        console.error('Error in addStaffMember:', error);
+        throw error;
       }
-
-      const { uid, userData } = await response.json();
-      console.log('Staff member created successfully:', { uid, userData });
-
-      return uid;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['staff'] });
