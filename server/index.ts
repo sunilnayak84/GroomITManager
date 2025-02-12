@@ -8,7 +8,6 @@ import fs from "fs";
 import cors from 'cors';
 import { json } from 'express';
 
-
 // Configure Express app
 const app = express();
 app.use(express.json({ limit: '10mb' }));
@@ -67,9 +66,9 @@ async function startServer(port: number) {
       next();
     });
     registerRoutes(app);
-    console.log('Available routes:', app._router.stack
-      .filter(r => r.route)
-      .map(r => `${Object.keys(r.route.methods)} ${r.route.path}`));
+    console.log('Available routes:', (app._router?.stack || [])
+      .filter((r: any) => r.route)
+      .map((r: any) => `${Object.keys(r.route?.methods || {})} ${r.route?.path}`));
 
     // API endpoints will be registered by registerRoutes
     console.log('Server routes registered successfully');
