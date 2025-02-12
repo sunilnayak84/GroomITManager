@@ -4,10 +4,10 @@ import * as admin from 'firebase-admin';
 
 const router = Router();
 
-router.post('/api/staff/create', async (req: Express.Request, res: Express.Response) => {
+router.post('/staff/create', async (req: Request, res: Response) => {
   try {
     const { email, password, name, role, phone } = req.body;
-    
+
     // Validate role
     const validRoles = ['staff', 'groomer', 'pet_walker', 'receptionist'];
     if (!validRoles.includes(role)) {
@@ -15,7 +15,7 @@ router.post('/api/staff/create', async (req: Express.Request, res: Express.Respo
     }
 
     // Create user in Firebase Auth
-    const userRecord = await auth.createUser({
+    const userRecord = await admin.auth().createUser({
       email,
       password: password || 'Welcome123!',
       displayName: name,
@@ -33,7 +33,7 @@ router.post('/api/staff/create', async (req: Express.Request, res: Express.Respo
     const permissions = roleData?.permissions || [];
 
     // Set custom claims with role and permissions
-    await auth.setCustomUserClaims(userRecord.uid, {
+    await admin.auth().setCustomUserClaims(userRecord.uid, {
       role,
       permissions,
       isStaff: true,
@@ -50,27 +50,4 @@ router.post('/api/staff/create', async (req: Express.Request, res: Express.Respo
 
 export const registerRoutes = (app: any) => {
   app.use('/api', router);
-  // Remove duplicate route registration since it's already defined above
-      
-      // Create user in Firebase Auth
-      const userRecord = await auth.createUser({
-        email,
-        password: password || 'Welcome123!', // Default password
-        displayName: name,
-      });
-
-      // Set custom claims based on role
-      await auth.setCustomUserClaims(userRecord.uid, {
-        role,
-        isStaff: true
-      });
-
-      res.json({ uid: userRecord.uid });
-    } catch (error) {
-      console.error('Error creating staff:', error);
-      res.status(500).json({ message: error instanceof Error ? error.message : 'Unknown error occurred' });
-    }
-  });
-
-  app.use(router);
 };

@@ -37,7 +37,7 @@ export function useStaff() {
       console.log('Adding staff member with data:', data);
 
       // Create Firebase Auth user with role
-      const response = await fetch('/api/staff/create', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/staff/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
