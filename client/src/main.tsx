@@ -21,7 +21,8 @@ import { Button } from "@/components/ui/button";
 import RoleManagementPage from "./pages/RoleManagementPage";
 import WorkingHoursPage from "./pages/WorkingHoursPage";
 import LoyaltyProgramPage from "./pages/settings/LoyaltyProgramPage";
-import DogWalkingPage from "./pages/DogWalkingPage"; // Add import
+import DogWalkingPage from "./pages/DogWalkingPage";
+import StaffManagementPage from "./pages/StaffManagementPage";
 
 // Loading component for suspense fallback
 function LoadingSpinner() {
@@ -103,7 +104,7 @@ function Router() {
             <Route path="/pets" component={PetsPage} />
             <Route path="/services" component={ServicesPage} />
             <Route path="/staff" component={lazy(() => import('./pages/StaffPage'))} />
-            <Route path="/walks" component={DogWalkingPage} /> {/* Add new route */}
+            <Route path="/walks" component={DogWalkingPage} />
             <Route path="/inventory" component={InventoryPage} />
             <Route path="/marketplace" component={MarketplacePage} />
             <Route path="/settings/working-hours" component={lazy(() => import('./pages/WorkingHoursPage'))} />
@@ -112,6 +113,7 @@ function Router() {
             <Route path="/settings/roles" component={lazy(() => import('./pages/RoleManagementPage'))} />
             <Route path="/settings/loyalty" component={lazy(() => import('./pages/settings/LoyaltyProgramPage'))} />
             <Route path="/settings/rewards" component={lazy(() => import('./pages/settings/RewardsManagementPage'))} />
+            <Route path="/settings/staff" component={StaffManagementPage} />
             <Route>404 Page Not Found</Route>
           </Switch>
         </Suspense>
