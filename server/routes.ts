@@ -1,9 +1,11 @@
-import { Router, Request, Response, json } from 'express';
+import { Router, Request, Response } from 'express';
 import { auth, db } from './firebase';
 import * as admin from 'firebase-admin';
 import * as Express from 'express';
 
 const router = Router();
+
+// Request logging middleware (unchanged from original)
 router.use((req, res, next) => {
   console.log('API Request:', {
     method: req.method,
@@ -15,91 +17,118 @@ router.use((req, res, next) => {
   next();
 });
 
-router.post('/staff/create', json(), async (req: Request, res: Response) => {
+// Staff creation endpoint (replaced with edited code)
+router.post('/staff/create', async (req: Request, res: Response) => {
   console.log('Received staff creation request:', req.body);
-  try {
-    const { email, password, name, role, phone } = req.body;
-    console.log('Attempting to create staff member:', { email, name, role, phone });
 
-    // Validate required fields
-    if (!email || !name || !role) {
-      return res.status(400).json({ 
-        message: 'Missing required fields', 
-        details: { email: !email, name: !name, role: !role } 
+  try {
+    const { email, password, name, role, phone, specialties, experienceYears, maxDailyAppointments, walkingPreferences } = req.body;
+
+    // Input validation
+    if (!email || !name || !role || !phone) {
+      return res.status(400).json({
+        message: 'Missing required fields',
+        details: { email: !email, name: !name, role: !role, phone: !phone }
       });
     }
 
     // Validate role
-    const validRoles = ['staff', 'groomer', 'pet_walker', 'receptionist'];
+    const validRoles = ['staff', 'groomer', 'pet_walker'];
     if (!validRoles.includes(role)) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: 'Invalid role specified',
-        validRoles 
+        validRoles
       });
     }
 
-    // Create user in Firebase Auth
+    // Create Firebase Auth user
     const userRecord = await admin.auth().createUser({
       email,
-      password: password || 'Welcome123!',
+      password: password || 'Welcome123!', // Default password if not provided
       displayName: name,
       phoneNumber: phone,
       disabled: false
-    }).catch(error => {
-      console.error('Firebase Auth user creation failed:', error);
-      throw new Error(`Auth creation failed: ${error.message}`);
     });
 
-    // Get role permissions from roles collection
-    const roleDoc = await admin.firestore().collection('roles').doc(role).get();
-    if (!roleDoc.exists) {
-      throw new Error(`Role ${role} not found in roles collection`);
-    }
-
-    const roleData = roleDoc.data();
-    const permissions = roleData?.permissions || [];
-
-    // Set custom claims with role and permissions
-    await admin.auth().setCustomUserClaims(userRecord.uid, {
+    // Set custom claims based on role
+    const claims = {
       role,
-      permissions,
       isStaff: true,
       createdAt: new Date().toISOString()
-    }).catch(error => {
-      console.error('Setting custom claims failed:', error);
-      throw new Error(`Failed to set role permissions: ${error.message}`);
+    };
+
+    await admin.auth().setCustomUserClaims(userRecord.uid, claims);
+
+    // Create Firestore user document with role-specific data
+    const userData = {
+      id: userRecord.uid,
+      email,
+      name,
+      phone,
+      role,
+      isActive: true,
+      specialties: specialties || [],
+      experienceYears: experienceYears || 0,
+      maxDailyAppointments: maxDailyAppointments || 8,
+      walkingPreferences: role === 'pet_walker' ? {
+        maxDistance: walkingPreferences?.maxDistance || 5,
+        preferredAreas: walkingPreferences?.preferredAreas || [],
+        availableTimeSlots: walkingPreferences?.availableTimeSlots || [],
+        simultaneousWalks: walkingPreferences?.simultaneousWalks || 1
+      } : null,
+      appointments: [],
+      rating: 0,
+      reviews: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    // Save to Firestore
+    await admin.firestore().collection('users').doc(userRecord.uid).set(userData);
+
+    console.log(`Successfully created staff member ${name} with role ${role}`);
+    res.status(201).json({
+      message: 'Staff member created successfully',
+      uid: userRecord.uid
     });
 
-    console.log(`Successfully created staff member ${name} with role ${role} and permissions:`, permissions);
-    res.json({ 
-      uid: userRecord.uid,
-      message: 'Staff member created successfully'
-    });
   } catch (error) {
-    console.error('Error creating staff:', error);
+    console.error('Staff creation error:', error);
+
     if (error instanceof Error) {
-      console.error('Error details:', error.message);
-      res.status(500).json({ message: error.message, success: false });
+      // Handle specific Firebase Auth errors
+      if (error.message.includes('auth')) {
+        return res.status(400).json({
+          message: 'Authentication error',
+          details: error.message
+        });
+      }
+
+      res.status(500).json({
+        message: error.message,
+        success: false
+      });
     } else {
-      res.status(500).json({ message: 'Unknown error occurred', success: false });
+      res.status(500).json({
+        message: 'Unknown error occurred',
+        success: false
+      });
     }
   }
 });
 
 export const registerRoutes = (app: Express.Application) => {
-  // Register routes with base path
-  const apiRouter = Router();
-  apiRouter.use(router);
-  app.use('/api', apiRouter);
+  // Mount routes under /api
+  app.use('/api', router);
 
-  // Log all registered routes
-  const routes = apiRouter.stack
-    .filter((r: any) => r.route)
-    .map((r: any) => `${Object.keys(r.route.methods).join(',')} ${r.route.path}`);
+  // Log registered routes
+  console.log('Available API routes:', 
+    router.stack
+      .filter((r: any) => r.route)
+      .map((r: any) => `${Object.keys(r.route.methods).join(',')} ${r.route.path}`)
+  );
 
-  console.log('Available API routes:', routes);
-
-  // Add catch-all for API 404s
+  // API 404 handler
   app.use('/api/*', (req: Request, res: Response) => {
     console.log('404 Not Found:', req.method, req.url);
     res.status(404).json({ message: `Route ${req.method} ${req.url} not found` });
