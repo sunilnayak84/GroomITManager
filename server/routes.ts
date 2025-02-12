@@ -1,6 +1,7 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, json } from 'express';
 import { auth, db } from './firebase';
 import * as admin from 'firebase-admin';
+import * as Express from 'express';
 
 const router = Router();
 router.use((req, res, next) => {
@@ -14,7 +15,7 @@ router.use((req, res, next) => {
   next();
 });
 
-router.post('/staff/create', express.json(), async (req: Request, res: Response) => {
+router.post('/staff/create', json(), async (req: Request, res: Response) => {
   console.log('Received staff creation request:', req.body);
   try {
     const { email, password, name, role, phone } = req.body;
@@ -85,21 +86,21 @@ router.post('/staff/create', express.json(), async (req: Request, res: Response)
   }
 });
 
-export const registerRoutes = (app: any) => {
+export const registerRoutes = (app: Express.Application) => {
   // Register routes with base path
-  const apiRouter = express.Router();
+  const apiRouter = Router();
   apiRouter.use(router);
   app.use('/api', apiRouter);
-  
+
   // Log all registered routes
-  const routes = apiRouter._router.stack
+  const routes = apiRouter.stack
     .filter((r: any) => r.route)
     .map((r: any) => `${Object.keys(r.route.methods).join(',')} ${r.route.path}`);
-  
+
   console.log('Available API routes:', routes);
-  
+
   // Add catch-all for API 404s
-  app.use('/api/*', (req, res) => {
+  app.use('/api/*', (req: Request, res: Response) => {
     console.log('404 Not Found:', req.method, req.url);
     res.status(404).json({ message: `Route ${req.method} ${req.url} not found` });
   });
