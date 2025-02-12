@@ -14,7 +14,8 @@ router.use((req, res, next) => {
   next();
 });
 
-router.post('/staff/create', async (req: Request, res: Response) => {
+router.post('/staff/create', express.json(), async (req: Request, res: Response) => {
+  console.log('Received staff creation request:', req.body);
   try {
     const { email, password, name, role, phone } = req.body;
     console.log('Attempting to create staff member:', { email, name, role, phone });
@@ -86,12 +87,20 @@ router.post('/staff/create', async (req: Request, res: Response) => {
 
 export const registerRoutes = (app: any) => {
   // Register routes with base path
-  app.use('/api', router);
+  const apiRouter = express.Router();
+  apiRouter.use(router);
+  app.use('/api', apiRouter);
   
-  // Log available routes
-  const routes = router.stack
+  // Log all registered routes
+  const routes = apiRouter._router.stack
     .filter((r: any) => r.route)
     .map((r: any) => `${Object.keys(r.route.methods).join(',')} ${r.route.path}`);
   
   console.log('Available API routes:', routes);
+  
+  // Add catch-all for API 404s
+  app.use('/api/*', (req, res) => {
+    console.log('404 Not Found:', req.method, req.url);
+    res.status(404).json({ message: `Route ${req.method} ${req.url} not found` });
+  });
 };

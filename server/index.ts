@@ -11,9 +11,17 @@ import { json } from 'express';
 
 // Configure Express app
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.set('trust proxy', 1);
+
+// Add error handling for JSON parsing
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  if (err instanceof SyntaxError && 'body' in err) {
+    return res.status(400).send({ message: 'Invalid JSON' });
+  }
+  next();
+});
 
 // CORS configuration
 const corsOptions = {
