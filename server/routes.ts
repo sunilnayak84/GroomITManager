@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { auth } from './firebase';
+import { auth, db } from './firebase';
+import * as admin from 'firebase-admin';
 
 const router = Router();
 
@@ -48,7 +49,8 @@ router.post('/api/staff/create', async (req, res) => {
 });
 
 export const registerRoutes = (app: any) => {
-  router.post('/api/staff/create', async (req, res) => {
+  app.use('/api', router);
+  app.post('/api/staff/create', async (req, res) => {
     try {
       const { email, password, name, role } = req.body;
       

@@ -9,7 +9,6 @@ import fs from "fs";
 // Configure Express app
 const app = express();
 app.use(express.json());
-registerRoutes(app);
 app.use(express.urlencoded({ extended: true }));
 app.set('trust proxy', 1);
 
@@ -55,7 +54,7 @@ async function startServer(port: number) {
     // Create HTTP server
     const server = createServer(app);
 
-    // Register routes
+    // Register routes  (Assuming registerRoutes now correctly handles the routes)
     registerRoutes(app);
 
     // API endpoints will be registered by registerRoutes
