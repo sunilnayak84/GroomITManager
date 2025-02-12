@@ -6,7 +6,7 @@ import staffManagementRouter from './api/staff-management';
 
 const router = Router();
 
-// Request logging middleware (unchanged from original)
+// Request logging middleware
 router.use((req, res, next) => {
   console.log('API Request:', {
     method: req.method,
@@ -18,14 +18,14 @@ router.use((req, res, next) => {
   next();
 });
 
-// Staff creation endpoint (unchanged from original)
+// Staff creation endpoint
 router.post('/staff/create', async (req: Request, res: Response) => {
   console.log('[STAFF] Creation request received:', req.body);
 
   try {
     const { email, password, name, role, phone, specialties, experienceYears, maxDailyAppointments, walkingPreferences } = req.body;
 
-    // Input validation (unchanged from original)
+    // Input validation
     if (!email || !name || !role || !phone) {
       console.log('[STAFF] Validation failed:', { email: !email, name: !name, role: !role, phone: !phone });
       return res.status(400).json({
@@ -34,7 +34,7 @@ router.post('/staff/create', async (req: Request, res: Response) => {
       });
     }
 
-    // Validate role (unchanged from original)
+    // Validate role
     const validRoles = ['staff', 'groomer', 'pet_walker'];
     if (!validRoles.includes(role)) {
       console.log('[STAFF] Invalid role:', role);
@@ -45,7 +45,7 @@ router.post('/staff/create', async (req: Request, res: Response) => {
     }
 
     console.log('[STAFF] Creating Firebase Auth user');
-    // Create Firebase Auth user (unchanged from original)
+    // Create Firebase Auth user
     const userRecord = await admin.auth().createUser({
       email,
       password: password || 'Welcome123!',
@@ -55,7 +55,7 @@ router.post('/staff/create', async (req: Request, res: Response) => {
     });
 
     console.log('[STAFF] Setting custom claims');
-    // Set custom claims based on role (unchanged from original)
+    // Set custom claims based on role
     const claims = {
       role,
       isStaff: true,
@@ -65,7 +65,7 @@ router.post('/staff/create', async (req: Request, res: Response) => {
     await admin.auth().setCustomUserClaims(userRecord.uid, claims);
 
     console.log('[STAFF] Preparing user data for Firestore');
-    // Create Firestore user document with role-specific data (unchanged from original)
+    // Create Firestore user document with role-specific data
     const userData = {
       id: userRecord.uid,
       email,
@@ -90,7 +90,7 @@ router.post('/staff/create', async (req: Request, res: Response) => {
     };
 
     console.log('[STAFF] Saving to Firestore');
-    // Save to Firestore (unchanged from original)
+    // Save to Firestore
     await admin.firestore().collection('users').doc(userRecord.uid).set(userData);
 
     console.log('[STAFF] Successfully created staff member:', { name, role, uid: userRecord.uid });
@@ -124,14 +124,21 @@ router.post('/staff/create', async (req: Request, res: Response) => {
 });
 
 export function registerRoutes(app: Express.Application) {
-  // Mount staff management routes
+  // Mount staff management routes first to ensure proper routing
   app.use('/api/staff-management', staffManagementRouter);
-  app.use('/api', router); // Added this line to include the original router
+
+  // Mount the main router after specific routes
+  app.use('/api', router);
 
   console.log('[ROUTES] Available API routes:',
-    router.stack
-      .filter((r: any) => r.route)
-      .map((r: any) => `${Object.keys(r.route.methods).join(',')} ${r.route.path}`)
+    [
+      ...router.stack
+        .filter((r: any) => r.route)
+        .map((r: any) => `${Object.keys(r.route.methods).join(',')} ${r.route.path}`),
+      ...staffManagementRouter.stack
+        .filter((r: any) => r.route)
+        .map((r: any) => `${Object.keys(r.route.methods).join(',')} /staff-management${r.route.path}`)
+    ]
   );
 
   // API 404 handler
