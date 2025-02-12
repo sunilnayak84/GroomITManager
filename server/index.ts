@@ -6,49 +6,42 @@ import { initializeFirebaseAdmin } from "./firebase.js";
 import path from "path";
 import fs from "fs";
 import cors from 'cors';
-import { json } from 'express';
 
 // Configure Express app
 const app = express();
+
+// Global middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.set('trust proxy', 1);
 
-// Add error handling for JSON parsing
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  if (err instanceof SyntaxError && 'body' in err) {
-    return res.status(400).send({ message: 'Invalid JSON' });
-  }
-  next();
-});
-
 // CORS configuration
 const corsOptions = {
-  origin: true, // Allow all origins
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
-  optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
 
 // Request logging middleware
 app.use((req, res, next) => {
   const start = Date.now();
-  console.log(`Incoming request: ${req.method} ${req.path}`);
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+
   res.on("finish", () => {
     const duration = Date.now() - start;
-    console.log(`${req.method} ${req.path} ${res.statusCode} ${duration}ms`);
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url} ${res.statusCode} ${duration}ms`);
   });
   next();
 });
 
-// Global error handling
-app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-  console.error('Error:', err.message);
-  const status = err.status || err.statusCode || 500;
-  const message = err.message || "Internal Server Error";
-  res.status(status).json({ message });
+// JSON parsing error handler
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  if (err instanceof SyntaxError && 'body' in err) {
+    return res.status(400).json({ message: 'Invalid JSON' });
+  }
+  next();
 });
 
 async function startServer(port: number) {
@@ -57,24 +50,11 @@ async function startServer(port: number) {
     await initializeFirebaseAdmin();
     console.log('Firebase Admin initialized successfully');
 
-    // Create HTTP server
-    const server = createServer(app);
-
-    // Register routes with base path
-    app.use('/api', (req, res, next) => {
-      console.log('API Base Path Hit:', req.path);
-      next();
-    });
+    // Register routes
     registerRoutes(app);
-    console.log('Available routes:', (app._router?.stack || [])
-      .filter((r: any) => r.route)
-      .map((r: any) => `${Object.keys(r.route?.methods || {})} ${r.route?.path}`));
-
-    // API endpoints will be registered by registerRoutes
-    console.log('Server routes registered successfully');
 
     // Start server
-    server.listen(port, '0.0.0.0', () => {
+    app.listen(port, '0.0.0.0', () => {
       console.log(`Server started on port ${port}`);
     });
 
