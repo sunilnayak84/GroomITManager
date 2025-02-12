@@ -1,10 +1,10 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { auth, db } from './firebase';
 import * as admin from 'firebase-admin';
 
 const router = Router();
 
-router.post('/api/staff/create', async (req, res) => {
+router.post('/api/staff/create', async (req: Express.Request, res: Express.Response) => {
   try {
     const { email, password, name, role, phone } = req.body;
     
@@ -50,9 +50,7 @@ router.post('/api/staff/create', async (req, res) => {
 
 export const registerRoutes = (app: any) => {
   app.use('/api', router);
-  app.post('/api/staff/create', async (req, res) => {
-    try {
-      const { email, password, name, role } = req.body;
+  // Remove duplicate route registration since it's already defined above
       
       // Create user in Firebase Auth
       const userRecord = await auth.createUser({

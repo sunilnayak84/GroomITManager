@@ -51,12 +51,12 @@ export function useStaff() {
         }),
       });
 
+      const errorData = await response.text();
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create staff member');
+        throw new Error(errorData || 'Failed to create staff member');
       }
 
-      const { uid } = await response.json();
+      const { uid } = JSON.parse(errorData);
 
       // Create Firestore record with role-specific data
       const staffData = {
