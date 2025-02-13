@@ -18,7 +18,7 @@ app.set('trust proxy', 1);
 
 // CORS configuration - must come before routes
 const corsOptions = {
-  origin: '*', // For development - adjust in production
+  origin: ['http://localhost:5174', '*'], // Allow requests from frontend dev server and any other origin.  Change '*' to specific origins in production.
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };

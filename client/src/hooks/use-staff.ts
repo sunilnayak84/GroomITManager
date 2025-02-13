@@ -38,7 +38,7 @@ export function useStaff() {
 
       try {
         // Make the API call to create staff member
-        const response = await fetch(`/api/staff-management/create`, {
+        const response = await fetch(`http://localhost:3000/api/staff-management/create`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
