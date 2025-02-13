@@ -1,25 +1,24 @@
 import { Router, Request, Response } from 'express';
-import * as admin from 'firebase-admin';
+import { getAuth } from 'firebase-admin/auth';
+import { getFirestore } from 'firebase-admin/firestore';
+import { logger } from '../utils/logger.js';
 
 // Create and export the router
 export const staffManagementRouter = Router();
 
 // Request logging middleware specific to staff management
 staffManagementRouter.use((req, res, next) => {
-  console.log('[STAFF-MGMT] Incoming request:', {
+  logger.info('[STAFF-MGMT] Incoming request:', {
     method: req.method,
     path: req.path,
-    body: req.body,
-    baseUrl: req.baseUrl,
-    originalUrl: req.originalUrl,
-    url: req.url
+    body: req.body
   });
   next();
 });
 
 // Create staff member endpoint
 staffManagementRouter.post('/create', async (req: Request, res: Response) => {
-  console.log('[STAFF-MGMT] Creation request received:', req.body);
+  logger.info('[STAFF-MGMT] Creation request received:', req.body);
 
   try {
     const {
@@ -36,7 +35,7 @@ staffManagementRouter.post('/create', async (req: Request, res: Response) => {
 
     // Input validation
     if (!email || !name || !role || !phone) {
-      console.log('[STAFF-MGMT] Missing required fields:', { email: !email, name: !name, role: !role, phone: !phone });
+      logger.warn('[STAFF-MGMT] Missing required fields:', { email: !email, name: !name, role: !role, phone: !phone });
       return res.status(400).json({
         message: 'Missing required fields',
         details: { email: !email, name: !name, role: !role, phone: !phone }
@@ -44,8 +43,9 @@ staffManagementRouter.post('/create', async (req: Request, res: Response) => {
     }
 
     // Create user in Firebase Auth
-    console.log('[STAFF-MGMT] Creating Firebase Auth user');
-    const userRecord = await admin.auth().createUser({
+    logger.info('[STAFF-MGMT] Creating Firebase Auth user');
+    const auth = getAuth();
+    const userRecord = await auth.createUser({
       email,
       password: password || 'Welcome123!', // Default password
       displayName: name,
@@ -54,16 +54,16 @@ staffManagementRouter.post('/create', async (req: Request, res: Response) => {
     });
 
     // Set custom claims for role-based access
-    console.log('[STAFF-MGMT] Setting custom claims');
+    logger.info('[STAFF-MGMT] Setting custom claims');
     const claims = {
       role,
       isStaff: true,
       createdAt: new Date().toISOString()
     };
-    await admin.auth().setCustomUserClaims(userRecord.uid, claims);
+    await auth.setCustomUserClaims(userRecord.uid, claims);
 
     // Prepare user document for Firestore
-    console.log('[STAFF-MGMT] Preparing user data');
+    logger.info('[STAFF-MGMT] Preparing user data');
     const userData = {
       id: userRecord.uid,
       email,
@@ -88,10 +88,11 @@ staffManagementRouter.post('/create', async (req: Request, res: Response) => {
     };
 
     // Save to Firestore
-    console.log('[STAFF-MGMT] Saving to Firestore');
-    await admin.firestore().collection('users').doc(userRecord.uid).set(userData);
+    logger.info('[STAFF-MGMT] Saving to Firestore');
+    const db = getFirestore();
+    await db.collection('users').doc(userRecord.uid).set(userData);
 
-    console.log('[STAFF-MGMT] Successfully created staff member:', { name, role, uid: userRecord.uid });
+    logger.info('[STAFF-MGMT] Successfully created staff member:', { name, role, uid: userRecord.uid });
     res.status(201).json({
       message: 'Staff member created successfully',
       uid: userRecord.uid,
@@ -99,7 +100,7 @@ staffManagementRouter.post('/create', async (req: Request, res: Response) => {
     });
 
   } catch (error) {
-    console.error('[STAFF-MGMT] Error creating staff:', error);
+    logger.error('[STAFF-MGMT] Error creating staff:', error);
 
     if (error instanceof Error) {
       if (error.message.includes('auth/email-already-exists')) {
@@ -129,5 +130,4 @@ staffManagementRouter.post('/create', async (req: Request, res: Response) => {
   }
 });
 
-// Export default router
 export default staffManagementRouter;

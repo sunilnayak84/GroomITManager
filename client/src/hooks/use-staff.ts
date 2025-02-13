@@ -4,6 +4,7 @@ import { db } from '../lib/firebase';
 import type { User, InsertUser } from '@/lib/user-types';
 
 const STAFF_COLLECTION = 'users';
+const API_BASE_URL = import.meta.env.PROD ? '/api' : 'http://localhost:3000/api';
 
 export function useStaff() {
   const queryClient = useQueryClient();
@@ -38,7 +39,7 @@ export function useStaff() {
 
       try {
         // Make the API call to create staff member
-        const response = await fetch(`http://localhost:3000/api/staff-management/create`, {
+        const response = await fetch(`${API_BASE_URL}/staff-management/create`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -59,6 +60,7 @@ export function useStaff() {
             } : null,
             password: 'Welcome123!'
           }),
+          credentials: 'include'
         });
 
         if (!response.ok) {
