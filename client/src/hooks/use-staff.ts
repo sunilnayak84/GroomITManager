@@ -1,16 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { collection, getDocs, updateDoc, doc, deleteDoc, query, where } from 'firebase/firestore';
+import { collection, getDocs, updateDoc, doc, setDoc, deleteDoc, query, where } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
 import { db } from '../lib/firebase';
 import type { User, InsertUser } from '@/lib/user-types';
 
 const STAFF_COLLECTION = 'users';
-// Use Replit-specific environment detection
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? '/api' 
-  : `https://${window.location.hostname.replace('5174', '3000')}/api`;
+const ROLES_COLLECTION = 'roles';
 
 export function useStaff() {
   const queryClient = useQueryClient();
+  const auth = getAuth();
 
   const { data: staffMembers = [], isLoading } = useQuery({
     queryKey: ['staff'],
@@ -41,40 +40,47 @@ export function useStaff() {
       console.log('Adding staff member with data:', data);
 
       try {
-        const response = await fetch(`${API_BASE_URL}/staff-management/create`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: data.email,
-            name: data.name,
-            role: data.role,
-            phone: data.phone.startsWith('+') ? data.phone : `+91${data.phone}`,
-            specialties: data.specialties || [],
-            experienceYears: data.experienceYears || 0,
-            maxDailyAppointments: data.maxDailyAppointments || 8,
-            walkingPreferences: data.role === 'pet_walker' ? {
-              maxDistance: data.walkingPreferences?.maxDistance || 5,
-              preferredAreas: data.walkingPreferences?.preferredAreas || [],
-              availableTimeSlots: data.walkingPreferences?.availableTimeSlots || [],
-              simultaneousWalks: data.walkingPreferences?.simultaneousWalks || 1
-            } : null,
-            password: 'Welcome123!'
-          }),
-          credentials: 'include'
+        // Create user in Firebase Auth
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          data.email,
+          data.password || 'Welcome123!' // Default password if not provided
+        );
+
+        const { uid } = userCredential.user;
+        const timestamp = new Date().toISOString();
+
+        // Prepare user data
+        const userData = {
+          email: data.email,
+          name: data.name,
+          role: data.role,
+          phone: data.phone.startsWith('+') ? data.phone : `+91${data.phone}`,
+          specialties: data.specialties || [],
+          experienceYears: data.experienceYears || 0,
+          maxDailyAppointments: data.maxDailyAppointments || 8,
+          walkingPreferences: data.role === 'pet_walker' ? {
+            maxDistance: data.walkingPreferences?.maxDistance || 5,
+            preferredAreas: data.walkingPreferences?.preferredAreas || [],
+            availableTimeSlots: data.walkingPreferences?.availableTimeSlots || [],
+            simultaneousWalks: data.walkingPreferences?.simultaneousWalks || 1
+          } : null,
+          createdAt: timestamp,
+          updatedAt: timestamp
+        };
+
+        // Save user data in Firestore
+        await setDoc(doc(db, STAFF_COLLECTION, uid), userData);
+
+        // Set role in roles collection
+        await setDoc(doc(db, ROLES_COLLECTION, uid), {
+          role: data.role,
+          permissions: getRolePermissions(data.role),
+          updatedAt: timestamp
         });
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          console.error('Staff creation failed:', response.status, errorData);
-          throw new Error(errorData.message || `Failed to create staff member (${response.status})`);
-        }
-
-        const { uid, userData } = await response.json();
         console.log('Staff member created successfully:', { uid, userData });
-
-        return userData;
+        return { uid, ...userData };
       } catch (error) {
         console.error('Error in addStaffMember:', error);
         throw error;
@@ -102,6 +108,16 @@ export function useStaff() {
       };
 
       await updateDoc(docRef, updateData);
+
+      // Update role if changed
+      if (data.role) {
+        const roleRef = doc(db, ROLES_COLLECTION, id);
+        await setDoc(roleRef, {
+          role: data.role,
+          permissions: getRolePermissions(data.role),
+          updatedAt: new Date().toISOString()
+        });
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['staff'] });
@@ -113,6 +129,9 @@ export function useStaff() {
       console.log('Deleting staff member:', id);
       const docRef = doc(db, STAFF_COLLECTION, id);
       await deleteDoc(docRef);
+      // Also delete role
+      const roleRef = doc(db, ROLES_COLLECTION, id);
+      await deleteDoc(roleRef);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['staff'] });
@@ -126,4 +145,29 @@ export function useStaff() {
     updateStaffMember: updateStaffMember.mutateAsync,
     deleteStaffMember: deleteStaffMember.mutateAsync
   };
+}
+
+// Helper function to get default permissions based on role
+function getRolePermissions(role: string): string[] {
+  const DEFAULT_PERMISSIONS = {
+    staff: [
+      'view_appointments',
+      'manage_own_schedule',
+      'view_customers'
+    ],
+    groomer: [
+      'view_appointments',
+      'manage_own_schedule',
+      'view_customers',
+      'manage_appointments'
+    ],
+    pet_walker: [
+      'view_appointments',
+      'manage_own_schedule',
+      'view_customers',
+      'manage_walks'
+    ]
+  };
+
+  return DEFAULT_PERMISSIONS[role as keyof typeof DEFAULT_PERMISSIONS] || DEFAULT_PERMISSIONS.staff;
 }
