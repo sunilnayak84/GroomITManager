@@ -106,23 +106,17 @@ export function getFirebaseAdmin(): admin.app.App {
     return firebaseApp;
   }
 
-  const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
-  
-  if (!privateKey || !process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL) {
-    throw new Error('Missing Firebase credentials');
-  }
-
   try {
     const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
     if (!serviceAccount.project_id) {
       throw new Error('Invalid service account configuration');
     }
-    
+
     firebaseApp = admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
       databaseURL: 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
     });
-    
+
     console.log('Firebase Admin initialized successfully');
   } catch (error) {
     console.error('Failed to initialize Firebase Admin:', error);
@@ -156,14 +150,14 @@ export async function getUserRole(userId: string): Promise<{ role: RoleTypes; pe
   const firestore = getFirestore(getFirebaseAdmin());
   const roleDoc = await firestore.collection('roles').doc(userId).get();
   const roleData = roleDoc.data();
-  
+
   if (!roleData) {
     return {
       role: RoleTypes.staff,
       permissions: DefaultPermissions[RoleTypes.staff]
     };
   }
-  
+
   return {
     role: roleData.role as RoleTypes,
     permissions: roleData.permissions as Permission[]
@@ -179,23 +173,23 @@ export async function updateUserRole(
   const firestore = getFirestore(app);
   const auth = getAuth(app);
   const timestamp = new Date();
-  
+
   await auth.getUser(userId);
-  
+
   const permissions = customPermissions || DefaultPermissions[role];
-  
+
   await firestore.collection('roles').doc(userId).set({
     role,
     permissions,
     updatedAt: timestamp
   });
-  
+
   await auth.setCustomUserClaims(userId, {
     role,
     permissions,
     updatedAt: timestamp
   });
-  
+
   return {
     success: true,
     role,
@@ -207,7 +201,7 @@ export async function setupAdminUser(adminEmail: string): Promise<void> {
   const app = getFirebaseAdmin();
   const auth = getAuth(app);
   const db = getDatabase(app);
-  
+
   let userRecord;
   try {
     userRecord = await auth.getUserByEmail(adminEmail);
@@ -218,16 +212,16 @@ export async function setupAdminUser(adminEmail: string): Promise<void> {
       displayName: 'System Admin',
     });
   }
-  
+
   const userId = userRecord.uid;
-  
+
   // Initialize role definitions if they don't exist
   const roleDefsRef = db.ref('role-definitions');
   const roleDefsSnapshot = await roleDefsRef.once('value');
   if (!roleDefsSnapshot.exists()) {
     await roleDefsRef.set(InitialRoleConfigs);
   }
-  
+
   // Set up admin role
   await db.ref(`roles/${userId}`).set({
     role: RoleTypes.admin,
@@ -235,7 +229,7 @@ export async function setupAdminUser(adminEmail: string): Promise<void> {
     updatedAt: Date.now(),
     createdAt: Date.now()
   });
-  
+
   await auth.setCustomUserClaims(userId, {
     role: RoleTypes.admin,
     permissions: DefaultPermissions[RoleTypes.admin],
@@ -246,7 +240,7 @@ export async function setupAdminUser(adminEmail: string): Promise<void> {
 export async function listAllUsers(pageToken?: string) {
   const auth = getAuth(getFirebaseAdmin());
   const result = await auth.listUsers(100, pageToken);
-  
+
   const users = await Promise.all(
     result.users.map(async (userRecord) => {
       const roleData = await getUserRole(userRecord.uid);
@@ -259,7 +253,7 @@ export async function listAllUsers(pageToken?: string) {
       };
     })
   );
-  
+
   return {
     users,
     pageToken: result.pageToken
@@ -280,34 +274,34 @@ export async function updateRoleDefinition(
 ) {
   const db = getDatabase(getFirebaseAdmin());
   const timestamp = Date.now();
-  
+
   const roleRef = db.ref(`role-definitions/${roleName}`);
   const snapshot = await roleRef.once('value');
-  
+
   if (!snapshot.exists()) {
     throw new Error(`Role ${roleName} not found`);
   }
-  
+
   const currentRole = snapshot.val();
-  
+
   if (currentRole.isSystem) {
     throw new Error('Cannot modify system roles');
   }
-  
+
   const updatedRole = {
     ...currentRole,
     permissions,
     description: description || currentRole.description,
     updatedAt: timestamp
   };
-  
+
   await roleRef.update(updatedRole);
-  
+
   await roleRef.child('history').push({
     permissions,
     timestamp,
     type: 'definition_update'
   });
-  
+
   return updatedRole;
 }

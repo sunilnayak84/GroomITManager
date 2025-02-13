@@ -4,7 +4,10 @@ import { db } from '../lib/firebase';
 import type { User, InsertUser } from '@/lib/user-types';
 
 const STAFF_COLLECTION = 'users';
-const API_BASE_URL = import.meta.env.PROD ? '/api' : 'http://localhost:3000/api';
+// Use Replit-specific environment detection
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? '/api' 
+  : `https://${window.location.hostname.replace('5174', '3000')}/api`;
 
 export function useStaff() {
   const queryClient = useQueryClient();
@@ -38,7 +41,6 @@ export function useStaff() {
       console.log('Adding staff member with data:', data);
 
       try {
-        // Make the API call to create staff member
         const response = await fetch(`${API_BASE_URL}/staff-management/create`, {
           method: 'POST',
           headers: {
@@ -48,7 +50,7 @@ export function useStaff() {
             email: data.email,
             name: data.name,
             role: data.role,
-            phone: data.phone,
+            phone: data.phone.startsWith('+') ? data.phone : `+91${data.phone}`,
             specialties: data.specialties || [],
             experienceYears: data.experienceYears || 0,
             maxDailyAppointments: data.maxDailyAppointments || 8,

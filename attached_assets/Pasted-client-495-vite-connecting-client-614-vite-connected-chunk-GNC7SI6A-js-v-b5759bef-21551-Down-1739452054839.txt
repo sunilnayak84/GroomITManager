@@ -1,0 +1,137 @@
+client:495 [vite] connecting...
+client:614 [vite] connected.
+chunk-GNC7SI6A.js?v=b5759bef:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:17 Checking Firebase environment variables...
+firebase.ts:37 FIREBASE_INIT: Initializing Firebase with config: {apiKey: '***', authDomain: 'replit-5ac6a.firebaseapp.com', projectId: 'replit-5ac6a', storageBucket: 'replit-5ac6a.firebasestorage.app', messagingSenderId: '194114432530', …}
+firebase.ts:42 FIREBASE_INIT: Firebase initialized successfully
+content.js:1 CISPL SignerDigital Loaded
+use-staff.ts:15 FETCH_STAFF: Starting to fetch staff members
+use-staff.ts:27 FETCH_STAFF: Successfully fetched staff members: (2) [{…}, {…}]
+use-staff.ts:38 Adding staff member with data: {role: 'groomer', email: 'test@example.com', name: 'Test Staff', phone: '9876543210'}
+use-staff.ts:42 
+        
+        
+       POST http://localhost:3000/api/staff-management/create net::ERR_CONNECTION_REFUSED
+mutationFn @ use-staff.ts:42
+fn @ @tanstack_react-query.js?v=b5759bef:1188
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+execute @ @tanstack_react-query.js?v=b5759bef:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=b5759bef:2621
+handleSubmit @ StaffManagementPage.tsx:29
+callCallback2 @ chunk-GNC7SI6A.js?v=b5759bef:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=b5759bef:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=b5759bef:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-GNC7SI6A.js?v=b5759bef:3736
+executeDispatch @ chunk-GNC7SI6A.js?v=b5759bef:7014
+processDispatchQueueItemsInOrder @ chunk-GNC7SI6A.js?v=b5759bef:7034
+processDispatchQueue @ chunk-GNC7SI6A.js?v=b5759bef:7043
+dispatchEventsForPlugins @ chunk-GNC7SI6A.js?v=b5759bef:7051
+(anonymous) @ chunk-GNC7SI6A.js?v=b5759bef:7174
+batchedUpdates$1 @ chunk-GNC7SI6A.js?v=b5759bef:18913
+batchedUpdates @ chunk-GNC7SI6A.js?v=b5759bef:3579
+dispatchEventForPluginEventSystem @ chunk-GNC7SI6A.js?v=b5759bef:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-GNC7SI6A.js?v=b5759bef:5478
+dispatchEvent @ chunk-GNC7SI6A.js?v=b5759bef:5472
+dispatchDiscreteEvent @ chunk-GNC7SI6A.js?v=b5759bef:5449Understand this errorAI
+use-staff.ts:77 Error in addStaffMember: TypeError: Failed to fetch
+    at Object.mutationFn (use-staff.ts:42:32)
+    at Object.fn (@tanstack_react-query.js?v=b5759bef:1188:29)
+    at run (@tanstack_react-query.js?v=b5759bef:493:49)
+    at Object.start (@tanstack_react-query.js?v=b5759bef:535:9)
+    at _a6.execute (@tanstack_react-query.js?v=b5759bef:1224:56)
+    at async handleSubmit (StaffManagementPage.tsx:29:7)
+mutationFn @ use-staff.ts:77
+await in mutationFn
+fn @ @tanstack_react-query.js?v=b5759bef:1188
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+execute @ @tanstack_react-query.js?v=b5759bef:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=b5759bef:2621
+handleSubmit @ StaffManagementPage.tsx:29
+callCallback2 @ chunk-GNC7SI6A.js?v=b5759bef:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=b5759bef:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=b5759bef:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-GNC7SI6A.js?v=b5759bef:3736
+executeDispatch @ chunk-GNC7SI6A.js?v=b5759bef:7014
+processDispatchQueueItemsInOrder @ chunk-GNC7SI6A.js?v=b5759bef:7034
+processDispatchQueue @ chunk-GNC7SI6A.js?v=b5759bef:7043
+dispatchEventsForPlugins @ chunk-GNC7SI6A.js?v=b5759bef:7051
+(anonymous) @ chunk-GNC7SI6A.js?v=b5759bef:7174
+batchedUpdates$1 @ chunk-GNC7SI6A.js?v=b5759bef:18913
+batchedUpdates @ chunk-GNC7SI6A.js?v=b5759bef:3579
+dispatchEventForPluginEventSystem @ chunk-GNC7SI6A.js?v=b5759bef:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-GNC7SI6A.js?v=b5759bef:5478
+dispatchEvent @ chunk-GNC7SI6A.js?v=b5759bef:5472
+dispatchDiscreteEvent @ chunk-GNC7SI6A.js?v=b5759bef:5449Understand this errorAI
+use-staff.ts:38 Adding staff member with data: {role: 'groomer', email: 'test@example.com', name: 'Test Staff', phone: '9876543210'}
+use-staff.ts:42 
+        
+        
+       POST http://localhost:3000/api/staff-management/create net::ERR_CONNECTION_REFUSED
+mutationFn @ use-staff.ts:42
+fn @ @tanstack_react-query.js?v=b5759bef:1188
+run @ @tanstack_react-query.js?v=b5759bef:493
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:514
+Promise.catch
+run @ @tanstack_react-query.js?v=b5759bef:497
+start @ @tanstack_react-query.js?v=b5759bef:535
+execute @ @tanstack_react-query.js?v=b5759bef:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=b5759bef:2621
+handleSubmit @ StaffManagementPage.tsx:29
+callCallback2 @ chunk-GNC7SI6A.js?v=b5759bef:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=b5759bef:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=b5759bef:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-GNC7SI6A.js?v=b5759bef:3736
+executeDispatch @ chunk-GNC7SI6A.js?v=b5759bef:7014
+processDispatchQueueItemsInOrder @ chunk-GNC7SI6A.js?v=b5759bef:7034
+processDispatchQueue @ chunk-GNC7SI6A.js?v=b5759bef:7043
+dispatchEventsForPlugins @ chunk-GNC7SI6A.js?v=b5759bef:7051
+(anonymous) @ chunk-GNC7SI6A.js?v=b5759bef:7174
+batchedUpdates$1 @ chunk-GNC7SI6A.js?v=b5759bef:18913
+batchedUpdates @ chunk-GNC7SI6A.js?v=b5759bef:3579
+dispatchEventForPluginEventSystem @ chunk-GNC7SI6A.js?v=b5759bef:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-GNC7SI6A.js?v=b5759bef:5478
+dispatchEvent @ chunk-GNC7SI6A.js?v=b5759bef:5472
+dispatchDiscreteEvent @ chunk-GNC7SI6A.js?v=b5759bef:5449Understand this errorAI
+use-staff.ts:77 Error in addStaffMember: TypeError: Failed to fetch
+    at Object.mutationFn (use-staff.ts:42:32)
+    at Object.fn (@tanstack_react-query.js?v=b5759bef:1188:29)
+    at run (@tanstack_react-query.js?v=b5759bef:493:49)
+    at @tanstack_react-query.js?v=b5759bef:518:11
+mutationFn @ use-staff.ts:77
+await in mutationFn
+fn @ @tanstack_react-query.js?v=b5759bef:1188
+run @ @tanstack_react-query.js?v=b5759bef:493
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:518
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:514
+Promise.catch
+run @ @tanstack_react-query.js?v=b5759bef:497
+start @ @tanstack_react-query.js?v=b5759bef:535
+execute @ @tanstack_react-query.js?v=b5759bef:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=b5759bef:2621
+handleSubmit @ StaffManagementPage.tsx:29
+callCallback2 @ chunk-GNC7SI6A.js?v=b5759bef:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=b5759bef:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=b5759bef:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-GNC7SI6A.js?v=b5759bef:3736
+executeDispatch @ chunk-GNC7SI6A.js?v=b5759bef:7014
+processDispatchQueueItemsInOrder @ chunk-GNC7SI6A.js?v=b5759bef:7034
+processDispatchQueue @ chunk-GNC7SI6A.js?v=b5759bef:7043
+dispatchEventsForPlugins @ chunk-GNC7SI6A.js?v=b5759bef:7051
+(anonymous) @ chunk-GNC7SI6A.js?v=b5759bef:7174
+batchedUpdates$1 @ chunk-GNC7SI6A.js?v=b5759bef:18913
+batchedUpdates @ chunk-GNC7SI6A.js?v=b5759bef:3579
+dispatchEventForPluginEventSystem @ chunk-GNC7SI6A.js?v=b5759bef:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-GNC7SI6A.js?v=b5759bef:5478
+dispatchEvent @ chunk-GNC7SI6A.js?v=b5759bef:5472
+dispatchDiscreteEvent @ chunk-GNC7SI6A.js?v=b5759bef:5449Understand this errorAI
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
