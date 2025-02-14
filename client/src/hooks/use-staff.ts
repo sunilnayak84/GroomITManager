@@ -50,13 +50,18 @@ export function useStaff() {
         const { uid } = userCredential.user;
         const timestamp = new Date().toISOString();
 
+        // Set specialties automatically for groomers
+        const specialties = data.role === 'groomer'
+          ? ['groomer', ...(data.specialties || [])]
+          : data.specialties || [];
+
         // Prepare user data
         const userData = {
           email: data.email,
           name: data.name,
           role: data.role,
           phone: data.phone.startsWith('+') ? data.phone : `+91${data.phone}`,
-          specialties: data.specialties || [],
+          specialties,
           experienceYears: data.experienceYears || 0,
           maxDailyAppointments: data.maxDailyAppointments || 8,
           walkingPreferences: data.role === 'pet_walker' ? {
@@ -65,8 +70,13 @@ export function useStaff() {
             availableTimeSlots: data.walkingPreferences?.availableTimeSlots || [],
             simultaneousWalks: data.walkingPreferences?.simultaneousWalks || 1
           } : null,
+          branch: 'null', // Default branch
+          isActive: true, // Default to active
           createdAt: timestamp,
-          updatedAt: timestamp
+          updatedAt: timestamp,
+          metadata: {}, // Empty metadata object
+          schedule: [], // Empty schedule array
+          isGroomer: data.role === 'groomer' // Additional flag for groomer role
         };
 
         // Save user data in Firestore
@@ -96,9 +106,16 @@ export function useStaff() {
       console.log('Updating staff member:', id, 'with data:', data);
       const docRef = doc(db, STAFF_COLLECTION, id);
 
+      // Set specialties automatically for groomers if role is being updated
+      const specialties = data.role === 'groomer'
+        ? ['groomer', ...(data.specialties || [])]
+        : data.specialties;
+
       const updateData = {
         ...data,
+        specialties,
         updatedAt: new Date().toISOString(),
+        isGroomer: data.role === 'groomer',
         walkingPreferences: data.role === 'pet_walker' ? {
           maxDistance: data.walkingPreferences?.maxDistance || 5,
           preferredAreas: data.walkingPreferences?.preferredAreas || [],
