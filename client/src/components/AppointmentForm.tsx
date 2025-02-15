@@ -311,7 +311,6 @@ export default function AppointmentForm({ setOpen, selectedDate, selectedPet }: 
 
   async function onSubmit(data: z.infer<typeof insertAppointmentSchema>) {
     if (isSubmitting) return;
-
     setIsSubmitting(true);
     setValidationError(null);
 
@@ -351,10 +350,8 @@ export default function AppointmentForm({ setOpen, selectedDate, selectedPet }: 
       );
 
       // Check staff availability first
-      const staffAvailability = useStaffAvailability(data.groomerId);
-      const appointmentDay = appointmentDateTime.getDay();
-      const staffDayAvailability = staffAvailability.availability?.find(
-        a => a.dayOfWeek === appointmentDay
+      const staffDayAvailability = availability?.find(
+        a => a.dayOfWeek === appointmentDateTime.getDay()
       );
 
       if (!staffDayAvailability?.isAvailable) {
