@@ -27,16 +27,31 @@ export function useStaffAvailability(staffId?: string) {
   const addAvailabilityMutation = useMutation({
     mutationFn: async (data: InsertStaffAvailability) => {
       const availabilityRef = collection(db, 'staffAvailability');
-      const docRef = doc(availabilityRef);
+      const q = query(availabilityRef, 
+        where('staffId', '==', data.staffId),
+        where('dayOfWeek', '==', data.dayOfWeek)
+      );
+      const snapshot = await getDocs(q);
       
       const now = new Date().toISOString();
-      await setDoc(docRef, {
-        ...data,
-        createdAt: now,
-        updatedAt: now
-      });
-      
-      return docRef.id;
+      if (!snapshot.empty) {
+        // Update existing availability
+        const docRef = doc(availabilityRef, snapshot.docs[0].id);
+        await setDoc(docRef, {
+          ...data,
+          updatedAt: now
+        }, { merge: true });
+        return docRef.id;
+      } else {
+        // Create new availability
+        const docRef = doc(availabilityRef);
+        await setDoc(docRef, {
+          ...data,
+          createdAt: now,
+          updatedAt: now
+        });
+        return docRef.id;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["staffAvailability"] });

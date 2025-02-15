@@ -71,13 +71,21 @@ export default function StaffAvailabilityForm({
     
     setIsSubmitting(true);
     try {
-      await addAvailability(data);
+      const availability = {
+        ...data,
+        staffId,
+        breakStart: data.breakStart || null,
+        breakEnd: data.breakEnd || null
+      };
+      
+      await addAvailability(availability);
       toast({
         title: "Success",
         description: "Staff availability updated successfully",
       });
       onOpenChange(false);
     } catch (error) {
+      console.error('Error saving availability:', error);
       toast({
         variant: "destructive",
         title: "Error",
