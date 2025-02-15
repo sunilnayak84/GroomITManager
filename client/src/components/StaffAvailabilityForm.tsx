@@ -90,6 +90,7 @@ export default function StaffAvailabilityForm({
         throw new Error("Start time and end time are required when staff is available");
       }
 
+      console.log('[STAFF_AVAIL] Current form data:', data);
       const availability = {
         staffId,
         dayOfWeek: Number(data.dayOfWeek),

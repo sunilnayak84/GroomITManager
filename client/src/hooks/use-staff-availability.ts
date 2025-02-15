@@ -12,18 +12,22 @@ export function useStaffAvailability(staffId?: string) {
     queryFn: async () => {
       if (!staffId) return [];
       
+      console.log('[STAFF_AVAIL] Fetching availability for staffId:', staffId);
       const availabilityRef = collection(db, 'staffAvailability');
       const q = query(availabilityRef, where('staffId', '==', staffId));
       const snapshot = await getDocs(q);
       
-      return snapshot.docs.map(doc => ({
+      const result = snapshot.docs.map(doc => ({
         id: doc.id,
-        ...doc.data(),
-        dayOfWeek: doc.data().dayOfWeek
+        ...doc.data()
       }));
+      console.log('[STAFF_AVAIL] Fetched availability:', result);
+      return result;
     },
     enabled: !!staffId,
-    staleTime: 0
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true
   });
 
   const addAvailabilityMutation = useMutation({
