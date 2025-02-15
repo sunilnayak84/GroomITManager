@@ -34,6 +34,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useServices } from '../hooks/use-services';
 import { useStaff } from '../hooks/use-staff';
 import { useWorkingHours } from '../hooks/use-working-hours';
+import { useStaffAvailability } from '../hooks/use-staff-availability';
 import type { WorkingDays } from "@/lib/schema";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { format } from 'date-fns';
