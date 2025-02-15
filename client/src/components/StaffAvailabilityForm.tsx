@@ -66,17 +66,24 @@ export default function StaffAvailabilityForm({
 
   // Update form values when availability data changes or day changes
   useEffect(() => {
-    const dayAvailability = availability?.find(a => a.dayOfWeek === Number(defaultDay));
-    form.reset({
-      staffId,
-      dayOfWeek: Number(defaultDay),
-      isAvailable: dayAvailability?.isAvailable ?? true,
-      startTime: dayAvailability?.startTime ?? "09:00",
-      endTime: dayAvailability?.endTime ?? "17:00",
-      breakStart: dayAvailability?.breakStart ?? null,
-      breakEnd: dayAvailability?.breakEnd ?? null,
-    });
-  }, [availability, staffId, defaultDay, form]);
+    if (availability) {
+      const dayAvailability = availability.find(a => a.dayOfWeek === Number(defaultDay));
+      const values = form.getValues();
+      
+      // Only reset if values have actually changed
+      if (values.dayOfWeek !== Number(defaultDay)) {
+        form.reset({
+          staffId,
+          dayOfWeek: Number(defaultDay),
+          isAvailable: dayAvailability?.isAvailable ?? true,
+          startTime: dayAvailability?.startTime ?? "09:00",
+          endTime: dayAvailability?.endTime ?? "17:00",
+          breakStart: dayAvailability?.breakStart ?? null,
+          breakEnd: dayAvailability?.breakEnd ?? null,
+        }, { keepDefaultValues: true });
+      }
+    }
+  }, [availability, staffId, defaultDay]);
 
   async function onSubmit(data: InsertStaffAvailability) {
     console.log('[STAFF_AVAIL_FORM] Submit Start:', { 
