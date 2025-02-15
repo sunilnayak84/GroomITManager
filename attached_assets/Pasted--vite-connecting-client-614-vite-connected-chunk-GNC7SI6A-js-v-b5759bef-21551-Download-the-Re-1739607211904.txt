@@ -1,0 +1,37 @@
+[vite] connecting...
+client:614 [vite] connected.
+chunk-GNC7SI6A.js?v=b5759bef:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:17 Checking Firebase environment variables...
+firebase.ts:37 FIREBASE_INIT: Initializing Firebase with config: {apiKey: '***', authDomain: 'replit-5ac6a.firebaseapp.com', projectId: 'replit-5ac6a', storageBucket: 'replit-5ac6a.firebasestorage.app', messagingSenderId: '194114432530', …}
+firebase.ts:42 FIREBASE_INIT: Firebase initialized successfully
+content.js:1 CISPL SignerDigital Loaded
+use-staff.ts:17 FETCH_STAFF: Starting to fetch staff members
+use-staff.ts:29 FETCH_STAFF: Successfully fetched staff members: (3) [{…}, {…}, {…}]0: {id: 'bEWrvBuCjcaS81IPqzBpApXnRyy1', specialties: Array(1), walkingPreferences: null, isGroomer: true, name: 'Test Groomer', …}1: {id: 'p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82', disabled: false, createdAt: _Timestamp, phone: '9856857854', petTypePreferences: Array(0), …}2: {id: 'zjMezeDkskSz772Lxn7dHqkxuLV2', disabled: false, email: 'groomer2@groomery.in', experienceYears: 0, maxDailyAppointments: 8, …}length: 3[[Prototype]]: Array(0)
+StaffAvailabilityForm.tsx:65 [STAFF_AVAIL_FORM] Submit Start: {isSubmitting: false, isAdding: false, formData: '{\n  "staffId": "bEWrvBuCjcaS81IPqzBpApXnRyy1",\n  "…7:00",\n  "breakStart": null,\n  "breakEnd": null\n}'}formData: "{\n  \"staffId\": \"bEWrvBuCjcaS81IPqzBpApXnRyy1\",\n  \"dayOfWeek\": 0,\n  \"isAvailable\": true,\n  \"startTime\": \"11:00\",\n  \"endTime\": \"17:00\",\n  \"breakStart\": null,\n  \"breakEnd\": null\n}"isAdding: falseisSubmitting: false[[Prototype]]: Object
+StaffAvailabilityForm.tsx:72 [Form Submit] Missing day of week
+onSubmit @ StaffAvailabilityForm.tsx:72
+(anonymous) @ chunk-YGGBEVKP.js?v=b5759bef:1694
+await in (anonymous)
+callCallback2 @ chunk-GNC7SI6A.js?v=b5759bef:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=b5759bef:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=b5759bef:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-GNC7SI6A.js?v=b5759bef:3736
+executeDispatch @ chunk-GNC7SI6A.js?v=b5759bef:7014
+processDispatchQueueItemsInOrder @ chunk-GNC7SI6A.js?v=b5759bef:7034
+processDispatchQueue @ chunk-GNC7SI6A.js?v=b5759bef:7043
+dispatchEventsForPlugins @ chunk-GNC7SI6A.js?v=b5759bef:7051
+(anonymous) @ chunk-GNC7SI6A.js?v=b5759bef:7174
+batchedUpdates$1 @ chunk-GNC7SI6A.js?v=b5759bef:18913
+batchedUpdates @ chunk-GNC7SI6A.js?v=b5759bef:3579
+dispatchEventForPluginEventSystem @ chunk-GNC7SI6A.js?v=b5759bef:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-GNC7SI6A.js?v=b5759bef:5478
+dispatchEvent @ chunk-GNC7SI6A.js?v=b5759bef:5472
+dispatchDiscreteEvent @ chunk-GNC7SI6A.js?v=b5759bef:5449Understand this errorAI
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}toast: {variant: 'destructive', title: 'Error', description: 'Please select a day of the week', id: '1', open: true, …}type: "ADD_TOAST"[[Prototype]]: Object
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '1'}toastId: "1"type: "DISMISS_TOAST"[[Prototype]]: Object
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}toasts: [{…}][[Prototype]]: Object
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '1'}toastId: "1"type: "DISMISS_TOAST"[[Prototype]]: Object
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}toasts: [{…}][[Prototype]]: Object
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST {type: 'REMOVE_TOAST', toastId: '1'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(0)}
