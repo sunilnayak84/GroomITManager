@@ -157,15 +157,20 @@ export default function StaffAvailabilityForm({
                   <FormLabel>Day of Week</FormLabel>
                   <FormControl>
                     <Select
-                      value={String(field.value)}
+                      defaultValue={String(field.value)}
                       onValueChange={(value) => {
-                        const numValue = Number(value);
-                        if (!isNaN(numValue)) {
-                          field.onChange(numValue);
-                          form.setValue('dayOfWeek', numValue, {
-                            shouldDirty: true,
-                            shouldTouch: true,
-                            shouldValidate: true
+                        const dayIndex = Number(value);
+                        if (!isNaN(dayIndex)) {
+                          form.setValue('dayOfWeek', dayIndex);
+                          const dayAvailability = availability?.find(a => a.dayOfWeek === dayIndex);
+                          form.reset({
+                            ...form.getValues(),
+                            dayOfWeek: dayIndex,
+                            isAvailable: dayAvailability?.isAvailable ?? true,
+                            startTime: dayAvailability?.startTime ?? "09:00",
+                            endTime: dayAvailability?.endTime ?? "17:00",
+                            breakStart: dayAvailability?.breakStart ?? null,
+                            breakEnd: dayAvailability?.breakEnd ?? null,
                           });
                         }
                       }}
