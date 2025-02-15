@@ -155,24 +155,26 @@ export default function StaffAvailabilityForm({
                 <FormItem>
                   <FormLabel>Day of Week</FormLabel>
                   <FormControl>
-                    <select
-                      className="w-full p-2 border rounded"
-                      {...field}
-                      value={field.value}
-                      onChange={(e) => {
-                        const value = Number(e.target.value);
-                        if (!isNaN(value)) {
-                          field.onChange(value);
-                          form.setValue("dayOfWeek", value);
+                    <Select
+                      value={String(field.value)}
+                      onValueChange={(value) => {
+                        const numValue = Number(value);
+                        if (!isNaN(numValue)) {
+                          field.onChange(numValue);
                         }
                       }}
                     >
-                      {DAYS_OF_WEEK.map((day, index) => (
-                        <option key={index} value={index}>
-                          {day}
-                        </option>
-                      ))}
-                    </select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a day" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {DAYS_OF_WEEK.map((day, index) => (
+                          <SelectItem key={index} value={String(index)}>
+                            {day}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
