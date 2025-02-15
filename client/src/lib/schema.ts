@@ -215,16 +215,13 @@ export const insertUserSchema = userSchema.omit({
 
 // Staff availability schema
 export const staffAvailabilitySchema = z.object({
-  id: z.string().optional(),
   staffId: z.string(),
   dayOfWeek: z.number().min(0).max(6),
-  isAvailable: z.boolean(),
+  isAvailable: z.boolean().default(true),
   startTime: z.string(),
   endTime: z.string(),
-  breakStart: z.string().nullable().optional(),
-  breakEnd: z.string().nullable().optional(),
-  createdAt: z.string().optional(),
-  updatedAt: z.string().nullable()
+  breakStart: z.string().nullable(),
+  breakEnd: z.string().nullable(),
 });
 
 export type StaffAvailability = z.infer<typeof staffAvailabilitySchema>;

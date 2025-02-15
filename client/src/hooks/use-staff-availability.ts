@@ -27,7 +27,9 @@ export function useStaffAvailability(staffId?: string) {
   const addAvailabilityMutation = useMutation({
     mutationKey: ['addStaffAvailability'],
     mutationFn: async (availability: InsertStaffAvailability) => {
+      console.log('[STAFF_AVAIL] Starting mutation:', availability);
       if (!availability.staffId || !availability.dayOfWeek) {
+        console.error('[STAFF_AVAIL] Missing required fields');
         throw new Error('Invalid availability data');
       }
       

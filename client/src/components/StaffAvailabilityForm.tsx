@@ -62,7 +62,7 @@ export default function StaffAvailabilityForm({
   });
 
   async function onSubmit(data: InsertStaffAvailability) {
-    console.log('[Form Submit Start]', { 
+    console.log('[STAFF_AVAIL_FORM] Submit Start:', { 
       isSubmitting, 
       isAdding, 
       formData: JSON.stringify(data, null, 2)
