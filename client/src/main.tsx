@@ -114,6 +114,7 @@ function Router() {
             <Route path="/settings/loyalty" component={lazy(() => import('./pages/settings/LoyaltyProgramPage'))} />
             <Route path="/settings/rewards" component={lazy(() => import('./pages/settings/RewardsManagementPage'))} />
             <Route path="/settings/staff" component={StaffManagementPage} />
+            <Route path="/staff-availability" component={lazy(() => import('./pages/staff-availability'))} />
             <Route>404 Page Not Found</Route>
           </Switch>
         </Suspense>
