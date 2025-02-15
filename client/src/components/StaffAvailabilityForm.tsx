@@ -65,7 +65,7 @@ export default function StaffAvailabilityForm({
     console.log('[Form Submit Start]', { 
       isSubmitting, 
       isAdding, 
-      formData: data 
+      formData: JSON.stringify(data, null, 2)
     });
     
     if (isSubmitting || isAdding) {

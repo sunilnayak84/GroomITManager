@@ -25,6 +25,7 @@ export function useStaffAvailability(staffId?: string) {
   });
 
   const addAvailabilityMutation = useMutation({
+    mutationKey: ['addStaffAvailability'],
     mutationFn: async (availability: InsertStaffAvailability) => {
       try {
         console.log('[Mutation Start]', {
