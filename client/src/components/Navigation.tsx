@@ -22,8 +22,6 @@ export default function Navigation() {
     { href: "/", icon: Home, label: "Dashboard" },
     { href: "/appointments", icon: Calendar, label: "Appointments" },
     { href: "/customers", icon: Users, label: "Customers" },
-    { href: "/services", icon: Calendar, label: "Services" },
-    { href: "/staff", icon: Users, label: "Staff" },
     { href: "/pets", icon: PawPrint, label: "Pets" },
     { href: "/walks", icon: PersonStanding, label: "Dog Walking" },
     { href: "/inventory", icon: Package, label: "Inventory" },
@@ -36,6 +34,8 @@ export default function Navigation() {
     { href: "/settings/breeds", icon: PawPrint, label: "Pet Breeds" },
     { href: "/settings/loyalty", icon: Users, label: "Loyalty Program" },
     { href: "/settings/rewards", icon: Gift, label: "Rewards Management" },
+    { href: "/services", icon: Calendar, label: "Services Management" },
+    { href: "/staff", icon: Users, label: "Staff Management" },
     ...(user?.role === 'admin' || user?.role === 'manager' ? [
       { href: "/settings/roles", icon: Shield, label: "Role Management" }
     ] : []),
