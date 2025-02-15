@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { staffAvailabilitySchema, type InsertStaffAvailability } from "@/lib/schema";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useStaffAvailability } from "@/hooks/use-staff-availability";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
