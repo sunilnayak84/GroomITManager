@@ -163,6 +163,7 @@ export default function StaffAvailabilityForm({
                         const value = Number(e.target.value);
                         if (!isNaN(value)) {
                           field.onChange(value);
+                          form.setValue("dayOfWeek", value);
                         }
                       }}
                     >
