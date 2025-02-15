@@ -47,17 +47,19 @@ export default function StaffAvailabilityForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { addAvailability, isAdding } = useStaffAvailability(staffId);
 
+  const { availability } = useStaffAvailability(staffId);
+  const existingAvailability = availability?.find(a => a.dayOfWeek === Number(defaultDay));
+  
   const form = useForm<InsertStaffAvailability>({
     resolver: zodResolver(staffAvailabilitySchema),
     defaultValues: {
       staffId,
       dayOfWeek: Number(defaultDay),
-      isAvailable: true,
-      startTime: "09:00",
-      endTime: "17:00",
-      breakStart: null,
-      breakEnd: null,
-      ...existingSchedule
+      isAvailable: existingAvailability?.isAvailable ?? true,
+      startTime: existingAvailability?.startTime ?? "09:00",
+      endTime: existingAvailability?.endTime ?? "17:00",
+      breakStart: existingAvailability?.breakStart ?? null,
+      breakEnd: existingAvailability?.breakEnd ?? null,
     }
   });
 
