@@ -25,13 +25,7 @@ import {
 } from "@/components/ui/dialog";
 
 const DAYS_OF_WEEK = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
+  "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
 ];
 
 interface StaffAvailabilityFormProps {
@@ -51,34 +45,33 @@ export default function StaffAvailabilityForm({
 }: StaffAvailabilityFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { addAvailability } = useStaffAvailability(staffId);
+  const { addAvailability, isAdding } = useStaffAvailability(staffId);
 
   const form = useForm<InsertStaffAvailability>({
     resolver: zodResolver(staffAvailabilitySchema),
-    defaultValues: existingSchedule || {
+    defaultValues: {
       staffId,
       dayOfWeek: defaultDay,
       isAvailable: true,
       startTime: "09:00",
       endTime: "17:00",
       breakStart: null,
-      breakEnd: null
+      breakEnd: null,
+      ...existingSchedule
     }
   });
 
   async function onSubmit(data: InsertStaffAvailability) {
-    if (isSubmitting) return;
+    if (isSubmitting || isAdding) return;
     
     setIsSubmitting(true);
     try {
-      const availability = {
+      await addAvailability({
         ...data,
         staffId,
-        breakStart: data.breakStart || null,
-        breakEnd: data.breakEnd || null
-      };
+        dayOfWeek: Number(data.dayOfWeek)
+      });
       
-      await addAvailability(availability);
       toast({
         title: "Success",
         description: "Staff availability updated successfully",
@@ -118,7 +111,7 @@ export default function StaffAvailabilityForm({
                       className="w-full p-2 border rounded"
                       {...field}
                       value={field.value}
-                      onChange={(e) => field.onChange(parseInt(e.target.value))}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
                     >
                       {DAYS_OF_WEEK.map((day, index) => (
                         <option key={index} value={index}>
@@ -225,8 +218,12 @@ export default function StaffAvailabilityForm({
               )}
             />
 
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? "Saving..." : "Save Availability"}
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={isSubmitting || isAdding}
+            >
+              {isSubmitting || isAdding ? "Saving..." : "Save Availability"}
             </Button>
           </form>
         </Form>
