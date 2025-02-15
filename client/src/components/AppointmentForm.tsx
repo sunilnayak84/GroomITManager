@@ -357,6 +357,36 @@ export default function AppointmentForm({ setOpen, selectedDate, selectedPet }: 
       if (!staffDayAvailability?.isAvailable) {
         const errorMessage = "Staff member is not available on this day";
         setValidationError(errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      // Check for break time conflicts
+      if (staffDayAvailability.breakStart && staffDayAvailability.breakEnd) {
+        const appointmentEndTime = new Date(appointmentDateTime);
+        appointmentEndTime.setMinutes(appointmentEndTime.getMinutes() + (selectedService?.duration || 0));
+        
+        const [breakStartHour, breakStartMin] = staffDayAvailability.breakStart.split(':').map(Number);
+        const [breakEndHour, breakEndMin] = staffDayAvailability.breakEnd.split(':').map(Number);
+        
+        const breakStart = new Date(appointmentDateTime);
+        breakStart.setHours(breakStartHour, breakStartMin, 0, 0);
+        
+        const breakEnd = new Date(appointmentDateTime);
+        breakEnd.setHours(breakEndHour, breakEndMin, 0, 0);
+
+        if (
+          (appointmentDateTime <= breakEnd && appointmentEndTime >= breakStart) ||
+          (appointmentDateTime >= breakStart && appointmentDateTime < breakEnd)
+        ) {
+          const errorMessage = `This time conflicts with the groomer's break time (${staffDayAvailability.breakStart} - ${staffDayAvailability.breakEnd})`;
+          setValidationError(errorMessage);
+          throw new Error(errorMessage);
+        }
+      }
+
+      if (!staffDayAvailability?.isAvailable) {
+        const errorMessage = "Staff member is not available on this day";
+        setValidationError(errorMessage);
         form.setError('time', {
           type: 'manual',
           message: errorMessage
