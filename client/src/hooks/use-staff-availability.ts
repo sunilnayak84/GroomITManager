@@ -20,7 +20,7 @@ export function useStaffAvailability(staffId?: string) {
       const result = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
-      }));
+      })) as (InsertStaffAvailability & { id: string })[];
       console.log('[STAFF_AVAIL] Fetched availability:', result);
       return result;
     },
