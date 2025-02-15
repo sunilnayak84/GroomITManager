@@ -66,7 +66,8 @@ export default function StaffAvailabilityForm({
     
     setIsSubmitting(true);
     try {
-      if (!data.startTime || !data.endTime) {
+      console.log('Form data:', data);
+      if (data.isAvailable && (!data.startTime || !data.endTime)) {
         throw new Error("Start time and end time are required when staff is available");
       }
 
@@ -94,7 +95,7 @@ export default function StaffAvailabilityForm({
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to update staff availability",
+        description: error instanceof Error ? error.message : "Failed to update staff availability",
       });
     } finally {
       setIsSubmitting(false);

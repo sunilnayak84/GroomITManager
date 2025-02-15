@@ -26,6 +26,7 @@ export function useStaffAvailability(staffId?: string) {
 
   const addAvailabilityMutation = useMutation({
     mutationFn: async (availability: InsertStaffAvailability) => {
+      console.log('Starting mutation with data:', availability);
       const availabilityRef = collection(db, 'staffAvailability');
       const q = query(
         availabilityRef, 
