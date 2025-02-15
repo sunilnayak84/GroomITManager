@@ -143,7 +143,12 @@ export default function StaffAvailabilityForm({
                       className="w-full p-2 border rounded"
                       {...field}
                       value={field.value}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      onChange={(e) => {
+                        const value = Number(e.target.value);
+                        if (!isNaN(value)) {
+                          field.onChange(value);
+                        }
+                      }}
                     >
                       {DAYS_OF_WEEK.map((day, index) => (
                         <option key={index} value={index}>
