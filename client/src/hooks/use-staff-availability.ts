@@ -18,10 +18,12 @@ export function useStaffAvailability(staffId?: string) {
       
       return snapshot.docs.map(doc => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
+        dayOfWeek: doc.data().dayOfWeek
       }));
     },
-    enabled: !!staffId
+    enabled: !!staffId,
+    staleTime: 0
   });
 
   const addAvailabilityMutation = useMutation({
@@ -79,7 +81,7 @@ export function useStaffAvailability(staffId?: string) {
     },
     onSuccess: () => {
       console.log('[Query Invalidation] Invalidating staffAvailability');
-      queryClient.invalidateQueries({ queryKey: ["staffAvailability"] });
+      queryClient.invalidateQueries({ queryKey: ["staffAvailability", staffId] });
     }
   });
 
