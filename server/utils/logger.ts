@@ -10,10 +10,9 @@ interface LogMetadata {
 
 const logFormat = winston.format.printf((info: winston.Logform.TransformableInfo) => {
   let msg = `${info.timestamp} [${info.level}] : ${info.message} `;
-  const metadata: LogMetadata = { ...info };
+  const copy = { ...info } as LogMetadata;
   
   // Remove standard properties from metadata
-  const copy = { ...metadata };
   delete copy.timestamp;
   delete copy.level;
   delete copy.message;
