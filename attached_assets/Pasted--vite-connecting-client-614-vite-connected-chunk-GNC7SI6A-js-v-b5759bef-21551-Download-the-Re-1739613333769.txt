@@ -1,0 +1,25 @@
+[vite] connecting...
+client:614 [vite] connected.
+chunk-GNC7SI6A.js?v=b5759bef:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:17 Checking Firebase environment variables...
+firebase.ts:37 FIREBASE_INIT: Initializing Firebase with config: {apiKey: '***', authDomain: 'replit-5ac6a.firebaseapp.com', projectId: 'replit-5ac6a', storageBucket: 'replit-5ac6a.firebasestorage.app', messagingSenderId: '194114432530', …}apiKey: "***"appId: "1:194114432530:web:b07a6d50e1db9e5372f2cb"authDomain: "replit-5ac6a.firebaseapp.com"experimentalAutoDetectLongPolling: trueexperimentalForceLongPolling: truemessagingSenderId: "194114432530"projectId: "replit-5ac6a"storageBucket: "replit-5ac6a.firebasestorage.app"[[Prototype]]: Object
+firebase.ts:42 FIREBASE_INIT: Firebase initialized successfully
+content.js:1 CISPL SignerDigital Loaded
+use-staff.ts:17 FETCH_STAFF: Starting to fetch staff members
+use-staff.ts:29 FETCH_STAFF: Successfully fetched staff members: (3) [{…}, {…}, {…}]0: {id: 'bEWrvBuCjcaS81IPqzBpApXnRyy1', specialties: Array(1), walkingPreferences: null, isGroomer: true, name: 'Test Groomer', …}1: {id: 'p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82', disabled: false, createdAt: _Timestamp, phone: '9856857854', petTypePreferences: Array(0), …}2: {id: 'zjMezeDkskSz772Lxn7dHqkxuLV2', disabled: false, email: 'groomer2@groomery.in', experienceYears: 0, maxDailyAppointments: 8, …}length: 3[[Prototype]]: Array(0)
+StaffAvailabilityForm.tsx:65 [STAFF_AVAIL_FORM] Submit Start: {isSubmitting: false, isAdding: false, formData: '{\n  "staffId": "bEWrvBuCjcaS81IPqzBpApXnRyy1",\n  "…1:00",\n  "breakStart": null,\n  "breakEnd": null\n}'}formData: "{\n  \"staffId\": \"bEWrvBuCjcaS81IPqzBpApXnRyy1\",\n  \"dayOfWeek\": 0,\n  \"isAvailable\": true,\n  \"startTime\": \"11:00\",\n  \"endTime\": \"21:00\",\n  \"breakStart\": null,\n  \"breakEnd\": null\n}"isAdding: falseisSubmitting: false[[Prototype]]: Object
+StaffAvailabilityForm.tsx:88 Form data: {staffId: 'bEWrvBuCjcaS81IPqzBpApXnRyy1', dayOfWeek: 0, isAvailable: true, startTime: '11:00', endTime: '21:00', …}breakEnd: nullbreakStart: nulldayOfWeek: 0endTime: "21:00"isAvailable: truestaffId: "bEWrvBuCjcaS81IPqzBpApXnRyy1"startTime: "11:00"[[Prototype]]: Object
+StaffAvailabilityForm.tsx:102 Submitting availability: {staffId: 'bEWrvBuCjcaS81IPqzBpApXnRyy1', dayOfWeek: 0, startTime: '11:00', endTime: '21:00', breakStart: null, …}breakEnd: nullbreakStart: nulldayOfWeek: 0endTime: "21:00"isAvailable: truestaffId: "bEWrvBuCjcaS81IPqzBpApXnRyy1"startTime: "11:00"[[Prototype]]: Object
+use-staff-availability.ts:30 [STAFF_AVAIL] Starting mutation: {staffId: 'bEWrvBuCjcaS81IPqzBpApXnRyy1', dayOfWeek: 0, startTime: '11:00', endTime: '21:00', breakStart: null, …}breakEnd: nullbreakStart: nulldayOfWeek: 0endTime: "21:00"isAvailable: truestaffId: "bEWrvBuCjcaS81IPqzBpApXnRyy1"startTime: "11:00"[[Prototype]]: Object
+use-staff-availability.ts:41 [Mutation Start] {staffId: 'bEWrvBuCjcaS81IPqzBpApXnRyy1', dayOfWeek: 0, isAvailable: true, startTime: '11:00', endTime: '21:00'}dayOfWeek: 0endTime: "21:00"isAvailable: truestaffId: "bEWrvBuCjcaS81IPqzBpApXnRyy1"startTime: "11:00"[[Prototype]]: Object
+use-staff-availability.ts:73 [Mutation Success] DocId: GkXezDRPGMy9f9Umsln6
+use-staff-availability.ts:81 [Query Invalidation] Invalidating staffAvailability
+StaffAvailabilityForm.tsx:104 Submission result: GkXezDRPGMy9f9Umsln6
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}toast: {title: 'Success', description: 'Staff availability updated successfully', id: '1', open: true, onOpenChange: ƒ}type: "ADD_TOAST"[[Prototype]]: Object
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}toasts: [{…}][[Prototype]]: Object
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '1'}toastId: "1"type: "DISMISS_TOAST"[[Prototype]]: Object
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}toasts: [{…}][[Prototype]]: Object
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '1'}toastId: "1"type: "DISMISS_TOAST"[[Prototype]]: Object
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST {type: 'REMOVE_TOAST', toastId: '1'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(0)}
