@@ -1,0 +1,15 @@
+[vite] connecting...
+client:614 [vite] connected.
+chunk-GNC7SI6A.js?v=b5759bef:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:17 Checking Firebase environment variables...
+firebase.ts:37 FIREBASE_INIT: Initializing Firebase with config: {apiKey: '***', authDomain: 'replit-5ac6a.firebaseapp.com', projectId: 'replit-5ac6a', storageBucket: 'replit-5ac6a.firebasestorage.app', messagingSenderId: '194114432530', …}
+firebase.ts:42 FIREBASE_INIT: Firebase initialized successfully
+content.js:1 CISPL SignerDigital Loaded
+use-staff.ts:17 FETCH_STAFF: Starting to fetch staff members
+use-staff.ts:29 FETCH_STAFF: Successfully fetched staff members: (3) [{…}, {…}, {…}]0: {id: 'bEWrvBuCjcaS81IPqzBpApXnRyy1', specialties: Array(1), walkingPreferences: null, isGroomer: true, name: 'Test Groomer', …}1: {id: 'p4ntJ9cw1fQ6L7x5JF3fb7T8ZQ82', disabled: false, createdAt: _Timestamp, phone: '9856857854', petTypePreferences: Array(0), …}2: {id: 'zjMezeDkskSz772Lxn7dHqkxuLV2', disabled: false, email: 'groomer2@groomery.in', experienceYears: 0, maxDailyAppointments: 8, …}length: 3[[Prototype]]: Array(0)
+use-staff-availability.ts:15 [STAFF_AVAIL] Fetching availability for staffId: bEWrvBuCjcaS81IPqzBpApXnRyy1
+use-staff-availability.ts:33 [STAFF_AVAIL] Fetched availability: (3) [{…}, {…}, {…}]0: breakEnd: "14:00"breakStart: "13:00"dayOfWeek: 2endTime: "20:00"id: "PTSXN84OHTFTkNdmnMUE"isAvailable: truestaffId: "bEWrvBuCjcaS81IPqzBpApXnRyy1"startTime: "11:00"[[Prototype]]: Object1: breakEnd: nullbreakStart: nulldayOfWeek: 1endTime: "21:00"id: "U2IcXK9e1Ipsf0xXeUl9"isAvailable: truestaffId: "bEWrvBuCjcaS81IPqzBpApXnRyy1"startTime: "11:00"[[Prototype]]: Object2: breakEnd: nullbreakStart: nulldayOfWeek: 0endTime: "20:00"id: "Xj5XzgRSchVvmTWPAVa3"isAvailable: truestaffId: "bEWrvBuCjcaS81IPqzBpApXnRyy1"startTime: "11:00"[[Prototype]]: Objectlength: 3[[Prototype]]: Array(0)
+use-staff-availability.ts:15 [STAFF_AVAIL] Fetching availability for staffId: bEWrvBuCjcaS81IPqzBpApXnRyy1
+use-staff-availability.ts:33 [STAFF_AVAIL] Fetched availability: (3) [{…}, {…}, {…}]0: breakEnd: "14:00"breakStart: "13:00"dayOfWeek: 2endTime: "20:00"id: "PTSXN84OHTFTkNdmnMUE"isAvailable: truestaffId: "bEWrvBuCjcaS81IPqzBpApXnRyy1"startTime: "11:00"[[Prototype]]: Object1: breakEnd: nullbreakStart: nulldayOfWeek: 1endTime: "21:00"id: "U2IcXK9e1Ipsf0xXeUl9"isAvailable: truestaffId: "bEWrvBuCjcaS81IPqzBpApXnRyy1"startTime: "11:00"[[Prototype]]: Object2: breakEnd: nullbreakStart: nulldayOfWeek: 0endTime: "20:00"id: "Xj5XzgRSchVvmTWPAVa3"isAvailable: truestaffId: "bEWrvBuCjcaS81IPqzBpApXnRyy1"startTime: "11:00"[[Prototype]]: Objectlength: 3[[Prototype]]: Array(0)
+use-staff-availability.ts:15 [STAFF_AVAIL] Fetching availability for staffId: bEWrvBuCjcaS81IPqzBpApXnRyy1
+use-staff-availability.ts:33 [STAFF_AVAIL] Fetched availability: (3) [{…}, {…}, {…}]
