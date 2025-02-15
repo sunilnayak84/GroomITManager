@@ -1,14 +1,17 @@
 
 import * as winston from 'winston';
 
-interface LogMetadata {
+interface LogInfo extends winston.Logform.TransformableInfo {
   timestamp?: string;
-  level?: string;
-  message?: string;
-  [key: string]: any;
+  level: string;
+  message: string;
 }
 
-const logFormat = winston.format.printf((info) => {
+interface LogMetadata extends LogInfo {
+  [key: string]: unknown;
+}
+
+const logFormat = winston.format.printf((info: LogInfo) => {
   let msg = `${info.timestamp} [${info.level}] : ${info.message} `;
   const metadata: LogMetadata = { ...info };
   
