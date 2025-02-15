@@ -8,7 +8,7 @@ import { Plus, Calendar, List, Trash2, Pencil } from "lucide-react";
 import { useUser } from "@/hooks/use-user";
 import { useToast } from "@/hooks/use-toast";
 import { useAppointments } from "../hooks/use-appointments";
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import AppointmentForm from "../components/AppointmentForm";
 import { DataTable } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
@@ -33,31 +33,28 @@ function ActionButtons({ appointment, onView, onEdit }: ActionButtonsProps) {
   const { deleteAppointment } = useAppointments();
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  const handleDeleteClick = () => setShowDeleteDialog(true);
 
   const handleDelete = async () => {
-    if (!deleteAppointment) {
-      console.error('Delete appointment function is not available');
-      return;
-    }
-
-    if (confirm("Are you sure you want to delete this appointment? This action cannot be undone.")) {
-      try {
-        setIsDeleting(true);
-        await deleteAppointment(appointment.id);
-        toast({
-          title: "Success",
-          description: "Appointment deleted successfully",
-        });
-      } catch (error) {
-        console.error('Error deleting appointment:', error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: error instanceof Error ? error.message : "Failed to delete appointment",
-        });
-      } finally {
-        setIsDeleting(false);
-      }
+    try {
+      setIsDeleting(true);
+      await deleteAppointment(appointment.id);
+      setShowDeleteDialog(false);
+      toast({
+        title: "Success",
+        description: "Appointment deleted successfully",
+      });
+    } catch (error) {
+      console.error('Error deleting appointment:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to delete appointment",
+      });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -80,10 +77,28 @@ function ActionButtons({ appointment, onView, onEdit }: ActionButtonsProps) {
           >
             <Pencil className="h-4 w-4" />
           </Button>
+          <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+            <DialogContent className="p-4">
+              <DialogHeader>
+                <DialogTitle>Delete Appointment</DialogTitle>
+              </DialogHeader>
+              <DialogDescription>
+                Are you sure you want to delete this appointment? This action cannot be undone.
+              </DialogDescription>
+              <DialogFooter>
+                <Button variant="ghost" onClick={() => setShowDeleteDialog(false)}>
+                  Cancel
+                </Button>
+                <Button variant="destructive" onClick={handleDelete}>
+                  Delete
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
           <Button
             variant="outline"
             size="sm"
-            onClick={handleDelete}
+            onClick={handleDeleteClick}
             disabled={isDeleting}
             className="text-destructive hover:text-destructive"
           >
@@ -220,7 +235,7 @@ export default function AppointmentsPage() {
 
   const sortedAppointments = useMemo(() => {
     if (!filteredAppointments || !sortConfig.direction) return filteredAppointments;
-    
+
     return [...filteredAppointments].sort((a, b) => {
       const dateA = new Date(a[sortConfig.key]).getTime();
       const dateB = new Date(b[sortConfig.key]).getTime();
