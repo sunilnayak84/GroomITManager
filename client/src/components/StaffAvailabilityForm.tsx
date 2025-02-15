@@ -86,6 +86,28 @@ export default function StaffAvailabilityForm({
   }, [availability, staffId, defaultDay]);
 
   async function onSubmit(data: InsertStaffAvailability) {
+    // Validate break times are within working hours
+    if (data.breakStart && data.breakEnd) {
+      const [startHour, startMinute] = data.startTime.split(':').map(Number);
+      const [endHour, endMinute] = data.endTime.split(':').map(Number);
+      const [breakStartHour, breakStartMinute] = data.breakStart.split(':').map(Number);
+      const [breakEndHour, breakEndMinute] = data.breakEnd.split(':').map(Number);
+
+      const startMins = startHour * 60 + startMinute;
+      const endMins = endHour * 60 + endMinute;
+      const breakStartMins = breakStartHour * 60 + breakStartMinute;
+      const breakEndMins = breakEndHour * 60 + breakEndMinute;
+
+      if (breakStartMins < startMins || breakEndMins > endMins || breakStartMins >= breakEndMins) {
+        toast({
+          title: "Invalid break time",
+          description: "Break time must be within working hours and end after start",
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+
     console.log('[STAFF_AVAIL_FORM] Submit Start:', { 
       isSubmitting, 
       isAdding, 

@@ -347,12 +347,47 @@ export default function AppointmentForm({ setOpen, selectedDate, selectedPet }: 
         (schedule) => schedule.dayOfWeek === dayOfWeek
       );
 
+      // Check staff availability first
+      const staffAvailability = useStaffAvailability(data.groomerId);
+      const appointmentDay = appointmentDateTime.getDay();
+      const staffDayAvailability = staffAvailability.availability?.find(
+        a => a.dayOfWeek === appointmentDay
+      );
+
+      if (!staffDayAvailability?.isAvailable) {
+        const errorMessage = "Staff member is not available on this day";
+        setValidationError(errorMessage);
+        form.setError('time', {
+          type: 'manual',
+          message: errorMessage
+        });
+        return;
+      }
+
+      // Check if appointment time is within staff working hours
+      const [appointmentHour, appointmentMinute] = formTime.split(':').map(Number);
+      const [startHour, startMinute] = staffDayAvailability.startTime.split(':').map(Number);
+      const [endHour, endMinute] = staffDayAvailability.endTime.split(':').map(Number);
+
+      const appointmentTime = appointmentHour * 60 + appointmentMinute;
+      const startTime = startHour * 60 + startMinute;
+      const endTime = endHour * 60 + endMinute;
+
+      if (appointmentTime < startTime || appointmentTime > endTime) {
+        const errorMessage = `Staff member is only available between ${staffDayAvailability.startTime} and ${staffDayAvailability.endTime}`;
+        setValidationError(errorMessage);
+        form.setError('time', {
+          type: 'manual',
+          message: errorMessage
+        });
+        return;
+      }
+
+      // Then check general working hours
       const validation = validateTimeSlot(formDate, formTime, daySchedule, data.groomerId);
       if (!validation.isValid) {
         const errorMessage = validation.error || "This time slot is not available";
-
         setValidationError(errorMessage);
-
         form.setError('time', {
           type: 'manual',
           message: errorMessage
