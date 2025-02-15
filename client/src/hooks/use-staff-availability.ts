@@ -17,10 +17,19 @@ export function useStaffAvailability(staffId?: string) {
       const q = query(availabilityRef, where('staffId', '==', staffId));
       const snapshot = await getDocs(q);
       
-      const result = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as (InsertStaffAvailability & { id: string })[];
+      const result = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          staffId: data.staffId,
+          dayOfWeek: data.dayOfWeek,
+          startTime: data.startTime,
+          endTime: data.endTime,
+          breakStart: data.breakStart || null,
+          breakEnd: data.breakEnd || null,
+          isAvailable: data.isAvailable ?? true
+        } as (InsertStaffAvailability & { id: string });
+      });
       console.log('[STAFF_AVAIL] Fetched availability:', result);
       return result;
     },

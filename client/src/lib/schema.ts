@@ -217,16 +217,43 @@ export const insertUserSchema = userSchema.omit({
 export const staffAvailabilitySchema = z.object({
   staffId: z.string(),
   dayOfWeek: z.number().min(0).max(6),
-  isAvailable: z.boolean().default(true),
   startTime: z.string(),
   endTime: z.string(),
   breakStart: z.string().nullable(),
   breakEnd: z.string().nullable(),
+  isAvailable: z.boolean().default(true)
 });
 
-export type StaffAvailability = z.infer<typeof staffAvailabilitySchema>;
 export type InsertStaffAvailability = z.infer<typeof staffAvailabilitySchema>;
 
+export type FirestorePet = {
+  id: string;
+  firebaseId: string | null;
+  name: string;
+  type: "dog" | "cat" | "bird" | "fish" | "other";
+  breed: string;
+  customerId: string;
+  dateOfBirth: string | null;
+  age: number | null;
+  gender: "male" | "female" | "other" | "unknown" | null;
+  weight: number | null;
+  weightUnit: "kg" | "lbs";
+  image: string | File | null;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string | null;
+  submissionId: string | undefined;
+  owner: {
+    id: string;
+    name: string;
+    email: string | null;
+  } | null;
+  temperamentCategory: "easy_to_groom" | "mildly_challenging" | "anxiety_fear" | "difficult_to_handle" | "aggression" | "special_case" | null;
+  temperamentTags: string[];
+  temperamentNotes: string | null;
+};
+
+export type StaffAvailability = z.infer<typeof staffAvailabilitySchema>;
 export type FirestoreUser = z.infer<typeof userSchema>;
 
 // Types
