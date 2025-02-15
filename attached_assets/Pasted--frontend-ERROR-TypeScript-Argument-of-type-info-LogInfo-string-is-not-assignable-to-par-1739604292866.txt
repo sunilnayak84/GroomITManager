@@ -1,0 +1,38 @@
+[frontend]  ERROR(TypeScript)  Argument of type '(info: LogInfo) => string' is not assignable to parameter of type '(info: TransformableInfo) => string'.
+[frontend]   Types of parameters 'info' and 'info' are incompatible.
+[frontend]     Type 'TransformableInfo' is not assignable to type 'LogInfo'.
+[frontend]       Types of property 'message' are incompatible.
+[frontend]         Type 'unknown' is not assignable to type 'string'.
+[frontend]  FILE  /home/runner/workspace/server/utils/logger.ts:14:41
+[frontend] 
+[frontend]     12 | }
+[frontend]     13 |
+[frontend]   > 14 | const logFormat = winston.format.printf((info: LogInfo) => {
+[frontend]        |                                         ^^^^^^^^^^^^^^^^^^^^
+[frontend]     15 |   let msg = `${info.timestamp} [${info.level}] : ${info.message} `;
+[frontend]     16 |   const metadata: LogMetadata = { ...info };
+[frontend]     17 |   
+[frontend] 
+[frontend]  ERROR(TypeScript)  The operand of a 'delete' operator must be optional.
+[frontend]  FILE  /home/runner/workspace/server/utils/logger.ts:20:30
+[frontend] 
+[frontend]     18 |   // Remove standard properties
+[frontend]     19 |   if (metadata.timestamp) delete metadata.timestamp;
+[frontend]   > 20 |   if (metadata.level) delete metadata.level;
+[frontend]        |                              ^^^^^^^^^^^^^^
+[frontend]     21 |   if (metadata.message) delete metadata.message;
+[frontend]     22 |   
+[frontend]     23 |   if (Object.keys(metadata).length > 0) {
+[frontend] 
+[frontend]  ERROR(TypeScript)  The operand of a 'delete' operator must be optional.
+[frontend]  FILE  /home/runner/workspace/server/utils/logger.ts:21:32
+[frontend] 
+[frontend]     19 |   if (metadata.timestamp) delete metadata.timestamp;
+[frontend]     20 |   if (metadata.level) delete metadata.level;
+[frontend]   > 21 |   if (metadata.message) delete metadata.message;
+[frontend]        |                                ^^^^^^^^^^^^^^^^
+[frontend]     22 |   
+[frontend]     23 |   if (Object.keys(metadata).length > 0) {
+[frontend]     24 |     msg += JSON.stringify(metadata);
+[frontend] 
+[frontend] [TypeScript] Found 3 errors. Watching for file changes.
