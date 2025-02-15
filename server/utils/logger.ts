@@ -1,27 +1,25 @@
 
 import * as winston from 'winston';
 
-interface LogInfo extends winston.Logform.TransformableInfo {
+interface LogMetadata {
   timestamp?: string;
-  level: string;
-  message: string;
-}
-
-interface LogMetadata extends LogInfo {
+  level?: string;
+  message?: string;
   [key: string]: unknown;
 }
 
-const logFormat = winston.format.printf((info: LogInfo) => {
+const logFormat = winston.format.printf((info: winston.Logform.TransformableInfo) => {
   let msg = `${info.timestamp} [${info.level}] : ${info.message} `;
   const metadata: LogMetadata = { ...info };
   
-  // Remove standard properties
-  if (metadata.timestamp) delete metadata.timestamp;
-  if (metadata.level) delete metadata.level;
-  if (metadata.message) delete metadata.message;
+  // Remove standard properties from metadata
+  const copy = { ...metadata };
+  delete copy.timestamp;
+  delete copy.level;
+  delete copy.message;
   
-  if (Object.keys(metadata).length > 0) {
-    msg += JSON.stringify(metadata);
+  if (Object.keys(copy).length > 0) {
+    msg += JSON.stringify(copy);
   }
   return msg;
 });
