@@ -351,7 +351,7 @@ export async function setupAuth(app: Express) {
   let isHealthy = true;
   const checkConnectionHealth = async () => {
     try {
-      const auth = admin.auth();
+      const auth = getAuth();
       await auth.listUsers(1); // Light query to check connection
       if (!isHealthy) {
         console.log('[AUTH] Connection restored');
