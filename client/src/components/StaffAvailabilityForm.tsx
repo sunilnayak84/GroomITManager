@@ -51,7 +51,7 @@ export default function StaffAvailabilityForm({
     resolver: zodResolver(staffAvailabilitySchema),
     defaultValues: {
       staffId,
-      dayOfWeek: defaultDay,
+      dayOfWeek: Number(defaultDay),
       isAvailable: true,
       startTime: "09:00",
       endTime: "17:00",
