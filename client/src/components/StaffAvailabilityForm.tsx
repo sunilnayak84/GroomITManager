@@ -68,12 +68,12 @@ export default function StaffAvailabilityForm({
       formData: JSON.stringify(data, null, 2)
     });
 
-    if (!data.dayOfWeek) {
-      console.error('[Form Submit] Missing day of week');
+    if (typeof data.dayOfWeek !== 'number' || data.dayOfWeek < 0 || data.dayOfWeek > 6) {
+      console.error('[Form Submit] Invalid day of week:', data.dayOfWeek);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Please select a day of the week",
+        description: "Please select a valid day of the week",
       });
       return;
     }
