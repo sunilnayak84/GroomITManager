@@ -26,15 +26,14 @@ export function useStaffAvailability(staffId?: string) {
 
   const addAvailabilityMutation = useMutation({
     mutationFn: async (availability: InsertStaffAvailability) => {
-      try {
-        console.log('Starting mutation with data:', availability);
-        const availabilityRef = collection(db, 'staffAvailability');
-        const q = query(
-          availabilityRef, 
-          where('staffId', '==', availability.staffId),
-          where('dayOfWeek', '==', availability.dayOfWeek)
-        );
-        const snapshot = await getDocs(q);
+      console.log('Starting mutation with data:', availability);
+      const availabilityRef = collection(db, 'staffAvailability');
+      const q = query(
+        availabilityRef, 
+        where('staffId', '==', availability.staffId),
+        where('dayOfWeek', '==', availability.dayOfWeek)
+      );
+      const snapshot = await getDocs(q);
         
         const now = Timestamp.now();
         const data = {

@@ -66,17 +66,23 @@ export default function StaffAvailabilityForm({
     
     setIsSubmitting(true);
     try {
+      if (!data.startTime || !data.endTime) {
+        throw new Error("Start time and end time are required when staff is available");
+      }
+
       const availability = {
         ...data,
         staffId,
         dayOfWeek: Number(data.dayOfWeek),
-        startTime: data.startTime || null,
-        endTime: data.endTime || null,
+        startTime: data.startTime,
+        endTime: data.endTime,
         breakStart: data.breakStart || null,
-        breakEnd: data.breakEnd || null
+        breakEnd: data.breakEnd || null,
+        isAvailable: data.isAvailable ?? true
       };
       console.log('Submitting availability:', availability);
-      await addAvailability(availability);
+      const result = await addAvailability(availability);
+      console.log('Submission result:', result);
       
       toast({
         title: "Success",
