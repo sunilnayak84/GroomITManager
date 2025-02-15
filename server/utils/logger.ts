@@ -1,9 +1,16 @@
 
 import * as winston from 'winston';
 
+interface LogMetadata {
+  timestamp?: string;
+  level?: string;
+  message?: string;
+  [key: string]: any;
+}
+
 const logFormat = winston.format.printf((info) => {
   let msg = `${info.timestamp} [${info.level}] : ${info.message} `;
-  const metadata = { ...info };
+  const metadata: LogMetadata = { ...info };
   
   // Remove standard properties
   if (metadata.timestamp) delete metadata.timestamp;
