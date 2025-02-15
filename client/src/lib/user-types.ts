@@ -24,6 +24,7 @@ export const insertUserSchema = z.object({
   availability: z.string().optional(),
   maxDailyAppointments: z.number().min(1).optional(),
   isActive: z.boolean().default(true),
+  password: z.string().min(8, "Password must be at least 8 characters").optional(), // Added password field
   walkingPreferences: walkingPreferencesSchema.nullable().default(null)
 });
 
