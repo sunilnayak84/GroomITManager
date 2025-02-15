@@ -27,6 +27,10 @@ export function useStaffAvailability(staffId?: string) {
   const addAvailabilityMutation = useMutation({
     mutationKey: ['addStaffAvailability'],
     mutationFn: async (availability: InsertStaffAvailability) => {
+      if (!availability.staffId || !availability.dayOfWeek) {
+        throw new Error('Invalid availability data');
+      }
+      
       try {
         console.log('[Mutation Start]', {
           staffId: availability.staffId,

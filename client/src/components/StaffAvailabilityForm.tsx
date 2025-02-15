@@ -67,6 +67,16 @@ export default function StaffAvailabilityForm({
       isAdding, 
       formData: JSON.stringify(data, null, 2)
     });
+
+    if (!data.dayOfWeek) {
+      console.error('[Form Submit] Missing day of week');
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please select a day of the week",
+      });
+      return;
+    }
     
     if (isSubmitting || isAdding) {
       console.log('[Form Submit] Blocked due to submission in progress');
