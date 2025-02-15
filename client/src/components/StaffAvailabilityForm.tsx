@@ -162,6 +162,11 @@ export default function StaffAvailabilityForm({
                         const numValue = Number(value);
                         if (!isNaN(numValue)) {
                           field.onChange(numValue);
+                          form.setValue('dayOfWeek', numValue, {
+                            shouldDirty: true,
+                            shouldTouch: true,
+                            shouldValidate: true
+                          });
                         }
                       }}
                     >
