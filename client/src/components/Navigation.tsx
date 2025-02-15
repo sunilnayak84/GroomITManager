@@ -1,4 +1,4 @@
-import { Home, Calendar, Users, PawPrint, LogOut, Package, Shield, Settings, Gift, PersonStanding } from "lucide-react";
+import { Home, Calendar, Users, PawPrint, LogOut, Package, Shield, Gift, PersonStanding, Clock } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useUser } from "../hooks/use-user";
 import { Button } from "./ui/button";
@@ -36,6 +36,7 @@ export default function Navigation() {
     { href: "/settings/rewards", icon: Gift, label: "Rewards Management" },
     { href: "/services", icon: Calendar, label: "Services Management" },
     { href: "/staff", icon: Users, label: "Staff Management" },
+    { href: "/settings/staff-availability", icon: Clock, label: "Staff Availability" }, // Added new link
     ...(user?.role === 'admin' || user?.role === 'manager' ? [
       { href: "/settings/roles", icon: Shield, label: "Role Management" }
     ] : []),
