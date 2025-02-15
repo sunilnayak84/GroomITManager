@@ -306,6 +306,8 @@ export default function AppointmentForm({ setOpen, selectedDate, selectedPet }: 
     return { isValid: true };
   };
 
+  const { availability } = useStaffAvailability(form.watch("groomerId"));
+
   async function onSubmit(data: z.infer<typeof insertAppointmentSchema>) {
     if (isSubmitting) return;
 
