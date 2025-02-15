@@ -66,11 +66,17 @@ export default function StaffAvailabilityForm({
     
     setIsSubmitting(true);
     try {
-      await addAvailability({
+      const availability = {
         ...data,
         staffId,
-        dayOfWeek: Number(data.dayOfWeek)
-      });
+        dayOfWeek: Number(data.dayOfWeek),
+        startTime: data.startTime || null,
+        endTime: data.endTime || null,
+        breakStart: data.breakStart || null,
+        breakEnd: data.breakEnd || null
+      };
+      console.log('Submitting availability:', availability);
+      await addAvailability(availability);
       
       toast({
         title: "Success",

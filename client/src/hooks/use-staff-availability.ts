@@ -26,35 +26,40 @@ export function useStaffAvailability(staffId?: string) {
 
   const addAvailabilityMutation = useMutation({
     mutationFn: async (availability: InsertStaffAvailability) => {
-      const availabilityRef = collection(db, 'staffAvailability');
-      const q = query(
-        availabilityRef, 
-        where('staffId', '==', availability.staffId),
-        where('dayOfWeek', '==', availability.dayOfWeek)
-      );
-      const snapshot = await getDocs(q);
-      
-      const now = Timestamp.now();
-      const data = {
-        ...availability,
-        startTime: availability.startTime,
-        endTime: availability.endTime,
-        breakStart: availability.breakStart || null,
-        breakEnd: availability.breakEnd || null,
-        updatedAt: now
-      };
+      try {
+        console.log('Starting mutation with data:', availability);
+        const availabilityRef = collection(db, 'staffAvailability');
+        const q = query(
+          availabilityRef, 
+          where('staffId', '==', availability.staffId),
+          where('dayOfWeek', '==', availability.dayOfWeek)
+        );
+        const snapshot = await getDocs(q);
+        
+        const now = Timestamp.now();
+        const data = {
+          ...availability,
+          isAvailable: availability.isAvailable ?? true,
+          updatedAt: now
+        };
 
-      let docId;
-      if (!snapshot.empty) {
-        docId = snapshot.docs[0].id;
-        await setDoc(doc(availabilityRef, docId), data, { merge: true });
-      } else {
-        const newDoc = doc(availabilityRef);
-        docId = newDoc.id;
-        await setDoc(newDoc, { ...data, createdAt: now });
+        let docId;
+        if (!snapshot.empty) {
+          docId = snapshot.docs[0].id;
+          console.log('Updating existing doc:', docId);
+          await setDoc(doc(availabilityRef, docId), data);
+        } else {
+          const newDoc = doc(availabilityRef);
+          docId = newDoc.id;
+          console.log('Creating new doc:', docId);
+          await setDoc(newDoc, { ...data, createdAt: now });
+        }
+        
+        return docId;
+      } catch (error) {
+        console.error('Error in mutation:', error);
+        throw error;
       }
-      
-      return docId;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["staffAvailability"] });
