@@ -26,7 +26,14 @@ export function useStaffAvailability(staffId?: string) {
 
   const addAvailabilityMutation = useMutation({
     mutationFn: async (availability: InsertStaffAvailability) => {
-      console.log('Starting mutation with data:', availability);
+      try {
+        console.log('[Mutation Start]', {
+          staffId: availability.staffId,
+          dayOfWeek: availability.dayOfWeek,
+          isAvailable: availability.isAvailable,
+          startTime: availability.startTime,
+          endTime: availability.endTime
+        });
       const availabilityRef = collection(db, 'staffAvailability');
       const q = query(
         availabilityRef, 
@@ -52,9 +59,15 @@ export function useStaffAvailability(staffId?: string) {
         await setDoc(newDoc, { ...data, createdAt: now });
       }
       
+      console.log('[Mutation Success] DocId:', docId);
       return docId;
+    } catch (error) {
+      console.error('[Mutation Error]', error);
+      throw error;
+    }
     },
     onSuccess: () => {
+      console.log('[Query Invalidation] Invalidating staffAvailability');
       queryClient.invalidateQueries({ queryKey: ["staffAvailability"] });
     }
   });

@@ -62,7 +62,16 @@ export default function StaffAvailabilityForm({
   });
 
   async function onSubmit(data: InsertStaffAvailability) {
-    if (isSubmitting || isAdding) return;
+    console.log('[Form Submit Start]', { 
+      isSubmitting, 
+      isAdding, 
+      formData: data 
+    });
+    
+    if (isSubmitting || isAdding) {
+      console.log('[Form Submit] Blocked due to submission in progress');
+      return;
+    }
     
     setIsSubmitting(true);
     try {
