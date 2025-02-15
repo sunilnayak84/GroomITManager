@@ -91,7 +91,6 @@ export default function StaffAvailabilityForm({
       }
 
       const availability = {
-        ...data,
         staffId,
         dayOfWeek: Number(data.dayOfWeek),
         startTime: data.startTime,

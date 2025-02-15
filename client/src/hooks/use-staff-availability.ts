@@ -28,8 +28,12 @@ export function useStaffAvailability(staffId?: string) {
     mutationKey: ['addStaffAvailability'],
     mutationFn: async (availability: InsertStaffAvailability) => {
       console.log('[STAFF_AVAIL] Starting mutation:', availability);
-      if (!availability.staffId || !availability.dayOfWeek) {
-        console.error('[STAFF_AVAIL] Missing required fields');
+      if (!availability.staffId || typeof availability.dayOfWeek !== 'number') {
+        console.error('[STAFF_AVAIL] Missing required fields:', { 
+          staffId: availability.staffId, 
+          dayOfWeek: availability.dayOfWeek,
+          type: typeof availability.dayOfWeek 
+        });
         throw new Error('Invalid availability data');
       }
       
