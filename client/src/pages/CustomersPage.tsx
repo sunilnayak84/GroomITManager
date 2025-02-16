@@ -41,6 +41,7 @@ export default function CustomersPage() {
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+  const [searchQuery, setSearchQuery] = useState(''); // Added searchQuery state
   const formatDate = (date: FirestoreTimestamp | string | null | undefined) => {
     if (!date) return 'N/A';
     try {
@@ -418,6 +419,8 @@ export default function CustomersPage() {
             <Input
               placeholder="Search customers..."
               className="pl-10 h-10 text-sm bg-white"
+              value={searchQuery} // Bind input value to searchQuery
+              onChange={(e) => setSearchQuery(e.target.value)} // Update searchQuery on change
             />
           </div>
         </div>
@@ -575,7 +578,15 @@ export default function CustomersPage() {
           <div className="p-1">
             <DataTable
               columns={columns}
-              data={customersData as Customer[]}
+              data={(customersData as Customer[]).filter(customer => {
+                const searchLower = searchQuery.toLowerCase();
+                return (
+                  customer.firstName.toLowerCase().includes(searchLower) ||
+                  customer.lastName.toLowerCase().includes(searchLower) ||
+                  customer.email.toLowerCase().includes(searchLower) ||
+                  customer.phone.includes(searchQuery)
+                );
+              })}
             />
           </div>
         )}
@@ -928,7 +939,7 @@ export default function CustomersPage() {
                       <div>
                         <p className="text-sm text-muted-foreground">Member Since</p>
                         <p className="text-sm font-medium">
-                          {format(new Date(selectedCustomer.createdAt), 'MM/dd/yyyy')}
+                          {format(new Date(selectedCustomer.createdAt), `MM/dd/yyyy')}
                         </p>
                       </div>
                       <div className="col-span-2">
