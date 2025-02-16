@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUser } from "../hooks/use-user";
 import { auth } from "@/lib/firebase";
+import { sendPasswordResetEmail } from "firebase/auth";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -113,7 +114,7 @@ export default function AuthPage() {
                 }
                 
                 try {
-                  await auth.sendPasswordResetEmail(email);
+                  await sendPasswordResetEmail(auth, email);
                   toast({
                     title: "Success",
                     description: "Password reset email sent. Please check your inbox.",
