@@ -525,7 +525,7 @@ const AppointmentDetails = ({
                         setIsUpdating(true);
                         const updatedImages = (form.watch("afterImages") || []).filter(img => img.id !== imageId);
                         form.setValue("afterImages", updatedImages);
-                        
+
                         toast({
                           title: "Success",
                           description: "Image deleted. Don't forget to click Update Appointment to save all changes.",
@@ -660,7 +660,7 @@ const AppointmentDetails = ({
                   </div>
                 </div>
 
-                
+
 
                 <FormField
                   control={form.control}
@@ -702,35 +702,6 @@ const AppointmentDetails = ({
                   )}
                 />
               </>
-            )}
-
-            {form.watch("status") === "cancelled" && (
-              <FormField
-                control={form.control}
-                name="cancellationReason"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Cancellation Reason</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange} 
-                      value={field.value || "no_show"} 
-                      disabled={isTerminalStatus}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select reason for cancellation" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="no_show">No Show</SelectItem>
-                        <SelectItem value="rescheduled">Rescheduled</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             )}
 
             <FormField
