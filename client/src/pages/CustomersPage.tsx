@@ -939,7 +939,7 @@ export default function CustomersPage() {
                       <div>
                         <p className="text-sm text-muted-foreground">Member Since</p>
                         <p className="text-sm font-medium">
-                          {format(new Date(selectedCustomer.createdAt), `MM/dd/yyyy')}
+                          {format(new Date(selectedCustomer.createdAt), 'MM/dd/yyyy')}
                         </p>
                       </div>
                       <div className="col-span-2">
