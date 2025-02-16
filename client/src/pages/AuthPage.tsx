@@ -97,6 +97,39 @@ export default function AuthPage() {
               </Button>
             </form>
           </Form>
+          
+          <div className="mt-4 text-center">
+            <button 
+              onClick={async () => {
+                const email = form.getValues("email");
+                if (!email) {
+                  toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: "Please enter your email address",
+                  });
+                  return;
+                }
+                
+                try {
+                  await auth.sendPasswordResetEmail(email);
+                  toast({
+                    title: "Success",
+                    description: "Password reset email sent. Please check your inbox.",
+                  });
+                } catch (error: any) {
+                  toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: error.message || "Failed to send reset email",
+                  });
+                }
+              }}
+              className="text-sm text-primary hover:underline"
+            >
+              Forgot Password?
+            </button>
+          </div>
         </div>
       </div>
 
