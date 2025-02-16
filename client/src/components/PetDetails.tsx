@@ -233,12 +233,22 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
                               <h4 className="font-medium mb-2">Before Images</h4>
                               <div className="grid grid-cols-2 gap-2">
                                 {appointment.beforeImages.map((image: any) => (
-                                  <img
-                                    key={image.id}
-                                    src={image.url}
-                                    alt="Before grooming"
-                                    className="rounded-md w-full h-32 object-cover"
-                                  />
+                                  <Dialog key={image.id}>
+                                    <DialogTrigger>
+                                      <img
+                                        src={image.url}
+                                        alt="Before grooming"
+                                        className="rounded-md w-full h-32 object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                                      />
+                                    </DialogTrigger>
+                                    <DialogContent className="max-w-4xl">
+                                      <img
+                                        src={image.url}
+                                        alt="Before grooming"
+                                        className="w-full h-auto"
+                                      />
+                                    </DialogContent>
+                                  </Dialog>
                                 ))}
                               </div>
                             </div>
@@ -249,12 +259,22 @@ export function PetDetails({ pet, onEdit, onDelete, formatDate }: PetDetailsProp
                               <h4 className="font-medium mb-2">After Images</h4>
                               <div className="grid grid-cols-2 gap-2">
                                 {appointment.afterImages.map((image: any) => (
-                                  <img
-                                    key={image.id}
-                                    src={image.url}
-                                    alt="After grooming"
-                                    className="rounded-md w-full h-32 object-cover"
-                                  />
+                                  <Dialog key={image.id}>
+                                    <DialogTrigger>
+                                      <img
+                                        src={image.url}
+                                        alt="After grooming"
+                                        className="rounded-md w-full h-32 object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                                      />
+                                    </DialogTrigger>
+                                    <DialogContent className="max-w-4xl">
+                                      <img
+                                        src={image.url}
+                                        alt="After grooming"
+                                        className="w-full h-auto"
+                                      />
+                                    </DialogContent>
+                                  </Dialog>
                                 ))}
                               </div>
                             </div>
