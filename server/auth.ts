@@ -158,7 +158,7 @@ export type AuthUser = FirebaseUser;
 
 export async function createUserInDatabase(user: FirebaseUser) {
   try {
-    const db = admin.database();
+    const db = getDatabase();
     const userRef = db.ref(`users/${user.id}`);
 
     // Check if user exists
@@ -210,7 +210,7 @@ export async function setUserRole(userId: string, role: keyof typeof RoleTypes) 
     }
 
     // Get role from Realtime Database
-    const rtdb = admin.database();
+    const rtdb = getDatabase();
     const roleSnapshot = await rtdb.ref(`roles/${userId}`).once('value');
     const currentRole = roleSnapshot.val()?.role;
 
@@ -273,7 +273,7 @@ export async function setUserRole(userId: string, role: keyof typeof RoleTypes) 
     console.log('[AUTH] Tokens revoked, user will need to re-authenticate');
 
     // Update user role in Firebase Realtime Database 
-    await rtdb.ref(`users/${userId}`).update({ role });
+    await getDatabase().ref(`users/${userId}`).update({ role });
 
     return true;
   } catch (error) {
@@ -307,7 +307,7 @@ async function setupDevelopmentAdmin() {
     }
 
     // Set admin role in Realtime Database
-    const db = admin.database();
+    const db = getDatabase();
     const userRolesRef = db.ref(`roles/${adminUid}`);
 
     await userRolesRef.set({
@@ -409,12 +409,12 @@ export async function setupAuth(app: Express) {
         const decodedToken = await auth.verifyIdToken(token);
 
         // Get role and permissions from Firebase Realtime Database
-        const db = admin.database();
+        const db = getDatabase();
         const userRoleSnapshot = await db.ref(`roles/${decodedToken.uid}`).once('value');
         const userRole = userRoleSnapshot.val() || { role: 'staff', permissions: [] };
 
         // Get user from Firebase database or create if doesn't exist
-        const dbRef = admin.database();
+        const dbRef = getDatabase();
         const userRef = dbRef.ref(`users/${decodedToken.uid}`);
         const snapshot = await userRef.once('value');
         const existingUser = snapshot.val();
