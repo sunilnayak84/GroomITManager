@@ -19,11 +19,21 @@ app.set('trust proxy', 1);
 
 // CORS configuration - must come before routes
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? (process.env.CLIENT_URL ? [process.env.CLIENT_URL] : ['http://localhost:5174']) //Prioritize CLIENT_URL in production, fallback to localhost
-    : ['http://localhost:5174', `http://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`],
+  origin: function(origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:5174',
+      'https://localhost:5174',
+      new RegExp('https://.*\\.sisko\\.replit\\.dev$'),
+      new RegExp('https://.*\\.repl\\.co$')
+    ];
+    const isAllowed = !origin || allowedOrigins.some(allowed => 
+      allowed instanceof RegExp ? allowed.test(origin) : allowed === origin
+    );
+    callback(null, isAllowed);
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
   credentials: true
 };
 app.use(cors(corsOptions));
