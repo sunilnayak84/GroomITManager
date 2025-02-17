@@ -1,0 +1,1048 @@
+[vite] connecting...
+client:614 [vite] connected.
+chunk-GNC7SI6A.js?v=b5759bef:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:17 Checking Firebase environment variables...
+firebase.ts:37 FIREBASE_INIT: Initializing Firebase with config: {apiKey: '***', authDomain: 'replit-5ac6a.firebaseapp.com', projectId: 'replit-5ac6a', storageBucket: 'replit-5ac6a.firebasestorage.app', messagingSenderId: '194114432530', …}
+firebase.ts:42 FIREBASE_INIT: Firebase initialized successfully
+content.js:1 CISPL SignerDigital Loaded
+chunk-GNC7SI6A.js?v=b5759bef:18625 [Violation] 'setTimeout' handler took 50ms
+use-roles.ts:36 [ROLES] Starting role fetch...
+RoleManagement.tsx:97 Role Management State: {roles: undefined, isLoadingRoles: true, users: Array(0), isLoadingUsers: true, hasNextPage: false}
+RoleManagement.tsx:97 Role Management State: {roles: undefined, isLoadingRoles: true, users: Array(0), isLoadingUsers: true, hasNextPage: false}
+use-roles.ts:45 [ROLES] Got fresh ID token
+use-roles.ts:99 [FIREBASE-USERS] Fetching users...
+use-roles.ts:104 
+            
+            
+           GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/firebase-users? 401 (Unauthorized)
+makeRequest @ use-roles.ts:104
+fetchFirebaseUsers @ use-roles.ts:125
+await in fetchFirebaseUsers
+queryFn @ use-roles.ts:245
+fetchPage @ @tanstack_react-query.js?v=b5759bef:1498
+fetchFn @ @tanstack_react-query.js?v=b5759bef:1524
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+fetch @ @tanstack_react-query.js?v=b5759bef:925
+executeFetch_fn @ @tanstack_react-query.js?v=b5759bef:2211
+onSubscribe @ @tanstack_react-query.js?v=b5759bef:1898
+subscribe @ @tanstack_react-query.js?v=b5759bef:24
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=b5759bef:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=b5759bef:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=b5759bef:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=b5759bef:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=b5759bef:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=b5759bef:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=b5759bef:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=b5759bef:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=b5759bef:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=b5759bef:19432
+commitRoot @ chunk-GNC7SI6A.js?v=b5759bef:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=b5759bef:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18718
+workLoop @ chunk-GNC7SI6A.js?v=b5759bef:197
+flushWork @ chunk-GNC7SI6A.js?v=b5759bef:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=b5759bef:384Understand this errorAI
+use-roles.ts:115 [FIREBASE-USERS] Error response: {"message":"Authentication failed","error":"admin.database is not a function","code":"AUTH_ERROR"}
+makeRequest @ use-roles.ts:115
+await in makeRequest
+fetchFirebaseUsers @ use-roles.ts:125
+await in fetchFirebaseUsers
+queryFn @ use-roles.ts:245
+fetchPage @ @tanstack_react-query.js?v=b5759bef:1498
+fetchFn @ @tanstack_react-query.js?v=b5759bef:1524
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+fetch @ @tanstack_react-query.js?v=b5759bef:925
+executeFetch_fn @ @tanstack_react-query.js?v=b5759bef:2211
+onSubscribe @ @tanstack_react-query.js?v=b5759bef:1898
+subscribe @ @tanstack_react-query.js?v=b5759bef:24
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=b5759bef:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=b5759bef:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=b5759bef:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=b5759bef:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=b5759bef:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=b5759bef:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=b5759bef:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=b5759bef:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=b5759bef:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=b5759bef:19432
+commitRoot @ chunk-GNC7SI6A.js?v=b5759bef:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=b5759bef:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18718
+workLoop @ chunk-GNC7SI6A.js?v=b5759bef:197
+flushWork @ chunk-GNC7SI6A.js?v=b5759bef:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=b5759bef:384Understand this errorAI
+use-roles.ts:132 [FIREBASE-USERS] Error in request: Error: Failed to fetch users: {"message":"Authentication failed","error":"admin.database is not a function","code":"AUTH_ERROR"}
+    at makeRequest (use-roles.ts:116:15)
+    at async fetchFirebaseUsers (use-roles.ts:125:14)
+    at async fetchPage (@tanstack_react-query.js?v=b5759bef:1498:24)
+    at async Object.fetchFn [as fn] (@tanstack_react-query.js?v=b5759bef:1524:22)
+fetchFirebaseUsers @ use-roles.ts:132
+await in fetchFirebaseUsers
+queryFn @ use-roles.ts:245
+fetchPage @ @tanstack_react-query.js?v=b5759bef:1498
+fetchFn @ @tanstack_react-query.js?v=b5759bef:1524
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+fetch @ @tanstack_react-query.js?v=b5759bef:925
+executeFetch_fn @ @tanstack_react-query.js?v=b5759bef:2211
+onSubscribe @ @tanstack_react-query.js?v=b5759bef:1898
+subscribe @ @tanstack_react-query.js?v=b5759bef:24
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=b5759bef:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=b5759bef:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=b5759bef:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=b5759bef:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=b5759bef:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=b5759bef:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=b5759bef:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=b5759bef:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=b5759bef:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=b5759bef:19432
+commitRoot @ chunk-GNC7SI6A.js?v=b5759bef:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=b5759bef:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18718
+workLoop @ chunk-GNC7SI6A.js?v=b5759bef:197
+flushWork @ chunk-GNC7SI6A.js?v=b5759bef:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=b5759bef:384Understand this errorAI
+use-roles.ts:136 [FIREBASE-USERS] Error: Error: Failed to fetch users: {"message":"Authentication failed","error":"admin.database is not a function","code":"AUTH_ERROR"}
+    at makeRequest (use-roles.ts:116:15)
+    at async fetchFirebaseUsers (use-roles.ts:125:14)
+    at async fetchPage (@tanstack_react-query.js?v=b5759bef:1498:24)
+    at async Object.fetchFn [as fn] (@tanstack_react-query.js?v=b5759bef:1524:22)
+fetchFirebaseUsers @ use-roles.ts:136
+await in fetchFirebaseUsers
+queryFn @ use-roles.ts:245
+fetchPage @ @tanstack_react-query.js?v=b5759bef:1498
+fetchFn @ @tanstack_react-query.js?v=b5759bef:1524
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+fetch @ @tanstack_react-query.js?v=b5759bef:925
+executeFetch_fn @ @tanstack_react-query.js?v=b5759bef:2211
+onSubscribe @ @tanstack_react-query.js?v=b5759bef:1898
+subscribe @ @tanstack_react-query.js?v=b5759bef:24
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=b5759bef:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=b5759bef:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=b5759bef:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=b5759bef:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=b5759bef:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=b5759bef:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=b5759bef:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=b5759bef:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=b5759bef:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=b5759bef:19432
+commitRoot @ chunk-GNC7SI6A.js?v=b5759bef:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=b5759bef:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18718
+workLoop @ chunk-GNC7SI6A.js?v=b5759bef:197
+flushWork @ chunk-GNC7SI6A.js?v=b5759bef:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=b5759bef:384Understand this errorAI
+RoleManagement.tsx:97 Role Management State: {roles: undefined, isLoadingRoles: true, users: Array(0), isLoadingUsers: false, hasNextPage: false}
+use-roles.ts:49 
+            
+            
+           GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:49
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=b5759bef:839
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+fetch @ @tanstack_react-query.js?v=b5759bef:925
+executeFetch_fn @ @tanstack_react-query.js?v=b5759bef:2211
+onSubscribe @ @tanstack_react-query.js?v=b5759bef:1898
+subscribe @ @tanstack_react-query.js?v=b5759bef:24
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=b5759bef:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=b5759bef:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=b5759bef:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=b5759bef:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=b5759bef:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=b5759bef:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=b5759bef:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=b5759bef:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=b5759bef:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=b5759bef:19432
+commitRoot @ chunk-GNC7SI6A.js?v=b5759bef:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=b5759bef:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18718
+workLoop @ chunk-GNC7SI6A.js?v=b5759bef:197
+flushWork @ chunk-GNC7SI6A.js?v=b5759bef:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=b5759bef:384Understand this errorAI
+use-roles.ts:36 [ROLES] Starting role fetch...
+use-roles.ts:45 [ROLES] Got fresh ID token
+use-roles.ts:49 
+            
+            
+           GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:49
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=b5759bef:839
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+fetch @ @tanstack_react-query.js?v=b5759bef:925
+executeFetch_fn @ @tanstack_react-query.js?v=b5759bef:2211
+onSubscribe @ @tanstack_react-query.js?v=b5759bef:1898
+subscribe @ @tanstack_react-query.js?v=b5759bef:24
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=b5759bef:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=b5759bef:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=b5759bef:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=b5759bef:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=b5759bef:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=b5759bef:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=b5759bef:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=b5759bef:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=b5759bef:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=b5759bef:19432
+commitRoot @ chunk-GNC7SI6A.js?v=b5759bef:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=b5759bef:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18718
+workLoop @ chunk-GNC7SI6A.js?v=b5759bef:197
+flushWork @ chunk-GNC7SI6A.js?v=b5759bef:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=b5759bef:384Understand this errorAI
+use-roles.ts:36 [ROLES] Starting role fetch...
+use-roles.ts:45 [ROLES] Got fresh ID token
+use-roles.ts:49 
+            
+            
+           GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:49
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=b5759bef:839
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+fetch @ @tanstack_react-query.js?v=b5759bef:925
+executeFetch_fn @ @tanstack_react-query.js?v=b5759bef:2211
+onSubscribe @ @tanstack_react-query.js?v=b5759bef:1898
+subscribe @ @tanstack_react-query.js?v=b5759bef:24
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=b5759bef:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=b5759bef:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=b5759bef:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=b5759bef:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=b5759bef:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=b5759bef:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=b5759bef:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=b5759bef:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=b5759bef:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=b5759bef:19432
+commitRoot @ chunk-GNC7SI6A.js?v=b5759bef:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=b5759bef:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18718
+workLoop @ chunk-GNC7SI6A.js?v=b5759bef:197
+flushWork @ chunk-GNC7SI6A.js?v=b5759bef:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=b5759bef:384Understand this errorAI
+use-roles.ts:36 [ROLES] Starting role fetch...
+use-roles.ts:45 [ROLES] Got fresh ID token
+use-roles.ts:49 
+            
+            
+           GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:49
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=b5759bef:839
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+fetch @ @tanstack_react-query.js?v=b5759bef:925
+executeFetch_fn @ @tanstack_react-query.js?v=b5759bef:2211
+onSubscribe @ @tanstack_react-query.js?v=b5759bef:1898
+subscribe @ @tanstack_react-query.js?v=b5759bef:24
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=b5759bef:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=b5759bef:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=b5759bef:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=b5759bef:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=b5759bef:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=b5759bef:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=b5759bef:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=b5759bef:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=b5759bef:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=b5759bef:19432
+commitRoot @ chunk-GNC7SI6A.js?v=b5759bef:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=b5759bef:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18718
+workLoop @ chunk-GNC7SI6A.js?v=b5759bef:197
+flushWork @ chunk-GNC7SI6A.js?v=b5759bef:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=b5759bef:384Understand this errorAI
+use-roles.ts:36 [ROLES] Starting role fetch...
+use-roles.ts:45 [ROLES] Got fresh ID token
+use-roles.ts:49 
+            
+            
+           GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:49
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=b5759bef:839
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+fetch @ @tanstack_react-query.js?v=b5759bef:925
+executeFetch_fn @ @tanstack_react-query.js?v=b5759bef:2211
+onSubscribe @ @tanstack_react-query.js?v=b5759bef:1898
+subscribe @ @tanstack_react-query.js?v=b5759bef:24
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=b5759bef:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=b5759bef:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=b5759bef:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=b5759bef:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=b5759bef:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=b5759bef:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=b5759bef:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=b5759bef:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=b5759bef:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=b5759bef:19432
+commitRoot @ chunk-GNC7SI6A.js?v=b5759bef:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=b5759bef:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18718
+workLoop @ chunk-GNC7SI6A.js?v=b5759bef:197
+flushWork @ chunk-GNC7SI6A.js?v=b5759bef:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=b5759bef:384Understand this errorAI
+use-roles.ts:36 [ROLES] Starting role fetch...
+use-roles.ts:45 [ROLES] Got fresh ID token
+use-roles.ts:49 
+            
+            
+           GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:49
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=b5759bef:839
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+fetch @ @tanstack_react-query.js?v=b5759bef:925
+executeFetch_fn @ @tanstack_react-query.js?v=b5759bef:2211
+onSubscribe @ @tanstack_react-query.js?v=b5759bef:1898
+subscribe @ @tanstack_react-query.js?v=b5759bef:24
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=b5759bef:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=b5759bef:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=b5759bef:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=b5759bef:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=b5759bef:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=b5759bef:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=b5759bef:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=b5759bef:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=b5759bef:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=b5759bef:19432
+commitRoot @ chunk-GNC7SI6A.js?v=b5759bef:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=b5759bef:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18718
+workLoop @ chunk-GNC7SI6A.js?v=b5759bef:197
+flushWork @ chunk-GNC7SI6A.js?v=b5759bef:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=b5759bef:384Understand this errorAI
+use-roles.ts:36 [ROLES] Starting role fetch...
+use-roles.ts:45 [ROLES] Got fresh ID token
+use-roles.ts:49 
+            
+            
+           GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:49
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=b5759bef:839
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+fetch @ @tanstack_react-query.js?v=b5759bef:925
+executeFetch_fn @ @tanstack_react-query.js?v=b5759bef:2211
+onSubscribe @ @tanstack_react-query.js?v=b5759bef:1898
+subscribe @ @tanstack_react-query.js?v=b5759bef:24
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=b5759bef:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=b5759bef:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=b5759bef:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=b5759bef:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=b5759bef:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=b5759bef:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=b5759bef:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=b5759bef:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=b5759bef:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=b5759bef:19432
+commitRoot @ chunk-GNC7SI6A.js?v=b5759bef:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=b5759bef:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18718
+workLoop @ chunk-GNC7SI6A.js?v=b5759bef:197
+flushWork @ chunk-GNC7SI6A.js?v=b5759bef:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=b5759bef:384Understand this errorAI
+use-roles.ts:36 [ROLES] Starting role fetch...
+use-roles.ts:45 [ROLES] Got fresh ID token
+use-roles.ts:49 
+            
+            
+           GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:49
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=b5759bef:839
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+fetch @ @tanstack_react-query.js?v=b5759bef:925
+executeFetch_fn @ @tanstack_react-query.js?v=b5759bef:2211
+onSubscribe @ @tanstack_react-query.js?v=b5759bef:1898
+subscribe @ @tanstack_react-query.js?v=b5759bef:24
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=b5759bef:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=b5759bef:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=b5759bef:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=b5759bef:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=b5759bef:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=b5759bef:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=b5759bef:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=b5759bef:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=b5759bef:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=b5759bef:19432
+commitRoot @ chunk-GNC7SI6A.js?v=b5759bef:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=b5759bef:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18718
+workLoop @ chunk-GNC7SI6A.js?v=b5759bef:197
+flushWork @ chunk-GNC7SI6A.js?v=b5759bef:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=b5759bef:384Understand this errorAI
+use-roles.ts:36 [ROLES] Starting role fetch...
+use-roles.ts:45 [ROLES] Got fresh ID token
+use-roles.ts:49 
+            
+            
+           GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:49
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=b5759bef:839
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+fetch @ @tanstack_react-query.js?v=b5759bef:925
+executeFetch_fn @ @tanstack_react-query.js?v=b5759bef:2211
+onSubscribe @ @tanstack_react-query.js?v=b5759bef:1898
+subscribe @ @tanstack_react-query.js?v=b5759bef:24
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=b5759bef:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=b5759bef:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=b5759bef:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=b5759bef:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=b5759bef:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=b5759bef:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=b5759bef:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=b5759bef:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=b5759bef:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=b5759bef:19432
+commitRoot @ chunk-GNC7SI6A.js?v=b5759bef:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=b5759bef:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18718
+workLoop @ chunk-GNC7SI6A.js?v=b5759bef:197
+flushWork @ chunk-GNC7SI6A.js?v=b5759bef:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=b5759bef:384Understand this errorAI
+use-roles.ts:36 [ROLES] Starting role fetch...
+use-roles.ts:45 [ROLES] Got fresh ID token
+use-roles.ts:49 
+            
+            
+           GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:49
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=b5759bef:839
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+fetch @ @tanstack_react-query.js?v=b5759bef:925
+executeFetch_fn @ @tanstack_react-query.js?v=b5759bef:2211
+onSubscribe @ @tanstack_react-query.js?v=b5759bef:1898
+subscribe @ @tanstack_react-query.js?v=b5759bef:24
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=b5759bef:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=b5759bef:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=b5759bef:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=b5759bef:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=b5759bef:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=b5759bef:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=b5759bef:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=b5759bef:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=b5759bef:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=b5759bef:19432
+commitRoot @ chunk-GNC7SI6A.js?v=b5759bef:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=b5759bef:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18718
+workLoop @ chunk-GNC7SI6A.js?v=b5759bef:197
+flushWork @ chunk-GNC7SI6A.js?v=b5759bef:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=b5759bef:384Understand this errorAI
+use-roles.ts:36 [ROLES] Starting role fetch...
+use-roles.ts:45 [ROLES] Got fresh ID token
+use-roles.ts:49 
+            
+            
+           GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:49
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=b5759bef:839
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+fetch @ @tanstack_react-query.js?v=b5759bef:925
+executeFetch_fn @ @tanstack_react-query.js?v=b5759bef:2211
+onSubscribe @ @tanstack_react-query.js?v=b5759bef:1898
+subscribe @ @tanstack_react-query.js?v=b5759bef:24
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=b5759bef:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=b5759bef:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=b5759bef:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=b5759bef:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=b5759bef:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=b5759bef:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=b5759bef:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=b5759bef:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=b5759bef:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=b5759bef:19432
+commitRoot @ chunk-GNC7SI6A.js?v=b5759bef:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=b5759bef:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18718
+workLoop @ chunk-GNC7SI6A.js?v=b5759bef:197
+flushWork @ chunk-GNC7SI6A.js?v=b5759bef:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=b5759bef:384Understand this errorAI
+use-roles.ts:36 [ROLES] Starting role fetch...
+use-roles.ts:45 [ROLES] Got fresh ID token
+use-roles.ts:49 
+            
+            
+           GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:49
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=b5759bef:839
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+fetch @ @tanstack_react-query.js?v=b5759bef:925
+executeFetch_fn @ @tanstack_react-query.js?v=b5759bef:2211
+onSubscribe @ @tanstack_react-query.js?v=b5759bef:1898
+subscribe @ @tanstack_react-query.js?v=b5759bef:24
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=b5759bef:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=b5759bef:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=b5759bef:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=b5759bef:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=b5759bef:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=b5759bef:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=b5759bef:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=b5759bef:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=b5759bef:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=b5759bef:19432
+commitRoot @ chunk-GNC7SI6A.js?v=b5759bef:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=b5759bef:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18718
+workLoop @ chunk-GNC7SI6A.js?v=b5759bef:197
+flushWork @ chunk-GNC7SI6A.js?v=b5759bef:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=b5759bef:384Understand this errorAI
+use-roles.ts:36 [ROLES] Starting role fetch...
+use-roles.ts:45 [ROLES] Got fresh ID token
+use-roles.ts:49 
+            
+            
+           GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:49
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=b5759bef:839
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+fetch @ @tanstack_react-query.js?v=b5759bef:925
+executeFetch_fn @ @tanstack_react-query.js?v=b5759bef:2211
+onSubscribe @ @tanstack_react-query.js?v=b5759bef:1898
+subscribe @ @tanstack_react-query.js?v=b5759bef:24
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=b5759bef:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=b5759bef:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=b5759bef:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=b5759bef:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=b5759bef:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=b5759bef:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=b5759bef:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=b5759bef:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=b5759bef:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=b5759bef:19432
+commitRoot @ chunk-GNC7SI6A.js?v=b5759bef:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=b5759bef:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18718
+workLoop @ chunk-GNC7SI6A.js?v=b5759bef:197
+flushWork @ chunk-GNC7SI6A.js?v=b5759bef:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=b5759bef:384Understand this errorAI
+use-roles.ts:36 [ROLES] Starting role fetch...
+use-roles.ts:45 [ROLES] Got fresh ID token
+use-roles.ts:49 
+            
+            
+           GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:49
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=b5759bef:839
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+fetch @ @tanstack_react-query.js?v=b5759bef:925
+executeFetch_fn @ @tanstack_react-query.js?v=b5759bef:2211
+onSubscribe @ @tanstack_react-query.js?v=b5759bef:1898
+subscribe @ @tanstack_react-query.js?v=b5759bef:24
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=b5759bef:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=b5759bef:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=b5759bef:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=b5759bef:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=b5759bef:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=b5759bef:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=b5759bef:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=b5759bef:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=b5759bef:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=b5759bef:19432
+commitRoot @ chunk-GNC7SI6A.js?v=b5759bef:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=b5759bef:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18718
+workLoop @ chunk-GNC7SI6A.js?v=b5759bef:197
+flushWork @ chunk-GNC7SI6A.js?v=b5759bef:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=b5759bef:384Understand this errorAI
+use-roles.ts:36 [ROLES] Starting role fetch...
+use-roles.ts:45 [ROLES] Got fresh ID token
+use-roles.ts:49 
+            
+            
+           GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:49
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=b5759bef:839
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+fetch @ @tanstack_react-query.js?v=b5759bef:925
+executeFetch_fn @ @tanstack_react-query.js?v=b5759bef:2211
+onSubscribe @ @tanstack_react-query.js?v=b5759bef:1898
+subscribe @ @tanstack_react-query.js?v=b5759bef:24
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=b5759bef:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=b5759bef:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=b5759bef:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=b5759bef:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=b5759bef:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=b5759bef:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=b5759bef:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=b5759bef:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=b5759bef:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=b5759bef:19432
+commitRoot @ chunk-GNC7SI6A.js?v=b5759bef:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=b5759bef:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18718
+workLoop @ chunk-GNC7SI6A.js?v=b5759bef:197
+flushWork @ chunk-GNC7SI6A.js?v=b5759bef:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=b5759bef:384Understand this errorAI
+use-roles.ts:36 [ROLES] Starting role fetch...
+use-roles.ts:45 [ROLES] Got fresh ID token
+use-roles.ts:49 
+            
+            
+           GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:49
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=b5759bef:839
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+fetch @ @tanstack_react-query.js?v=b5759bef:925
+executeFetch_fn @ @tanstack_react-query.js?v=b5759bef:2211
+onSubscribe @ @tanstack_react-query.js?v=b5759bef:1898
+subscribe @ @tanstack_react-query.js?v=b5759bef:24
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=b5759bef:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=b5759bef:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=b5759bef:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=b5759bef:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=b5759bef:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=b5759bef:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=b5759bef:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=b5759bef:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=b5759bef:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=b5759bef:19432
+commitRoot @ chunk-GNC7SI6A.js?v=b5759bef:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=b5759bef:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18718
+workLoop @ chunk-GNC7SI6A.js?v=b5759bef:197
+flushWork @ chunk-GNC7SI6A.js?v=b5759bef:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=b5759bef:384Understand this errorAI
+use-roles.ts:36 [ROLES] Starting role fetch...
+use-roles.ts:45 [ROLES] Got fresh ID token
+use-roles.ts:49 
+            
+            
+           GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:49
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=b5759bef:839
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+fetch @ @tanstack_react-query.js?v=b5759bef:925
+executeFetch_fn @ @tanstack_react-query.js?v=b5759bef:2211
+onSubscribe @ @tanstack_react-query.js?v=b5759bef:1898
+subscribe @ @tanstack_react-query.js?v=b5759bef:24
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=b5759bef:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=b5759bef:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=b5759bef:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=b5759bef:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=b5759bef:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=b5759bef:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=b5759bef:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=b5759bef:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=b5759bef:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=b5759bef:19432
+commitRoot @ chunk-GNC7SI6A.js?v=b5759bef:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=b5759bef:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18718
+workLoop @ chunk-GNC7SI6A.js?v=b5759bef:197
+flushWork @ chunk-GNC7SI6A.js?v=b5759bef:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=b5759bef:384Understand this errorAI
+use-roles.ts:36 [ROLES] Starting role fetch...
+use-roles.ts:45 [ROLES] Got fresh ID token
+use-roles.ts:49 
+            
+            
+           GET https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev:3000/api/roles 401 (Unauthorized)
+fetchRoles @ use-roles.ts:49
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchRoles @ use-roles.ts:60
+await in fetchRoles
+fetchFn @ @tanstack_react-query.js?v=b5759bef:839
+run @ @tanstack_react-query.js?v=b5759bef:493
+start @ @tanstack_react-query.js?v=b5759bef:535
+fetch @ @tanstack_react-query.js?v=b5759bef:925
+executeFetch_fn @ @tanstack_react-query.js?v=b5759bef:2211
+onSubscribe @ @tanstack_react-query.js?v=b5759bef:1898
+subscribe @ @tanstack_react-query.js?v=b5759bef:24
+(anonymous) @ @tanstack_react-query.js?v=b5759bef:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=b5759bef:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=b5759bef:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=b5759bef:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=b5759bef:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=b5759bef:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=b5759bef:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=b5759bef:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=b5759bef:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=b5759bef:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=b5759bef:19432
+commitRoot @ chunk-GNC7SI6A.js?v=b5759bef:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=b5759bef:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=b5759bef:18718
+workLoop @ chunk-GNC7SI6A.js?v=b5759bef:197
+flushWork @ chunk-GNC7SI6A.js?v=b5759bef:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=b5759bef:384Understand this errorAI
+use-roles.ts:36 [ROLES] Starting role fetch...
+use-roles.ts:45 [ROLES] Got fresh ID token
