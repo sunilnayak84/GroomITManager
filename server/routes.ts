@@ -3,6 +3,8 @@ import { auth, db } from './firebase';
 import * as admin from 'firebase-admin';
 import * as Express from 'express';
 import { staffManagementRouter } from './api/staff-management';
+import { getDatabase } from 'firebase-admin/database';
+import { getAuth } from 'firebase-admin/auth';
 
 const router = Router();
 
@@ -118,6 +120,60 @@ export function registerRoutes(app: Express.Application) {
     ];
 
     console.log(routes);
+
+    // Add role management routes here.  This assumes a middleware setup to handle requests.  Adjust based on your actual middleware.
+    router.get('/roles', async (req: Request, res: Response) => {
+      try {
+        const db = getDatabase();
+        const rolesSnapshot = await db.ref('role-definitions').once('value');
+        const roles = rolesSnapshot.val() || {};
+
+        const formattedRoles = Object.entries(roles).map(([name, role]) => ({
+          name,
+          ...(role as any)
+        }));
+
+        res.json(formattedRoles);
+      } catch (error) {
+        console.error('[ROLES] Error fetching roles:', error);
+        res.status(500).json({ message: 'Failed to fetch roles' });
+      }
+    });
+
+    router.get('/firebase-users', async (req: Request, res: Response) => {
+      try {
+        const auth = getAuth();
+        const { pageToken } = req.query;
+
+        const listUsersResult = await auth.listUsers(1000, pageToken as string);
+        const users = await Promise.all(
+          listUsersResult.users.map(async (user) => {
+            const db = getDatabase();
+            const roleSnapshot = await db.ref(`roles/${user.uid}`).once('value');
+            const role = roleSnapshot.val()?.role || 'staff';
+
+            return {
+              uid: user.uid,
+              email: user.email,
+              displayName: user.displayName,
+              role,
+              disabled: user.disabled,
+              lastSignInTime: user.metadata.lastSignInTime,
+              creationTime: user.metadata.creationTime
+            };
+          })
+        );
+
+        res.json({
+          users,
+          pageToken: listUsersResult.pageToken
+        });
+      } catch (error) {
+        console.error('[USERS] Error fetching users:', error);
+        res.status(500).json({ message: 'Failed to fetch users' });
+      }
+    });
+
 
     // API 404 handler - must be last
     app.use('/api/*', (req: Request, res: Response) => {
