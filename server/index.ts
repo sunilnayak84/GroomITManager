@@ -20,7 +20,7 @@ app.set('trust proxy', 1);
 // CORS configuration - must come before routes
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
-    ? [process.env.CLIENT_URL || 'http://localhost:5174'] 
+    ? (process.env.CLIENT_URL ? [process.env.CLIENT_URL] : ['http://localhost:5174']) //Prioritize CLIENT_URL in production, fallback to localhost
     : ['http://localhost:5174', `http://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
