@@ -64,20 +64,20 @@ export const RolePermissions: Record<string, string[]> = {
     'reschedule_appointments',
     'cancel_appointments',
     'create_appointments',
-    
+
     // Service Management
     'manage_services',
     'create_services',
     'edit_services',
     'view_services',
     'set_service_pricing',
-    
+
     // Staff Schedule Management (excluding user/role management)
     'view_staff_schedule',
     'manage_staff_schedule',
     'assign_staff_tasks',
     'manage_working_hours',
-    
+
     // Customer and Pet Management
     'manage_customers',
     'view_customers',
@@ -85,7 +85,7 @@ export const RolePermissions: Record<string, string[]> = {
     'manage_pets',
     'view_all_pets',
     'edit_pet_info',
-    
+
     // Inventory and Stock Management
     'manage_inventory',
     'view_inventory',
@@ -93,36 +93,36 @@ export const RolePermissions: Record<string, string[]> = {
     'manage_consumables',
     'view_stock_alerts',
     'create_purchase_orders',
-    
+
     // Business Operations
     'view_analytics',
     'view_reports',
     'manage_branch_settings',
     'view_financial_reports',
     'export_reports',
-    
+
     // Service Package Management
     'manage_service_packages',
     'create_packages',
     'edit_packages',
     'set_package_pricing',
-    
+
     // Branch Operations
     'view_branch_details',
     'manage_branch_operations',
     'view_branch_performance',
-    
+
     // Customer Communication
     'manage_notifications',
     'send_customer_notifications',
     'manage_customer_feedback',
-    
+
     // Marketing and Promotions
     'manage_marketing_campaigns',
     'create_promotions',
     'edit_promotions',
     'view_campaign_analytics',
-    
+
     // Financial Operations
     'manage_service_pricing',
     'set_special_rates',
@@ -160,7 +160,7 @@ export async function createUserInDatabase(user: FirebaseUser) {
   try {
     const db = admin.database();
     const userRef = db.ref(`users/${user.id}`);
-    
+
     // Check if user exists
     const snapshot = await userRef.once('value');
     if (!snapshot.exists()) {
@@ -189,7 +189,7 @@ export async function createUserInDatabase(user: FirebaseUser) {
         });
       }
     }
-    
+
     return true;
   } catch (error) {
     console.error('[AUTH] Error creating user in database:', error);
@@ -202,7 +202,7 @@ export async function setUserRole(userId: string, role: keyof typeof RoleTypes) 
 
     // Get Firebase Admin instance
     const app = getFirebaseAdmin();
-    
+
     // Get current user from Firebase
     const userRecord = await admin.auth().getUser(userId);
     if (!userRecord) {
@@ -227,7 +227,7 @@ export async function setUserRole(userId: string, role: keyof typeof RoleTypes) 
       if (!email.endsWith('@groomery.in') && process.env.NODE_ENV !== 'development') {
         throw new Error('Manager role requires a company email address');
       }
-      
+
       // Ensure manager can't modify admin users
       if (currentRole === 'admin') {
         throw new Error('Cannot modify admin user roles');
@@ -255,7 +255,7 @@ export async function setUserRole(userId: string, role: keyof typeof RoleTypes) 
       permissions,
       updatedAt: new Date().toISOString()
     };
-    
+
     await admin.auth().setCustomUserClaims(userId, customClaims);
 
     // Force a token refresh
@@ -271,10 +271,10 @@ export async function setUserRole(userId: string, role: keyof typeof RoleTypes) 
     console.log('[AUTH] Assigned permissions:', permissions);
     console.log('[AUTH] Custom claims set:', customClaims);
     console.log('[AUTH] Tokens revoked, user will need to re-authenticate');
-    
+
     // Update user role in Firebase Realtime Database 
     await rtdb.ref(`users/${userId}`).update({ role });
-    
+
     return true;
   } catch (error) {
     console.error('Error setting user role:', error);
@@ -286,10 +286,10 @@ export async function setUserRole(userId: string, role: keyof typeof RoleTypes) 
 
 async function setupDevelopmentAdmin() {
   try {
-    const auth = admin.auth();
+    const auth = getAuth();
     const adminEmail = 'admin@groomery.in';
     const adminUid = 'MjQnuZnthzUIh2huoDpqCSMMvxe2';
-    
+
     // Try to get admin user or create if doesn't exist
     try {
       await auth.getUser(adminUid);
@@ -309,7 +309,7 @@ async function setupDevelopmentAdmin() {
     // Set admin role in Realtime Database
     const db = admin.database();
     const userRolesRef = db.ref(`roles/${adminUid}`);
-    
+
     await userRolesRef.set({
       role: 'admin',
       permissions: ['all'],
@@ -405,9 +405,9 @@ export async function setupAuth(app: Express) {
         }
 
         const token = authHeader.split('Bearer ')[1];
-        const auth = admin.auth();
+        const auth = getAuth();
         const decodedToken = await auth.verifyIdToken(token);
-        
+
         // Get role and permissions from Firebase Realtime Database
         const db = admin.database();
         const userRoleSnapshot = await db.ref(`roles/${decodedToken.uid}`).once('value');
@@ -447,7 +447,7 @@ export async function setupAuth(app: Express) {
         next();
       } catch (error) {
         console.error('[AUTH] Authentication error:', error);
-        
+
         if (error instanceof Error) {
           return res.status(401).json({ 
             message: "Authentication failed",
@@ -455,7 +455,7 @@ export async function setupAuth(app: Express) {
             code: "AUTH_ERROR"
           });
         }
-        
+
         return res.status(401).json({ 
           message: "Authentication failed",
           code: "UNKNOWN_ERROR"
@@ -475,7 +475,7 @@ export async function setupAuth(app: Express) {
     });
 
     console.log('[AUTH] Authentication middleware setup completed');
-    
+
     // In development mode, ensure admin user exists
     if (isDevelopment) {
       await setupDevelopmentAdmin();
