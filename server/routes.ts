@@ -124,7 +124,7 @@ export function registerRoutes(app: Express.Application) {
     // Add role management routes here.  This assumes a middleware setup to handle requests.  Adjust based on your actual middleware.
     router.get('/roles', async (req: Request, res: Response) => {
       try {
-        const firestore = getFirestore();
+        const firestore = admin.firestore();
         const rolesSnapshot = await firestore.collection('role-definitions').get();
         
         const roles = rolesSnapshot.docs.map(doc => ({
@@ -141,8 +141,8 @@ export function registerRoutes(app: Express.Application) {
 
     router.get('/firebase-users', async (req: Request, res: Response) => {
       try {
-        const auth = getAuth();
-        const firestore = getFirestore();
+        const auth = admin.auth();
+        const firestore = admin.firestore();
         const { pageToken } = req.query;
 
         const listUsersResult = await auth.listUsers(1000, pageToken as string);
