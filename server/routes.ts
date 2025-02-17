@@ -124,16 +124,15 @@ export function registerRoutes(app: Express.Application) {
     // Add role management routes here.  This assumes a middleware setup to handle requests.  Adjust based on your actual middleware.
     router.get('/roles', async (req: Request, res: Response) => {
       try {
-        const db = getDatabase();
-        const rolesSnapshot = await db.ref('role-definitions').once('value');
-        const roles = rolesSnapshot.val() || {};
-
-        const formattedRoles = Object.entries(roles).map(([name, role]) => ({
-          name,
-          ...(role as any)
+        const firestore = getFirestore();
+        const rolesSnapshot = await firestore.collection('role-definitions').get();
+        
+        const roles = rolesSnapshot.docs.map(doc => ({
+          name: doc.id,
+          ...doc.data()
         }));
 
-        res.json(formattedRoles);
+        res.json(roles);
       } catch (error) {
         console.error('[ROLES] Error fetching roles:', error);
         res.status(500).json({ message: 'Failed to fetch roles' });
@@ -143,14 +142,14 @@ export function registerRoutes(app: Express.Application) {
     router.get('/firebase-users', async (req: Request, res: Response) => {
       try {
         const auth = getAuth();
+        const firestore = getFirestore();
         const { pageToken } = req.query;
 
         const listUsersResult = await auth.listUsers(1000, pageToken as string);
         const users = await Promise.all(
           listUsersResult.users.map(async (user) => {
-            const db = getDatabase();
-            const roleSnapshot = await db.ref(`roles/${user.uid}`).once('value');
-            const role = roleSnapshot.val()?.role || 'staff';
+            const roleDoc = await firestore.collection('roles').doc(user.uid).get();
+            const role = roleDoc.exists ? roleDoc.data()?.role : 'staff';
 
             return {
               uid: user.uid,
