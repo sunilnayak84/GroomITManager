@@ -13,17 +13,26 @@ import { logger } from "./utils/logger.js";
 const app = express();
 
 // Configure CORS
-app.use(cors({
-  origin: (origin, callback) => {
-    callback(null, true); // Allow any origin
-  },
+const corsOptions = {
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
-}));
+  optionsSuccessStatus: 200
+};
 
-// Pre-flight OPTIONS handling
-app.options('*', cors());
+app.use(cors(corsOptions));
+
+// Pre-flight OPTIONS handling for specific routes
+app.options('/api/firebase-users', cors(corsOptions));
+app.options('*', cors(corsOptions));
+
+// Additional headers middleware
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 
 
 // Global middleware
