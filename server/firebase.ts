@@ -9,7 +9,10 @@ let firebaseApp: admin.app.App;
 export function initializeFirebaseAdmin(): admin.app.App {
   if (!firebaseApp) {
     try {
-      const serviceAccount = require('../serviceAccount.json');
+      const serviceAccount = JSON.parse(
+        await import('../serviceAccount.json', { assert: { type: 'json' } })
+          .then(module => JSON.stringify(module.default))
+      );
 
       firebaseApp = admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
