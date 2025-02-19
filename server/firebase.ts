@@ -130,66 +130,86 @@ export enum RoleTypes {
   receptionist = 'receptionist'
 }
 
-// All available permissions
-export const ALL_PERMISSIONS = [
-  'all',
-  'manage_appointments',
-  'view_appointments',
-  'create_appointments',
-  'cancel_appointments',
-  'manage_customers',
-  'view_customers',
-  'create_customers',
-  'edit_customer_info',
-  'manage_services',
-  'view_services',
-  'create_services',
-  'edit_services',
-  'manage_inventory',
-  'view_inventory',
-  'update_stock',
-  'manage_consumables',
-  'manage_staff_schedule',
-  'view_staff_schedule',
-  'manage_own_schedule',
-  'view_analytics',
-  'view_reports',
-  'view_financial_reports'
-] as const;
+// Create a union type of all permissions using proper type inference
+type PermissionValue<T> = T extends { [key: string]: infer U } ? U : never;
+type CategoryPermissions = typeof PermissionCategories[keyof typeof PermissionCategories];
+export type Permission = PermissionValue<CategoryPermissions>;
 
-export type Permission = typeof ALL_PERMISSIONS[number];
+// Categorized permissions for better management
+export const PermissionCategories = {
+  APPOINTMENTS: {
+    MANAGE: 'manage_appointments',
+    VIEW: 'view_appointments',
+    CREATE: 'create_appointments',
+    CANCEL: 'cancel_appointments',
+    RESCHEDULE: 'reschedule_appointments'
+  } as const,
+  CUSTOMERS: {
+    MANAGE: 'manage_customers',
+    VIEW: 'view_customers',
+    CREATE: 'create_customers',
+    EDIT: 'edit_customer_info'
+  } as const,
+  SERVICES: {
+    MANAGE: 'manage_services',
+    VIEW: 'view_services',
+    CREATE: 'create_services',
+    EDIT: 'edit_services',
+    PRICING: 'set_service_pricing'
+  } as const,
+  STAFF: {
+    MANAGE: 'manage_staff',
+    VIEW: 'view_staff',
+    SCHEDULE: 'manage_staff_schedule',
+    VIEW_SCHEDULE: 'view_staff_schedule'
+  } as const,
+  SYSTEM: {
+    ALL: 'all',
+    MANAGE_ROLES: 'manage_roles',
+    VIEW_ANALYTICS: 'view_analytics',
+    VIEW_REPORTS: 'view_reports'
+  } as const
+} as const;
 
 // Default permissions for each role
 export const DefaultPermissions: Record<RoleTypes, Permission[]> = {
-  [RoleTypes.admin]: ['all'],
+  [RoleTypes.admin]: [PermissionCategories.SYSTEM.ALL],
   [RoleTypes.manager]: [
-    'manage_appointments',
-    'view_appointments',
-    'manage_services',
-    'view_services',
-    'manage_customers',
-    'view_customers',
-    'manage_inventory',
-    'view_inventory'
+    PermissionCategories.APPOINTMENTS.MANAGE,
+    PermissionCategories.APPOINTMENTS.VIEW,
+    PermissionCategories.APPOINTMENTS.CREATE,
+    PermissionCategories.APPOINTMENTS.CANCEL,
+    PermissionCategories.SERVICES.MANAGE,
+    PermissionCategories.SERVICES.VIEW,
+    PermissionCategories.CUSTOMERS.MANAGE,
+    PermissionCategories.CUSTOMERS.VIEW,
+    PermissionCategories.STAFF.SCHEDULE,
+    PermissionCategories.STAFF.VIEW_SCHEDULE,
+    PermissionCategories.SYSTEM.VIEW_ANALYTICS,
+    PermissionCategories.SYSTEM.VIEW_REPORTS
   ],
   [RoleTypes.staff]: [
-    'view_appointments',
-    'manage_own_schedule',
-    'view_customers'
+    PermissionCategories.APPOINTMENTS.VIEW,
+    PermissionCategories.CUSTOMERS.VIEW,
+    PermissionCategories.SERVICES.VIEW,
+    PermissionCategories.STAFF.VIEW_SCHEDULE
   ],
   [RoleTypes.receptionist]: [
-    'view_appointments',
-    'create_appointments',
-    'view_customers',
-    'create_customers'
+    PermissionCategories.APPOINTMENTS.CREATE,
+    PermissionCategories.APPOINTMENTS.VIEW,
+    PermissionCategories.CUSTOMERS.CREATE,
+    PermissionCategories.CUSTOMERS.VIEW,
+    PermissionCategories.SERVICES.VIEW
   ]
 };
 
+// Role configurations with metadata
 export const InitialRoleConfigs = {
   [RoleTypes.admin]: {
-    permissions: ['all'],
+    permissions: DefaultPermissions[RoleTypes.admin],
     description: 'Full system access with all permissions',
     isSystem: true,
+    canBeModified: false,
     createdAt: Date.now(),
     updatedAt: Date.now()
   },
@@ -197,6 +217,7 @@ export const InitialRoleConfigs = {
     permissions: DefaultPermissions[RoleTypes.manager],
     description: 'Manages daily operations and staff',
     isSystem: true,
+    canBeModified: true,
     createdAt: Date.now(),
     updatedAt: Date.now()
   },
@@ -204,6 +225,7 @@ export const InitialRoleConfigs = {
     permissions: DefaultPermissions[RoleTypes.staff],
     description: 'Regular staff member access',
     isSystem: true,
+    canBeModified: true,
     createdAt: Date.now(),
     updatedAt: Date.now()
   },
@@ -211,19 +233,44 @@ export const InitialRoleConfigs = {
     permissions: DefaultPermissions[RoleTypes.receptionist],
     description: 'Front desk and customer service access',
     isSystem: true,
+    canBeModified: true,
     createdAt: Date.now(),
     updatedAt: Date.now()
   }
 };
 
-// Permission validation
-export function isValidPermission(permission: unknown): permission is Permission {
-  if (typeof permission !== 'string') return false;
-  return ALL_PERMISSIONS.includes(permission as Permission);
+// Role validation helper
+export function isValidRole(role: unknown): role is RoleTypes {
+  return typeof role === 'string' && Object.values(RoleTypes).includes(role as RoleTypes);
 }
 
-export function validatePermissions(permissions: unknown[]): Permission[] {
-  return permissions.filter(isValidPermission);
+// Permission validation helper
+export function isValidPermission(permission: unknown): permission is Permission {
+  if (typeof permission !== 'string') return false;
+  return Object.values(PermissionCategories).some(category =>
+    Object.values(category).includes(permission as Permission)
+  );
+}
+
+// Role update validation
+export function validateRoleUpdate(
+  currentRole: RoleTypes,
+  newRole: RoleTypes,
+  actorRole: RoleTypes
+): { valid: boolean; error?: string } {
+  if (currentRole === RoleTypes.admin && actorRole !== RoleTypes.admin) {
+    return { valid: false, error: 'Only administrators can modify admin roles' };
+  }
+
+  if (newRole === RoleTypes.admin && actorRole !== RoleTypes.admin) {
+    return { valid: false, error: 'Only administrators can assign admin roles' };
+  }
+
+  if (actorRole !== RoleTypes.admin && actorRole !== RoleTypes.manager) {
+    return { valid: false, error: 'Insufficient permissions to modify roles' };
+  }
+
+  return { valid: true };
 }
 
 // Role management functions

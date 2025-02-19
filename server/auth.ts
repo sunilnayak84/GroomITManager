@@ -196,92 +196,131 @@ export async function createUserInDatabase(user: FirebaseUser) {
     return false;
   }
 }
-export async function setUserRole(userId: string, role: keyof typeof RoleTypes) {
+
+function validateRoleUpdate(currentRole: RoleTypes, newRole: RoleTypes, actorRole: RoleTypes | null): { valid: boolean; error?: string } {
+  if (currentRole === RoleTypes.admin && newRole !== RoleTypes.admin) {
+    return { valid: false, error: 'Cannot downgrade admin user' };
+  }
+  if (actorRole === RoleTypes.manager && currentRole === RoleTypes.admin) {
+    return { valid: false, error: 'Managers cannot modify admin users' };
+  }
+  if (actorRole === RoleTypes.staff && currentRole === RoleTypes.admin) {
+      return { valid: false, error: 'Staff cannot modify admin users' };
+  }
+  return { valid: true };
+}
+
+export async function setUserRole(userId: string, role: RoleTypes, actorId: string) {
   try {
     console.log(`[AUTH] Setting role ${role} for user ${userId}`);
 
     // Get Firebase Admin instance
     const app = getFirebaseAdmin();
 
-    // Get current user from Firebase
+    // Get current user records
     const userRecord = await admin.auth().getUser(userId);
-    if (!userRecord) {
-      throw new Error('User not found in Firebase');
+    const actorRecord = await admin.auth().getUser(actorId);
+
+    if (!userRecord || !actorRecord) {
+      throw new Error('User not found');
     }
 
-    // Get role from Realtime Database
-    const rtdb = getDatabase();
-    const roleSnapshot = await rtdb.ref(`roles/${userId}`).once('value');
-    const currentRole = roleSnapshot.val()?.role;
+    // Get current roles
+    const db = getDatabase();
+    const roleSnapshot = await db.ref(`roles/${userId}`).once('value');
+    const currentRole = roleSnapshot.val()?.role || RoleTypes.staff;
 
-    // Role transition validation  
-    if (currentRole === 'admin') {
-      if (role !== 'admin') {
-        throw new Error('Cannot downgrade admin user');
-      }
+    const actorRoleSnapshot = await db.ref(`roles/${actorId}`).once('value');
+    const actorRole = actorRoleSnapshot.val()?.role;
+
+    // Validate role update
+    const validation = validateRoleUpdate(currentRole, role, actorRole);
+    if (!validation.valid) {
+      throw new Error(validation.error);
     }
 
-    // Special validation for manager role
-    if (role === 'manager') {
+    // Validate email domain for sensitive roles
+    if (role === RoleTypes.admin || role === RoleTypes.manager) {
       const email = userRecord.email?.toLowerCase() || '';
       if (!email.endsWith('@groomery.in') && process.env.NODE_ENV !== 'development') {
-        throw new Error('Manager role requires a company email address');
-      }
-
-      // Ensure manager can't modify admin users
-      if (currentRole === 'admin') {
-        throw new Error('Cannot modify admin user roles');
+        throw new Error(`${role} role requires a company email address`);
       }
     }
 
-    // Special handling for admin role
-    if (role === 'admin') {
-      const email = userRecord.email?.toLowerCase() || '';
-      // In development mode, allow any email for admin
-      if (process.env.NODE_ENV !== 'development' && !email.endsWith('@groomery.in')) {
-        throw new Error('Admin role requires a company email address');
-      }
-    }
+    // Get permissions for the new role
+    const permissions = DefaultPermissions[role];
+    const timestamp = new Date().toISOString();
 
-    // Get permissions from RolePermissions constant
-    const permissions = RolePermissions[role];
-    if (!permissions) {
-      throw new Error(`Invalid role: ${role}`);
-    }
-
-    // Set custom claims including role, permissions and timestamp
+    // Update custom claims
     const customClaims = {
       role,
       permissions,
-      updatedAt: new Date().toISOString()
+      updatedAt: timestamp,
+      updatedBy: actorId
     };
 
     await admin.auth().setCustomUserClaims(userId, customClaims);
 
-    // Force a token refresh
+    // Force token refresh
     await admin.auth().revokeRefreshTokens(userId);
 
-    // Double check the claims were set
-    const updatedUser = await admin.auth().getUser(userId);
-    if (!updatedUser.customClaims || updatedUser.customClaims.role !== role) {
-      throw new Error('Failed to verify role update');
-    }
+    // Update role in Realtime Database
+    await db.ref(`roles/${userId}`).set({
+      role,
+      permissions,
+      updatedAt: timestamp,
+      updatedBy: actorId
+    });
 
-    console.log(`[AUTH] Successfully set role ${role} for user ${userId} (${userRecord.email})`);
-    console.log('[AUTH] Assigned permissions:', permissions);
-    console.log('[AUTH] Custom claims set:', customClaims);
-    console.log('[AUTH] Tokens revoked, user will need to re-authenticate');
+    // Create role history entry
+    await db.ref(`role-history/${userId}`).push({
+      previousRole: currentRole,
+      newRole: role,
+      timestamp,
+      actorId,
+      actorEmail: actorRecord.email,
+      type: 'role_update'
+    });
 
-    // Update user role in Firebase Realtime Database 
-    await getDatabase().ref(`users/${userId}`).update({ role });
+    // Update user record in Users collection
+    await db.ref(`users/${userId}`).update({
+      role,
+      permissions,
+      lastRoleUpdate: timestamp
+    });
 
-    return true;
+    console.log(`[AUTH] Successfully set role ${role} for user ${userId}`);
+
+    return {
+      success: true,
+      user: userRecord,
+      role,
+      permissions
+    };
+
   } catch (error) {
-    console.error('Error setting user role:', error);
+    console.error('[AUTH] Error setting user role:', error);
     throw error instanceof Error
       ? new Error(`Failed to set user role: ${error.message}`)
       : new Error('Failed to set user role: Unknown error');
   }
+}
+
+// Add a function to get role history
+export async function getRoleHistory(userId: string) {
+  try {
+    const db = getDatabase();
+    const historySnapshot = await db.ref(`role-history/${userId}`).orderByChild('timestamp').once('value');
+    return historySnapshot.val() || [];
+  } catch (error) {
+    console.error('[AUTH] Error getting role history:', error);
+    throw error;
+  }
+}
+
+// Add a function to validate user permissions
+export function hasPermission(userPermissions: string[], requiredPermission: Permission): boolean {
+  return userPermissions.includes('all') || userPermissions.includes(requiredPermission);
 }
 
 async function setupDevelopmentAdmin() {
