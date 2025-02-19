@@ -6,25 +6,26 @@ import { initializeFirebaseAdmin } from "./firebase.js";
 import { setupAuth } from "./auth.js";
 import path from "path";
 import fs from "fs";
-import cors from 'cors'; // Added import statement for cors
+import cors from 'cors';
 import { logger } from "./utils/logger.js";
 
 // Configure Express app
 const app = express();
+
+// Configure CORS
+app.use(cors({
+  origin: true,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 
 // Global middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.set('trust proxy', 1);
 
-// CORS configuration - must come before routes
-const corsOptions = {
-  origin: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-};
-app.use(cors(corsOptions));
 
 // Request logging middleware
 app.use((req, res, next) => {
