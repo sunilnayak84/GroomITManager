@@ -9,6 +9,7 @@ export default function App() {
   return (
     <Layout>
       <Switch>
+        <Route path="/role-management" component={RoleManagementPage} />
         <Route path="/settings/role-management" component={RoleManagementPage} />
         <Route path="/staff-availability" component={StaffAvailabilityPage} />
         <Route>
