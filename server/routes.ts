@@ -123,7 +123,7 @@ export function registerRoutes(app: Express.Application) {
       try {
         const firestore = admin.firestore();
         const rolesSnapshot = await firestore.collection('role-definitions').get();
-        
+
         const roles = rolesSnapshot.docs.map(doc => ({
           name: doc.id,
           ...doc.data()
@@ -160,13 +160,21 @@ export function registerRoutes(app: Express.Application) {
           })
         );
 
+        // Set explicit CORS headers for this route
+        res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+        res.header('Access-Control-Allow-Credentials', 'true');
+
         res.json({
           users,
           pageToken: listUsersResult.pageToken
         });
       } catch (error) {
         console.error('[USERS] Error fetching users:', error);
-        res.status(500).json({ message: 'Failed to fetch users' });
+        res.status(500).json({
+          error: 'Failed to fetch users',
+          message: error instanceof Error ? error.message : 'Unknown error',
+          code: 'USER_FETCH_ERROR'
+        });
       }
     });
 
