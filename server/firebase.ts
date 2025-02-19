@@ -15,18 +15,11 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export function initializeFirebaseAdmin(): admin.app.App {
   if (!firebaseApp) {
     try {
-      const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
-      
-      if (!privateKey || !process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL) {
-        throw new Error('Missing Firebase credentials');
-      }
+      const serviceAccountPath = join(__dirname, '../serviceAccount.json');
+      const serviceAccountData = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
 
       firebaseApp = admin.initializeApp({
-        credential: admin.credential.cert({
-          projectId: process.env.FIREBASE_PROJECT_ID,
-          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-          privateKey: privateKey
-        }),
+        credential: admin.credential.cert(serviceAccountData),
         databaseURL: process.env.FIREBASE_DATABASE_URL || 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
       });
       console.log('Firebase Admin initialized successfully');
