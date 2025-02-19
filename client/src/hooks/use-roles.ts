@@ -135,7 +135,6 @@ export function useRoles() {
     isUpdating: updateRoleMutation.isPending,
     updateUserRole: updateUserRoleMutation.mutate,
     isUpdatingUserRole: updateUserRoleMutation.isPending,
-    hasNextPage: !!usersData?.pageToken,
-    fetchNextPage: () => fetchUsers(usersData?.pageToken)
+    error: error || createRoleMutation.error || updateRoleMutation.error || updateUserRoleMutation.error
   };
 }

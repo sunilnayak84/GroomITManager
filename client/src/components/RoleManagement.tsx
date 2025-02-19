@@ -123,8 +123,7 @@ export function RoleManagement() {
       roles,
       isLoadingRoles,
       users,
-      isLoadingUsers,
-      hasNextPage
+      isLoadingUsers
     });
 
     if (roles) {
