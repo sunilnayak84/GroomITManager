@@ -1,10 +1,7 @@
 import { Router, Request, Response } from 'express';
-import { auth, db } from './firebase';
-import * as admin from 'firebase-admin';
+import { admin } from './firebase';
 import * as Express from 'express';
 import { staffManagementRouter } from './api/staff-management';
-import { getDatabase } from 'firebase-admin/database';
-import { getAuth } from 'firebase-admin/auth';
 
 const router = Router();
 
