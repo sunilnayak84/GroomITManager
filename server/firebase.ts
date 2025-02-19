@@ -10,28 +10,36 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Initialize Firebase Admin
 let firebaseApp: admin.app.App | null = null;
+let initializationAttempts = 0;
+const MAX_INIT_ATTEMPTS = 3;
 
 export function initializeFirebaseAdmin(): admin.app.App {
-  if (!firebaseApp) {
+  if (firebaseApp) {
+    return firebaseApp;
+  }
+
+  // Check if we're in development mode
+  const isDevelopment = process.env.NODE_ENV === 'development';
+
+  try {
+    console.log('[FIREBASE] Starting Firebase Admin initialization...');
+
+    if (isDevelopment) {
+      console.log('[FIREBASE] Initializing in development mode');
+      firebaseApp = admin.initializeApp({
+        projectId: 'demo-project',
+        credential: admin.credential.applicationDefault()
+      });
+      console.log('[FIREBASE] Development mode initialization successful');
+      return firebaseApp;
+    }
+
+    // Production initialization
     try {
-      console.log('[FIREBASE] Starting Firebase Admin initialization...');
-      console.log('[FIREBASE] Admin credential object:', typeof admin.credential, Object.keys(admin.credential));
-
-      // Read service account file
       const serviceAccountPath = join(__dirname, '../serviceAccount.json');
-      console.log('[FIREBASE] Reading service account from:', serviceAccountPath);
+      const serviceAccountContent = readFileSync(serviceAccountPath, 'utf8');
+      const serviceAccountData = JSON.parse(serviceAccountContent);
 
-      let serviceAccountData;
-      try {
-        const serviceAccountContent = readFileSync(serviceAccountPath, 'utf8');
-        serviceAccountData = JSON.parse(serviceAccountContent);
-        console.log('[FIREBASE] Service account parsed successfully');
-      } catch (error) {
-        console.error('[FIREBASE] Error reading service account:', error);
-        throw new Error('Failed to read service account file');
-      }
-
-      // Validate service account data
       if (!serviceAccountData.project_id || !serviceAccountData.private_key || !serviceAccountData.client_email) {
         throw new Error('Invalid service account data: missing required fields');
       }
@@ -45,59 +53,52 @@ export function initializeFirebaseAdmin(): admin.app.App {
         }
       }
 
-      const certConfig = {
-        projectId: serviceAccountData.project_id,
-        privateKey: privateKey,
-        clientEmail: serviceAccountData.client_email,
-      };
-      console.log('[FIREBASE] Cert config prepared:', { 
-        projectId: certConfig.projectId,
-        clientEmail: certConfig.clientEmail,
-        privateKeyLength: certConfig.privateKey.length 
-      });
-
-      // Initialize the app with credentials
-      const credential = admin.credential.cert(certConfig);
-      console.log('[FIREBASE] Credential created successfully');
+      console.log('[FIREBASE] Initializing with service account for project:', serviceAccountData.project_id);
 
       firebaseApp = admin.initializeApp({
-        credential,
-        databaseURL: process.env.FIREBASE_DATABASE_URL || `https://${serviceAccountData.project_id}-default-rtdb.asia-southeast1.firebasedatabase.app`
+        credential: admin.credential.cert({
+          projectId: serviceAccountData.project_id,
+          privateKey: privateKey,
+          clientEmail: serviceAccountData.client_email,
+        }),
+        databaseURL: `https://${serviceAccountData.project_id}-default-rtdb.asia-southeast1.firebasedatabase.app`
       });
 
-      console.log('[FIREBASE] Firebase Admin initialized successfully');
+      console.log('[FIREBASE] Production initialization successful');
       return firebaseApp;
     } catch (error) {
-      console.error('[FIREBASE] Error initializing Firebase Admin:', error);
-
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('[FIREBASE] Running in development mode, initializing with default app');
-        try {
-          firebaseApp = admin.initializeApp({
-            projectId: 'demo-project',
-            credential: admin.credential.applicationDefault()
-          });
-          return firebaseApp;
-        } catch (devError) {
-          console.error('[FIREBASE] Failed to initialize development app:', devError);
-          throw devError;
-        }
-      }
-
+      console.error('[FIREBASE] Service account initialization failed:', error);
       throw error;
     }
+  } catch (error) {
+    console.error('[FIREBASE] Initialization error:', error);
+
+    // If we're in development and previous attempts failed, try with minimal config
+    if (isDevelopment && initializationAttempts < MAX_INIT_ATTEMPTS) {
+      initializationAttempts++;
+      console.log(`[FIREBASE] Attempting minimal development initialization (Attempt ${initializationAttempts}/${MAX_INIT_ATTEMPTS})`);
+
+      try {
+        firebaseApp = admin.initializeApp({
+          projectId: 'demo-project'
+        });
+        console.log('[FIREBASE] Minimal development initialization successful');
+        return firebaseApp;
+      } catch (minimalError) {
+        console.error('[FIREBASE] Minimal initialization failed:', minimalError);
+        throw minimalError;
+      }
+    }
+
+    throw error;
   }
-  return firebaseApp;
 }
 
 export function getFirebaseAdmin(): admin.app.App {
-  if (!firebaseApp) {
-    return initializeFirebaseAdmin();
-  }
-  return firebaseApp;
+  return initializeFirebaseAdmin();
 }
 
-// Export the admin instance and services
+// Export the admin instance
 export { admin };
 
 // Initialize services after Firebase Admin is initialized

@@ -340,10 +340,12 @@ async function setupDevelopmentAdmin() {
   }
 }
 
-// Health check interval in milliseconds
+// Health check configuration
 const HEALTH_CHECK_INTERVAL = 30000; // 30 seconds
 const MAX_RETRIES = 3;
 let retryCount = 0;
+let lastHealthCheckTime = 0;
+const MIN_CHECK_INTERVAL = 5000; // Minimum 5 seconds between checks
 
 export async function setupAuth(app: Express) {
   const isDevelopment = process.env.NODE_ENV === 'development';
@@ -352,6 +354,12 @@ export async function setupAuth(app: Express) {
   // Setup connection health monitoring
   let isHealthy = true;
   const checkConnectionHealth = async () => {
+    const now = Date.now();
+    if (now - lastHealthCheckTime < MIN_CHECK_INTERVAL) {
+      return; // Prevent too frequent checks
+    }
+    lastHealthCheckTime = now;
+
     try {
       const auth = getAuth();
       await auth.listUsers(1); // Light query to check connection
@@ -376,8 +384,8 @@ export async function setupAuth(app: Express) {
           isHealthy = true; // Mark as healthy if reinitialization succeeds
         } catch (reinitError) {
           console.error('[AUTH] Failed to reinitialize Firebase Admin:', reinitError);
-          if (process.env.NODE_ENV === 'development') {
-            console.warn('[AUTH] Continuing in development mode despite reinitialization failure');
+          if (isDevelopment) {
+            console.warn('[AUTH] Development mode: Continuing with limited functionality');
             isHealthy = true; // Force healthy in development
           }
         }
@@ -385,8 +393,10 @@ export async function setupAuth(app: Express) {
     }
   };
 
-  // Start health monitoring
-  setInterval(checkConnectionHealth, HEALTH_CHECK_INTERVAL);
+  // Start health monitoring with a delayed initial check
+  setTimeout(() => {
+    setInterval(checkConnectionHealth, HEALTH_CHECK_INTERVAL);
+  }, 5000);
 
   try {
     // Initialize Firebase Admin
