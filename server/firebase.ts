@@ -6,12 +6,17 @@ import { getDatabase } from 'firebase-admin/database';
 // Initialize Firebase Admin
 let firebaseApp: admin.app.App;
 
-import serviceAccount from '../serviceAccount.json' assert { type: 'json' };
+import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export function initializeFirebaseAdmin(): admin.app.App {
   if (!firebaseApp) {
     try {
-      const serviceAccountData = serviceAccount;
+      const serviceAccountPath = join(__dirname, '..', 'serviceAccount.json');
+      const serviceAccountData = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
 
       firebaseApp = admin.initializeApp({
         credential: admin.credential.cert(serviceAccountData),
