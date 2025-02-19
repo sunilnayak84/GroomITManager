@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { getFirebaseAdmin, getUserRole, RoleTypes, DefaultPermissions } from '../firebase';
-import admin from 'firebase-admin';
+import { getUserRole, RoleTypes, DefaultPermissions, admin, getFirebaseAdmin } from '../firebase';
 
 // Import FirebaseUser interface
 import { FirebaseUser } from '../auth';

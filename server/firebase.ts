@@ -2,21 +2,26 @@ import * as admin from 'firebase-admin';
 import serviceAccount from '../serviceAccount.json';
 
 // Initialize Firebase Admin
-if (!admin.apps.length) {
-  try {
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
-    });
-    console.log('Firebase Admin initialized successfully');
-  } catch (error) {
-    console.error('Error initializing Firebase Admin:', error);
-    throw error;
+let firebaseApp: admin.app.App | null = null;
+
+export function getFirebaseAdmin(): admin.app.App {
+  if (!firebaseApp) {
+    try {
+      firebaseApp = admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+        databaseURL: 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
+      });
+      console.log('Firebase Admin initialized successfully');
+    } catch (error) {
+      console.error('Error initializing Firebase Admin:', error);
+      throw error;
+    }
   }
+  return firebaseApp;
 }
 
-// Export the initialized admin instance
+// Export the admin instance
 export { admin };
-
 
 // Role Types
 export enum RoleTypes {
@@ -112,34 +117,8 @@ export const InitialRoleConfigs = {
   }
 };
 
-//let firebaseApp: admin.app.App | null = null;
-export const db = admin.firestore();
-export const auth = admin.auth();
-
-/*export function getFirebaseAdmin(): admin.app.App {
-  if (firebaseApp) {
-    return firebaseApp;
-  }
-
-  try {
-    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
-    if (!serviceAccount.project_id) {
-      throw new Error('Invalid service account configuration');
-    }
-
-    firebaseApp = admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
-      databaseURL: 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
-    });
-
-    console.log('Firebase Admin initialized successfully');
-  } catch (error) {
-    console.error('Failed to initialize Firebase Admin:', error);
-    throw error;
-  }
-
-  return firebaseApp;
-}*/
+export const db = getFirebaseAdmin().firestore();
+export const auth = getFirebaseAdmin().auth();
 
 // Permission validation
 export function isValidPermission(permission: unknown): permission is Permission {
@@ -153,17 +132,12 @@ export function validatePermissions(permissions: unknown[]): Permission[] {
 
 // Initialize Firebase Admin
 export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
-  //if (firebaseApp) {
-  //  return firebaseApp;
-  //}
-
-  //return getFirebaseAdmin();
-    return admin.app();
+  return getFirebaseAdmin();
 }
 
 // Role management functions
 export async function getUserRole(userId: string): Promise<{ role: RoleTypes; permissions: Permission[] }> {
-  const firestore = admin.firestore();
+  const firestore = getFirebaseAdmin().firestore();
   const roleDoc = await firestore.collection('roles').doc(userId).get();
   const roleData = roleDoc.data();
 
@@ -185,9 +159,9 @@ export async function updateUserRole(
   role: RoleTypes,
   customPermissions?: Permission[]
 ): Promise<{ success: boolean; role: RoleTypes; permissions: Permission[] }> {
-  const app = admin.app();
-  const firestore = admin.firestore();
-  const auth = admin.auth();
+  const app = getFirebaseAdmin();
+  const firestore = app.firestore();
+  const auth = app.auth();
   const timestamp = new Date();
 
   await auth.getUser(userId);
@@ -214,9 +188,9 @@ export async function updateUserRole(
 }
 
 export async function setupAdminUser(adminEmail: string): Promise<void> {
-  const app = admin.app();
-  const auth = admin.auth();
-  const db = admin.database();
+  const app = getFirebaseAdmin();
+  const auth = app.auth();
+  const db = app.database();
 
   let userRecord;
   try {
@@ -254,7 +228,7 @@ export async function setupAdminUser(adminEmail: string): Promise<void> {
 }
 
 export async function listAllUsers(pageToken?: string) {
-  const auth = admin.auth();
+  const auth = getFirebaseAdmin().auth();
   const result = await auth.listUsers(100, pageToken);
 
   const users = await Promise.all(
@@ -278,7 +252,7 @@ export async function listAllUsers(pageToken?: string) {
 
 // Role definitions management
 export async function getRoleDefinitions() {
-  const db = admin.database();
+  const db = getFirebaseAdmin().database();
   const snapshot = await db.ref('role-definitions').once('value');
   return snapshot.val() || InitialRoleConfigs;
 }
@@ -288,7 +262,7 @@ export async function updateRoleDefinition(
   permissions: Permission[],
   description?: string
 ) {
-  const db = admin.database();
+  const db = getFirebaseAdmin().database();
   const timestamp = Date.now();
 
   const roleRef = db.ref(`role-definitions/${roleName}`);
