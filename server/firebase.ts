@@ -1,30 +1,83 @@
-import * as admin from 'firebase-admin';
+import admin from 'firebase-admin';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuth } from 'firebase-admin/auth';
 import { getDatabase } from 'firebase-admin/database';
-
-// Initialize Firebase Admin
-let firebaseApp: admin.app.App;
-
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+// Initialize Firebase Admin
+let firebaseApp: admin.app.App | null = null;
+
 export function initializeFirebaseAdmin(): admin.app.App {
   if (!firebaseApp) {
     try {
+      console.log('[FIREBASE] Starting Firebase Admin initialization...');
+      console.log('[FIREBASE] Admin credential object:', typeof admin.credential, Object.keys(admin.credential));
+
+      // Read service account file
       const serviceAccountPath = join(__dirname, '../serviceAccount.json');
-      const serviceAccountData = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
+      console.log('[FIREBASE] Reading service account from:', serviceAccountPath);
+
+      let serviceAccountData;
+      try {
+        const serviceAccountContent = readFileSync(serviceAccountPath, 'utf8');
+        serviceAccountData = JSON.parse(serviceAccountContent);
+        console.log('[FIREBASE] Service account parsed successfully');
+      } catch (error) {
+        console.error('[FIREBASE] Error reading service account:', error);
+        throw new Error('Failed to read service account file');
+      }
+
+      // Validate service account data
+      if (!serviceAccountData.project_id || !serviceAccountData.private_key || !serviceAccountData.client_email) {
+        throw new Error('Invalid service account data: missing required fields');
+      }
+
+      // Format private key correctly
+      const privateKey = serviceAccountData.private_key.replace(/\\n/g, '\n');
+
+      const certConfig = {
+        projectId: serviceAccountData.project_id,
+        privateKey: privateKey,
+        clientEmail: serviceAccountData.client_email,
+      };
+      console.log('[FIREBASE] Cert config prepared:', { 
+        projectId: certConfig.projectId,
+        clientEmail: certConfig.clientEmail,
+        privateKeyLength: certConfig.privateKey.length 
+      });
+
+      // Initialize the app with credentials
+      const credential = admin.credential.cert(certConfig);
+      console.log('[FIREBASE] Credential created successfully');
 
       firebaseApp = admin.initializeApp({
-        credential: admin.credential.cert(serviceAccountData),
-        databaseURL: process.env.FIREBASE_DATABASE_URL || 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
+        credential,
+        databaseURL: process.env.FIREBASE_DATABASE_URL || `https://${serviceAccountData.project_id}-default-rtdb.asia-southeast1.firebasedatabase.app`
       });
-      console.log('Firebase Admin initialized successfully');
+
+      console.log('[FIREBASE] Firebase Admin initialized successfully');
+      return firebaseApp;
     } catch (error) {
-      console.error('Error initializing Firebase Admin:', error);
+      console.error('[FIREBASE] Error initializing Firebase Admin:', error);
+
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('[FIREBASE] Running in development mode, initializing with default app');
+        try {
+          firebaseApp = admin.initializeApp({
+            projectId: 'demo-project',
+            credential: admin.credential.applicationDefault()
+          });
+          return firebaseApp;
+        } catch (devError) {
+          console.error('[FIREBASE] Failed to initialize development app:', devError);
+          throw devError;
+        }
+      }
+
       throw error;
     }
   }
@@ -40,9 +93,12 @@ export function getFirebaseAdmin(): admin.app.App {
 
 // Export the admin instance and services
 export { admin };
-export const db = getFirestore(getFirebaseAdmin());
-export const auth = getAuth(getFirebaseAdmin());
-export const rtdb = getDatabase(getFirebaseAdmin());
+
+// Initialize services after Firebase Admin is initialized
+const app = getFirebaseAdmin();
+export const db = getFirestore(app);
+export const auth = getAuth(app);
+export const rtdb = getDatabase(app);
 
 // Role Types
 export enum RoleTypes {
