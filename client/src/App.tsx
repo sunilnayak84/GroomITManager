@@ -2,7 +2,7 @@
 import React from 'react';
 import { Route, Switch } from 'wouter';
 import Layout from './components/Layout';
-import { RoleManagement } from './components/RoleManagement';
+import RoleManagementPage from './pages/RoleManagementPage';
 import StaffAvailabilityPage from './pages/staff-availability';
 
 export default function App() {
