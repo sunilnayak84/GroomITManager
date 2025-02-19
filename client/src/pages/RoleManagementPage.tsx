@@ -1,4 +1,4 @@
-import { RoleManagement } from "@/components/RoleManagement";
+import { RoleManagement } from "../components/RoleManagement";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function RoleManagementPage() {
