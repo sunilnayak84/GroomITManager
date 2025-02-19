@@ -3,10 +3,12 @@ import * as admin from 'firebase-admin';
 // Initialize Firebase Admin
 let firebaseApp: admin.app.App | null = null;
 
-export function getFirebaseAdmin(): admin.app.App {
+export async function getFirebaseAdmin(): Promise<admin.app.App> {
   if (!firebaseApp) {
     try {
-      const serviceAccount = require('../serviceAccount.json');
+      const { default: serviceAccount } = await import('../serviceAccount.json', {
+        assert: { type: 'json' }
+      });
       
       firebaseApp = admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
