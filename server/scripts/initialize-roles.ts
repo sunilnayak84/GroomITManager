@@ -1,6 +1,7 @@
 import * as admin from 'firebase-admin';
 import { getDatabase } from 'firebase-admin/database';
 import { getAuth } from 'firebase-admin/auth';
+import { getFirestore } from 'firebase-admin/firestore';
 import { 
   RoleTypes, 
   DefaultPermissions,

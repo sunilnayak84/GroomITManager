@@ -58,18 +58,13 @@ async function fetchRoles(): Promise<Role[]> {
     });
 
     console.log('[ROLES] Fetched roles:', roles);
-
-    if (response.status === 401) {
-      // Token expired, refresh and retry
-      const newToken = await auth.currentUser.getIdToken(true);
-      return await fetchRoles(); // Retry with new token
-    }
     
-    if (!response.ok) {
-      throw new Error(`Failed to fetch roles: ${response.statusText}`);
-    }
-    
-    const fetchedRoles = await response.json() as Role[];
+    // Sort and return the roles
+    return roles.sort((roleA: Role, roleB: Role) => {
+      if (roleA.isSystem && !roleB.isSystem) return -1;
+      if (!roleB.isSystem && roleA.isSystem) return 1;
+      return roleA.name.localeCompare(roleB.name);
+    });
     console.log('[ROLES] Fetched roles:', fetchedRoles);
     
     // Sort roles: system roles first, then alphabetically
