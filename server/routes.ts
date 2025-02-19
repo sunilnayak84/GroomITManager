@@ -18,7 +18,7 @@ router.use((req, res, next) => {
 });
 
 // Role management endpoints
-router.get('/api/roles', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
+router.get('/roles', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
   try {
     console.log('[ROLES] Fetching role definitions...');
     const firestore = admin.firestore();
@@ -41,7 +41,58 @@ router.get('/api/roles', authenticateFirebase, requireRole(['admin']), async (re
   }
 });
 
-router.get('/api/users', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
+router.post('/roles', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
+  try {
+    const { name, permissions } = req.body;
+
+    if (!name || !permissions) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const firestore = admin.firestore();
+    await firestore.collection('role-definitions').doc(name).set({
+      permissions,
+      createdAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+
+    res.status(201).json({
+      id: name,
+      name,
+      permissions
+    });
+  } catch (error) {
+    console.error('[ROLES] Error creating role:', error);
+    res.status(500).json({ error: 'Failed to create role' });
+  }
+});
+
+router.put('/roles/:name', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
+  try {
+    const { name } = req.params;
+    const { permissions } = req.body;
+
+    if (!permissions) {
+      return res.status(400).json({ error: 'Missing permissions' });
+    }
+
+    const firestore = admin.firestore();
+    await firestore.collection('role-definitions').doc(name).update({
+      permissions,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+
+    res.json({
+      id: name,
+      name,
+      permissions
+    });
+  } catch (error) {
+    console.error('[ROLES] Error updating role:', error);
+    res.status(500).json({ error: 'Failed to update role' });
+  }
+});
+
+router.get('/users', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
   try {
     console.log('[USERS] Fetching users...');
     const { pageToken } = req.query;
@@ -80,9 +131,43 @@ router.get('/api/users', authenticateFirebase, requireRole(['admin']), async (re
   }
 });
 
+router.post('/users/:userId/role', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const { role } = req.body;
+
+    if (!userId || !role) {
+      return res.status(400).json({ error: 'Missing userId or role' });
+    }
+
+    console.log('[USERS] Updating role for user:', userId, 'to:', role);
+
+    const firestore = admin.firestore();
+    const auth = admin.auth();
+
+    // Update Firestore
+    await firestore.collection('users').doc(userId).set({
+      role,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    // Update custom claims
+    await auth.setCustomUserClaims(userId, { role });
+
+    console.log('[USERS] Successfully updated role for user:', userId);
+    res.json({ message: 'Role updated successfully' });
+  } catch (error) {
+    console.error('[USERS] Error updating user role:', error);
+    res.status(500).json({ 
+      error: 'Failed to update user role',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
 // Register routes
 export function registerRoutes(app: Express.Application) {
-  // Mount all routes directly under /api without the authenticateFirebase middleware
+  // Mount all routes under /api
   app.use('/api', router);
 
   // API 404 handler
