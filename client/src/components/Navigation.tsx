@@ -37,9 +37,7 @@ export default function Navigation() {
     { href: "/services", icon: Calendar, label: "Services Management" },
     { href: "/staff", icon: Users, label: "Staff Management" },
     { href: "/staff-availability", icon: Clock, label: "Staff Availability" },
-    ...(user?.role === 'admin' || user?.role === 'manager' ? [
-      { href: "/settings/roles", icon: Shield, label: "Role Management" }
-    ] : []),
+    { href: "/roles", icon: Shield, label: "Role Management" },
   ];
 
   return (
