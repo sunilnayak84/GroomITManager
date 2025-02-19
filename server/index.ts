@@ -6,7 +6,7 @@ import { initializeFirebaseAdmin } from "./firebase.js";
 import { setupAuth } from "./auth.js";
 import path from "path";
 import fs from "fs";
-import cors from 'cors';
+import cors from 'cors'; // Added import statement for cors
 import { logger } from "./utils/logger.js";
 
 // Configure Express app

@@ -1,11 +1,10 @@
 import { type Express } from "express";
 import * as admin from "firebase-admin";
 import { 
-  initializeFirebaseAdmin,
   RoleTypes,
   DefaultPermissions,
   Permission,
-  getFirebaseAdmin
+  admin
 } from "./firebase";
 import { getAuth } from "firebase-admin/auth";
 import { getDatabase } from "firebase-admin/database";
