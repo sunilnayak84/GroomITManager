@@ -1,19 +1,22 @@
+
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Route, Switch } from 'wouter';
+import Layout from './components/Layout';
+import { RoleManagement } from './components/RoleManagement';
+import StaffAvailabilityPage from './pages/staff-availability';
 
-// Dummy components
-const StaffAvailabilityPage = () => <h1>Staff Availability</h1>;
-const RoleManagementPage = () => <h1>Role Management</h1>;
-
-function App() {
+export default function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/staff-availability" element={<StaffAvailabilityPage />} />
-        <Route path="/roles" element={<RoleManagementPage />} /> {/* Updated route */}
-      </Routes>
-    </Router>
+    <Layout>
+      <Switch>
+        <Route path="/roles" component={RoleManagement} />
+        <Route path="/staff-availability" component={StaffAvailabilityPage} />
+        <Route>
+          <div className="flex items-center justify-center min-h-screen">
+            <h1 className="text-2xl font-bold">404 Page Not Found</h1>
+          </div>
+        </Route>
+      </Switch>
+    </Layout>
   );
 }
-
-export default App;
