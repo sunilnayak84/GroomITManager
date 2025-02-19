@@ -6,16 +6,15 @@ import { getDatabase } from 'firebase-admin/database';
 // Initialize Firebase Admin
 let firebaseApp: admin.app.App;
 
+import serviceAccount from '../serviceAccount.json' assert { type: 'json' };
+
 export function initializeFirebaseAdmin(): admin.app.App {
   if (!firebaseApp) {
     try {
-      const serviceAccount = JSON.parse(
-        await import('../serviceAccount.json', { assert: { type: 'json' } })
-          .then(module => JSON.stringify(module.default))
-      );
+      const serviceAccountData = serviceAccount;
 
       firebaseApp = admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
+        credential: admin.credential.cert(serviceAccountData),
         databaseURL: process.env.FIREBASE_DATABASE_URL || 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
       });
       console.log('Firebase Admin initialized successfully');
