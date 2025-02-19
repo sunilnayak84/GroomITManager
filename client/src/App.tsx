@@ -1,17 +1,24 @@
-
 import React from 'react';
 import { Route, Switch } from 'wouter';
 import Layout from './components/Layout';
 import RoleManagementPage from './pages/RoleManagementPage';
 import StaffAvailabilityPage from './pages/staff-availability';
+import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
   return (
     <Layout>
       <Switch>
-        <Route path="/role-management" component={RoleManagementPage} />
-        <Route path="/settings/role-management" component={RoleManagementPage} />
-        <Route path="/staff-availability" component={StaffAvailabilityPage} />
+        <Route path="/settings/role-management">
+          <ProtectedRoute allowedRoles={['admin']}>
+            <RoleManagementPage />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/staff-availability">
+          <ProtectedRoute allowedRoles={['admin', 'manager']}>
+            <StaffAvailabilityPage />
+          </ProtectedRoute>
+        </Route>
         <Route>
           <div className="flex items-center justify-center min-h-screen">
             <h1 className="text-2xl font-bold">404 Page Not Found</h1>
