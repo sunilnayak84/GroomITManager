@@ -1,6 +1,6 @@
 import { type Express } from "express";
 import * as admin from "firebase-admin";
-import { 
+import {
   RoleTypes,
   DefaultPermissions,
   Permission,
@@ -169,8 +169,8 @@ export async function createUserInDatabase(user: FirebaseUser) {
         email: user.email || '',
         name: user.name,
         displayName: user.displayName,
-        role: (user.role === 'admin' || user.role === 'manager' || user.role === 'staff' || user.role === 'receptionist') 
-          ? user.role 
+        role: (user.role === 'admin' || user.role === 'manager' || user.role === 'staff' || user.role === 'receptionist')
+          ? user.role
           : 'staff' as const,
         permissions: user.permissions || RolePermissions[user.role] || [],
         isActive: true,
@@ -278,7 +278,7 @@ export async function setUserRole(userId: string, role: keyof typeof RoleTypes) 
     return true;
   } catch (error) {
     console.error('Error setting user role:', error);
-    throw error instanceof Error 
+    throw error instanceof Error
       ? new Error(`Failed to set user role: ${error.message}`)
       : new Error('Failed to set user role: Unknown error');
   }
@@ -342,6 +342,8 @@ async function setupDevelopmentAdmin() {
 
 // Health check interval in milliseconds
 const HEALTH_CHECK_INTERVAL = 30000; // 30 seconds
+const MAX_RETRIES = 3;
+let retryCount = 0;
 
 export async function setupAuth(app: Express) {
   const isDevelopment = process.env.NODE_ENV === 'development';
@@ -356,11 +358,29 @@ export async function setupAuth(app: Express) {
       if (!isHealthy) {
         console.log('[AUTH] Connection restored');
         isHealthy = true;
+        retryCount = 0; // Reset retry count on successful connection
       }
     } catch (error) {
       if (isHealthy) {
         console.error('[AUTH] Connection health check failed:', error);
         isHealthy = false;
+      }
+
+      // Handle credential errors specifically
+      if ((error as any).code === 'app/invalid-credential' && retryCount < MAX_RETRIES) {
+        retryCount++;
+        console.log(`[AUTH] Attempting to reinitialize Firebase Admin (Attempt ${retryCount}/${MAX_RETRIES})`);
+        try {
+          await initializeFirebaseAdmin();
+          console.log('[AUTH] Successfully reinitialized Firebase Admin');
+          isHealthy = true; // Mark as healthy if reinitialization succeeds
+        } catch (reinitError) {
+          console.error('[AUTH] Failed to reinitialize Firebase Admin:', reinitError);
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('[AUTH] Continuing in development mode despite reinitialization failure');
+            isHealthy = true; // Force healthy in development
+          }
+        }
       }
     }
   };
@@ -383,9 +403,9 @@ export async function setupAuth(app: Express) {
       try {
         const authHeader = req.headers.authorization;
         if (!authHeader?.startsWith('Bearer ')) {
-          return res.status(401).json({ 
+          return res.status(401).json({
             message: "Not authenticated",
-            code: "NO_TOKEN" 
+            code: "NO_TOKEN"
           });
         }
 
@@ -449,14 +469,14 @@ export async function setupAuth(app: Express) {
         console.error('[AUTH] Authentication error:', error);
 
         if (error instanceof Error) {
-          return res.status(401).json({ 
+          return res.status(401).json({
             message: "Authentication failed",
             error: error.message,
             code: "AUTH_ERROR"
           });
         }
 
-        return res.status(401).json({ 
+        return res.status(401).json({
           message: "Authentication failed",
           code: "UNKNOWN_ERROR"
         });
@@ -466,9 +486,9 @@ export async function setupAuth(app: Express) {
     // Simple auth check endpoint
     app.get("/api/user", (req, res) => {
       if (!req.user) {
-        return res.status(401).json({ 
+        return res.status(401).json({
           message: "Not authenticated",
-          code: "NO_USER" 
+          code: "NO_USER"
         });
       }
       res.json(req.user);

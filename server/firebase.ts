@@ -37,7 +37,13 @@ export function initializeFirebaseAdmin(): admin.app.App {
       }
 
       // Format private key correctly
-      const privateKey = serviceAccountData.private_key.replace(/\\n/g, '\n');
+      let privateKey = serviceAccountData.private_key;
+      if (privateKey) {
+        privateKey = privateKey.replace(/\\n/g, '\n').replace(/^['"]|['"]$/g, '');
+        if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
+          privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----`;
+        }
+      }
 
       const certConfig = {
         projectId: serviceAccountData.project_id,
