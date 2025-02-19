@@ -102,11 +102,20 @@ export function RoleManagement() {
     isUpdating,
     users,
     isLoadingUsers,
-    fetchNextPage,
-    hasNextPage,
     updateUserRole,
-    isUpdatingUserRole
+    isUpdatingUserRole,
+    error
   } = useRoles();
+
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  }, [error]);
 
   useEffect(() => {
     // Enhanced debugging logs
@@ -184,6 +193,7 @@ export function RoleManagement() {
         permissions: [],
         description: '',
       });
+      form.clearErrors();
     } catch (error) {
       console.error('Error saving role:', error);
       toast({
@@ -396,7 +406,13 @@ export function RoleManagement() {
                       <Select
                         value={user.role}
                         disabled={isUpdatingUserRole}
-                        onValueChange={(value) => updateUserRole({ userId: user.uid, role: value })}
+                        onValueChange={(value) => {
+                          toast({
+                            title: "Updating role...",
+                            description: "Please wait while we update the user's role"
+                          });
+                          updateUserRole({ userId: user.uid, role: value });
+                        }}
                       >
                         <SelectTrigger className="w-[180px]">
                           <SelectValue placeholder="Select role" />

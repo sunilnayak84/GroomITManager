@@ -91,9 +91,10 @@ async function updateUserRole(userId: string, role: string): Promise<void> {
 export function useRoles() {
   const queryClient = useQueryClient();
 
-  const { data: roles, isLoading: isLoadingRoles } = useQuery({
+  const { data: roles, isLoading: isLoadingRoles, error } = useQuery({
     queryKey: ['roles'],
-    queryFn: fetchRoles
+    queryFn: fetchRoles,
+    retry: 1
   });
 
   const { data: usersData, isLoading: isLoadingUsers } = useQuery({
