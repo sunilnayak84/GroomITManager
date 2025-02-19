@@ -1,30 +1,29 @@
+
 import * as admin from 'firebase-admin';
+import { getFirestore } from 'firebase-admin/firestore';
+import { getAuth } from 'firebase-admin/auth';
+import { getDatabase } from 'firebase-admin/database';
 
 // Initialize Firebase Admin
-let firebaseApp: admin.app.App | null = null;
+let firebaseApp: admin.app.App;
 
-export async function getFirebaseAdmin(): Promise<admin.app.App> {
-  if (!firebaseApp) {
-    try {
-      const { default: serviceAccount } = await import('../serviceAccount.json', {
-        assert: { type: 'json' }
-      });
-      
-      firebaseApp = admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-        databaseURL: process.env.FIREBASE_DATABASE_URL || 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
-      });
-      console.log('Firebase Admin initialized successfully');
-    } catch (error) {
-      console.error('Error initializing Firebase Admin:', error);
-      throw error;
-    }
-  }
-  return firebaseApp;
+try {
+  const serviceAccount = require('../serviceAccount.json');
+  firebaseApp = admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: process.env.FIREBASE_DATABASE_URL || 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
+  });
+  console.log('Firebase Admin initialized successfully');
+} catch (error) {
+  console.error('Error initializing Firebase Admin:', error);
+  throw error;
 }
 
-// Export the admin instance
+// Export the admin instance and services
 export { admin };
+export const db = getFirestore(firebaseApp);
+export const auth = getAuth(firebaseApp);
+export const rtdb = getDatabase(firebaseApp);
 
 // Role Types
 export enum RoleTypes {
@@ -120,9 +119,6 @@ export const InitialRoleConfigs = {
   }
 };
 
-export const db = getFirebaseAdmin().firestore();
-export const auth = getFirebaseAdmin().auth();
-
 // Permission validation
 export function isValidPermission(permission: unknown): permission is Permission {
   if (typeof permission !== 'string') return false;
@@ -133,16 +129,10 @@ export function validatePermissions(permissions: unknown[]): Permission[] {
   return permissions.filter(isValidPermission);
 }
 
-// Initialize Firebase Admin
-export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
-  return getFirebaseAdmin();
-}
-
 // Role management functions
 export async function getUserRole(userId: string): Promise<{ role: RoleTypes; permissions: Permission[] }> {
-  const firestore = getFirebaseAdmin().firestore();
   try {
-    const roleDoc = await firestore.collection('roles').doc(userId).get();
+    const roleDoc = await db.collection('roles').doc(userId).get();
     const roleData = roleDoc.data();
 
     if (!roleData) {
@@ -172,16 +162,11 @@ export async function updateUserRole(
   role: RoleTypes,
   customPermissions?: Permission[]
 ): Promise<{ success: boolean; role: RoleTypes; permissions: Permission[] }> {
-  const app = getFirebaseAdmin();
-  const firestore = app.firestore();
-  const auth = app.auth();
-  const timestamp = new Date();
-
   await auth.getUser(userId);
-
+  const timestamp = new Date();
   const permissions = customPermissions || DefaultPermissions[role];
 
-  await firestore.collection('roles').doc(userId).set({
+  await db.collection('roles').doc(userId).set({
     role,
     permissions,
     updatedAt: timestamp
@@ -201,10 +186,6 @@ export async function updateUserRole(
 }
 
 export async function setupAdminUser(adminEmail: string): Promise<void> {
-  const app = getFirebaseAdmin();
-  const auth = app.auth();
-  const db = app.database();
-
   let userRecord;
   try {
     userRecord = await auth.getUserByEmail(adminEmail);
@@ -219,14 +200,13 @@ export async function setupAdminUser(adminEmail: string): Promise<void> {
   const userId = userRecord.uid;
 
   // Initialize role definitions if they don't exist
-  const roleDefsRef = db.ref('role-definitions');
-  const roleDefsSnapshot = await roleDefsRef.once('value');
-  if (!roleDefsSnapshot.exists()) {
-    await roleDefsRef.set(InitialRoleConfigs);
+  const snapshot = await rtdb.ref('role-definitions').once('value');
+  if (!snapshot.exists()) {
+    await rtdb.ref('role-definitions').set(InitialRoleConfigs);
   }
 
   // Set up admin role
-  await db.ref(`roles/${userId}`).set({
+  await rtdb.ref(`roles/${userId}`).set({
     role: RoleTypes.admin,
     permissions: DefaultPermissions[RoleTypes.admin],
     updatedAt: Date.now(),
@@ -241,7 +221,6 @@ export async function setupAdminUser(adminEmail: string): Promise<void> {
 }
 
 export async function listAllUsers(pageToken?: string) {
-  const auth = getFirebaseAdmin().auth();
   const result = await auth.listUsers(100, pageToken);
 
   const users = await Promise.all(
@@ -265,8 +244,7 @@ export async function listAllUsers(pageToken?: string) {
 
 // Role definitions management
 export async function getRoleDefinitions() {
-  const db = getFirebaseAdmin().database();
-  const snapshot = await db.ref('role-definitions').once('value');
+  const snapshot = await rtdb.ref('role-definitions').once('value');
   return snapshot.val() || InitialRoleConfigs;
 }
 
@@ -275,10 +253,7 @@ export async function updateRoleDefinition(
   permissions: Permission[],
   description?: string
 ) {
-  const db = getFirebaseAdmin().database();
-  const timestamp = Date.now();
-
-  const roleRef = db.ref(`role-definitions/${roleName}`);
+  const roleRef = rtdb.ref(`role-definitions/${roleName}`);
   const snapshot = await roleRef.once('value');
 
   if (!snapshot.exists()) {
@@ -291,6 +266,7 @@ export async function updateRoleDefinition(
     throw new Error('Cannot modify system roles');
   }
 
+  const timestamp = Date.now();
   const updatedRole = {
     ...currentRole,
     permissions,
