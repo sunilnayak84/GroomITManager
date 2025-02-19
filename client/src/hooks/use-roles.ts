@@ -1,6 +1,6 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getAuth } from 'firebase/auth';
+import { toast } from '@/components/ui/use-toast';
 
 interface Role {
   id: string;
@@ -24,88 +24,112 @@ interface UsersResponse {
   pageToken?: string | null;
 }
 
-async function fetchRoles(): Promise<Role[]> {
+async function fetchWithAuth(url: string, options: RequestInit = {}) {
   const auth = getAuth();
   const token = await auth.currentUser?.getIdToken();
-  const response = await fetch('/api/roles', {
-    headers: { 'Authorization': `Bearer ${token}` }
+
+  if (!token) {
+    throw new Error('Not authenticated');
+  }
+
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      ...options.headers,
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
   });
-  if (!response.ok) throw new Error('Failed to fetch roles');
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('API Error:', errorText);
+    throw new Error(errorText || 'Failed to fetch data');
+  }
+
   return response.json();
+}
+
+async function fetchRoles(): Promise<Role[]> {
+  try {
+    return await fetchWithAuth('/api/roles');
+  } catch (error) {
+    console.error('Error fetching roles:', error);
+    throw error;
+  }
 }
 
 async function createRole(data: { name: string; permissions: string[] }): Promise<Role> {
-  const auth = getAuth();
-  const token = await auth.currentUser?.getIdToken();
-  const response = await fetch('/api/roles', {
+  return fetchWithAuth('/api/roles', {
     method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify(data)
   });
-  if (!response.ok) throw new Error('Failed to create role');
-  return response.json();
 }
 
 async function updateRole(data: { name: string; permissions: string[] }): Promise<Role> {
-  const auth = getAuth();
-  const token = await auth.currentUser?.getIdToken();
-  const response = await fetch(`/api/roles/${data.name}`, {
+  return fetchWithAuth(`/api/roles/${data.name}`, {
     method: 'PUT',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify(data)
   });
-  if (!response.ok) throw new Error('Failed to update role');
-  return response.json();
 }
 
 async function fetchUsers(pageToken?: string): Promise<UsersResponse> {
-  const auth = getAuth();
-  const token = await auth.currentUser?.getIdToken();
-  const response = await fetch(`/api/users${pageToken ? `?pageToken=${pageToken}` : ''}`, {
-    headers: { 'Authorization': `Bearer ${token}` }
-  });
-  if (!response.ok) throw new Error('Failed to fetch users');
-  return response.json();
+  return fetchWithAuth(`/api/users${pageToken ? `?pageToken=${pageToken}` : ''}`);
 }
 
-async function updateUserRole(userId: string, role: string): Promise<void> {
-  const auth = getAuth();
-  const token = await auth.currentUser?.getIdToken();
-  const response = await fetch(`/api/users/${userId}/role`, {
+async function updateUserRole({ userId, role }: { userId: string; role: string }): Promise<void> {
+  return fetchWithAuth(`/api/users/${userId}/role`, {
     method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify({ role })
   });
-  if (!response.ok) throw new Error('Failed to update user role');
 }
 
 export function useRoles() {
   const queryClient = useQueryClient();
 
-  const { data: roles, isLoading: isLoadingRoles, error } = useQuery({
+  const { data: roles, isLoading: isLoadingRoles, error: rolesError } = useQuery({
     queryKey: ['roles'],
     queryFn: fetchRoles,
-    retry: 1
+    retry: 1,
+    onError: (error: Error) => {
+      console.error('Error fetching roles:', error);
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive'
+      });
+    }
   });
 
-  const { data: usersData, isLoading: isLoadingUsers } = useQuery({
+  const { data: usersData, isLoading: isLoadingUsers, error: usersError } = useQuery({
     queryKey: ['users'],
-    queryFn: () => fetchUsers()
+    queryFn: () => fetchUsers(),
+    retry: 1,
+    onError: (error: Error) => {
+      console.error('Error fetching users:', error);
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive'
+      });
+    }
   });
 
   const createRoleMutation = useMutation({
     mutationFn: createRole,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['roles'] });
+      toast({
+        title: 'Success',
+        description: 'Role created successfully'
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive'
+      });
     }
   });
 
@@ -113,14 +137,35 @@ export function useRoles() {
     mutationFn: updateRole,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['roles'] });
+      toast({
+        title: 'Success',
+        description: 'Role updated successfully'
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive'
+      });
     }
   });
 
   const updateUserRoleMutation = useMutation({
-    mutationFn: ({ userId, role }: { userId: string; role: string }) => 
-      updateUserRole(userId, role),
+    mutationFn: updateUserRole,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
+      toast({
+        title: 'Success',
+        description: 'User role updated successfully'
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive'
+      });
     }
   });
 
@@ -135,6 +180,6 @@ export function useRoles() {
     isUpdating: updateRoleMutation.isPending,
     updateUserRole: updateUserRoleMutation.mutate,
     isUpdatingUserRole: updateUserRoleMutation.isPending,
-    error: error || createRoleMutation.error || updateRoleMutation.error || updateUserRoleMutation.error
+    error: rolesError || usersError || createRoleMutation.error || updateRoleMutation.error || updateUserRoleMutation.error
   };
 }

@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { admin } from './firebase';
 import * as Express from 'express';
 import { staffManagementRouter } from './api/staff-management';
+import { authenticateFirebase, requireRole } from './middleware/auth';
 
 const router = Router();
 
@@ -97,8 +98,9 @@ router.post('/staff/create', async (req: Request, res: Response) => {
 });
 
 // Role management endpoints
-router.get('/roles', async (req: Request, res: Response) => {
+router.get('/roles', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
   try {
+    console.log('[ROLES] Fetching role definitions...');
     const firestore = admin.firestore();
     const rolesSnapshot = await firestore.collection('role-definitions').get();
 
@@ -108,6 +110,7 @@ router.get('/roles', async (req: Request, res: Response) => {
       ...doc.data()
     }));
 
+    console.log('[ROLES] Successfully fetched roles:', roles.length);
     res.json(roles);
   } catch (error) {
     console.error('[ROLES] Error fetching roles:', error);
@@ -118,8 +121,9 @@ router.get('/roles', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/users', async (req: Request, res: Response) => {
+router.get('/users', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
   try {
+    console.log('[USERS] Fetching users...');
     const { pageToken } = req.query;
     const auth = admin.auth();
     const firestore = admin.firestore();
@@ -142,6 +146,7 @@ router.get('/users', async (req: Request, res: Response) => {
       })
     );
 
+    console.log('[USERS] Successfully fetched users:', users.length);
     res.json({
       users,
       pageToken: listUsersResult.pageToken
@@ -155,7 +160,7 @@ router.get('/users', async (req: Request, res: Response) => {
   }
 });
 
-router.post('/users/:userId/role', async (req: Request, res: Response) => {
+router.post('/users/:userId/role', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const { role } = req.body;
@@ -163,6 +168,8 @@ router.post('/users/:userId/role', async (req: Request, res: Response) => {
     if (!userId || !role) {
       return res.status(400).json({ error: 'Missing userId or role' });
     }
+
+    console.log('[USERS] Updating role for user:', userId, 'to:', role);
 
     const firestore = admin.firestore();
     const auth = admin.auth();
@@ -176,6 +183,7 @@ router.post('/users/:userId/role', async (req: Request, res: Response) => {
     // Update custom claims
     await auth.setCustomUserClaims(userId, { role });
 
+    console.log('[USERS] Successfully updated role for user:', userId);
     res.json({ message: 'Role updated successfully' });
   } catch (error) {
     console.error('[USERS] Error updating user role:', error);
@@ -188,6 +196,7 @@ router.post('/users/:userId/role', async (req: Request, res: Response) => {
 
 // Register routes
 export function registerRoutes(app: Express.Application) {
+  app.use('/api', authenticateFirebase);  // Global authentication middleware
   app.use('/api/staff-management', staffManagementRouter);
   app.use('/api', router);
 
