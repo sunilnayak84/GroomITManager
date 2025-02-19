@@ -15,18 +15,17 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export function initializeFirebaseAdmin(): admin.app.App {
   if (!firebaseApp) {
     try {
-      const serviceAccountPath = join(__dirname, '../serviceAccount.json');
-      const serviceAccountData = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
-
-      if (!serviceAccountData) {
-        throw new Error('Failed to load service account data');
+      const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+      
+      if (!privateKey || !process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL) {
+        throw new Error('Missing Firebase credentials');
       }
 
       firebaseApp = admin.initializeApp({
         credential: admin.credential.cert({
-          projectId: serviceAccountData.project_id,
-          clientEmail: serviceAccountData.client_email,
-          privateKey: serviceAccountData.private_key
+          projectId: process.env.FIREBASE_PROJECT_ID,
+          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+          privateKey: privateKey
         }),
         databaseURL: process.env.FIREBASE_DATABASE_URL || 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
       });
