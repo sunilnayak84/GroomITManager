@@ -1,4 +1,3 @@
-
 import * as admin from 'firebase-admin';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuth } from 'firebase-admin/auth';
@@ -7,23 +6,36 @@ import { getDatabase } from 'firebase-admin/database';
 // Initialize Firebase Admin
 let firebaseApp: admin.app.App;
 
-try {
-  const serviceAccount = require('../serviceAccount.json');
-  firebaseApp = admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: process.env.FIREBASE_DATABASE_URL || 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
-  });
-  console.log('Firebase Admin initialized successfully');
-} catch (error) {
-  console.error('Error initializing Firebase Admin:', error);
-  throw error;
+export function initializeFirebaseAdmin(): admin.app.App {
+  if (!firebaseApp) {
+    try {
+      const serviceAccount = require('../serviceAccount.json');
+
+      firebaseApp = admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+        databaseURL: process.env.FIREBASE_DATABASE_URL || 'https://replit-5ac6a-default-rtdb.asia-southeast1.firebasedatabase.app'
+      });
+      console.log('Firebase Admin initialized successfully');
+    } catch (error) {
+      console.error('Error initializing Firebase Admin:', error);
+      throw error;
+    }
+  }
+  return firebaseApp;
+}
+
+export function getFirebaseAdmin(): admin.app.App {
+  if (!firebaseApp) {
+    return initializeFirebaseAdmin();
+  }
+  return firebaseApp;
 }
 
 // Export the admin instance and services
 export { admin };
-export const db = getFirestore(firebaseApp);
-export const auth = getAuth(firebaseApp);
-export const rtdb = getDatabase(firebaseApp);
+export const db = getFirestore(getFirebaseAdmin());
+export const auth = getAuth(getFirebaseAdmin());
+export const rtdb = getDatabase(getFirebaseAdmin());
 
 // Role Types
 export enum RoleTypes {
