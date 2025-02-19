@@ -36,9 +36,24 @@ export function initializeFirebaseAdmin(): admin.app.App {
 
     // Production initialization
     try {
-      const serviceAccountPath = join(__dirname, '../serviceAccount.json');
-      const serviceAccountContent = readFileSync(serviceAccountPath, 'utf8');
-      const serviceAccountData = JSON.parse(serviceAccountContent);
+      let serviceAccountData;
+
+      // Try to get credentials from environment variable first
+      if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+        try {
+          serviceAccountData = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+          console.log('[FIREBASE] Using service account from environment variable');
+        } catch (parseError) {
+          console.error('[FIREBASE] Failed to parse FIREBASE_SERVICE_ACCOUNT:', parseError);
+          throw new Error('Invalid service account in environment variable');
+        }
+      } else {
+        // Fallback to file if environment variable is not available
+        const serviceAccountPath = join(__dirname, '../serviceAccount.json');
+        const serviceAccountContent = readFileSync(serviceAccountPath, 'utf8');
+        serviceAccountData = JSON.parse(serviceAccountContent);
+        console.log('[FIREBASE] Using service account from file');
+      }
 
       if (!serviceAccountData.project_id || !serviceAccountData.private_key || !serviceAccountData.client_email) {
         throw new Error('Invalid service account data: missing required fields');
