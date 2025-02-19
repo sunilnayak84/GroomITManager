@@ -4,7 +4,8 @@ import {
   RoleTypes,
   DefaultPermissions,
   Permission,
-  getFirebaseAdmin
+  getFirebaseAdmin,
+  initializeFirebaseAdmin
 } from "./firebase";
 import { getAuth } from "firebase-admin/auth";
 import { getDatabase } from "firebase-admin/database";

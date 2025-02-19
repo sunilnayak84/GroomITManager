@@ -65,10 +65,10 @@ async function fetchRoles(): Promise<Role[]> {
       if (!roleB.isSystem && roleA.isSystem) return 1;
       return roleA.name.localeCompare(roleB.name);
     });
-    console.log('[ROLES] Fetched roles:', fetchedRoles);
+    console.log('[ROLES] Fetched roles:', roles);
     
     // Sort roles: system roles first, then alphabetically
-    return fetchedRoles.sort((roleA: Role, roleB: Role) => {
+    return roles.sort((roleA: Role, roleB: Role) => {
       if (roleA.isSystem && !roleB.isSystem) return -1;
       if (!roleB.isSystem && roleA.isSystem) return 1;
       return roleA.name.localeCompare(roleB.name);
