@@ -22,7 +22,7 @@ export default function Sidebar() {
     { href: "/settings/working-hours", icon: Calendar, label: "Working Hours" },
     { href: "/settings/loyalty", icon: Package, label: "Loyalty Program" },
     ...(user?.role === 'admin' ? [
-      { href: "/settings/role-management", icon: Shield, label: "Role Management" }
+      { href: "/role-management", icon: Shield, label: "Role Management" }
     ] : []),
   ];
 
