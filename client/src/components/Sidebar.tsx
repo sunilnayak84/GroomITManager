@@ -20,9 +20,9 @@ export default function Sidebar() {
 
   const settingsLinks = [
     { href: "/settings/working-hours", icon: Calendar, label: "Working Hours" },
-    { href: "/settings/loyalty", icon: Package, label: "Loyalty Program" }, // Added Loyalty Program link
-    ...(user?.role === 'admin' || user?.role === 'manager' ? [
-      { href: "/settings/roles", icon: Shield, label: "Role Management" }
+    { href: "/settings/loyalty", icon: Package, label: "Loyalty Program" },
+    ...(user?.role === 'admin' ? [
+      { href: "/role-management", icon: Shield, label: "Role Management" }
     ] : []),
   ];
 
