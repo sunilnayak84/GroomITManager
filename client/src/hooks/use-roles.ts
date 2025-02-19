@@ -24,6 +24,8 @@ interface UsersResponse {
   pageToken?: string | null;
 }
 
+const API_BASE_URL = 'http://localhost:3000';
+
 async function fetchWithAuth(url: string, options: RequestInit = {}) {
   const auth = getAuth();
   const token = await auth.currentUser?.getIdToken();
@@ -32,23 +34,40 @@ async function fetchWithAuth(url: string, options: RequestInit = {}) {
     throw new Error('Not authenticated');
   }
 
-  console.log('[API] Making request to:', url);
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      ...options.headers,
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
-  });
+  console.log('[API] Making request to:', `${API_BASE_URL}${url}`);
+  try {
+    const response = await fetch(`${API_BASE_URL}${url}`, {
+      ...options,
+      headers: {
+        ...options.headers,
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include'
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('[API] Error response:', errorText);
-    throw new Error(errorText || 'Failed to fetch data');
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[API] Error response:', {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText
+      });
+      throw new Error(errorText || `HTTP error! status: ${response.status}`);
+    }
+
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return response.json();
+    } else {
+      const text = await response.text();
+      console.error('[API] Unexpected response type:', contentType, 'body:', text);
+      throw new Error('Invalid response format');
+    }
+  } catch (error) {
+    console.error('[API] Request failed:', error);
+    throw error;
   }
-
-  return response.json();
 }
 
 async function fetchRoles(): Promise<Role[]> {

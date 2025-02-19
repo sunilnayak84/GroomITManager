@@ -19,7 +19,7 @@ app.set('trust proxy', 1);
 
 // CORS configuration
 app.use(cors({
-  origin: true,
+  origin: ['http://localhost:5174', 'http://localhost:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -45,7 +45,11 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof SyntaxError && 'body' in err) {
     return res.status(400).json({ message: 'Invalid JSON' });
   }
-  next(err);
+
+  res.status(500).json({ 
+    error: 'Internal server error',
+    message: err.message
+  });
 });
 
 async function startServer(port: number) {
