@@ -107,11 +107,11 @@ function Router() {
             <Route path="/walks" component={DogWalkingPage} />
             <Route path="/inventory" component={InventoryPage} />
             <Route path="/marketplace" component={MarketplacePage} />
-            <Route path="/settings/working-hours" component={lazy(() => import('./pages/WorkingHoursPage'))} />
+            <Route path="/settings/working-hours" component={WorkingHoursPage} />
             <Route path="/settings/categories" component={lazy(() => import('./pages/settings/CategoriesPage'))} />
             <Route path="/settings/breeds" component={lazy(() => import('./pages/settings/BreedsPage'))} />
-            <Route path="/settings/roles" component={lazy(() => import('./pages/RoleManagementPage'))} />
-            <Route path="/settings/loyalty" component={lazy(() => import('./pages/settings/LoyaltyProgramPage'))} />
+            <Route path="/settings/role-management" component={RoleManagementPage} />
+            <Route path="/settings/loyalty" component={LoyaltyProgramPage} />
             <Route path="/settings/rewards" component={lazy(() => import('./pages/settings/RewardsManagementPage'))} />
             <Route path="/settings/staff" component={StaffManagementPage} />
             <Route path="/staff-availability" component={lazy(() => import('./pages/staff-availability'))} />
