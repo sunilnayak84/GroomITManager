@@ -22,22 +22,32 @@ async function initializeRoles() {
     const auth = getAuth(app);
     const timestamp = Date.now();
 
-    // Initialize role definitions
-    console.log('[ROLES] Setting up role definitions...');
-    const roleDefinitionsRef = db.ref('role-definitions');
+    // Initialize role definitions in Firestore
+    console.log('[ROLES] Setting up role definitions in Firestore...');
+    const firestore = getFirestore(app);
+    const roleDefinitionsRef = firestore.collection('role-definitions');
 
-    // Check if roles already exist
-    const existingRoles = await roleDefinitionsRef.once('value');
-    if (!existingRoles.exists()) {
+    // Check if roles exist
+    const existingRoles = await roleDefinitionsRef.get();
+    if (existingRoles.empty) {
       console.log('[ROLES] No existing roles found, initializing default roles...');
-      await roleDefinitionsRef.set(InitialRoleConfigs);
+      const batch = firestore.batch();
+      
+      for (const [roleName, roleData] of Object.entries(InitialRoleConfigs)) {
+        const roleRef = roleDefinitionsRef.doc(roleName);
+        batch.set(roleRef, {
+          ...roleData,
+          name: roleName,
+          updatedAt: new Date()
+        });
+      }
+      
+      await batch.commit();
       console.log('[ROLES] Default roles initialized successfully');
     } else {
       console.log('[ROLES] Existing roles found, skipping initialization');
-      
-      // Log existing roles for verification
-      const currentRoles = existingRoles.val();
-      console.log('[ROLES] Current roles:', Object.keys(currentRoles));
+      const currentRoles = existingRoles.docs.map(doc => doc.id);
+      console.log('[ROLES] Current roles:', currentRoles);
     }
     
     // Setup admin user

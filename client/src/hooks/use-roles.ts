@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { getAuth } from 'firebase/auth';
-import { getDatabase, ref, get, set, update } from 'firebase/database';
+import { getFirestore, collection, getDocs, doc, setDoc, updateDoc } from 'firebase/firestore';
 import { getApp } from 'firebase/app';
 import { toast } from '@/components/ui/use-toast';
 import type { UserRole } from './use-user';
@@ -33,26 +33,31 @@ interface FirebaseUsersResponse {
 
 async function fetchRoles(): Promise<Role[]> {
   try {
-    console.log('[ROLES] Starting role fetch...');
+    console.log('[ROLES] Starting role fetch from Firestore...');
     const auth = getAuth();
     if (!auth.currentUser) {
       console.warn('[ROLES] User not authenticated when fetching roles');
       return [];
     }
-    
-    // Get fresh ID token
-    const token = await auth.currentUser.getIdToken(true);
-    console.log('[ROLES] Got fresh ID token');
-    
-    // Fetch roles from backend API
-    const port = import.meta.env.VITE_SERVER_PORT || '3000';
-    const response = await fetch(`${window.location.protocol}//${window.location.hostname}:${port}/api/roles`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include'
+
+    const db = getFirestore();
+    const rolesSnapshot = await getDocs(collection(db, 'role-definitions'));
+    const roles: Role[] = [];
+
+    rolesSnapshot.forEach((doc) => {
+      const roleData = doc.data();
+      roles.push({
+        name: doc.id,
+        permissions: roleData.permissions || [],
+        description: roleData.description,
+        isSystem: roleData.isSystem,
+        createdAt: roleData.createdAt,
+        updatedAt: roleData.updatedAt,
+        canEdit: !roleData.isSystem
+      });
     });
+
+    console.log('[ROLES] Fetched roles:', roles);
 
     if (response.status === 401) {
       // Token expired, refresh and retry

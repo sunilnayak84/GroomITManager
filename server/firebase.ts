@@ -138,20 +138,30 @@ export async function initializeFirebaseAdmin(): Promise<admin.app.App> {
 // Role management functions
 export async function getUserRole(userId: string): Promise<{ role: RoleTypes; permissions: Permission[] }> {
   const firestore = getFirebaseAdmin().firestore();
-  const roleDoc = await firestore.collection('roles').doc(userId).get();
-  const roleData = roleDoc.data();
+  try {
+    const roleDoc = await firestore.collection('roles').doc(userId).get();
+    const roleData = roleDoc.data();
 
-  if (!roleData) {
+    if (!roleData) {
+      console.log(`[ROLES] No role found for user ${userId}, defaulting to staff`);
+      return {
+        role: RoleTypes.staff,
+        permissions: DefaultPermissions[RoleTypes.staff]
+      };
+    }
+
+    console.log(`[ROLES] Found role for user ${userId}:`, roleData);
+    return {
+      role: roleData.role as RoleTypes,
+      permissions: roleData.permissions as Permission[]
+    };
+  } catch (error) {
+    console.error(`[ROLES] Error getting role for user ${userId}:`, error);
     return {
       role: RoleTypes.staff,
       permissions: DefaultPermissions[RoleTypes.staff]
     };
   }
-
-  return {
-    role: roleData.role as RoleTypes,
-    permissions: roleData.permissions as Permission[]
-  };
 }
 
 export async function updateUserRole(
