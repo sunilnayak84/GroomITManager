@@ -101,7 +101,8 @@ async function fetchFirebaseUsers(params: { pageParam?: string | null }): Promis
     const makeRequest = async (authToken: string) => {
       // Updated URL to use the correct port
       const port = import.meta.env.VITE_SERVER_PORT || '3000';
-      const response = await fetch(`${window.location.protocol}//${window.location.hostname}:${port}/api/firebase-users?${searchParams.toString()}`, {
+      const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+      const response = await fetch(`${baseUrl}:${port}/api/firebase-users?${searchParams.toString()}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${authToken}`,
