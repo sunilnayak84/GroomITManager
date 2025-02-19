@@ -133,7 +133,7 @@ export function RoleManagement() {
         permissions: role.permissions
       })));
     }
-  }, [roles, isLoadingRoles, users, isLoadingUsers, hasNextPage]);
+  }, [roles, isLoadingRoles, users, isLoadingUsers]);
 
   const roleEntries = useMemo(() =>
     roles ? roles.map(role => [role.name, role.permissions]) : [],
