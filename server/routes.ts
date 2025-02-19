@@ -12,93 +12,13 @@ router.use((req, res, next) => {
     method: req.method,
     url: req.url,
     path: req.path,
-    body: req.body,
     baseUrl: req.baseUrl
   });
   next();
 });
 
-// Legacy staff creation endpoint - will be deprecated
-router.post('/staff/create', async (req: Request, res: Response) => {
-  console.log('[STAFF] Creation request received:', req.body);
-  try {
-    const { email, password, name, role, phone, specialties, experienceYears, maxDailyAppointments, walkingPreferences } = req.body;
-
-    // Input validation
-    if (!email || !name || !role || !phone) {
-      return res.status(400).json({
-        message: 'Missing required fields',
-        details: { email: !email, name: !name, role: !role, phone: !phone }
-      });
-    }
-
-    // Create user in Firebase Auth
-    const userRecord = await admin.auth().createUser({
-      email,
-      password: password || 'Welcome123!',
-      displayName: name,
-      phoneNumber: phone,
-      disabled: false
-    });
-
-    // Set custom claims
-    await admin.auth().setCustomUserClaims(userRecord.uid, {
-      role,
-      isStaff: true,
-      createdAt: new Date().toISOString()
-    });
-
-    // Create Firestore document
-    const userData = {
-      id: userRecord.uid,
-      email,
-      name,
-      phone,
-      role,
-      isActive: true,
-      specialties: specialties || [],
-      experienceYears: experienceYears || 0,
-      maxDailyAppointments: maxDailyAppointments || 8,
-      walkingPreferences: role === 'pet_walker' ? {
-        maxDistance: walkingPreferences?.maxDistance || 5,
-        preferredAreas: walkingPreferences?.preferredAreas || [],
-        availableTimeSlots: walkingPreferences?.availableTimeSlots || [],
-        simultaneousWalks: walkingPreferences?.simultaneousWalks || 1
-      } : null,
-      appointments: [],
-      rating: 0,
-      reviews: [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-
-    await admin.firestore().collection('users').doc(userRecord.uid).set(userData);
-
-    console.log('[STAFF] Successfully created staff member:', { uid: userRecord.uid });
-    res.status(201).json({
-      message: 'Staff member created successfully',
-      uid: userRecord.uid,
-      userData
-    });
-
-  } catch (error) {
-    console.error('[STAFF] Creation error:', error);
-    if (error instanceof Error) {
-      res.status(500).json({
-        message: error.message,
-        success: false
-      });
-    } else {
-      res.status(500).json({
-        message: 'Unknown error occurred',
-        success: false
-      });
-    }
-  }
-});
-
 // Role management endpoints
-router.get('/roles', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
+router.get('/api/roles', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
   try {
     console.log('[ROLES] Fetching role definitions...');
     const firestore = admin.firestore();
@@ -121,7 +41,7 @@ router.get('/roles', authenticateFirebase, requireRole(['admin']), async (req: R
   }
 });
 
-router.get('/users', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
+router.get('/api/users', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
   try {
     console.log('[USERS] Fetching users...');
     const { pageToken } = req.query;
@@ -160,48 +80,14 @@ router.get('/users', authenticateFirebase, requireRole(['admin']), async (req: R
   }
 });
 
-router.post('/users/:userId/role', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
-  try {
-    const { userId } = req.params;
-    const { role } = req.body;
-
-    if (!userId || !role) {
-      return res.status(400).json({ error: 'Missing userId or role' });
-    }
-
-    console.log('[USERS] Updating role for user:', userId, 'to:', role);
-
-    const firestore = admin.firestore();
-    const auth = admin.auth();
-
-    // Update Firestore
-    await firestore.collection('users').doc(userId).set({
-      role,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
-
-    // Update custom claims
-    await auth.setCustomUserClaims(userId, { role });
-
-    console.log('[USERS] Successfully updated role for user:', userId);
-    res.json({ message: 'Role updated successfully' });
-  } catch (error) {
-    console.error('[USERS] Error updating user role:', error);
-    res.status(500).json({ 
-      error: 'Failed to update user role',
-      message: error instanceof Error ? error.message : 'Unknown error'
-    });
-  }
-});
-
 // Register routes
 export function registerRoutes(app: Express.Application) {
-  app.use('/api', authenticateFirebase);  // Global authentication middleware
-  app.use('/api/staff-management', staffManagementRouter);
+  // Mount all routes directly under /api without the authenticateFirebase middleware
   app.use('/api', router);
 
   // API 404 handler
   app.use('/api/*', (req: Request, res: Response) => {
+    console.log('[API] 404 Not Found:', req.method, req.url);
     res.status(404).json({
       message: `Route ${req.method} ${req.url} not found`
     });

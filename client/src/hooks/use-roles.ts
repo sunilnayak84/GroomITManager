@@ -32,6 +32,7 @@ async function fetchWithAuth(url: string, options: RequestInit = {}) {
     throw new Error('Not authenticated');
   }
 
+  console.log('[API] Making request to:', url);
   const response = await fetch(url, {
     ...options,
     headers: {
@@ -43,7 +44,7 @@ async function fetchWithAuth(url: string, options: RequestInit = {}) {
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error('API Error:', errorText);
+    console.error('[API] Error response:', errorText);
     throw new Error(errorText || 'Failed to fetch data');
   }
 
@@ -52,36 +53,26 @@ async function fetchWithAuth(url: string, options: RequestInit = {}) {
 
 async function fetchRoles(): Promise<Role[]> {
   try {
-    return await fetchWithAuth('/api/roles');
+    console.log('[ROLES] Fetching roles...');
+    const roles = await fetchWithAuth('/api/roles');
+    console.log('[ROLES] Fetched roles:', roles);
+    return roles;
   } catch (error) {
-    console.error('Error fetching roles:', error);
+    console.error('[ROLES] Error fetching roles:', error);
     throw error;
   }
 }
 
-async function createRole(data: { name: string; permissions: string[] }): Promise<Role> {
-  return fetchWithAuth('/api/roles', {
-    method: 'POST',
-    body: JSON.stringify(data)
-  });
-}
-
-async function updateRole(data: { name: string; permissions: string[] }): Promise<Role> {
-  return fetchWithAuth(`/api/roles/${data.name}`, {
-    method: 'PUT',
-    body: JSON.stringify(data)
-  });
-}
-
 async function fetchUsers(pageToken?: string): Promise<UsersResponse> {
-  return fetchWithAuth(`/api/users${pageToken ? `?pageToken=${pageToken}` : ''}`);
-}
-
-async function updateUserRole({ userId, role }: { userId: string; role: string }): Promise<void> {
-  return fetchWithAuth(`/api/users/${userId}/role`, {
-    method: 'POST',
-    body: JSON.stringify({ role })
-  });
+  try {
+    console.log('[USERS] Fetching users...');
+    const response = await fetchWithAuth(`/api/users${pageToken ? `?pageToken=${pageToken}` : ''}`);
+    console.log('[USERS] Fetched users:', response);
+    return response;
+  } catch (error) {
+    console.error('[USERS] Error fetching users:', error);
+    throw error;
+  }
 }
 
 export function useRoles() {
@@ -90,9 +81,9 @@ export function useRoles() {
   const { data: roles, isLoading: isLoadingRoles, error: rolesError } = useQuery({
     queryKey: ['roles'],
     queryFn: fetchRoles,
-    retry: 1,
+    retry: false,
     onError: (error: Error) => {
-      console.error('Error fetching roles:', error);
+      console.error('[ROLES] Query error:', error);
       toast({
         title: 'Error',
         description: error.message,
@@ -104,63 +95,9 @@ export function useRoles() {
   const { data: usersData, isLoading: isLoadingUsers, error: usersError } = useQuery({
     queryKey: ['users'],
     queryFn: () => fetchUsers(),
-    retry: 1,
+    retry: false,
     onError: (error: Error) => {
-      console.error('Error fetching users:', error);
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive'
-      });
-    }
-  });
-
-  const createRoleMutation = useMutation({
-    mutationFn: createRole,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['roles'] });
-      toast({
-        title: 'Success',
-        description: 'Role created successfully'
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive'
-      });
-    }
-  });
-
-  const updateRoleMutation = useMutation({
-    mutationFn: updateRole,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['roles'] });
-      toast({
-        title: 'Success',
-        description: 'Role updated successfully'
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive'
-      });
-    }
-  });
-
-  const updateUserRoleMutation = useMutation({
-    mutationFn: updateUserRole,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      toast({
-        title: 'Success',
-        description: 'User role updated successfully'
-      });
-    },
-    onError: (error: Error) => {
+      console.error('[USERS] Query error:', error);
       toast({
         title: 'Error',
         description: error.message,
@@ -174,12 +111,6 @@ export function useRoles() {
     isLoadingRoles,
     users: usersData?.users ?? [],
     isLoadingUsers,
-    createRole: createRoleMutation.mutate,
-    updateRole: updateRoleMutation.mutate,
-    isCreating: createRoleMutation.isPending,
-    isUpdating: updateRoleMutation.isPending,
-    updateUserRole: updateUserRoleMutation.mutate,
-    isUpdatingUserRole: updateUserRoleMutation.isPending,
-    error: rolesError || usersError || createRoleMutation.error || updateRoleMutation.error || updateUserRoleMutation.error
+    error: rolesError || usersError
   };
 }
