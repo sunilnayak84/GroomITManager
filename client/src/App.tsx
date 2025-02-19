@@ -9,7 +9,7 @@ export default function App() {
   return (
     <Layout>
       <Switch>
-        <Route path="/settings/roles" component={RoleManagementPage} />
+        <Route path="/settings/role-management" component={RoleManagementPage} />
         <Route path="/staff-availability" component={StaffAvailabilityPage} />
         <Route>
           <div className="flex items-center justify-center min-h-screen">
