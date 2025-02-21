@@ -180,7 +180,7 @@ router.post('/users/:userId/role', authenticateFirebase, requireRole(['admin']),
 
 
 // Add billing routes to main router
-router.use('/billing', billingRouter);
+router.use('/api/billing', billingRouter);
 
 // Register routes
 export function registerRoutes(app: Express.Application) {
