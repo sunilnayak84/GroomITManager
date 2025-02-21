@@ -8,6 +8,20 @@ import { BillingService } from './billing-service';
 const router = Router();
 const billingService = new BillingService();
 
+router.post('/bills/generate/:appointmentId', authenticateFirebase, async (req, res) => {
+  try {
+    const { appointmentId } = req.params;
+    const bill = await billingService.generateBillFromAppointment(appointmentId);
+    res.json(bill);
+  } catch (error) {
+    console.error('[BILLING] Error generating bill:', error);
+    res.status(500).json({
+      error: 'Failed to generate bill',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
 router.get('/bills', authenticateFirebase, async (req, res) => {
   try {
     const billsRef = db.collection('bills');

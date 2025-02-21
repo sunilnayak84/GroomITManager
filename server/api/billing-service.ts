@@ -27,6 +27,33 @@ export interface Bill {
 }
 
 export class BillingService {
+  async generateBillFromAppointment(appointmentId: string): Promise<Bill> {
+    const appointmentDoc = await db.collection('appointments').doc(appointmentId).get();
+    const appointment = appointmentDoc.data();
+    
+    if (!appointment || appointment.status !== 'completed') {
+      throw new Error('Appointment not found or not completed');
+    }
+
+    const bill: Bill = {
+      appointmentId,
+      customerId: appointment.customerId,
+      items: appointment.services.map((service: any) => ({
+        serviceName: service.name,
+        price: service.price,
+        quantity: 1
+      })),
+      totalAmount: appointment.services.reduce((sum: number, service: any) => sum + service.price, 0),
+      status: 'pending',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    const billRef = await db.collection('bills').add(bill);
+    await appointmentDoc.ref.update({ billId: billRef.id });
+
+    return { id: billRef.id, ...bill };
+  }
   async generateBill(appointmentId: string): Promise<Bill> {
     const firestore = admin.firestore();
     const appointmentDoc = await firestore.collection('appointments').doc(appointmentId).get();

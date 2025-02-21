@@ -20,6 +20,8 @@ import AppointmentCalendar from "../components/AppointmentCalendar";
 import AppointmentEditForm from "../components/AppointmentEditForm";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PetDetails } from "../components/PetDetails";
+import { Link } from "react-router-dom";
+
 
 // Get status type from the schema
 interface ActionButtonsProps {
@@ -243,7 +245,7 @@ export default function AppointmentsPage() {
     });
   }, [filteredAppointments, sortConfig]);
 
-  const columns = [
+  const columns = useMemo(() => [
     {
       header: () => (
         <div
@@ -407,7 +409,53 @@ export default function AppointmentsPage() {
         />
       ),
     },
-  ];
+    {
+      id: 'billing',
+      header: 'Billing',
+      cell: ({ row }) => {
+        const appointment = row.original;
+        if (appointment.status === 'completed' && !appointment.billId) {
+          return (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleGenerateBill(appointment.id)}
+            >
+              Generate Bill
+            </Button>
+          );
+        } else if (appointment.billId) {
+          return (
+            <Link to={`/billing?billId=${appointment.billId}`}>
+              View Bill
+            </Link>
+          );
+        }
+        return null;
+      }
+    }
+  ], []);
+
+  const handleGenerateBill = async (appointmentId: string) => {
+    // This is a placeholder.  Replace with your actual billing logic.
+    console.log("Generating bill for appointment:", appointmentId);
+    //  Example:  Call an API to generate a bill, then update the appointment with the bill ID.
+    try {
+      const billId = await generateBill(appointmentId); // Replace with your billing API call
+      // Update the appointment in your database with the billId
+      // ... database update logic ...
+    } catch(error) {
+      console.error("Error generating bill:", error);
+      // Handle the error appropriately
+    }
+  };
+
+  const generateBill = async (appointmentId: string): Promise<string> => {
+    // Simulate generating a bill ID. Replace with your actual billing API call
+    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API delay
+    return `bill-${appointmentId}-${Date.now()}`;
+  };
+
 
   return (
     <div className="container mx-auto max-w-7xl space-y-6 px-6">
