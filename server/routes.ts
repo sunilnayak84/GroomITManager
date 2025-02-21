@@ -177,9 +177,8 @@ router.post('/users/:userId/role', authenticateFirebase, requireRole(['admin']),
   }
 });
 
-// Billing routes
+// Import and mount billing routes
 import { billingRouter } from './api/billing-routes';
-
 
 // Register routes
 export function registerRoutes(app: Express.Application) {
@@ -192,7 +191,7 @@ export function registerRoutes(app: Express.Application) {
   });
 
   // Mount API routes
-  app.use('/api/billing', billingRouter);
+  app.use('/', billingRouter); 
   app.use('/', router);
 
   // API 404 handler
