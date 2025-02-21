@@ -637,10 +637,15 @@ export function useAppointments() {
     }
   });
 
+  const fetchAppointments = () => {
+    queryClient.refetchQueries({ queryKey: ["appointments"] });
+  };
+
   return {
     data: appointments,
     isLoading,
     error,
+    refetch: fetchAppointments,
     addAppointment: addAppointmentMutation.mutateAsync,
     updateAppointment: updateAppointmentMutation.mutateAsync,
     deleteAppointment: deleteAppointmentMutation.mutateAsync,

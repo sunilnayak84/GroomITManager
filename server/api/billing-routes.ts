@@ -8,7 +8,7 @@ import { BillingService } from './billing-service';
 const router = Router();
 const billingService = new BillingService();
 
-router.post('/bills/generate/:appointmentId', authenticateFirebase, async (req, res) => {
+router.post('/billing/bills/generate/:appointmentId', authenticateFirebase, async (req, res) => {
   try {
     const { appointmentId } = req.params;
     const bill = await billingService.generateBillFromAppointment(appointmentId);
