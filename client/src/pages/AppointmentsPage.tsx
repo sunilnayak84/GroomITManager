@@ -154,7 +154,7 @@ export default function AppointmentsPage() {
   useEffect(() => {
     localStorage.setItem('appointmentStatusFilter', statusFilter);
   }, [statusFilter]);
-  const { data: appointments, isLoading, error } = useAppointments();
+  const { data: appointments, isLoading, error, refetch: fetchAppointments } = useAppointments();
 
   // Add logging when appointments data changes
   useEffect(() => {
