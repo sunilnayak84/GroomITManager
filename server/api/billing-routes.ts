@@ -7,10 +7,21 @@ import { BillingService } from './billing-service';
 const router = Router();
 const billingService = new BillingService();
 
+// Log all billing-related requests
+router.use((req, res, next) => {
+  console.log('[BILLING] Incoming request:', {
+    method: req.method,
+    path: req.path,
+    params: req.params,
+    body: req.body
+  });
+  next();
+});
+
 router.post('/billing/bills/:appointmentId', authenticateFirebase, async (req, res) => {
   try {
     const { appointmentId } = req.params;
-    console.log('[BILLING] Generating bill for appointment:', appointmentId);
+    console.log('[BILLING] Starting bill generation for appointment:', appointmentId);
 
     // Check if appointment exists first
     const appointmentDoc = await db.collection('appointments').doc(appointmentId).get();
@@ -19,24 +30,6 @@ router.post('/billing/bills/:appointmentId', authenticateFirebase, async (req, r
       return res.status(404).json({
         error: 'Appointment not found',
         message: `Appointment with ID ${appointmentId} does not exist`
-      });
-    }
-
-    const appointmentData = appointmentDoc.data();
-    console.log('[BILLING] Appointment data:', appointmentData);
-
-    // Check if bill already exists for this appointment
-    const existingBillsQuery = await db.collection('bills')
-      .where('appointmentId', '==', appointmentId)
-      .get();
-
-    if (!existingBillsQuery.empty) {
-      const existingBill = existingBillsQuery.docs[0].data();
-      console.log('[BILLING] Bill already exists:', existingBillsQuery.docs[0].id);
-      return res.status(400).json({
-        error: 'Bill already exists',
-        message: 'A bill has already been generated for this appointment',
-        billId: existingBillsQuery.docs[0].id
       });
     }
 
