@@ -54,7 +54,7 @@ export function useAuthSync() {
         await syncUserData(user.uid, {
           email: user.email,
           displayName: user.displayName,
-          lastSignInTime: user.metadata.lastSignInTime
+          lastSignInTime: user.metadata?.lastSignInTime || new Date().toISOString()
         });
       }
     });
