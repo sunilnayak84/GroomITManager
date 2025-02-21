@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAuth } from 'firebase/auth';
-import { getFirestore, collection, getDocs, doc, setDoc, updateDoc } from 'firebase/firestore';
+import { getAuth, User as FirebaseUser } from 'firebase/auth';
+import { getFirestore, collection, getDocs, doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
 import { toast } from '@/components/ui/use-toast';
 
 interface Role {
@@ -21,6 +21,7 @@ interface User {
 }
 
 const db = getFirestore();
+const auth = getAuth();
 
 async function fetchRoles(): Promise<Role[]> {
   try {
@@ -41,12 +42,37 @@ async function fetchRoles(): Promise<Role[]> {
 
 async function fetchUsers(): Promise<User[]> {
   try {
-    console.log('[USERS] Fetching users from API...');
-    const response = await fetch('/api/users');
-    if (!response.ok) {
-      throw new Error('Failed to fetch users');
-    }
-    const users = await response.json();
+    console.log('[USERS] Fetching users from Firestore...');
+    const usersSnapshot = await getDocs(collection(db, 'users'));
+
+    // Get all Firebase Auth users in our application
+    const authUsers = await Promise.all(
+      usersSnapshot.docs.map(async (doc) => {
+        try {
+          return await auth.getUser(doc.id);
+        } catch (error) {
+          console.error(`[USERS] Error fetching auth user for ${doc.id}:`, error);
+          return null;
+        }
+      })
+    );
+
+    // Map Firestore users to our User interface
+    const users = usersSnapshot.docs.map((doc, index) => {
+      const data = doc.data();
+      const authUser = authUsers[index];
+
+      return {
+        uid: doc.id,
+        email: data.email,
+        displayName: data.displayName || data.email?.split('@')[0] || 'N/A',
+        role: data.role || 'user', // Default role if not set
+        lastSignInTime: authUser?.metadata.lastSignInTime || 'Never',
+        createdAt: authUser?.metadata.creationTime,
+        disabled: data.disabled || false
+      } as User;
+    });
+
     console.log('[USERS] Fetched users:', users);
     return users;
   } catch (error) {
