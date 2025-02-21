@@ -29,13 +29,28 @@ app.use(cors({
 app.use((req, res, next) => {
   logger.info(`Incoming request: ${req.method} ${req.url}`, {
     headers: req.headers,
-    query: req.query
+    query: req.query,
+    body: req.body
   });
   next();
 });
 
-// Register API routes first
+// API routes should be registered first
+app.use('/api', (req, res, next) => {
+  res.setHeader('Content-Type', 'application/json');
+  next();
+});
+
+// Register API routes
 registerRoutes(app);
+
+// API 404 handler for /api routes
+app.use('/api/*', (req: Request, res: Response) => {
+  res.status(404).json({
+    error: 'Not Found',
+    message: `Route ${req.method} ${req.url} not found`
+  });
+});
 
 // Error handling middleware should be last
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
