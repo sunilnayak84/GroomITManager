@@ -24,24 +24,34 @@ interface UsersResponse {
   pageToken?: string | null;
 }
 
-// Get the API URL from environment or default to the current origin
-const API_BASE_URL = import.meta.env.VITE_API_URL || window.location.origin;
+// Get the API URL from environment or construct it based on the current origin
+const API_BASE_URL = (() => {
+  const url = import.meta.env.VITE_API_URL || window.location.origin;
+  // Ensure URL doesn't end with a slash
+  return url.endsWith('/') ? url.slice(0, -1) : url;
+})();
+
 console.log('[API] Base URL:', API_BASE_URL);
 
 async function fetchWithAuth(url: string, options: RequestInit = {}) {
   const auth = getAuth();
-  const token = await auth.currentUser?.getIdToken(true); // Force token refresh
-
-  if (!token) {
-    console.error('[AUTH] No authentication token available');
-    throw new Error('Not authenticated');
-  }
-
-  const fullUrl = `${API_BASE_URL}${url}`;
-  console.log('[API] Making request to:', fullUrl);
-  console.log('[API] Token available:', !!token);
-
   try {
+    const token = await auth.currentUser?.getIdToken(true);
+    console.log('[AUTH] Token refresh attempt completed');
+
+    if (!token) {
+      console.error('[AUTH] No authentication token available');
+      throw new Error('Not authenticated');
+    }
+
+    const fullUrl = `${API_BASE_URL}${url}`;
+    console.log('[API] Making request to:', fullUrl);
+    console.log('[API] Request headers:', {
+      ...options.headers,
+      'Authorization': 'Bearer [token]', // masked for security
+      'Content-Type': 'application/json'
+    });
+
     const response = await fetch(fullUrl, {
       ...options,
       headers: {
@@ -99,7 +109,7 @@ async function createRole(data: { name: string; permissions: string[] }): Promis
   }
 }
 
-async function updateRole(roleId: string, data: { name: string; permissions: string[] }): Promise<Role> {
+async function updateRole({ roleId, ...data }: { roleId: string; name: string; permissions: string[] }): Promise<Role> {
   try {
     console.log('[ROLES] Updating role:', { roleId, ...data });
     const role = await fetchWithAuth(`/api/roles/${roleId}`, {
@@ -129,7 +139,7 @@ async function fetchUsers(pageToken?: string): Promise<UsersResponse> {
 async function updateUserRole(params: { userId: string; role: string }): Promise<void> {
   try {
     console.log('[USERS] Updating user role:', params);
-    await fetchWithAuth(`/api/users/${params.userId}/role`, {
+    await fetchWithAuth(`/users/${params.userId}/role`, {
       method: 'POST',
       body: JSON.stringify({ role: params.role })
     });
@@ -150,7 +160,7 @@ export function useRoles() {
   } = useQuery({
     queryKey: ['roles'],
     queryFn: fetchRoles,
-    retry: false
+    retry: 1
   });
 
   const { 
@@ -160,7 +170,7 @@ export function useRoles() {
   } = useQuery({
     queryKey: ['users'],
     queryFn: () => fetchUsers(),
-    retry: false
+    retry: 1
   });
 
   const createRoleMutation = useMutation({
@@ -182,8 +192,7 @@ export function useRoles() {
   });
 
   const updateRoleMutation = useMutation({
-    mutationFn: ({ roleId, ...data }: { roleId: string; name: string; permissions: string[] }) => 
-      updateRole(roleId, data),
+    mutationFn: updateRole,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['roles'] });
       toast({
