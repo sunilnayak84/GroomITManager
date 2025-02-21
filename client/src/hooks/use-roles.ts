@@ -17,7 +17,7 @@ interface User {
   role: string;
   disabled?: boolean;
   lastSignInTime?: string;
-  creationTime?: string;
+  createdAt?: string;
 }
 
 const db = getFirestore();
@@ -45,7 +45,7 @@ async function createRole(data: { name: string; permissions: string[] }): Promis
     const roleRef = doc(db, 'role-definitions', data.name);
     await setDoc(roleRef, {
       ...data,
-      createdAt: new Date(),
+      createdAt: new Date()
     });
     const role = {
       id: data.name,
@@ -90,10 +90,10 @@ async function fetchUsers(): Promise<User[]> {
       return {
         uid: doc.id,
         email: data.email,
-        displayName: data.displayName,
+        displayName: data.displayName || data.email?.split('@')[0] || 'N/A',
         role: data.role || 'user', // Default role if not set
         lastSignInTime: data.lastSignInTime,
-        creationTime: data.createdAt,
+        createdAt: data.createdAt,
         disabled: data.disabled || false
       } as User;
     });

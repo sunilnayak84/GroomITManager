@@ -13,7 +13,7 @@ async function syncUserData(userId: string, userData: {
   try {
     const userRef = doc(db, 'users', userId);
     const userDoc = await getDoc(userRef);
-    
+
     if (!userDoc.exists()) {
       // New user - set default role and data
       await setDoc(userRef, {
@@ -46,14 +46,14 @@ async function syncUserData(userId: string, userData: {
 export function useAuthSync() {
   useEffect(() => {
     const auth = getAuth();
-    
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         console.log('[AUTH-SYNC] User signed in, syncing data...');
         await syncUserData(user.uid, {
           email: user.email,
           displayName: user.displayName,
-          lastSignInTime: user.metadata.lastSignInTime
+          lastSignInTime: user.metadata.lastSignInTime || null
         });
       }
     });
