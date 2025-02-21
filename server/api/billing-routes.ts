@@ -11,7 +11,6 @@ billingRouter.use((req, res, next) => {
     originalUrl: req.originalUrl,
     path: req.path,
     params: req.params,
-    body: req.body,
     headers: req.headers,
     route: req.route,
     body: req.body
@@ -20,7 +19,7 @@ billingRouter.use((req, res, next) => {
 });
 
 // Generate bill route
-billingRouter.post('/bills/:appointmentId', authenticateFirebase, async (req, res) => {
+billingRouter.post('/generate/:appointmentId', authenticateFirebase, async (req, res) => {
   try {
     console.log('[BILLING] Generating bill for appointment:', req.params.appointmentId);
 
