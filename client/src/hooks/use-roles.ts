@@ -48,12 +48,16 @@ async function fetchUsers(): Promise<User[]> {
     // Get all Firebase Auth users in our application
     const authUsers = await Promise.all(
       usersSnapshot.docs.map(async (doc) => {
-        try {
-          return await auth.getUser(doc.id);
-        } catch (error) {
-          console.error(`[USERS] Error fetching auth user for ${doc.id}:`, error);
-          return null;
-        }
+        const data = doc.data();
+        return {
+          uid: doc.id,
+          email: data.email,
+          displayName: data.displayName || data.email?.split('@')[0] || 'Unknown',
+          lastSignInTime: data.lastSignInTime || 'Never',
+          createdAt: data.createdAt,
+          role: data.role || 'staff',
+          permissions: data.permissions || []
+        };
       })
     );
 
