@@ -25,7 +25,7 @@ interface UsersResponse {
 }
 
 // Get the API URL from environment or default to the current origin
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://0.0.0.0:3000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || window.location.origin;
 console.log('[API] Base URL:', API_BASE_URL);
 
 async function fetchWithAuth(url: string, options: RequestInit = {}) {
