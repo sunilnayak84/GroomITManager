@@ -21,7 +21,7 @@ router.use((req, res, next) => {
 });
 
 // Role management endpoints
-router.get('/roles', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
+router.get('/api/roles', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
   try {
     console.log('[ROLES] Fetching role definitions...');
     const firestore = admin.firestore();
@@ -103,7 +103,7 @@ router.put('/roles/:name', authenticateFirebase, requireRole(['admin']), async (
   }
 });
 
-router.get('/users', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
+router.get('/api/users', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
   try {
     console.log('[USERS] Fetching users...');
     const { pageToken } = req.query;
@@ -177,11 +177,19 @@ router.post('/users/:userId/role', authenticateFirebase, requireRole(['admin']),
 
 // Register routes
 export function registerRoutes(app: Express.Application) {
-  // Mount all routes under /api
-  app.use('/api', router);
+  // Global error handler
+  app.use((err: any, req: Request, res: Response, next: Express.NextFunction) => {
+    console.error('[API] Error:', err);
+    res.status(err.status || 500).json({
+      error: err.message || 'Internal Server Error'
+    });
+  });
+
+  // Mount API routes
+  app.use('/', router);
 
   // API 404 handler
-  app.use('/api/*', (req: Request, res: Response) => {
+  app.use('*', (req: Request, res: Response) => {
     console.log('[API] 404 Not Found:', req.method, req.url);
     res.status(404).json({
       message: `Route ${req.method} ${req.url} not found`
