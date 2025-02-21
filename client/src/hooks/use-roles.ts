@@ -30,14 +30,16 @@ console.log('[API] Base URL:', API_BASE_URL);
 
 async function fetchWithAuth(url: string, options: RequestInit = {}) {
   const auth = getAuth();
-  const token = await auth.currentUser?.getIdToken();
+  const token = await auth.currentUser?.getIdToken(true); // Force token refresh
 
   if (!token) {
+    console.error('[AUTH] No authentication token available');
     throw new Error('Not authenticated');
   }
 
   const fullUrl = `${API_BASE_URL}${url}`;
   console.log('[API] Making request to:', fullUrl);
+  console.log('[API] Token available:', !!token);
 
   try {
     const response = await fetch(fullUrl, {
@@ -55,12 +57,15 @@ async function fetchWithAuth(url: string, options: RequestInit = {}) {
       console.error('[API] Error response:', {
         status: response.status,
         statusText: response.statusText,
-        body: errorText
+        body: errorText,
+        headers: Object.fromEntries(response.headers.entries())
       });
       throw new Error(errorText || `HTTP error! status: ${response.status}`);
     }
 
-    return response.json();
+    const data = await response.json();
+    console.log('[API] Successful response:', { url, data });
+    return data;
   } catch (error) {
     console.error('[API] Request failed:', error);
     throw error;
