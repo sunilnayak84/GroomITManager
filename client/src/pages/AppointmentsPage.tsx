@@ -438,7 +438,7 @@ export default function AppointmentsPage() {
 
   const handleGenerateBill = async (appointmentId: string) => {
     try {
-      const response = await fetch(`/billing/bills/generate/${appointmentId}`, {
+      const response = await fetch(`/api/billing/bills/generate/${appointmentId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

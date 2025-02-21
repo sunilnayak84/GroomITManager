@@ -413,6 +413,7 @@ export type AppointmentWithRelations = {
   services: string[];
   groomerId: string;
   branchId: string;
+  billId?: string;
   date: string;
   status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
   notes: string | null;
