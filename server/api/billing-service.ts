@@ -14,6 +14,7 @@ export interface BillItem {
 }
 
 export interface Bill {
+  id?: string;
   appointmentId: string;
   customerId: string;
   items: BillItem[];
@@ -26,7 +27,6 @@ export interface Bill {
   updatedAt: Date;
 }
 
-import { admin } from '../firebase';
 const db = admin.firestore();
 
 export class BillingService {
@@ -55,11 +55,11 @@ export class BillingService {
     const billRef = await db.collection('bills').add(bill);
     await appointmentDoc.ref.update({ billId: billRef.id });
 
-    return { id: billRef.id, ...bill };
+    return { ...bill, id: billRef.id };
   }
+
   async generateBill(appointmentId: string): Promise<Bill> {
-    const firestore = admin.firestore();
-    const appointmentDoc = await firestore.collection('appointments').doc(appointmentId).get();
+    const appointmentDoc = await db.collection('appointments').doc(appointmentId).get();
     const appointment = appointmentDoc.data();
 
     if (!appointment) {
@@ -100,10 +100,10 @@ export class BillingService {
 
     bill.paymentLink = paymentLink.short_url;
     
-    // Store bill in Firestore
-    await firestore.collection('bills').doc(appointmentId).set(bill);
+    const billRef = await db.collection('bills').doc(appointmentId);
+    await billRef.set(bill);
 
-    return bill;
+    return { ...bill, id: billRef.id };
   }
 
   async verifyPayment(paymentId: string) {
