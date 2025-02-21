@@ -58,8 +58,6 @@ async function fetchUsers(): Promise<User[]> {
         disabled: data.disabled || false
       } as User;
     });
-      const data = doc.data();
-      const authUser = authDetails[index];
 
       return {
         uid: doc.id,
