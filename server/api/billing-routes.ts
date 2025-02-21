@@ -1,10 +1,30 @@
 
 import { Router } from 'express';
-import { BillingService } from './billing-service';
+import { auth } from 'firebase-admin';
+import { db } from '../firebase';
 import { authenticateFirebase, requireRole } from '../middleware/auth';
+import { BillingService } from './billing-service';
 
 const router = Router();
 const billingService = new BillingService();
+
+router.get('/bills', authenticateFirebase, async (req, res) => {
+  try {
+    const billsRef = db.collection('bills');
+    const snapshot = await billsRef.get();
+    const bills = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    res.json(bills);
+  } catch (error) {
+    console.error('[BILLING] Error fetching bills:', error);
+    res.status(500).json({
+      error: 'Failed to fetch bills',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
 
 router.post('/bills/:appointmentId', authenticateFirebase, async (req, res) => {
   try {
@@ -29,32 +49,6 @@ router.post('/payments/verify/:paymentId', authenticateFirebase, async (req, res
     console.error('[BILLING] Error verifying payment:', error);
     res.status(500).json({
       error: 'Failed to verify payment',
-      message: error instanceof Error ? error.message : 'Unknown error'
-    });
-  }
-});
-
-export const billingRouter = router;
-import { Router } from 'express';
-import { auth } from 'firebase-admin';
-import { db } from '../firebase';
-import { authenticateFirebase } from '../middleware/auth';
-
-const router = Router();
-
-router.get('/bills', authenticateFirebase, async (req, res) => {
-  try {
-    const billsRef = db.collection('bills');
-    const snapshot = await billsRef.get();
-    const bills = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-    res.json(bills);
-  } catch (error) {
-    console.error('[BILLING] Error fetching bills:', error);
-    res.status(500).json({
-      error: 'Failed to fetch bills',
       message: error instanceof Error ? error.message : 'Unknown error'
     });
   }
