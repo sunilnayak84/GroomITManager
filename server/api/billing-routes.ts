@@ -7,7 +7,7 @@ import { BillingService } from './billing-service';
 const router = Router();
 const billingService = new BillingService();
 
-router.post('/api/billing/bills/:appointmentId', authenticateFirebase, async (req, res) => {
+router.post('/billing/bills/:appointmentId', authenticateFirebase, async (req, res) => {
   try {
     const { appointmentId } = req.params;
     console.log('[BILLING] Generating bill for appointment:', appointmentId);
@@ -58,7 +58,7 @@ router.post('/api/billing/bills/:appointmentId', authenticateFirebase, async (re
   }
 });
 
-router.get('/api/billing/bills', authenticateFirebase, async (req, res) => {
+router.get('/billing/bills', authenticateFirebase, async (req, res) => {
   try {
     const billsRef = db.collection('bills');
     const snapshot = await billsRef.get();
@@ -76,7 +76,7 @@ router.get('/api/billing/bills', authenticateFirebase, async (req, res) => {
   }
 });
 
-router.post('/api/billing/payments/verify/:paymentId', authenticateFirebase, async (req, res) => {
+router.post('/billing/payments/verify/:paymentId', authenticateFirebase, async (req, res) => {
   try {
     const { paymentId } = req.params;
     const isValid = await billingService.verifyPayment(paymentId);

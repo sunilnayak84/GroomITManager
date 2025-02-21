@@ -3,6 +3,7 @@ import { admin } from './firebase';
 import * as Express from 'express';
 import { staffManagementRouter } from './api/staff-management';
 import { authenticateFirebase, requireRole } from './middleware/auth';
+import { billingRouter } from './api/billing-routes';
 
 const router = Router();
 
@@ -177,8 +178,6 @@ router.post('/users/:userId/role', authenticateFirebase, requireRole(['admin']),
   }
 });
 
-// Import and mount billing routes
-import { billingRouter } from './api/billing-routes';
 
 // Register routes
 export function registerRoutes(app: Express.Application) {
@@ -191,7 +190,7 @@ export function registerRoutes(app: Express.Application) {
   });
 
   // Mount API routes
-  app.use('/', billingRouter); 
+  app.use('/api', billingRouter); // Changed to mount at /api
   app.use('/', router);
 
   // API 404 handler
