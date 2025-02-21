@@ -1,10 +1,11 @@
+
 import { Router } from 'express';
-import { auth } from 'firebase-admin';
-import { db } from '../firebase';
-import { authenticateFirebase, requireRole } from '../middleware/auth';
+import { admin } from '../firebase';
+import { authenticateFirebase } from '../middleware/auth';
 import { BillingService } from './billing-service';
 
 const router = Router();
+const db = admin.firestore();
 const billingService = new BillingService();
 
 // Log all billing-related requests
@@ -18,7 +19,7 @@ router.use((req, res, next) => {
   next();
 });
 
-router.post('/billing/bills/:appointmentId', authenticateFirebase, async (req, res) => {
+router.post('/bills/:appointmentId', authenticateFirebase, async (req, res) => {
   try {
     const { appointmentId } = req.params;
     console.log('[BILLING] Starting bill generation for appointment:', appointmentId);
@@ -39,11 +40,8 @@ router.post('/billing/bills/:appointmentId', authenticateFirebase, async (req, r
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('[BILLING] Error generating bill:', { error: errorMessage, appointmentId: req.params.appointmentId });
-
-    // Determine status code based on error message
     const statusCode = errorMessage.includes('not found') ? 404 : 
                       errorMessage.includes('uncompleted') ? 400 : 500;
-
     res.status(statusCode).json({
       error: 'Failed to generate bill',
       message: errorMessage
@@ -51,7 +49,7 @@ router.post('/billing/bills/:appointmentId', authenticateFirebase, async (req, r
   }
 });
 
-router.get('/billing/bills', authenticateFirebase, async (req, res) => {
+router.get('/bills', authenticateFirebase, async (req, res) => {
   try {
     const billsRef = db.collection('bills');
     const snapshot = await billsRef.get();
@@ -69,7 +67,7 @@ router.get('/billing/bills', authenticateFirebase, async (req, res) => {
   }
 });
 
-router.post('/billing/payments/verify/:paymentId', authenticateFirebase, async (req, res) => {
+router.post('/payments/verify/:paymentId', authenticateFirebase, async (req, res) => {
   try {
     const { paymentId } = req.params;
     const isValid = await billingService.verifyPayment(paymentId);
