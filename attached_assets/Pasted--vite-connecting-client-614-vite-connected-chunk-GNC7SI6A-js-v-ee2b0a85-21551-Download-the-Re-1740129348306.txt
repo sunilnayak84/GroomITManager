@@ -1,0 +1,84 @@
+[vite] connecting...
+client:614 [vite] connected.
+chunk-GNC7SI6A.js?v=ee2b0a85:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:17 Checking Firebase environment variables...
+firebase.ts:37 FIREBASE_INIT: Initializing Firebase with config: {apiKey: '***', authDomain: 'replit-5ac6a.firebaseapp.com', projectId: 'replit-5ac6a', storageBucket: 'replit-5ac6a.firebasestorage.app', messagingSenderId: '194114432530', …}
+firebase.ts:42 FIREBASE_INIT: Firebase initialized successfully
+content.js:1 CISPL SignerDigital Loaded
+use-roles.ts:28 [ROLES] Fetching roles from Firestore...
+use-roles.ts:45 [USERS] Fetching users from Firestore...
+chunk-GNC7SI6A.js?v=ee2b0a85:18625 [Violation] 'setTimeout' handler took 117ms
+use-roles.ts:35 [ROLES] Fetched roles: (5) [{…}, {…}, {…}, {…}, {…}]0: {id: 'admin', name: 'admin', createdAt: 1734152240235, migratedAt: _Timestamp, source: 'rtdb_migration', …}1: {id: 'customer', name: 'customer', description: 'Customer access for managing pets, appointments and profile', migratedAt: _Timestamp, permissions: Array(16), …}2: {id: 'manager', name: 'manager', createdAt: 1734152240235, updatedAt: 1734152241959, source: 'rtdb_migration', …}3: {id: 'receptionist', name: 'receptionist', migratedAt: _Timestamp, source: 'rtdb_migration', createdAt: 1734152240235, …}4: {id: 'staff', name: 'staff', createdAt: 1734152240235, source: 'rtdb_migration', updatedAt: 1734152241959, …}length: 5[[Prototype]]: Array(0)
+use-roles.ts:88 [USERS] Error fetching users: ReferenceError: authUser is not defined
+    at use-roles.ts:56:27
+    at Array.map (<anonymous>)
+    at fetchUsers (use-roles.ts:50:26)
+fetchUsers @ use-roles.ts:88
+await in fetchUsers
+fetchFn @ @tanstack_react-query.js?v=ee2b0a85:839
+run @ @tanstack_react-query.js?v=ee2b0a85:493
+start @ @tanstack_react-query.js?v=ee2b0a85:535
+fetch @ @tanstack_react-query.js?v=ee2b0a85:925
+executeFetch_fn @ @tanstack_react-query.js?v=ee2b0a85:2211
+onSubscribe @ @tanstack_react-query.js?v=ee2b0a85:1898
+subscribe @ @tanstack_react-query.js?v=ee2b0a85:24
+(anonymous) @ @tanstack_react-query.js?v=ee2b0a85:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=ee2b0a85:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=ee2b0a85:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=ee2b0a85:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=ee2b0a85:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=ee2b0a85:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=ee2b0a85:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=ee2b0a85:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=ee2b0a85:19447
+commitRootImpl @ chunk-GNC7SI6A.js?v=ee2b0a85:19416
+commitRoot @ chunk-GNC7SI6A.js?v=ee2b0a85:19277
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=ee2b0a85:18895
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=ee2b0a85:9119
+(anonymous) @ chunk-GNC7SI6A.js?v=ee2b0a85:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=ee2b0a85:554
+flush @ @tanstack_react-query.js?v=ee2b0a85:568
+batch @ @tanstack_react-query.js?v=ee2b0a85:586
+dispatch_fn @ @tanstack_react-query.js?v=ee2b0a85:995
+setData @ @tanstack_react-query.js?v=ee2b0a85:695
+onSuccess @ @tanstack_react-query.js?v=ee2b0a85:896
+resolve @ @tanstack_react-query.js?v=ee2b0a85:455
+Promise.then
+run @ @tanstack_react-query.js?v=ee2b0a85:497
+start @ @tanstack_react-query.js?v=ee2b0a85:535
+fetch @ @tanstack_react-query.js?v=ee2b0a85:925
+executeFetch_fn @ @tanstack_react-query.js?v=ee2b0a85:2211
+onSubscribe @ @tanstack_react-query.js?v=ee2b0a85:1898
+subscribe @ @tanstack_react-query.js?v=ee2b0a85:24
+(anonymous) @ @tanstack_react-query.js?v=ee2b0a85:3013
+subscribeToStore @ chunk-GNC7SI6A.js?v=ee2b0a85:11984
+commitHookEffectListMount @ chunk-GNC7SI6A.js?v=ee2b0a85:16915
+commitPassiveMountOnFiber @ chunk-GNC7SI6A.js?v=ee2b0a85:18156
+commitPassiveMountEffects_complete @ chunk-GNC7SI6A.js?v=ee2b0a85:18129
+commitPassiveMountEffects_begin @ chunk-GNC7SI6A.js?v=ee2b0a85:18119
+commitPassiveMountEffects @ chunk-GNC7SI6A.js?v=ee2b0a85:18109
+flushPassiveEffectsImpl @ chunk-GNC7SI6A.js?v=ee2b0a85:19490
+flushPassiveEffects @ chunk-GNC7SI6A.js?v=ee2b0a85:19447
+performSyncWorkOnRoot @ chunk-GNC7SI6A.js?v=ee2b0a85:18868
+flushSyncCallbacks @ chunk-GNC7SI6A.js?v=ee2b0a85:9119
+commitRootImpl @ chunk-GNC7SI6A.js?v=ee2b0a85:19432
+commitRoot @ chunk-GNC7SI6A.js?v=ee2b0a85:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=ee2b0a85:18805
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=ee2b0a85:18718
+workLoop @ chunk-GNC7SI6A.js?v=ee2b0a85:197
+flushWork @ chunk-GNC7SI6A.js?v=ee2b0a85:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=ee2b0a85:384Understand this errorAI
+iframe_form_detection.js:23 [Violation] 'setTimeout' handler took 57ms
+use-roles.ts:45 [USERS] Fetching users from Firestore...
+use-roles.ts:88 [USERS] Error fetching users: ReferenceError: authUser is not defined
+    at use-roles.ts:56:27
+    at Array.map (<anonymous>)
+    at fetchUsers (use-roles.ts:50:26)
+fetchUsers @ use-roles.ts:88
+await in fetchUsers
+fetchFn @ @tanstack_react-query.js?v=ee2b0a85:839
+run @ @tanstack_react-query.js?v=ee2b0a85:493
+(anonymous) @ @tanstack_react-query.js?v=ee2b0a85:518Understand this errorAI
+use-toast.tsx:72 Toast action: ADD_TOAST Toast data: {title: 'Error', description: 'authUser is not defined', variant: 'destructive', id: '1', open: true, …}description: "authUser is not defined"id: "1"onOpenChange: (open) => {         if (!open) dismiss();       }open: truetitle: "Error"variant: "destructive"[[Prototype]]: Object
+use-toast.tsx:77 Toast state after update: {toasts: Array(1)}
