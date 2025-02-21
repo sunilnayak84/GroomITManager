@@ -53,7 +53,7 @@ async function fetchUsers(): Promise<User[]> {
           uid: doc.id,
           email: data.email,
           displayName: data.displayName || data.email?.split('@')[0] || 'Unknown',
-          lastSignInTime: data.lastSignInTime || 'Never',
+          lastSignInTime: authUser.metadata.lastSignInTime || 'Never',
           createdAt: data.createdAt,
           role: data.role || 'staff',
           permissions: data.permissions || []
@@ -61,10 +61,15 @@ async function fetchUsers(): Promise<User[]> {
       })
     );
 
+    // Get additional user details from Firebase Auth
+    const authDetails = await Promise.all(
+      usersSnapshot.docs.map(doc => getAuth().getUser(doc.id))
+    );
+
     // Map Firestore users to our User interface
     const users = usersSnapshot.docs.map((doc, index) => {
       const data = doc.data();
-      const authUser = authUsers[index];
+      const authUser = authDetails[index];
 
       return {
         uid: doc.id,
