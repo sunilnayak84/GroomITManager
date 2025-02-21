@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAuth } from 'firebase/auth';
-import { getFirestore, collection, getDocs, doc, setDoc, updateDoc } from 'firebase/firestore';
+import { getAuth, User as FirebaseUser } from 'firebase/auth';
+import { getFirestore, collection, getDocs, doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
 import { toast } from '@/components/ui/use-toast';
 
 interface Role {
@@ -18,11 +18,6 @@ interface User {
   disabled?: boolean;
   lastSignInTime?: string;
   creationTime?: string;
-}
-
-interface UsersResponse {
-  users: User[];
-  pageToken?: string | null;
 }
 
 const db = getFirestore();
@@ -84,16 +79,27 @@ async function updateRole({ roleId, ...data }: { roleId: string; name: string; p
   }
 }
 
-async function fetchUsers(): Promise<UsersResponse> {
+async function fetchUsers(): Promise<User[]> {
   try {
     console.log('[USERS] Fetching users from Firestore...');
     const usersSnapshot = await getDocs(collection(db, 'users'));
-    const users = usersSnapshot.docs.map(doc => ({
-      uid: doc.id,
-      ...doc.data()
-    } as User));
+
+    // Map Firestore users to our User interface
+    const users = usersSnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        uid: doc.id,
+        email: data.email,
+        displayName: data.displayName,
+        role: data.role || 'user', // Default role if not set
+        lastSignInTime: data.lastSignInTime,
+        creationTime: data.createdAt,
+        disabled: data.disabled || false
+      } as User;
+    });
+
     console.log('[USERS] Fetched users:', users);
-    return { users };
+    return users;
   } catch (error) {
     console.error('[USERS] Error fetching users:', error);
     throw error;
@@ -129,12 +135,12 @@ export function useRoles() {
   });
 
   const { 
-    data: usersData, 
+    data: users, 
     isLoading: isLoadingUsers, 
     error: usersError 
   } = useQuery({
     queryKey: ['users'],
-    queryFn: () => fetchUsers(),
+    queryFn: fetchUsers,
     retry: 1
   });
 
@@ -195,7 +201,7 @@ export function useRoles() {
   return {
     roles: roles || [],
     isLoadingRoles,
-    users: usersData?.users || [],
+    users: users || [],
     isLoadingUsers,
     createRole: createRoleMutation.mutate,
     updateRole: updateRoleMutation.mutate,

@@ -4,8 +4,12 @@ import Layout from './components/Layout';
 import RoleManagementPage from './pages/RoleManagementPage';
 import StaffAvailabilityPage from './pages/staff-availability';
 import ProtectedRoute from './components/ProtectedRoute';
+import { useAuthSync } from './hooks/use-auth-sync';
 
 export default function App() {
+  // Initialize auth sync
+  useAuthSync();
+
   return (
     <Layout>
       <Switch>
