@@ -44,16 +44,6 @@ app.use('/api', (req, res, next) => {
 // Register API routes
 registerRoutes(app);
 
-// Serve static files from client/dist
-app.use(express.static(path.join(process.cwd(), 'client', 'dist')));
-
-// Handle client-side routing - serve index.html for all non-API routes
-app.get('*', (req, res) => {
-  if (!req.path.startsWith('/api')) {
-    res.sendFile(path.join(process.cwd(), 'client', 'dist', 'index.html'));
-  }
-});
-
 // API 404 handler for /api routes
 app.use('/api/*', (req: Request, res: Response) => {
   res.status(404).json({
