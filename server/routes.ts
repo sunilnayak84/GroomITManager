@@ -181,8 +181,17 @@ router.post('/users/:userId/role', authenticateFirebase, requireRole(['admin']),
 
 // Register routes
 export function registerRoutes(app: Express.Application) {
-  // Register routes in correct order
+  console.log('[ROUTES] Registering billing routes...');
   app.use('/api/billing', billingRouter);
+  // Log registered routes
+  app._router.stack.forEach((r: any) => {
+    if (r.route && r.route.path) {
+      console.log('[ROUTES] Registered route:', {
+        path: r.route.path,
+        methods: r.route.methods
+      });
+    }
+  });
   app.use('/api', router);
 
   // Debug 404 handler

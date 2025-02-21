@@ -6,10 +6,14 @@ const billingRouter = Router();
 
 // Debug middleware
 billingRouter.use((req, res, next) => {
-  console.log('[BILLING] Request:', {
+  console.log('[BILLING] Incoming request:', {
     method: req.method,
+    originalUrl: req.originalUrl,
     path: req.path,
     params: req.params,
+    body: req.body,
+    headers: req.headers,
+    route: req.route,
     body: req.body
   });
   next();
@@ -45,10 +49,14 @@ billingRouter.post('/bills/:appointmentId', authenticateFirebase, async (req, re
 
     res.json({ id: billRef.id, ...bill });
   } catch (error) {
-    console.error('[BILLING] Error generating bill:', {
+    console.error('[BILLING] Error in bill generation:', {
       error: error instanceof Error ? error.message : error,
       appointmentId: req.params.appointmentId,
-      stack: error instanceof Error ? error.stack : undefined
+      stack: error instanceof Error ? error.stack : undefined,
+      route: req.route,
+      path: req.path,
+      method: req.method,
+      originalUrl: req.originalUrl
     });
 
     const statusCode = error instanceof Error && error.message.includes('not found') ? 404 : 500;
