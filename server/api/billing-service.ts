@@ -26,6 +26,9 @@ export interface Bill {
   updatedAt: Date;
 }
 
+import { admin } from '../firebase';
+const db = admin.firestore();
+
 export class BillingService {
   async generateBillFromAppointment(appointmentId: string): Promise<Bill> {
     const appointmentDoc = await db.collection('appointments').doc(appointmentId).get();

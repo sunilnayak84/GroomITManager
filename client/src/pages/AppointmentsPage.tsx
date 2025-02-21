@@ -436,23 +436,36 @@ export default function AppointmentsPage() {
   ], []);
 
   const handleGenerateBill = async (appointmentId: string) => {
-    // This is a placeholder.  Replace with your actual billing logic.
-    console.log("Generating bill for appointment:", appointmentId);
-    //  Example:  Call an API to generate a bill, then update the appointment with the bill ID.
     try {
-      const billId = await generateBill(appointmentId); // Replace with your billing API call
-      // Update the appointment in your database with the billId
-      // ... database update logic ...
-    } catch(error) {
-      console.error("Error generating bill:", error);
-      // Handle the error appropriately
-    }
-  };
+      const response = await fetch(`/api/billing/bills/generate/${appointmentId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
-  const generateBill = async (appointmentId: string): Promise<string> => {
-    // Simulate generating a bill ID. Replace with your actual billing API call
-    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API delay
-    return `bill-${appointmentId}-${Date.now()}`;
+      if (!response.ok) {
+        throw new Error('Failed to generate bill');
+      }
+
+      const bill = await response.json();
+      toast({
+        title: "Success",
+        description: "Bill generated successfully",
+      });
+      
+      // Refresh appointments to show updated bill status
+      if (fetchAppointments) {
+        fetchAppointments();
+      }
+    } catch (error) {
+      console.error("Error generating bill:", error);
+      toast({
+        title: "Error",
+        description: "Failed to generate bill",
+        variant: "destructive",
+      });
+    }
   };
 
 
