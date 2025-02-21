@@ -10,11 +10,36 @@ const billingService = new BillingService();
 router.post('/api/billing/bills/:appointmentId', authenticateFirebase, async (req, res) => {
   try {
     const { appointmentId } = req.params;
-    const bill = await billingService.generateBillFromAppointment(appointmentId);
+
+    // Check if appointment exists first
+    const appointmentDoc = await db.collection('appointments').doc(appointmentId).get();
+    if (!appointmentDoc.exists) {
+      return res.status(404).json({
+        error: 'Appointment not found',
+        message: `Appointment with ID ${appointmentId} does not exist`
+      });
+    }
+
+    // Check if bill already exists for this appointment
+    const existingBillsQuery = await db.collection('bills')
+      .where('appointmentId', '==', appointmentId)
+      .get();
+
+    if (!existingBillsQuery.empty) {
+      const existingBill = existingBillsQuery.docs[0].data();
+      return res.status(400).json({
+        error: 'Bill already exists',
+        message: 'A bill has already been generated for this appointment',
+        billId: existingBillsQuery.docs[0].id
+      });
+    }
+
+    const bill = await billingService.generateBill(appointmentId);
+    console.log('[BILLING] Generated bill:', { appointmentId, billId: bill.id });
     res.json(bill);
   } catch (error) {
     console.error('[BILLING] Error generating bill:', error);
-    res.status(500).json({
+    res.status(error.message.includes('not found') ? 404 : 500).json({
       error: 'Failed to generate bill',
       message: error instanceof Error ? error.message : 'Unknown error'
     });
