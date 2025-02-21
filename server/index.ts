@@ -4,6 +4,7 @@ import { createServer } from "http";
 import { terminateProcessOnPort } from "./utils/port_cleanup.js";
 import { initializeFirebaseAdmin } from "./firebase.js";
 import { setupAuth } from "./auth.js";
+import usersRouter from "./api/users.js";
 import path from "path";
 import fs from "fs";
 import cors from 'cors';
@@ -35,13 +36,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// API routes should be registered first
-app.use('/api', (req, res, next) => {
-  res.setHeader('Content-Type', 'application/json');
-  next();
-});
-
 // Register API routes
+app.use(usersRouter);
 registerRoutes(app);
 
 // API 404 handler for /api routes
