@@ -177,6 +177,22 @@ router.post('/users/:userId/role', authenticateFirebase, requireRole(['admin']),
   }
 });
 
+// Billing routes
+const billingRouter = Router();
+
+// Example billing route (replace with actual Razorpay integration)
+billingRouter.post('/generateBill', async (req: Request, res: Response) => {
+    try {
+        // Implement billing logic here, including Razorpay integration
+        console.log("Generating bill...");
+        res.json({ message: 'Bill generated successfully' }); 
+    } catch (error) {
+        console.error("Error generating bill:", error);
+        res.status(500).json({ error: 'Failed to generate bill' });
+    }
+});
+
+
 // Register routes
 export function registerRoutes(app: Express.Application) {
   // Global error handler
@@ -188,6 +204,7 @@ export function registerRoutes(app: Express.Application) {
   });
 
   // Mount API routes
+  app.use('/api/billing', billingRouter);
   app.use('/', router);
 
   // API 404 handler

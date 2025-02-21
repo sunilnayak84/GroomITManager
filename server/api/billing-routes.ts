@@ -1,0 +1,37 @@
+
+import { Router } from 'express';
+import { BillingService } from './billing-service';
+import { authenticateFirebase, requireRole } from '../middleware/auth';
+
+const router = Router();
+const billingService = new BillingService();
+
+router.post('/bills/:appointmentId', authenticateFirebase, async (req, res) => {
+  try {
+    const { appointmentId } = req.params;
+    const bill = await billingService.generateBill(appointmentId);
+    res.json(bill);
+  } catch (error) {
+    console.error('[BILLING] Error generating bill:', error);
+    res.status(500).json({
+      error: 'Failed to generate bill',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+router.post('/payments/verify/:paymentId', authenticateFirebase, async (req, res) => {
+  try {
+    const { paymentId } = req.params;
+    const isValid = await billingService.verifyPayment(paymentId);
+    res.json({ valid: isValid });
+  } catch (error) {
+    console.error('[BILLING] Error verifying payment:', error);
+    res.status(500).json({
+      error: 'Failed to verify payment',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+export const billingRouter = router;
