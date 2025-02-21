@@ -29,6 +29,11 @@ export interface Bill {
 const db = admin.firestore();
 
 export class BillingService {
+  private normalizeUrl(url: string): string {
+    // Remove trailing slashes and ensure no double slashes
+    return url.replace(/\/+$/, '');
+  }
+
   async generateBill(appointmentId: string): Promise<Bill> {
     console.log('[BILLING] Starting bill generation for appointment:', appointmentId);
 
@@ -88,6 +93,13 @@ export class BillingService {
     try {
       // Create Razorpay payment link
       console.log('[BILLING] Creating Razorpay payment link');
+
+      // Normalize the frontend URL
+      const baseUrl = this.normalizeUrl(process.env.FRONTEND_URL || '');
+      const callbackUrl = `${baseUrl}/billing?appointmentId=${appointmentId}`;
+
+      console.log('[BILLING] Callback URL:', callbackUrl);
+
       const paymentLink = await razorpay.paymentLink.create({
         amount: totalAmount * 100, // Converting to paise
         currency: "INR",
@@ -97,7 +109,7 @@ export class BillingService {
           email: customer?.email,
           contact: customer?.phone
         },
-        callback_url: `${process.env.FRONTEND_URL}/billing?appointmentId=${appointmentId}`,
+        callback_url: callbackUrl,
         callback_method: "get"
       });
 
