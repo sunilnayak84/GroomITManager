@@ -45,7 +45,7 @@ async function createRole(data: { name: string; permissions: string[] }): Promis
     const roleRef = doc(db, 'role-definitions', data.name);
     await setDoc(roleRef, {
       ...data,
-      createdAt: new Date()
+      createdAt: new Date().toISOString()
     });
     const role = {
       id: data.name,
@@ -65,7 +65,7 @@ async function updateRole({ roleId, ...data }: { roleId: string; name: string; p
     const roleRef = doc(db, 'role-definitions', roleId);
     await updateDoc(roleRef, {
       ...data,
-      updatedAt: new Date()
+      updatedAt: new Date().toISOString()
     });
     const role = {
       id: roleId,
@@ -92,7 +92,7 @@ async function fetchUsers(): Promise<User[]> {
         email: data.email,
         displayName: data.displayName || data.email?.split('@')[0] || 'N/A',
         role: data.role || 'user', // Default role if not set
-        lastSignInTime: data.lastSignInTime,
+        lastSignInTime: data.lastSignInTime || 'Never',
         createdAt: data.createdAt,
         disabled: data.disabled || false
       } as User;
@@ -112,7 +112,7 @@ async function updateUserRole(params: { userId: string; role: string }): Promise
     const userRef = doc(db, 'users', params.userId);
     await updateDoc(userRef, {
       role: params.role,
-      updatedAt: new Date()
+      updatedAt: new Date().toISOString()
     });
     console.log('[USERS] Updated user role successfully');
   } catch (error) {

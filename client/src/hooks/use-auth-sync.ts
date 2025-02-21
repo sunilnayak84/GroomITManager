@@ -13,24 +13,25 @@ async function syncUserData(userId: string, userData: {
   try {
     const userRef = doc(db, 'users', userId);
     const userDoc = await getDoc(userRef);
+    const now = new Date().toISOString();
 
     if (!userDoc.exists()) {
       // New user - set default role and data
       await setDoc(userRef, {
         email: userData.email,
         displayName: userData.displayName,
-        lastSignInTime: userData.lastSignInTime,
+        lastSignInTime: userData.lastSignInTime || now,
         role: 'user', // Default role
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        createdAt: now,
+        updatedAt: now
       });
     } else {
       // Existing user - update only auth-related fields
       await setDoc(userRef, {
         email: userData.email,
         displayName: userData.displayName,
-        lastSignInTime: userData.lastSignInTime,
-        updatedAt: new Date().toISOString()
+        lastSignInTime: userData.lastSignInTime || now,
+        updatedAt: now
       }, { merge: true });
     }
   } catch (error) {
@@ -53,7 +54,7 @@ export function useAuthSync() {
         await syncUserData(user.uid, {
           email: user.email,
           displayName: user.displayName,
-          lastSignInTime: user.metadata.lastSignInTime || null
+          lastSignInTime: user.metadata.lastSignInTime
         });
       }
     });
