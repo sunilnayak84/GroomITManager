@@ -5,9 +5,7 @@ import RoleManagementPage from './pages/RoleManagementPage';
 import StaffAvailabilityPage from './pages/staff-availability';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAuthSync } from './hooks/use-auth-sync';
-// Added components - placeholders for now
-const BillingPage = () => <div>Billing Page Content</div>;
-const BillDetails = () => <div>Bill Details</div>;
+import BillingPage from './pages/BillingPage';
 
 
 export default function App() {
@@ -28,7 +26,9 @@ export default function App() {
           </ProtectedRoute>
         </Route>
         <Route path="/billing">
-          <BillingPage />
+          <ProtectedRoute>
+            <BillingPage />
+          </ProtectedRoute>
         </Route>
         <Route>
           <div className="flex items-center justify-center min-h-screen">
