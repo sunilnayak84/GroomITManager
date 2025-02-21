@@ -25,11 +25,11 @@ export default function App() {
             <StaffAvailabilityPage />
           </ProtectedRoute>
         </Route>
-        <Route path="/billing" element={
+        <Route path="/billing" component={() => (
           <ProtectedRoute>
             <BillingPage />
           </ProtectedRoute>
-        } />
+        )} />
         <Route>
           <div className="flex items-center justify-center min-h-screen">
             <h1 className="text-2xl font-bold">404 Page Not Found</h1>
