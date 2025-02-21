@@ -44,27 +44,26 @@ async function fetchUsers(): Promise<User[]> {
   try {
     console.log('[USERS] Fetching users from Firestore...');
     const usersSnapshot = await getDocs(collection(db, 'users'));
-
-    // Get all Firebase Auth users in our application
-    const authUsers = await Promise.all(
-      usersSnapshot.docs.map(async (doc) => {
-        const data = doc.data();
-        return {
-          uid: doc.id,
-          email: data.email,
-          displayName: data.displayName || data.email?.split('@')[0] || 'Unknown',
-          lastSignInTime: authUser.metadata.lastSignInTime || 'Never',
-          createdAt: data.createdAt,
-          role: data.role || 'staff',
-          permissions: data.permissions || []
-        };
-      })
-    );
-
+    
     // Get additional user details from Firebase Auth
-    const authDetails = await Promise.all(
-      usersSnapshot.docs.map(doc => getAuth().getUser(doc.id))
-    );
+    const authDetails = await admin.auth().listUsers();
+    const authMap = new Map(authDetails.users.map(user => [user.uid, user]));
+
+    // Map Firestore users with Auth details
+    const users = usersSnapshot.docs.map(doc => {
+      const data = doc.data();
+      const authData = authMap.get(doc.id);
+      
+      return {
+        uid: doc.id,
+        email: data.email,
+        displayName: data.displayName || data.email?.split('@')[0] || 'N/A',
+        role: data.role || 'user',
+        lastSignInTime: authData?.metadata?.lastSignInTime || 'Never',
+        createdAt: data.createdAt || null,
+        disabled: data.disabled || false
+      } as User;
+    });
 
     // Map Firestore users to our User interface
     const users = usersSnapshot.docs.map((doc, index) => {
