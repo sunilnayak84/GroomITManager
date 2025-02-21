@@ -1,5 +1,5 @@
 
-import { Razorpay } from 'razorpay';
+import Razorpay from 'razorpay';
 import { admin } from '../firebase';
 
 const razorpay = new Razorpay({
@@ -42,7 +42,7 @@ export class BillingService {
       quantity: 1
     }));
 
-    const totalAmount = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const totalAmount = items.reduce((sum: number, item: BillItem) => sum + (item.price * item.quantity), 0);
 
     const bill: Bill = {
       appointmentId,
