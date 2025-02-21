@@ -181,10 +181,22 @@ router.post('/users/:userId/role', authenticateFirebase, requireRole(['admin']),
 
 // Register routes
 export function registerRoutes(app: Express.Application) {
-  // Add billing routes to main router
+  // Register routes in correct order
   app.use('/api/billing', billingRouter);
-  // Mount API routes first
   app.use('/api', router);
+
+  // Debug 404 handler
+  app.use('/api/*', (req, res) => {
+    console.log('[API] 404 Not Found:', {
+      method: req.method,
+      url: req.url,
+      path: req.path
+    });
+    res.status(404).json({
+      error: 'Not Found',
+      message: `Route ${req.method} ${req.url} not found`
+    });
+  });
 
   // Global error handler
   app.use((err: any, req: Request, res: Response, next: NextFunction) => {
