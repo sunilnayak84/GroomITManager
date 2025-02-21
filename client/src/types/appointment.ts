@@ -13,6 +13,9 @@ export interface Appointment {
   date: Date;
   notes?: string;
   billId?: string;
+  customerName?: string;
+  petName?: string;
+  groomerName?: string;
 }
 
 export interface AppointmentWithRelations extends Appointment {
