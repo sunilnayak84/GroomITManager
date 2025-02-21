@@ -5,6 +5,10 @@ import RoleManagementPage from './pages/RoleManagementPage';
 import StaffAvailabilityPage from './pages/staff-availability';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAuthSync } from './hooks/use-auth-sync';
+// Added components - placeholders for now
+const BillingPage = () => <div>Billing Page Content</div>;
+const BillDetails = () => <div>Bill Details</div>;
+
 
 export default function App() {
   // Initialize auth sync
@@ -22,6 +26,9 @@ export default function App() {
           <ProtectedRoute allowedRoles={['admin', 'manager']}>
             <StaffAvailabilityPage />
           </ProtectedRoute>
+        </Route>
+        <Route path="/billing">
+          <BillingPage />
         </Route>
         <Route>
           <div className="flex items-center justify-center min-h-screen">
