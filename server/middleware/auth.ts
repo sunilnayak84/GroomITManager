@@ -1,7 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import { getUserRole, RoleTypes, DefaultPermissions, admin, getFirebaseAdmin } from '../firebase';
-
-// Import FirebaseUser interface
 import { FirebaseUser } from '../auth';
 
 declare global {
@@ -13,32 +11,12 @@ declare global {
   }
 }
 
-// Extend FirebaseUser type
-interface ExtendedFirebaseUser extends admin.auth.UserRecord {
-  role?: keyof typeof RoleTypes;
-  permissions?: string[];
-}
-
-// User management restricted paths
-const userManagementPaths = [
-  '/api/users',
-  '/api/setup-admin',
-  '/api/roles',
-  '/api/auth/roles',
-  '/api/users/role',
-  '/api/staff/role',
-  '/api/staff/permissions',
-  '/api/auth/admin',
-  '/api/auth/setup',
-  '/api/auth/permissions'
-];
-
-// Helper function to check if a path is restricted
-const isRestrictedPath = (path: string) => 
-  userManagementPaths.some(restrictedPath => path.startsWith(restrictedPath));
-
-// Firebase authentication middleware
 export async function authenticateFirebase(req: Request, res: Response, next: NextFunction) {
+  // Skip authentication for OPTIONS requests (CORS preflight)
+  if (req.method === 'OPTIONS') {
+    return next();
+  }
+
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith('Bearer ')) {
@@ -50,24 +28,9 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
 
     const idToken = authHeader.split('Bearer ')[1];
     const firebaseApp = await getFirebaseAdmin();
-    
+
     if (!firebaseApp) {
       console.error('[AUTH] Firebase Admin not initialized');
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[AUTH] Development mode: Setting up admin privileges');
-        // In development, set admin privileges with all required fields
-        req.user = {
-          id: 'dev-admin',
-          uid: 'dev-admin',
-          email: 'admin@groomery.in',
-          name: 'Admin User',
-          displayName: 'Admin User',
-          role: 'admin',
-          permissions: DefaultPermissions.admin
-        };
-        console.log('[AUTH] Development admin account configured:', req.user);
-        return next();
-      }
       return res.status(500).json({ 
         message: 'Authentication service unavailable',
         code: 'AUTH_SERVICE_ERROR'
@@ -79,23 +42,21 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
       const auth = firebaseApp.auth();
       const decodedToken = await auth.verifyIdToken(idToken);
       const user = await auth.getUser(decodedToken.uid);
-      
+
       console.log(`[AUTH] Token verified for user ${user.email}`);
-      
+
       // Get role and permissions
       const userRole = await getUserRole(user.uid);
       console.log('[AUTH] User role data:', userRole);
-      
-      // Check custom claims and database role
+
       const customClaims = user.customClaims || {};
       console.log('[AUTH] Custom claims:', customClaims);
 
-      let role: keyof typeof RoleTypes;
-      let permissions: string[];
+      let role: keyof typeof RoleTypes = 'staff';
+      let permissions: string[] = [];
 
       // Special handling for development admin
-      const isDevAdmin = process.env.NODE_ENV === 'development' && user.email === 'admin@groomery.in';
-      if (isDevAdmin) {
+      if (process.env.NODE_ENV === 'development' && user.email === 'admin@groomery.in') {
         console.log('[AUTH] Development admin user detected');
         role = 'admin';
         permissions = DefaultPermissions.admin;
@@ -118,31 +79,7 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
         role = userRole.role;
         permissions = userRole.permissions;
       }
-      // Default to staff role
-      else {
-        console.warn(`[AUTH] No role found for user ${user.email}, using default staff role`);
-        role = 'staff';
-        permissions = DefaultPermissions.staff;
-      }
 
-      // For admin users, ensure they have all admin permissions
-      if (role === 'admin') {
-        permissions = [...new Set([...permissions, ...DefaultPermissions.admin])];
-        console.log('[AUTH] Ensured admin has all admin permissions');
-      }
-
-      // Additional admin verification for development
-      if (role === 'admin') {
-        console.log('[AUTH] Verified admin role for user:', user.email);
-      }
-
-      // Log final role assignment
-      console.log('[AUTH] Final role assignment:', {
-        role,
-        permissionsCount: permissions.length,
-        isAdmin: role === RoleTypes.admin
-      });
-      
       req.user = {
         id: user.uid,
         uid: user.uid,
@@ -152,15 +89,13 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
         role,
         permissions
       };
-      
-      if (req.user) {
-        console.log(`[AUTH] User authenticated:`, {
-          email: req.user.email,
-          role: req.user.role,
-          permissions: req.user.permissions.length
-        });
-      }
-      
+
+      console.log(`[AUTH] User authenticated:`, {
+        email: req.user.email,
+        role: req.user.role,
+        permissions: req.user.permissions.length
+      });
+
       next();
     } catch (verifyError) {
       console.error('[AUTH] Token verification failed:', verifyError);
@@ -178,7 +113,6 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
   }
 }
 
-// Role-based access control middleware
 export function requireRole(allowedRoles: Array<keyof typeof RoleTypes>) {
   return async (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
@@ -194,50 +128,10 @@ export function requireRole(allowedRoles: Array<keyof typeof RoleTypes>) {
       path: req.path
     });
 
-    // Admin always has access
-    if (req.user.role === 'admin') {
-      console.log('[AUTH] Admin access granted:', {
-        path: req.path,
-        method: req.method
-      });
+    if (req.user.role === 'admin' || allowedRoles.includes(req.user.role)) {
       return next();
     }
 
-    // Check if user's role is explicitly allowed
-    if (allowedRoles.includes(req.user.role)) {
-      console.log('[AUTH] Role-based access granted:', {
-        userRole: req.user.role,
-        path: req.path,
-        method: req.method
-      });
-      return next();
-    }
-
-    // Check if the path is restricted to admin only
-    if (isRestrictedPath(req.path)) {
-      console.log('[AUTH] Restricted path access denied for non-admin');
-      return res.status(403).json({
-        message: 'This feature is restricted to administrators only',
-        code: 'ADMIN_ONLY',
-        currentRole: req.user.role
-      });
-    }
-
-
-    // For manager role, check specific permissions
-    if (req.user.role === 'manager' && !isRestrictedPath(req.path)) {
-      return next();
-    }
-
-    // For staff role, check specific permissions
-    if (req.user.role === 'staff') {
-      const staffAllowedPaths = ['/api/stats', '/api/appointments', '/api/customers'];
-      if (staffAllowedPaths.some(path => req.path.startsWith(path))) {
-        return next();
-      }
-    }
-
-    // Deny access if none of the above conditions are met
     return res.status(403).json({
       message: `Access denied. Required roles: ${allowedRoles.join(', ')}`,
       code: 'INSUFFICIENT_ROLE',
@@ -246,6 +140,24 @@ export function requireRole(allowedRoles: Array<keyof typeof RoleTypes>) {
     });
   };
 }
+
+// User management restricted paths
+const userManagementPaths = [
+  '/api/users',
+  '/api/setup-admin',
+  '/api/roles',
+  '/api/auth/roles',
+  '/api/users/role',
+  '/api/staff/role',
+  '/api/staff/permissions',
+  '/api/auth/admin',
+  '/api/auth/setup',
+  '/api/auth/permissions'
+];
+
+// Helper function to check if a path is restricted
+const isRestrictedPath = (path: string) => 
+  userManagementPaths.some(restrictedPath => path.startsWith(restrictedPath));
 
 // Permission-based access control middleware
 export function requirePermission(permission: string) {
