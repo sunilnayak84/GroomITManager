@@ -1,10 +1,12 @@
 import { RoleManagement } from "../components/RoleManagement";
-import { ProtectedRoute } from "../components/ProtectedRoute";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 export default function RoleManagementPage() {
   return (
-    <div className="container mx-auto py-6">
-      <RoleManagement />
-    </div>
+    <ProtectedRoute>
+      <div className="container mx-auto py-6">
+        <RoleManagement />
+      </div>
+    </ProtectedRoute>
   );
 }

@@ -12,7 +12,10 @@ router.use((req, res, next) => {
     method: req.method,
     url: req.url,
     path: req.path,
-    baseUrl: req.baseUrl
+    baseUrl: req.baseUrl,
+    headers: req.headers,
+    query: req.query,
+    body: req.body
   });
   next();
 });
@@ -30,7 +33,7 @@ router.get('/roles', authenticateFirebase, requireRole(['admin']), async (req: R
       ...doc.data()
     }));
 
-    console.log('[ROLES] Successfully fetched roles:', roles.length);
+    console.log('[ROLES] Successfully fetched roles:', roles);
     res.json(roles);
   } catch (error) {
     console.error('[ROLES] Error fetching roles:', error);
@@ -44,6 +47,7 @@ router.get('/roles', authenticateFirebase, requireRole(['admin']), async (req: R
 router.post('/roles', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
   try {
     const { name, permissions } = req.body;
+    console.log('[ROLES] Creating role:', { name, permissions });
 
     if (!name || !permissions) {
       return res.status(400).json({ error: 'Missing required fields' });
@@ -62,7 +66,10 @@ router.post('/roles', authenticateFirebase, requireRole(['admin']), async (req: 
     });
   } catch (error) {
     console.error('[ROLES] Error creating role:', error);
-    res.status(500).json({ error: 'Failed to create role' });
+    res.status(500).json({ 
+      error: 'Failed to create role',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 });
 
@@ -70,6 +77,7 @@ router.put('/roles/:name', authenticateFirebase, requireRole(['admin']), async (
   try {
     const { name } = req.params;
     const { permissions } = req.body;
+    console.log('[ROLES] Updating role:', { name, permissions });
 
     if (!permissions) {
       return res.status(400).json({ error: 'Missing permissions' });
@@ -88,7 +96,10 @@ router.put('/roles/:name', authenticateFirebase, requireRole(['admin']), async (
     });
   } catch (error) {
     console.error('[ROLES] Error updating role:', error);
-    res.status(500).json({ error: 'Failed to update role' });
+    res.status(500).json({ 
+      error: 'Failed to update role',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 });
 
@@ -135,12 +146,11 @@ router.post('/users/:userId/role', authenticateFirebase, requireRole(['admin']),
   try {
     const { userId } = req.params;
     const { role } = req.body;
+    console.log('[USERS] Updating role for user:', { userId, role });
 
     if (!userId || !role) {
       return res.status(400).json({ error: 'Missing userId or role' });
     }
-
-    console.log('[USERS] Updating role for user:', userId, 'to:', role);
 
     const firestore = admin.firestore();
     const auth = admin.auth();

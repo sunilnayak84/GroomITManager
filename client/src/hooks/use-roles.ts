@@ -24,8 +24,6 @@ interface UsersResponse {
   pageToken?: string | null;
 }
 
-const API_BASE_URL = 'http://localhost:3000';
-
 async function fetchWithAuth(url: string, options: RequestInit = {}) {
   const auth = getAuth();
   const token = await auth.currentUser?.getIdToken();
@@ -34,9 +32,9 @@ async function fetchWithAuth(url: string, options: RequestInit = {}) {
     throw new Error('Not authenticated');
   }
 
-  console.log('[API] Making request to:', `${API_BASE_URL}${url}`);
+  console.log('[API] Making request to:', url);
   try {
-    const response = await fetch(`${API_BASE_URL}${url}`, {
+    const response = await fetch(url, {
       ...options,
       headers: {
         ...options.headers,
@@ -56,14 +54,7 @@ async function fetchWithAuth(url: string, options: RequestInit = {}) {
       throw new Error(errorText || `HTTP error! status: ${response.status}`);
     }
 
-    const contentType = response.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
-      return response.json();
-    } else {
-      const text = await response.text();
-      console.error('[API] Unexpected response type:', contentType, 'body:', text);
-      throw new Error('Invalid response format');
-    }
+    return response.json();
   } catch (error) {
     console.error('[API] Request failed:', error);
     throw error;
@@ -97,10 +88,10 @@ async function createRole(data: { name: string; permissions: string[] }): Promis
   }
 }
 
-async function updateRole(data: { name: string; permissions: string[] }): Promise<Role> {
+async function updateRole(roleId: string, data: { name: string; permissions: string[] }): Promise<Role> {
   try {
     console.log('[ROLES] Updating role:', data);
-    const role = await fetchWithAuth(`/api/roles/${data.name}`, {
+    const role = await fetchWithAuth(`/api/roles/${roleId}`, {
       method: 'PUT',
       body: JSON.stringify(data)
     });
@@ -180,7 +171,8 @@ export function useRoles() {
   });
 
   const updateRoleMutation = useMutation({
-    mutationFn: updateRole,
+    mutationFn: ({ roleId, ...data }: { roleId: string; name: string; permissions: string[] }) => 
+      updateRole(roleId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['roles'] });
       toast({
@@ -226,6 +218,6 @@ export function useRoles() {
     isUpdating: updateRoleMutation.isPending,
     updateUserRole: updateUserRoleMutation.mutate,
     isUpdatingUserRole: updateUserRoleMutation.isPending,
-    error: rolesError || usersError || createRoleMutation.error || updateRoleMutation.error || updateUserRoleMutation.error
+    error: rolesError || usersError
   };
 }

@@ -26,7 +26,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/components/ui/use-toast';
-import { RolePermissions } from '@/hooks/use-user';
 import {
   Table,
   TableBody,
@@ -42,7 +41,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
 
 // Schema for role creation/editing
 const roleSchema = z.object({
@@ -117,30 +115,6 @@ export function RoleManagement() {
     }
   }, [error]);
 
-  useEffect(() => {
-    // Enhanced debugging logs
-    console.log('Role Management State:', {
-      roles,
-      isLoadingRoles,
-      users,
-      isLoadingUsers
-    });
-
-    if (roles) {
-      console.log('Available roles:', roles.map(role => ({
-        name: role.name,
-        permissionCount: role.permissions?.length || 0,
-        permissions: role.permissions
-      })));
-    }
-  }, [roles, isLoadingRoles, users, isLoadingUsers]);
-
-  const roleEntries = useMemo(() =>
-    roles ? roles.map(role => [role.name, role.permissions]) : [],
-    [roles]
-  );
-
-  const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [editingRole, setEditingRole] = useState<string | null>(null);
 
   const form = useForm<RoleFormValues>({
@@ -159,6 +133,7 @@ export function RoleManagement() {
       if (editingRole) {
         console.log('Updating existing role:', editingRole);
         await updateRole({
+          roleId: editingRole,
           name: editingRole,
           permissions: data.permissions
         });
@@ -192,7 +167,6 @@ export function RoleManagement() {
         permissions: [],
         description: '',
       });
-      form.clearErrors();
     } catch (error) {
       console.error('Error saving role:', error);
       toast({
@@ -368,7 +342,7 @@ export function RoleManagement() {
                       Cancel
                     </Button>
                   )}
-                  <Button type="submit">
+                  <Button type="submit" disabled={isCreating || isUpdating}>
                     {editingRole ? 'Update Role' : 'Create Role'}
                   </Button>
                 </div>
@@ -382,10 +356,11 @@ export function RoleManagement() {
       <Card className="mt-8">
         <CardHeader>
           <CardTitle>User Roles</CardTitle>
+          <CardDescription>Manage user role assignments</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoadingUsers ? (
-            <div className="p-4">Loading...</div>
+            <div className="text-center py-4">Loading users...</div>
           ) : (
             <Table>
               <TableHeader>
