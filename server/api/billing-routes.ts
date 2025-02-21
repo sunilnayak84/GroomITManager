@@ -1,4 +1,3 @@
-
 import { Router } from 'express';
 import { admin } from '../firebase';
 import { authenticateFirebase } from '../middleware/auth';
@@ -39,7 +38,11 @@ router.post('/bills/:appointmentId', authenticateFirebase, async (req, res) => {
     res.json(bill);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('[BILLING] Error generating bill:', { error: errorMessage, appointmentId: req.params.appointmentId });
+    console.error('[BILLING] Error generating bill:', { 
+      error: error instanceof Error ? error.message : error,
+      appointmentId: req.params.appointmentId,
+      stack: error instanceof Error ? error.stack : undefined
+    });
     const statusCode = errorMessage.includes('not found') ? 404 : 
                       errorMessage.includes('uncompleted') ? 400 : 500;
     res.status(statusCode).json({
