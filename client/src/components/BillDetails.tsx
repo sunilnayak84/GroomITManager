@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,18 +14,29 @@ export function BillDetails({ appointmentId }: BillDetailsProps) {
   const handleGenerateBill = async () => {
     try {
       setLoading(true);
+      // Use absolute path to ensure consistent routing
       const response = await fetch(`/api/billing/bills/${appointmentId}`, {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to generate bill');
+      }
+
       const bill = await response.json();
-      
+
       if (bill.paymentLink) {
         window.open(bill.paymentLink, '_blank');
       }
     } catch (error) {
+      console.error('Error generating bill:', error);
       toast({
         title: "Error",
-        description: "Failed to generate bill",
+        description: error instanceof Error ? error.message : "Failed to generate bill",
         variant: "destructive",
       });
     } finally {
