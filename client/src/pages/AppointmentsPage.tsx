@@ -123,6 +123,7 @@ const statusColors: Record<AppointmentWithRelations["status"], string> = {
 };
 
 export default function AppointmentsPage() {
+  const { toast } = useToast();
   const [openNewForm, setOpenNewForm] = useState(false);
   const [openDetails, setOpenDetails] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
@@ -453,7 +454,7 @@ export default function AppointmentsPage() {
         title: "Success",
         description: "Bill generated successfully",
       });
-      
+
       // Refresh appointments to show updated bill status
       if (fetchAppointments) {
         fetchAppointments();
