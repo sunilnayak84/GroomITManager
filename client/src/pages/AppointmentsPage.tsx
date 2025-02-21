@@ -412,8 +412,7 @@ export default function AppointmentsPage() {
     {
       id: 'billing',
       header: 'Billing',
-      cell: ({ row }) => {
-        const appointment = row.original;
+      cell: (appointment: AppointmentWithRelations) => {
         if (appointment.status === 'completed' && !appointment.billId) {
           return (
             <Button
