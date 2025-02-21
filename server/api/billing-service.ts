@@ -30,17 +30,19 @@ const db = admin.firestore();
 
 export class BillingService {
   async generateBill(appointmentId: string): Promise<Bill> {
-    const appointmentDoc = await db.collection('appointments').doc(appointmentId).get();
+    console.log('[BILLING] Starting bill generation for appointment:', appointmentId);
 
+    const appointmentDoc = await db.collection('appointments').doc(appointmentId).get();
     if (!appointmentDoc.exists) {
       throw new Error(`Appointment with ID ${appointmentId} not found`);
     }
 
     const appointment = appointmentDoc.data();
-
     if (!appointment) {
       throw new Error('Appointment data is missing');
     }
+
+    console.log('[BILLING] Appointment data:', appointment);
 
     if (appointment.status !== 'completed') {
       throw new Error('Cannot generate bill for uncompleted appointment');
@@ -52,15 +54,25 @@ export class BillingService {
       throw new Error('Customer not found');
     }
     const customer = customerDoc.data();
+    console.log('[BILLING] Customer data:', customer);
 
     // Extract services and calculate total
-    const items = appointment.service.map((service: any) => ({
+    // Check both 'service' and 'services' fields
+    const services = appointment.service || appointment.services || [];
+    console.log('[BILLING] Services found:', services);
+
+    if (!Array.isArray(services) || services.length === 0) {
+      throw new Error('No services found in appointment');
+    }
+
+    const items = services.map((service: any) => ({
       serviceName: service.name,
       price: service.price,
       quantity: 1
     }));
 
     const totalAmount = items.reduce((sum: number, item: BillItem) => sum + (item.price * item.quantity), 0);
+    console.log('[BILLING] Calculated total amount:', totalAmount);
 
     // Create bill object
     const bill: Bill = {
@@ -75,6 +87,7 @@ export class BillingService {
 
     try {
       // Create Razorpay payment link
+      console.log('[BILLING] Creating Razorpay payment link');
       const paymentLink = await razorpay.paymentLink.create({
         amount: totalAmount * 100, // Converting to paise
         currency: "INR",
@@ -88,21 +101,24 @@ export class BillingService {
         callback_method: "get"
       });
 
+      console.log('[BILLING] Razorpay payment link created:', paymentLink.short_url);
       bill.paymentLink = paymentLink.short_url;
 
       // Save bill to Firestore
       const billRef = await db.collection('bills').add(bill);
+      console.log('[BILLING] Bill saved to Firestore:', billRef.id);
 
       // Update appointment with billId
       await appointmentDoc.ref.update({ 
         billId: billRef.id,
         billStatus: 'pending'
       });
+      console.log('[BILLING] Appointment updated with bill reference');
 
       return { ...bill, id: billRef.id };
     } catch (error) {
-      console.error('Error creating Razorpay payment link:', error);
-      throw new Error('Failed to create payment link');
+      console.error('[BILLING] Error in bill generation:', error);
+      throw new Error(error instanceof Error ? error.message : 'Failed to create payment link');
     }
   }
 
