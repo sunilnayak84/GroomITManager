@@ -71,7 +71,7 @@ async function fetchUsers(): Promise<User[]> {
         email: data.email,
         displayName: data.displayName || data.email?.split('@')[0] || 'N/A',
         role: data.role || 'user', // Default role if not set
-        lastSignInTime: data.lastSignInTime?.toDate?.() ? data.lastSignInTime.toDate().toISOString() : data.lastSignInTime || 'Never',
+        lastSignInTime: data.lastSignInTime ? new Date(data.lastSignInTime).toISOString() : 'Never',
         createdAt: data.createdAt || null,
         disabled: data.disabled || false
       } as User;
