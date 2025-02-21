@@ -44,7 +44,7 @@ async function fetchUsers(): Promise<User[]> {
   try {
     console.log('[USERS] Fetching users from Firestore...');
     const usersSnapshot = await getDocs(collection(db, 'users'));
-    
+
     // Map Firestore users to our User interface
     const users = usersSnapshot.docs.map((doc) => {
       const data = doc.data();
@@ -54,17 +54,6 @@ async function fetchUsers(): Promise<User[]> {
         displayName: data.displayName || data.email?.split('@')[0] || 'N/A',
         role: data.role || 'user',
         lastSignInTime: data.lastSignInTime || 'Never',
-        createdAt: data.createdAt || null,
-        disabled: data.disabled || false
-      } as User;
-    });
-
-      return {
-        uid: doc.id,
-        email: data.email,
-        displayName: data.displayName || data.email?.split('@')[0] || 'N/A',
-        role: data.role || 'user', // Default role if not set
-        lastSignInTime: data.lastSignInTime ? new Date(data.lastSignInTime).toISOString() : 'Never',
         createdAt: data.createdAt || null,
         disabled: data.disabled || false
       } as User;
