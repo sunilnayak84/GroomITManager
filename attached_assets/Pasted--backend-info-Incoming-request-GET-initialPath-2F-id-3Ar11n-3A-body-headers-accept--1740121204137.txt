@@ -1,0 +1,32 @@
+[backend] info: Incoming request: GET /?initialPath=%2F&id=%3Ar11n%3A {"body":{},"headers":{"accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7","accept-encoding":"gzip, deflate, br","accept-language":"en-US","cache-control":"max-age=0","host":"c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev","sec-fetch-dest":"document","sec-fetch-mode":"navigate","sec-fetch-site":"none","sec-fetch-user":"?1","upgrade-insecure-requests":"1","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Replit/1.0.12 Chrome/124.0.6367.119 Electron/30.0.3 Safari/537.36","x-forwarded-for":"106.215.177.142, 10.84.7.93","x-forwarded-proto":"https","x-replit-user-bio":"","x-replit-user-id":"","x-replit-user-name":"","x-replit-user-profile-image":"","x-replit-user-roles":"","x-replit-user-teams":"","x-replit-user-url":""},"query":{"id":":r11n:","initialPath":"/"},"timestamp":"2025-02-21T06:58:56.917Z"}
+[backend] [API] Request: {
+[backend]   method: 'GET',
+[backend]   url: '/?initialPath=%2F&id=%3Ar11n%3A',
+[backend]   path: '/',
+[backend]   baseUrl: '',
+[backend]   headers: {
+[backend]     host: 'c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev',
+[backend]     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Replit/1.0.12 Chrome/124.0.6367.119 Electron/30.0.3 Safari/537.36',
+[backend]     accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+[backend]     'accept-encoding': 'gzip, deflate, br',
+[backend]     'accept-language': 'en-US',
+[backend]     'cache-control': 'max-age=0',
+[backend]     'sec-fetch-dest': 'document',
+[backend]     'sec-fetch-mode': 'navigate',
+[backend]     'sec-fetch-site': 'none',
+[backend]     'sec-fetch-user': '?1',
+[backend]     'upgrade-insecure-requests': '1',
+[backend]     'x-forwarded-for': '106.215.177.142, 10.84.7.93',
+[backend]     'x-forwarded-proto': 'https',
+[backend]     'x-replit-user-bio': '',
+[backend]     'x-replit-user-id': '',
+[backend]     'x-replit-user-name': '',
+[backend]     'x-replit-user-profile-image': '',
+[backend]     'x-replit-user-roles': '',
+[backend]     'x-replit-user-teams': '',
+[backend]     'x-replit-user-url': ''
+[backend]   },
+[backend]   query: { initialPath: '/', id: ':r11n:' },
+[backend]   body: {}
+[backend] }
+[backend] [API] 404 Not Found: GET /?initialPath=%2F&id=%3Ar11n%3A
