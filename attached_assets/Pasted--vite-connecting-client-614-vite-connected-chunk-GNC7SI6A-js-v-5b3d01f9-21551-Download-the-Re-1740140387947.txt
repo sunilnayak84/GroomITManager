@@ -1,0 +1,80 @@
+[vite] connecting...
+client:614 [vite] connected.
+chunk-GNC7SI6A.js?v=5b3d01f9:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:17 Checking Firebase environment variables...
+firebase.ts:37 FIREBASE_INIT: Initializing Firebase with config: {apiKey: '***', authDomain: 'replit-5ac6a.firebaseapp.com', projectId: 'replit-5ac6a', storageBucket: 'replit-5ac6a.firebasestorage.app', messagingSenderId: '194114432530', …}
+firebase.ts:42 FIREBASE_INIT: Firebase initialized successfully
+content.js:1 CISPL SignerDigital Loaded
+use-appointments.ts:118 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:126 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:129 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-pets.ts:61 FETCH_PETS: Starting to fetch pets
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+use-staff.ts:17 FETCH_STAFF: Starting to fetch staff members
+use-appointments.ts:138 FETCH_APPOINTMENTS: Found 5 active appointments
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: 7YUf1kJ39d3QcC8XAo7O {branchId: '1', inventoryUsage: Array(1), recommendations: 'erere', date: _Timestamp, totalPrice: 200, …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: HEbb5Lizjts4GdDQbrr1 {afterImages: Array(0), branchId: '1', totalPrice: 200, recommendations: null, date: _Timestamp, …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: bDYJk2pBjCIttjVbDHKK {beforeImages: Array(0), date: _Timestamp, petId: '2ZZWR51Bs9T8zAInnUId', productsUsed: null, notes: null, …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: xCLUNEaqRXNJCx3dGzjF {productsUsed: null, beforeImages: Array(0), recommendations: null, totalDuration: 195, inventoryUsage: Array(1), …}
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: xeTvTg2hLhYOGZtzQWRO {deletedAt: null, totalPrice: 200, date: _Timestamp, beforeImage: null, productsUsed: null, …}
+use-appointments.ts:144 FETCH_APPOINTMENTS: Got snapshot with 5 active documents
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment 7YUf1kJ39d3QcC8XAo7O
+use-staff.ts:29 FETCH_STAFF: Successfully fetched staff members: (3) [{…}, {…}, {…}]
+use-pets.ts:111 FETCH_PETS: Completed fetching pets {totalPets: 4, pets: Array(4)}
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: 7YUf1kJ39d3QcC8XAo7O Services: ['KBLvbaMCaz8uRMXutcrz']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: KBLvbaMCaz8uRMXutcrz
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for KBLvbaMCaz8uRMXutcrz : {selectedServices: Array(0), isActive: true, duration: 15, created_at: '2025-01-22T07:46:06.044Z', selectedAddons: Array(0), …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'KBLvbaMCaz8uRMXutcrz', name: 'Trim', duration: 15, price: 200, description: 'Add On', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment HEbb5Lizjts4GdDQbrr1
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: HEbb5Lizjts4GdDQbrr1 Services: ['KBLvbaMCaz8uRMXutcrz']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: KBLvbaMCaz8uRMXutcrz
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for KBLvbaMCaz8uRMXutcrz : {selectedServices: Array(0), isActive: true, duration: 15, created_at: '2025-01-22T07:46:06.044Z', selectedAddons: Array(0), …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'KBLvbaMCaz8uRMXutcrz', name: 'Trim', duration: 15, price: 200, description: 'Add On', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment bDYJk2pBjCIttjVbDHKK
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: bDYJk2pBjCIttjVbDHKK Services: ['KBLvbaMCaz8uRMXutcrz']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: KBLvbaMCaz8uRMXutcrz
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for KBLvbaMCaz8uRMXutcrz : {selectedServices: Array(0), isActive: true, duration: 15, created_at: '2025-01-22T07:46:06.044Z', selectedAddons: Array(0), …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'KBLvbaMCaz8uRMXutcrz', name: 'Trim', duration: 15, price: 200, description: 'Add On', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment xCLUNEaqRXNJCx3dGzjF
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: xCLUNEaqRXNJCx3dGzjF Services: (4) ['mGfPDXbrIpr0RlzVdLl3', 'scG1CGWPQ8VjMbXZBCAj', 'KBLvbaMCaz8uRMXutcrz', 'Jm2fkUCVsvF3yWeqwJ8a']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: mGfPDXbrIpr0RlzVdLl3
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for mGfPDXbrIpr0RlzVdLl3 : {updated_at: '2025-02-04T13:02:51.530Z', consumables: Array(2), discount_percentage: 0, created_at: '2025-01-22T07:45:24.027Z', isActive: true, …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'mGfPDXbrIpr0RlzVdLl3', name: 'Service Two', duration: 60, price: 1199, description: '2', …}
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: scG1CGWPQ8VjMbXZBCAj
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for scG1CGWPQ8VjMbXZBCAj : {selectedServices: Array(0), name: 'Service One', discount_percentage: 0, price: 999, consumables: Array(1), …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'scG1CGWPQ8VjMbXZBCAj', name: 'Service One', duration: 30, price: 999, description: 'One', …}
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: KBLvbaMCaz8uRMXutcrz
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for KBLvbaMCaz8uRMXutcrz : {selectedServices: Array(0), isActive: true, duration: 15, created_at: '2025-01-22T07:46:06.044Z', selectedAddons: Array(0), …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'KBLvbaMCaz8uRMXutcrz', name: 'Trim', duration: 15, price: 200, description: 'Add On', …}
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: Jm2fkUCVsvF3yWeqwJ8a
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for Jm2fkUCVsvF3yWeqwJ8a : {duration: 90, category: 'Package', updated_at: '2025-02-04T12:08:27.105Z', price: 2198, selectedServices: Array(2), …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'Jm2fkUCVsvF3yWeqwJ8a', name: 'Pack One', duration: 90, price: 2198, description: 'Package including 1 services and 1 add-ons.', …}
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment xeTvTg2hLhYOGZtzQWRO
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: xeTvTg2hLhYOGZtzQWRO Services: ['KBLvbaMCaz8uRMXutcrz']
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: KBLvbaMCaz8uRMXutcrz
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for KBLvbaMCaz8uRMXutcrz : {selectedServices: Array(0), isActive: true, duration: 15, created_at: '2025-01-22T07:46:06.044Z', selectedAddons: Array(0), …}
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: {service_id: 'KBLvbaMCaz8uRMXutcrz', name: 'Trim', duration: 15, price: 200, description: 'Add On', …}
+use-appointments.ts:338 FETCH_APPOINTMENTS: Processed 5 appointments. Success: 5, Errors: 0
+AppointmentsPage.tsx:178 AppointmentsPage: Appointments data updated: {count: 5, appointmentsWithImages: 0, timestamp: '2025-02-21T12:19:21.709Z'}
+AppointmentsPage.tsx:463 Error generating bill: Error: Failed to generate bill
+    at handleGenerateBill (AppointmentsPage.tsx:449:15)
+handleGenerateBill @ AppointmentsPage.tsx:463
+await in handleGenerateBill
+onClick @ AppointmentsPage.tsx:422
+callCallback2 @ chunk-GNC7SI6A.js?v=5b3d01f9:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=5b3d01f9:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=5b3d01f9:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-GNC7SI6A.js?v=5b3d01f9:3736
+executeDispatch @ chunk-GNC7SI6A.js?v=5b3d01f9:7014
+processDispatchQueueItemsInOrder @ chunk-GNC7SI6A.js?v=5b3d01f9:7034
+processDispatchQueue @ chunk-GNC7SI6A.js?v=5b3d01f9:7043
+dispatchEventsForPlugins @ chunk-GNC7SI6A.js?v=5b3d01f9:7051
+(anonymous) @ chunk-GNC7SI6A.js?v=5b3d01f9:7174
+batchedUpdates$1 @ chunk-GNC7SI6A.js?v=5b3d01f9:18913
+batchedUpdates @ chunk-GNC7SI6A.js?v=5b3d01f9:3579
+dispatchEventForPluginEventSystem @ chunk-GNC7SI6A.js?v=5b3d01f9:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-GNC7SI6A.js?v=5b3d01f9:5478
+dispatchEvent @ chunk-GNC7SI6A.js?v=5b3d01f9:5472
+dispatchDiscreteEvent @ chunk-GNC7SI6A.js?v=5b3d01f9:5449Understand this errorAI
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
