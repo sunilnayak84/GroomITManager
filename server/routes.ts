@@ -26,6 +26,8 @@ router.get('/api/roles', authenticateFirebase, requireRole(['admin']), async (re
     console.log('[ROLES] Fetching role definitions...');
     const firestore = admin.firestore();
     const rolesSnapshot = await firestore.collection('role-definitions').get();
+    const rolesRef = firestore.collection('role-definitions');
+    const snapshot = await rolesRef.get();
 
     const roles = rolesSnapshot.docs.map(doc => ({
       id: doc.id,
