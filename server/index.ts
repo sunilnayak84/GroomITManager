@@ -19,7 +19,7 @@ app.set('trust proxy', 1);
 
 // CORS configuration
 app.use(cors({
-  origin: ['http://localhost:5174', 'http://localhost:3000'],
+  origin: true, // Allow all origins in development
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -34,7 +34,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// Error handling middleware
+// Register API routes first
+registerRoutes(app);
+
+// Error handling middleware should be last
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   logger.error('Error in request:', { 
     error: err.message,
@@ -64,10 +67,6 @@ async function startServer(port: number) {
     // Setup authentication
     await setupAuth(app);
     logger.info('Authentication setup completed');
-
-    // Register API routes
-    registerRoutes(app);
-    logger.info('Routes registered successfully');
 
     // Start server
     const server = createServer(app);

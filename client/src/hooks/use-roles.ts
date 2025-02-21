@@ -24,6 +24,9 @@ interface UsersResponse {
   pageToken?: string | null;
 }
 
+// Get the API URL from environment or default to the current origin
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
 async function fetchWithAuth(url: string, options: RequestInit = {}) {
   const auth = getAuth();
   const token = await auth.currentUser?.getIdToken();
@@ -32,9 +35,11 @@ async function fetchWithAuth(url: string, options: RequestInit = {}) {
     throw new Error('Not authenticated');
   }
 
-  console.log('[API] Making request to:', url);
+  const fullUrl = `${API_BASE_URL}${url}`;
+  console.log('[API] Making request to:', fullUrl);
+
   try {
-    const response = await fetch(url, {
+    const response = await fetch(fullUrl, {
       ...options,
       headers: {
         ...options.headers,
@@ -90,7 +95,7 @@ async function createRole(data: { name: string; permissions: string[] }): Promis
 
 async function updateRole(roleId: string, data: { name: string; permissions: string[] }): Promise<Role> {
   try {
-    console.log('[ROLES] Updating role:', data);
+    console.log('[ROLES] Updating role:', { roleId, ...data });
     const role = await fetchWithAuth(`/api/roles/${roleId}`, {
       method: 'PUT',
       body: JSON.stringify(data)
