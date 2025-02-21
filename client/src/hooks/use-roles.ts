@@ -37,9 +37,10 @@ async function fetchWithAuth(url: string, options: RequestInit = {}) {
   }
 
   // Update endpoints to match Firestore collections
-  if (url === '/api/roles') {
-    url = '/api/role-definitions';
-  }
+  //This conditional is redundant as the endpoint is already correctly set.
+  // if (url === '/api/roles') {
+  //   url = '/api/role-definitions';
+  // }
 
   const fullUrl = `${API_BASE_URL}${url}`;
   console.log('[API] Making request to:', fullUrl);

@@ -44,7 +44,7 @@ router.get('/api/roles', authenticateFirebase, requireRole(['admin']), async (re
   }
 });
 
-router.post('/roles', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
+router.post('/api/roles', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
   try {
     const { name, permissions } = req.body;
     console.log('[ROLES] Creating role:', { name, permissions });
@@ -73,7 +73,7 @@ router.post('/roles', authenticateFirebase, requireRole(['admin']), async (req: 
   }
 });
 
-router.put('/roles/:name', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
+router.put('/api/roles/:name', authenticateFirebase, requireRole(['admin']), async (req: Request, res: Response) => {
   try {
     const { name } = req.params;
     const { permissions } = req.body;
