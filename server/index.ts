@@ -4,10 +4,9 @@ import { createServer } from "http";
 import { terminateProcessOnPort } from "./utils/port_cleanup.js";
 import { initializeFirebaseAdmin } from "./firebase.js";
 import { setupAuth } from "./auth.js";
-import path from "path";
-import fs from "fs";
 import cors from 'cors';
 import { logger } from "./utils/logger.js";
+import { setupVite } from "./vite.js";
 
 // Configure Express app
 const app = express();
@@ -35,41 +34,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// API routes should be registered first
-app.use('/api', (req, res, next) => {
-  res.setHeader('Content-Type', 'application/json');
-  next();
-});
-
-// Register API routes
-registerRoutes(app);
-
-// API 404 handler for /api routes
-app.use('/api/*', (req: Request, res: Response) => {
-  res.status(404).json({
-    error: 'Not Found',
-    message: `Route ${req.method} ${req.url} not found`
-  });
-});
-
-// Error handling middleware should be last
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  logger.error('Error in request:', { 
-    error: err.message,
-    stack: err.stack,
-    path: req.path
-  });
-
-  if (err instanceof SyntaxError && 'body' in err) {
-    return res.status(400).json({ message: 'Invalid JSON' });
-  }
-
-  res.status(500).json({ 
-    error: 'Internal server error',
-    message: err.message
-  });
-});
-
 async function startServer(port: number) {
   try {
     // Initialize Firebase
@@ -85,6 +49,15 @@ async function startServer(port: number) {
 
     // Start server
     const server = createServer(app);
+
+    // Register API routes before Vite setup
+    registerRoutes(app);
+    logger.info('API routes registered');
+
+    // Setup Vite after API routes
+    await setupVite(app, server);
+    logger.info('Vite middleware setup completed');
+
     server.listen(port, '0.0.0.0', () => {
       logger.info(`Server started on port ${port}`);
 

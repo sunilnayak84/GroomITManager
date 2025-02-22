@@ -5,14 +5,16 @@ import { BillingService } from './billing-service';
 const billingRouter = Router();
 const billingService = new BillingService();
 
-// Debug middleware
+// Enhanced debug middleware
 billingRouter.use((req, res, next) => {
-  console.log('[BILLING] Request:', {
+  console.log('[BILLING] Request received in billing router:', {
     method: req.method,
     path: req.path,
     params: req.params,
     body: req.body,
-    originalUrl: req.originalUrl
+    originalUrl: req.originalUrl,
+    baseUrl: req.baseUrl,
+    headers: req.headers
   });
   next();
 });
@@ -38,8 +40,8 @@ billingRouter.post('/generate/:appointmentId', async (req, res) => {
     });
 
     res.json(bill);
-  } catch (error: any) { // Explicitly type error as any for proper error handling
-    console.error('[BILLING] Error:', error);
+  } catch (error: any) {
+    console.error('[BILLING] Error generating bill:', error);
     const statusCode = error?.message?.includes('not found') ? 404 : 500;
     res.status(statusCode).json({
       error: statusCode === 404 ? 'Not Found' : 'Internal Server Error',

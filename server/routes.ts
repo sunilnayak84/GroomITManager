@@ -14,9 +14,8 @@ router.use((req, res, next) => {
     url: req.url,
     path: req.path,
     baseUrl: req.baseUrl,
-    headers: req.headers,
-    query: req.query,
-    body: req.body
+    originalUrl: req.originalUrl,
+    headers: req.headers
   });
   next();
 });
@@ -181,9 +180,9 @@ router.post('/users/:userId/role', authenticateFirebase, requireRole(['admin']),
 
 // Register routes
 export function registerRoutes(app: Express.Application) {
-  // Log all requests to help with debugging
-  app.use((req, res, next) => {
-    console.log('[API] Incoming request:', {
+  // Debug middleware for all API requests
+  app.use('/api', (req, res, next) => {
+    console.log('[API] Incoming API request:', {
       method: req.method,
       url: req.url,
       path: req.path,

@@ -439,7 +439,8 @@ export default function AppointmentsPage() {
   const handleGenerateBill = async (appointmentId: string) => {
     try {
       console.log('[BILLING] Initiating bill generation for:', appointmentId);
-      const response = await fetch(`/api/billing/generate/${appointmentId}`, {
+      const apiUrl = window.location.origin;  // Get the current origin
+      const response = await fetch(`${apiUrl}/api/billing/generate/${appointmentId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -456,6 +457,11 @@ export default function AppointmentsPage() {
           // If JSON parsing fails, use status text
           errorMessage = `Failed to generate bill: ${response.statusText}`;
         }
+        console.error('[BILLING] Error response:', {
+          status: response.status,
+          statusText: response.statusText,
+          message: errorMessage
+        });
         throw new Error(errorMessage);
       }
 
