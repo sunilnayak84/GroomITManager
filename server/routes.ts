@@ -27,23 +27,22 @@ export function registerRoutes(app: Express.Application) {
     next();
   });
 
-  // Register billing routes first with authentication
-  console.log('[ROUTES] Registering billing routes...');
-  app.use('/api/billing', (req, res, next) => {
-    console.log('[BILLING MIDDLEWARE] Request intercepted:', {
+  // Register all routes that need authentication
+  app.use('/api', authenticateFirebase, (req, res, next) => {
+    console.log('[API] Authenticated request:', {
+      user: req.user?.id,
       method: req.method,
-      path: req.path,
-      url: req.url,
-      originalUrl: req.originalUrl,
-      params: req.params,
-      headers: {
-        authorization: req.headers.authorization ? 'Present' : 'Missing'
-      }
+      path: req.path
     });
     next();
-  }, authenticateFirebase, billingRouter);
+  });
+
+  // Register billing routes with debug logging
+  console.log('[ROUTES] Registering billing routes at /api/billing');
+  app.use('/api/billing', billingRouter);
 
   // Then register other API routes
+  console.log('[ROUTES] Registering general API routes');
   app.use('/api', router);
 
   // Debug 404 handler for API routes
@@ -52,7 +51,8 @@ export function registerRoutes(app: Express.Application) {
       method: req.method,
       url: req.url,
       path: req.path,
-      originalUrl: req.originalUrl
+      originalUrl: req.originalUrl,
+      headers: req.headers
     });
     res.status(404).json({
       error: 'Not Found',
