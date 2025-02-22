@@ -1,3 +1,4 @@
+
 import { Router } from 'express';
 import { admin } from '../firebase';
 import { authenticateFirebase } from '../middleware/auth';
@@ -19,7 +20,7 @@ billingRouter.use((req, res, next) => {
 });
 
 // Generate bill route
-billingRouter.post('/generate/:appointmentId', authenticateFirebase, async (req, res) => {
+billingRouter.post('/generate/:appointmentId', async (req, res) => {
   try {
     console.log('[BILLING] Generating bill for appointment:', req.params.appointmentId);
 
@@ -39,7 +40,10 @@ billingRouter.post('/generate/:appointmentId', authenticateFirebase, async (req,
     const bill = {
       appointmentId,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      // Add other bill details
+      status: 'pending',
+      amount: appointmentData?.totalAmount || 0,
+      customerName: appointmentData?.customerName,
+      services: appointmentData?.services || []
     };
 
     // Save bill
