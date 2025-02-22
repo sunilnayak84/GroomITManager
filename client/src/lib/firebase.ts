@@ -1,8 +1,10 @@
 
 import { initializeApp } from "firebase/app";
-import { getAuth, browserLocalPersistence } from "firebase/auth";
+import { getAuth as firebaseGetAuth, browserLocalPersistence } from "firebase/auth";
 import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+
+export const getAuth = firebaseGetAuth;
 
 // Validate required environment variables
 const requiredEnvVars = [
