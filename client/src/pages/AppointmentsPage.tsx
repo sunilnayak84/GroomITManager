@@ -439,8 +439,8 @@ export default function AppointmentsPage() {
   const handleGenerateBill = async (appointmentId: string) => {
     try {
       console.log('[BILLING] Initiating bill generation for:', appointmentId);
-      const apiUrl = window.location.origin;
-      const response = await fetch(`${apiUrl}/api/billing/generate/${appointmentId}`, {
+
+      const response = await fetch(`/api/billing/generate/${appointmentId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -478,7 +478,7 @@ export default function AppointmentsPage() {
         handler: async function (response: any) {
           try {
             // Verify payment
-            const verifyResponse = await fetch(`${apiUrl}/api/billing/verify-payment`, {
+            const verifyResponse = await fetch('/api/billing/verify-payment', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
