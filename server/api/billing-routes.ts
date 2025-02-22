@@ -53,23 +53,27 @@ billingRouter.post('/generate/:appointmentId', async (req, res) => {
     const { appointmentId } = req.params;
     logger.info('[BILLING] Starting bill generation for appointment:', appointmentId);
 
-    if (!appointmentId) {
-      logger.warn('[BILLING] Missing appointment ID in request');
+    if (!appointmentId || typeof appointmentId !== 'string' || appointmentId.trim() === '') {
+      logger.warn('[BILLING] Missing or invalid appointment ID in request');
       return res.status(400).json({
         error: 'Bad Request',
-        message: 'Appointment ID is required'
+        message: 'Valid appointment ID is required'
       });
     }
 
-    const bill = await billingService.generateBill(appointmentId);
+    const bill = await billingService.generateBill(appointmentId.trim());
     logger.info('[BILLING] Bill generated successfully:', { billId: bill.id });
     res.json(bill);
   } catch (error) {
     logger.error('[BILLING] Error generating bill:', error);
-    const statusCode = error instanceof Error && error.message.includes('not found') ? 404 : 500;
+    const errorMessage = error instanceof Error ? error.message : 'Failed to generate bill';
+    const statusCode = errorMessage.includes('not found') ? 404 : 
+                      errorMessage.includes('Invalid') ? 400 : 500;
+
     res.status(statusCode).json({
-      error: statusCode === 404 ? 'Not Found' : 'Internal Server Error',
-      message: error instanceof Error ? error.message : 'Failed to generate bill'
+      error: statusCode === 404 ? 'Not Found' : 
+            statusCode === 400 ? 'Bad Request' : 'Internal Server Error',
+      message: errorMessage
     });
   }
 });

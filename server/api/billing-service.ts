@@ -40,11 +40,17 @@ const TAX_RATE = 0.18; // 18% GST
 export class BillingService {
   private async getAppointmentDetails(appointmentId: string) {
     try {
+      // Validate appointmentId
+      if (!appointmentId || typeof appointmentId !== 'string' || appointmentId.trim() === '') {
+        logger.error('[BILLING] Invalid appointment ID:', appointmentId);
+        throw new Error('Invalid appointment ID');
+      }
+
       logger.info('[BILLING] Fetching appointment details:', appointmentId);
 
       const appointmentDoc = await admin.firestore()
         .collection('appointments')
-        .doc(appointmentId)
+        .doc(appointmentId.trim())
         .get();
 
       if (!appointmentDoc.exists) {
@@ -59,9 +65,14 @@ export class BillingService {
       }
 
       // Get customer details
+      if (!appointment.customerId) {
+        logger.error('[BILLING] Customer ID is missing in appointment');
+        throw new Error('Customer ID is missing in appointment');
+      }
+
       const customerDoc = await admin.firestore()
         .collection('customers')
-        .doc(appointment.customerId)
+        .doc(appointment.customerId.toString())
         .get();
 
       if (!customerDoc.exists) {
@@ -71,11 +82,16 @@ export class BillingService {
 
       const customer = customerDoc.data()!;
 
-      // Get service details
-      const servicePromises = appointment.services.map(async (serviceId: string) => {
+      // Get service details with proper error handling
+      const servicePromises = (appointment.services || []).map(async (serviceId: string) => {
+        if (!serviceId || typeof serviceId !== 'string') {
+          logger.warn(`[BILLING] Invalid service ID: ${serviceId}`);
+          return null;
+        }
+
         const serviceDoc = await admin.firestore()
           .collection('services')
-          .doc(serviceId)
+          .doc(serviceId.trim())
           .get();
 
         if (!serviceDoc.exists) {
@@ -85,7 +101,12 @@ export class BillingService {
         return { id: serviceDoc.id, ...serviceDoc.data() };
       });
 
-      const services = (await Promise.all(servicePromises)).filter(service => service !== null);
+      const services = (await Promise.all(servicePromises))
+        .filter(service => service !== null);
+
+      if (services.length === 0) {
+        logger.warn(`[BILLING] No valid services found for appointment ${appointmentId}`);
+      }
 
       return {
         appointment,
