@@ -439,7 +439,7 @@ export default function AppointmentsPage() {
   const handleGenerateBill = async (appointmentId: string) => {
     try {
       console.log('[BILLING] Initiating bill generation for:', appointmentId);
-      const apiUrl = window.location.origin;  // Get the current origin
+      const apiUrl = window.location.origin;
       const response = await fetch(`${apiUrl}/api/billing/generate/${appointmentId}`, {
         method: 'POST',
         headers: {
@@ -454,7 +454,6 @@ export default function AppointmentsPage() {
           const errorData = await response.json();
           errorMessage = errorData.message || errorMessage;
         } catch (e) {
-          // If JSON parsing fails, use status text
           errorMessage = `Failed to generate bill: ${response.statusText}`;
         }
         console.error('[BILLING] Error response:', {
@@ -465,22 +464,67 @@ export default function AppointmentsPage() {
         throw new Error(errorMessage);
       }
 
-      const bill = await response.json();
-      console.log('[BILLING] Bill generated:', bill);
+      const orderData = await response.json();
+      console.log('[BILLING] Order created:', orderData);
 
-      toast({
-        title: "Success",
-        description: "Bill generated successfully",
-      });
+      // Initialize Razorpay payment
+      const options = {
+        key: orderData.keyId,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: "GroomIT",
+        description: "Pet Grooming Service Payment",
+        order_id: orderData.orderId,
+        handler: async function (response: any) {
+          try {
+            // Verify payment
+            const verifyResponse = await fetch(`${apiUrl}/api/billing/verify-payment`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${await auth.currentUser?.getIdToken()}`
+              },
+              body: JSON.stringify({
+                paymentId: response.razorpay_payment_id,
+                orderId: response.razorpay_order_id,
+                signature: response.razorpay_signature
+              })
+            });
 
-      if (bill.paymentLink) {
-        window.open(bill.paymentLink, '_blank');
-      }
+            if (!verifyResponse.ok) {
+              throw new Error('Payment verification failed');
+            }
 
-      // Refresh appointments to show updated bill status
-      if (fetchAppointments) {
-        fetchAppointments();
-      }
+            toast({
+              title: "Success",
+              description: "Payment completed successfully",
+            });
+
+            // Refresh appointments to show updated payment status
+            if (fetchAppointments) {
+              fetchAppointments();
+            }
+          } catch (error) {
+            console.error('[BILLING] Payment verification error:', error);
+            toast({
+              title: "Error",
+              description: error instanceof Error ? error.message : "Payment verification failed",
+              variant: "destructive",
+            });
+          }
+        },
+        prefill: {
+          name: `${auth.currentUser?.displayName || ''}`,
+          email: auth.currentUser?.email || '',
+        },
+        theme: {
+          color: "#6366f1",
+        }
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.open();
+
     } catch (error) {
       console.error("[BILLING] Error generating bill:", error);
       toast({

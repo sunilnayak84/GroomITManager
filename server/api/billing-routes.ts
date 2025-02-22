@@ -1,29 +1,27 @@
 import { Router } from 'express';
+import { RazorpayService } from './razorpay-service';
 import { admin } from '../firebase';
-import { BillingService } from './billing-service';
 
 const billingRouter = Router();
-const billingService = new BillingService();
+const razorpayService = new RazorpayService();
 
-// Enhanced debug middleware
+// Debug middleware
 billingRouter.use((req, res, next) => {
-  console.log('[BILLING] Request received in billing router:', {
+  console.log('[BILLING] Request:', {
     method: req.method,
     path: req.path,
     params: req.params,
     body: req.body,
-    originalUrl: req.originalUrl,
-    baseUrl: req.baseUrl,
-    headers: req.headers
+    originalUrl: req.originalUrl
   });
   next();
 });
 
-// Generate bill route
+// Create payment order
 billingRouter.post('/generate/:appointmentId', async (req, res) => {
   try {
     const { appointmentId } = req.params;
-    console.log('[BILLING] Generating bill for appointment:', appointmentId);
+    console.log('[BILLING] Creating payment order for appointment:', appointmentId);
 
     if (!appointmentId) {
       return res.status(400).json({ 
@@ -32,20 +30,76 @@ billingRouter.post('/generate/:appointmentId', async (req, res) => {
       });
     }
 
-    const bill = await billingService.generateBill(appointmentId);
-    console.log('[BILLING] Bill generated successfully:', {
-      billId: bill.id,
-      appointmentId: bill.appointmentId,
-      status: bill.status
-    });
+    const orderDetails = await razorpayService.createOrder(appointmentId);
+    console.log('[BILLING] Payment order created:', orderDetails);
 
-    res.json(bill);
+    res.json(orderDetails);
   } catch (error: any) {
-    console.error('[BILLING] Error generating bill:', error);
+    console.error('[BILLING] Error creating payment order:', error);
     const statusCode = error?.message?.includes('not found') ? 404 : 500;
     res.status(statusCode).json({
       error: statusCode === 404 ? 'Not Found' : 'Internal Server Error',
       message: error instanceof Error ? error.message : 'Unknown error occurred'
+    });
+  }
+});
+
+// Verify payment
+billingRouter.post('/verify-payment', async (req, res) => {
+  try {
+    const { paymentId, orderId, signature } = req.body;
+    console.log('[BILLING] Verifying payment:', { paymentId, orderId });
+
+    if (!paymentId || !orderId || !signature) {
+      return res.status(400).json({
+        error: 'Bad Request',
+        message: 'Payment details are incomplete'
+      });
+    }
+
+    const isValid = razorpayService.verifyPayment(paymentId, orderId, signature);
+    if (isValid) {
+      await razorpayService.updatePaymentStatus(orderId, paymentId, signature);
+    }
+    console.log('[BILLING] Payment verification result:', { isValid, orderId });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('[BILLING] Payment verification failed:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: error instanceof Error ? error.message : 'Failed to verify payment'
+    });
+  }
+});
+
+// Get payment details
+billingRouter.get('/payment/:orderId', async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    console.log('[BILLING] Fetching payment details:', orderId);
+
+    const paymentDoc = await admin.firestore()
+      .collection('payments')
+      .doc(orderId)
+      .get();
+
+    if (!paymentDoc.exists) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'Payment not found'
+      });
+    }
+
+    res.json({
+      id: paymentDoc.id,
+      ...paymentDoc.data()
+    });
+  } catch (error) {
+    console.error('[BILLING] Error fetching payment:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: error instanceof Error ? error.message : 'Failed to fetch payment details'
     });
   }
 });
