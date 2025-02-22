@@ -36,6 +36,20 @@ billingRouter.post('/generate/:appointmentId', async (req, res) => {
       });
     }
 
+    // First verify the appointment exists
+    const appointmentRef = admin.firestore().collection('appointments').doc(appointmentId);
+    const appointmentDoc = await appointmentRef.get();
+
+    if (!appointmentDoc.exists) {
+      console.log('[BILLING] Appointment not found:', appointmentId);
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'Appointment not found'
+      });
+    }
+
+    console.log('[BILLING] Found appointment:', appointmentDoc.data());
+
     const orderDetails = await razorpayService.createOrder(appointmentId);
     console.log('[BILLING] Payment order created:', orderDetails);
 

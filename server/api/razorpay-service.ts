@@ -14,6 +14,8 @@ export class RazorpayService {
 
   async createOrder(appointmentId: string): Promise<any> {
     try {
+      console.log('[RAZORPAY] Starting order creation for appointment:', appointmentId);
+
       // Get appointment details from Firestore
       const appointmentDoc = await admin.firestore()
         .collection('appointments')
@@ -21,21 +23,32 @@ export class RazorpayService {
         .get();
 
       if (!appointmentDoc.exists) {
+        console.error('[RAZORPAY] Appointment not found:', appointmentId);
         throw new Error('Appointment not found');
       }
 
       const appointmentData = appointmentDoc.data();
       if (!appointmentData) {
+        console.error('[RAZORPAY] Appointment data is empty:', appointmentId);
         throw new Error('Appointment data is empty');
       }
+
+      console.log('[RAZORPAY] Processing appointment data:', {
+        id: appointmentId,
+        services: appointmentData.service,
+        customer: appointmentData.customer
+      });
 
       // Calculate total amount from services
       const amount = appointmentData.service.reduce((total: number, service: any) => 
         total + (service.price || 0), 0);
 
       if (amount <= 0) {
+        console.error('[RAZORPAY] Invalid amount calculated:', amount);
         throw new Error('Invalid amount for payment');
       }
+
+      console.log('[RAZORPAY] Calculated amount:', amount);
 
       // Create Razorpay order
       const order = await this.razorpay.orders.create({
@@ -48,6 +61,8 @@ export class RazorpayService {
           services: appointmentData.service.map((s: any) => s.name).join(', ')
         }
       });
+
+      console.log('[RAZORPAY] Order created successfully:', order);
 
       // Store order details in Firestore
       await admin.firestore()
