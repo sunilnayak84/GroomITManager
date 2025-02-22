@@ -20,7 +20,7 @@ import AppointmentCalendar from "../components/AppointmentCalendar";
 import AppointmentEditForm from "../components/AppointmentEditForm";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PetDetails } from "../components/PetDetails";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 
 // Get status type from the schema
@@ -436,7 +436,6 @@ export default function AppointmentsPage() {
     }
   ], []);
 
-  const navigate = useNavigate();
   const handleGenerateBill = async (appointmentId: string) => {
     try {
       console.log('[BILLING] Initiating bill generation for:', appointmentId);
@@ -460,7 +459,6 @@ export default function AppointmentsPage() {
           const errorData = await response.json();
           errorMessage = errorData.message || errorMessage;
         } catch (e) {
-          // If error response is not JSON
           errorMessage = `Failed to generate bill: ${response.statusText}`;
         }
         console.error('[BILLING] Error response:', {
@@ -485,9 +483,9 @@ export default function AppointmentsPage() {
         await fetchAppointments();
       }
 
-      // Redirect to billing page if we have a bill ID
+      // Instead of using navigation, open in new tab
       if (bill.id) {
-        navigate(`/billing?billId=${bill.id}`);
+        window.open(`/billing?billId=${bill.id}`, '_blank');
       }
 
     } catch (error) {

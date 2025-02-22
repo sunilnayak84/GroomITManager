@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { Bill, BillDraft } from '@/types/billing';
 import { useToast } from './use-toast';
+import { auth } from '@/lib/firebase';
 
 interface UseBillingOptions {
   onSuccess?: () => void;
@@ -12,24 +13,38 @@ export function useBilling(options: UseBillingOptions = {}) {
   const [bills, setBills] = useState<Bill[]>([]);
   const { toast } = useToast();
 
-  const generateBill = useCallback(async (appointmentId: string, draft: BillDraft) => {
+  const generateBill = useCallback(async (appointmentId: string, draft?: BillDraft) => {
     setIsLoading(true);
     try {
       console.log('[BILLING] Generating bill for:', appointmentId);
+
+      // Get the current user's ID token
+      const token = await auth.currentUser?.getIdToken();
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
       const response = await fetch(`/api/billing/generate/${appointmentId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(draft),
+        body: draft ? JSON.stringify(draft) : null,
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to generate bill');
+        const errorData = await response.json();
+        console.error('[BILLING] Error response:', {
+          status: response.status,
+          statusText: response.statusText,
+          data: errorData
+        });
+        throw new Error(errorData.message || 'Failed to generate bill');
       }
 
       const bill = await response.json();
+      console.log('[BILLING] Bill generated:', bill);
       setBills(prev => [...prev, bill]);
 
       toast({
@@ -58,10 +73,23 @@ export function useBilling(options: UseBillingOptions = {}) {
     setIsLoading(true);
     try {
       console.log('[BILLING] Fetching bills');
-      const response = await fetch('/api/billing/bills');
+
+      // Get the current user's ID token
+      const token = await auth.currentUser?.getIdToken();
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
+      const response = await fetch('/api/billing/bills', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
       if (!response.ok) {
         throw new Error('Failed to fetch bills');
       }
+
       const data = await response.json();
       console.log('[BILLING] Fetched bills:', data);
       setBills(data);
@@ -81,10 +109,18 @@ export function useBilling(options: UseBillingOptions = {}) {
   const verifyPayment = useCallback(async (paymentId: string) => {
     try {
       console.log('[BILLING] Verifying payment:', paymentId);
+
+      // Get the current user's ID token
+      const token = await auth.currentUser?.getIdToken();
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
       const response = await fetch('/api/billing/verify-payment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ paymentId }),
       });
