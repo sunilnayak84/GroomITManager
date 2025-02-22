@@ -181,8 +181,13 @@ router.post('/users/:userId/role', authenticateFirebase, requireRole(['admin']),
 
 // Register routes
 export function registerRoutes(app: Express.Application) {
+  // Register billing routes first
   console.log('[ROUTES] Registering billing routes...');
   app.use('/api/billing', authenticateFirebase, billingRouter);
+  
+  // Then register other API routes
+  app.use('/api', router);
+  
   // Log registered routes
   app._router.stack.forEach((r: any) => {
     if (r.route && r.route.path) {
@@ -192,7 +197,6 @@ export function registerRoutes(app: Express.Application) {
       });
     }
   });
-  app.use('/api', router);
 
   // Debug 404 handler
   app.use('/api/*', (req, res) => {

@@ -23,10 +23,12 @@ billingRouter.post('/generate/:appointmentId', async (req, res) => {
     if (!appointmentId) {
       return res.status(400).json({ error: 'Appointment ID is required' });
     }
-    console.log('[BILLING] Generating bill for appointment:', appointmentId);
-    console.log('[BILLING] Generating bill for appointment:', appointmentId);
+    console.log('[BILLING] Request received for appointment:', appointmentId);
 
     const bill = await billingService.generateBill(appointmentId);
+    if (!bill) {
+      return res.status(404).json({ error: 'Could not generate bill' });
+    }
     res.json(bill);
   } catch (error) {
     console.error('[BILLING] Error:', error);
