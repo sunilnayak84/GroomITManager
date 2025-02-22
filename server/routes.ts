@@ -178,7 +178,7 @@ router.post('/users/:userId/role', authenticateFirebase, requireRole(['admin']),
 });
 
 
-// Register routes
+// Register API routes
 export function registerRoutes(app: Express.Application) {
   // Debug middleware for all API requests
   app.use('/api', (req, res, next) => {
@@ -187,22 +187,17 @@ export function registerRoutes(app: Express.Application) {
       url: req.url,
       path: req.path,
       baseUrl: req.baseUrl,
-      originalUrl: req.originalUrl
+      originalUrl: req.originalUrl,
+      headers: {
+        authorization: req.headers.authorization ? 'Present' : 'Missing'
+      }
     });
     next();
   });
 
-  // Register billing routes first with proper error handling
+  // Register billing routes first with authentication
   console.log('[ROUTES] Registering billing routes...');
-  app.use('/api/billing', authenticateFirebase, (req, res, next) => {
-    console.log('[BILLING] Request received:', {
-      method: req.method,
-      path: req.path,
-      params: req.params,
-      originalUrl: req.originalUrl
-    });
-    next();
-  }, billingRouter);
+  app.use('/api/billing', authenticateFirebase, billingRouter);
 
   // Then register other API routes
   app.use('/api', router);

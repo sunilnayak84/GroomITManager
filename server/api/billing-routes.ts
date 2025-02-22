@@ -1,18 +1,24 @@
 import { Router } from 'express';
 import { RazorpayService } from './razorpay-service';
 import { admin } from '../firebase';
+import { authenticateFirebase } from '../middleware/auth';
 
 const billingRouter = Router();
 const razorpayService = new RazorpayService();
 
-// Debug middleware
+// Debug middleware to log all billing requests
 billingRouter.use((req, res, next) => {
-  console.log('[BILLING] Request:', {
+  console.log('[BILLING] Request received:', {
     method: req.method,
     path: req.path,
     params: req.params,
     body: req.body,
-    originalUrl: req.originalUrl
+    url: req.url,
+    originalUrl: req.originalUrl,
+    headers: {
+      authorization: req.headers.authorization ? 'Present' : 'Missing',
+      'content-type': req.headers['content-type']
+    }
   });
   next();
 });
