@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { RazorpayService } from './razorpay-service';
+import { BillingService } from './billing-service';
 import { admin } from '../firebase';
 import { authenticateFirebase } from '../middleware/auth';
 
 const billingRouter = Router();
-const razorpayService = new RazorpayService();
+const billingService = new BillingService();
 
 // Debug middleware to log all billing requests
 billingRouter.use((req, res, next) => {
@@ -23,11 +23,11 @@ billingRouter.use((req, res, next) => {
   next();
 });
 
-// Create payment order
+// Generate bill
 billingRouter.post('/generate/:appointmentId', async (req, res) => {
   try {
     const { appointmentId } = req.params;
-    console.log('[BILLING] Creating payment order for appointment:', appointmentId);
+    console.log('[BILLING] Generating bill for appointment:', appointmentId);
 
     if (!appointmentId) {
       return res.status(400).json({ 
@@ -36,30 +36,16 @@ billingRouter.post('/generate/:appointmentId', async (req, res) => {
       });
     }
 
-    // First verify the appointment exists
-    const appointmentRef = admin.firestore().collection('appointments').doc(appointmentId);
-    const appointmentDoc = await appointmentRef.get();
+    const bill = await billingService.generateBill(appointmentId);
+    console.log('[BILLING] Bill generated successfully:', bill);
 
-    if (!appointmentDoc.exists) {
-      console.log('[BILLING] Appointment not found:', appointmentId);
-      return res.status(404).json({
-        error: 'Not Found',
-        message: 'Appointment not found'
-      });
-    }
-
-    console.log('[BILLING] Found appointment:', appointmentDoc.data());
-
-    const orderDetails = await razorpayService.createOrder(appointmentId);
-    console.log('[BILLING] Payment order created:', orderDetails);
-
-    res.json(orderDetails);
+    res.json(bill);
   } catch (error: any) {
-    console.error('[BILLING] Error creating payment order:', error);
+    console.error('[BILLING] Error generating bill:', error);
     const statusCode = error?.message?.includes('not found') ? 404 : 500;
     res.status(statusCode).json({
       error: statusCode === 404 ? 'Not Found' : 'Internal Server Error',
-      message: error instanceof Error ? error.message : 'Unknown error occurred'
+      message: error instanceof Error ? error.message : 'Failed to generate bill'
     });
   }
 });
@@ -67,23 +53,20 @@ billingRouter.post('/generate/:appointmentId', async (req, res) => {
 // Verify payment
 billingRouter.post('/verify-payment', async (req, res) => {
   try {
-    const { paymentId, orderId, signature } = req.body;
-    console.log('[BILLING] Verifying payment:', { paymentId, orderId });
+    const { paymentId } = req.body;
+    console.log('[BILLING] Verifying payment:', paymentId);
 
-    if (!paymentId || !orderId || !signature) {
+    if (!paymentId) {
       return res.status(400).json({
         error: 'Bad Request',
-        message: 'Payment details are incomplete'
+        message: 'Payment ID is required'
       });
     }
 
-    const isValid = razorpayService.verifyPayment(paymentId, orderId, signature);
-    if (isValid) {
-      await razorpayService.updatePaymentStatus(orderId, paymentId, signature);
-    }
-    console.log('[BILLING] Payment verification result:', { isValid, orderId });
+    const isValid = await billingService.verifyPayment(paymentId);
+    console.log('[BILLING] Payment verification result:', { isValid, paymentId });
 
-    res.json({ success: true });
+    res.json({ success: isValid });
   } catch (error) {
     console.error('[BILLING] Payment verification failed:', error);
     res.status(500).json({
