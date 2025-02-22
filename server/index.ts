@@ -34,6 +34,18 @@ app.use((req, res, next) => {
   next();
 });
 
+// API routes prefix middleware
+app.use('/api', (req, res, next) => {
+  console.log('[API] Request received:', {
+    method: req.method,
+    path: req.path,
+    url: req.url,
+    originalUrl: req.originalUrl
+  });
+  res.setHeader('Content-Type', 'application/json');
+  next();
+});
+
 async function startServer(port: number) {
   try {
     // Initialize Firebase
@@ -50,11 +62,20 @@ async function startServer(port: number) {
     // Start server
     const server = createServer(app);
 
-    // Register API routes before Vite setup
+    // Register API routes BEFORE Vite setup
     registerRoutes(app);
     logger.info('API routes registered');
 
-    // Setup Vite after API routes
+    // Handle API 404s before Vite takes over
+    app.use('/api/*', (req, res) => {
+      logger.warn(`API route not found: ${req.method} ${req.originalUrl}`);
+      res.status(404).json({
+        error: 'Not Found',
+        message: `API route ${req.method} ${req.originalUrl} not found`
+      });
+    });
+
+    // Setup Vite AFTER API routes
     await setupVite(app, server);
     logger.info('Vite middleware setup completed');
 
