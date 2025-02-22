@@ -1,0 +1,35 @@
+[vite] connecting...
+client:614 [vite] connected.
+chunk-GNC7SI6A.js?v=5b3d01f9:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:19 Checking Firebase environment variables...
+firebase.ts:39 FIREBASE_INIT: Initializing Firebase with config: Object
+firebase.ts:44 FIREBASE_INIT: Firebase initialized successfully
+content.js:1 CISPL SignerDigital Loaded
+use-appointments.ts:118 FETCH_APPOINTMENTS: Starting appointment fetch
+use-appointments.ts:126 FETCH_APPOINTMENTS: Created collection reference
+use-appointments.ts:129 FETCH_APPOINTMENTS: Creating query for non-deleted appointments
+use-pets.ts:61 FETCH_PETS: Starting to fetch pets
+use-services.ts:23 FETCH_SERVICES: Starting to fetch services
+use-staff.ts:17 FETCH_STAFF: Starting to fetch staff members
+use-appointments.ts:138 FETCH_APPOINTMENTS: Found 1 active appointments
+use-appointments.ts:142 FETCH_APPOINTMENTS: Active appointment: 7YUf1kJ39d3QcC8XAo7O Object
+use-appointments.ts:144 FETCH_APPOINTMENTS: Got snapshot with 1 active documents
+use-appointments.ts:157 FETCH_APPOINTMENTS: Processing appointment 7YUf1kJ39d3QcC8XAo7O
+use-staff.ts:29 FETCH_STAFF: Successfully fetched staff members: Array(3)
+use-pets.ts:111 FETCH_PETS: Completed fetching pets Object
+use-appointments.ts:225 FETCH_APPOINTMENTS: Processing services for appointment: 7YUf1kJ39d3QcC8XAo7O Services: Array(1)
+use-appointments.ts:233 FETCH_APPOINTMENTS: Fetching service data for ID: KBLvbaMCaz8uRMXutcrz
+use-appointments.ts:238 FETCH_APPOINTMENTS: Raw service data for KBLvbaMCaz8uRMXutcrz : Object
+use-appointments.ts:259 FETCH_APPOINTMENTS: Processed service: Object
+use-appointments.ts:338 FETCH_APPOINTMENTS: Processed 1 appointments. Success: 1, Errors: 0
+AppointmentsPage.tsx:178 AppointmentsPage: Appointments data updated: Object
+AppointmentsPage.tsx:441 [BILLING] Initiating bill generation for: 7YUf1kJ39d3QcC8XAo7O
+api/billing/generate/7YUf1kJ39d3QcC8XAo7O:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 (Not Found)Understand this errorAI
+AppointmentsPage.tsx:472 [BILLING] Error generating bill: SyntaxError: Failed to execute 'json' on 'Response': Unexpected end of JSON input
+    at handleGenerateBill (AppointmentsPage.tsx:451:42)
+handleGenerateBill @ AppointmentsPage.tsx:472Understand this errorAI
+use-toast.ts:132 Toast dispatch: ADD_TOAST Object
+use-toast.ts:134 Toast state after dispatch: Object
