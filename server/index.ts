@@ -1,4 +1,4 @@
-import express, { type Request, type Response, type NextFunction } from "express";
+import express, { type Request, type Response } from "express";
 import { registerRoutes } from "./routes.js";
 import { createServer } from "http";
 import { terminateProcessOnPort } from "./utils/port_cleanup.js";
@@ -18,7 +18,7 @@ app.set('trust proxy', 1);
 
 // CORS configuration
 app.use(cors({
-  origin: true, // Allow all origins in development
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -26,7 +26,7 @@ app.use(cors({
 
 // Request logging middleware
 app.use((req, res, next) => {
-  logger.info(`Incoming request: ${req.method} ${req.url}`, {
+  logger.info(`Incoming ${req.method} request to ${req.path}`, {
     headers: req.headers,
     query: req.query,
     body: req.body
@@ -34,17 +34,40 @@ app.use((req, res, next) => {
   next();
 });
 
-// API routes prefix middleware
-app.use('/api', (req, res, next) => {
-  console.log('[API] Request received:', {
-    method: req.method,
-    path: req.path,
-    url: req.url,
-    originalUrl: req.originalUrl
-  });
-  res.setHeader('Content-Type', 'application/json');
+
+//Billing routes and middleware
+const billingRouter = express.Router();
+const billingAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  //Implementation for authentication middleware.  Placeholder for now.
   next();
+};
+
+billingRouter.get('/invoices', billingAuthMiddleware, async (req, res) => {
+  try {
+    const invoices = await BillingService.getInvoices();
+    res.json(invoices);
+  } catch (error) {
+    logger.error("Error getting invoices:", error);
+    res.status(500).json({ error: 'Failed to retrieve invoices' });
+  }
 });
+
+
+// ... other billing routes as needed
+
+
+//Billing Service (Placeholder Implementation)
+class BillingService {
+  static async getInvoices() {
+    //Implementation to fetch invoices from Firebase or other source.  Placeholder for now.
+    return [];
+  }
+  //Add other billing methods here.
+}
+
+
+app.use('/api/billing', billingRouter);
+
 
 async function startServer(port: number) {
   try {
@@ -62,32 +85,17 @@ async function startServer(port: number) {
     // Start server
     const server = createServer(app);
 
-    // Register API routes BEFORE Vite setup
-    registerRoutes(app);
+    // Register API routes before Vite middleware
+    await registerRoutes(app);
     logger.info('API routes registered');
 
-    // Handle API 404s before Vite takes over
-    app.use('/api/*', (req, res) => {
-      logger.warn(`API route not found: ${req.method} ${req.originalUrl}`);
-      res.status(404).json({
-        error: 'Not Found',
-        message: `API route ${req.method} ${req.originalUrl} not found`
-      });
-    });
-
-    // Setup Vite AFTER API routes
+    // Setup Vite after API routes
     await setupVite(app, server);
     logger.info('Vite middleware setup completed');
 
+    // Start listening
     server.listen(port, '0.0.0.0', () => {
       logger.info(`Server started on port ${port}`);
-
-      // Log all registered routes
-      app._router.stack.forEach((r: any) => {
-        if (r.route && r.route.path) {
-          logger.info(`Route registered: ${Object.keys(r.route.methods).join(',')} ${r.route.path}`);
-        }
-      });
     });
 
     // Handle server errors

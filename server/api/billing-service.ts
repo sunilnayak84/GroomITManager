@@ -1,6 +1,8 @@
 import Razorpay from 'razorpay';
 import { admin } from '../firebase';
+import { logger } from '../utils/logger';
 
+// Initialize Razorpay with environment variables
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID!,
   key_secret: process.env.RAZORPAY_KEY_SECRET!
@@ -21,25 +23,21 @@ export interface Bill {
   status: 'pending' | 'paid' | 'failed';
   paymentId?: string;
   paymentLink?: string;
-  qrCode?: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const db = admin.firestore();
-
 export class BillingService {
-  private normalizeUrl(url: string): string {
-    // Remove trailing slashes and ensure no double slashes
-    return url.replace(/\/+$/, '');
-  }
+  private async getAppointmentDetails(appointmentId: string) {
+    logger.info('[BILLING] Fetching appointment details:', appointmentId);
 
-  async generateBill(appointmentId: string): Promise<Bill> {
-    console.log('[BILLING] Starting bill generation for appointment:', appointmentId);
+    const appointmentDoc = await admin.firestore()
+      .collection('appointments')
+      .doc(appointmentId)
+      .get();
 
-    const appointmentDoc = await db.collection('appointments').doc(appointmentId).get();
     if (!appointmentDoc.exists) {
-      throw new Error(`Appointment with ID ${appointmentId} not found`);
+      throw new Error(`Appointment ${appointmentId} not found`);
     }
 
     const appointment = appointmentDoc.data();
@@ -47,100 +45,143 @@ export class BillingService {
       throw new Error('Appointment data is missing');
     }
 
-    console.log('[BILLING] Appointment data:', appointment);
+    return { doc: appointmentDoc, data: appointment };
+  }
 
-    if (appointment.status !== 'completed') {
-      throw new Error('Cannot generate bill for uncompleted appointment');
-    }
+  private async getCustomerDetails(customerId: string) {
+    logger.info('[BILLING] Fetching customer details:', customerId);
 
-    // Get customer details for Razorpay
-    const customerDoc = await db.collection('customers').doc(appointment.customerId).get();
+    const customerDoc = await admin.firestore()
+      .collection('customers')
+      .doc(customerId)
+      .get();
+
     if (!customerDoc.exists) {
       throw new Error('Customer not found');
     }
-    const customer = customerDoc.data();
-    console.log('[BILLING] Customer data:', customer);
 
-    // Extract services and calculate total
-    // Check both 'service' and 'services' fields
-    const services = appointment.service || appointment.services || [];
-    console.log('[BILLING] Services found:', services);
+    return customerDoc.data()!;
+  }
 
-    if (!Array.isArray(services) || services.length === 0) {
-      throw new Error('No services found in appointment');
-    }
+  private calculateTotal(items: BillItem[]): number {
+    return items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  }
 
-    const items = services.map((service: any) => ({
-      serviceName: service.name,
-      price: service.price,
-      quantity: 1
-    }));
-
-    const totalAmount = items.reduce((sum: number, item: BillItem) => sum + (item.price * item.quantity), 0);
-    console.log('[BILLING] Calculated total amount:', totalAmount);
-
-    // Create bill object
-    const bill: Bill = {
-      appointmentId,
-      customerId: appointment.customerId,
-      items,
-      totalAmount,
-      status: 'pending',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-
+  async generateBill(appointmentId: string): Promise<Bill> {
     try {
-      // Create Razorpay payment link
-      console.log('[BILLING] Creating Razorpay payment link');
+      logger.info('[BILLING] Starting bill generation for appointment:', appointmentId);
 
-      // Normalize the frontend URL
-      const baseUrl = this.normalizeUrl(process.env.FRONTEND_URL || '');
-      const callbackUrl = `${baseUrl}/billing?appointmentId=${appointmentId}`;
+      // Get appointment details
+      const { doc: appointmentDoc, data: appointment } = await this.getAppointmentDetails(appointmentId);
 
-      console.log('[BILLING] Callback URL:', callbackUrl);
+      // Get customer details
+      const customer = await this.getCustomerDetails(appointment.customerId);
 
-      const paymentLink = await razorpay.paymentLink.create({
-        amount: totalAmount * 100, // Converting to paise
-        currency: "INR",
-        description: `Bill for grooming services - Appointment ${appointmentId}`,
-        customer: {
-          name: `${customer?.firstName} ${customer?.lastName}`,
-          email: customer?.email,
-          contact: customer?.phone
-        },
-        callback_url: callbackUrl,
-        callback_method: "get"
-      });
+      // Process services
+      const services = appointment.services || [];
+      if (!Array.isArray(services) || services.length === 0) {
+        throw new Error('No services found in appointment');
+      }
 
-      console.log('[BILLING] Razorpay payment link created:', paymentLink.short_url);
-      bill.paymentLink = paymentLink.short_url;
+      // Create bill items
+      const items = services.map(service => ({
+        serviceName: service.name,
+        price: service.price,
+        quantity: 1
+      }));
 
-      // Save bill to Firestore
-      const billRef = await db.collection('bills').add(bill);
-      console.log('[BILLING] Bill saved to Firestore:', billRef.id);
+      const totalAmount = this.calculateTotal(items);
+      logger.info('[BILLING] Calculated total amount:', totalAmount);
 
-      // Update appointment with billId
-      await appointmentDoc.ref.update({ 
-        billId: billRef.id,
-        billStatus: 'pending'
-      });
-      console.log('[BILLING] Appointment updated with bill reference');
+      // Create bill object
+      const bill: Bill = {
+        appointmentId,
+        customerId: appointment.customerId,
+        items,
+        totalAmount,
+        status: 'pending',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
 
-      return { ...bill, id: billRef.id };
+      try {
+        // Create Razorpay payment link
+        logger.info('[BILLING] Creating Razorpay payment link');
+
+        const callbackUrl = `${process.env.FRONTEND_URL || ''}/billing?appointmentId=${appointmentId}`.replace(/\/+$/, '');
+
+        const paymentLink = await razorpay.paymentLink.create({
+          amount: totalAmount * 100, // Convert to paise
+          currency: "INR",
+          description: `Pet grooming services - Appointment ${appointmentId}`,
+          customer: {
+            name: customer.name || `${customer.firstName} ${customer.lastName}`,
+            email: customer.email,
+            contact: customer.phone
+          },
+          callback_url: callbackUrl,
+          callback_method: "get"
+        });
+
+        logger.info('[BILLING] Payment link created:', paymentLink);
+        bill.paymentLink = paymentLink.short_url;
+
+        // Save bill to Firestore
+        const billRef = await admin.firestore()
+          .collection('bills')
+          .add(bill);
+
+        logger.info('[BILLING] Bill saved:', billRef.id);
+
+        // Update appointment with bill reference
+        await appointmentDoc.ref.update({
+          billId: billRef.id,
+          billStatus: 'pending'
+        });
+
+        return { ...bill, id: billRef.id };
+      } catch (error) {
+        logger.error('[BILLING] Error in payment processing:', error);
+        throw new Error(error instanceof Error ? error.message : 'Payment processing failed');
+      }
     } catch (error) {
-      console.error('[BILLING] Error in bill generation:', error);
-      throw new Error(error instanceof Error ? error.message : 'Failed to create payment link');
+      logger.error('[BILLING] Bill generation failed:', error);
+      throw error;
     }
   }
 
-  async verifyPayment(paymentId: string) {
+  async verifyPayment(paymentId: string): Promise<boolean> {
     try {
+      logger.info('[BILLING] Verifying payment:', paymentId);
       const payment = await razorpay.payments.fetch(paymentId);
-      return payment.status === 'captured';
+
+      const isValid = payment.status === 'captured';
+      logger.info('[BILLING] Payment verification result:', { paymentId, status: payment.status, isValid });
+
+      return isValid;
     } catch (error) {
-      console.error('Payment verification failed:', error);
+      logger.error('[BILLING] Payment verification failed:', error);
       return false;
+    }
+  }
+
+  async getBill(billId: string): Promise<Bill | null> {
+    try {
+      logger.info('[BILLING] Fetching bill:', billId);
+
+      const billDoc = await admin.firestore()
+        .collection('bills')
+        .doc(billId)
+        .get();
+
+      if (!billDoc.exists) {
+        return null;
+      }
+
+      return { id: billDoc.id, ...billDoc.data() as Bill };
+    } catch (error) {
+      logger.error('[BILLING] Error fetching bill:', error);
+      throw error;
     }
   }
 }
