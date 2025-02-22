@@ -48,6 +48,7 @@ export class BillingService {
 
       logger.info('[BILLING] Fetching appointment details:', appointmentId);
 
+      // Get appointment with customer data
       const appointmentDoc = await admin.firestore()
         .collection('appointments')
         .doc(appointmentId.trim())
@@ -64,45 +65,51 @@ export class BillingService {
         throw new Error('Appointment data is missing');
       }
 
-      // Get customer details
-      if (!appointment.customerId) {
-        logger.error('[BILLING] Customer ID is missing in appointment');
-        throw new Error('Customer ID is missing in appointment');
+      // Log appointment data for debugging
+      logger.info('[BILLING] Retrieved appointment data:', JSON.stringify(appointment, null, 2));
+
+      // Check for customer reference
+      const customerId = appointment.customer?.id || appointment.customerId;
+      if (!customerId) {
+        logger.error('[BILLING] Customer reference is missing in appointment:', appointment);
+        throw new Error('Customer reference is missing in appointment');
       }
 
+      // Get customer details
       const customerDoc = await admin.firestore()
         .collection('customers')
-        .doc(appointment.customerId.toString())
+        .doc(customerId.toString())
         .get();
 
       if (!customerDoc.exists) {
-        logger.error(`[BILLING] Customer ${appointment.customerId} not found`);
+        logger.error(`[BILLING] Customer ${customerId} not found`);
         throw new Error('Customer not found');
       }
 
       const customer = customerDoc.data()!;
 
-      // Get service details with proper error handling
-      const servicePromises = (appointment.services || []).map(async (serviceId: string) => {
-        if (!serviceId || typeof serviceId !== 'string') {
-          logger.warn(`[BILLING] Invalid service ID: ${serviceId}`);
-          return null;
+      // Get service details
+      const services = [];
+      if (appointment.services && Array.isArray(appointment.services)) {
+        for (const serviceId of appointment.services) {
+          if (!serviceId || typeof serviceId !== 'string') {
+            logger.warn(`[BILLING] Invalid service ID: ${serviceId}`);
+            continue;
+          }
+
+          const serviceDoc = await admin.firestore()
+            .collection('services')
+            .doc(serviceId.trim())
+            .get();
+
+          if (!serviceDoc.exists) {
+            logger.warn(`[BILLING] Service ${serviceId} not found`);
+            continue;
+          }
+
+          services.push({ id: serviceDoc.id, ...serviceDoc.data() });
         }
-
-        const serviceDoc = await admin.firestore()
-          .collection('services')
-          .doc(serviceId.trim())
-          .get();
-
-        if (!serviceDoc.exists) {
-          logger.warn(`[BILLING] Service ${serviceId} not found`);
-          return null;
-        }
-        return { id: serviceDoc.id, ...serviceDoc.data() };
-      });
-
-      const services = (await Promise.all(servicePromises))
-        .filter(service => service !== null);
+      }
 
       if (services.length === 0) {
         logger.warn(`[BILLING] No valid services found for appointment ${appointmentId}`);
