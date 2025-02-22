@@ -78,7 +78,9 @@ export class BillingService {
         customerId: appointment.customerId,
         customerRef: appointment.customer,
         customerDetails: appointment.customerDetails,
-        services: appointment.services
+        services: appointment.services,
+        petDetails: appointment.pet,
+        petRef: appointment.petRef
       });
 
       // Check for customer reference - try all possible paths
@@ -91,15 +93,22 @@ export class BillingService {
         customerId = appointment.customerDetails.id;
       } else if (appointment.customerRef?.id) {
         customerId = appointment.customerRef.id;
+      } else if (appointment.pet?.owner?.id) {
+        customerId = appointment.pet.owner.id;
+      } else if (appointment.petRef?.owner?.id) {
+        customerId = appointment.petRef.owner.id;
       }
 
       if (!customerId) {
         logger.error('[BILLING] Customer reference not found in appointment:', {
           appointmentId,
+          appointmentData: JSON.stringify(appointment, null, 2),
           customerId: appointment.customerId,
           customerObj: appointment.customer,
           customerDetails: appointment.customerDetails,
-          customerRef: appointment.customerRef
+          customerRef: appointment.customerRef,
+          petOwner: appointment.pet?.owner,
+          petRefOwner: appointment.petRef?.owner
         });
         throw new Error('Customer reference is missing in appointment');
       }
