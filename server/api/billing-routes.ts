@@ -11,7 +11,8 @@ billingRouter.use((req, res, next) => {
   console.log('[BILLING] Request:', {
     method: req.method,
     path: req.path,
-    params: req.params
+    params: req.params,
+    body: req.body
   });
   next();
 });
@@ -21,20 +22,27 @@ billingRouter.post('/generate/:appointmentId', async (req, res) => {
   try {
     const { appointmentId } = req.params;
     if (!appointmentId) {
-      return res.status(400).json({ error: 'Appointment ID is required' });
+      return res.status(400).json({ 
+        error: 'Bad Request',
+        message: 'Appointment ID is required' 
+      });
     }
     console.log('[BILLING] Request received for appointment:', appointmentId);
 
     const bill = await billingService.generateBill(appointmentId);
-    if (!bill) {
-      return res.status(404).json({ error: 'Could not generate bill' });
-    }
+    console.log('[BILLING] Bill generated successfully:', {
+      billId: bill.id,
+      appointmentId: bill.appointmentId,
+      status: bill.status
+    });
+
     res.json(bill);
   } catch (error) {
     console.error('[BILLING] Error:', error);
-    res.status(500).json({
-      error: 'Failed to generate bill',
-      message: error instanceof Error ? error.message : 'Unknown error'
+    const statusCode = error.message.includes('not found') ? 404 : 500;
+    res.status(statusCode).json({
+      error: statusCode === 404 ? 'Not Found' : 'Internal Server Error',
+      message: error instanceof Error ? error.message : 'Unknown error occurred'
     });
   }
 });
@@ -46,13 +54,19 @@ billingRouter.get('/bills/:billId', async (req, res) => {
     const billDoc = await admin.firestore().collection('bills').doc(billId).get();
 
     if (!billDoc.exists) {
-      return res.status(404).json({ error: 'Bill not found' });
+      return res.status(404).json({ 
+        error: 'Not Found',
+        message: 'Bill not found' 
+      });
     }
 
     res.json({ id: billDoc.id, ...billDoc.data() });
   } catch (error) {
     console.error('[BILLING] Error fetching bill:', error);
-    res.status(500).json({ error: 'Failed to fetch bill' });
+    res.status(500).json({ 
+      error: 'Internal Server Error',
+      message: error instanceof Error ? error.message : 'Failed to fetch bill'
+    });
   }
 });
 

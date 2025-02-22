@@ -181,13 +181,32 @@ router.post('/users/:userId/role', authenticateFirebase, requireRole(['admin']),
 
 // Register routes
 export function registerRoutes(app: Express.Application) {
-  // Register billing routes first
+  // Log all requests to help with debugging
+  app.use((req, res, next) => {
+    console.log('[API] Incoming request:', {
+      method: req.method,
+      url: req.url,
+      path: req.path,
+      baseUrl: req.baseUrl
+    });
+    next();
+  });
+
+  // Register billing routes first with proper error handling
   console.log('[ROUTES] Registering billing routes...');
-  app.use('/api/billing', authenticateFirebase, billingRouter);
-  
+  const billingPath = '/api/billing';
+  app.use(billingPath, authenticateFirebase, (req, res, next) => {
+    console.log('[BILLING] Request received:', {
+      method: req.method,
+      path: req.path,
+      params: req.params
+    });
+    next();
+  }, billingRouter);
+
   // Then register other API routes
   app.use('/api', router);
-  
+
   // Log registered routes
   app._router.stack.forEach((r: any) => {
     if (r.route && r.route.path) {
@@ -198,7 +217,7 @@ export function registerRoutes(app: Express.Application) {
     }
   });
 
-  // Debug 404 handler
+  // Debug 404 handler for API routes
   app.use('/api/*', (req, res) => {
     console.log('[API] 404 Not Found:', {
       method: req.method,
@@ -215,15 +234,8 @@ export function registerRoutes(app: Express.Application) {
   app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.error('[API] Error:', err);
     res.status(err.status || 500).json({
-      error: err.message || 'Internal Server Error'
-    });
-  });
-
-  // API 404 handler should be last
-  app.use('*', (req: Request, res: Response) => {
-    console.log('[API] 404 Not Found:', req.method, req.url);
-    res.status(404).json({
-      message: `Route ${req.method} ${req.url} not found`
+      error: err.message || 'Internal Server Error',
+      details: process.env.NODE_ENV === 'development' ? err.stack : undefined
     });
   });
 }

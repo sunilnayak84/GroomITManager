@@ -439,17 +439,26 @@ export default function AppointmentsPage() {
   const handleGenerateBill = async (appointmentId: string) => {
     try {
       console.log('[BILLING] Initiating bill generation for:', appointmentId);
-      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/billing/generate/${appointmentId}`, {
+      // Use window.location.origin as fallback if VITE_API_URL is not set
+      const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+      const response = await fetch(`${baseUrl}/api/billing/generate/${appointmentId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${await getAuth().currentUser?.getIdToken()}`
+          'Authorization': `Bearer ${await auth.currentUser?.getIdToken()}`
         }
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to generate bill');
+        let errorMessage = 'Failed to generate bill';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (e) {
+          // If JSON parsing fails, use status text
+          errorMessage = `Failed to generate bill: ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
       }
 
       const bill = await response.json();

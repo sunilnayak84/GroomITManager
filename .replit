@@ -51,7 +51,7 @@ name = "dev"
 command = "concurrently \"cd server && tsx watch --clear-screen=false index.ts\" \"cd client && npm run dev\""
 
 [workflows]
-runButton = "Development Servers"
+runButton = "Project"
 
 [[workflows.workflow]]
 name = "Project"
