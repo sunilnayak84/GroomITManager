@@ -440,12 +440,18 @@ export default function AppointmentsPage() {
     try {
       console.log('[BILLING] Initiating bill generation for:', appointmentId);
 
-      const token = await auth.currentUser?.getIdToken();
-      if (!token) {
-        throw new Error('Authentication required');
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error('You must be logged in to generate a bill');
       }
 
-      // Use the full URL to ensure proper routing
+      const token = await user.getIdToken(true); // Force refresh token
+      if (!token) {
+        throw new Error('Failed to get authentication token');
+      }
+
+      console.log('[BILLING] Authentication token obtained, making request');
+
       const response = await fetch(`/api/billing/generate/${appointmentId}`, {
         method: 'POST',
         headers: {
@@ -473,18 +479,15 @@ export default function AppointmentsPage() {
       const bill = await response.json();
       console.log('[BILLING] Bill generated:', bill);
 
-      // Show success message
       toast({
         title: "Success",
         description: "Bill generated successfully",
       });
 
-      // Refresh the appointments list to show updated status
       if (fetchAppointments) {
         await fetchAppointments();
       }
 
-      // Open bill in new tab
       if (bill.id) {
         window.open(`/billing?billId=${bill.id}`, '_blank');
       }
