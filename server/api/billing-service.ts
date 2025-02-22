@@ -35,6 +35,13 @@ interface Bill {
   updatedAt: Date;
 }
 
+interface ServiceData {
+  id: string;
+  name: string;
+  description?: string;
+  price: number;
+}
+
 const TAX_RATE = 0.18; // 18% GST
 
 export class BillingService {
@@ -66,12 +73,24 @@ export class BillingService {
       }
 
       // Log appointment data for debugging
-      logger.info('[BILLING] Retrieved appointment data:', JSON.stringify(appointment, null, 2));
+      logger.debug('[BILLING] Full appointment data:', appointment);
 
-      // Check for customer reference
-      const customerId = appointment.customer?.id || appointment.customerId;
+      // Check for customer reference - try all possible paths
+      let customerId = null;
+      if (appointment.customerId) {
+        customerId = appointment.customerId;
+      } else if (appointment.customer?.id) {
+        customerId = appointment.customer.id;
+      } else if (appointment.customerRef?.id) {
+        customerId = appointment.customerRef.id;
+      }
+
       if (!customerId) {
-        logger.error('[BILLING] Customer reference is missing in appointment:', appointment);
+        logger.error('[BILLING] Customer reference not found in appointment:', {
+          customerId: appointment.customerId,
+          customerObj: appointment.customer,
+          customerRef: appointment.customerRef
+        });
         throw new Error('Customer reference is missing in appointment');
       }
 
@@ -89,25 +108,47 @@ export class BillingService {
       const customer = customerDoc.data()!;
 
       // Get service details
-      const services = [];
+      const services: ServiceData[] = [];
       if (appointment.services && Array.isArray(appointment.services)) {
-        for (const serviceId of appointment.services) {
-          if (!serviceId || typeof serviceId !== 'string') {
-            logger.warn(`[BILLING] Invalid service ID: ${serviceId}`);
+        for (const serviceRef of appointment.services) {
+          let serviceId;
+          // Handle both string IDs and reference objects
+          if (typeof serviceRef === 'string') {
+            serviceId = serviceRef;
+          } else if (serviceRef?.id) {
+            serviceId = serviceRef.id;
+          } else {
+            logger.warn('[BILLING] Invalid service reference:', serviceRef);
             continue;
           }
 
-          const serviceDoc = await admin.firestore()
-            .collection('services')
-            .doc(serviceId.trim())
-            .get();
+          try {
+            const serviceDoc = await admin.firestore()
+              .collection('services')
+              .doc(serviceId.trim())
+              .get();
 
-          if (!serviceDoc.exists) {
-            logger.warn(`[BILLING] Service ${serviceId} not found`);
+            if (!serviceDoc.exists) {
+              logger.warn(`[BILLING] Service ${serviceId} not found`);
+              continue;
+            }
+
+            const serviceData = serviceDoc.data();
+            if (!serviceData) {
+              logger.warn(`[BILLING] Service ${serviceId} has no data`);
+              continue;
+            }
+
+            services.push({
+              id: serviceDoc.id,
+              name: serviceData.name || 'Unknown Service',
+              description: serviceData.description || '',
+              price: serviceData.price || 0
+            });
+          } catch (error) {
+            logger.error(`[BILLING] Error fetching service ${serviceId}:`, error);
             continue;
           }
-
-          services.push({ id: serviceDoc.id, ...serviceDoc.data() });
         }
       }
 
@@ -122,7 +163,7 @@ export class BillingService {
         doc: appointmentDoc
       };
     } catch (error) {
-      logger.error('[BILLING] Error fetching appointment details:', error);
+      logger.error('[BILLING] Error in getAppointmentDetails:', error);
       throw error;
     }
   }
