@@ -445,6 +445,7 @@ export default function AppointmentsPage() {
         throw new Error('Authentication required');
       }
 
+      // Use the full URL to ensure proper routing
       const response = await fetch(`/api/billing/generate/${appointmentId}`, {
         method: 'POST',
         headers: {
@@ -483,7 +484,7 @@ export default function AppointmentsPage() {
         await fetchAppointments();
       }
 
-      // Instead of using navigation, open in new tab
+      // Open bill in new tab
       if (bill.id) {
         window.open(`/billing?billId=${bill.id}`, '_blank');
       }

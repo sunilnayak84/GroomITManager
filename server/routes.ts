@@ -10,11 +10,7 @@ const router = Router();
 
 // Register API routes
 export async function registerRoutes(app: Express.Application) {
-  // Mount billing routes first, ensuring they're accessible
-  logger.info('[ROUTES] Registering billing routes');
-  app.use('/api/billing', billingRouter);
-
-  // API request logging middleware
+  // API request logging middleware first
   app.use('/api', (req, res, next) => {
     logger.info('[API] Request:', {
       method: req.method,
@@ -28,6 +24,17 @@ export async function registerRoutes(app: Express.Application) {
     });
     next();
   });
+
+  // Mount billing routes after logging but before authentication
+  logger.info('[ROUTES] Registering billing routes');
+  app.use('/api/billing', (req, res, next) => {
+    logger.info('[BILLING] Incoming request:', {
+      method: req.method,
+      path: req.path,
+      params: req.params
+    });
+    next();
+  }, billingRouter);
 
   // All other API routes require authentication
   app.use('/api', authenticateFirebase);
