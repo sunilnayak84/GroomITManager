@@ -2,15 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 import { getUserRole, RoleTypes, DefaultPermissions, admin, getFirebaseAdmin } from '../firebase';
 import { FirebaseUser } from '../auth';
 
-declare global {
-  namespace Express {
-    interface Request {
-      user?: FirebaseUser;
-      firebaseUser?: admin.auth.UserRecord;
-    }
-  }
-}
-
 export async function authenticateFirebase(req: Request, res: Response, next: NextFunction) {
   // Skip authentication for OPTIONS requests (CORS preflight)
   if (req.method === 'OPTIONS') {
@@ -18,8 +9,16 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
   }
 
   try {
+    console.log('[AUTH] Starting authentication for request:', {
+      method: req.method,
+      path: req.path,
+      url: req.url,
+      originalUrl: req.originalUrl
+    });
+
     const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith('Bearer ')) {
+      console.log('[AUTH] No bearer token found in request');
       return res.status(401).json({ 
         message: 'No token provided',
         code: 'NO_TOKEN'
@@ -27,8 +26,9 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
     }
 
     const idToken = authHeader.split('Bearer ')[1];
-    const firebaseApp = await getFirebaseAdmin();
+    console.log('[AUTH] Token extracted, verifying...');
 
+    const firebaseApp = await getFirebaseAdmin();
     if (!firebaseApp) {
       console.error('[AUTH] Firebase Admin not initialized');
       return res.status(500).json({ 
@@ -38,7 +38,6 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
     }
 
     try {
-      console.log('[AUTH] Verifying token...');
       const auth = firebaseApp.auth();
       const decodedToken = await auth.verifyIdToken(idToken);
       const user = await auth.getUser(decodedToken.uid);
@@ -90,7 +89,7 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
         permissions
       };
 
-      console.log(`[AUTH] User authenticated:`, {
+      console.log(`[AUTH] Authentication successful:`, {
         email: req.user.email,
         role: req.user.role,
         permissions: req.user.permissions.length
