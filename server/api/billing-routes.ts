@@ -1,9 +1,13 @@
 import { Router } from 'express';
 import { BillingService } from './billing-service';
 import { logger } from '../utils/logger';
+import { authenticateFirebase } from '../middleware/auth';
 
 const billingRouter = Router();
 const billingService = new BillingService();
+
+// Add authentication middleware to all billing routes
+billingRouter.use(authenticateFirebase);
 
 // Log all billing requests
 billingRouter.use((req, res, next) => {

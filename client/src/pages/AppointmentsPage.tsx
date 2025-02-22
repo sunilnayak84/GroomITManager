@@ -20,7 +20,7 @@ import AppointmentCalendar from "../components/AppointmentCalendar";
 import AppointmentEditForm from "../components/AppointmentEditForm";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PetDetails } from "../components/PetDetails";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 
 // Get status type from the schema
@@ -62,9 +62,9 @@ function ActionButtons({ appointment, onView, onEdit }: ActionButtonsProps) {
 
   return (
     <div className="flex items-center gap-2">
-      <Button 
-        variant="outline" 
-        size="sm" 
+      <Button
+        variant="outline"
+        size="sm"
         onClick={onView}
       >
         View
@@ -311,7 +311,7 @@ export default function AppointmentsPage() {
             setSelectedPet(fullPetData);
             setShowPetDetails(true);
           }
-        }}> 
+        }}>
           <img
             src={pet.image || `https://api.dicebear.com/7.x/adventurer/svg?seed=${pet.name}`}
             alt={pet.name}
@@ -399,7 +399,7 @@ export default function AppointmentsPage() {
               setOpenDetails(true);
             }
           }}
-          onEdit={() => { 
+          onEdit={() => {
             // Update selected appointment directly from appointments data
             const appointment = appointments?.find(apt => apt.id === row.id);
             if (appointment) {
@@ -436,15 +436,21 @@ export default function AppointmentsPage() {
     }
   ], []);
 
+  const navigate = useNavigate();
   const handleGenerateBill = async (appointmentId: string) => {
     try {
       console.log('[BILLING] Initiating bill generation for:', appointmentId);
+
+      const token = await auth.currentUser?.getIdToken();
+      if (!token) {
+        throw new Error('Authentication required');
+      }
 
       const response = await fetch(`/api/billing/generate/${appointmentId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${await auth.currentUser?.getIdToken()}`
+          'Authorization': `Bearer ${token}`
         }
       });
 
@@ -454,6 +460,7 @@ export default function AppointmentsPage() {
           const errorData = await response.json();
           errorMessage = errorData.message || errorMessage;
         } catch (e) {
+          // If error response is not JSON
           errorMessage = `Failed to generate bill: ${response.statusText}`;
         }
         console.error('[BILLING] Error response:', {
@@ -464,66 +471,24 @@ export default function AppointmentsPage() {
         throw new Error(errorMessage);
       }
 
-      const orderData = await response.json();
-      console.log('[BILLING] Order created:', orderData);
+      const bill = await response.json();
+      console.log('[BILLING] Bill generated:', bill);
 
-      // Initialize Razorpay payment
-      const options = {
-        key: orderData.keyId,
-        amount: orderData.amount,
-        currency: orderData.currency,
-        name: "GroomIT",
-        description: "Pet Grooming Service Payment",
-        order_id: orderData.orderId,
-        handler: async function (response: any) {
-          try {
-            // Verify payment
-            const verifyResponse = await fetch('/api/billing/verify-payment', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${await auth.currentUser?.getIdToken()}`
-              },
-              body: JSON.stringify({
-                paymentId: response.razorpay_payment_id,
-                orderId: response.razorpay_order_id,
-                signature: response.razorpay_signature
-              })
-            });
+      // Show success message
+      toast({
+        title: "Success",
+        description: "Bill generated successfully",
+      });
 
-            if (!verifyResponse.ok) {
-              throw new Error('Payment verification failed');
-            }
+      // Refresh the appointments list to show updated status
+      if (fetchAppointments) {
+        await fetchAppointments();
+      }
 
-            toast({
-              title: "Success",
-              description: "Payment completed successfully",
-            });
-
-            // Refresh appointments to show updated payment status
-            if (fetchAppointments) {
-              fetchAppointments();
-            }
-          } catch (error) {
-            console.error('[BILLING] Payment verification error:', error);
-            toast({
-              title: "Error",
-              description: error instanceof Error ? error.message : "Payment verification failed",
-              variant: "destructive",
-            });
-          }
-        },
-        prefill: {
-          name: `${auth.currentUser?.displayName || ''}`,
-          email: auth.currentUser?.email || '',
-        },
-        theme: {
-          color: "#6366f1",
-        }
-      };
-
-      const rzp = new (window as any).Razorpay(options);
-      rzp.open();
+      // Redirect to billing page if we have a bill ID
+      if (bill.id) {
+        navigate(`/billing?billId=${bill.id}`);
+      }
 
     } catch (error) {
       console.error("[BILLING] Error generating bill:", error);
@@ -630,7 +595,7 @@ export default function AppointmentsPage() {
           />
         </div>
       ) : (
-        <AppointmentCalendar 
+        <AppointmentCalendar
           setSelectedAppointment={setSelectedAppointment}
           setOpenDetails={setOpenDetails}
         />
@@ -644,11 +609,11 @@ export default function AppointmentsPage() {
             onOpenChange={setOpenDetails}
             onEdit={() => setOpenEdit(true)}
           />
-          <Dialog open={openEdit} onOpenChange={setOpenEdit}> 
+          <Dialog open={openEdit} onOpenChange={setOpenEdit}>
             <DialogTrigger asChild>
               {/* This trigger is already handled in ActionButtons */}
             </DialogTrigger>
-            <AppointmentEditForm appointment={selectedAppointment} setOpen={setOpenEdit} /> 
+            <AppointmentEditForm appointment={selectedAppointment} setOpen={setOpenEdit} />
           </Dialog>
         </>
       )}
@@ -677,11 +642,11 @@ export default function AppointmentsPage() {
                 <div>
                   <h2 className="text-2xl font-bold">{selectedCustomer.firstName} {selectedCustomer.lastName}</h2>
                   <p className="text-muted-foreground">
-                    Customer since {selectedCustomer.createdAt ? 
-                      format(typeof selectedCustomer.createdAt === 'string' ? 
-                        new Date(selectedCustomer.createdAt) : 
-                        selectedCustomer.createdAt.toDate(), 
-                      'PPP') : 
+                    Customer since {selectedCustomer.createdAt ?
+                      format(typeof selectedCustomer.createdAt === 'string' ?
+                        new Date(selectedCustomer.createdAt) :
+                        selectedCustomer.createdAt.toDate(),
+                      'PPP') :
                       'Not available'}
                   </p>
                 </div>
@@ -703,11 +668,11 @@ export default function AppointmentsPage() {
                     <p><span className="text-muted-foreground">Gender: </span>{selectedCustomer.gender ? selectedCustomer.gender.charAt(0).toUpperCase() + selectedCustomer.gender.slice(1) : 'Not specified'}</p>
                     <p><span className="text-muted-foreground">Pets: </span>{selectedCustomer.petCount || 0} pet(s)</p>
                     <p><span className="text-muted-foreground">Last Updated: </span>
-                      {selectedCustomer.updatedAt ? 
-                        format(typeof selectedCustomer.updatedAt === 'string' ? 
-                          new Date(selectedCustomer.updatedAt) : 
-                          selectedCustomer.updatedAt.toDate(), 
-                        'PPP') : 
+                      {selectedCustomer.updatedAt ?
+                        format(typeof selectedCustomer.updatedAt === 'string' ?
+                          new Date(selectedCustomer.updatedAt) :
+                          selectedCustomer.updatedAt.toDate(),
+                        'PPP') :
                         'Never'}
                     </p>
                   </div>
