@@ -1,0 +1,52 @@
+[frontend] 
+[frontend] > groom-it-manager-client@0.1.0 dev
+[frontend] > vite --port 5174 --host 0.0.0.0 --port 5174 --host 0.0.0.0
+[frontend] 
+[frontend] 
+[frontend]   VITE v5.4.11  ready in 503 ms
+[frontend] 
+[frontend]   ➜  Local:   http://localhost:5174/
+[frontend]   ➜  Network: http://172.31.128.46:5174/
+[backend] [FIREBASE] Starting Firebase Admin initialization...
+[backend] [FIREBASE] Using service account from environment variable
+[backend] [FIREBASE] Initializing with service account for project: replit-5ac6a
+[backend] [FIREBASE] Production initialization successful
+[backend] [PORT_CLEANUP] Attempting to clean up port 3000...
+[backend] [PORT_CLEANUP] Unix method failed, trying Windows method...
+[backend] [PORT_CLEANUP] Windows method failed
+[backend] [PORT_CLEANUP] Port 3000 is now available
+[backend] info: Firebase Admin initialized successfully {"timestamp":"2025-02-22T07:54:24.792Z"}
+[backend] [AUTH] Setting up authentication middleware in production mode
+[backend] [AUTH] Firebase Admin initialized successfully
+[backend] [AUTH] Authentication middleware setup completed
+[backend] info: Authentication setup completed {"timestamp":"2025-02-22T07:54:24.795Z"}
+[backend] [ROUTES] Registering billing routes...
+[backend] info: API routes registered {"timestamp":"2025-02-22T07:54:24.797Z"}
+[backend] AssertError: Expected required property
+[backend]     at AssertValue (file:///home/runner/workspace/node_modules/@sinclair/typebox/build/esm/value/assert/assert.mjs:44:11)
+[backend]     at Assert (file:///home/runner/workspace/node_modules/@sinclair/typebox/build/esm/value/assert/assert.mjs:48:32)
+[backend]     at file:///home/runner/workspace/node_modules/@sinclair/typebox/build/esm/value/parse/parse.mjs:13:38
+[backend]     at file:///home/runner/workspace/node_modules/@sinclair/typebox/build/esm/value/parse/parse.mjs:20:52
+[backend]     at Array.reduce (<anonymous>)
+[backend]     at ParseValue (file:///home/runner/workspace/node_modules/@sinclair/typebox/build/esm/value/parse/parse.mjs:20:25)
+[backend]     at Module.Parse (file:///home/runner/workspace/node_modules/@sinclair/typebox/build/esm/value/parse/parse.mjs:24:72)
+[backend]     at safeParseThemeJson (/home/runner/workspace/node_modules/@replit/vite-plugin-shadcn-theme-json/src/schemas.ts:25:26)
+[backend]     at PluginContext.buildStart (/home/runner/workspace/node_modules/@replit/vite-plugin-shadcn-theme-json/src/index.ts:35:43)
+[backend]     at async Promise.all (index 6) {
+[backend]   error: {
+[backend]     type: 45,
+[backend]     schema: { anyOf: [Array], [Symbol(TypeBox.Kind)]: 'Union' },
+[backend]     path: '/variant',
+[backend]     value: undefined,
+[backend]     message: 'Expected required property',
+[backend]     errors: []
+[backend]   }
+[backend] }
+[backend] Re-optimizing dependencies because vite config has changed
+[backend] info: Vite middleware setup completed {"timestamp":"2025-02-22T07:54:25.777Z"}
+[backend] info: Server started on port 3000 {"timestamp":"2025-02-22T07:54:25.780Z"}
+[backend] info: Route registered: get /api/user {"timestamp":"2025-02-22T07:54:25.783Z"}
+[frontend] 
+[frontend] [TypeScript] Found 0 errors. Watching for file changes.
+[backend] 
+[backend] [TypeScript] Found 0 errors. Watching for file changes.
