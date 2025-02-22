@@ -15,6 +15,7 @@ export function useBilling(options: UseBillingOptions = {}) {
   const generateBill = useCallback(async (appointmentId: string, draft: BillDraft) => {
     setIsLoading(true);
     try {
+      console.log('[BILLING] Generating bill for:', appointmentId);
       const response = await fetch(`/api/billing/generate/${appointmentId}`, {
         method: 'POST',
         headers: {
@@ -30,7 +31,7 @@ export function useBilling(options: UseBillingOptions = {}) {
 
       const bill = await response.json();
       setBills(prev => [...prev, bill]);
-      
+
       toast({
         title: "Success",
         description: "Bill generated successfully",
@@ -39,6 +40,7 @@ export function useBilling(options: UseBillingOptions = {}) {
       options.onSuccess?.();
       return bill;
     } catch (error) {
+      console.error('[BILLING] Error generating bill:', error);
       const message = error instanceof Error ? error.message : 'Failed to generate bill';
       toast({
         title: "Error",
@@ -55,13 +57,16 @@ export function useBilling(options: UseBillingOptions = {}) {
   const getBills = useCallback(async () => {
     setIsLoading(true);
     try {
+      console.log('[BILLING] Fetching bills');
       const response = await fetch('/api/billing/bills');
       if (!response.ok) {
         throw new Error('Failed to fetch bills');
       }
       const data = await response.json();
+      console.log('[BILLING] Fetched bills:', data);
       setBills(data);
     } catch (error) {
+      console.error('[BILLING] Error fetching bills:', error);
       toast({
         title: "Error",
         description: "Failed to fetch bills",
@@ -75,6 +80,7 @@ export function useBilling(options: UseBillingOptions = {}) {
 
   const verifyPayment = useCallback(async (paymentId: string) => {
     try {
+      console.log('[BILLING] Verifying payment:', paymentId);
       const response = await fetch('/api/billing/verify-payment', {
         method: 'POST',
         headers: {
@@ -96,6 +102,7 @@ export function useBilling(options: UseBillingOptions = {}) {
       }
       return success;
     } catch (error) {
+      console.error('[BILLING] Error verifying payment:', error);
       toast({
         title: "Error",
         description: "Failed to verify payment",

@@ -1,4 +1,4 @@
-import express, { type Request, type Response } from "express";
+import express, { type Request, type Response, type NextFunction } from "express";
 import { registerRoutes } from "./routes.js";
 import { createServer } from "http";
 import { terminateProcessOnPort } from "./utils/port_cleanup.js";
@@ -33,40 +33,6 @@ app.use((req, res, next) => {
   });
   next();
 });
-
-
-//Billing routes and middleware
-const billingRouter = express.Router();
-const billingAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  //Implementation for authentication middleware.  Placeholder for now.
-  next();
-};
-
-billingRouter.get('/invoices', billingAuthMiddleware, async (req, res) => {
-  try {
-    const invoices = await BillingService.getInvoices();
-    res.json(invoices);
-  } catch (error) {
-    logger.error("Error getting invoices:", error);
-    res.status(500).json({ error: 'Failed to retrieve invoices' });
-  }
-});
-
-
-// ... other billing routes as needed
-
-
-//Billing Service (Placeholder Implementation)
-class BillingService {
-  static async getInvoices() {
-    //Implementation to fetch invoices from Firebase or other source.  Placeholder for now.
-    return [];
-  }
-  //Add other billing methods here.
-}
-
-
-app.use('/api/billing', billingRouter);
 
 
 async function startServer(port: number) {

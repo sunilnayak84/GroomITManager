@@ -1,0 +1,75 @@
+[frontend] 
+[frontend] > groom-it-manager-client@0.1.0 dev
+[frontend] > vite --port 5174 --host 0.0.0.0 --port 5174 --host 0.0.0.0
+[frontend] 
+[frontend] 
+[frontend]   VITE v5.4.11  ready in 689 ms
+[frontend] 
+[frontend]   ➜  Local:   http://localhost:5174/
+[frontend]   ➜  Network: http://172.31.128.46:5174/
+[backend] [FIREBASE] Starting Firebase Admin initialization...
+[backend] [FIREBASE] Using service account from environment variable
+[backend] [FIREBASE] Initializing with service account for project: replit-5ac6a
+[backend] [FIREBASE] Production initialization successful
+[backend] [PORT_CLEANUP] Attempting to clean up port 3000...
+[backend] [PORT_CLEANUP] Unix method failed, trying Windows method...
+[backend] [PORT_CLEANUP] Windows method failed
+[backend] [PORT_CLEANUP] Port 3000 is now available
+[backend] info: Firebase Admin initialized successfully {"timestamp":"2025-02-22T10:22:48.704Z"}
+[backend] [AUTH] Setting up authentication middleware in production mode
+[backend] [AUTH] Firebase Admin initialized successfully
+[backend] [AUTH] Authentication middleware setup completed
+[backend] info: Authentication setup completed {"timestamp":"2025-02-22T10:22:48.706Z"}
+[backend] info: [ROUTES] Registering billing routes {"timestamp":"2025-02-22T10:22:48.708Z"}
+[backend] info: [ROUTES] Registering general API routes {"timestamp":"2025-02-22T10:22:48.709Z"}
+[backend] info: [ROUTES] Registering staff management routes {"timestamp":"2025-02-22T10:22:48.709Z"}
+[backend] info: API routes registered {"timestamp":"2025-02-22T10:22:48.710Z"}
+[backend] AssertError: Expected required property
+[backend]     at AssertValue (file:///home/runner/workspace/node_modules/@sinclair/typebox/build/esm/value/assert/assert.mjs:44:11)
+[backend]     at Assert (file:///home/runner/workspace/node_modules/@sinclair/typebox/build/esm/value/assert/assert.mjs:48:32)
+[backend]     at file:///home/runner/workspace/node_modules/@sinclair/typebox/build/esm/value/parse/parse.mjs:13:38
+[backend]     at file:///home/runner/workspace/node_modules/@sinclair/typebox/build/esm/value/parse/parse.mjs:20:52
+[backend]     at Array.reduce (<anonymous>)
+[backend]     at ParseValue (file:///home/runner/workspace/node_modules/@sinclair/typebox/build/esm/value/parse/parse.mjs:20:25)
+[backend]     at Module.Parse (file:///home/runner/workspace/node_modules/@sinclair/typebox/build/esm/value/parse/parse.mjs:24:72)
+[backend]     at safeParseThemeJson (/home/runner/workspace/node_modules/@replit/vite-plugin-shadcn-theme-json/src/schemas.ts:25:26)
+[backend]     at PluginContext.buildStart (/home/runner/workspace/node_modules/@replit/vite-plugin-shadcn-theme-json/src/index.ts:35:43)
+[backend]     at async Promise.all (index 6) {
+[backend]   error: {
+[backend]     type: 45,
+[backend]     schema: { anyOf: [Array], [Symbol(TypeBox.Kind)]: 'Union' },
+[backend]     path: '/appearance',
+[backend]     value: undefined,
+[backend]     message: 'Expected required property',
+[backend]     errors: []
+[backend]   }
+[backend] }
+[backend] info: Vite middleware setup completed {"timestamp":"2025-02-22T10:22:50.202Z"}
+[backend] info: Server started on port 3000 {"timestamp":"2025-02-22T10:22:50.209Z"}
+[frontend] 
+[frontend]  ERROR(TypeScript)  Cannot find name 'NextFunction'. Did you mean 'Function'?
+[frontend]  FILE  /home/runner/workspace/server/index.ts:40:67
+[frontend] 
+[frontend]     38 | //Billing routes and middleware
+[frontend]     39 | const billingRouter = express.Router();
+[frontend]   > 40 | const billingAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
+[frontend]        |                                                                   ^^^^^^^^^^^^
+[frontend]     41 |   //Implementation for authentication middleware.  Placeholder for now.
+[frontend]     42 |   next();
+[frontend]     43 | };
+[frontend] 
+[frontend] [TypeScript] Found 1 error. Watching for file changes.
+[backend] 
+[backend]  ERROR(TypeScript)  Cannot find name 'NextFunction'. Did you mean 'Function'?
+[backend]  FILE  /home/runner/workspace/server/index.ts:40:67
+[backend] 
+[backend]     38 | //Billing routes and middleware
+[backend]     39 | const billingRouter = express.Router();
+[backend]   > 40 | const billingAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
+[backend]        |                                                                   ^^^^^^^^^^^^
+[backend]     41 |   //Implementation for authentication middleware.  Placeholder for now.
+[backend]     42 |   next();
+[backend]     43 | };
+[backend] 
+[backend] [TypeScript] Found 1 error. Watching for file changes.
+[backend] info: Incoming GET request to / {"body":{},"headers":{"accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7","accept-encoding":"gzip, deflate, br","accept-language":"en-US","host":"c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev","sec-fetch-dest":"document","sec-fetch-mode":"navigate","sec-fetch-site":"none","sec-fetch-user":"?1","upgrade-insecure-requests":"1","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Replit/1.0.12 Chrome/124.0.6367.119 Electron/30.0.3 Safari/537.36","x-forwarded-for":"106.215.177.142, 10.84.3.16","x-forwarded-proto":"https","x-replit-user-bio":"","x-replit-user-id":"","x-replit-user-name":"","x-replit-user-profile-image":"","x-replit-user-roles":"","x-replit-user-teams":"","x-replit-user-url":""},"query":{},"timestamp":"2025-02-22T10:23:50.161Z"}

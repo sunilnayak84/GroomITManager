@@ -16,6 +16,7 @@ export async function registerRoutes(app: Express.Application) {
       method: req.method,
       path: req.path,
       query: req.query,
+      body: req.body,
       headers: {
         authorization: req.headers.authorization ? 'Present' : 'Missing',
         'content-type': req.headers['content-type']
@@ -35,10 +36,9 @@ export async function registerRoutes(app: Express.Application) {
   logger.info('[ROUTES] Registering general API routes');
   app.use('/api', router);
 
-    // Register staff management routes
+  // Register staff management routes
   logger.info('[ROUTES] Registering staff management routes');
   app.use('/api/staff', staffManagementRouter);
-
 
   // API 404 handler
   app.use('/api/*', (req, res) => {
