@@ -15,7 +15,7 @@ export function BillDetails({ appointmentId }: BillDetailsProps) {
     try {
       setLoading(true);
       // Use absolute path to ensure consistent routing
-      const response = await fetch(`/api/billing/bills/${appointmentId}`, {
+      const response = await fetch(`/api/billing/generate/${appointmentId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

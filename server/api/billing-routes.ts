@@ -20,6 +20,11 @@ billingRouter.use((req, res, next) => {
 billingRouter.post('/generate/:appointmentId', async (req, res) => {
   try {
     const { appointmentId } = req.params;
+    console.log('[BILLING] Request received:', {
+      path: req.path,
+      params: req.params,
+      body: req.body
+    });
     console.log('[BILLING] Generating bill for appointment:', appointmentId);
 
     const bill = await billingService.generateBill(appointmentId);
