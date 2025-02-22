@@ -24,6 +24,7 @@ export function useBilling(options: UseBillingOptions = {}) {
         throw new Error('Authentication required');
       }
 
+      // Use relative path instead of full URL
       const response = await fetch(`/api/billing/generate/${appointmentId}`, {
         method: 'POST',
         headers: {

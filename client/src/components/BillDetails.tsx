@@ -14,7 +14,7 @@ export function BillDetails({ appointmentId }: BillDetailsProps) {
   const handleGenerateBill = async () => {
     try {
       setLoading(true);
-      // Use absolute path to ensure consistent routing
+      // Use relative path to ensure consistent routing
       const response = await fetch(`/api/billing/generate/${appointmentId}`, {
         method: 'POST',
         headers: {
