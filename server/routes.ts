@@ -180,8 +180,6 @@ router.post('/users/:userId/role', authenticateFirebase, requireRole(['admin']),
 
 
 // Register routes
-router.use('/billing', billingRouter); // Added billing routes registration
-
 export function registerRoutes(app: Express.Application) {
   console.log('[ROUTES] Registering billing routes...');
   app.use('/api/billing', authenticateFirebase, billingRouter);
