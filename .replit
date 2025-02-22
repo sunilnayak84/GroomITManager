@@ -30,6 +30,10 @@ externalPort = 3001
 localPort = 9006
 externalPort = 3003
 
+[[ports]]
+localPort = 24678
+externalPort = 4200
+
 [env]
 PORT = "3000"
 VITE_PORT = "5174"

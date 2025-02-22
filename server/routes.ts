@@ -25,12 +25,12 @@ export async function registerRoutes(app: Express.Application) {
     next();
   });
 
-  // All API routes require authentication
-  app.use('/api', authenticateFirebase);
-
-  // Register billing routes first (before general API routes)
+  // Mount billing routes first, before authentication middleware
   logger.info('[ROUTES] Registering billing routes');
   app.use('/api/billing', billingRouter);
+
+  // All other API routes require authentication
+  app.use('/api', authenticateFirebase);
 
   // Register general API routes
   logger.info('[ROUTES] Registering general API routes');

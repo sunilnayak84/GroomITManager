@@ -1,4 +1,4 @@
-import express, { type Request, type Response, type NextFunction } from "express";
+import express, { type Request, type Response } from "express";
 import { registerRoutes } from "./routes.js";
 import { createServer } from "http";
 import { terminateProcessOnPort } from "./utils/port_cleanup.js";
@@ -34,7 +34,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
 async function startServer(port: number) {
   try {
     // Initialize Firebase
@@ -48,14 +47,12 @@ async function startServer(port: number) {
     await setupAuth(app);
     logger.info('Authentication setup completed');
 
-    // Start server
-    const server = createServer(app);
-
-    // Register API routes before Vite middleware
+    // Register API routes before Vite middleware to ensure proper routing
     await registerRoutes(app);
     logger.info('API routes registered');
 
     // Setup Vite after API routes
+    const server = createServer(app); // Moved createServer here
     await setupVite(app, server);
     logger.info('Vite middleware setup completed');
 
