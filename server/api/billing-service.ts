@@ -73,7 +73,13 @@ export class BillingService {
       }
 
       // Log appointment data for debugging
-      logger.debug('[BILLING] Full appointment data:', appointment);
+      logger.debug('[BILLING] Full appointment data:', {
+        appointmentData: appointment,
+        customerId: appointment.customerId,
+        customerRef: appointment.customer,
+        customerDetails: appointment.customerDetails,
+        services: appointment.services
+      });
 
       // Check for customer reference - try all possible paths
       let customerId = null;
@@ -81,14 +87,18 @@ export class BillingService {
         customerId = appointment.customerId;
       } else if (appointment.customer?.id) {
         customerId = appointment.customer.id;
+      } else if (appointment.customerDetails?.id) {
+        customerId = appointment.customerDetails.id;
       } else if (appointment.customerRef?.id) {
         customerId = appointment.customerRef.id;
       }
 
       if (!customerId) {
         logger.error('[BILLING] Customer reference not found in appointment:', {
+          appointmentId,
           customerId: appointment.customerId,
           customerObj: appointment.customer,
+          customerDetails: appointment.customerDetails,
           customerRef: appointment.customerRef
         });
         throw new Error('Customer reference is missing in appointment');
