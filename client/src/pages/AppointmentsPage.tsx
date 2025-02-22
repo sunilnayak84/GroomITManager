@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { doc, getDoc } from 'firebase/firestore';
 import { petsCollection } from "@/lib/firestore";
-import { db } from "@/lib/firebase";
+import { db, getAuth, auth } from "@/lib/firebase";
 import { parseFirestorePet } from "@/hooks/use-pets";
 import { Button } from "@/components/ui/button";
 import { Plus, Calendar, List, Trash2, Pencil } from "lucide-react";
@@ -454,7 +454,7 @@ export default function AppointmentsPage() {
 
       const bill = await response.json();
       console.log('[BILLING] Bill generated:', bill);
-      
+
       toast({
         title: "Success",
         description: "Bill generated successfully",
