@@ -12,12 +12,27 @@ billingRouter.use((req, res, next) => {
     path: req.path,
     params: req.params,
     query: req.query,
+    body: req.body,
     headers: {
       authorization: req.headers.authorization ? 'Present' : 'Missing',
       'content-type': req.headers['content-type']
     }
   });
   next();
+});
+
+// Get all bills
+billingRouter.get('/bills', async (req, res) => {
+  try {
+    const bills = await billingService.getAllBills();
+    res.json(bills);
+  } catch (error) {
+    logger.error('[BILLING] Error fetching bills:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: error instanceof Error ? error.message : 'Failed to fetch bills'
+    });
+  }
 });
 
 // Generate bill

@@ -1,31 +1,41 @@
 import Razorpay from 'razorpay';
 import { admin } from '../firebase';
 import { logger } from '../utils/logger';
+import crypto from 'crypto';
 
-// Initialize Razorpay with environment variables
+// Initialize Razorpay
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID!,
   key_secret: process.env.RAZORPAY_KEY_SECRET!
 });
 
-export interface BillItem {
+export type BillStatus = 'DRAFT' | 'PENDING_PAYMENT' | 'PAID' | 'FAILED';
+
+interface BillItem {
+  id: string;
   serviceName: string;
+  description?: string;
   price: number;
   quantity: number;
+  subtotal: number;
 }
 
-export interface Bill {
+interface Bill {
   id?: string;
   appointmentId: string;
   customerId: string;
   items: BillItem[];
+  subtotal: number;
+  tax: number;
   totalAmount: number;
-  status: 'pending' | 'paid' | 'failed';
+  status: BillStatus;
   paymentId?: string;
   paymentLink?: string;
   createdAt: Date;
   updatedAt: Date;
 }
+
+const TAX_RATE = 0.18; // 18% GST
 
 export class BillingService {
   private async getAppointmentDetails(appointmentId: string) {
@@ -63,8 +73,12 @@ export class BillingService {
     return customerDoc.data()!;
   }
 
-  private calculateTotal(items: BillItem[]): number {
-    return items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  private calculateTotals(items: BillItem[]) {
+    const subtotal = items.reduce((sum, item) => sum + item.subtotal, 0);
+    const tax = subtotal * TAX_RATE;
+    const totalAmount = subtotal + tax;
+
+    return { subtotal, tax, totalAmount };
   }
 
   async generateBill(appointmentId: string): Promise<Bill> {
@@ -85,21 +99,26 @@ export class BillingService {
 
       // Create bill items
       const items = services.map(service => ({
+        id: service.id || crypto.randomUUID(),
         serviceName: service.name,
+        description: service.description,
         price: service.price,
-        quantity: 1
+        quantity: 1,
+        subtotal: service.price
       }));
 
-      const totalAmount = this.calculateTotal(items);
-      logger.info('[BILLING] Calculated total amount:', totalAmount);
+      // Calculate totals
+      const { subtotal, tax, totalAmount } = this.calculateTotals(items);
 
       // Create bill object
       const bill: Bill = {
         appointmentId,
         customerId: appointment.customerId,
         items,
+        subtotal,
+        tax,
         totalAmount,
-        status: 'pending',
+        status: 'PENDING_PAYMENT',
         createdAt: new Date(),
         updatedAt: new Date()
       };
@@ -108,10 +127,10 @@ export class BillingService {
         // Create Razorpay payment link
         logger.info('[BILLING] Creating Razorpay payment link');
 
-        const callbackUrl = `${process.env.FRONTEND_URL || ''}/billing?appointmentId=${appointmentId}`.replace(/\/+$/, '');
+        const callbackUrl = `${process.env.FRONTEND_URL || ''}/billing/verification?appointmentId=${appointmentId}`.replace(/\/+$/, '');
 
         const paymentLink = await razorpay.paymentLink.create({
-          amount: totalAmount * 100, // Convert to paise
+          amount: Math.round(totalAmount * 100), // Convert to paise and round
           currency: "INR",
           description: `Pet grooming services - Appointment ${appointmentId}`,
           customer: {
@@ -136,7 +155,7 @@ export class BillingService {
         // Update appointment with bill reference
         await appointmentDoc.ref.update({
           billId: billRef.id,
-          billStatus: 'pending'
+          billStatus: 'PENDING_PAYMENT'
         });
 
         return { ...bill, id: billRef.id };
@@ -158,10 +177,53 @@ export class BillingService {
       const isValid = payment.status === 'captured';
       logger.info('[BILLING] Payment verification result:', { paymentId, status: payment.status, isValid });
 
+      if (isValid) {
+        // Update bill status
+        const billsRef = admin.firestore().collection('bills');
+        const billQuery = await billsRef.where('paymentId', '==', paymentId).get();
+
+        if (!billQuery.empty) {
+          const billDoc = billQuery.docs[0];
+          await billDoc.ref.update({
+            status: 'PAID',
+            updatedAt: new Date()
+          });
+
+          // Update appointment status
+          const appointmentRef = admin.firestore()
+            .collection('appointments')
+            .doc(billDoc.data().appointmentId);
+
+          await appointmentRef.update({
+            billStatus: 'PAID',
+            paymentStatus: 'COMPLETED'
+          });
+        }
+      }
+
       return isValid;
     } catch (error) {
       logger.error('[BILLING] Payment verification failed:', error);
       return false;
+    }
+  }
+
+  async getAllBills(): Promise<Bill[]> {
+    try {
+      logger.info('[BILLING] Fetching all bills');
+
+      const billsSnapshot = await admin.firestore()
+        .collection('bills')
+        .orderBy('createdAt', 'desc')
+        .get();
+
+      return billsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data() as Bill
+      }));
+    } catch (error) {
+      logger.error('[BILLING] Error fetching bills:', error);
+      throw error;
     }
   }
 
