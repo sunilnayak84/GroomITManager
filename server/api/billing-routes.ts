@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { admin } from '../firebase';
-import Razorpay from 'razorpay';
 import { BillingService } from './billing-service';
 
 const billingRouter = Router();
@@ -12,7 +11,8 @@ billingRouter.use((req, res, next) => {
     method: req.method,
     path: req.path,
     params: req.params,
-    body: req.body
+    body: req.body,
+    originalUrl: req.originalUrl
   });
   next();
 });
@@ -21,13 +21,14 @@ billingRouter.use((req, res, next) => {
 billingRouter.post('/generate/:appointmentId', async (req, res) => {
   try {
     const { appointmentId } = req.params;
+    console.log('[BILLING] Generating bill for appointment:', appointmentId);
+
     if (!appointmentId) {
       return res.status(400).json({ 
         error: 'Bad Request',
         message: 'Appointment ID is required' 
       });
     }
-    console.log('[BILLING] Request received for appointment:', appointmentId);
 
     const bill = await billingService.generateBill(appointmentId);
     console.log('[BILLING] Bill generated successfully:', {
@@ -37,9 +38,9 @@ billingRouter.post('/generate/:appointmentId', async (req, res) => {
     });
 
     res.json(bill);
-  } catch (error) {
+  } catch (error: any) { // Explicitly type error as any for proper error handling
     console.error('[BILLING] Error:', error);
-    const statusCode = error.message.includes('not found') ? 404 : 500;
+    const statusCode = error?.message?.includes('not found') ? 404 : 500;
     res.status(statusCode).json({
       error: statusCode === 404 ? 'Not Found' : 'Internal Server Error',
       message: error instanceof Error ? error.message : 'Unknown error occurred'
@@ -51,6 +52,8 @@ billingRouter.post('/generate/:appointmentId', async (req, res) => {
 billingRouter.get('/bills/:billId', async (req, res) => {
   try {
     const { billId } = req.params;
+    console.log('[BILLING] Fetching bill:', billId);
+
     const billDoc = await admin.firestore().collection('bills').doc(billId).get();
 
     if (!billDoc.exists) {

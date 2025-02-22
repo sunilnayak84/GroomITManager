@@ -1,0 +1,42 @@
+AppointmentsPage.tsx:444 
+            
+            
+           POST https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/api/billing/generate/7YUf1kJ39d3QcC8XAo7O 404 (Not Found)
+handleGenerateBill @ AppointmentsPage.tsx:444
+await in handleGenerateBill
+onClick @ AppointmentsPage.tsx:422
+callCallback2 @ chunk-GNC7SI6A.js?v=5b3d01f9:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=5b3d01f9:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=5b3d01f9:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-GNC7SI6A.js?v=5b3d01f9:3736
+executeDispatch @ chunk-GNC7SI6A.js?v=5b3d01f9:7014
+processDispatchQueueItemsInOrder @ chunk-GNC7SI6A.js?v=5b3d01f9:7034
+processDispatchQueue @ chunk-GNC7SI6A.js?v=5b3d01f9:7043
+dispatchEventsForPlugins @ chunk-GNC7SI6A.js?v=5b3d01f9:7051
+(anonymous) @ chunk-GNC7SI6A.js?v=5b3d01f9:7174
+batchedUpdates$1 @ chunk-GNC7SI6A.js?v=5b3d01f9:18913
+batchedUpdates @ chunk-GNC7SI6A.js?v=5b3d01f9:3579
+dispatchEventForPluginEventSystem @ chunk-GNC7SI6A.js?v=5b3d01f9:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-GNC7SI6A.js?v=5b3d01f9:5478
+dispatchEvent @ chunk-GNC7SI6A.js?v=5b3d01f9:5472
+dispatchDiscreteEvent @ chunk-GNC7SI6A.js?v=5b3d01f9:5449Understand this errorAI
+AppointmentsPage.tsx:481 [BILLING] Error generating bill: Error: Failed to generate bill: Not Found
+    at handleGenerateBill (AppointmentsPage.tsx:461:15)
+handleGenerateBill @ AppointmentsPage.tsx:481
+await in handleGenerateBill
+onClick @ AppointmentsPage.tsx:422
+callCallback2 @ chunk-GNC7SI6A.js?v=5b3d01f9:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=5b3d01f9:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=5b3d01f9:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-GNC7SI6A.js?v=5b3d01f9:3736
+executeDispatch @ chunk-GNC7SI6A.js?v=5b3d01f9:7014
+processDispatchQueueItemsInOrder @ chunk-GNC7SI6A.js?v=5b3d01f9:7034
+processDispatchQueue @ chunk-GNC7SI6A.js?v=5b3d01f9:7043
+dispatchEventsForPlugins @ chunk-GNC7SI6A.js?v=5b3d01f9:7051
+(anonymous) @ chunk-GNC7SI6A.js?v=5b3d01f9:7174
+batchedUpdates$1 @ chunk-GNC7SI6A.js?v=5b3d01f9:18913
+batchedUpdates @ chunk-GNC7SI6A.js?v=5b3d01f9:3579
+dispatchEventForPluginEventSystem @ chunk-GNC7SI6A.js?v=5b3d01f9:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-GNC7SI6A.js?v=5b3d01f9:5478
+dispatchEvent @ chunk-GNC7SI6A.js?v=5b3d01f9:5472
+dispatchDiscreteEvent @ chunk-GNC7SI6A.js?v=5b3d01f9:5449Understand this errorAI

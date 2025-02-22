@@ -439,9 +439,7 @@ export default function AppointmentsPage() {
   const handleGenerateBill = async (appointmentId: string) => {
     try {
       console.log('[BILLING] Initiating bill generation for:', appointmentId);
-      // Use window.location.origin as fallback if VITE_API_URL is not set
-      const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
-      const response = await fetch(`${baseUrl}/api/billing/generate/${appointmentId}`, {
+      const response = await fetch(`/api/billing/generate/${appointmentId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

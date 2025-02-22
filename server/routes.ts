@@ -187,19 +187,20 @@ export function registerRoutes(app: Express.Application) {
       method: req.method,
       url: req.url,
       path: req.path,
-      baseUrl: req.baseUrl
+      baseUrl: req.baseUrl,
+      originalUrl: req.originalUrl
     });
     next();
   });
 
   // Register billing routes first with proper error handling
   console.log('[ROUTES] Registering billing routes...');
-  const billingPath = '/api/billing';
-  app.use(billingPath, authenticateFirebase, (req, res, next) => {
+  app.use('/api/billing', authenticateFirebase, (req, res, next) => {
     console.log('[BILLING] Request received:', {
       method: req.method,
       path: req.path,
-      params: req.params
+      params: req.params,
+      originalUrl: req.originalUrl
     });
     next();
   }, billingRouter);
@@ -207,26 +208,17 @@ export function registerRoutes(app: Express.Application) {
   // Then register other API routes
   app.use('/api', router);
 
-  // Log registered routes
-  app._router.stack.forEach((r: any) => {
-    if (r.route && r.route.path) {
-      console.log('[ROUTES] Registered route:', {
-        path: r.route.path,
-        methods: r.route.methods
-      });
-    }
-  });
-
   // Debug 404 handler for API routes
   app.use('/api/*', (req, res) => {
     console.log('[API] 404 Not Found:', {
       method: req.method,
       url: req.url,
-      path: req.path
+      path: req.path,
+      originalUrl: req.originalUrl
     });
     res.status(404).json({
       error: 'Not Found',
-      message: `Route ${req.method} ${req.url} not found`
+      message: `Route ${req.method} ${req.originalUrl} not found`
     });
   });
 
