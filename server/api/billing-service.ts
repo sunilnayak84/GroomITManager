@@ -39,67 +39,76 @@ const TAX_RATE = 0.18; // 18% GST
 
 export class BillingService {
   private async getAppointmentDetails(appointmentId: string) {
-    logger.info('[BILLING] Fetching appointment details:', appointmentId);
+    try {
+      logger.info('[BILLING] Fetching appointment details:', appointmentId);
 
-    const appointmentDoc = await admin.firestore()
-      .collection('appointments')
-      .doc(appointmentId)
-      .get();
+      const appointmentDoc = await admin.firestore()
+        .collection('appointments')
+        .doc(appointmentId)
+        .get();
 
-    if (!appointmentDoc.exists) {
-      throw new Error(`Appointment ${appointmentId} not found`);
+      if (!appointmentDoc.exists) {
+        logger.error(`[BILLING] Appointment ${appointmentId} not found`);
+        throw new Error(`Appointment ${appointmentId} not found`);
+      }
+
+      const appointment = appointmentDoc.data();
+      if (!appointment) {
+        logger.error('[BILLING] Appointment data is missing');
+        throw new Error('Appointment data is missing');
+      }
+
+      // Get customer details
+      const customerDoc = await admin.firestore()
+        .collection('customers')
+        .doc(appointment.customerId)
+        .get();
+
+      if (!customerDoc.exists) {
+        logger.error(`[BILLING] Customer ${appointment.customerId} not found`);
+        throw new Error('Customer not found');
+      }
+
+      const customer = customerDoc.data()!;
+
+      // Get service details
+      const servicePromises = appointment.services.map(async (serviceId: string) => {
+        const serviceDoc = await admin.firestore()
+          .collection('services')
+          .doc(serviceId)
+          .get();
+
+        if (!serviceDoc.exists) {
+          logger.warn(`[BILLING] Service ${serviceId} not found`);
+          return null;
+        }
+        return { id: serviceDoc.id, ...serviceDoc.data() };
+      });
+
+      const services = (await Promise.all(servicePromises)).filter(service => service !== null);
+
+      return {
+        appointment,
+        customer,
+        services,
+        doc: appointmentDoc
+      };
+    } catch (error) {
+      logger.error('[BILLING] Error fetching appointment details:', error);
+      throw error;
     }
-
-    const appointment = appointmentDoc.data();
-    if (!appointment) {
-      throw new Error('Appointment data is missing');
-    }
-
-    return { doc: appointmentDoc, data: appointment };
-  }
-
-  private async getCustomerDetails(customerId: string) {
-    logger.info('[BILLING] Fetching customer details:', customerId);
-
-    const customerDoc = await admin.firestore()
-      .collection('customers')
-      .doc(customerId)
-      .get();
-
-    if (!customerDoc.exists) {
-      throw new Error('Customer not found');
-    }
-
-    return customerDoc.data()!;
-  }
-
-  private calculateTotals(items: BillItem[]) {
-    const subtotal = items.reduce((sum, item) => sum + item.subtotal, 0);
-    const tax = subtotal * TAX_RATE;
-    const totalAmount = subtotal + tax;
-
-    return { subtotal, tax, totalAmount };
   }
 
   async generateBill(appointmentId: string): Promise<Bill> {
     try {
       logger.info('[BILLING] Starting bill generation for appointment:', appointmentId);
 
-      // Get appointment details
-      const { doc: appointmentDoc, data: appointment } = await this.getAppointmentDetails(appointmentId);
+      // Get all required details
+      const { appointment, customer, services, doc: appointmentDoc } = await this.getAppointmentDetails(appointmentId);
 
-      // Get customer details
-      const customer = await this.getCustomerDetails(appointment.customerId);
-
-      // Process services
-      const services = appointment.services || [];
-      if (!Array.isArray(services) || services.length === 0) {
-        throw new Error('No services found in appointment');
-      }
-
-      // Create bill items
-      const items = services.map(service => ({
-        id: service.id || crypto.randomUUID(),
+      // Create bill items from services
+      const items: BillItem[] = services.map(service => ({
+        id: service.id,
         serviceName: service.name,
         description: service.description,
         price: service.price,
@@ -108,12 +117,14 @@ export class BillingService {
       }));
 
       // Calculate totals
-      const { subtotal, tax, totalAmount } = this.calculateTotals(items);
+      const subtotal = items.reduce((sum, item) => sum + item.subtotal, 0);
+      const tax = subtotal * TAX_RATE;
+      const totalAmount = subtotal + tax;
 
       // Create bill object
       const bill: Bill = {
         appointmentId,
-        customerId: appointment.customerId,
+        customerId: customer.id,
         items,
         subtotal,
         tax,
@@ -130,7 +141,7 @@ export class BillingService {
         const callbackUrl = `${process.env.FRONTEND_URL || ''}/billing/verification?appointmentId=${appointmentId}`.replace(/\/+$/, '');
 
         const paymentLink = await razorpay.paymentLink.create({
-          amount: Math.round(totalAmount * 100), // Convert to paise and round
+          amount: Math.round(totalAmount * 100), // Convert to paise
           currency: "INR",
           description: `Pet grooming services - Appointment ${appointmentId}`,
           customer: {
