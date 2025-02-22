@@ -438,32 +438,41 @@ export default function AppointmentsPage() {
 
   const handleGenerateBill = async (appointmentId: string) => {
     try {
+      console.log('[BILLING] Initiating bill generation for:', appointmentId);
       const response = await fetch(`/api/billing/generate/${appointmentId}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await getAuth().currentUser?.getIdToken()}`
         }
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate bill');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to generate bill');
       }
 
       const bill = await response.json();
+      console.log('[BILLING] Bill generated:', bill);
+      
       toast({
         title: "Success",
         description: "Bill generated successfully",
       });
+
+      if (bill.paymentLink) {
+        window.open(bill.paymentLink, '_blank');
+      }
 
       // Refresh appointments to show updated bill status
       if (fetchAppointments) {
         fetchAppointments();
       }
     } catch (error) {
-      console.error("Error generating bill:", error);
+      console.error("[BILLING] Error generating bill:", error);
       toast({
         title: "Error",
-        description: "Failed to generate bill",
+        description: error instanceof Error ? error.message : "Failed to generate bill",
         variant: "destructive",
       });
     }
