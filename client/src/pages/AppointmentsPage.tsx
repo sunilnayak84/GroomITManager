@@ -448,7 +448,28 @@ export default function AppointmentsPage() {
         throw new Error("Authentication required");
       }
 
+      // Debug the appointment first to check customer reference
       const token = await user.getIdToken();
+      console.log("[BILLING] Debugging appointment data before bill generation");
+      
+      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+      const debugResponse = await fetch(
+        `${apiBaseUrl}/api/debug/appointment/${appointmentId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      
+      if (debugResponse.ok) {
+        const debugData = await debugResponse.json();
+        console.log("[BILLING] Appointment debug data:", debugData);
+      } else {
+        console.error("[BILLING] Failed to debug appointment");
+      }
+      
       console.log("[BILLING] Authentication token obtained, making request");
 
       // Make API request to generate bill

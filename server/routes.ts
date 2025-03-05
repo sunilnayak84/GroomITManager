@@ -46,6 +46,33 @@ export async function registerRoutes(app: Express.Application) {
   // Register staff management routes
   logger.info('[ROUTES] Registering staff management routes');
   app.use('/api/staff', staffManagementRouter);
+  
+  // Debug routes
+  logger.info('[ROUTES] Registering debug routes');
+  app.use('/api/debug', authenticateFirebase, async (req: Request, res: Response) => {
+    try {
+      if (req.path.startsWith('/appointment/')) {
+        const appointmentId = req.path.replace('/appointment/', '');
+        if (!appointmentId) {
+          return res.status(400).json({ error: 'Bad Request', message: 'Appointment ID is required' });
+        }
+        
+        // Import the debug service
+        const { default: DebugService } = await import('./api/debug-service');
+        const debugService = new DebugService();
+        const debugInfo = await debugService.debugAppointment(appointmentId);
+        return res.json(debugInfo);
+      }
+      
+      return res.status(404).json({ error: 'Not Found', message: 'Debug endpoint not found' });
+    } catch (error) {
+      logger.error('[DEBUG] Error in debug route:', error);
+      return res.status(500).json({ 
+        error: 'Internal Server Error', 
+        message: error instanceof Error ? error.message : 'Unknown error' 
+      });
+    }
+  });
 
   // API 404 handler
   app.use('/api/*', (req, res) => {

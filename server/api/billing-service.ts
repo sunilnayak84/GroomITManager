@@ -85,18 +85,41 @@ export class BillingService {
 
       // Check for customer reference - try all possible paths
       let customerId = null;
+      
+      // Log raw customer data for debugging
+      logger.info('[BILLING] Raw customer data in appointment:', {
+        customerId: appointment.customerId,
+        customer: appointment.customer,
+        customerDetails: appointment.customerDetails,
+        customerRef: appointment.customerRef,
+        pet: appointment.pet,
+        petRef: appointment.petRef
+      });
+      
       if (appointment.customerId) {
         customerId = appointment.customerId;
+        logger.info('[BILLING] Found customerId directly:', customerId);
       } else if (appointment.customer?.id) {
         customerId = appointment.customer.id;
+        logger.info('[BILLING] Found customerId in customer.id:', customerId);
+      } else if (typeof appointment.customer === 'string') {
+        customerId = appointment.customer;
+        logger.info('[BILLING] Found customerId as string in customer field:', customerId);
       } else if (appointment.customerDetails?.id) {
         customerId = appointment.customerDetails.id;
+        logger.info('[BILLING] Found customerId in customerDetails.id:', customerId);
       } else if (appointment.customerRef?.id) {
         customerId = appointment.customerRef.id;
+        logger.info('[BILLING] Found customerId in customerRef.id:', customerId);
       } else if (appointment.pet?.owner?.id) {
         customerId = appointment.pet.owner.id;
+        logger.info('[BILLING] Found customerId in pet.owner.id:', customerId);
       } else if (appointment.petRef?.owner?.id) {
         customerId = appointment.petRef.owner.id;
+        logger.info('[BILLING] Found customerId in petRef.owner.id:', customerId);
+      } else if (appointment.pet?.owner && typeof appointment.pet.owner === 'string') {
+        customerId = appointment.pet.owner;
+        logger.info('[BILLING] Found customerId as string in pet.owner:', customerId);
       }
 
       if (!customerId) {
