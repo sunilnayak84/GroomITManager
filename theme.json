@@ -1,6 +1,8 @@
+
 {
   "name": "groomit-purple",
   "type": "light",
+  "appearance": "light",
   "colors": {
     "primary": {
       "DEFAULT": "267 75% 40%",
