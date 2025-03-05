@@ -473,7 +473,6 @@ export default function AppointmentsPage() {
       console.log("[BILLING] Authentication token obtained, making request");
 
       // Make API request to generate bill
-      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
       console.log("[BILLING] Using API base URL:", apiBaseUrl);
 
       const response = await fetch(
