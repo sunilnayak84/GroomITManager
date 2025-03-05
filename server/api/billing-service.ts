@@ -85,16 +85,10 @@ export class BillingService {
 
       // Check for customer reference - try all possible paths
       let customerId = null;
-      
-      // Log full appointment object for debugging
-      logger.debug('[BILLING] Full appointment object', appointment);
-      
       if (appointment.customerId) {
         customerId = appointment.customerId;
       } else if (appointment.customer?.id) {
         customerId = appointment.customer.id;
-      } else if (appointment.customer && typeof appointment.customer === 'string') {
-        customerId = appointment.customer;
       } else if (appointment.customerDetails?.id) {
         customerId = appointment.customerDetails.id;
       } else if (appointment.customerRef?.id) {
@@ -103,47 +97,6 @@ export class BillingService {
         customerId = appointment.pet.owner.id;
       } else if (appointment.petRef?.owner?.id) {
         customerId = appointment.petRef.owner.id;
-      } else if (appointment.petId) {
-        // If we have a petId, try to get the owner from the pet document
-        try {
-          const petDoc = await admin.firestore()
-            .collection('pets')
-            .doc(appointment.petId)
-            .get();
-            
-          if (petDoc.exists) {
-            const pet = petDoc.data();
-            if (pet?.ownerId) {
-              customerId = pet.ownerId;
-            } else if (pet?.owner?.id) {
-              customerId = pet.owner.id;
-            } else if (pet?.owner && typeof pet.owner === 'string') {
-              customerId = pet.owner;
-            }
-          }
-        } catch (error) {
-          logger.error('[BILLING] Error getting pet details:', error);
-        }
-      }
-      
-      // If still no customerId, try to get it from special fields or parent collection
-      if (!customerId && appointment.id) {
-        try {
-          // Check if the appointment was created by a customer directly
-          const appointmentSnapshot = await admin.firestore()
-            .collection('appointments')
-            .doc(appointment.id)
-            .get();
-            
-          if (appointmentSnapshot.exists) {
-            const parent = appointmentSnapshot.ref.parent.parent;
-            if (parent && parent.id === 'customers') {
-              customerId = parent.id;
-            }
-          }
-        } catch (error) {
-          logger.error('[BILLING] Error getting appointment parent:', error);
-        }
       }
 
       if (!customerId) {
@@ -155,8 +108,7 @@ export class BillingService {
           customerDetails: appointment.customerDetails,
           customerRef: appointment.customerRef,
           petOwner: appointment.pet?.owner,
-          petRefOwner: appointment.petRef?.owner,
-          petId: appointment.petId
+          petRefOwner: appointment.petRef?.owner
         });
         throw new Error('Customer reference is missing in appointment');
       }
