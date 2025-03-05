@@ -1,0 +1,67 @@
+[BILLING] Initiating bill generation for: 7YUf1kJ39d3QcC8XAo7O
+AppointmentsPage.tsx:453 [BILLING] Authentication token obtained, making request
+AppointmentsPage.tsx:455 
+            
+            
+           POST https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/api/billing/generate/7YUf1kJ39d3QcC8XAo7O 500 (Internal Server Error)
+handleGenerateBill @ AppointmentsPage.tsx:455
+await in handleGenerateBill
+onClick @ AppointmentsPage.tsx:422
+callCallback2 @ chunk-GNC7SI6A.js?v=2f554567:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=2f554567:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=2f554567:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-GNC7SI6A.js?v=2f554567:3736
+executeDispatch @ chunk-GNC7SI6A.js?v=2f554567:7014
+processDispatchQueueItemsInOrder @ chunk-GNC7SI6A.js?v=2f554567:7034
+processDispatchQueue @ chunk-GNC7SI6A.js?v=2f554567:7043
+dispatchEventsForPlugins @ chunk-GNC7SI6A.js?v=2f554567:7051
+(anonymous) @ chunk-GNC7SI6A.js?v=2f554567:7174
+batchedUpdates$1 @ chunk-GNC7SI6A.js?v=2f554567:18913
+batchedUpdates @ chunk-GNC7SI6A.js?v=2f554567:3579
+dispatchEventForPluginEventSystem @ chunk-GNC7SI6A.js?v=2f554567:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-GNC7SI6A.js?v=2f554567:5478
+dispatchEvent @ chunk-GNC7SI6A.js?v=2f554567:5472
+dispatchDiscreteEvent @ chunk-GNC7SI6A.js?v=2f554567:5449Understand this errorAI
+AppointmentsPage.tsx:471 [BILLING] Error response: {status: 500, statusText: 'Internal Server Error', message: 'Customer reference is missing in appointment'}message: "Customer reference is missing in appointment"status: 500statusText: "Internal Server Error"[[Prototype]]: Object
+handleGenerateBill @ AppointmentsPage.tsx:471
+await in handleGenerateBill
+onClick @ AppointmentsPage.tsx:422
+callCallback2 @ chunk-GNC7SI6A.js?v=2f554567:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=2f554567:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=2f554567:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-GNC7SI6A.js?v=2f554567:3736
+executeDispatch @ chunk-GNC7SI6A.js?v=2f554567:7014
+processDispatchQueueItemsInOrder @ chunk-GNC7SI6A.js?v=2f554567:7034
+processDispatchQueue @ chunk-GNC7SI6A.js?v=2f554567:7043
+dispatchEventsForPlugins @ chunk-GNC7SI6A.js?v=2f554567:7051
+(anonymous) @ chunk-GNC7SI6A.js?v=2f554567:7174
+batchedUpdates$1 @ chunk-GNC7SI6A.js?v=2f554567:18913
+batchedUpdates @ chunk-GNC7SI6A.js?v=2f554567:3579
+dispatchEventForPluginEventSystem @ chunk-GNC7SI6A.js?v=2f554567:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-GNC7SI6A.js?v=2f554567:5478
+dispatchEvent @ chunk-GNC7SI6A.js?v=2f554567:5472
+dispatchDiscreteEvent @ chunk-GNC7SI6A.js?v=2f554567:5449Understand this errorAI
+AppointmentsPage.tsx:496 [BILLING] Error generating bill: Error: Customer reference is missing in appointment
+    at handleGenerateBill (AppointmentsPage.tsx:476:15)
+handleGenerateBill @ AppointmentsPage.tsx:496
+await in handleGenerateBill
+onClick @ AppointmentsPage.tsx:422
+callCallback2 @ chunk-GNC7SI6A.js?v=2f554567:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=2f554567:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=2f554567:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-GNC7SI6A.js?v=2f554567:3736
+executeDispatch @ chunk-GNC7SI6A.js?v=2f554567:7014
+processDispatchQueueItemsInOrder @ chunk-GNC7SI6A.js?v=2f554567:7034
+processDispatchQueue @ chunk-GNC7SI6A.js?v=2f554567:7043
+dispatchEventsForPlugins @ chunk-GNC7SI6A.js?v=2f554567:7051
+(anonymous) @ chunk-GNC7SI6A.js?v=2f554567:7174
+batchedUpdates$1 @ chunk-GNC7SI6A.js?v=2f554567:18913
+batchedUpdates @ chunk-GNC7SI6A.js?v=2f554567:3579
+dispatchEventForPluginEventSystem @ chunk-GNC7SI6A.js?v=2f554567:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-GNC7SI6A.js?v=2f554567:5478
+dispatchEvent @ chunk-GNC7SI6A.js?v=2f554567:5472
+dispatchDiscreteEvent @ chunk-GNC7SI6A.js?v=2f554567:5449Understand this errorAI
+use-toast.ts:132 Toast dispatch: ADD_TOAST {type: 'ADD_TOAST', toast: {…}}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST {type: 'REMOVE_TOAST', toastId: '1'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
