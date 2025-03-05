@@ -58,9 +58,8 @@ export async function registerRoutes(app: Express.Application) {
         }
         
         // Import the debug service
-        const { default: DebugService } = await import('./api/debug-service');
-        const debugService = new DebugService();
-        const debugInfo = await debugService.debugAppointment(appointmentId);
+        const DebugService = await import('./api/debug-service');
+        const debugInfo = await DebugService.default.debugAppointment(appointmentId);
         return res.json(debugInfo);
       }
       

@@ -1,6 +1,6 @@
 import express from 'express';
 import { logger } from '../utils/logger';
-import admin from 'firebase-admin';
+import { admin } from '../firebase';
 
 class DebugService {
   async getFirestoreDocument(collection: string, id: string) {
@@ -15,40 +15,6 @@ class DebugService {
       return { exists: true, id, data: doc.data() };
     } catch (error) {
       logger.error(`[DEBUG] Error getting document: ${collection}/${id}`, error);
-      throw error;
-    }
-  }
-
-  async debugAppointment(appointmentId: string) {
-    try {
-      logger.info(`[DEBUG] Debugging appointment: ${appointmentId}`);
-      const appointmentDoc = await admin.firestore().collection('appointments').doc(appointmentId).get();
-
-      if (!appointmentDoc.exists) {
-        logger.error(`[DEBUG] Appointment not found: ${appointmentId}`);
-        return { exists: false, id: appointmentId };
-      }
-
-      const appointment = appointmentDoc.data();
-
-      const debug = {
-        exists: true,
-        id: appointmentId,
-        data: appointment,
-        customerRefs: {
-          customerId: appointment?.customerId,
-          customerObj: appointment?.customer,
-          customerDetails: appointment?.customerDetails,
-          customerRef: appointment?.customerRef,
-          petOwner: appointment?.pet?.owner,
-          petRefOwner: appointment?.petRef?.owner
-        }
-      };
-
-      logger.info(`[DEBUG] Appointment debug info: ${JSON.stringify(debug, null, 2)}`);
-      return debug;
-    } catch (error) {
-      logger.error(`[DEBUG] Error debugging appointment: ${appointmentId}`, error);
       throw error;
     }
   }
@@ -107,6 +73,50 @@ class DebugService {
       return { error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }
+
+  async debugAppointment(appointmentId: string) {
+    try {
+      logger.info(`[DEBUG] Debugging appointment: ${appointmentId}`);
+
+      // Fetch the appointment
+      const appointmentDoc = await admin.firestore()
+        .collection('appointments')
+        .doc(appointmentId)
+        .get();
+
+      if (!appointmentDoc.exists) {
+        logger.error(`[DEBUG] Appointment not found: ${appointmentId}`);
+        throw new Error(`Appointment not found: ${appointmentId}`);
+      }
+
+      const appointmentData = appointmentDoc.data();
+
+      // Log detailed info about customer references
+      const debugInfo = {
+        appointment: {
+          id: appointmentDoc.id,
+          ...appointmentData
+        },
+        customerReferences: {
+          customerId: appointmentData?.customerId || null,
+          customerRefType: appointmentData?.customer ? (typeof appointmentData.customer === 'string' ? 'string' : 'object') : 'missing',
+          customerValue: appointmentData?.customer || null,
+          hasCustomerDetails: !!appointmentData?.customerDetails,
+          hasCustomerRef: !!appointmentData?.customerRef,
+          petOwnerRefType: appointmentData?.pet?.owner ? (typeof appointmentData.pet.owner === 'string' ? 'string' : 'object') : 'missing',
+          petOwnerValue: appointmentData?.pet?.owner || null
+        }
+      };
+
+      logger.info(`[DEBUG] Appointment debug info:`, debugInfo);
+
+      return debugInfo;
+    } catch (error) {
+      logger.error(`[DEBUG] Error debugging appointment:`, error);
+      throw error;
+    }
+  }
+
 
   setupRoutes(router: express.Router) {
     router.get('/debug/appointment/:id', async (req, res) => {
