@@ -1,9 +1,9 @@
 
-import admin from 'firebase-admin';
-import { logger } from '../utils/logger';
 import express from 'express';
+import { logger } from '../utils/logger';
+import admin from 'firebase-admin';
 
-export class DebugService {
+class DebugService {
   async getAppointmentStructure(appointmentId: string) {
     try {
       logger.info('[DEBUG] Fetching appointment structure:', appointmentId);
@@ -18,7 +18,7 @@ export class DebugService {
         return { error: 'Appointment not found' };
       }
       
-      const appointment = appointmentDoc.data();
+      const appointment = appointmentDoc.data() || {};
       
       // Look for related customer records
       let customerData = null;
@@ -47,7 +47,7 @@ export class DebugService {
       
       return {
         appointmentId,
-        appointmentFields: Object.keys(appointment || {}),
+        appointmentFields: Object.keys(appointment),
         appointmentData: appointment,
         customerReference: appointment.customerId,
         customerData: customerData,
@@ -55,7 +55,7 @@ export class DebugService {
       };
     } catch (error) {
       logger.error('[DEBUG] Error fetching appointment structure:', error);
-      return { error: error.message };
+      return { error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }
   
@@ -67,7 +67,7 @@ export class DebugService {
         res.json(data);
       } catch (error) {
         res.status(500).json({
-          error: error.message
+          error: error instanceof Error ? error.message : 'Unknown error'
         });
       }
     });
@@ -75,3 +75,5 @@ export class DebugService {
     return router;
   }
 }
+
+export default new DebugService();

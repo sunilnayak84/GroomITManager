@@ -442,28 +442,40 @@ export default function AppointmentsPage() {
       console.log('[BILLING] Initiating bill generation for:', appointmentId);
       setIsLoading(true);
 
-      const idToken = await auth.currentUser?.getIdToken();
-      console.log('[BILLING] Authentication token obtained, making request');
+      const user = auth.currentUser;
+      if (!user) {
+        console.error("[BILLING] No authenticated user");
+        throw new Error("Authentication required");
+      }
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/billing/generate/${appointmentId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${idToken}`
+      const token = await user.getIdToken();
+      console.log("[BILLING] Authentication token obtained, making request");
+
+      // Make API request to generate bill
+      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+      console.log("[BILLING] Using API base URL:", apiBaseUrl);
+
+      const response = await fetch(
+        `${apiBaseUrl}/api/billing/generate/${appointmentId}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
-      });
+      );
 
       if (!response.ok) {
-        const errorData = await response.json();
-        console.log('[BILLING] Error response:', errorData);
-
-        toast({
-          variant: "destructive",
-          title: "Bill Generation Failed",
-          description: errorData.message || 'Failed to generate bill',
-        });
-
-        throw new Error(errorData.message || 'Failed to generate bill');
+        let errorMessage = `Server returned ${response.status} ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          console.error("[BILLING] Error response:", errorData);
+          errorMessage = errorData.message || errorMessage;
+        } catch (parseError) {
+          console.error("[BILLING] Failed to parse error response:", parseError);
+        }
+        throw new Error(errorMessage);
       }
 
       const bill = await response.json();
