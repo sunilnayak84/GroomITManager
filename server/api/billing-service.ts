@@ -234,7 +234,7 @@ export class BillingService {
       logger.info('[BILLING] Generating bill for appointment:', appointmentId);
 
       // Get appointment details
-      const { appointment, customer, services } = await this.getAppointmentDetails(appointmentId);
+      const { appointment, customer, services, doc } = await this.getAppointmentDetails(appointmentId);
 
 
       // Create bill items from services
@@ -295,10 +295,13 @@ export class BillingService {
         logger.info('[BILLING] Bill saved:', billRef.id);
 
         // Update appointment with bill reference
-        await appointment.doc.ref.update({
-          billId: billRef.id,
-          billStatus: 'PENDING_PAYMENT'
-        });
+        await admin.firestore()
+          .collection('appointments')
+          .doc(appointmentId)
+          .update({
+            billId: billRef.id,
+            billStatus: 'PENDING_PAYMENT'
+          });
 
         return { ...bill, id: billRef.id };
       } catch (error) {
