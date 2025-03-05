@@ -6,7 +6,7 @@ import { parseFirestorePet } from "@/hooks/use-pets";
 import { Button } from "@/components/ui/button";
 import { Plus, Calendar, List, Trash2, Pencil } from "lucide-react";
 import { useUser } from "@/hooks/use-user";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { useAppointments } from "../hooks/use-appointments";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import AppointmentForm from "../components/AppointmentForm";

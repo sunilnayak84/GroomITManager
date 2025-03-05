@@ -189,13 +189,33 @@ export class BillingService {
 
   async generateBill(appointmentId: string): Promise<Bill> {
     try {
-      logger.info('[BILLING] Starting bill generation for appointment:', appointmentId);
+      logger.info('[BILLING] Generating bill for appointment:', appointmentId);
 
-      // Get all required details
-      const { appointment, customer, services, doc: appointmentDoc } = await this.getAppointmentDetails(appointmentId);
+      // Get appointment details
+      const appointmentDoc = await admin.firestore()
+        .collection('appointments')
+        .doc(appointmentId)
+        .get();
+
+      if (!appointmentDoc.exists) {
+        logger.error('[BILLING] Appointment not found:', appointmentId);
+        throw new Error('Appointment not found');
+      }
+
+      const appointment = appointmentDoc.data() as any;
+      logger.info('[BILLING] Appointment data:', { appointmentId, appointment });
+
+      // Validate customer ID exists
+      if (!appointment.customerId) {
+        logger.error('[BILLING] Customer reference is missing in appointment:', appointmentId);
+        throw new Error('Customer reference is missing in appointment');
+      }
+
+      // Get customer details
+      const customer = await this.getCustomerDetails(appointment.customerId);
 
       // Create bill items from services
-      const items: BillItem[] = services.map(service => ({
+      const items: BillItem[] = appointment.services.map(service => ({
         id: service.id,
         serviceName: service.name,
         description: service.description,
@@ -264,6 +284,33 @@ export class BillingService {
       }
     } catch (error) {
       logger.error('[BILLING] Bill generation failed:', error);
+      throw error;
+    }
+  }
+
+  private async getCustomerDetails(customerId: string) {
+    try {
+      logger.info('[BILLING] Fetching customer details:', customerId);
+      const customerDoc = await admin.firestore()
+        .collection('customers')
+        .doc(customerId)
+        .get();
+
+      if (!customerDoc.exists) {
+        logger.error('[BILLING] Customer not found:', customerId);
+        throw new Error('Customer not found');
+      }
+
+      const customerData = customerDoc.data();
+      logger.info('[BILLING] Customer data retrieved:', { 
+        customerId, 
+        hasName: !!customerData?.name,
+        hasEmail: !!customerData?.email,
+        hasPhone: !!customerData?.phone 
+      });
+      return customerData;
+    } catch (error) {
+      logger.error('[BILLING] Error fetching customer details:', error);
       throw error;
     }
   }
