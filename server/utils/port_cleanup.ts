@@ -77,33 +77,85 @@ export async function terminateProcessOnPort(port: number): Promise<void> {
     await wait(1000); // Wait for processes to fully terminate
     
     let portIsFree = false;
-    try {
-      const { stdout } = await execAsync(`lsof -t -i:${port}`);
-      portIsFree = !stdout.trim();
-    } catch {
-      // lsof returns error when no process is using the port
-      portIsFree = true;
+    let attempts = 0;
+    const maxAttempts = 3;
+    
+    while (!portIsFree && attempts < maxAttempts) {
+      try {
+        // Try multiple methods to check if port is free
+        attempts++;
+        console.log(`[PORT_CLEANUP] Verification attempt ${attempts}/${maxAttempts}`);
+        
+        // First method: lsof
+        try {
+          const { stdout } = await execAsync(`lsof -t -i:${port}`);
+          if (!stdout.trim()) {
+            portIsFree = true;
+            break;
+          }
+          
+          // If we get here, port is still in use - try to kill processes forcefully
+          console.log(`[PORT_CLEANUP] Port ${port} still in use, attempting forceful termination`);
+          const remainingPids = stdout.trim().split('\n').filter(Boolean);
+          for (const pid of remainingPids) {
+            try {
+              await execAsync(`kill -9 ${pid}`); // Use shell command for more reliability
+              console.log(`[PORT_CLEANUP] Forcefully terminated process ${pid}`);
+            } catch (error) {
+              console.log(`[PORT_CLEANUP] Failed to kill process ${pid}:`, error);
+            }
+          }
+        } catch {
+          // lsof returns error when no process is using the port
+          portIsFree = true;
+          break;
+        }
+        
+        // Second method: Try to bind to the port directly as a test
+        if (!portIsFree) {
+          try {
+            const testServer = require('net').createServer();
+            await new Promise<void>((resolve, reject) => {
+              testServer.once('error', (err: any) => {
+                testServer.close();
+                if (err.code === 'EADDRINUSE') {
+                  reject(new Error('Port still in use'));
+                } else {
+                  reject(err);
+                }
+              });
+              testServer.once('listening', () => {
+                testServer.close();
+                resolve();
+              });
+              testServer.listen(port);
+            });
+            portIsFree = true;
+          } catch (error) {
+            console.log(`[PORT_CLEANUP] Port binding test failed:`, error);
+            // Port still in use, wait a bit before next attempt
+            await wait(1000);
+          }
+        }
+      } catch (error) {
+        console.log(`[PORT_CLEANUP] Verification error:`, error);
+        await wait(1000);
+      }
     }
 
     if (portIsFree) {
       console.log(`[PORT_CLEANUP] Port ${port} is now available`);
       success = true;
-    } else if (!success) {
-      console.warn(`[PORT_CLEANUP] Warning: Port ${port} might still be in use`);
-      // One final attempt with SIGKILL
+    } else {
+      console.warn(`[PORT_CLEANUP] Warning: Port ${port} might still be in use after ${maxAttempts} attempts`);
+      // One final desperate attempt - use direct shell command
       try {
-        const { stdout } = await execAsync(`lsof -t -i:${port}`);
-        const remainingPids = stdout.trim().split('\n').filter(Boolean);
-        for (const pid of remainingPids) {
-          try {
-            process.kill(Number(pid), 'SIGKILL');
-            success = true;
-          } catch {
-            // Ignore errors in final cleanup
-          }
-        }
-      } catch {
-        // Ignore errors in final cleanup
+        // This is more aggressive and might require sudo in some environments
+        await execAsync(`pkill -f "node.*:${port}" || true`);
+        await execAsync(`fuser -k ${port}/tcp || true`);
+        success = true;
+      } catch (error) {
+        console.warn(`[PORT_CLEANUP] Final cleanup attempt failed:`, error);
       }
     }
 
