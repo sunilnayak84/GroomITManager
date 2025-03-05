@@ -141,6 +141,7 @@ export default function AppointmentsPage() {
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled'>(() => {
     return localStorage.getItem('appointmentStatusFilter') as 'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled' || 'all'
   });
+  const [isLoading, setIsLoading] = useState(false); // Added loading state
 
   // Save preferences when they change
   useEffect(() => {
@@ -154,7 +155,7 @@ export default function AppointmentsPage() {
   useEffect(() => {
     localStorage.setItem('appointmentStatusFilter', statusFilter);
   }, [statusFilter]);
-  const { data: appointments, isLoading, error, refetch: fetchAppointments } = useAppointments();
+  const { data: appointments, isLoading: appointmentsLoading, error, refetch: fetchAppointments } = useAppointments();
 
   // Add logging when appointments data changes
   useEffect(() => {
@@ -439,41 +440,30 @@ export default function AppointmentsPage() {
   const handleGenerateBill = async (appointmentId: string) => {
     try {
       console.log('[BILLING] Initiating bill generation for:', appointmentId);
+      setIsLoading(true);
 
-      const user = auth.currentUser;
-      if (!user) {
-        throw new Error('You must be logged in to generate a bill');
-      }
-
-      const token = await user.getIdToken(true); // Force refresh token
-      if (!token) {
-        throw new Error('Failed to get authentication token');
-      }
-
+      const idToken = await auth.currentUser?.getIdToken();
       console.log('[BILLING] Authentication token obtained, making request');
 
-      const response = await fetch(`/api/billing/generate/${appointmentId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/billing/generate/${appointmentId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${idToken}`
         }
       });
 
       if (!response.ok) {
-        let errorMessage = 'Failed to generate bill';
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.message || errorMessage;
-        } catch (e) {
-          errorMessage = `Failed to generate bill: ${response.statusText}`;
-        }
-        console.error('[BILLING] Error response:', {
-          status: response.status,
-          statusText: response.statusText,
-          message: errorMessage
+        const errorData = await response.json();
+        console.log('[BILLING] Error response:', errorData);
+
+        toast({
+          variant: "destructive",
+          title: "Bill Generation Failed",
+          description: errorData.message || 'Failed to generate bill',
         });
-        throw new Error(errorMessage);
+
+        throw new Error(errorData.message || 'Failed to generate bill');
       }
 
       const bill = await response.json();
@@ -493,12 +483,14 @@ export default function AppointmentsPage() {
       }
 
     } catch (error) {
-      console.error("[BILLING] Error generating bill:", error);
+      console.log('[BILLING] Error generating bill:', error);
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to generate bill",
         variant: "destructive",
+        title: "Bill Generation Failed",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -593,7 +585,7 @@ export default function AppointmentsPage() {
           <DataTable
             columns={columns}
             data={sortedAppointments as AppointmentWithRelations[]}
-            isLoading={isLoading}
+            isLoading={appointmentsLoading || isLoading} // Combine loading states
           />
         </div>
       ) : (

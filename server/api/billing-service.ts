@@ -192,30 +192,11 @@ export class BillingService {
       logger.info('[BILLING] Generating bill for appointment:', appointmentId);
 
       // Get appointment details
-      const appointmentDoc = await admin.firestore()
-        .collection('appointments')
-        .doc(appointmentId)
-        .get();
+      const { appointment, customer, services } = await this.getAppointmentDetails(appointmentId);
 
-      if (!appointmentDoc.exists) {
-        logger.error('[BILLING] Appointment not found:', appointmentId);
-        throw new Error('Appointment not found');
-      }
-
-      const appointment = appointmentDoc.data() as any;
-      logger.info('[BILLING] Appointment data:', { appointmentId, appointment });
-
-      // Validate customer ID exists
-      if (!appointment.customerId) {
-        logger.error('[BILLING] Customer reference is missing in appointment:', appointmentId);
-        throw new Error('Customer reference is missing in appointment');
-      }
-
-      // Get customer details
-      const customer = await this.getCustomerDetails(appointment.customerId);
 
       // Create bill items from services
-      const items: BillItem[] = appointment.services.map(service => ({
+      const items: BillItem[] = services.map(service => ({
         id: service.id,
         serviceName: service.name,
         description: service.description,
@@ -232,7 +213,7 @@ export class BillingService {
       // Create bill object
       const bill: Bill = {
         appointmentId,
-        customerId: customer.id,
+        customerId: customer.id, //Using customer.id directly as it's already validated in getAppointmentDetails
         items,
         subtotal,
         tax,
@@ -272,7 +253,7 @@ export class BillingService {
         logger.info('[BILLING] Bill saved:', billRef.id);
 
         // Update appointment with bill reference
-        await appointmentDoc.ref.update({
+        await appointment.doc.ref.update({
           billId: billRef.id,
           billStatus: 'PENDING_PAYMENT'
         });
