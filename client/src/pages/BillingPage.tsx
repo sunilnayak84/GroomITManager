@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, BrowserRouter as Router } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -127,34 +127,36 @@ export default function BillingPage() {
   }
 
   return (
-    <div className="container mx-auto py-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Bills</h1>
-        <div className="flex gap-2">
-          {['ALL' as const, ...Object.keys(statusColors)].map(status => (
-            <Button
-              key={status}
-              variant={filter === status ? "default" : "outline"}
-              onClick={() => setFilter(status as BillStatus | 'ALL')}
-              size="sm"
-            >
-              {status}
-            </Button>
-          ))}
+    <Router>
+      <div className="container mx-auto py-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Bills</h1>
+          <div className="flex gap-2">
+            {['ALL' as const, ...Object.keys(statusColors)].map(status => (
+              <Button
+                key={status}
+                variant={filter === status ? "default" : "outline"}
+                onClick={() => setFilter(status as BillStatus | 'ALL')}
+                size="sm"
+              >
+                {status}
+              </Button>
+            ))}
+          </div>
         </div>
-      </div>
 
-      {filteredBills.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
-          No bills found
-        </div>
-      ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filteredBills.map(bill => (
-            <BillCard key={bill.id} bill={bill} />
-          ))}
-        </div>
-      )}
-    </div>
+        {filteredBills.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            No bills found
+          </div>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {filteredBills.map(bill => (
+              <BillCard key={bill.id} bill={bill} />
+            ))}
+          </div>
+        )}
+      </div>
+    </Router>>
   );
 }
