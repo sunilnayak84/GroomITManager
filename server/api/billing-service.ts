@@ -490,8 +490,8 @@ export class BillingService {
         }
       }
 
-      // If customer name still not resolved and we have a petId, try through pet
-      if ((!bill.customerName || bill.customerName.trim() === '') && bill.petId) {
+      // If there's a petId in the bill, prioritize getting customer through the pet
+      if (bill.petId) {
         try {
           logger.info('[BILLING] Attempting to get customer through pet ID:', { billId, petId: bill.petId });
           const petDoc = await admin.firestore()
@@ -501,12 +501,10 @@ export class BillingService {
 
           if (petDoc.exists) {
             const petData = petDoc.data();
-            logger.info('[BILLING] Pet data found:', { billId, petId: bill.petId, hasOwner: !!petData?.ownerId || !!petData?.owner });
+            logger.info('[BILLING] Pet data found:', { billId, petId: bill.petId, petData });
 
             // Try various possible owner reference structures
             let ownerId = null;
-
-            // Check customerId first since that's what your database structure uses
             if (petData.customerId) {
               ownerId = petData.customerId;
               logger.info('[BILLING] Found customerId directly on pet:', { billId, ownerId });

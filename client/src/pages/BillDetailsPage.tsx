@@ -76,11 +76,9 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
         // Always attempt to find the correct customer name regardless of current value
         console.log('[BILLING] Starting customer resolution for bill:', billData.id, 'Current name:', billData.customerName);
 
-        // Clear cache of static customer names to force refresh
-        if (billData.customerName === 'Sam Smith' || billData.customerName === 'John Doe' || billData.customerName === 'Unknown Customer') {
-          console.log('[BILLING] Clearing static customer name:', billData.customerName);
-          billData.customerName = '';
-        }
+        // Always reset customer name to force proper resolution
+        console.log('[BILLING] Resetting customer name for resolution. Current:', billData.customerName);
+        billData.customerName = '';
 
         // Attempt to get customer through customerId if available
         if (billData.customerId && billData.customerId.trim() !== '') {
@@ -107,8 +105,8 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
           }
         }
 
-        // If we still don't have a valid customer name and there's a petId, try to get customer through pet relationship
-        if ((!billData.customerName || billData.customerName.trim() === '') && billData.petId) {
+        // If there's a petId, prioritize getting customer through the pet regardless of current state
+        if (billData.petId) {
           try {
             console.log('[BILLING] Attempting to get customer through pet ID:', billData.petId);
             const petRef = doc(db, 'pets', billData.petId);
@@ -117,6 +115,7 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
             if (petDoc.exists()) {
               const petData = petDoc.data();
               console.log('[BILLING] Pet data found:', petData);
+              console.log('[BILLING] Attempting to extract owner from pet with ID:', billData.petId);
               
               // Try various possible owner reference structures
               let ownerId = null;
