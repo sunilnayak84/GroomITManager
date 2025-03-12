@@ -77,7 +77,7 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
         console.log('[BILLING] Starting customer resolution for bill:', billData.id, 'Current name:', billData.customerName);
 
         // Clear cache of static customer names to force refresh
-        if (billData.customerName === 'Sam Smith' || billData.customerName === 'John Doe') {
+        if (billData.customerName === 'Sam Smith' || billData.customerName === 'John Doe' || billData.customerName === 'Unknown Customer') {
           console.log('[BILLING] Clearing static customer name:', billData.customerName);
           billData.customerName = '';
         }
@@ -121,7 +121,11 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
               // Try various possible owner reference structures
               let ownerId = null;
               
-              if (petData.ownerId) {
+              // Check customerId first as it appears to be the primary field in your DB structure
+              if (petData.customerId) {
+                ownerId = petData.customerId;
+                console.log('[BILLING] Found customerId directly on pet:', ownerId);
+              } else if (petData.ownerId) {
                 ownerId = petData.ownerId;
                 console.log('[BILLING] Found ownerId directly on pet:', ownerId);
               } else if (petData.owner?.id) {
@@ -130,9 +134,6 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
               } else if (typeof petData.owner === 'string') {
                 ownerId = petData.owner;
                 console.log('[BILLING] Found ownerId as string in pet.owner:', ownerId);
-              } else if (petData.customerId) {
-                ownerId = petData.customerId;
-                console.log('[BILLING] Found customerId on pet:', ownerId);
               }
               
               if (ownerId && typeof ownerId === 'string') {

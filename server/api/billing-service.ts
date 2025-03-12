@@ -471,7 +471,7 @@ export class BillingService {
                 `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
                 customerData.displayName || 
                 '';
-              
+
               logger.info('[BILLING] Updated bill with customer name from customerId:', { 
                 billId, 
                 customerId: bill.customerId, 
@@ -502,31 +502,32 @@ export class BillingService {
           if (petDoc.exists) {
             const petData = petDoc.data();
             logger.info('[BILLING] Pet data found:', { billId, petId: bill.petId, hasOwner: !!petData?.ownerId || !!petData?.owner });
-            
+
             // Try various possible owner reference structures
             let ownerId = null;
-            
-            if (petData?.ownerId) {
+
+            // Check customerId first since that's what your database structure uses
+            if (petData.customerId) {
+              ownerId = petData.customerId;
+              logger.info('[BILLING] Found customerId directly on pet:', { billId, ownerId });
+            } else if (petData.ownerId) {
               ownerId = petData.ownerId;
               logger.info('[BILLING] Found ownerId directly on pet:', { billId, ownerId });
-            } else if (petData?.owner?.id) {
+            } else if (petData.owner?.id) {
               ownerId = petData.owner.id;
               logger.info('[BILLING] Found ownerId in pet.owner.id:', { billId, ownerId });
-            } else if (typeof petData?.owner === 'string') {
+            } else if (typeof petData.owner === 'string') {
               ownerId = petData.owner;
               logger.info('[BILLING] Found ownerId as string in pet.owner:', { billId, ownerId });
-            } else if (petData?.customerId) {
-              ownerId = petData.customerId;
-              logger.info('[BILLING] Found customerId on pet:', { billId, ownerId });
             }
-            
+
             if (ownerId && typeof ownerId === 'string') {
               logger.info('[BILLING] Looking up customer with ID:', { billId, ownerId });
               const customerDoc = await admin.firestore()
                 .collection('customers')
                 .doc(ownerId)
                 .get();
-              
+
               if (customerDoc.exists) {
                 const customerData = customerDoc.data();
                 bill.customerName = customerData.name || 
@@ -558,13 +559,13 @@ export class BillingService {
             .collection('appointments')
             .doc(bill.appointmentId)
             .get();
-          
+
           if (appointmentDoc.exists) {
             const appointmentData = appointmentDoc.data();
-            
+
             // Try various possible customer reference structures
             let customerId = null;
-            
+
             if (appointmentData.customerId) {
               customerId = appointmentData.customerId;
               logger.info('[BILLING] Found customerId directly on appointment:', { billId, customerId });
@@ -575,14 +576,14 @@ export class BillingService {
               customerId = appointmentData.customer;
               logger.info('[BILLING] Found customerId as string in appointment.customer:', { billId, customerId });
             }
-            
+
             if (customerId && typeof customerId === 'string') {
               logger.info('[BILLING] Looking up customer with ID from appointment:', { billId, customerId });
               const customerDoc = await admin.firestore()
                 .collection('customers')
                 .doc(customerId)
                 .get();
-              
+
               if (customerDoc.exists) {
                 const customerData = customerDoc.data();
                 bill.customerName = customerData.name || 
