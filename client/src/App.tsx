@@ -6,6 +6,7 @@ import StaffAvailabilityPage from './pages/staff-availability';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAuthSync } from './hooks/use-auth-sync';
 import BillingPage from './pages/BillingPage';
+import BillDetailsPage from '@/pages/BillDetailsPage';
 
 
 export default function App() {
@@ -30,6 +31,7 @@ export default function App() {
             <BillingPage />
           </ProtectedRoute>
         )} />
+        <Route path="/billing/:billId" component={BillDetailsPage} />
         <Route>
           <div className="flex items-center justify-center min-h-screen">
             <h1 className="text-2xl font-bold">404 Page Not Found</h1>

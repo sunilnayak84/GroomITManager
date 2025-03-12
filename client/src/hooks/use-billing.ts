@@ -23,7 +23,7 @@ export function useBilling(options: UseBillingOptions = {}) {
       if (!token) {
         throw new Error('Authentication required');
       }
-      
+
       // First debug the appointment to help diagnose issues
       console.log('[BILLING] Debugging appointment before generating bill');
       try {
@@ -123,6 +123,27 @@ export function useBilling(options: UseBillingOptions = {}) {
     }
   }, [toast]);
 
+  const getBillById = useCallback(async (billId: string) => {
+    try {
+      // First check if we have it in state already
+      if (bills.length > 0) {
+        const existingBill = bills.find(bill => bill.id === billId);
+        if (existingBill) return existingBill;
+      }
+
+      // Otherwise fetch from API
+      const response = await fetch(`/api/billing/bills/${billId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch bill details');
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching bill by ID:', error);
+      return null;
+    }
+  }, [bills]);
+
   const verifyPayment = useCallback(async (paymentId: string) => {
     try {
       console.log('[BILLING] Verifying payment:', paymentId);
@@ -177,5 +198,6 @@ export function useBilling(options: UseBillingOptions = {}) {
     getBills,
     refreshBills,
     verifyPayment,
+    getBillById
   };
 }
