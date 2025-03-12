@@ -39,6 +39,18 @@ function ActionButtons({ appointment, onView, onEdit }: ActionButtonsProps) {
 
   const handleDeleteClick = () => setShowDeleteDialog(true);
 
+  const handleViewClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onView();
+  };
+
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onEdit();
+  };
+
   const handleDelete = async () => {
     try {
       setIsDeleting(true);
@@ -65,7 +77,7 @@ function ActionButtons({ appointment, onView, onEdit }: ActionButtonsProps) {
       <Button
         variant="outline"
         size="sm"
-        onClick={onView}
+        onClick={handleViewClick}
       >
         View
       </Button>
@@ -74,7 +86,7 @@ function ActionButtons({ appointment, onView, onEdit }: ActionButtonsProps) {
           <Button
             variant="outline"
             size="sm"
-            onClick={onEdit}
+            onClick={handleEditClick}
             className="text-primary hover:text-primary"
           >
             <Pencil className="h-4 w-4" />
