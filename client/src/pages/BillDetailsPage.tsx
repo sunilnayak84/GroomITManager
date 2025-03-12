@@ -16,9 +16,7 @@ interface BillDetailsPageProps {
 }
 
 export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageProps) {
-  const [location] = useLocation();
-  // Use the prop billId if provided, otherwise extract from URL
-  //const billId = propBillId || location.split('/').pop();
+  const [location, setLocation] = useLocation();
   const [matched, params] = useRoute('/billing/:id');
   const billId = params?.id || propBillId;
   const [loading, setLoading] = useState(true);
@@ -53,7 +51,7 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
     };
 
     fetchBill();
-  }, [params?.id, getBillById, setLocation]);
+  }, [params?.id, getBillById, setLocation, navigate]);
 
   // Format date if available
   const formattedDate = bill?.createdAt ? 
