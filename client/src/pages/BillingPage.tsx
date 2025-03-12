@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { formatCurrency } from '@/lib/utils';
+import { formatIndianCurrency } from '@/lib/utils';
 
 export interface Bill {
   id: string;
@@ -57,7 +57,7 @@ function BillCard({ bill }: { bill: Bill }) {
             {bill.items.length}
           </div>
           <div className="text-lg font-bold mt-2">
-            Total: {formatCurrency(bill.total)}
+            Total: {formatIndianCurrency(bill.total)}
           </div>
           <Button 
             className="w-full mt-2" 
