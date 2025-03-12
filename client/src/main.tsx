@@ -127,6 +127,7 @@ function Router() {
             <Route path="/settings/staff" component={StaffManagementPage} />
             <Route path="/staff-availability" component={lazy(() => import('./pages/staff-availability'))} />
             <Route path="/billing" component={lazy(() => import('./pages/BillingPage'))} />
+<Route path="/billing/:id" component={lazy(() => import('./pages/BillDetailsPage'))} />
             <Route>404 Page Not Found</Route>
           </Switch>
         </Suspense>

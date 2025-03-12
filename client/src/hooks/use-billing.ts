@@ -14,45 +14,9 @@ export function useBilling(options: UseBillingOptions = {}) {
   const [bills, setBills] = useState<Bill[]>([]);
   const { toast } = useToast();
 
-  // Declare getBills function first as an empty function that will be properly defined later
-  const getBills = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      console.log('[BILLING] Fetching bills');
-
-      // Get the current user's ID token
-      const token = await auth.currentUser?.getIdToken();
-      if (!token) {
-        throw new Error('Authentication required');
-      }
-
-      const response = await fetch('/api/billing/bills', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch bills');
-      }
-
-      const billsData = await response.json();
-      console.log('[BILLING] Fetched bills:', billsData);
-      setBills(billsData);
-      return billsData;
-    } catch (error) {
-      console.error('[BILLING] Error fetching bills:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch bills",
-        variant: "destructive",
-      });
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [toast]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [bills, setBills] = useState<Bill[]>([]);
+  const { toast } = useToast();
 
   const generateBill = useCallback(async (appointmentId: string, draft?: BillDraft) => {
     setIsLoading(true);
@@ -130,6 +94,8 @@ export function useBilling(options: UseBillingOptions = {}) {
       setIsLoading(false);
     }
   }, [toast, options, getBills]);
+
+  const getBills = useCallback(async () => {
     setIsLoading(true);
     try {
       console.log('[BILLING] Fetching bills');
@@ -186,13 +152,11 @@ export function useBilling(options: UseBillingOptions = {}) {
         }
       });
 
-      if (response.status === 404) {
-        console.error(`[BILLING] Bill not found for ID: ${billId}`);
-        throw new Error(`404: Bill with ID ${billId} not found`);
-      }
-
       if (!response.ok) {
         if (response.status === 404) {
+          console.error(`[BILLING] Bill not found for ID: ${billId}`);
+          throw new Error(`404: Bill with ID ${billId} not found`);
+        }
           console.error('[BILLING] Bill not found:', billId);
           return null;
         }
