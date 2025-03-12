@@ -1,74 +1,116 @@
 
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { formatIndianCurrency } from '@/lib/utils';
-import { auth } from '@/lib/firebase';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
-
-export interface Bill {
-  id: string;
-  appointmentId: string;
-  customerId: string;
-  customerName: string;
-  date: string;
-  items: {
-    name: string;
-    price: number;
-    quantity: number;
-  }[];
-  subtotal: number;
-  tax: number;
-  total: number;
-  status: BillStatus;
-}
+import { useBilling } from '../hooks/use-billing';
+import { formatIndianCurrency } from '../lib/utils';
+import { format } from 'date-fns';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter
+} from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Skeleton } from '../components/ui/skeleton';
+import { Badge } from '../components/ui/badge';
+import { CreditCard, ExternalLink, Calendar, User, Package } from 'lucide-react';
 
 type BillStatus = 'PENDING_PAYMENT' | 'PAID' | 'CANCELED' | 'REFUNDED';
 
 const statusColors: Record<BillStatus, string> = {
-  'PENDING_PAYMENT': 'bg-amber-100 text-amber-800',
-  'PAID': 'bg-green-100 text-green-800',
-  'CANCELED': 'bg-gray-100 text-gray-800',
-  'REFUNDED': 'bg-red-100 text-red-800'
+  'PENDING_PAYMENT': 'bg-amber-100 text-amber-800 border-amber-200',
+  'PAID': 'bg-green-100 text-green-800 border-green-200',
+  'CANCELED': 'bg-gray-100 text-gray-800 border-gray-200',
+  'REFUNDED': 'bg-red-100 text-red-800 border-red-200'
 };
 
 function BillCard({ bill }: { bill: Bill }) {
   const [, navigate] = useLocation();
+  const formattedDate = bill.date ? format(new Date(bill.date), 'dd MMM yyyy') : 'Invalid Date';
 
   return (
-    <Card id={`bill-${bill.id}`} className="overflow-hidden">
-      <CardHeader className="pb-2">
+    <Card className="overflow-hidden transition-all duration-200 hover:shadow-md">
+      <CardHeader className="pb-2 border-b">
         <div className="flex justify-between items-start">
-          <CardTitle className="text-lg font-medium">Invoice #{bill.id.slice(0, 8)}</CardTitle>
-          <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[bill.status]}`}>
+          <CardTitle className="text-lg font-medium flex items-center">
+            <span className="truncate">Invoice #{bill.id.slice(0, 8)}</span>
+          </CardTitle>
+          <Badge className={`px-2 py-1 font-medium ${statusColors[bill.status]}`}>
             {bill.status}
-          </span>
+          </Badge>
         </div>
-        <div className="text-sm text-gray-500">{new Date(bill.date).toLocaleDateString()}</div>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-2">
-          <div className="text-sm">
-            <span className="font-medium">Customer: </span>
-            {bill.customerName}
+      <CardContent className="pt-4">
+        <div className="space-y-3">
+          <div className="flex items-center text-sm gap-1.5 text-muted-foreground">
+            <Calendar className="h-4 w-4" />
+            <span>{formattedDate}</span>
           </div>
-          <div className="text-sm">
-            <span className="font-medium">Items: </span>
-            {bill.items.length}
+
+          <div className="flex items-center text-sm gap-1.5 text-muted-foreground">
+            <User className="h-4 w-4" />
+            <span className="truncate font-medium">{bill.customerName || 'Unknown Customer'}</span>
           </div>
-          <div className="text-lg font-bold mt-2">
-            Total: {formatIndianCurrency(bill.total)}
+
+          <div className="flex items-center text-sm gap-1.5 text-muted-foreground">
+            <Package className="h-4 w-4" />
+            <span>{bill.items.length} {bill.items.length === 1 ? 'item' : 'items'}</span>
           </div>
-          <Button 
-            className="w-full mt-2" 
-            onClick={() => navigate(`/billing/${bill.id}`)}
-          >
-            View Details
-          </Button>
+
+          <div className="text-xl font-bold mt-4">
+            {formatIndianCurrency(bill.total)}
+          </div>
         </div>
       </CardContent>
+      <CardFooter className="bg-gray-50 pt-3 pb-3">
+        <Button 
+          className="w-full" 
+          variant="default"
+          onClick={() => navigate(`/billing/${bill.id}`)}
+        >
+          <ExternalLink className="mr-2 h-4 w-4" />
+          View Details
+        </Button>
+      </CardFooter>
+    </Card>
+  );
+}
+
+function EmptyState() {
+  return (
+    <div className="text-center py-12 border border-dashed rounded-lg">
+      <div className="mx-auto w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+        <CreditCard className="h-6 w-6 text-gray-400" />
+      </div>
+      <h3 className="mt-4 text-lg font-medium">No bills found</h3>
+      <p className="mt-2 text-sm text-gray-500">
+        Bills will appear here once they are generated from appointments.
+      </p>
+    </div>
+  );
+}
+
+function BillSkeleton() {
+  return (
+    <Card className="overflow-hidden">
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-start">
+          <Skeleton className="h-6 w-36" />
+          <Skeleton className="h-6 w-24" />
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-2 py-2">
+          <Skeleton className="h-4 w-40" />
+          <Skeleton className="h-4 w-32" />
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-6 w-20 mt-2" />
+        </div>
+      </CardContent>
+      <CardFooter className="pt-3 pb-3">
+        <Skeleton className="h-9 w-full" />
+      </CardFooter>
     </Card>
   );
 }
@@ -77,98 +119,50 @@ export default function BillingPage() {
   const [bills, setBills] = useState<Bill[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<BillStatus | 'ALL'>('ALL');
+  const { getBills } = useBilling();
+  const [, params] = useLocation();
+  
+  // Get query parameters (for direct bill opening)
+  const queryParams = new URLSearchParams(window.location.search);
+  const billId = queryParams.get('billId');
 
   useEffect(() => {
-    async function fetchBills() {
+    const fetchBills = async () => {
       try {
-        // Get the current user's ID token for authentication
-        const token = await auth.currentUser?.getIdToken();
-        const headers: HeadersInit = {};
+        setLoading(true);
+        const fetchedBills = await getBills();
+        setBills(fetchedBills);
         
-        if (token) {
-          headers['Authorization'] = `Bearer ${token}`;
-        }
-        
-        const response = await fetch('/api/billing/bills', { headers });
-        const data = await response.json();
-        // Ensure data is an array before setting state
-        setBills(Array.isArray(data) ? data : []);
-        
-        // Check for billId in URL params
-        const urlParams = new URLSearchParams(window.location.search);
-        const billId = urlParams.get('billId');
-        
+        // If billId is present in query param, redirect to bill details
         if (billId) {
-          console.log(`Found billId in URL: ${billId}`);
-          // If we have a billId param, scroll to that bill
-          setTimeout(() => {
-            const element = document.getElementById(`bill-${billId}`);
-            if (element) {
-              element.scrollIntoView({ behavior: 'smooth' });
-              // Highlight the bill card
-              element.classList.add('ring-2', 'ring-primary', 'ring-offset-2');
-            } else {
-              console.warn(`Bill with ID ${billId} not found in the loaded bills`);
-            }
-          }, 500);
+          window.location.href = `/billing/${billId}`;
         }
-        
-        setLoading(false);
       } catch (error) {
-        console.error('Failed to fetch bills', error);
-        setBills([]);
+        console.error('Error fetching bills:', error);
+      } finally {
         setLoading(false);
       }
-    }
+    };
 
     fetchBills();
-  }, []);
+  }, [getBills, billId]);
 
-  // Ensure bills is always an array before filtering
-  const filteredBills = Array.isArray(bills) 
-    ? (filter === 'ALL' ? bills : bills.filter(bill => bill.status === filter))
-    : [];
-
-  if (loading) {
-    return (
-      <div className="container mx-auto py-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Bills</h1>
-          <div className="h-8 w-40"><Skeleton className="h-full w-full" /></div>
-        </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3, 4, 5, 6].map(i => (
-            <Card key={i} className="overflow-hidden">
-              <CardHeader className="pb-2">
-                <Skeleton className="h-6 w-32 mb-2" />
-                <Skeleton className="h-4 w-24" />
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-1/2" />
-                  <Skeleton className="h-6 w-24 mt-2" />
-                  <Skeleton className="h-10 w-full mt-2" />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
-  }
+  const filteredBills = filter === 'ALL' 
+    ? bills 
+    : bills.filter(bill => bill.status === filter);
 
   return (
     <div className="container mx-auto py-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Bills</h1>
-        <div className="flex gap-2">
-          {['ALL' as const, ...Object.keys(statusColors)].map(status => (
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <h1 className="text-2xl font-bold">Billing & Invoices</h1>
+        <div className="flex flex-wrap gap-2">
+          {['ALL' as const, ...Object.keys(statusColors) as BillStatus[]].map(status => (
             <Button
               key={status}
               variant={filter === status ? "default" : "outline"}
               onClick={() => setFilter(status as BillStatus | 'ALL')}
               size="sm"
+              className={filter === status && status !== 'ALL' ? statusColors[status as BillStatus] : ''}
             >
               {status}
             </Button>
@@ -176,14 +170,14 @@ export default function BillingPage() {
         </div>
       </div>
 
-      {!Array.isArray(filteredBills) ? (
-        <div className="text-center py-8 text-gray-500">
-          Loading bills...
+      {loading ? (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {[...Array(6)].map((_, i) => (
+            <BillSkeleton key={i} />
+          ))}
         </div>
       ) : filteredBills.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
-          No bills found
-        </div>
+        <EmptyState />
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredBills.map(bill => (
