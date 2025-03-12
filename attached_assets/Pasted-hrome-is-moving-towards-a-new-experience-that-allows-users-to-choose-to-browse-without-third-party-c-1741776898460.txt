@@ -1,0 +1,303 @@
+hrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warningAI
+client:495 [vite] connecting...
+client:614 [vite] connected.
+content.js:1 CISPL SignerDigital Loaded
+api.razorpay.com/v1/checkout/public?traffic_env=production&build=471137a66c9d01d2ee51a020826bd9334ed314cc&build_v1=368703ca18df4bd6071ae944791cd8870683687b&checkout_v2=1&new_session=1&session_token=86B7DB0671E7B0B8CD3D38D86FFC95E4179E7377B02A7E97B009316683FE7FB7F03C9525C9C51B33FFED87A04338CDD3728463C1EA70F99D8A6E3033752FCD4D181B69743BE86F1A71484C2BADCDE56B422991F22774116534856FB35B289FC19CA4F481247C60EF:1 [DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) <input id=​"SdExtUserPin" type=​"password">​
+chunk-GNC7SI6A.js?v=30caa528:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:19 Checking Firebase environment variables...
+firebase.ts:39 FIREBASE_INIT: Initializing Firebase with config: {apiKey: '***', authDomain: 'replit-5ac6a.firebaseapp.com', projectId: 'replit-5ac6a', storageBucket: 'replit-5ac6a.firebasestorage.app', messagingSenderId: '194114432530', …}
+firebase.ts:44 FIREBASE_INIT: Firebase initialized successfully
+content.js:1 CISPL SignerDigital Loaded
+billing:1 [DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) <input id=​"SdExtUserPin" type=​"password">​
+use-billing.ts:92 [BILLING] Fetching bills
+use-billing.ts:92 [BILLING] Fetching bills
+use-billing.ts:111 [BILLING] Fetched bills: (3) [{…}, {…}, {…}]
+main.tsx:74 Global error: {message: 'Uncaught RangeError: Invalid time value', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-34…e_modules/.vite/deps/chunk-MINZTFPE.js?v=30caa528', lineno: 2295, colno: 11, error: RangeError: Invalid time value
+    at format (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t0…}
+window.onerror @ main.tsx:74
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=30caa528:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=30caa528:3733
+beginWork$1 @ chunk-GNC7SI6A.js?v=30caa528:19765
+performUnitOfWork @ chunk-GNC7SI6A.js?v=30caa528:19198
+workLoopSync @ chunk-GNC7SI6A.js?v=30caa528:19137
+renderRootSync @ chunk-GNC7SI6A.js?v=30caa528:19116
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=30caa528:18678
+workLoop @ chunk-GNC7SI6A.js?v=30caa528:197
+flushWork @ chunk-GNC7SI6A.js?v=30caa528:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=30caa528:384Understand this errorAI
+chunk-MINZTFPE.js?v=30caa528:2295 Uncaught RangeError: Invalid time value
+    at format (chunk-MINZTFPE.js?v=30caa528:2295:11)
+    at BillCard (BillingPage.tsx:29:42)
+    at renderWithHooks (chunk-GNC7SI6A.js?v=30caa528:11548:26)
+    at mountIndeterminateComponent (chunk-GNC7SI6A.js?v=30caa528:14926:21)
+    at beginWork (chunk-GNC7SI6A.js?v=30caa528:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-GNC7SI6A.js?v=30caa528:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-GNC7SI6A.js?v=30caa528:3699:24)
+    at invokeGuardedCallback (chunk-GNC7SI6A.js?v=30caa528:3733:39)
+    at beginWork$1 (chunk-GNC7SI6A.js?v=30caa528:19765:15)
+    at performUnitOfWork (chunk-GNC7SI6A.js?v=30caa528:19198:20)
+format @ chunk-MINZTFPE.js?v=30caa528:2295
+BillCard @ BillingPage.tsx:29
+renderWithHooks @ chunk-GNC7SI6A.js?v=30caa528:11548
+mountIndeterminateComponent @ chunk-GNC7SI6A.js?v=30caa528:14926
+beginWork @ chunk-GNC7SI6A.js?v=30caa528:15914
+callCallback2 @ chunk-GNC7SI6A.js?v=30caa528:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=30caa528:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=30caa528:3733
+beginWork$1 @ chunk-GNC7SI6A.js?v=30caa528:19765
+performUnitOfWork @ chunk-GNC7SI6A.js?v=30caa528:19198
+workLoopSync @ chunk-GNC7SI6A.js?v=30caa528:19137
+renderRootSync @ chunk-GNC7SI6A.js?v=30caa528:19116
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=30caa528:18678
+workLoop @ chunk-GNC7SI6A.js?v=30caa528:197
+flushWork @ chunk-GNC7SI6A.js?v=30caa528:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=30caa528:384Understand this errorAI
+main.tsx:74 Global error: {message: 'Uncaught RangeError: Invalid time value', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-34…e_modules/.vite/deps/chunk-MINZTFPE.js?v=30caa528', lineno: 2295, colno: 11, error: RangeError: Invalid time value
+    at format (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t0…}
+window.onerror @ main.tsx:74
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=30caa528:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=30caa528:3733
+beginWork$1 @ chunk-GNC7SI6A.js?v=30caa528:19765
+performUnitOfWork @ chunk-GNC7SI6A.js?v=30caa528:19198
+workLoopSync @ chunk-GNC7SI6A.js?v=30caa528:19137
+renderRootSync @ chunk-GNC7SI6A.js?v=30caa528:19116
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=30caa528:18678
+workLoop @ chunk-GNC7SI6A.js?v=30caa528:197
+flushWork @ chunk-GNC7SI6A.js?v=30caa528:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=30caa528:384Understand this errorAI
+chunk-MINZTFPE.js?v=30caa528:2295 Uncaught RangeError: Invalid time value
+    at format (chunk-MINZTFPE.js?v=30caa528:2295:11)
+    at BillCard (BillingPage.tsx:29:42)
+    at renderWithHooks (chunk-GNC7SI6A.js?v=30caa528:11548:26)
+    at mountIndeterminateComponent (chunk-GNC7SI6A.js?v=30caa528:14926:21)
+    at beginWork (chunk-GNC7SI6A.js?v=30caa528:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-GNC7SI6A.js?v=30caa528:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-GNC7SI6A.js?v=30caa528:3699:24)
+    at invokeGuardedCallback (chunk-GNC7SI6A.js?v=30caa528:3733:39)
+    at beginWork$1 (chunk-GNC7SI6A.js?v=30caa528:19765:15)
+    at performUnitOfWork (chunk-GNC7SI6A.js?v=30caa528:19198:20)
+format @ chunk-MINZTFPE.js?v=30caa528:2295
+BillCard @ BillingPage.tsx:29
+renderWithHooks @ chunk-GNC7SI6A.js?v=30caa528:11548
+mountIndeterminateComponent @ chunk-GNC7SI6A.js?v=30caa528:14926
+beginWork @ chunk-GNC7SI6A.js?v=30caa528:15914
+callCallback2 @ chunk-GNC7SI6A.js?v=30caa528:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=30caa528:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=30caa528:3733
+beginWork$1 @ chunk-GNC7SI6A.js?v=30caa528:19765
+performUnitOfWork @ chunk-GNC7SI6A.js?v=30caa528:19198
+workLoopSync @ chunk-GNC7SI6A.js?v=30caa528:19137
+renderRootSync @ chunk-GNC7SI6A.js?v=30caa528:19116
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=30caa528:18678
+workLoop @ chunk-GNC7SI6A.js?v=30caa528:197
+flushWork @ chunk-GNC7SI6A.js?v=30caa528:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=30caa528:384Understand this errorAI
+main.tsx:74 Global error: {message: 'Uncaught RangeError: Invalid time value', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-34…e_modules/.vite/deps/chunk-MINZTFPE.js?v=30caa528', lineno: 2295, colno: 11, error: RangeError: Invalid time value
+    at format (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t0…}
+window.onerror @ main.tsx:74
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=30caa528:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=30caa528:3733
+beginWork$1 @ chunk-GNC7SI6A.js?v=30caa528:19765
+performUnitOfWork @ chunk-GNC7SI6A.js?v=30caa528:19198
+workLoopSync @ chunk-GNC7SI6A.js?v=30caa528:19137
+renderRootSync @ chunk-GNC7SI6A.js?v=30caa528:19116
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=30caa528:18678
+workLoop @ chunk-GNC7SI6A.js?v=30caa528:197
+flushWork @ chunk-GNC7SI6A.js?v=30caa528:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=30caa528:384Understand this errorAI
+chunk-MINZTFPE.js?v=30caa528:2295 Uncaught RangeError: Invalid time value
+    at format (chunk-MINZTFPE.js?v=30caa528:2295:11)
+    at BillCard (BillingPage.tsx:29:42)
+    at renderWithHooks (chunk-GNC7SI6A.js?v=30caa528:11548:26)
+    at mountIndeterminateComponent (chunk-GNC7SI6A.js?v=30caa528:14926:21)
+    at beginWork (chunk-GNC7SI6A.js?v=30caa528:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-GNC7SI6A.js?v=30caa528:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-GNC7SI6A.js?v=30caa528:3699:24)
+    at invokeGuardedCallback (chunk-GNC7SI6A.js?v=30caa528:3733:39)
+    at beginWork$1 (chunk-GNC7SI6A.js?v=30caa528:19765:15)
+    at performUnitOfWork (chunk-GNC7SI6A.js?v=30caa528:19198:20)
+format @ chunk-MINZTFPE.js?v=30caa528:2295
+BillCard @ BillingPage.tsx:29
+renderWithHooks @ chunk-GNC7SI6A.js?v=30caa528:11548
+mountIndeterminateComponent @ chunk-GNC7SI6A.js?v=30caa528:14926
+beginWork @ chunk-GNC7SI6A.js?v=30caa528:15914
+callCallback2 @ chunk-GNC7SI6A.js?v=30caa528:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=30caa528:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=30caa528:3733
+beginWork$1 @ chunk-GNC7SI6A.js?v=30caa528:19765
+performUnitOfWork @ chunk-GNC7SI6A.js?v=30caa528:19198
+workLoopSync @ chunk-GNC7SI6A.js?v=30caa528:19137
+renderRootSync @ chunk-GNC7SI6A.js?v=30caa528:19116
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=30caa528:18678
+workLoop @ chunk-GNC7SI6A.js?v=30caa528:197
+flushWork @ chunk-GNC7SI6A.js?v=30caa528:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=30caa528:384Understand this errorAI
+main.tsx:74 Global error: {message: 'Uncaught RangeError: Invalid time value', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-34…e_modules/.vite/deps/chunk-MINZTFPE.js?v=30caa528', lineno: 2295, colno: 11, error: RangeError: Invalid time value
+    at format (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t0…}
+window.onerror @ main.tsx:74
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=30caa528:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=30caa528:3733
+beginWork$1 @ chunk-GNC7SI6A.js?v=30caa528:19765
+performUnitOfWork @ chunk-GNC7SI6A.js?v=30caa528:19198
+workLoopSync @ chunk-GNC7SI6A.js?v=30caa528:19137
+renderRootSync @ chunk-GNC7SI6A.js?v=30caa528:19116
+recoverFromConcurrentError @ chunk-GNC7SI6A.js?v=30caa528:18736
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=30caa528:18684
+workLoop @ chunk-GNC7SI6A.js?v=30caa528:197
+flushWork @ chunk-GNC7SI6A.js?v=30caa528:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=30caa528:384Understand this errorAI
+chunk-MINZTFPE.js?v=30caa528:2295 Uncaught RangeError: Invalid time value
+    at format (chunk-MINZTFPE.js?v=30caa528:2295:11)
+    at BillCard (BillingPage.tsx:29:42)
+    at renderWithHooks (chunk-GNC7SI6A.js?v=30caa528:11548:26)
+    at mountIndeterminateComponent (chunk-GNC7SI6A.js?v=30caa528:14926:21)
+    at beginWork (chunk-GNC7SI6A.js?v=30caa528:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-GNC7SI6A.js?v=30caa528:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-GNC7SI6A.js?v=30caa528:3699:24)
+    at invokeGuardedCallback (chunk-GNC7SI6A.js?v=30caa528:3733:39)
+    at beginWork$1 (chunk-GNC7SI6A.js?v=30caa528:19765:15)
+    at performUnitOfWork (chunk-GNC7SI6A.js?v=30caa528:19198:20)
+format @ chunk-MINZTFPE.js?v=30caa528:2295
+BillCard @ BillingPage.tsx:29
+renderWithHooks @ chunk-GNC7SI6A.js?v=30caa528:11548
+mountIndeterminateComponent @ chunk-GNC7SI6A.js?v=30caa528:14926
+beginWork @ chunk-GNC7SI6A.js?v=30caa528:15914
+callCallback2 @ chunk-GNC7SI6A.js?v=30caa528:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=30caa528:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=30caa528:3733
+beginWork$1 @ chunk-GNC7SI6A.js?v=30caa528:19765
+performUnitOfWork @ chunk-GNC7SI6A.js?v=30caa528:19198
+workLoopSync @ chunk-GNC7SI6A.js?v=30caa528:19137
+renderRootSync @ chunk-GNC7SI6A.js?v=30caa528:19116
+recoverFromConcurrentError @ chunk-GNC7SI6A.js?v=30caa528:18736
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=30caa528:18684
+workLoop @ chunk-GNC7SI6A.js?v=30caa528:197
+flushWork @ chunk-GNC7SI6A.js?v=30caa528:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=30caa528:384Understand this errorAI
+main.tsx:74 Global error: {message: 'Uncaught RangeError: Invalid time value', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-34…e_modules/.vite/deps/chunk-MINZTFPE.js?v=30caa528', lineno: 2295, colno: 11, error: RangeError: Invalid time value
+    at format (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t0…}
+window.onerror @ main.tsx:74
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=30caa528:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=30caa528:3733
+beginWork$1 @ chunk-GNC7SI6A.js?v=30caa528:19765
+performUnitOfWork @ chunk-GNC7SI6A.js?v=30caa528:19198
+workLoopSync @ chunk-GNC7SI6A.js?v=30caa528:19137
+renderRootSync @ chunk-GNC7SI6A.js?v=30caa528:19116
+recoverFromConcurrentError @ chunk-GNC7SI6A.js?v=30caa528:18736
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=30caa528:18684
+workLoop @ chunk-GNC7SI6A.js?v=30caa528:197
+flushWork @ chunk-GNC7SI6A.js?v=30caa528:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=30caa528:384Understand this errorAI
+chunk-MINZTFPE.js?v=30caa528:2295 Uncaught RangeError: Invalid time value
+    at format (chunk-MINZTFPE.js?v=30caa528:2295:11)
+    at BillCard (BillingPage.tsx:29:42)
+    at renderWithHooks (chunk-GNC7SI6A.js?v=30caa528:11548:26)
+    at mountIndeterminateComponent (chunk-GNC7SI6A.js?v=30caa528:14926:21)
+    at beginWork (chunk-GNC7SI6A.js?v=30caa528:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-GNC7SI6A.js?v=30caa528:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-GNC7SI6A.js?v=30caa528:3699:24)
+    at invokeGuardedCallback (chunk-GNC7SI6A.js?v=30caa528:3733:39)
+    at beginWork$1 (chunk-GNC7SI6A.js?v=30caa528:19765:15)
+    at performUnitOfWork (chunk-GNC7SI6A.js?v=30caa528:19198:20)
+format @ chunk-MINZTFPE.js?v=30caa528:2295
+BillCard @ BillingPage.tsx:29
+renderWithHooks @ chunk-GNC7SI6A.js?v=30caa528:11548
+mountIndeterminateComponent @ chunk-GNC7SI6A.js?v=30caa528:14926
+beginWork @ chunk-GNC7SI6A.js?v=30caa528:15914
+callCallback2 @ chunk-GNC7SI6A.js?v=30caa528:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=30caa528:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=30caa528:3733
+beginWork$1 @ chunk-GNC7SI6A.js?v=30caa528:19765
+performUnitOfWork @ chunk-GNC7SI6A.js?v=30caa528:19198
+workLoopSync @ chunk-GNC7SI6A.js?v=30caa528:19137
+renderRootSync @ chunk-GNC7SI6A.js?v=30caa528:19116
+recoverFromConcurrentError @ chunk-GNC7SI6A.js?v=30caa528:18736
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=30caa528:18684
+workLoop @ chunk-GNC7SI6A.js?v=30caa528:197
+flushWork @ chunk-GNC7SI6A.js?v=30caa528:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=30caa528:384Understand this errorAI
+main.tsx:74 Global error: {message: 'Uncaught RangeError: Invalid time value', source: 'https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-34…e_modules/.vite/deps/chunk-MINZTFPE.js?v=30caa528', lineno: 2295, colno: 11, error: RangeError: Invalid time value
+    at format (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t0…}
+window.onerror @ main.tsx:74
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=30caa528:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=30caa528:3733
+beginWork$1 @ chunk-GNC7SI6A.js?v=30caa528:19765
+performUnitOfWork @ chunk-GNC7SI6A.js?v=30caa528:19198
+workLoopSync @ chunk-GNC7SI6A.js?v=30caa528:19137
+renderRootSync @ chunk-GNC7SI6A.js?v=30caa528:19116
+recoverFromConcurrentError @ chunk-GNC7SI6A.js?v=30caa528:18736
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=30caa528:18684
+workLoop @ chunk-GNC7SI6A.js?v=30caa528:197
+flushWork @ chunk-GNC7SI6A.js?v=30caa528:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=30caa528:384Understand this errorAI
+chunk-MINZTFPE.js?v=30caa528:2295 Uncaught RangeError: Invalid time value
+    at format (chunk-MINZTFPE.js?v=30caa528:2295:11)
+    at BillCard (BillingPage.tsx:29:42)
+    at renderWithHooks (chunk-GNC7SI6A.js?v=30caa528:11548:26)
+    at mountIndeterminateComponent (chunk-GNC7SI6A.js?v=30caa528:14926:21)
+    at beginWork (chunk-GNC7SI6A.js?v=30caa528:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-GNC7SI6A.js?v=30caa528:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-GNC7SI6A.js?v=30caa528:3699:24)
+    at invokeGuardedCallback (chunk-GNC7SI6A.js?v=30caa528:3733:39)
+    at beginWork$1 (chunk-GNC7SI6A.js?v=30caa528:19765:15)
+    at performUnitOfWork (chunk-GNC7SI6A.js?v=30caa528:19198:20)
+format @ chunk-MINZTFPE.js?v=30caa528:2295
+BillCard @ BillingPage.tsx:29
+renderWithHooks @ chunk-GNC7SI6A.js?v=30caa528:11548
+mountIndeterminateComponent @ chunk-GNC7SI6A.js?v=30caa528:14926
+beginWork @ chunk-GNC7SI6A.js?v=30caa528:15914
+callCallback2 @ chunk-GNC7SI6A.js?v=30caa528:3674
+invokeGuardedCallbackDev @ chunk-GNC7SI6A.js?v=30caa528:3699
+invokeGuardedCallback @ chunk-GNC7SI6A.js?v=30caa528:3733
+beginWork$1 @ chunk-GNC7SI6A.js?v=30caa528:19765
+performUnitOfWork @ chunk-GNC7SI6A.js?v=30caa528:19198
+workLoopSync @ chunk-GNC7SI6A.js?v=30caa528:19137
+renderRootSync @ chunk-GNC7SI6A.js?v=30caa528:19116
+recoverFromConcurrentError @ chunk-GNC7SI6A.js?v=30caa528:18736
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=30caa528:18684
+workLoop @ chunk-GNC7SI6A.js?v=30caa528:197
+flushWork @ chunk-GNC7SI6A.js?v=30caa528:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=30caa528:384Understand this errorAI
+3chunk-GNC7SI6A.js?v=30caa528:14032 The above error occurred in the <BillCard> component:
+
+    at BillCard (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/BillingPage.tsx:40:21)
+    at div
+    at div
+    at BillingPage (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/pages/BillingPage.tsx:302:29)
+    at Route (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=083fd097:323:16)
+    at Switch (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/wouter.js?v=083fd097:379:17)
+    at Suspense
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=74dd684b:18:5)
+    at div
+    at main
+    at main
+    at _c9 (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:398:48)
+    at div
+    at div
+    at Provider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/chunk-BIT4GNDH.js?v=30caa528:38:15)
+    at TooltipProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f9026108:61:5)
+    at https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/ui/sidebar.tsx:54:7
+    at Layout (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/components/Layout.tsx:26:34)
+    at Router (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/src/main.tsx:141:31)
+    at Suspense
+    at QueryClientProvider (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=3967090a:2796:3)
+    at ErrorBoundary (https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/node_modules/.vite/deps/react-error-boundary.js?v=74dd684b:18:5)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+logCapturedError @ chunk-GNC7SI6A.js?v=30caa528:14032
+callback @ chunk-GNC7SI6A.js?v=30caa528:14078
+callCallback @ chunk-GNC7SI6A.js?v=30caa528:11248
+commitUpdateQueue @ chunk-GNC7SI6A.js?v=30caa528:11265
+commitLayoutEffectOnFiber @ chunk-GNC7SI6A.js?v=30caa528:17075
+commitLayoutMountEffects_complete @ chunk-GNC7SI6A.js?v=30caa528:17980
+commitLayoutEffects_begin @ chunk-GNC7SI6A.js?v=30caa528:17969
+commitLayoutEffects_begin @ chunk-GNC7SI6A.js?v=30caa528:17950
+commitLayoutEffects @ chunk-GNC7SI6A.js?v=30caa528:17920
+commitRootImpl @ chunk-GNC7SI6A.js?v=30caa528:19353
+commitRoot @ chunk-GNC7SI6A.js?v=30caa528:19277
+finishConcurrentRender @ chunk-GNC7SI6A.js?v=30caa528:18760
+performConcurrentWorkOnRoot @ chunk-GNC7SI6A.js?v=30caa528:18718
+workLoop @ chunk-GNC7SI6A.js?v=30caa528:197
+flushWork @ chunk-GNC7SI6A.js?v=30caa528:176
+performWorkUntilDeadline @ chunk-GNC7SI6A.js?v=30caa528:384Understand this errorAI
+use-billing.ts:111 [BILLING] Fetched bills: (3) [{…}, {…}, {…}]
