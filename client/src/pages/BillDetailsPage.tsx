@@ -41,9 +41,8 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
           setLocation('/billing');
           return;
         }
-        // Fetch customer name here.  Replace with your actual database call.
-        const customerName = await getCustomerName(billData.customerId);
-        billData.customerName = customerName; //add customer name to billData
+        // The server already provides the customer name, so we don't need to fetch it separately
+        console.log('[BILLING] Using customer name from API:', billData.customerName);
         setBill(billData);
       } catch (error) {
         console.error('[BILLING] Error fetching bill:', error);
@@ -260,11 +259,10 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
   );
 }
 
-// Placeholder function - replace with your actual database call
+// This function is no longer needed as we're getting the customer name from the API response
 async function getCustomerName(customerId: string | undefined): Promise<string | undefined> {
-  //Implementation to fetch customer name from DB using customerId
   if (!customerId) return undefined;
-  // Simulate fetching customer name - replace with your database logic.
-  await new Promise(resolve => setTimeout(resolve, 500)); //Simulate network delay
-  return `John Doe`; // Replace with actual fetched name
+  // We don't need to fetch customer name here anymore as it's included in the bill data
+  // Just returning undefined will allow the bill's customerName to be used
+  return undefined;
 }
