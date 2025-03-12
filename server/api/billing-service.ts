@@ -450,4 +450,9 @@ export class BillingService {
       throw error;
     }
   }
+  
+  // Add alias method for getBillById to match the API endpoint
+  async getBillById(billId: string): Promise<Bill | null> {
+    return this.getBill(billId);
+  }
 }
