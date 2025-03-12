@@ -10,6 +10,11 @@ import { useBilling } from '@/hooks/use-billing';
 import { formatIndianCurrency } from '@/lib/utils';
 import { Bill } from '@/types/billing';
 import { Separator } from '@/components/ui/separator';
+import { useAuth } from '@/hooks/use-auth'; // Import useAuth
+import { useFirebaseAuth } from '@/hooks/use-firebase-auth'; //Import useFirebaseAuth
+import { db } from '@/lib/firebase'; // Assuming firebase import
+import { doc, getDoc } from 'firebase/firestore'; // Assuming firebase imports
+
 
 interface BillDetailsPageProps {
   billId?: string;
@@ -19,11 +24,22 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
   const [location, setLocation] = useLocation();
   const [matched, params] = useRoute('/billing/:id');
   const billId = params?.id || propBillId;
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [bill, setBill] = useState<Bill | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [, navigate] = useLocation();
   const { getBillById, isLoading } = useBilling();
+  const { user } = useAuth();
+  const { getIdToken } = useFirebaseAuth();
+
+  // Define types for nested objects to avoid TypeScript errors
+  type CustomerData = {
+    id?: string;
+    name?: string;
+    firstName?: string;
+    lastName?: string;
+    displayName?: string;
+  };
 
   useEffect(() => {
     const fetchBill = async () => {
@@ -42,23 +58,25 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
           return;
         }
 
-        // Fetch fresh customer data to ensure we have the latest name
-        if (billData.customerId) {
+        // Handle the bill data
+        if (billData && billData.customerId) {
+          console.log('[BILLING] Bill data loaded, checking customer details:', billData);
+
+          // Always attempt to get the latest customer details
           try {
-            const user = auth.currentUser;
-            if (user) {
-              const token = await user.getIdToken();
+            const fetchCustomer = async () => {
+              // Direct customer data fetch attempt
               const response = await fetch(`/api/customers/${billData.customerId}`, {
                 headers: {
-                  'Authorization': `Bearer ${token}`
+                  'Authorization': `Bearer ${await getIdToken()}`
                 }
               });
 
               if (response.ok) {
-                const customerData = await response.json();
+                const customerData: CustomerData = await response.json();
                 if (customerData) {
                   // Update the customer name from the direct customer data
-                  billData.customerName = customerData.name || 
+                  billData.customerName = customerData.name ||
                     `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() ||
                     customerData.displayName ||
                     billData.customerName || 'Unknown Customer';
@@ -66,12 +84,14 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
                   console.log('[BILLING] Updated customer name from customer data:', billData.customerName);
                 }
               }
-            }
+            };
+            await fetchCustomer();
           } catch (custError) {
             console.error('[BILLING] Error fetching customer details:', custError);
             // Continue with existing customer name if fetch fails
           }
         }
+
 
         // Always attempt to find the correct customer name regardless of current value
         console.log('[BILLING] Starting customer resolution for bill:', billData.id, 'Current name:', billData.customerName);
@@ -88,9 +108,9 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
             const customerDoc = await getDoc(customerRef);
 
             if (customerDoc.exists()) {
-              const customerData = customerDoc.data();
-              const nameFromCustomer = customerData.name || 
-                `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
+              const customerData: CustomerData = customerDoc.data() as CustomerData;
+              const nameFromCustomer = customerData.name ||
+                `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() ||
                 customerData.displayName || '';
 
               if (nameFromCustomer && nameFromCustomer !== 'Sam Smith' && nameFromCustomer !== 'John Doe') {
@@ -141,10 +161,10 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
                 const customerDoc = await getDoc(customerRef);
 
                 if (customerDoc.exists()) {
-                  const customerData = customerDoc.data();
-                  billData.customerName = customerData.name || 
-                    `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
-                    customerData.displayName || 
+                  const customerData: CustomerData = customerDoc.data() as CustomerData;
+                  billData.customerName = customerData.name ||
+                    `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() ||
+                    customerData.displayName ||
                     '';
                   console.log('[BILLING] Updated customer name from pet owner:', billData.customerName);
                 } else {
@@ -192,10 +212,10 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
                 const customerDoc = await getDoc(customerRef);
 
                 if (customerDoc.exists()) {
-                  const customerData = customerDoc.data();
-                  billData.customerName = customerData.name || 
-                    `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
-                    customerData.displayName || 
+                  const customerData: CustomerData = customerDoc.data() as CustomerData;
+                  billData.customerName = customerData.name ||
+                    `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() ||
+                    customerData.displayName ||
                     '';
                   console.log('[BILLING] Updated customer name from appointment data:', billData.customerName);
                 }
@@ -223,10 +243,10 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
     };
 
     fetchBill();
-  }, [params?.id, getBillById, setLocation, navigate]);
+  }, [params?.id, getBillById, setLocation, navigate, getIdToken]);
 
   // Format date if available
-  const formattedDate = bill?.createdAt && bill.createdAt instanceof Date && !isNaN(bill.createdAt.getTime()) ? 
+  const formattedDate = bill?.createdAt && bill.createdAt instanceof Date && !isNaN(bill.createdAt.getTime()) ?
     (() => {
       try {
         const dateObj = new Date(bill.createdAt);
@@ -242,7 +262,7 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
 
   // Define status color mapping
   const getStatusColor = (status: string) => {
-    switch(status) {
+    switch (status) {
       case 'PAID': return 'bg-green-100 text-green-800';
       case 'PENDING_PAYMENT': return 'bg-yellow-100 text-yellow-800';
       case 'CANCELED': return 'bg-gray-100 text-gray-800';
@@ -398,9 +418,9 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
                 <div className="flex items-center text-sm">
                   <CreditCard className="mr-2 h-4 w-4 text-gray-500" />
                   <span>Online Payment:</span>
-                  <a 
-                    href={bill.paymentLink} 
-                    target="_blank" 
+                  <a
+                    href={bill.paymentLink}
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="ml-2 text-blue-600 underline truncate flex-1"
                   >

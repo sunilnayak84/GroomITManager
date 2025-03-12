@@ -33,6 +33,8 @@ interface Bill {
   paymentLink?: string;
   createdAt: Date;
   updatedAt: Date;
+  customerName?: string;
+  petId?:string;
 }
 
 interface ServiceData {
@@ -295,7 +297,8 @@ export class BillingService {
         totalAmount,
         status: 'PENDING_PAYMENT',
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        petId: appointment.petId
       };
 
       try {
@@ -475,7 +478,7 @@ export class BillingService {
                 `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
                 customerData.displayName || 
                 '';
-              
+
               // Don't immediately assign it to bill.customerName to prevent overwriting with "Sam Smith"
               if (nameFromCustomer && nameFromCustomer !== 'Sam Smith' && nameFromCustomer !== 'John Doe') {
                 foundCustomerNames.add(nameFromCustomer);
@@ -547,7 +550,7 @@ export class BillingService {
                   `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
                   customerData.displayName || 
                   '';
-                
+
                 if (nameFromPetOwner && nameFromPetOwner !== 'Sam Smith' && nameFromPetOwner !== 'John Doe') {
                   foundCustomerNames.add(nameFromPetOwner);
                   realCustomerName = nameFromPetOwner;
@@ -585,20 +588,46 @@ export class BillingService {
             .get();
 
           if (appointmentDoc.exists) {
-            const appointmentData = appointmentDoc.data();
+            const appointment = appointmentDoc.data();
 
             // Try various possible customer reference structures
             let customerId = null;
 
-            if (appointmentData.customerId) {
-              customerId = appointmentData.customerId;
-              logger.info('[BILLING] Found customerId directly on appointment:', { billId, customerId });
-            } else if (appointmentData.customer?.id) {
-              customerId = appointmentData.customer.id;
-              logger.info('[BILLING] Found customerId in appointment.customer.id:', { billId, customerId });
-            } else if (typeof appointmentData.customer === 'string') {
-              customerId = appointmentData.customer;
-              logger.info('[BILLING] Found customerId as string in appointment.customer:', { billId, customerId });
+            // First, check if there's a pet ID and get the owner from there
+            if (appointment.petId) {
+              logger.info('[BILLING] Found pet ID in appointment, looking up pet owner:', { petId: appointment.petId });
+              try {
+                const petDoc = await admin.firestore()
+                  .collection('pets')
+                  .doc(appointment.petId)
+                  .get();
+
+                if (petDoc.exists) {
+                  const petData = petDoc.data();
+                  if (petData && petData.ownerId) {
+                    customerId = petData.ownerId;
+                    logger.info('[BILLING] Found owner ID from pet:', { petId: appointment.petId, ownerId: customerId });
+                  } else if (petData && petData.owner?.id) {
+                    customerId = petData.owner.id;
+                    logger.info('[BILLING] Found owner ID from pet.owner:', { petId: appointment.petId, ownerId: customerId });
+                  }
+                }
+              } catch (petError) {
+                logger.error('[BILLING] Error fetching pet for owner lookup:', petError);
+              }
+            }
+
+            // If we couldn't get owner from pet, try other appointment fields
+            if (!customerId) {
+              if (appointment.customer?.id) {
+                customerId = appointment.customer.id;
+              } else if (appointment.customerId) {
+                customerId = appointment.customerId;
+              } else if (appointment.customerRef?.id) {
+                customerId = appointment.customerRef.id;
+              } else if (appointment.customerDetails?.id) {
+                customerId = appointment.customerDetails.id;
+              }
             }
 
             if (customerId && typeof customerId === 'string') {
@@ -614,7 +643,7 @@ export class BillingService {
                   `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
                   customerData.displayName || 
                   '';
-                
+
                 if (nameFromAppointment && nameFromAppointment !== 'Sam Smith' && nameFromAppointment !== 'John Doe') {
                   foundCustomerNames.add(nameFromAppointment);
                   realCustomerName = nameFromAppointment;
@@ -667,5 +696,14 @@ export class BillingService {
   // Add alias method for getBillById to match the API endpoint
   async getBillById(billId: string): Promise<Bill | null> {
     return this.getBill(billId);
+  }
+  async updateBill(billId: string, updateData: Partial<Bill>): Promise<void> {
+    try {
+      logger.info('[BILLING] Updating bill:', { billId, updateData });
+      await admin.firestore().collection('bills').doc(billId).update(updateData);
+    } catch (error) {
+      logger.error('[BILLING] Error updating bill:', error);
+      throw error;
+    }
   }
 }
