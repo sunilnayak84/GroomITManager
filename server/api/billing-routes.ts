@@ -47,6 +47,33 @@ billingRouter.get('/bills', async (req, res) => {
   }
 });
 
+// Get bill by ID
+billingRouter.get('/bills/:billId', async (req, res) => {
+  try {
+    const { billId } = req.params;
+    logger.info('[BILLING] Fetching bill by ID:', billId);
+    
+    const bill = await billingService.getBillById(billId);
+    
+    if (!bill) {
+      logger.warn('[BILLING] Bill not found:', billId);
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'Bill not found'
+      });
+    }
+    
+    logger.info('[BILLING] Successfully fetched bill:', billId);
+    res.json(bill);
+  } catch (error) {
+    logger.error('[BILLING] Error fetching bill by ID:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: error instanceof Error ? error.message : 'Failed to fetch bill'
+    });
+  }
+});
+
 // Generate bill for appointment
 billingRouter.post('/generate/:appointmentId', async (req, res) => {
   try {

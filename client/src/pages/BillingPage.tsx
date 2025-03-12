@@ -26,7 +26,7 @@ const statusColors: Record<BillStatus, string> = {
 
 function BillCard({ bill }: { bill: Bill }) {
   const [, navigate] = useLocation();
-  
+
   // Safely format the date with error handling
   let formattedDate = 'Invalid Date';
   try {
@@ -39,7 +39,7 @@ function BillCard({ bill }: { bill: Bill }) {
   } catch (error) {
     console.error('Error formatting date:', error);
   }
-  
+
   const invoiceId = bill.id ? bill.id.slice(0, 8) : 'N/A';
 
   // Calculate total from items
@@ -55,6 +55,11 @@ function BillCard({ bill }: { bill: Bill }) {
       default: return '';
     }
   };
+
+  const handleViewDetails = () => {
+    navigate(`/billing/${bill.id}`);
+  };
+
 
   return (
     <Card className="overflow-hidden transition-all duration-200 hover:shadow-md">
@@ -89,10 +94,7 @@ function BillCard({ bill }: { bill: Bill }) {
         <Button 
           variant="outline" 
           className="w-full" 
-          onClick={(e) => {
-            e.preventDefault();
-            navigate(`/billing/${bill.id}`);
-          }}
+          onClick={handleViewDetails}
         >
           <Eye className="mr-2 h-4 w-4" />
           View Details

@@ -186,6 +186,46 @@ export function useBilling(options: UseBillingOptions = {}) {
     }
   }, [toast]);
 
+  // Get a specific bill by ID
+  const getBillById = useCallback(async (billId: string) => {
+    try {
+      console.log('[BILLING] Fetching bill by ID:', billId);
+      
+      // Get the current user's ID token
+      const token = await auth.currentUser?.getIdToken();
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
+      const response = await fetch(`/api/billing/bills/${billId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          console.error('[BILLING] Bill not found:', billId);
+          return null;
+        }
+        throw new Error(`Failed to fetch bill: ${response.statusText}`);
+      }
+
+      const bill = await response.json();
+      console.log('[BILLING] Bill fetched successfully:', bill);
+      return bill;
+    } catch (error) {
+      console.error('[BILLING] Error fetching bill by ID:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch bill details",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  }, [toast]);
+
   // Function to manually refresh bills
   const refreshBills = useCallback(async () => {
     return await getBills();

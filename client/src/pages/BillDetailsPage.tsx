@@ -22,21 +22,33 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
   const billId = propBillId || location.split('/').pop();
   const [loading, setLoading] = useState(true);
   const [bill, setBill] = useState<Bill | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [, navigate] = useLocation();
   const { getBillById } = useBilling();
 
   useEffect(() => {
     const fetchBillDetails = async () => {
-      if (!billId) return;
+      if (!billId) {
+        setError("Bill ID is missing");
+        setLoading(false);
+        return;
+      }
       
       try {
         setLoading(true);
+        setError(null);
+        console.log(`[BILLING] Fetching bill details for ID: ${billId}`);
         const billData = await getBillById(billId);
+        
         if (billData) {
+          console.log(`[BILLING] Bill details retrieved:`, billData);
           setBill(billData);
+        } else {
+          setError("Bill not found");
         }
       } catch (error) {
         console.error('Error fetching bill details:', error);
+        setError(error instanceof Error ? error.message : "Failed to fetch bill details");
       } finally {
         setLoading(false);
       }
