@@ -31,6 +31,17 @@ function BillCard({ bill }: { bill: Bill }) {
 
   // Calculate total from items
   const total = bill.items?.reduce((sum, item) => sum + (item.subtotal || 0), 0) || 0;
+  
+  // Define status color mapping
+  const getStatusColor = (status: string) => {
+    switch(status) {
+      case 'PAID': return 'bg-green-100 text-green-800';
+      case 'PENDING_PAYMENT': return 'bg-yellow-100 text-yellow-800';
+      case 'DRAFT': return 'bg-gray-100 text-gray-800';
+      case 'FAILED': return 'bg-red-100 text-red-800';
+      default: return '';
+    }
+  };
 
   return (
     <Card className="overflow-hidden transition-all duration-200 hover:shadow-md">
@@ -39,7 +50,7 @@ function BillCard({ bill }: { bill: Bill }) {
           <CardTitle className="text-lg font-medium flex items-center">
             <span className="truncate">Invoice #{invoiceId}</span>
           </CardTitle>
-          <Badge className={`px-2 py-1 font-medium ${statusColors[bill.status] || ''}`}>
+          <Badge className={`px-2 py-1 font-medium ${getStatusColor(bill.status)}`}>
             {bill.status}
           </Badge>
         </div>
@@ -57,10 +68,20 @@ function BillCard({ bill }: { bill: Bill }) {
           </div>
 
           <div className="text-xl font-bold mt-4">
-            {formatIndianCurrency(total)}
+            {formatIndianCurrency(bill.totalAmount || total)}
           </div>
         </div>
       </CardContent>
+      <CardFooter className="pt-3 pb-3">
+        <Button 
+          variant="outline" 
+          className="w-full" 
+          onClick={() => window.location.href = `/billing/${bill.id}`}
+        >
+          <Eye className="mr-2 h-4 w-4" />
+          View Details
+        </Button>
+      </CardFooter>
       <CardFooter className="bg-gray-50 pt-3 pb-3">
         <Button 
           className="w-full" 
@@ -119,7 +140,7 @@ export default function BillingPage() {
   const [bills, setBills] = useState<Bill[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<BillStatus | 'ALL'>('ALL');
-  const { getBills } = useBilling();
+  const { bills: hookBills, getBills, isLoading } = useBilling();
   const [, params] = useLocation();
 
   // Get query parameters (for direct bill opening)
@@ -130,9 +151,9 @@ export default function BillingPage() {
     const fetchBills = async () => {
       try {
         setLoading(true);
-        const fetchedBills = await getBills();
-        setBills(fetchedBills);
-
+        await getBills();
+        // The updated bills will be available from the hookBills
+        
         // If billId is present in query param, redirect to bill details
         if (billId) {
           window.location.href = `/billing/${billId}`;
@@ -146,6 +167,13 @@ export default function BillingPage() {
 
     fetchBills();
   }, [getBills, billId]);
+
+  // Use the bills directly from the hook instead
+  useEffect(() => {
+    if (hookBills && hookBills.length > 0) {
+      setBills(hookBills);
+    }
+  }, [hookBills]);
 
   const filteredBills = filter === 'ALL' ? bills : (bills || []).filter(bill => bill.status === filter);
 
