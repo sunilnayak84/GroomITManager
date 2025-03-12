@@ -4,6 +4,9 @@ import { logger } from '../utils/logger';
 import { authenticateFirebase } from '../middleware/auth';
 
 const billingRouter = Router();
+
+// Apply authentication middleware to all billing routes
+billingRouter.use(authenticateFirebase);
 const billingService = new BillingService();
 
 // Add authentication middleware to all billing routes
@@ -128,6 +131,42 @@ billingRouter.post('/verify-payment', async (req, res) => {
       error: 'Internal Server Error',
       message: error instanceof Error ? error.message : 'Failed to verify payment'
     });
+  }
+});
+
+// Get bill by ID
+billingRouter.get('/bill/:id', async (req, res) => {
+  try {
+    const billId = req.params.id;
+    const userId = req.user?.uid;
+    
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    
+    logger.info(`Fetching bill with ID: ${billId}`, { 
+      user: userId,
+      billId
+    });
+    
+    const billingService = new BillingService();
+    const bill = await billingService.getBillById(billId);
+    
+    if (!bill) {
+      logger.warn(`Bill not found with ID: ${billId}`, {
+        user: userId,
+        billId
+      });
+      return res.status(404).json({ error: 'Bill not found' });
+    }
+    
+    return res.json(bill);
+  } catch (error) {
+    logger.error('Error fetching bill by ID', { 
+      error: (error as Error).message,
+      stack: (error as Error).stack
+    });
+    return res.status(500).json({ error: 'Failed to fetch bill' });
   }
 });
 

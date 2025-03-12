@@ -1,6 +1,6 @@
 
 import { useState, useCallback } from 'react';
-import { Bill, BillDraft } from '@/types/billing';
+import { Bill, BillDraft, BillStatus } from '@/types/billing';
 import { useToast } from './use-toast';
 import { auth } from '@/lib/firebase';
 
@@ -13,87 +13,6 @@ export function useBilling(options: UseBillingOptions = {}) {
   const [isLoading, setIsLoading] = useState(false);
   const [bills, setBills] = useState<Bill[]>([]);
   const { toast } = useToast();
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [bills, setBills] = useState<Bill[]>([]);
-  const { toast } = useToast();
-
-  const generateBill = useCallback(async (appointmentId: string, draft?: BillDraft) => {
-    setIsLoading(true);
-    try {
-      console.log('[BILLING] Generating bill for:', appointmentId);
-
-      // Get the current user's ID token
-      const token = await auth.currentUser?.getIdToken();
-      if (!token) {
-        throw new Error('Authentication required');
-      }
-
-      // First debug the appointment to help diagnose issues
-      console.log('[BILLING] Debugging appointment before generating bill');
-      try {
-        const debugResponse = await fetch(`/api/debug/appointment/${appointmentId}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        if (debugResponse.ok) {
-          const debugData = await debugResponse.json();
-          console.log('[BILLING] Appointment debug data:', debugData);
-        }
-      } catch (error) {
-        console.error('[BILLING] Error debugging appointment:', error);
-      }
-
-      const response = await fetch(`/api/billing/generate/${appointmentId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(draft || {}),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to generate bill');
-      }
-
-      const bill = await response.json();
-      
-      // Refresh the bills list to include the new bill
-      await getBills();
-
-      // Trigger optional success callback
-      if (options.onSuccess) {
-        options.onSuccess();
-      }
-
-      toast({
-        title: "Success",
-        description: "Bill generated successfully",
-      });
-
-      return bill;
-    } catch (error) {
-      console.error('[BILLING] Error generating bill:', error);
-      
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to generate bill",
-        variant: "destructive",
-      });
-      
-      // Trigger optional error callback
-      if (options.onError && error instanceof Error) {
-        options.onError(error);
-      }
-      
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [toast, options, getBills]);
 
   const getBills = useCallback(async () => {
     setIsLoading(true);
@@ -134,18 +53,94 @@ export function useBilling(options: UseBillingOptions = {}) {
     }
   }, [toast]);
 
-  // Get a specific bill by ID
-  const getBillById = useCallback(async (billId: string) => {
+  const generateBill = useCallback(async (appointmentId: string, draft?: BillDraft) => {
+    setIsLoading(true);
     try {
-      console.log('[BILLING] Fetching bill by ID:', billId);
-      
+      console.log('[BILLING] Generating bill for:', appointmentId);
+
       // Get the current user's ID token
       const token = await auth.currentUser?.getIdToken();
       if (!token) {
         throw new Error('Authentication required');
       }
 
-      const response = await fetch(`/api/billing/bills/${billId}`, {
+      // First debug the appointment to help diagnose issues
+      console.log('[BILLING] Debugging appointment before generating bill');
+      try {
+        const debugResponse = await fetch(`/api/debug/appointment/${appointmentId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (debugResponse.ok) {
+          const debugData = await debugResponse.json();
+          console.log('[BILLING] Appointment debug data:', debugData);
+        }
+      } catch (error) {
+        console.error('[BILLING] Error debugging appointment:', error);
+      }
+
+      const response = await fetch(`/api/billing/generate/${appointmentId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: draft ? JSON.stringify(draft) : undefined
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to generate bill');
+      }
+
+      const generatedBill = await response.json();
+      console.log('[BILLING] Bill generated successfully:', generatedBill);
+      
+      // Refresh bills list
+      await getBills();
+      
+      if (options.onSuccess) {
+        options.onSuccess();
+      }
+      
+      toast({
+        title: "Success",
+        description: "Bill generated successfully",
+      });
+      
+      return generatedBill;
+    } catch (error) {
+      console.error('[BILLING] Error generating bill:', error);
+      
+      if (options.onError) {
+        options.onError(error as Error);
+      }
+      
+      toast({
+        title: "Error",
+        description: (error as Error).message || "Failed to generate bill",
+        variant: "destructive",
+      });
+      
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [toast, options, getBills]);
+
+  const getBillById = useCallback(async (billId: string) => {
+    setIsLoading(true);
+    try {
+      console.log('[BILLING] Fetching bill by ID:', billId);
+
+      // Get the current user's ID token
+      const token = await auth.currentUser?.getIdToken();
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
+      const response = await fetch(`/api/billing/bill/${billId}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -157,10 +152,7 @@ export function useBilling(options: UseBillingOptions = {}) {
           console.error(`[BILLING] Bill not found for ID: ${billId}`);
           throw new Error(`404: Bill with ID ${billId} not found`);
         }
-          console.error('[BILLING] Bill not found:', billId);
-          return null;
-        }
-        throw new Error(`Failed to fetch bill: ${response.statusText}`);
+        throw new Error('Failed to fetch bill');
       }
 
       const bill = await response.json();
@@ -170,16 +162,18 @@ export function useBilling(options: UseBillingOptions = {}) {
       console.error('[BILLING] Error fetching bill by ID:', error);
       toast({
         title: "Error",
-        description: "Failed to fetch bill details",
+        description: (error as Error).message || "Failed to fetch bill",
         variant: "destructive",
       });
       throw error;
+    } finally {
+      setIsLoading(false);
     }
   }, [toast]);
 
   const verifyPayment = useCallback(async (paymentId: string) => {
     try {
-      console.log('[BILLING] Verifying payment:', paymentId);
+      console.log('[BILLING] Verifying payment for:', paymentId);
 
       // Get the current user's ID token
       const token = await auth.currentUser?.getIdToken();
@@ -187,13 +181,11 @@ export function useBilling(options: UseBillingOptions = {}) {
         throw new Error('Authentication required');
       }
 
-      const response = await fetch('/api/billing/verify-payment', {
+      const response = await fetch(`/api/billing/verify-payment/${paymentId}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ paymentId }),
+        }
       });
 
       if (!response.ok) {

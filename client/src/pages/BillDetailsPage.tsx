@@ -1,6 +1,5 @@
-
 import { useEffect, useState } from 'react';
-import { useLocation } from 'wouter';
+import { useLocation, useRoute } from 'wouter';
 import { format } from 'date-fns';
 import { ArrowLeft, Download, CreditCard, User, Calendar, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -19,7 +18,9 @@ interface BillDetailsPageProps {
 export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageProps) {
   const [location] = useLocation();
   // Use the prop billId if provided, otherwise extract from URL
-  const billId = propBillId || location.split('/').pop();
+  //const billId = propBillId || location.split('/').pop();
+  const [matched, params] = useRoute('/billing/:id');
+  const billId = params?.id || propBillId;
   const [loading, setLoading] = useState(true);
   const [bill, setBill] = useState<Bill | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -33,13 +34,13 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
         setLoading(false);
         return;
       }
-      
+
       try {
         setLoading(true);
         setError(null);
         console.log(`[BILLING] Fetching bill details for ID: ${billId}`);
         const billData = await getBillById(billId);
-        
+
         if (billData) {
           console.log(`[BILLING] Bill details retrieved:`, billData);
           setBill(billData);
