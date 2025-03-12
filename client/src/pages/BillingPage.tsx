@@ -26,7 +26,20 @@ const statusColors: Record<BillStatus, string> = {
 
 function BillCard({ bill }: { bill: Bill }) {
   const [, navigate] = useLocation();
-  const formattedDate = bill.createdAt ? format(new Date(bill.createdAt), 'dd MMM yyyy') : 'Invalid Date';
+  
+  // Safely format the date with error handling
+  let formattedDate = 'Invalid Date';
+  try {
+    if (bill.createdAt) {
+      const dateObj = new Date(bill.createdAt);
+      if (!isNaN(dateObj.getTime())) {
+        formattedDate = format(dateObj, 'dd MMM yyyy');
+      }
+    }
+  } catch (error) {
+    console.error('Error formatting date:', error);
+  }
+  
   const invoiceId = bill.id ? bill.id.slice(0, 8) : 'N/A';
 
   // Calculate total from items
