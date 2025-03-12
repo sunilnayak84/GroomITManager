@@ -72,6 +72,37 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
             // Continue with existing customer name if fetch fails
           }
         }
+
+        // If there's a petId in the bill, use that to find the correct customer
+        if (billData.petId && (!billData.customerName || billData.customerName === 'John Doe')) {
+          try {
+            console.log('[BILLING] Attempting to get customer through pet ID:', billData.petId);
+            const petRef = doc(db, 'pets', billData.petId);
+            const petDoc = await getDoc(petRef);
+            
+            if (petDoc.exists()) {
+              const petData = petDoc.data();
+              const ownerId = petData.ownerId || (petData.owner?.id || petData.owner);
+              
+              if (ownerId && typeof ownerId === 'string') {
+                console.log('[BILLING] Found pet owner ID:', ownerId);
+                const customerRef = doc(db, 'customers', ownerId);
+                const customerDoc = await getDoc(customerRef);
+                
+                if (customerDoc.exists()) {
+                  const customerData = customerDoc.data();
+                  billData.customerName = customerData.name || 
+                    `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
+                    customerData.displayName || 
+                    billData.customerName;
+                  console.log('[BILLING] Updated customer name from pet owner:', billData.customerName);
+                }
+              }
+            }
+          } catch (petError) {
+            console.error('[BILLING] Error fetching pet owner details:', petError);
+          }
+        }
         
         console.log('[BILLING] Final customer name:', billData.customerName);
         setBill(billData);
