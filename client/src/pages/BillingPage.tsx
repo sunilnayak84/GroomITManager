@@ -77,7 +77,7 @@ function BillCard({ bill }: { bill: Bill }) {
         <div className="space-y-3">
           <div className="flex items-center text-sm gap-1.5 text-muted-foreground">
             <User className="h-4 w-4" />
-            <span className="truncate font-medium">Customer ID: {bill.customerId || 'Unknown'}</span>
+            <span className="truncate font-medium">Customer: {bill.customerName || bill.customerId || 'Unknown'}</span>
           </div>
 
           <div className="flex items-center text-sm gap-1.5 text-muted-foreground">

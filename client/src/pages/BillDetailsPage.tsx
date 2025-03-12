@@ -54,7 +54,7 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
   }, [params?.id, getBillById, setLocation, navigate]);
 
   // Format date if available
-  const formattedDate = bill?.createdAt ? 
+  const formattedDate = bill?.createdAt && bill.createdAt instanceof Date && !isNaN(bill.createdAt.getTime()) ? 
     (() => {
       try {
         const dateObj = new Date(bill.createdAt);
@@ -158,14 +158,14 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
                 <h3 className="text-sm font-medium text-muted-foreground mb-1">Customer</h3>
                 <div className="flex items-center gap-1.5">
                   <User className="h-4 w-4 text-muted-foreground" />
-                  <span>{bill.customerId || 'N/A'}</span>
+                  <span>{bill.customerName || bill.customerId || 'N/A'}</span>
                 </div>
               </div>
               <div>
                 <h3 className="text-sm font-medium text-muted-foreground mb-1">Date</h3>
                 <div className="flex items-center gap-1.5">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <span>{formattedDate}</span>
+                  <span>{formattedDate || 'N/A'}</span>
                 </div>
               </div>
               <div>

@@ -288,6 +288,7 @@ export class BillingService {
       const bill: Bill = {
         appointmentId,
         customerId: customer.id, //Using customer.id directly as it's already validated in getAppointmentDetails
+        customerName: customer.name || `${customer.firstName || ''} ${customer.lastName || ''}`.trim() || null,
         items,
         subtotal,
         tax,
