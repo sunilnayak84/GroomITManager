@@ -108,32 +108,102 @@ export function BillDetails({ appointmentId }: BillDetailsProps) {
       {/* Bill Preview Dialog */}
       {showPreview && billData && (
         <Dialog open={showPreview} onOpenChange={setShowPreview}>
-          <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
-              <DialogTitle>Bill Generated</DialogTitle>
+              <DialogTitle className="text-xl">Bill Generated</DialogTitle>
               <DialogDescription>
                 Your bill has been generated successfully.
               </DialogDescription>
             </DialogHeader>
 
-            <div className="border rounded-md p-4 my-4 bg-muted/20">
-              <div className="grid grid-cols-2 gap-2">
-                <div className="text-sm font-medium">Total Amount:</div>
-                <div className="text-sm">₹{billData.totalAmount?.toFixed(2)}</div>
-
-                <div className="text-sm font-medium">Services:</div>
-                <div className="text-sm">{billData.items?.length || 0}</div>
-
-                <div className="text-sm font-medium">Status:</div>
-                <div className="text-sm capitalize">{billData.status?.toLowerCase().replace('_', ' ')}</div>
+            {/* Bill Header */}
+            <div className="flex justify-between items-center border-b pb-3 mt-2">
+              <div>
+                <h3 className="font-medium">Invoice #{billData.id?.slice(0, 8)}</h3>
+                <p className="text-sm text-gray-500">
+                  {billData.createdAt && new Date(billData.createdAt).toLocaleString()}
+                </p>
+              </div>
+              <div>
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  billData.status === 'PENDING_PAYMENT' ? 'bg-amber-100 text-amber-800' :
+                  billData.status === 'PAID' ? 'bg-green-100 text-green-800' :
+                  billData.status === 'CANCELED' ? 'bg-gray-100 text-gray-800' :
+                  'bg-red-100 text-red-800'
+                }`}>
+                  {billData.status}
+                </span>
               </div>
             </div>
 
-            <DialogFooter className="flex-col sm:flex-row sm:justify-between gap-2">
+            {/* Bill Items */}
+            <div className="space-y-2 my-4">
+              <h3 className="font-medium">Services</h3>
+              <div className="border rounded-md overflow-hidden">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qty</th>
+                      <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {billData.items?.map((item, index) => (
+                      <tr key={index}>
+                        <td className="px-4 py-2 whitespace-nowrap">
+                          <div className="text-sm font-medium">{item.serviceName}</div>
+                          {item.description && <div className="text-xs text-gray-500">{item.description}</div>}
+                        </td>
+                        <td className="px-4 py-2 whitespace-nowrap text-sm">₹{item.price?.toFixed(2)}</td>
+                        <td className="px-4 py-2 whitespace-nowrap text-sm">{item.quantity}</td>
+                        <td className="px-4 py-2 whitespace-nowrap text-sm text-right">₹{item.subtotal?.toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Bill Totals */}
+            <div className="space-y-2 border-t pt-2">
+              <div className="flex justify-between">
+                <span className="font-medium">Subtotal:</span>
+                <span>₹{billData.subtotal?.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium">Tax:</span>
+                <span>₹{billData.tax?.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-lg font-bold pt-1">
+                <span>Total:</span>
+                <span>₹{billData.totalAmount?.toFixed(2)}</span>
+              </div>
+            </div>
+
+            {/* Payment Link */}
+            {billData.paymentLink && (
+              <div className="border rounded-md p-3 bg-gray-50 mt-4">
+                <div className="flex items-center text-sm">
+                  <CreditCard className="mr-2 h-4 w-4 text-gray-500" />
+                  <span>Online Payment:</span>
+                  <a 
+                    href={billData.paymentLink} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="ml-2 text-blue-600 underline truncate"
+                  >
+                    {billData.paymentLink}
+                  </a>
+                </div>
+              </div>
+            )}
+
+            <DialogFooter className="flex-col sm:flex-row sm:justify-between gap-2 pt-4 mt-2">
               <Button variant="outline" onClick={() => setShowPreview(false)}>
                 Close
               </Button>
-
               <div className="flex gap-2">
                 {billData.paymentLink && (
                   <Button onClick={() => window.open(billData.paymentLink, '_blank')} className="bg-green-600 hover:bg-green-700">

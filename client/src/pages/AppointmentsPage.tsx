@@ -729,24 +729,116 @@ export default function AppointmentsPage() {
 
       {/* Bill Preview Modal */}
       <Dialog open={showBillModal} onOpenChange={setShowBillModal}>
-        <DialogContent className="p-4">
+        <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>Bill Preview</DialogTitle>
+            <DialogTitle className="text-xl">Bill Preview</DialogTitle>
+            <DialogDescription>
+              Bill generated successfully
+            </DialogDescription>
             <DialogClose />
           </DialogHeader>
           {billPreview && (
-            <div>
-              {/* Display bill preview data here */}
-              <pre>{JSON.stringify(billPreview, null, 2)}</pre>
-              <DialogFooter>
-                <Button variant="ghost" onClick={() => setShowBillModal(false)}>
+            <div className="space-y-4">
+              {/* Bill Header */}
+              <div className="flex justify-between items-center border-b pb-3">
+                <div>
+                  <h3 className="font-medium">Invoice #{billPreview.id?.slice(0, 8)}</h3>
+                  <p className="text-sm text-gray-500">
+                    {billPreview.createdAt && new Date(billPreview.createdAt).toLocaleString()}
+                  </p>
+                </div>
+                <div>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    billPreview.status === 'PENDING_PAYMENT' ? 'bg-amber-100 text-amber-800' :
+                    billPreview.status === 'PAID' ? 'bg-green-100 text-green-800' :
+                    billPreview.status === 'CANCELED' ? 'bg-gray-100 text-gray-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    {billPreview.status}
+                  </span>
+                </div>
+              </div>
+              
+              {/* Bill Items */}
+              <div className="space-y-2">
+                <h3 className="font-medium">Services</h3>
+                <div className="border rounded-md overflow-hidden">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qty</th>
+                        <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Subtotal</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {billPreview.items?.map((item, index) => (
+                        <tr key={index}>
+                          <td className="px-4 py-2 whitespace-nowrap">
+                            <div className="text-sm font-medium">{item.serviceName}</div>
+                            {item.description && <div className="text-xs text-gray-500">{item.description}</div>}
+                          </td>
+                          <td className="px-4 py-2 whitespace-nowrap text-sm">₹{item.price?.toFixed(2)}</td>
+                          <td className="px-4 py-2 whitespace-nowrap text-sm">{item.quantity}</td>
+                          <td className="px-4 py-2 whitespace-nowrap text-sm text-right">₹{item.subtotal?.toFixed(2)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              
+              {/* Bill Totals */}
+              <div className="space-y-2">
+                <div className="flex justify-between border-b pb-2">
+                  <span className="font-medium">Subtotal:</span>
+                  <span>₹{billPreview.subtotal?.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between border-b pb-2">
+                  <span className="font-medium">Tax:</span>
+                  <span>₹{billPreview.tax?.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-lg font-bold">
+                  <span>Total:</span>
+                  <span>₹{billPreview.totalAmount?.toFixed(2)}</span>
+                </div>
+              </div>
+              
+              {/* Payment Link */}
+              {billPreview.paymentLink && (
+                <div className="border rounded-md p-3 bg-gray-50">
+                  <div className="flex items-center text-sm">
+                    <CreditCard className="mr-2 h-4 w-4 text-gray-500" />
+                    <span>Online Payment:</span>
+                    <a 
+                      href={billPreview.paymentLink} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="ml-2 text-blue-600 underline truncate"
+                    >
+                      {billPreview.paymentLink}
+                    </a>
+                  </div>
+                </div>
+              )}
+              
+              <DialogFooter className="flex sm:justify-between gap-2 pt-4">
+                <Button variant="outline" onClick={() => setShowBillModal(false)}>
                   Close
                 </Button>
-                <Button
-                  onClick={() => window.open(`/billing?billId=${billPreview.id}`, '_blank')}
-                >
-                  View in New Tab <ExternalLink className="h-4 w-4 ml-2" />
-                </Button>
+                <div className="flex gap-2">
+                  {billPreview.paymentLink && (
+                    <Button onClick={() => window.open(billPreview.paymentLink, '_blank')} className="bg-green-600 hover:bg-green-700">
+                      <CreditCard className="mr-2 h-4 w-4" />
+                      Pay Now
+                    </Button>
+                  )}
+                  <Button onClick={() => window.open(`/billing?billId=${billPreview.id}`, '_blank')}>
+                    <ExternalLink className="mr-2 h-4 w-4" />
+                    View Full Bill
+                  </Button>
+                </div>
               </DialogFooter>
             </div>
           )}
