@@ -84,6 +84,17 @@ function setupErrorHandlers() {
 
 function Router() {
   const { user, isLoading } = useUser();
+  
+  // Handle URL parameters by cleaning them if present
+  React.useEffect(() => {
+    const url = new URL(window.location.href);
+    // If we have initialPath param, replace the URL with the actual path
+    if (url.searchParams.has('initialPath')) {
+      const initialPath = url.searchParams.get('initialPath') || '/';
+      // Remove the query parameters and navigate to the clean URL
+      window.history.replaceState({}, '', initialPath);
+    }
+  }, []);
 
   if (isLoading) {
     return <LoadingSpinner />;
