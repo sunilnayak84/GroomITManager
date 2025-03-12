@@ -31,7 +31,9 @@ export default function App() {
             <BillingPage />
           </ProtectedRoute>
         )} />
-        <Route path="/billing/:billId" component={BillDetailsPage} />
+        <Route path="/billing/:billId">
+          <BillDetailsPage />
+        </Route>
         <Route>
           <div className="flex items-center justify-center min-h-screen">
             <h1 className="text-2xl font-bold">404 Page Not Found</h1>

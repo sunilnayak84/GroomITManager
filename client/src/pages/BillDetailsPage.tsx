@@ -13,8 +13,9 @@ import { Bill } from '@/types/billing';
 import { Separator } from '@/components/ui/separator';
 
 export default function BillDetailsPage() {
-  const [, params] = useLocation();
-  const billId = params.billId;
+  const [location] = useLocation();
+  // Extract billId from the URL path
+  const billId = location.split('/').pop();
   const [loading, setLoading] = useState(true);
   const [bill, setBill] = useState<Bill | null>(null);
   const [, navigate] = useLocation();
@@ -159,7 +160,7 @@ export default function BillDetailsPage() {
                 <h3 className="text-sm font-medium text-muted-foreground mb-1">Type</h3>
                 <div className="flex items-center gap-1.5">
                   <Tag className="h-4 w-4 text-muted-foreground" />
-                  <span>{bill.type || 'Standard'}</span>
+                  <span>Standard Invoice</span>
                 </div>
               </div>
             </div>
@@ -173,7 +174,7 @@ export default function BillDetailsPage() {
                   bill.items.map((item, index) => (
                     <div key={index} className="flex justify-between py-2 border-b last:border-0">
                       <div>
-                        <p className="font-medium">{item.name}</p>
+                        <p className="font-medium">{item.serviceName || 'Service'}</p>
                         <p className="text-sm text-muted-foreground">
                           {item.quantity} x {formatIndianCurrency(item.price || 0)}
                         </p>
