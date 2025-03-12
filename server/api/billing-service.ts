@@ -454,6 +454,10 @@ export class BillingService {
         bill.customerName = '';
       }
 
+      // Store all potential customer names we find to validate them later
+      const foundCustomerNames = new Set();
+      let realCustomerName = null;
+
       // Try to get customer name through the customerId first
       if (bill.customerId) {
         try {
@@ -467,16 +471,27 @@ export class BillingService {
             const customerData = customerDoc.data();
             if (customerData) {
               // Try to get the customer name from various possible fields
-              bill.customerName = customerData.name || 
+              const nameFromCustomer = customerData.name || 
                 `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
                 customerData.displayName || 
                 '';
-
-              logger.info('[BILLING] Updated bill with customer name from customerId:', { 
-                billId, 
-                customerId: bill.customerId, 
-                customerName: bill.customerName 
-              });
+              
+              // Don't immediately assign it to bill.customerName to prevent overwriting with "Sam Smith"
+              if (nameFromCustomer && nameFromCustomer !== 'Sam Smith' && nameFromCustomer !== 'John Doe') {
+                foundCustomerNames.add(nameFromCustomer);
+                realCustomerName = nameFromCustomer;
+                logger.info('[BILLING] Found potential real customer name:', { 
+                  billId, 
+                  customerId: bill.customerId, 
+                  nameFromCustomer 
+                });
+              } else {
+                logger.info('[BILLING] Skipping placeholder customer name from customerId:', { 
+                  billId, 
+                  customerId: bill.customerId, 
+                  nameFromCustomer 
+                });
+              }
             }
           } else {
             logger.info('[BILLING] Customer document not found for ID:', { billId, customerId: bill.customerId });
@@ -528,15 +543,26 @@ export class BillingService {
 
               if (customerDoc.exists) {
                 const customerData = customerDoc.data();
-                bill.customerName = customerData.name || 
+                const nameFromPetOwner = customerData.name || 
                   `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
                   customerData.displayName || 
                   '';
-                logger.info('[BILLING] Updated bill with customer name from pet owner:', { 
-                  billId, 
-                  ownerId, 
-                  customerName: bill.customerName 
-                });
+                
+                if (nameFromPetOwner && nameFromPetOwner !== 'Sam Smith' && nameFromPetOwner !== 'John Doe') {
+                  foundCustomerNames.add(nameFromPetOwner);
+                  realCustomerName = nameFromPetOwner;
+                  logger.info('[BILLING] Found potential real customer name from pet owner:', { 
+                    billId, 
+                    ownerId, 
+                    nameFromPetOwner 
+                  });
+                } else {
+                  logger.info('[BILLING] Skipping placeholder customer name from pet owner:', { 
+                    billId, 
+                    ownerId, 
+                    nameFromPetOwner 
+                  });
+                }
               } else {
                 logger.info('[BILLING] Customer document not found for pet owner ID:', { billId, ownerId });
               }
@@ -584,15 +610,26 @@ export class BillingService {
 
               if (customerDoc.exists) {
                 const customerData = customerDoc.data();
-                bill.customerName = customerData.name || 
+                const nameFromAppointment = customerData.name || 
                   `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
                   customerData.displayName || 
                   '';
-                logger.info('[BILLING] Updated bill with customer name from appointment data:', { 
-                  billId, 
-                  customerId, 
-                  customerName: bill.customerName 
-                });
+                
+                if (nameFromAppointment && nameFromAppointment !== 'Sam Smith' && nameFromAppointment !== 'John Doe') {
+                  foundCustomerNames.add(nameFromAppointment);
+                  realCustomerName = nameFromAppointment;
+                  logger.info('[BILLING] Found potential real customer name from appointment:', { 
+                    billId, 
+                    customerId, 
+                    nameFromAppointment 
+                  });
+                } else {
+                  logger.info('[BILLING] Skipping placeholder customer name from appointment:', { 
+                    billId, 
+                    customerId, 
+                    nameFromAppointment 
+                  });
+                }
               }
             }
           }
@@ -601,8 +638,21 @@ export class BillingService {
         }
       }
 
-      // Set a default if all resolution attempts failed
-      if (!bill.customerName || bill.customerName.trim() === '') {
+      // Now assign the best customer name we found
+      if (realCustomerName) {
+        logger.info('[BILLING] Setting verified customer name:', { billId, customerName: realCustomerName });
+        bill.customerName = realCustomerName;
+      } else if (foundCustomerNames.size > 0) {
+        // If we have any customer names (that aren't placeholders), use the first one
+        const firstCustomerName = Array.from(foundCustomerNames)[0];
+        logger.info('[BILLING] Using first found customer name:', { billId, customerName: firstCustomerName });
+        bill.customerName = firstCustomerName;
+      } else if (bill.customerName === 'Sam Smith' || bill.customerName === 'John Doe') {
+        // Ensure we don't return a placeholder name
+        bill.customerName = 'Unknown Customer';
+        logger.info('[BILLING] Replaced placeholder name with Unknown Customer:', { billId });
+      } else if (!bill.customerName || bill.customerName.trim() === '') {
+        // Set a default if all resolution attempts failed
         bill.customerName = 'Unknown Customer';
         logger.info('[BILLING] Using fallback customer name for bill:', { billId });
       }

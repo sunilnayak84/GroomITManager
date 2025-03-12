@@ -41,7 +41,7 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
           setLocation('/billing');
           return;
         }
-        
+
         // Fetch fresh customer data to ensure we have the latest name
         if (billData.customerId) {
           try {
@@ -53,7 +53,7 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
                   'Authorization': `Bearer ${token}`
                 }
               });
-              
+
               if (response.ok) {
                 const customerData = await response.json();
                 if (customerData) {
@@ -62,7 +62,7 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
                     `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() ||
                     customerData.displayName ||
                     billData.customerName || 'Unknown Customer';
-                  
+
                   console.log('[BILLING] Updated customer name from customer data:', billData.customerName);
                 }
               }
@@ -86,14 +86,14 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
             console.log('[BILLING] Attempting to get customer through customerId:', billData.customerId);
             const customerRef = doc(db, 'customers', billData.customerId);
             const customerDoc = await getDoc(customerRef);
-            
+
             if (customerDoc.exists()) {
               const customerData = customerDoc.data();
               const nameFromCustomer = customerData.name || 
                 `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
                 customerData.displayName || '';
-              
-              if (nameFromCustomer) {
+
+              if (nameFromCustomer && nameFromCustomer !== 'Sam Smith' && nameFromCustomer !== 'John Doe') {
                 billData.customerName = nameFromCustomer;
                 console.log('[BILLING] Updated customer name using customerId:', billData.customerName);
               }
@@ -111,15 +111,15 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
             console.log('[BILLING] Attempting to get customer through pet ID:', billData.petId);
             const petRef = doc(db, 'pets', billData.petId);
             const petDoc = await getDoc(petRef);
-            
+
             if (petDoc.exists()) {
               const petData = petDoc.data();
               console.log('[BILLING] Pet data found:', petData);
               console.log('[BILLING] Attempting to extract owner from pet with ID:', billData.petId);
-              
+
               // Try various possible owner reference structures
               let ownerId = null;
-              
+
               // Check customerId first as it appears to be the primary field in your DB structure
               if (petData.customerId) {
                 ownerId = petData.customerId;
@@ -134,12 +134,12 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
                 ownerId = petData.owner;
                 console.log('[BILLING] Found ownerId as string in pet.owner:', ownerId);
               }
-              
+
               if (ownerId && typeof ownerId === 'string') {
                 console.log('[BILLING] Looking up customer with ID:', ownerId);
                 const customerRef = doc(db, 'customers', ownerId);
                 const customerDoc = await getDoc(customerRef);
-                
+
                 if (customerDoc.exists()) {
                   const customerData = customerDoc.data();
                   billData.customerName = customerData.name || 
@@ -160,21 +160,21 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
             console.error('[BILLING] Error fetching pet owner details:', petError);
           }
         }
-        
+
         // Last resort: Check if appointmentId is available and get customer through that
         if ((!billData.customerName || billData.customerName.trim() === '') && billData.appointmentId) {
           try {
             console.log('[BILLING] Attempting to get customer through appointment ID:', billData.appointmentId);
             const appointmentRef = doc(db, 'appointments', billData.appointmentId);
             const appointmentDoc = await getDoc(appointmentRef);
-            
+
             if (appointmentDoc.exists()) {
               const appointmentData = appointmentDoc.data();
               console.log('[BILLING] Appointment data found:', appointmentData);
-              
+
               // Try various possible customer reference structures
               let customerId = null;
-              
+
               if (appointmentData.customerId) {
                 customerId = appointmentData.customerId;
                 console.log('[BILLING] Found customerId directly on appointment:', customerId);
@@ -185,12 +185,12 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
                 customerId = appointmentData.customer;
                 console.log('[BILLING] Found customerId as string in appointment.customer:', customerId);
               }
-              
+
               if (customerId && typeof customerId === 'string') {
                 console.log('[BILLING] Looking up customer with ID from appointment:', customerId);
                 const customerRef = doc(db, 'customers', customerId);
                 const customerDoc = await getDoc(customerRef);
-                
+
                 if (customerDoc.exists()) {
                   const customerData = customerDoc.data();
                   billData.customerName = customerData.name || 
@@ -205,13 +205,13 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
             console.error('[BILLING] Error fetching appointment details:', apptError);
           }
         }
-        
+
         // If we still don't have a name after all attempts
         if (!billData.customerName || billData.customerName.trim() === '') {
           billData.customerName = 'Unknown Customer';
           console.log('[BILLING] Using fallback customer name after all attempts failed');
         }
-        
+
         console.log('[BILLING] Final customer name:', billData.customerName);
         setBill(billData);
       } catch (error) {
