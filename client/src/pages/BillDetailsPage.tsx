@@ -73,8 +73,42 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
           }
         }
 
-        // If there's a petId in the bill, use that to find the correct customer
-        if (billData.petId && (!billData.customerName || billData.customerName === 'John Doe')) {
+        // Always attempt to find the correct customer name regardless of current value
+        console.log('[BILLING] Starting customer resolution for bill:', billData.id, 'Current name:', billData.customerName);
+
+        // Clear cache of static customer names to force refresh
+        if (billData.customerName === 'Sam Smith' || billData.customerName === 'John Doe') {
+          console.log('[BILLING] Clearing static customer name:', billData.customerName);
+          billData.customerName = '';
+        }
+
+        // Attempt to get customer through customerId if available
+        if (billData.customerId && billData.customerId.trim() !== '') {
+          try {
+            console.log('[BILLING] Attempting to get customer through customerId:', billData.customerId);
+            const customerRef = doc(db, 'customers', billData.customerId);
+            const customerDoc = await getDoc(customerRef);
+            
+            if (customerDoc.exists()) {
+              const customerData = customerDoc.data();
+              const nameFromCustomer = customerData.name || 
+                `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
+                customerData.displayName || '';
+              
+              if (nameFromCustomer) {
+                billData.customerName = nameFromCustomer;
+                console.log('[BILLING] Updated customer name using customerId:', billData.customerName);
+              }
+            } else {
+              console.log('[BILLING] Customer document not found for ID:', billData.customerId);
+            }
+          } catch (custError) {
+            console.error('[BILLING] Error fetching customer details by customerId:', custError);
+          }
+        }
+
+        // If we still don't have a valid customer name and there's a petId, try to get customer through pet relationship
+        if ((!billData.customerName || billData.customerName.trim() === '') && billData.petId) {
           try {
             console.log('[BILLING] Attempting to get customer through pet ID:', billData.petId);
             const petRef = doc(db, 'pets', billData.petId);
@@ -82,10 +116,27 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
             
             if (petDoc.exists()) {
               const petData = petDoc.data();
-              const ownerId = petData.ownerId || (petData.owner?.id || petData.owner);
+              console.log('[BILLING] Pet data found:', petData);
+              
+              // Try various possible owner reference structures
+              let ownerId = null;
+              
+              if (petData.ownerId) {
+                ownerId = petData.ownerId;
+                console.log('[BILLING] Found ownerId directly on pet:', ownerId);
+              } else if (petData.owner?.id) {
+                ownerId = petData.owner.id;
+                console.log('[BILLING] Found ownerId in pet.owner.id:', ownerId);
+              } else if (typeof petData.owner === 'string') {
+                ownerId = petData.owner;
+                console.log('[BILLING] Found ownerId as string in pet.owner:', ownerId);
+              } else if (petData.customerId) {
+                ownerId = petData.customerId;
+                console.log('[BILLING] Found customerId on pet:', ownerId);
+              }
               
               if (ownerId && typeof ownerId === 'string') {
-                console.log('[BILLING] Found pet owner ID:', ownerId);
+                console.log('[BILLING] Looking up customer with ID:', ownerId);
                 const customerRef = doc(db, 'customers', ownerId);
                 const customerDoc = await getDoc(customerRef);
                 
@@ -94,14 +145,71 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
                   billData.customerName = customerData.name || 
                     `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
                     customerData.displayName || 
-                    billData.customerName;
+                    '';
                   console.log('[BILLING] Updated customer name from pet owner:', billData.customerName);
+                } else {
+                  console.log('[BILLING] Customer document not found for pet owner ID:', ownerId);
                 }
+              } else {
+                console.log('[BILLING] Could not find valid owner ID in pet data');
               }
+            } else {
+              console.log('[BILLING] Pet not found for ID:', billData.petId);
             }
           } catch (petError) {
             console.error('[BILLING] Error fetching pet owner details:', petError);
           }
+        }
+        
+        // Last resort: Check if appointmentId is available and get customer through that
+        if ((!billData.customerName || billData.customerName.trim() === '') && billData.appointmentId) {
+          try {
+            console.log('[BILLING] Attempting to get customer through appointment ID:', billData.appointmentId);
+            const appointmentRef = doc(db, 'appointments', billData.appointmentId);
+            const appointmentDoc = await getDoc(appointmentRef);
+            
+            if (appointmentDoc.exists()) {
+              const appointmentData = appointmentDoc.data();
+              console.log('[BILLING] Appointment data found:', appointmentData);
+              
+              // Try various possible customer reference structures
+              let customerId = null;
+              
+              if (appointmentData.customerId) {
+                customerId = appointmentData.customerId;
+                console.log('[BILLING] Found customerId directly on appointment:', customerId);
+              } else if (appointmentData.customer?.id) {
+                customerId = appointmentData.customer.id;
+                console.log('[BILLING] Found customerId in appointment.customer.id:', customerId);
+              } else if (typeof appointmentData.customer === 'string') {
+                customerId = appointmentData.customer;
+                console.log('[BILLING] Found customerId as string in appointment.customer:', customerId);
+              }
+              
+              if (customerId && typeof customerId === 'string') {
+                console.log('[BILLING] Looking up customer with ID from appointment:', customerId);
+                const customerRef = doc(db, 'customers', customerId);
+                const customerDoc = await getDoc(customerRef);
+                
+                if (customerDoc.exists()) {
+                  const customerData = customerDoc.data();
+                  billData.customerName = customerData.name || 
+                    `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
+                    customerData.displayName || 
+                    '';
+                  console.log('[BILLING] Updated customer name from appointment data:', billData.customerName);
+                }
+              }
+            }
+          } catch (apptError) {
+            console.error('[BILLING] Error fetching appointment details:', apptError);
+          }
+        }
+        
+        // If we still don't have a name after all attempts
+        if (!billData.customerName || billData.customerName.trim() === '') {
+          billData.customerName = 'Unknown Customer';
+          console.log('[BILLING] Using fallback customer name after all attempts failed');
         }
         
         console.log('[BILLING] Final customer name:', billData.customerName);

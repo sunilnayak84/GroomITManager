@@ -448,10 +448,16 @@ export class BillingService {
       const billData = billDoc.data() as Bill;
       const bill = { id: billDoc.id, ...billData };
 
-      // If the bill doesn't have a customer name but has a customer ID, fetch the customer details
-      if ((!bill.customerName || bill.customerName.trim() === '') && bill.customerId) {
+      // Reset customer name if it's one of the static placeholder names
+      if (bill.customerName === 'Sam Smith' || bill.customerName === 'John Doe') {
+        logger.info('[BILLING] Clearing static customer name:', { billId, customerName: bill.customerName });
+        bill.customerName = '';
+      }
+
+      // Try to get customer name through the customerId first
+      if (bill.customerId) {
         try {
-          logger.info('[BILLING] Fetching customer details for bill:', { billId, customerId: bill.customerId });
+          logger.info('[BILLING] Fetching customer details for bill by customerId:', { billId, customerId: bill.customerId });
           const customerDoc = await admin.firestore()
             .collection('customers')
             .doc(bill.customerId)
@@ -464,14 +470,16 @@ export class BillingService {
               bill.customerName = customerData.name || 
                 `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
                 customerData.displayName || 
-                'Unknown Customer';
+                '';
               
-              logger.info('[BILLING] Updated bill with customer name:', { 
+              logger.info('[BILLING] Updated bill with customer name from customerId:', { 
                 billId, 
                 customerId: bill.customerId, 
                 customerName: bill.customerName 
               });
             }
+          } else {
+            logger.info('[BILLING] Customer document not found for ID:', { billId, customerId: bill.customerId });
           }
         } catch (custError) {
           logger.error('[BILLING] Error fetching customer for bill:', { 
@@ -480,6 +488,124 @@ export class BillingService {
             error: custError 
           });
         }
+      }
+
+      // If customer name still not resolved and we have a petId, try through pet
+      if ((!bill.customerName || bill.customerName.trim() === '') && bill.petId) {
+        try {
+          logger.info('[BILLING] Attempting to get customer through pet ID:', { billId, petId: bill.petId });
+          const petDoc = await admin.firestore()
+            .collection('pets')
+            .doc(bill.petId)
+            .get();
+
+          if (petDoc.exists) {
+            const petData = petDoc.data();
+            logger.info('[BILLING] Pet data found:', { billId, petId: bill.petId, hasOwner: !!petData?.ownerId || !!petData?.owner });
+            
+            // Try various possible owner reference structures
+            let ownerId = null;
+            
+            if (petData?.ownerId) {
+              ownerId = petData.ownerId;
+              logger.info('[BILLING] Found ownerId directly on pet:', { billId, ownerId });
+            } else if (petData?.owner?.id) {
+              ownerId = petData.owner.id;
+              logger.info('[BILLING] Found ownerId in pet.owner.id:', { billId, ownerId });
+            } else if (typeof petData?.owner === 'string') {
+              ownerId = petData.owner;
+              logger.info('[BILLING] Found ownerId as string in pet.owner:', { billId, ownerId });
+            } else if (petData?.customerId) {
+              ownerId = petData.customerId;
+              logger.info('[BILLING] Found customerId on pet:', { billId, ownerId });
+            }
+            
+            if (ownerId && typeof ownerId === 'string') {
+              logger.info('[BILLING] Looking up customer with ID:', { billId, ownerId });
+              const customerDoc = await admin.firestore()
+                .collection('customers')
+                .doc(ownerId)
+                .get();
+              
+              if (customerDoc.exists) {
+                const customerData = customerDoc.data();
+                bill.customerName = customerData.name || 
+                  `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
+                  customerData.displayName || 
+                  '';
+                logger.info('[BILLING] Updated bill with customer name from pet owner:', { 
+                  billId, 
+                  ownerId, 
+                  customerName: bill.customerName 
+                });
+              } else {
+                logger.info('[BILLING] Customer document not found for pet owner ID:', { billId, ownerId });
+              }
+            }
+          } else {
+            logger.info('[BILLING] Pet not found for ID:', { billId, petId: bill.petId });
+          }
+        } catch (petError) {
+          logger.error('[BILLING] Error fetching pet owner details:', { billId, petId: bill.petId, error: petError });
+        }
+      }
+
+      // Last resort: Check if appointmentId is available and get customer through that
+      if ((!bill.customerName || bill.customerName.trim() === '') && bill.appointmentId) {
+        try {
+          logger.info('[BILLING] Attempting to get customer through appointment ID:', { billId, appointmentId: bill.appointmentId });
+          const appointmentDoc = await admin.firestore()
+            .collection('appointments')
+            .doc(bill.appointmentId)
+            .get();
+          
+          if (appointmentDoc.exists) {
+            const appointmentData = appointmentDoc.data();
+            
+            // Try various possible customer reference structures
+            let customerId = null;
+            
+            if (appointmentData.customerId) {
+              customerId = appointmentData.customerId;
+              logger.info('[BILLING] Found customerId directly on appointment:', { billId, customerId });
+            } else if (appointmentData.customer?.id) {
+              customerId = appointmentData.customer.id;
+              logger.info('[BILLING] Found customerId in appointment.customer.id:', { billId, customerId });
+            } else if (typeof appointmentData.customer === 'string') {
+              customerId = appointmentData.customer;
+              logger.info('[BILLING] Found customerId as string in appointment.customer:', { billId, customerId });
+            }
+            
+            if (customerId && typeof customerId === 'string') {
+              logger.info('[BILLING] Looking up customer with ID from appointment:', { billId, customerId });
+              const customerDoc = await admin.firestore()
+                .collection('customers')
+                .doc(customerId)
+                .get();
+              
+              if (customerDoc.exists) {
+                const customerData = customerDoc.data();
+                bill.customerName = customerData.name || 
+                  `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
+                  customerData.displayName || 
+                  '';
+                logger.info('[BILLING] Updated bill with customer name from appointment data:', { 
+                  billId, 
+                  customerId, 
+                  customerName: bill.customerName 
+                });
+              }
+            }
+          }
+        } catch (apptError) {
+          logger.error('[BILLING] Error fetching appointment details:', { billId, appointmentId: bill.appointmentId, error: apptError });
+        }
+      }
+
+      // Set a default if all resolution attempts failed
+      if (!bill.customerName || bill.customerName.trim() === '') {
+        bill.customerName = 'Unknown Customer';
+        logger.info('[BILLING] Using fallback customer name for bill:', { billId });
       }
 
       return bill;
