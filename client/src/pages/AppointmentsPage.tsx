@@ -405,20 +405,14 @@ export default function AppointmentsPage() {
         <ActionButtons
           appointment={row}
           onView={() => {
-            // Update selected appointment directly from appointments data
-            const appointment = appointments?.find(apt => apt.id === row.id);
-            if (appointment) {
-              setSelectedAppointment(appointment);
-              setOpenDetails(true);
-            }
+            console.log("View button clicked for appointment:", row.id);
+            setSelectedAppointment(row);
+            setOpenDetails(true);
           }}
           onEdit={() => {
-            // Update selected appointment directly from appointments data
-            const appointment = appointments?.find(apt => apt.id === row.id);
-            if (appointment) {
-              setSelectedAppointment(appointment);
-              setOpenEdit(true);
-            }
+            console.log("Edit button clicked for appointment:", row.id);
+            setSelectedAppointment(row);
+            setOpenEdit(true);
           }}
         />
       ),
