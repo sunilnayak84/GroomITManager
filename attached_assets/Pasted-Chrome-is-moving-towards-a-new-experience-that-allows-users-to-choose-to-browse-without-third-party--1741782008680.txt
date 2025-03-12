@@ -1,0 +1,19 @@
+Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warningAI
+client:495 [vite] connecting...
+client:614 [vite] connected.
+content.js:1 CISPL SignerDigital Loaded
+api.razorpay.com/v1/checkout/public?traffic_env=production&build=471137a66c9d01d2ee51a020826bd9334ed314cc&build_v1=368703ca18df4bd6071ae944791cd8870683687b&checkout_v2=1&new_session=1&session_token=9F9C03254660BA0B366B2DF9CECF57939220570B9632A73CF29B62AD1A01FFE07644EE93A5A62B28BA58EF1F928AEB7F11E6A1B73B18C7FEB21E73793B75679F0264B6B4918421E80428F2114CAEABB54D3C685E77395BB14ADE56E9C4DF892D96862DCF33807532:1 [DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) <input id=​"SdExtUserPin" type=​"password">​
+chunk-GNC7SI6A.js?v=78b4ca71:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+firebase.ts:19 Checking Firebase environment variables...
+firebase.ts:39 FIREBASE_INIT: Initializing Firebase with config: {apiKey: '***', authDomain: 'replit-5ac6a.firebaseapp.com', projectId: 'replit-5ac6a', storageBucket: 'replit-5ac6a.firebasestorage.app', messagingSenderId: '194114432530', …}
+firebase.ts:44 FIREBASE_INIT: Firebase initialized successfully
+content.js:1 CISPL SignerDigital Loaded
+InfvdwNHRoTliS9NyoQT:1 [DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) <input id=​"SdExtUserPin" type=​"password">​
+BillDetailsPage.tsx:37 [BILLING] Fetching bill with ID: InfvdwNHRoTliS9NyoQT
+use-billing.ts:134 [BILLING] Fetching bill: InfvdwNHRoTliS9NyoQT
+BillDetailsPage.tsx:37 [BILLING] Fetching bill with ID: InfvdwNHRoTliS9NyoQT
+use-billing.ts:134 [BILLING] Fetching bill: InfvdwNHRoTliS9NyoQT
+use-billing.ts:158 [BILLING] Fetched bill: {id: 'InfvdwNHRoTliS9NyoQT', appointmentId: 'Me4zF8tjVcxULazfUJ8o', customerId: 'CA6Bd09SzND7J1UEfLRo', items: Array(1), subtotal: 1199, …}appointmentId: "Me4zF8tjVcxULazfUJ8o"createdAt: "2025-03-12T10:29:35.128Z"customerId: "CA6Bd09SzND7J1UEfLRo"customerName: "Sam Smith"id: "InfvdwNHRoTliS9NyoQT"items: [{…}]paymentLink: "https://rzp.io/rzp/dJMNryI5"status: "PENDING_PAYMENT"subtotal: 1199tax: 215.82totalAmount: 1414.82updatedAt: "2025-03-12T10:29:35.128Z"[[Prototype]]: Object
+use-billing.ts:168 [BILLING] Processed bill data: {id: 'InfvdwNHRoTliS9NyoQT', customer: 'Sam Smith'}customer: "Sam Smith"id: "InfvdwNHRoTliS9NyoQT"[[Prototype]]: Object
+use-billing.ts:158 [BILLING] Fetched bill: {id: 'InfvdwNHRoTliS9NyoQT', appointmentId: 'Me4zF8tjVcxULazfUJ8o', customerId: 'CA6Bd09SzND7J1UEfLRo', items: Array(1), subtotal: 1199, …}appointmentId: "Me4zF8tjVcxULazfUJ8o"createdAt: "2025-03-12T10:29:35.128Z"customerId: "CA6Bd09SzND7J1UEfLRo"customerName: "Sam Smith"id: "InfvdwNHRoTliS9NyoQT"items: [{…}]paymentLink: "https://rzp.io/rzp/dJMNryI5"status: "PENDING_PAYMENT"subtotal: 1199tax: 215.82totalAmount: 1414.82updatedAt: "2025-03-12T10:29:35.128Z"[[Prototype]]: Object
+use-billing.ts:168 [BILLING] Processed bill data: {id: 'InfvdwNHRoTliS9NyoQT', customer: 'Sam Smith'}customer: "Sam Smith"id: "InfvdwNHRoTliS9NyoQT"[[Prototype]]: Object
