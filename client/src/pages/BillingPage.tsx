@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatIndianCurrency } from '@/lib/utils';
 import { auth } from '@/lib/firebase';
+import { useLocation } from 'wouter';
 
 export interface Bill {
   id: string;
@@ -34,7 +35,7 @@ const statusColors: Record<BillStatus, string> = {
 };
 
 function BillCard({ bill }: { bill: Bill }) {
-  const navigate = useNavigate();
+  const [, navigate] = useLocation();
 
   return (
     <Card id={`bill-${bill.id}`} className="overflow-hidden">
