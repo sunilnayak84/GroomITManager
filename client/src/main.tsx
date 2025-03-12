@@ -1,4 +1,4 @@
-import { StrictMode, lazy, Suspense, useEffect } from "react";
+import React, { StrictMode, lazy, Suspense, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { Switch, Route } from "wouter";
 import "./index.css";
@@ -86,7 +86,7 @@ function Router() {
   const { user, isLoading } = useUser();
   
   // Handle URL parameters by cleaning them if present
-  React.useEffect(() => {
+  useEffect(() => {
     const url = new URL(window.location.href);
     // If we have initialPath param, replace the URL with the actual path
     if (url.searchParams.has('initialPath')) {
