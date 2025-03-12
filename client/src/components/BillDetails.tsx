@@ -14,7 +14,21 @@ export function BillDetails({ appointmentId }: BillDetailsProps) {
   const handleGenerateBill = async () => {
     try {
       setLoading(true);
-      // Use relative path to ensure consistent routing
+      
+      // First debug the appointment to help with troubleshooting
+      console.log('[BILLING] Getting details for appointment:', appointmentId);
+      const debugResponse = await fetch(`/api/debug/appointment/${appointmentId}`, {
+        method: 'GET'
+      });
+      
+      if (debugResponse.ok) {
+        const debugData = await debugResponse.json();
+        console.log('[BILLING] Appointment debug data:', debugData);
+      } else {
+        console.error('[BILLING] Failed to debug appointment');
+      }
+      
+      // Generate the bill
       const response = await fetch(`/api/billing/generate/${appointmentId}`, {
         method: 'POST',
         headers: {
@@ -23,8 +37,15 @@ export function BillDetails({ appointmentId }: BillDetailsProps) {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to generate bill');
+        let errorMessage = 'Failed to generate bill';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+          console.error('[BILLING] Bill generation error:', errorData);
+        } catch (err) {
+          console.error('[BILLING] Error parsing error response:', err);
+        }
+        throw new Error(errorMessage);
       }
 
       const bill = await response.json();

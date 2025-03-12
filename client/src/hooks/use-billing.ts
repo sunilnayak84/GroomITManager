@@ -23,6 +23,22 @@ export function useBilling(options: UseBillingOptions = {}) {
       if (!token) {
         throw new Error('Authentication required');
       }
+      
+      // First debug the appointment to help diagnose issues
+      console.log('[BILLING] Debugging appointment before generating bill');
+      try {
+        const debugResponse = await fetch(`/api/debug/appointment/${appointmentId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (debugResponse.ok) {
+          const debugData = await debugResponse.json();
+          console.log('[BILLING] Appointment debug data:', debugData);
+        }
+      } catch (error) {
+        console.error('[BILLING] Error debugging appointment:', error);
+      }
 
       // Use relative path instead of full URL
       const response = await fetch(`/api/billing/generate/${appointmentId}`, {

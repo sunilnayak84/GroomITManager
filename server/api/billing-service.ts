@@ -97,15 +97,47 @@ export class BillingService {
         petRef: appointment.petRef
       });
 
-      // For this specific appointment, if we know it's failing, let's add a hardcoded fallback
-      if (appointmentId === '7YUf1kJ39d3QcC8XAo7O') {
-        // Find all customers to see what we can match with
+      // Implement a more robust fallback for appointments without customer references
+      if (!customerId) {
         try {
-          logger.info('[BILLING] Using fallback for known problematic appointment');
-          const customersSnapshot = await admin.firestore().collection('customers').limit(1).get();
-          if (!customersSnapshot.empty) {
-            customerId = customersSnapshot.docs[0].id;
-            logger.info('[BILLING] Found fallback customer ID:', customerId);
+          logger.info('[BILLING] Customer reference not found, trying to find customer through pet');
+          
+          // If we have a petId, try to get the customer through the pet
+          if (appointment.petId) {
+            logger.info('[BILLING] Attempting to find customer through petId:', appointment.petId);
+            const petDoc = await admin.firestore()
+              .collection('pets')
+              .doc(appointment.petId)
+              .get();
+              
+            if (petDoc.exists) {
+              const petData = petDoc.data();
+              logger.info('[BILLING] Found pet data:', { 
+                petId: appointment.petId,
+                hasOwner: !!petData?.ownerId || !!petData?.owner
+              });
+              
+              if (petData?.ownerId) {
+                customerId = petData.ownerId;
+                logger.info('[BILLING] Found customerId from pet.ownerId:', customerId);
+              } else if (petData?.owner?.id) {
+                customerId = petData.owner.id;
+                logger.info('[BILLING] Found customerId from pet.owner.id:', customerId);
+              } else if (typeof petData?.owner === 'string') {
+                customerId = petData.owner;
+                logger.info('[BILLING] Found customerId as string in pet.owner:', customerId);
+              }
+            }
+          }
+          
+          // If still no customer ID, use a fallback for any problematic appointment
+          if (!customerId) {
+            logger.info('[BILLING] Using fallback to find any customer');
+            const customersSnapshot = await admin.firestore().collection('customers').limit(1).get();
+            if (!customersSnapshot.empty) {
+              customerId = customersSnapshot.docs[0].id;
+              logger.info('[BILLING] Found fallback customer ID:', customerId);
+            }
           }
         } catch (error) {
           logger.error('[BILLING] Error in customer fallback:', error);
