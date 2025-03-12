@@ -18,16 +18,15 @@ interface BillDetailsProps {
 
 export function BillDetails({ appointmentId }: BillDetailsProps) {
   const [loading, setLoading] = useState(false);
-  const [showPreview, setShowPreview] = useState(false); // Added state for preview modal
-  const [billData, setBillData] = useState(null);       // Added state for bill data
+  const [showPreview, setShowPreview] = useState(false);
+  const [billData, setBillData] = useState<any>(null);
   const { toast } = useToast();
 
   const handleGenerateBill = async () => {
     try {
       setLoading(true);
-      setShowPreview(false); //Hide preview before new generation
+      setShowPreview(false);
 
-      // First debug the appointment to help with troubleshooting
       console.log('[BILLING] Getting details for appointment:', appointmentId);
       const debugResponse = await fetch(`/api/debug/appointment/${appointmentId}`, {
         method: 'GET'
@@ -40,7 +39,6 @@ export function BillDetails({ appointmentId }: BillDetailsProps) {
         console.error('[BILLING] Failed to debug appointment');
       }
 
-      // Generate the bill
       const response = await fetch(`/api/billing/generate/${appointmentId}`, {
         method: 'POST',
         headers: {
@@ -61,8 +59,8 @@ export function BillDetails({ appointmentId }: BillDetailsProps) {
       }
 
       const bill = await response.json();
-      setBillData(bill); //Store bill data for preview
-      setShowPreview(true); //Show preview after successful generation
+      setBillData(bill);
+      setShowPreview(true);
       toast({
         title: "Success",
         description: "Bill generated successfully",
@@ -105,7 +103,6 @@ export function BillDetails({ appointmentId }: BillDetailsProps) {
         </CardContent>
       </Card>
 
-      {/* Bill Preview Dialog */}
       {showPreview && billData && (
         <Dialog open={showPreview} onOpenChange={setShowPreview}>
           <DialogContent className="sm:max-w-[600px]">
@@ -116,12 +113,11 @@ export function BillDetails({ appointmentId }: BillDetailsProps) {
               </DialogDescription>
             </DialogHeader>
 
-            {/* Bill Header */}
             <div className="flex justify-between items-center border-b pb-3 mt-2">
               <div>
-                <h3 className="font-medium">Invoice #{billData.id?.slice(0, 8)}</h3>
+                <h3 className="font-medium">Invoice #{billData.id?.slice(0, 8) || "N/A"}</h3>
                 <p className="text-sm text-gray-500">
-                  {billData.createdAt && new Date(billData.createdAt).toLocaleString()}
+                  {billData.createdAt ? new Date(billData.createdAt).toLocaleString() : "N/A"}
                 </p>
               </div>
               <div>
@@ -131,17 +127,16 @@ export function BillDetails({ appointmentId }: BillDetailsProps) {
                   billData.status === 'CANCELED' ? 'bg-gray-100 text-gray-800' :
                   'bg-red-100 text-red-800'
                 }`}>
-                  {billData.status}
+                  {billData.status || "N/A"}
                 </span>
               </div>
             </div>
 
-            {/* Bill Items */}
             <div className="space-y-2 my-4">
               <h3 className="font-medium">Services</h3>
               <div className="border rounded-md overflow-hidden">
                 <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                  <thead>
                     <tr>
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service</th>
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
@@ -149,16 +144,16 @@ export function BillDetails({ appointmentId }: BillDetailsProps) {
                       <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Subtotal</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {billData.items?.map((item, index) => (
+                  <tbody>
+                    {(billData.items || []).map((item: any, index: number) => (
                       <tr key={index}>
                         <td className="px-4 py-2 whitespace-nowrap">
-                          <div className="text-sm font-medium">{item.serviceName}</div>
+                          <div className="text-sm font-medium">{item.serviceName || "N/A"}</div>
                           {item.description && <div className="text-xs text-gray-500">{item.description}</div>}
                         </td>
-                        <td className="px-4 py-2 whitespace-nowrap text-sm">₹{item.price?.toFixed(2)}</td>
-                        <td className="px-4 py-2 whitespace-nowrap text-sm">{item.quantity}</td>
-                        <td className="px-4 py-2 whitespace-nowrap text-sm text-right">₹{item.subtotal?.toFixed(2)}</td>
+                        <td className="px-4 py-2 whitespace-nowrap text-sm">₹{(item.price || 0).toFixed(2)}</td>
+                        <td className="px-4 py-2 whitespace-nowrap text-sm">{item.quantity || 0}</td>
+                        <td className="px-4 py-2 whitespace-nowrap text-sm text-right">₹{(item.subtotal || 0).toFixed(2)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -166,23 +161,21 @@ export function BillDetails({ appointmentId }: BillDetailsProps) {
               </div>
             </div>
 
-            {/* Bill Totals */}
             <div className="space-y-2 border-t pt-2">
               <div className="flex justify-between">
                 <span className="font-medium">Subtotal:</span>
-                <span>₹{billData.subtotal?.toFixed(2)}</span>
+                <span>₹{(billData.subtotal || 0).toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium">Tax:</span>
-                <span>₹{billData.tax?.toFixed(2)}</span>
+                <span>₹{(billData.tax || 0).toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-lg font-bold pt-1">
                 <span>Total:</span>
-                <span>₹{billData.totalAmount?.toFixed(2)}</span>
+                <span>₹{(billData.totalAmount || 0).toFixed(2)}</span>
               </div>
             </div>
 
-            {/* Payment Link */}
             {billData.paymentLink && (
               <div className="border rounded-md p-3 bg-gray-50 mt-4">
                 <div className="flex items-center text-sm">
@@ -211,7 +204,7 @@ export function BillDetails({ appointmentId }: BillDetailsProps) {
                     Pay Now
                   </Button>
                 )}
-                <Button onClick={() => window.open(`/billing?billId=${billData.id}`, '_blank')}>
+                <Button onClick={() => window.open(`/billing?billId=${billData.id || ''}`, '_blank')}>
                   <ExternalLink className="mr-2 h-4 w-4" />
                   View Full Bill
                 </Button>

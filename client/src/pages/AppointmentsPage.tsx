@@ -773,7 +773,7 @@ export default function AppointmentsPage() {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {billPreview.items?.map((item, index) => (
+                      {billPreview.items?.map((item: any, index: number) => (
                         <tr key={index}>
                           <td className="px-4 py-2 whitespace-nowrap">
                             <div className="text-sm font-medium">{item.serviceName}</div>
