@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { Bill, BillDraft, BillStatus } from '@/types/billing';
 import { useToast } from './use-toast';
@@ -96,33 +95,33 @@ export function useBilling(options: UseBillingOptions = {}) {
 
       const generatedBill = await response.json();
       console.log('[BILLING] Bill generated successfully:', generatedBill);
-      
+
       // Refresh bills list
       await getBills();
-      
+
       if (options.onSuccess) {
         options.onSuccess();
       }
-      
+
       toast({
         title: "Success",
         description: "Bill generated successfully",
       });
-      
+
       return generatedBill;
     } catch (error) {
       console.error('[BILLING] Error generating bill:', error);
-      
+
       if (options.onError) {
         options.onError(error as Error);
       }
-      
+
       toast({
         title: "Error",
         description: (error as Error).message || "Failed to generate bill",
         variant: "destructive",
       });
-      
+
       throw error;
     } finally {
       setIsLoading(false);
@@ -132,7 +131,7 @@ export function useBilling(options: UseBillingOptions = {}) {
   const getBillById = useCallback(async (billId: string) => {
     setIsLoading(true);
     try {
-      console.log('[BILLING] Fetching bill by ID:', billId);
+      console.log('[BILLING] Fetching bill:', billId);
 
       // Get the current user's ID token
       const token = await auth.currentUser?.getIdToken();
@@ -149,20 +148,31 @@ export function useBilling(options: UseBillingOptions = {}) {
 
       if (!response.ok) {
         if (response.status === 404) {
-          console.error(`[BILLING] Bill not found for ID: ${billId}`);
-          throw new Error(`404: Bill with ID ${billId} not found`);
+          console.error('[BILLING] Bill not found:', billId);
+          return null;
         }
         throw new Error('Failed to fetch bill');
       }
 
-      const bill = await response.json();
-      console.log('[BILLING] Bill fetched successfully:', bill);
+      const billData = await response.json();
+      console.log('[BILLING] Fetched bill:', billData);
+
+      // Convert dates from strings to Date objects
+      const bill: Bill = {
+        ...billData,
+        createdAt: new Date(billData.createdAt),
+        updatedAt: new Date(billData.updatedAt)
+      };
+
       return bill;
     } catch (error) {
-      console.error('[BILLING] Error fetching bill by ID:', error);
+      console.error('[BILLING] Error fetching bill:', error);
+      if (error instanceof Error && error.message.startsWith('404')) {
+        return null;
+      }
       toast({
         title: "Error",
-        description: (error as Error).message || "Failed to fetch bill",
+        description: "Failed to fetch bill details",
         variant: "destructive",
       });
       throw error;

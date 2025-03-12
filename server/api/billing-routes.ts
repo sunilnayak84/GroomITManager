@@ -51,6 +51,36 @@ billingRouter.get('/bills', async (req, res) => {
 });
 
 // Get bill by ID
+billingRouter.get('/bill/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user?.uid;
+    
+    logger.info('Fetching bill with ID:', { billId: id, user: userId });
+    logger.info('[BILLING] Fetching bill:');
+    
+    const bill = await billingService.getBillById(id);
+    
+    if (!bill) {
+      logger.warn('[BILLING] Bill not found:', { billId: id });
+      return res.status(404).json({
+        error: 'Not Found',
+        message: `Bill with ID ${id} not found`
+      });
+    }
+    
+    logger.info('[BILLING] Successfully fetched bill:', { billId: id });
+    res.json(bill);
+  } catch (error) {
+    logger.error('[BILLING] Error fetching bill:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: error instanceof Error ? error.message : 'Failed to fetch bill'
+    });
+  }
+});
+
+// Get bill by ID
 billingRouter.get('/bills/:billId', async (req, res) => {
   try {
     const { billId } = req.params;

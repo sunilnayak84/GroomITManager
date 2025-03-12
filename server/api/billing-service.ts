@@ -85,7 +85,7 @@ export class BillingService {
 
       // Check for customer reference - try all possible paths
       let customerId = null;
-      
+
       // Log raw customer data for debugging
       logger.info('[BILLING] Raw customer data in appointment:', {
         appointmentId,
@@ -101,7 +101,7 @@ export class BillingService {
       if (!customerId) {
         try {
           logger.info('[BILLING] Customer reference not found, trying to find customer through pet');
-          
+
           // If we have a petId, try to get the customer through the pet
           if (appointment.petId) {
             logger.info('[BILLING] Attempting to find customer through petId:', appointment.petId);
@@ -109,14 +109,14 @@ export class BillingService {
               .collection('pets')
               .doc(appointment.petId)
               .get();
-              
+
             if (petDoc.exists) {
               const petData = petDoc.data();
               logger.info('[BILLING] Found pet data:', { 
                 petId: appointment.petId,
                 hasOwner: !!petData?.ownerId || !!petData?.owner
               });
-              
+
               if (petData?.ownerId) {
                 customerId = petData.ownerId;
                 logger.info('[BILLING] Found customerId from pet.ownerId:', customerId);
@@ -129,7 +129,7 @@ export class BillingService {
               }
             }
           }
-          
+
           // If still no customer ID, use a fallback for any problematic appointment
           if (!customerId) {
             logger.info('[BILLING] Using fallback to find any customer');
@@ -143,7 +143,7 @@ export class BillingService {
           logger.error('[BILLING] Error in customer fallback:', error);
         }
       }
-      
+
       // Try normal methods if fallback wasn't used or didn't work
       if (!customerId) {
         if (appointment.customerId) {
@@ -450,7 +450,7 @@ export class BillingService {
       throw error;
     }
   }
-  
+
   // Add alias method for getBillById to match the API endpoint
   async getBillById(billId: string): Promise<Bill | null> {
     return this.getBill(billId);

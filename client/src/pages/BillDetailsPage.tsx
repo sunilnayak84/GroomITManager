@@ -25,43 +25,35 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
   const [bill, setBill] = useState<Bill | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [, navigate] = useLocation();
-  const { getBillById } = useBilling();
+  const { getBillById, isLoading } = useBilling();
 
   useEffect(() => {
-    const fetchBillDetails = async () => {
-      if (!billId) {
-        setError("Bill ID is missing");
-        setLoading(false);
+    const fetchBill = async () => {
+      if (!params?.id) {
+        setLocation('/billing');
         return;
       }
 
+      setLoading(true);
       try {
-        setLoading(true);
-        setError(null);
-        console.log(`[BILLING] Fetching bill details for ID: ${billId}`);
-        const billData = await getBillById(billId);
-
-        if (billData) {
-          console.log(`[BILLING] Bill details retrieved:`, billData);
-          setBill(billData);
-        } else {
-          console.error(`[BILLING] Bill not found for ID: ${billId}`);
-          setError("Bill not found");
+        console.log('[BILLING] Fetching bill with ID:', params.id);
+        const billData = await getBillById(params.id);
+        if (!billData) {
+          console.error('[BILLING] Bill not found:', params.id);
+          setLocation('/billing');
+          return;
         }
+        setBill(billData);
       } catch (error) {
-        console.error('Error fetching bill details:', error);
-        setError(error instanceof Error ? error.message : "Failed to fetch bill details");
-        // If we got a 404, handle it specially
-        if (error instanceof Error && error.message.includes('404')) {
-          setError(`Bill with ID ${billId} not found`);
-        }
+        console.error('[BILLING] Error fetching bill:', error);
+        setLocation('/billing');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBillDetails();
-  }, [billId, getBillById]);
+    fetchBill();
+  }, [params?.id, getBillById, setLocation]);
 
   // Format date if available
   const formattedDate = bill?.createdAt ? 
