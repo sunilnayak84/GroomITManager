@@ -32,7 +32,7 @@ export default function App() {
           </ProtectedRoute>
         )} />
         <Route path="/billing/:billId">
-          <BillDetailsPage />
+          {(params) => <BillDetailsPage billId={params.billId} />}
         </Route>
         <Route>
           <div className="flex items-center justify-center min-h-screen">

@@ -12,10 +12,14 @@ import { formatIndianCurrency } from '@/lib/utils';
 import { Bill } from '@/types/billing';
 import { Separator } from '@/components/ui/separator';
 
-export default function BillDetailsPage() {
+interface BillDetailsPageProps {
+  billId?: string;
+}
+
+export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageProps) {
   const [location] = useLocation();
-  // Extract billId from the URL path
-  const billId = location.split('/').pop();
+  // Use the prop billId if provided, otherwise extract from URL
+  const billId = propBillId || location.split('/').pop();
   const [loading, setLoading] = useState(true);
   const [bill, setBill] = useState<Bill | null>(null);
   const [, navigate] = useLocation();

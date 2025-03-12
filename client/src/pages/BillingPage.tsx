@@ -89,7 +89,10 @@ function BillCard({ bill }: { bill: Bill }) {
         <Button 
           variant="outline" 
           className="w-full" 
-          onClick={() => navigate(`/billing/${bill.id}`)}
+          onClick={(e) => {
+            e.preventDefault();
+            navigate(`/billing/${bill.id}`);
+          }}
         >
           <Eye className="mr-2 h-4 w-4" />
           View Details
