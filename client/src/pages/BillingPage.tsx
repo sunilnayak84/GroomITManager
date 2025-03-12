@@ -13,7 +13,7 @@ import {
 import { Button } from '../components/ui/button';
 import { Skeleton } from '../components/ui/skeleton';
 import { Badge } from '../components/ui/badge';
-import { CreditCard, ExternalLink, Calendar, User, Package } from 'lucide-react';
+import { CreditCard, ExternalLink, Calendar, User, Package, Eye } from 'lucide-react';
 
 type BillStatus = 'PENDING_PAYMENT' | 'PAID' | 'CANCELED' | 'REFUNDED';
 
@@ -31,7 +31,7 @@ function BillCard({ bill }: { bill: Bill }) {
 
   // Calculate total from items
   const total = bill.items?.reduce((sum, item) => sum + (item.subtotal || 0), 0) || 0;
-  
+
   // Define status color mapping
   const getStatusColor = (status: string) => {
     switch(status) {
@@ -153,7 +153,7 @@ export default function BillingPage() {
         setLoading(true);
         await getBills();
         // The updated bills will be available from the hookBills
-        
+
         // If billId is present in query param, redirect to bill details
         if (billId) {
           window.location.href = `/billing/${billId}`;
