@@ -64,6 +64,10 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
       }
     })() : 'N/A';
 
+  // Get customer display name - improved handling of nullish values
+  const customerDisplayName = bill?.customerName ?? (bill?.customerId ?? 'N/A');
+
+
   // Define status color mapping
   const getStatusColor = (status: string) => {
     switch(status) {
@@ -158,14 +162,14 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
                 <h3 className="text-sm font-medium text-muted-foreground mb-1">Customer</h3>
                 <div className="flex items-center gap-1.5">
                   <User className="h-4 w-4 text-muted-foreground" />
-                  <span>{bill.customerName || bill.customerId || 'N/A'}</span>
+                  <span>{customerDisplayName}</span>
                 </div>
               </div>
               <div>
                 <h3 className="text-sm font-medium text-muted-foreground mb-1">Date</h3>
                 <div className="flex items-center gap-1.5">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <span>{formattedDate || 'N/A'}</span>
+                  <span>{formattedDate}</span>
                 </div>
               </div>
               <div>

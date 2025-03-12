@@ -24,7 +24,7 @@ export const BillSchema = z.object({
   id: z.string().optional(),
   appointmentId: z.string(),
   customerId: z.string(),
-  customerName: z.string().optional(), //Added customerName field
+  customerName: z.string().optional(),
   items: z.array(BillItemSchema),
   subtotal: z.number(),
   tax: z.number(),
@@ -32,8 +32,8 @@ export const BillSchema = z.object({
   status: BillStatusSchema,
   paymentId: z.string().optional(),
   paymentLink: z.string().optional(),
-  createdAt: z.date(),
-  updatedAt: z.date()
+  createdAt: z.date().or(z.string()), // Support both date objects and string dates
+  updatedAt: z.date().or(z.string())
 });
 
 export type Bill = z.infer<typeof BillSchema>;

@@ -38,7 +38,14 @@ billingRouter.use((req, res, next) => {
 billingRouter.get('/bills', async (req, res) => {
   try {
     logger.info('[BILLING] Fetching all bills');
-    const bills = await billingService.getAllBills();
+    let bills = await billingService.getAllBills();
+    // Convert date fields and ensure customer name is included
+    bills = bills.map(bill => ({
+      ...bill,
+      customerName: bill.customerName || '',
+      createdAt: bill.createdAt?.toDate ? bill.createdAt.toDate() : bill.createdAt,
+      updatedAt: bill.updatedAt?.toDate ? bill.updatedAt.toDate() : bill.updatedAt
+    }));
     logger.info('[BILLING] Successfully fetched bills:', { count: bills.length });
     res.json(bills);
   } catch (error) {
@@ -55,12 +62,12 @@ billingRouter.get('/bill/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user?.uid;
-    
+
     logger.info('Fetching bill with ID:', { billId: id, user: userId });
     logger.info('[BILLING] Fetching bill:');
-    
+
     const bill = await billingService.getBillById(id);
-    
+
     if (!bill) {
       logger.warn('[BILLING] Bill not found:', { billId: id });
       return res.status(404).json({
@@ -68,7 +75,19 @@ billingRouter.get('/bill/:id', async (req, res) => {
         message: `Bill with ID ${id} not found`
       });
     }
-    
+
+    // Convert date fields if necessary and ensure customer name is included
+    if (bill.createdAt?.toDate) {
+      bill.createdAt = bill.createdAt.toDate();
+    }
+    if (bill.updatedAt?.toDate) {
+      bill.updatedAt = bill.updatedAt.toDate();
+    }
+
+    // Ensure customer name is available
+    bill.customerName = bill.customerName || '';
+
+
     logger.info('[BILLING] Successfully fetched bill:', { billId: id });
     res.json(bill);
   } catch (error) {
@@ -85,9 +104,9 @@ billingRouter.get('/bills/:billId', async (req, res) => {
   try {
     const { billId } = req.params;
     logger.info('[BILLING] Fetching bill by ID:', billId);
-    
+
     const bill = await billingService.getBillById(billId);
-    
+
     if (!bill) {
       logger.warn('[BILLING] Bill not found:', billId);
       return res.status(404).json({
@@ -95,7 +114,7 @@ billingRouter.get('/bills/:billId', async (req, res) => {
         message: 'Bill not found'
       });
     }
-    
+
     logger.info('[BILLING] Successfully fetched bill:', billId);
     res.json(bill);
   } catch (error) {
@@ -169,19 +188,19 @@ billingRouter.get('/bill/:id', async (req, res) => {
   try {
     const billId = req.params.id;
     const userId = req.user?.uid;
-    
+
     if (!userId) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
-    
+
     logger.info(`Fetching bill with ID: ${billId}`, { 
       user: userId,
       billId
     });
-    
+
     const billingService = new BillingService();
     const bill = await billingService.getBillById(billId);
-    
+
     if (!bill) {
       logger.warn(`Bill not found with ID: ${billId}`, {
         user: userId,
@@ -189,7 +208,7 @@ billingRouter.get('/bill/:id', async (req, res) => {
       });
       return res.status(404).json({ error: 'Bill not found' });
     }
-    
+
     return res.json(bill);
   } catch (error) {
     logger.error('Error fetching bill by ID', { 
