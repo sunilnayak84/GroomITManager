@@ -41,8 +41,39 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
           setLocation('/billing');
           return;
         }
-        // The server already provides the customer name, so we don't need to fetch it separately
-        console.log('[BILLING] Using customer name from API:', billData.customerName);
+        
+        // Fetch fresh customer data to ensure we have the latest name
+        if (billData.customerId) {
+          try {
+            const user = auth.currentUser;
+            if (user) {
+              const token = await user.getIdToken();
+              const response = await fetch(`/api/customers/${billData.customerId}`, {
+                headers: {
+                  'Authorization': `Bearer ${token}`
+                }
+              });
+              
+              if (response.ok) {
+                const customerData = await response.json();
+                if (customerData) {
+                  // Update the customer name from the direct customer data
+                  billData.customerName = customerData.name || 
+                    `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() ||
+                    customerData.displayName ||
+                    billData.customerName || 'Unknown Customer';
+                  
+                  console.log('[BILLING] Updated customer name from customer data:', billData.customerName);
+                }
+              }
+            }
+          } catch (custError) {
+            console.error('[BILLING] Error fetching customer details:', custError);
+            // Continue with existing customer name if fetch fails
+          }
+        }
+        
+        console.log('[BILLING] Final customer name:', billData.customerName);
         setBill(billData);
       } catch (error) {
         console.error('[BILLING] Error fetching bill:', error);
