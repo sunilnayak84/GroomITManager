@@ -37,7 +37,10 @@ export function calculateAge(dateOfBirth: string | null): string {
  * Formats a number as Indian currency (₹)
  * Example: 100000 -> ₹1,00,000.00
  */
-export function formatIndianCurrency(amount: number): string {
+export function formatIndianCurrency(amount: number | undefined | null): string {
+  if (amount === undefined || amount === null) {
+    return '₹0.00';
+  }
   // Format as Indian currency with commas (e.g., ₹1,00,000.00)
   const parts = amount.toFixed(2).split('.');
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
