@@ -89,19 +89,9 @@ function BillCard({ bill }: { bill: Bill }) {
         <Button 
           variant="outline" 
           className="w-full" 
-          onClick={() => window.location.href = `/billing/${bill.id}`}
-        >
-          <Eye className="mr-2 h-4 w-4" />
-          View Details
-        </Button>
-      </CardFooter>
-      <CardFooter className="bg-gray-50 pt-3 pb-3">
-        <Button 
-          className="w-full" 
-          variant="default"
           onClick={() => navigate(`/billing/${bill.id}`)}
         >
-          <ExternalLink className="mr-2 h-4 w-4" />
+          <Eye className="mr-2 h-4 w-4" />
           View Details
         </Button>
       </CardFooter>
