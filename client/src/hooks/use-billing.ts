@@ -149,11 +149,17 @@ export function useBilling(options: UseBillingOptions = {}) {
     }
   }, [toast]);
 
+  // Function to manually refresh bills
+  const refreshBills = useCallback(async () => {
+    return await getBills();
+  }, [getBills]);
+
   return {
     bills,
     isLoading,
     generateBill,
     getBills,
+    refreshBills,
     verifyPayment,
   };
 }

@@ -36,7 +36,7 @@ function BillCard({ bill }: { bill: Bill }) {
   const navigate = useNavigate();
 
   return (
-    <Card className="overflow-hidden">
+    <Card id={`bill-${bill.id}`} className="overflow-hidden">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <CardTitle className="text-lg font-medium">Invoice #{bill.id.slice(0, 8)}</CardTitle>
@@ -83,6 +83,26 @@ export default function BillingPage() {
         const data = await response.json();
         // Ensure data is an array before setting state
         setBills(Array.isArray(data) ? data : []);
+        
+        // Check for billId in URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        const billId = urlParams.get('billId');
+        
+        if (billId) {
+          console.log(`Found billId in URL: ${billId}`);
+          // If we have a billId param, scroll to that bill
+          setTimeout(() => {
+            const element = document.getElementById(`bill-${billId}`);
+            if (element) {
+              element.scrollIntoView({ behavior: 'smooth' });
+              // Highlight the bill card
+              element.classList.add('ring-2', 'ring-primary', 'ring-offset-2');
+            } else {
+              console.warn(`Bill with ID ${billId} not found in the loaded bills`);
+            }
+          }, 500);
+        }
+        
         setLoading(false);
       } catch (error) {
         console.error('Failed to fetch bills', error);

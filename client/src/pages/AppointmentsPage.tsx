@@ -511,6 +511,16 @@ export default function AppointmentsPage() {
       }
 
       if (bill.id) {
+        // Fetch latest bills before opening the billing page
+        try {
+          const response = await fetch('/api/billing/bills');
+          if (!response.ok) {
+            console.error('Failed to refresh bills after generation');
+          }
+        } catch (error) {
+          console.error('Error refreshing bills:', error);
+        }
+        
         window.open(`/billing?billId=${bill.id}`, '_blank');
       }
 
