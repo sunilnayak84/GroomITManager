@@ -147,7 +147,7 @@ export default function BillingPage() {
     fetchBills();
   }, [getBills, billId]);
 
-  const filteredBills = filter === 'ALL' ? bills : bills.filter(bill => bill.status === filter);
+  const filteredBills = filter === 'ALL' ? bills : (bills || []).filter(bill => bill.status === filter);
 
   return (
     <div className="container mx-auto py-6">
