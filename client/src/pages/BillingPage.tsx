@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatIndianCurrency } from '@/lib/utils';
+import { auth } from '@/lib/firebase';
 
 export interface Bill {
   id: string;
@@ -79,7 +80,15 @@ export default function BillingPage() {
   useEffect(() => {
     async function fetchBills() {
       try {
-        const response = await fetch('/api/billing/bills');
+        // Get the current user's ID token for authentication
+        const token = await auth.currentUser?.getIdToken();
+        const headers: HeadersInit = {};
+        
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+        
+        const response = await fetch('/api/billing/bills', { headers });
         const data = await response.json();
         // Ensure data is an array before setting state
         setBills(Array.isArray(data) ? data : []);
