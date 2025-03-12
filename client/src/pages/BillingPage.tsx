@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { useBilling } from '../hooks/use-billing';
@@ -27,39 +26,38 @@ const statusColors: Record<BillStatus, string> = {
 
 function BillCard({ bill }: { bill: Bill }) {
   const [, navigate] = useLocation();
-  const formattedDate = bill.date ? format(new Date(bill.date), 'dd MMM yyyy') : 'Invalid Date';
+  const formattedDate = bill.createdAt ? format(new Date(bill.createdAt), 'dd MMM yyyy') : 'Invalid Date';
+  const invoiceId = bill.id ? bill.id.slice(0, 8) : 'N/A';
+
+  // Calculate total from items
+  const total = bill.items?.reduce((sum, item) => sum + (item.subtotal || 0), 0) || 0;
 
   return (
     <Card className="overflow-hidden transition-all duration-200 hover:shadow-md">
-      <CardHeader className="pb-2 border-b">
+      <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <CardTitle className="text-lg font-medium flex items-center">
-            <span className="truncate">Invoice #{bill.id.slice(0, 8)}</span>
+            <span className="truncate">Invoice #{invoiceId}</span>
           </CardTitle>
-          <Badge className={`px-2 py-1 font-medium ${statusColors[bill.status]}`}>
+          <Badge className={`px-2 py-1 font-medium ${statusColors[bill.status] || ''}`}>
             {bill.status}
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="pt-4">
+      <CardContent className="pb-3">
         <div className="space-y-3">
+          <div className="flex items-center text-sm gap-1.5 text-muted-foreground">
+            <User className="h-4 w-4" />
+            <span className="truncate font-medium">Customer ID: {bill.customerId || 'Unknown'}</span>
+          </div>
+
           <div className="flex items-center text-sm gap-1.5 text-muted-foreground">
             <Calendar className="h-4 w-4" />
             <span>{formattedDate}</span>
           </div>
 
-          <div className="flex items-center text-sm gap-1.5 text-muted-foreground">
-            <User className="h-4 w-4" />
-            <span className="truncate font-medium">{bill.customerName || 'Unknown Customer'}</span>
-          </div>
-
-          <div className="flex items-center text-sm gap-1.5 text-muted-foreground">
-            <Package className="h-4 w-4" />
-            <span>{bill.items.length} {bill.items.length === 1 ? 'item' : 'items'}</span>
-          </div>
-
           <div className="text-xl font-bold mt-4">
-            {formatIndianCurrency(bill.total)}
+            {formatIndianCurrency(total)}
           </div>
         </div>
       </CardContent>
@@ -123,7 +121,7 @@ export default function BillingPage() {
   const [filter, setFilter] = useState<BillStatus | 'ALL'>('ALL');
   const { getBills } = useBilling();
   const [, params] = useLocation();
-  
+
   // Get query parameters (for direct bill opening)
   const queryParams = new URLSearchParams(window.location.search);
   const billId = queryParams.get('billId');
@@ -134,7 +132,7 @@ export default function BillingPage() {
         setLoading(true);
         const fetchedBills = await getBills();
         setBills(fetchedBills);
-        
+
         // If billId is present in query param, redirect to bill details
         if (billId) {
           window.location.href = `/billing/${billId}`;
@@ -149,9 +147,7 @@ export default function BillingPage() {
     fetchBills();
   }, [getBills, billId]);
 
-  const filteredBills = filter === 'ALL' 
-    ? bills 
-    : bills.filter(bill => bill.status === filter);
+  const filteredBills = filter === 'ALL' ? bills : bills.filter(bill => bill.status === filter);
 
   return (
     <div className="container mx-auto py-6">
