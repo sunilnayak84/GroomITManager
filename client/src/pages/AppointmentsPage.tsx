@@ -4,11 +4,11 @@ import { petsCollection } from "@/lib/firestore";
 import { db, getAuth, auth } from "@/lib/firebase";
 import { parseFirestorePet } from "@/hooks/use-pets";
 import { Button } from "@/components/ui/button";
-import { Plus, Calendar, List, Trash2, Pencil } from "lucide-react";
+import { Plus, Calendar, List, Trash2, Pencil, ExternalLink, CreditCard } from "lucide-react";
 import { useUser } from "@/hooks/use-user";
 import { useToast } from "@/hooks/use-toast";
 import { useAppointments } from "../hooks/use-appointments";
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import AppointmentForm from "../components/AppointmentForm";
 import { DataTable } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
@@ -154,6 +154,8 @@ export default function AppointmentsPage() {
     return localStorage.getItem('appointmentStatusFilter') as 'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled' || 'all'
   });
   const [isLoading, setIsLoading] = useState(false); // Added loading state
+  const [billPreview, setBillPreview] = useState<any>(null);
+  const [showBillModal, setShowBillModal] = useState(false);
 
   // Save preferences when they change
   useEffect(() => {
@@ -457,7 +459,7 @@ export default function AppointmentsPage() {
       // Debug the appointment first to check customer reference
       const token = await user.getIdToken();
       console.log("[BILLING] Debugging appointment data before bill generation");
-      
+
       const apiBaseUrl = import.meta.env.VITE_API_URL || '';
       const debugResponse = await fetch(
         `${apiBaseUrl}/api/debug/appointment/${appointmentId}`,
@@ -468,19 +470,18 @@ export default function AppointmentsPage() {
           },
         }
       );
-      
+
       if (debugResponse.ok) {
         const debugData = await debugResponse.json();
         console.log("[BILLING] Appointment debug data:", debugData);
       } else {
         console.error("[BILLING] Failed to debug appointment");
       }
-      
+
       console.log("[BILLING] Authentication token obtained, making request");
 
       // Make API request to generate bill
       console.log("[BILLING] Using API base URL:", apiBaseUrl);
-
       const response = await fetch(
         `${apiBaseUrl}/api/billing/generate/${appointmentId}`,
         {
@@ -517,7 +518,7 @@ export default function AppointmentsPage() {
       }
 
       if (bill.id) {
-        // Fetch latest bills before opening the billing page
+        // Fetch latest bills before showing modal
         try {
           const response = await fetch('/api/billing/bills');
           if (!response.ok) {
@@ -526,10 +527,11 @@ export default function AppointmentsPage() {
         } catch (error) {
           console.error('Error refreshing bills:', error);
         }
-        
-        window.open(`/billing?billId=${bill.id}`, '_blank');
-      }
 
+        // Store bill preview and show modal
+        setBillPreview(bill);
+        setShowBillModal(true);
+      }
     } catch (error) {
       console.log('[BILLING] Error generating bill:', error);
       toast({
@@ -720,6 +722,32 @@ export default function AppointmentsPage() {
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Bill Preview Modal */}
+      <Dialog open={showBillModal} onOpenChange={setShowBillModal}>
+        <DialogContent className="p-4">
+          <DialogHeader>
+            <DialogTitle>Bill Preview</DialogTitle>
+            <DialogClose />
+          </DialogHeader>
+          {billPreview && (
+            <div>
+              {/* Display bill preview data here */}
+              <pre>{JSON.stringify(billPreview, null, 2)}</pre>
+              <DialogFooter>
+                <Button variant="ghost" onClick={() => setShowBillModal(false)}>
+                  Close
+                </Button>
+                <Button
+                  onClick={() => window.open(`/billing?billId=${billPreview.id}`, '_blank')}
+                >
+                  View in New Tab <ExternalLink className="h-4 w-4 ml-2" />
+                </Button>
+              </DialogFooter>
             </div>
           )}
         </DialogContent>
