@@ -1,17 +1,35 @@
+
 import { useEffect, useState } from 'react';
-import { useNavigate, BrowserRouter as Router } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Badge } from '@/components/ui/badge';
-import { useBilling } from '@/hooks/use-billing';
-import { Bill, BillStatus } from '@/types/billing';
+import { formatCurrency } from '@/lib/utils';
+
+export interface Bill {
+  id: string;
+  appointmentId: string;
+  customerId: string;
+  customerName: string;
+  date: string;
+  items: {
+    name: string;
+    price: number;
+    quantity: number;
+  }[];
+  subtotal: number;
+  tax: number;
+  total: number;
+  status: BillStatus;
+}
+
+type BillStatus = 'PENDING_PAYMENT' | 'PAID' | 'CANCELED' | 'REFUNDED';
 
 const statusColors: Record<BillStatus, string> = {
-  DRAFT: 'bg-gray-500',
-  PENDING_PAYMENT: 'bg-yellow-500',
-  PAID: 'bg-green-500',
-  FAILED: 'bg-red-500'
+  'PENDING_PAYMENT': 'bg-amber-100 text-amber-800',
+  'PAID': 'bg-green-100 text-green-800',
+  'CANCELED': 'bg-gray-100 text-gray-800',
+  'REFUNDED': 'bg-red-100 text-red-800'
 };
 
 function BillCard({ bill }: { bill: Bill }) {
@@ -19,61 +37,33 @@ function BillCard({ bill }: { bill: Bill }) {
 
   return (
     <Card className="overflow-hidden">
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <CardTitle>Bill #{bill.id?.slice(0, 8)}</CardTitle>
-          <Badge className={statusColors[bill.status]}>
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-start">
+          <CardTitle className="text-lg font-medium">Invoice #{bill.id.slice(0, 8)}</CardTitle>
+          <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[bill.status]}`}>
             {bill.status}
-          </Badge>
+          </span>
         </div>
+        <div className="text-sm text-gray-500">{new Date(bill.date).toLocaleDateString()}</div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            {bill.items.map((item, index) => (
-              <div key={index} className="flex justify-between text-sm">
-                <span>{item.serviceName}</span>
-                <span>₹{item.price}</span>
-              </div>
-            ))}
+        <div className="space-y-2">
+          <div className="text-sm">
+            <span className="font-medium">Customer: </span>
+            {bill.customerName}
           </div>
-
-          <div className="border-t pt-2 space-y-1">
-            <div className="flex justify-between text-sm">
-              <span>Subtotal</span>
-              <span>₹{bill.subtotal}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span>Tax</span>
-              <span>₹{bill.tax}</span>
-            </div>
-            <div className="flex justify-between font-bold">
-              <span>Total</span>
-              <span>₹{bill.totalAmount}</span>
-            </div>
+          <div className="text-sm">
+            <span className="font-medium">Items: </span>
+            {bill.items.length}
           </div>
-
-          {bill.status === 'PENDING_PAYMENT' && bill.paymentLink && (
-            <Button 
-              className="w-full"
-              onClick={() => window.open(bill.paymentLink, '_blank')}
-            >
-              Pay Now
-            </Button>
-          )}
-
-          {bill.status === 'PAID' && (
-            <div className="text-center text-green-600">
-              Paid Successfully
-            </div>
-          )}
-
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => navigate(`/appointments/${bill.appointmentId}`)}
+          <div className="text-lg font-bold mt-2">
+            Total: {formatCurrency(bill.total)}
+          </div>
+          <Button 
+            className="w-full mt-2" 
+            onClick={() => navigate(`/billing/${bill.id}`)}
           >
-            View Appointment
+            View Details
           </Button>
         </div>
       </CardContent>
@@ -81,82 +71,89 @@ function BillCard({ bill }: { bill: Bill }) {
   );
 }
 
-function LoadingCard() {
-  return (
-    <Card>
-      <CardHeader>
-        <Skeleton className="h-8 w-1/3" />
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-3/4" />
-          </div>
-          <div className="border-t pt-2">
-            <Skeleton className="h-6 w-full" />
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
 export default function BillingPage() {
+  const [bills, setBills] = useState<Bill[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<BillStatus | 'ALL'>('ALL');
-  const { bills, isLoading, getBills } = useBilling();
 
   useEffect(() => {
-    getBills();
-  }, [getBills]);
+    async function fetchBills() {
+      try {
+        const response = await fetch('/api/billing/bills');
+        const data = await response.json();
+        setBills(data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Failed to fetch bills', error);
+        setLoading(false);
+      }
+    }
 
-  const filteredBills = bills.filter(bill => 
-    filter === 'ALL' ? true : bill.status === filter
-  );
+    fetchBills();
+  }, []);
 
-  if (isLoading) {
+  const filteredBills = filter === 'ALL' 
+    ? bills 
+    : bills.filter(bill => bill.status === filter);
+
+  if (loading) {
     return (
       <div className="container mx-auto py-6">
-        <h1 className="text-2xl font-bold mb-6">Bills</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Bills</h1>
+          <div className="h-8 w-40"><Skeleton className="h-full w-full" /></div>
+        </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3].map(i => <LoadingCard key={i} />)}
+          {[1, 2, 3, 4, 5, 6].map(i => (
+            <Card key={i} className="overflow-hidden">
+              <CardHeader className="pb-2">
+                <Skeleton className="h-6 w-32 mb-2" />
+                <Skeleton className="h-4 w-24" />
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-6 w-24 mt-2" />
+                  <Skeleton className="h-10 w-full mt-2" />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     );
   }
 
   return (
-    <Router>
-      <div className="container mx-auto py-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Bills</h1>
-          <div className="flex gap-2">
-            {['ALL' as const, ...Object.keys(statusColors)].map(status => (
-              <Button
-                key={status}
-                variant={filter === status ? "default" : "outline"}
-                onClick={() => setFilter(status as BillStatus | 'ALL')}
-                size="sm"
-              >
-                {status}
-              </Button>
-            ))}
-          </div>
+    <div className="container mx-auto py-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Bills</h1>
+        <div className="flex gap-2">
+          {['ALL' as const, ...Object.keys(statusColors)].map(status => (
+            <Button
+              key={status}
+              variant={filter === status ? "default" : "outline"}
+              onClick={() => setFilter(status as BillStatus | 'ALL')}
+              size="sm"
+            >
+              {status}
+            </Button>
+          ))}
         </div>
-
-        {filteredBills.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            No bills found
-          </div>
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {filteredBills.map(bill => (
-              <BillCard key={bill.id} bill={bill} />
-            ))}
-          </div>
-        )}
       </div>
-    </Router>
+
+      {filteredBills.length === 0 ? (
+        <div className="text-center py-8 text-gray-500">
+          No bills found
+        </div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {filteredBills.map(bill => (
+            <BillCard key={bill.id} bill={bill} />
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
