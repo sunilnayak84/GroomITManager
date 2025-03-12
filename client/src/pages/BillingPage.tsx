@@ -115,6 +115,8 @@ function BillSkeleton() {
   );
 }
 
+import { Bill } from '@/types/billing';
+
 export default function BillingPage() {
   const [bills, setBills] = useState<Bill[]>([]);
   const [loading, setLoading] = useState(true);
@@ -176,7 +178,7 @@ export default function BillingPage() {
             <BillSkeleton key={i} />
           ))}
         </div>
-      ) : filteredBills.length === 0 ? (
+      ) : !filteredBills || filteredBills.length === 0 ? (
         <EmptyState />
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
