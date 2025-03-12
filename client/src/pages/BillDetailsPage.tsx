@@ -44,11 +44,16 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
           console.log(`[BILLING] Bill details retrieved:`, billData);
           setBill(billData);
         } else {
+          console.error(`[BILLING] Bill not found for ID: ${billId}`);
           setError("Bill not found");
         }
       } catch (error) {
         console.error('Error fetching bill details:', error);
         setError(error instanceof Error ? error.message : "Failed to fetch bill details");
+        // If we got a 404, handle it specially
+        if (error instanceof Error && error.message.includes('404')) {
+          setError(`Bill with ID ${billId} not found`);
+        }
       } finally {
         setLoading(false);
       }
