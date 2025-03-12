@@ -157,13 +157,15 @@ export function useBilling(options: UseBillingOptions = {}) {
       const billData = await response.json();
       console.log('[BILLING] Fetched bill:', billData);
 
-      // Convert dates from strings to Date objects
+      // Convert dates from strings to Date objects and ensure customer name is present
       const bill: Bill = {
         ...billData,
         createdAt: new Date(billData.createdAt),
-        updatedAt: new Date(billData.updatedAt)
+        updatedAt: new Date(billData.updatedAt),
+        customerName: billData.customerName || billData.customerName === '' ? billData.customerName : 'Unknown Customer'
       };
 
+      console.log('[BILLING] Processed bill data:', { id: bill.id, customer: bill.customerName });
       return bill;
     } catch (error) {
       console.error('[BILLING] Error fetching bill:', error);

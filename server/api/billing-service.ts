@@ -445,7 +445,44 @@ export class BillingService {
         return null;
       }
 
-      return { id: billDoc.id, ...billDoc.data() as Bill };
+      const billData = billDoc.data() as Bill;
+      const bill = { id: billDoc.id, ...billData };
+
+      // If the bill doesn't have a customer name but has a customer ID, fetch the customer details
+      if ((!bill.customerName || bill.customerName.trim() === '') && bill.customerId) {
+        try {
+          logger.info('[BILLING] Fetching customer details for bill:', { billId, customerId: bill.customerId });
+          const customerDoc = await admin.firestore()
+            .collection('customers')
+            .doc(bill.customerId)
+            .get();
+
+          if (customerDoc.exists) {
+            const customerData = customerDoc.data();
+            if (customerData) {
+              // Try to get the customer name from various possible fields
+              bill.customerName = customerData.name || 
+                `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
+                customerData.displayName || 
+                'Unknown Customer';
+              
+              logger.info('[BILLING] Updated bill with customer name:', { 
+                billId, 
+                customerId: bill.customerId, 
+                customerName: bill.customerName 
+              });
+            }
+          }
+        } catch (custError) {
+          logger.error('[BILLING] Error fetching customer for bill:', { 
+            billId, 
+            customerId: bill.customerId, 
+            error: custError 
+          });
+        }
+      }
+
+      return bill;
     } catch (error) {
       logger.error('[BILLING] Error fetching bill:', error);
       throw error;

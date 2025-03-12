@@ -41,6 +41,9 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
           setLocation('/billing');
           return;
         }
+        // Fetch customer name here.  Replace with your actual database call.
+        const customerName = await getCustomerName(billData.customerId);
+        billData.customerName = customerName; //add customer name to billData
         setBill(billData);
       } catch (error) {
         console.error('[BILLING] Error fetching bill:', error);
@@ -65,7 +68,7 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
     })() : 'N/A';
 
   // Get customer display name - improved handling of nullish values
-  const customerDisplayName = bill?.customerName ?? (bill?.customerId ?? 'N/A');
+  const customerDisplayName = bill?.customerName ?? (bill?.customerId ? `Customer ${bill.customerId.slice(0, 8)}...` : 'N/A');
 
 
   // Define status color mapping
@@ -255,4 +258,13 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
       </Card>
     </div>
   );
+}
+
+// Placeholder function - replace with your actual database call
+async function getCustomerName(customerId: string | undefined): Promise<string | undefined> {
+  //Implementation to fetch customer name from DB using customerId
+  if (!customerId) return undefined;
+  // Simulate fetching customer name - replace with your database logic.
+  await new Promise(resolve => setTimeout(resolve, 500)); //Simulate network delay
+  return `John Doe`; // Replace with actual fetched name
 }

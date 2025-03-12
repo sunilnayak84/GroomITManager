@@ -88,6 +88,38 @@ billingRouter.get('/bill/:id', async (req, res) => {
     bill.customerName = bill.customerName || '';
 
 
+    // Ensure customer name is available
+    if (!bill.customerName && bill.customerId) {
+      try {
+        const customerDoc = await admin.firestore()
+          .collection('customers')
+          .doc(bill.customerId)
+          .get();
+        
+        if (customerDoc.exists) {
+          const customerData = customerDoc.data();
+          if (customerData) {
+            bill.customerName = customerData.name || 
+              `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
+              customerData.displayName || 
+              '';
+            
+            logger.info('[BILLING] Added customer name to bill:', { 
+              billId: id, 
+              customerId: bill.customerId, 
+              customerName: bill.customerName 
+            });
+          }
+        }
+      } catch (custError) {
+        logger.error('[BILLING] Error fetching customer for bill:', { 
+          billId: id, 
+          customerId: bill.customerId, 
+          error: custError 
+        });
+      }
+    }
+
     logger.info('[BILLING] Successfully fetched bill:', { billId: id });
     res.json(bill);
   } catch (error) {
