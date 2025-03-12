@@ -81,10 +81,12 @@ export default function BillingPage() {
       try {
         const response = await fetch('/api/billing/bills');
         const data = await response.json();
-        setBills(data);
+        // Ensure data is an array before setting state
+        setBills(Array.isArray(data) ? data : []);
         setLoading(false);
       } catch (error) {
         console.error('Failed to fetch bills', error);
+        setBills([]);
         setLoading(false);
       }
     }
@@ -92,9 +94,10 @@ export default function BillingPage() {
     fetchBills();
   }, []);
 
-  const filteredBills = filter === 'ALL' 
-    ? bills 
-    : bills.filter(bill => bill.status === filter);
+  // Ensure bills is always an array before filtering
+  const filteredBills = Array.isArray(bills) 
+    ? (filter === 'ALL' ? bills : bills.filter(bill => bill.status === filter))
+    : [];
 
   if (loading) {
     return (
@@ -143,7 +146,11 @@ export default function BillingPage() {
         </div>
       </div>
 
-      {filteredBills.length === 0 ? (
+      {!Array.isArray(filteredBills) ? (
+        <div className="text-center py-8 text-gray-500">
+          Loading bills...
+        </div>
+      ) : filteredBills.length === 0 ? (
         <div className="text-center py-8 text-gray-500">
           No bills found
         </div>
