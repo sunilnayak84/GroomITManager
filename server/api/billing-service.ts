@@ -523,13 +523,13 @@ export class BillingService {
 
             // Try various possible owner reference structures
             let ownerId = null;
-            if (petData.customerId) {
+            if (petData && petData.customerId) {
               ownerId = petData.customerId;
               logger.info('[BILLING] Found customerId directly on pet:', { billId, ownerId });
-            } else if (petData.ownerId) {
+            } else if (petData && petData.ownerId) {
               ownerId = petData.ownerId;
               logger.info('[BILLING] Found ownerId directly on pet:', { billId, ownerId });
-            } else if (petData.owner?.id) {
+            } else if (petData && petData.owner?.id) {
               ownerId = petData.owner.id;
               logger.info('[BILLING] Found ownerId in pet.owner.id:', { billId, ownerId });
             } else if (petData && typeof petData.owner === 'string') {

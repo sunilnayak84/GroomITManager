@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { BillingService } from './billing-service';
 import { logger } from '../utils/logger';
 import { authenticateFirebase } from '../middleware/auth';
+import * as admin from 'firebase-admin';
 
 const billingRouter = Router();
 
@@ -43,8 +44,8 @@ billingRouter.get('/bills', async (req, res) => {
     bills = bills.map(bill => ({
       ...bill,
       customerName: bill.customerName || '',
-      createdAt: bill.createdAt?.toDate ? bill.createdAt.toDate() : bill.createdAt,
-      updatedAt: bill.updatedAt?.toDate ? bill.updatedAt.toDate() : bill.updatedAt
+      createdAt: bill.createdAt && typeof bill.createdAt.toDate === 'function' ? bill.createdAt.toDate() : bill.createdAt,
+      updatedAt: bill.updatedAt && typeof bill.updatedAt.toDate === 'function' ? bill.updatedAt.toDate() : bill.updatedAt
     }));
     logger.info('[BILLING] Successfully fetched bills:', { count: bills.length });
     res.json(bills);
@@ -77,10 +78,10 @@ billingRouter.get('/bill/:id', async (req, res) => {
     }
 
     // Convert date fields if necessary and ensure customer name is included
-    if (bill.createdAt?.toDate) {
+    if (bill.createdAt && typeof bill.createdAt.toDate === 'function') {
       bill.createdAt = bill.createdAt.toDate();
     }
-    if (bill.updatedAt?.toDate) {
+    if (bill.updatedAt && typeof bill.updatedAt.toDate === 'function') {
       bill.updatedAt = bill.updatedAt.toDate();
     }
 

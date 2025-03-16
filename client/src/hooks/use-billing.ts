@@ -1,5 +1,10 @@
 import { useState, useCallback } from 'react';
-import { Bill, BillDraft, BillStatus } from '@/types/billing';
+import { Bill as BaseBill, BillDraft, BillStatus } from '@/types/billing';
+
+// Extend the Bill type to include petId
+export interface Bill extends BaseBill {
+  petId?: string;
+}
 import { useToast } from './use-toast';
 import { auth } from '@/lib/firebase';
 
