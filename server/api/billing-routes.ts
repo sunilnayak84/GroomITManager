@@ -3,6 +3,21 @@ import { BillingService } from './billing-service';
 import { logger } from '../utils/logger';
 import { authenticateFirebase } from '../middleware/auth';
 import * as admin from 'firebase-admin';
+import { Router } from 'express';
+
+// Define types for Firestore timestamp objects
+interface FirestoreTimestamp {
+  toDate: () => Date;
+}
+
+// Define a type for bills that may have Firestore timestamps
+interface FirestoreBill {
+  id: string;
+  customerName?: string;
+  createdAt: Date | FirestoreTimestamp;
+  updatedAt: Date | FirestoreTimestamp;
+  [key: string]: any;
+}
 
 const billingRouter = Router();
 
@@ -41,11 +56,11 @@ billingRouter.get('/bills', async (req, res) => {
     logger.info('[BILLING] Fetching all bills');
     let bills = await billingService.getAllBills();
     // Convert date fields and ensure customer name is included
-    bills = bills.map(bill => ({
+    bills = bills.map((bill: FirestoreBill) => ({
       ...bill,
       customerName: bill.customerName || '',
-      createdAt: bill.createdAt && typeof bill.createdAt.toDate === 'function' ? bill.createdAt.toDate() : bill.createdAt,
-      updatedAt: bill.updatedAt && typeof bill.updatedAt.toDate === 'function' ? bill.updatedAt.toDate() : bill.updatedAt
+      createdAt: bill.createdAt && 'toDate' in bill.createdAt && typeof bill.createdAt.toDate === 'function' ? bill.createdAt.toDate() : bill.createdAt,
+      updatedAt: bill.updatedAt && 'toDate' in bill.updatedAt && typeof bill.updatedAt.toDate === 'function' ? bill.updatedAt.toDate() : bill.updatedAt
     }));
     logger.info('[BILLING] Successfully fetched bills:', { count: bills.length });
     res.json(bills);
@@ -78,10 +93,10 @@ billingRouter.get('/bill/:id', async (req, res) => {
     }
 
     // Convert date fields if necessary and ensure customer name is included
-    if (bill.createdAt && typeof bill.createdAt.toDate === 'function') {
+    if (bill.createdAt && 'toDate' in bill.createdAt && typeof bill.createdAt.toDate === 'function') {
       bill.createdAt = bill.createdAt.toDate();
     }
-    if (bill.updatedAt && typeof bill.updatedAt.toDate === 'function') {
+    if (bill.updatedAt && 'toDate' in bill.updatedAt && typeof bill.updatedAt.toDate === 'function') {
       bill.updatedAt = bill.updatedAt.toDate();
     }
 

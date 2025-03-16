@@ -25,6 +25,7 @@ export const BillSchema = z.object({
   appointmentId: z.string(),
   customerId: z.string(),
   customerName: z.string().optional(),
+  petId: z.string().optional(),
   items: z.array(BillItemSchema),
   subtotal: z.number(),
   tax: z.number(),
