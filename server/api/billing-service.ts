@@ -532,7 +532,7 @@ export class BillingService {
             } else if (petData.owner?.id) {
               ownerId = petData.owner.id;
               logger.info('[BILLING] Found ownerId in pet.owner.id:', { billId, ownerId });
-            } else if (typeof petData.owner === 'string') {
+            } else if (petData && typeof petData.owner === 'string') {
               ownerId = petData.owner;
               logger.info('[BILLING] Found ownerId as string in pet.owner:', { billId, ownerId });
             }
@@ -546,9 +546,9 @@ export class BillingService {
 
               if (customerDoc.exists) {
                 const customerData = customerDoc.data();
-                const nameFromPetOwner = customerData.name || 
-                  `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
-                  customerData.displayName || 
+                const nameFromPetOwner = customerData?.name || 
+                  `${customerData?.firstName || ''} ${customerData?.lastName || ''}`.trim() || 
+                  customerData?.displayName || 
                   '';
 
                 if (nameFromPetOwner && nameFromPetOwner !== 'Sam Smith' && nameFromPetOwner !== 'John Doe') {
@@ -594,7 +594,7 @@ export class BillingService {
             let customerId = null;
 
             // First, check if there's a pet ID and get the owner from there
-            if (appointment.petId) {
+            if (appointment?.petId) {
               logger.info('[BILLING] Found pet ID in appointment, looking up pet owner:', { petId: appointment.petId });
               try {
                 const petDoc = await admin.firestore()
@@ -609,7 +609,7 @@ export class BillingService {
                     logger.info('[BILLING] Found owner ID from pet:', { petId: appointment.petId, ownerId: customerId });
                   } else if (petData && petData.owner?.id) {
                     customerId = petData.owner.id;
-                    logger.info('[BILLING] Found owner ID from pet.owner:', { petId: appointment.petId, ownerId: customerId });
+                    logger.info('[BILLING] Found owner ID from pet.owner:', { petId: appointment?.petId, ownerId: customerId });
                   }
                 }
               } catch (petError) {
@@ -618,7 +618,7 @@ export class BillingService {
             }
 
             // If we couldn't get owner from pet, try other appointment fields
-            if (!customerId) {
+            if (!customerId && appointment) {
               if (appointment.customer?.id) {
                 customerId = appointment.customer.id;
               } else if (appointment.customerId) {
@@ -639,9 +639,9 @@ export class BillingService {
 
               if (customerDoc.exists) {
                 const customerData = customerDoc.data();
-                const nameFromAppointment = customerData.name || 
-                  `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
-                  customerData.displayName || 
+                const nameFromAppointment = customerData?.name || 
+                  `${customerData?.firstName || ''} ${customerData?.lastName || ''}`.trim() || 
+                  customerData?.displayName || 
                   '';
 
                 if (nameFromAppointment && nameFromAppointment !== 'Sam Smith' && nameFromAppointment !== 'John Doe') {
@@ -673,7 +673,7 @@ export class BillingService {
         bill.customerName = realCustomerName;
       } else if (foundCustomerNames.size > 0) {
         // If we have any customer names (that aren't placeholders), use the first one
-        const firstCustomerName = Array.from(foundCustomerNames)[0];
+        const firstCustomerName = Array.from(foundCustomerNames)[0] as string;
         logger.info('[BILLING] Using first found customer name:', { billId, customerName: firstCustomerName });
         bill.customerName = firstCustomerName;
       } else if (bill.customerName === 'Sam Smith' || bill.customerName === 'John Doe') {
