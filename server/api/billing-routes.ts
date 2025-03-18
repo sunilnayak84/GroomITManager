@@ -16,8 +16,8 @@ import { Bill } from '../types/billing';
 interface FirestoreBill extends Omit<Bill, 'createdAt' | 'updatedAt' | 'id'> {
   id: string;
   customerName?: string;
-  createdAt: Date | FirestoreTimestamp;
-  updatedAt: Date | FirestoreTimestamp;
+  createdAt: Date | FirestoreTimestamp | string;
+  updatedAt: Date | FirestoreTimestamp | string;
   [key: string]: any;
 }
 
@@ -58,20 +58,33 @@ billingRouter.get('/bills', async (req, res) => {
     logger.info('[BILLING] Fetching all bills');
     let bills = await billingService.getAllBills();
     // Convert date fields and ensure customer name is included
-    bills = bills.map(bill => {
+    const convertedBills = bills.map(bill => {
       // First cast to FirestoreBill to handle timestamp conversion
       const firestoreBill = bill as unknown as FirestoreBill;
+      
+      // Convert dates properly ensuring they are Date objects
+      const createdAt = firestoreBill.createdAt && 
+        'toDate' in firestoreBill.createdAt && 
+        typeof firestoreBill.createdAt.toDate === 'function' 
+          ? firestoreBill.createdAt.toDate() 
+          : new Date(firestoreBill.createdAt as any);
+          
+      const updatedAt = firestoreBill.updatedAt && 
+        'toDate' in firestoreBill.updatedAt && 
+        typeof firestoreBill.updatedAt.toDate === 'function' 
+          ? firestoreBill.updatedAt.toDate() 
+          : new Date(firestoreBill.updatedAt as any);
+      
+      // Return a properly typed Bill
       return {
         ...firestoreBill,
         customerName: firestoreBill.customerName || '',
-        createdAt: firestoreBill.createdAt && 'toDate' in firestoreBill.createdAt && typeof firestoreBill.createdAt.toDate === 'function' 
-          ? firestoreBill.createdAt.toDate() 
-          : firestoreBill.createdAt,
-        updatedAt: firestoreBill.updatedAt && 'toDate' in firestoreBill.updatedAt && typeof firestoreBill.updatedAt.toDate === 'function' 
-          ? firestoreBill.updatedAt.toDate() 
-          : firestoreBill.updatedAt
-      };
+        createdAt,
+        updatedAt
+      } as Bill;
     });
+    
+    bills = convertedBills;
     logger.info('[BILLING] Successfully fetched bills:', { count: bills.length });
     res.json(bills);
   } catch (error) {
