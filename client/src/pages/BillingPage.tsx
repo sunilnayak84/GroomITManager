@@ -27,10 +27,10 @@ const statusColors: Record<BillStatus, string> = {
 function BillCard({ bill }: { bill: Bill }) {
   const [, navigate] = useLocation();
 
-  // Safely format the date with error handling
+  // Safely format the date with error handling and null checks
   let formattedDate = 'Invalid Date';
   try {
-    if (bill.createdAt) {
+    if (bill.createdAt !== null && bill.createdAt !== undefined) {
       const dateObj = new Date(bill.createdAt);
       if (!isNaN(dateObj.getTime())) {
         formattedDate = format(dateObj, 'dd MMM yyyy');
