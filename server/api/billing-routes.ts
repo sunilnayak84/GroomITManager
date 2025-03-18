@@ -63,17 +63,17 @@ billingRouter.get('/bills', async (req, res) => {
       const firestoreBill = bill as unknown as FirestoreBill;
       
       // Convert dates properly ensuring they are Date objects
-      const createdAt = firestoreBill.createdAt && 
-        'toDate' in firestoreBill.createdAt && 
-        typeof firestoreBill.createdAt.toDate === 'function' 
-          ? firestoreBill.createdAt.toDate() 
-          : new Date(firestoreBill.createdAt as any);
+      const createdAt = firestoreBill.createdAt 
+        ? (typeof firestoreBill.createdAt === 'object' && firestoreBill.createdAt !== null && 'toDate' in firestoreBill.createdAt && typeof firestoreBill.createdAt.toDate === 'function'
+            ? firestoreBill.createdAt.toDate() 
+            : new Date(firestoreBill.createdAt as any))
+        : new Date();
           
-      const updatedAt = firestoreBill.updatedAt && 
-        'toDate' in firestoreBill.updatedAt && 
-        typeof firestoreBill.updatedAt.toDate === 'function' 
-          ? firestoreBill.updatedAt.toDate() 
-          : new Date(firestoreBill.updatedAt as any);
+      const updatedAt = firestoreBill.updatedAt
+        ? (typeof firestoreBill.updatedAt === 'object' && firestoreBill.updatedAt !== null && 'toDate' in firestoreBill.updatedAt && typeof firestoreBill.updatedAt.toDate === 'function'
+            ? firestoreBill.updatedAt.toDate() 
+            : new Date(firestoreBill.updatedAt as any))
+        : new Date();
       
       // Return a properly typed Bill
       return {
@@ -84,7 +84,8 @@ billingRouter.get('/bills', async (req, res) => {
       } as Bill;
     });
     
-    bills = convertedBills;
+    // Use type assertion to ensure compatibility with Bill[] type
+    bills = convertedBills as Bill[];
     logger.info('[BILLING] Successfully fetched bills:', { count: bills.length });
     res.json(bills);
   } catch (error) {
