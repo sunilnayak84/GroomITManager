@@ -423,24 +423,17 @@ export default function AppointmentsPage() {
       id: 'billing',
       header: 'Billing',
       cell: (appointment: AppointmentWithRelations) => {
-        if (appointment.status === 'completed' && !appointment.billId) {
-          return (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleGenerateBill(appointment.id)}
-            >
-              Generate Bill
-            </Button>
-          );
-        } else if (appointment.billId) {
-          return (
-            <Link to={`/billing?billId=${appointment.billId}`}>
-              View Bill
-            </Link>
-          );
-        }
-        return null;
+        const isDisabled = appointment.billId !== undefined && appointment.billId !== null;
+        return (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleGenerateBill(appointment.id)}
+            disabled={isDisabled}
+          >
+            {isDisabled ? 'Bill Generated' : 'Generate Bill'}
+          </Button>
+        );
       }
     }
   ], []);
@@ -758,7 +751,7 @@ export default function AppointmentsPage() {
                   </span>
                 </div>
               </div>
-              
+
               {/* Bill Items */}
               <div className="space-y-2">
                 <h3 className="font-medium">Services</h3>
@@ -788,7 +781,7 @@ export default function AppointmentsPage() {
                   </table>
                 </div>
               </div>
-              
+
               {/* Bill Totals */}
               <div className="space-y-2">
                 <div className="flex justify-between border-b pb-2">
@@ -804,7 +797,7 @@ export default function AppointmentsPage() {
                   <span>₹{billPreview.totalAmount?.toFixed(2)}</span>
                 </div>
               </div>
-              
+
               {/* Payment Link */}
               {billPreview.paymentLink && (
                 <div className="border rounded-md p-3 bg-gray-50">
@@ -822,7 +815,7 @@ export default function AppointmentsPage() {
                   </div>
                 </div>
               )}
-              
+
               <DialogFooter className="flex sm:justify-between gap-2 pt-4">
                 <Button variant="outline" onClick={() => setShowBillModal(false)}>
                   Close

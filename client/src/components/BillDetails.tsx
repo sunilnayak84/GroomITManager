@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
+import { useState, useEffect } from 'react';
+import { Button } from './ui/button';
+import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
+import { useToast } from '@/hooks/use-toast';
 import { CreditCard, ExternalLink } from "lucide-react";
 import {
   Dialog,
@@ -11,6 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { auth } from '@/lib/firebase';
 
 interface BillDetailsProps {
   appointmentId: string;
@@ -20,7 +21,25 @@ export function BillDetails({ appointmentId }: BillDetailsProps) {
   const [loading, setLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [billData, setBillData] = useState<any>(null);
+  const [billGenerated, setBillGenerated] = useState(false); // Added state to track bill generation
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Check if a bill already exists on component mount
+    const checkBillStatus = async () => {
+      try {
+        const response = await fetch(`/api/billing/check/${appointmentId}`, { method: 'GET' });
+        if (response.ok) {
+          const data = await response.json();
+          setBillGenerated(data.billGenerated);
+        }
+      } catch (error) {
+        console.error("Error checking bill status:", error);
+      }
+    };
+    checkBillStatus();
+  }, [appointmentId]);
+
 
   const handleGenerateBill = async () => {
     try {
@@ -61,6 +80,7 @@ export function BillDetails({ appointmentId }: BillDetailsProps) {
       const bill = await response.json();
       setBillData(bill);
       setShowPreview(true);
+      setBillGenerated(true); // Update billGenerated state after successful generation
       toast({
         title: "Success",
         description: "Bill generated successfully",
@@ -87,7 +107,7 @@ export function BillDetails({ appointmentId }: BillDetailsProps) {
         <CardContent>
           <Button 
             onClick={handleGenerateBill} 
-            disabled={loading}
+            disabled={loading || billGenerated} // Disable button if loading or bill already generated
             className="w-full"
           >
             {loading ? (
