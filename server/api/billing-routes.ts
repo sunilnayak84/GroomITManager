@@ -57,35 +57,44 @@ billingRouter.get('/bills', async (req, res) => {
   try {
     logger.info('[BILLING] Fetching all bills');
     let bills = await billingService.getAllBills();
-    // Convert date fields and ensure customer name is included
-    const convertedBills = bills.map(bill => {
-      // First cast to FirestoreBill to handle timestamp conversion
-      const firestoreBill = bill as unknown as FirestoreBill;
-      
-      // Convert dates properly ensuring they are Date objects
-      const createdAt = firestoreBill.createdAt 
-        ? (typeof firestoreBill.createdAt === 'object' && firestoreBill.createdAt !== null && 'toDate' in firestoreBill.createdAt && typeof firestoreBill.createdAt.toDate === 'function'
-            ? firestoreBill.createdAt.toDate() 
-            : new Date(firestoreBill.createdAt as any))
-        : new Date();
-          
-      const updatedAt = firestoreBill.updatedAt
-        ? (typeof firestoreBill.updatedAt === 'object' && firestoreBill.updatedAt !== null && 'toDate' in firestoreBill.updatedAt && typeof firestoreBill.updatedAt.toDate === 'function'
-            ? firestoreBill.updatedAt.toDate() 
-            : new Date(firestoreBill.updatedAt as any))
-        : new Date();
-      
-      // Return a properly typed Bill
-      return {
-        ...firestoreBill,
-        customerName: firestoreBill.customerName || '',
-        createdAt,
-        updatedAt
-      } as Bill;
-    });
-    
-    // Use type assertion to ensure compatibility with Bill[] type
-    bills = convertedBills as Bill[];
+
+    // Process each bill through the customer name resolution service
+    const processedBills = await Promise.all(
+      bills.map(async (bill) => {
+        try {
+          // Use the same getBill method that resolves customer names
+          return await billingService.getBill(bill.id);
+        } catch (error) {
+          logger.error('[BILLING] Error processing bill for listing:', { billId: bill.id, error });
+
+          // First cast to FirestoreBill to handle timestamp conversion
+          const firestoreBill = bill as unknown as FirestoreBill;
+
+          // Convert dates properly ensuring they are Date objects
+          const createdAt = firestoreBill.createdAt 
+            ? (typeof firestoreBill.createdAt === 'object' && firestoreBill.createdAt !== null && 'toDate' in firestoreBill.createdAt && typeof firestoreBill.createdAt.toDate === 'function'
+                ? firestoreBill.createdAt.toDate() 
+                : new Date(firestoreBill.createdAt as any))
+            : new Date();
+
+          const updatedAt = firestoreBill.updatedAt
+            ? (typeof firestoreBill.updatedAt === 'object' && firestoreBill.updatedAt !== null && 'toDate' in firestoreBill.updatedAt && typeof firestoreBill.updatedAt.toDate === 'function'
+                ? firestoreBill.updatedAt.toDate() 
+                : new Date(firestoreBill.updatedAt as any))
+            : new Date();
+
+          // If there's an error, return the bill with basic processing
+          return {
+            ...firestoreBill,
+            customerName: firestoreBill.customerName || 'Unknown Customer',
+            createdAt,
+            updatedAt
+          } as Bill;
+        }
+      })
+    );
+
+    bills = processedBills;
     logger.info('[BILLING] Successfully fetched bills:', { count: bills.length });
     res.json(bills);
   } catch (error) {
@@ -135,7 +144,7 @@ billingRouter.get('/bill/:id', async (req, res) => {
           .collection('customers')
           .doc(bill.customerId)
           .get();
-        
+
         if (customerDoc.exists) {
           const customerData = customerDoc.data();
           if (customerData) {
@@ -143,7 +152,7 @@ billingRouter.get('/bill/:id', async (req, res) => {
               `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() || 
               customerData.displayName || 
               '';
-            
+
             logger.info('[BILLING] Added customer name to bill:', { 
               billId: id, 
               customerId: bill.customerId, 
