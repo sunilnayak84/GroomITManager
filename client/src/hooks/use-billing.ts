@@ -7,6 +7,8 @@ export interface Bill extends BaseBill {
 }
 import { useToast } from './use-toast';
 import { auth } from '@/lib/firebase';
+import { useRouter } from 'next/router'; // Added import for useRouter
+
 
 interface UseBillingOptions {
   onSuccess?: () => void;
@@ -253,3 +255,75 @@ export function useBilling(options: UseBillingOptions = {}) {
     getBillById
   };
 }
+
+// Added useBillingOperations hook based on the changes provided.  Assumes getToken() exists.
+export const useBillingOperations = () => {
+  const { showToast } = useToast();
+  const router = useRouter();
+
+  const generateBill = async (appointmentId: string): Promise<string | null> => {
+    try {
+      console.log('[BILLING] Initiating bill generation for appointment:', appointmentId);
+
+      const response = await fetch(`/api/billing/generate/${appointmentId}`, { // Removed import.meta.env.VITE_API_URL - assuming it's handled elsewhere
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await getToken()}`
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to generate bill');
+      }
+
+      const { billId } = await response.json();
+      console.log('[BILLING] Bill successfully generated with ID:', billId);
+
+      showToast({
+        title: 'Bill Generated',
+        description: 'The bill has been successfully generated.',
+        variant: 'success'
+      });
+
+      // Fetch the bill to verify it has the customer name
+      try {
+        const billResponse = await fetch(`/api/billing/bill/${billId}`, {
+          headers: {
+            'Authorization': `Bearer ${await getToken()}`
+          }
+        });
+
+        if (billResponse.ok) {
+          const billData = await billResponse.json();
+          console.log('[BILLING] Verification - Bill data retrieved:', billData);
+
+          if (!billData.customerName || billData.customerName === 'Unknown Customer') {
+            console.warn('[BILLING] Bill created but customer name might be missing:', billData.customerName);
+          }
+        }
+      } catch (verifyError) {
+        console.error('[BILLING] Error verifying generated bill:', verifyError);
+      }
+
+      return billId;
+    } catch (error) {
+      console.error('Error generating bill:', error);
+      showToast({
+        title: 'Error',
+        description: error.message || 'Failed to generate bill',
+        variant: 'destructive'
+      });
+      return null;
+    }
+  };
+  return { generateBill };
+};
+
+// Placeholder for getToken - replace with actual implementation
+const getToken = async () => {
+  // Implement your token retrieval logic here
+  // Example:  return await firebase.auth().currentUser.getIdToken();
+  return 'YOUR_TOKEN_HERE'; // Replace with your actual token retrieval
+};

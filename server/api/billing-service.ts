@@ -732,4 +732,107 @@ export class BillingService {
       logger.error(`[BILLING] Error resolving and updating customer name for bill ${billId}:`, error);
     }
   }
+
+  // Create a new bill record
+  async createBill(data: BillCreateInput): Promise<string> {
+    try {
+      const billRef = admin.firestore().collection('bills').doc();
+      const billId = billRef.id;
+
+      logger.info('[BILLING] Creating new bill:', { billId, data });
+
+      // Add default values
+      const billData: any = {
+        ...data,
+        id: billId,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        status: data.status || 'unpaid'
+      };
+
+      // Ensure we have a valid amount
+      if (!billData.amount || isNaN(parseFloat(billData.amount))) {
+        billData.amount = 0;
+      }
+
+      // Try to get customer name from pet if we have petId but no customerName
+      if (billData.petId && (!billData.customerName || billData.customerName.trim() === '')) {
+        logger.info('[BILLING] Bill has petId but no customer name, attempting to resolve:', { 
+          billId, 
+          petId: billData.petId 
+        });
+
+        try {
+          const petDoc = await admin.firestore()
+            .collection('pets')
+            .doc(billData.petId)
+            .get();
+
+          if (petDoc.exists) {
+            const petData = petDoc.data();
+            logger.info('[BILLING] Found pet data:', { petId: billData.petId, petData });
+
+            // Try to get customerId from pet
+            let customerId = null;
+            if (petData?.customerId) {
+              customerId = petData.customerId;
+              logger.info('[BILLING] Found customerId on pet:', { customerId });
+            } else if (petData?.ownerId) {
+              customerId = petData.ownerId;
+              logger.info('[BILLING] Found ownerId on pet:', { customerId });
+            } else if (petData?.owner?.id) {
+              customerId = petData.owner.id;
+              logger.info('[BILLING] Found owner.id reference on pet:', { customerId });
+            } else if (typeof petData?.owner === 'string') {
+              customerId = petData.owner;
+              logger.info('[BILLING] Found owner as string on pet:', { customerId });
+            }
+
+            // If we found a customerId, get customer name
+            if (customerId) {
+              const customerDoc = await admin.firestore()
+                .collection('customers')
+                .doc(customerId)
+                .get();
+
+              if (customerDoc.exists) {
+                const customerData = customerDoc.data();
+                // Try multiple name formats
+                const fullName = customerData?.name || 
+                               `${customerData?.firstName || ''} ${customerData?.lastName || ''}`.trim() || 
+                               customerData?.displayName || '';
+
+                if (fullName && fullName !== 'Sam Smith' && fullName !== 'John Doe') {
+                  logger.info('[BILLING] Found customer name from pet:', { fullName, customerId });
+                  billData.customerName = fullName;
+                  billData.customerId = customerId;
+                }
+              }
+            }
+          }
+        } catch (error) {
+          logger.error('[BILLING] Error resolving customer from pet:', { error, petId: billData.petId });
+        }
+      }
+
+      await billRef.set(billData);
+      logger.info('[BILLING] Bill created successfully:', { billId, customerName: billData.customerName });
+
+      return billId;
+    } catch (error) {
+      logger.error('[BILLING] Error creating bill:', error);
+      throw new Error(`Failed to create bill: ${error.message}`);
+    }
+  }
+}
+
+interface BillCreateInput {
+  appointmentId: string;
+  petId?: string;
+  items: BillItem[];
+  amount: number;
+  status?: string;
+  customerName?: string;
+  customerId?: string;
+
 }
