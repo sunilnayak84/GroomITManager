@@ -853,7 +853,7 @@ export default function AppointmentsPage() {
                       Pay Now
                     </Button>
                   )}
-                  <Button onClick={() => window.open(`/billing?billId=${billPreview.id}`, '_blank')}>
+                  <Button onClick={() => window.open`/billing?billId=${billPreview.id}`, '_blank')}>
                     <ExternalLink className="mr-2 h-4 w-4" />
                     View Full Bill
                   </Button>
