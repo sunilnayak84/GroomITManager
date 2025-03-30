@@ -20,7 +20,8 @@ import AppointmentCalendar from "../components/AppointmentCalendar";
 import AppointmentEditForm from "../components/AppointmentEditForm";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PetDetails } from "../components/PetDetails";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation as useReactRouterLocation } from "react-router-dom";
+import { useLocation } from 'wouter';
 
 
 // Get status type from the schema
@@ -156,7 +157,7 @@ export default function AppointmentsPage() {
   const [isLoading, setIsLoading] = useState(false); // Added loading state
   const [billPreview, setBillPreview] = useState<any>(null);
   const [showBillModal, setShowBillModal] = useState(false);
-  const navigate = useNavigate(); // Added navigate hook
+  const [, navigate] = useLocation(); // Using wouter's useLocation for navigation
   const { data: appointments, isLoading: appointmentsLoading, error, refetch: fetchAppointments } = useAppointments();
 
   // Add logging when appointments data changes
