@@ -69,11 +69,13 @@ billingRouter.get('/bills', async (req, res) => {
           const processedBill = await billingService.getBill(bill.id);
           if (!processedBill) return null;
           
-          return {
+          // Ensure dates are properly converted to Date objects
+          const processedBillWithDates: Bill = {
             ...processedBill,
-            createdAt: new Date(processedBill.createdAt),
-            updatedAt: new Date(processedBill.updatedAt)
+            createdAt: processedBill.createdAt instanceof Date ? processedBill.createdAt : new Date(processedBill.createdAt),
+            updatedAt: processedBill.updatedAt instanceof Date ? processedBill.updatedAt : new Date(processedBill.updatedAt)
           };
+          return processedBillWithDates;
         } catch (error) {
           logger.error('[BILLING] Error processing bill for listing:', { billId: bill.id, error });
 
