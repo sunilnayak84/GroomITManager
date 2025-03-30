@@ -409,6 +409,34 @@ export default function AppointmentsPage() {
       ),
     },
     {
+      id: 'payment_status',
+      header: 'Payment Status',
+      cell: (appointment) => {
+        // Check if bill is already generated for this appointment
+        const billGenerated = appointment.hasBill === true || appointment.billId;
+        
+        // Get the payment status
+        let paymentStatus = "Not Generated";
+        let statusColor = "bg-gray-100 text-gray-800";
+        
+        if (billGenerated) {
+          paymentStatus = "Generated";
+          statusColor = "bg-green-100 text-green-800";
+        } else if (appointment.status !== 'completed') {
+          paymentStatus = "Pending";
+          statusColor = "bg-yellow-100 text-yellow-800";
+        }
+        
+        console.log('[BILLING] Appointment bill status:', appointment.id, { billGenerated, hasBill: appointment.hasBill, billId: appointment.billId, status: appointment.status });
+        
+        return (
+          <Badge className={statusColor}>
+            {paymentStatus}
+          </Badge>
+        );
+      }
+    },
+    {
       id: 'billing',
       header: 'Billing',
       cell: (appointment) => {
