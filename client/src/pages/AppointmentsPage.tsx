@@ -392,7 +392,8 @@ export default function AppointmentsPage() {
     },
     {
       header: "Actions",
-      cell: (appointment) => {
+      cell: ({ row }) => {
+        const appointment = row.original;
         // Check if bill is already generated for this appointment
         const billGenerated = appointment.hasBill === true || appointment.billId;
 
