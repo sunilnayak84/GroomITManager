@@ -103,6 +103,15 @@ interface InventoryUsageData {
   service_name: string;
 }
 
+export interface AppointmentWithRelations extends AppointmentData {
+  customer?: CustomerData;
+  groomer?: GroomerData;
+  pet?: PetData;
+  services?: ServiceData[];
+  allServices?: ServiceData[];
+  paymentStatus?: 'paid' | 'pending';
+}
+
 export function useAppointments() {
   const queryClient = useQueryClient();
   const { user: currentUser } = useUser();

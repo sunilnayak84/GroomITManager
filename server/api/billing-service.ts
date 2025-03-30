@@ -35,6 +35,7 @@ interface Bill {
   updatedAt: Date;
   customerName?: string;
   petId?:string;
+  paymentStatus?: string; // Added paymentStatus
 }
 
 interface ServiceData {
@@ -291,7 +292,7 @@ export class BillingService {
 
       // Ensure we use the correct customerId from pet when available
       let actualCustomerId = customer.id;
-      
+
       // If we have a petId, try to get the correct customer from the pet
       if (appointment.petId) {
         try {
@@ -300,7 +301,7 @@ export class BillingService {
             .collection('pets')
             .doc(appointment.petId)
             .get();
-            
+
           if (petDoc.exists) {
             const petData = petDoc.data();
             if (petData?.customerId) {
@@ -312,7 +313,7 @@ export class BillingService {
           logger.error('[BILLING] Error getting pet owner:', error);
         }
       }
-      
+
       const bill: Bill = {
         appointmentId,
         customerId: actualCustomerId,
@@ -325,7 +326,8 @@ export class BillingService {
         createdAt: now,
         updatedAt: now,
         createdTime: now.toISOString(), // Store ISO string for consistent time representation
-        petId: appointment.petId
+        petId: appointment.petId,
+        paymentStatus: 'PENDING_PAYMENT' // added paymentStatus
       };
 
       try {
@@ -421,7 +423,8 @@ export class BillingService {
           const billDoc = billQuery.docs[0];
           await billDoc.ref.update({
             status: 'PAID',
-            updatedAt: new Date()
+            updatedAt: new Date(),
+            paymentStatus: 'PAID' // Update paymentStatus
           });
 
           // Update appointment status
@@ -721,7 +724,39 @@ export class BillingService {
 
   // Add alias method for getBillById to match the API endpoint
   async getBillById(billId: string): Promise<Bill | null> {
-    return this.getBill(billId);
+    try {
+      logger.info('[BILLING] Fetching bill:', billId);
+
+      const billDoc = await admin.firestore()
+        .collection('bills')
+        .doc(billId)
+        .get();
+
+      if (!billDoc.exists) {
+        return null;
+      }
+
+      const billData = billDoc.data() as Bill;
+
+      // If there's an appointmentId, update its paymentStatus
+      if (billData.appointmentId) {
+        // Get the appointment and update its payment status
+        const appointmentRef = admin.firestore().collection('appointments').doc(billData.appointmentId);
+        await appointmentRef.update({
+          billId: billId,
+          paymentStatus: billData.paymentStatus || 'pending'
+        });
+      }
+
+      return { 
+        ...billData, 
+        id: billDoc.id,
+        createdAt: billData.createdAt ? billData.createdAt : new Date() 
+      };
+    } catch (error) {
+      console.error('Error getting bill by ID:', error);
+      throw error;
+    }
   }
   async updateBill(billId: string, updateData: Partial<Bill>): Promise<void> {
     try {
@@ -771,7 +806,8 @@ export class BillingService {
         id: billId,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-        status: data.status || 'unpaid'
+        status: data.status || 'unpaid',
+        paymentStatus: 'PENDING_PAYMENT' // Added paymentStatus
       };
 
       // Ensure we have a valid amount

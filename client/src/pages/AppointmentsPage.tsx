@@ -20,7 +20,7 @@ import AppointmentCalendar from "../components/AppointmentCalendar";
 import AppointmentEditForm from "../components/AppointmentEditForm";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PetDetails } from "../components/PetDetails";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 
 // Get status type from the schema
@@ -156,19 +156,7 @@ export default function AppointmentsPage() {
   const [isLoading, setIsLoading] = useState(false); // Added loading state
   const [billPreview, setBillPreview] = useState<any>(null);
   const [showBillModal, setShowBillModal] = useState(false);
-
-  // Save preferences when they change
-  useEffect(() => {
-    localStorage.setItem('appointmentView', view);
-  }, [view]);
-
-  useEffect(() => {
-    localStorage.setItem('appointmentDateFilter', dateFilter);
-  }, [dateFilter]);
-
-  useEffect(() => {
-    localStorage.setItem('appointmentStatusFilter', statusFilter);
-  }, [statusFilter]);
+  const navigate = useNavigate(); // Added navigate hook
   const { data: appointments, isLoading: appointmentsLoading, error, refetch: fetchAppointments } = useAppointments();
 
   // Add logging when appointments data changes
@@ -423,16 +411,21 @@ export default function AppointmentsPage() {
       id: 'billing',
       header: 'Billing',
       cell: (appointment: AppointmentWithRelations) => {
-        const isDisabled = appointment.billId !== undefined && appointment.billId !== null;
         return (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handleGenerateBill(appointment.id)}
-            disabled={isDisabled}
-          >
-            {isDisabled ? 'Bill Generated' : 'Generate Bill'}
-          </Button>
+          <>
+            {appointment.billId ? (
+              <>
+                <Button variant="outline" size="sm" onClick={() => navigate(`/billing/${appointment.billId}`)}>
+                  View Bill
+                </Button>
+                <span className="ml-2">{appointment.paymentStatus || 'Pending'}</span>
+              </>
+            ) : (
+              <Button variant="outline" size="sm" onClick={() => handleGenerateBill(appointment.id)}>
+                Generate Bill
+              </Button>
+            )}
+          </>
         );
       }
     }

@@ -15,9 +15,10 @@ import { auth } from '@/lib/firebase';
 
 interface BillDetailsProps {
   appointmentId: string;
+  onBillGenerated?: () => void;
 }
 
-export function BillDetails({ appointmentId }: BillDetailsProps) {
+export function BillDetails({ appointmentId, onBillGenerated }: BillDetailsProps) {
   const [loading, setLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [billData, setBillData] = useState<any>(null);
@@ -85,6 +86,10 @@ export function BillDetails({ appointmentId }: BillDetailsProps) {
         title: "Success",
         description: "Bill generated successfully",
       });
+      
+      if (onBillGenerated) {
+        onBillGenerated();
+      }
     } catch (error) {
       console.error('Error generating bill:', error);
       toast({
