@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useRoute } from 'wouter';
 import { format } from 'date-fns';
-import { ArrowLeft, Download, CreditCard, User, Calendar, Tag } from 'lucide-react';
+import { ArrowLeft, Download, CreditCard, User, Calendar, Tag, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -245,16 +245,18 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
     fetchBill();
   }, [params?.id, getBillById, setLocation, navigate, getIdToken]);
 
-  // Format date if available
-  const formattedDate = bill?.createdAt && bill.createdAt instanceof Date && !isNaN(bill.createdAt.getTime()) ?
-    (() => {
-      try {
-        const dateObj = new Date(bill.createdAt);
-        return !isNaN(dateObj.getTime()) ? format(dateObj, 'dd MMM yyyy') : 'Invalid Date';
-      } catch (error) {
-        return 'Invalid Date';
-      }
-    })() : 'N/A';
+  // Convert Firestore timestamp to Date object properly
+  const billDate = bill?.createdAt instanceof Date
+    ? bill.createdAt
+    : bill?.createdAt && typeof bill.createdAt === 'object' && bill.createdAt.toDate
+      ? bill.createdAt.toDate()
+      : bill?.createdAt
+        ? new Date(bill.createdAt)
+        : new Date();
+
+  // Format the date and time
+  const formattedDate = format(billDate, 'dd MMM yyyy');
+  const formattedTime = format(billDate, 'hh:mm a');
 
   // Get customer display name - improved handling of nullish values
   const customerDisplayName = bill?.customerName ?? (bill?.customerId ? `Customer ${bill.customerId.slice(0, 8)}...` : 'N/A');
@@ -359,9 +361,13 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
               </div>
               <div>
                 <h3 className="text-sm font-medium text-muted-foreground mb-1">Date</h3>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center space-x-2 mb-2">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
                   <span>{formattedDate}</span>
+                </div>
+                <div className="flex items-center space-x-2 mb-2">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <span>{formattedTime}</span>
                 </div>
               </div>
               <div>

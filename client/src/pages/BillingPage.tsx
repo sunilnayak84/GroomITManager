@@ -13,7 +13,7 @@ import {
 import { Button } from '../components/ui/button';
 import { Skeleton } from '../components/ui/skeleton';
 import { Badge } from '../components/ui/badge';
-import { CreditCard, ExternalLink, Calendar, User, Package, Eye } from 'lucide-react';
+import { CreditCard, ExternalLink, Calendar, User, Package, Eye, Clock } from 'lucide-react';
 
 type BillStatus = 'PENDING_PAYMENT' | 'PAID' | 'CANCELED' | 'REFUNDED';
 
@@ -27,18 +27,15 @@ const statusColors: Record<BillStatus, string> = {
 function BillCard({ bill }: { bill: Bill }) {
   const [, navigate] = useLocation();
 
-  // Safely format the date with error handling and null checks
-  let formattedDate = 'Invalid Date';
-  try {
-    if (bill.createdAt !== null && bill.createdAt !== undefined) {
-      const dateObj = new Date(bill.createdAt);
-      if (!isNaN(dateObj.getTime())) {
-        formattedDate = format(dateObj, 'dd MMM yyyy');
-      }
-    }
-  } catch (error) {
-    console.error('Error formatting date:', error);
-  }
+  // Handle Firestore timestamp conversion properly
+  const createdDate = bill.createdAt instanceof Date 
+    ? bill.createdAt 
+    : (bill.createdAt && typeof bill.createdAt === 'object' && bill.createdAt.toDate 
+      ? bill.createdAt.toDate() 
+      : new Date(bill.createdAt || Date.now()));
+
+  // Format the date with date-fns
+  const formattedDate = format(createdDate, 'dd MMM yyyy');
 
   const invoiceId = bill.id ? bill.id.slice(0, 8) : 'N/A';
 
@@ -73,20 +70,22 @@ function BillCard({ bill }: { bill: Bill }) {
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="pb-3">
-        <div className="space-y-3">
-          <div className="flex items-center text-sm gap-1.5 text-muted-foreground">
-            <User className="h-4 w-4" />
-            <span className="truncate font-medium">Customer: {bill.customerName || bill.customerId || 'Unknown'}</span>
+      <CardContent>
+        <div className="space-y-2 py-2">
+          <div className="flex items-center space-x-2">
+            <User className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm">Customer: {bill.customerName || 'Unknown Customer'}</span>
           </div>
-
-          <div className="flex items-center text-sm gap-1.5 text-muted-foreground">
-            <Calendar className="h-4 w-4" />
-            <span>{formattedDate}</span>
+          <div className="flex items-center space-x-2">
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm">{formattedDate}</span>
           </div>
-
-          <div className="text-xl font-bold mt-4">
-            {formatIndianCurrency(bill.totalAmount || total)}
+          <div className="flex items-center space-x-2">
+            <Clock className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm">{format(createdDate, 'hh:mm a')}</span>
+          </div>
+          <div className="mt-3">
+            <p className="text-lg font-bold">{formatIndianCurrency(bill.totalAmount)}</p>
           </div>
         </div>
       </CardContent>

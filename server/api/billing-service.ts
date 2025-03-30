@@ -286,7 +286,9 @@ export class BillingService {
       const tax = subtotal * TAX_RATE;
       const totalAmount = subtotal + tax;
 
-      // Create bill object
+      // Create bill object with full timestamp
+      const now = new Date();
+      
       const bill: Bill = {
         appointmentId,
         customerId: customer.id, //Using customer.id directly as it's already validated in getAppointmentDetails
@@ -296,8 +298,9 @@ export class BillingService {
         tax,
         totalAmount,
         status: 'PENDING_PAYMENT',
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: now,
+        updatedAt: now,
+        createdTime: now.toISOString(), // Store ISO string for consistent time representation
         petId: appointment.petId
       };
 

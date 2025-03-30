@@ -1,4 +1,3 @@
-
 import { z } from 'zod';
 
 // Define billing-related types for the server
