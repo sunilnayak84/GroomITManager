@@ -62,7 +62,10 @@ billingRouter.get('/bills', async (req, res) => {
     const processedBills = await Promise.all(
       bills.map(async (bill) => {
         try {
-          // Use the same getBill method that resolves customer names
+          if (!bill.id) {
+            logger.error('[BILLING] Bill ID missing');
+            return null;
+          }
           return await billingService.getBill(bill.id);
         } catch (error) {
           logger.error('[BILLING] Error processing bill for listing:', { billId: bill.id, error });
@@ -94,7 +97,7 @@ billingRouter.get('/bills', async (req, res) => {
       })
     );
 
-    bills = processedBills;
+    bills = processedBills.filter((bill): bill is Bill => bill !== null);
     logger.info('[BILLING] Successfully fetched bills:', { count: bills.length });
     res.json(bills);
   } catch (error) {
