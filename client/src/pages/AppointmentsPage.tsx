@@ -414,25 +414,25 @@ export default function AppointmentsPage() {
       cell: (appointment) => {
         // Check if bill is already generated for this appointment
         const billGenerated = appointment.hasBill === true || appointment.billId;
-        
+
         // Get the payment status
         let paymentStatus = "Not Generated";
         let statusColor = "bg-gray-100 text-gray-800";
-        
+
         if (billGenerated) {
-          // If we have a bill, check for its status
+          // If the bill has a specific status, show that
           if (appointment.billStatus) {
-            paymentStatus = appointment.billStatus.replace("_", " ").toUpperCase();
-            
-            // Set color based on bill status
-            if (paymentStatus.includes("PAID")) {
+            paymentStatus = appointment.billStatus;
+            if (paymentStatus === "PAID") {
               statusColor = "bg-green-100 text-green-800";
-            } else if (paymentStatus.includes("PENDING")) {
+            } else if (paymentStatus === "PENDING_PAYMENT") {
               statusColor = "bg-yellow-100 text-yellow-800";
-            } else if (paymentStatus.includes("OVERDUE")) {
-              statusColor = "bg-red-100 text-red-800";
-            } else {
+            } else if (paymentStatus === "CANCELED") {
+              statusColor = "bg-gray-100 text-gray-800";
+            } else if (paymentStatus === "REFUNDED") {
               statusColor = "bg-blue-100 text-blue-800";
+            } else if (paymentStatus === "FAILED") {
+              statusColor = "bg-red-100 text-red-800";
             }
           } else {
             // Default status for bills without explicit status
@@ -443,7 +443,7 @@ export default function AppointmentsPage() {
           paymentStatus = "Pending";
           statusColor = "bg-yellow-100 text-yellow-800";
         }
-        
+
         console.log('[BILLING] Appointment bill status:', appointment.id, { 
           billGenerated, 
           hasBill: appointment.hasBill, 
@@ -451,7 +451,7 @@ export default function AppointmentsPage() {
           status: appointment.status,
           billStatus: appointment.billStatus
         });
-        
+
         return (
           <Badge className={statusColor}>
             {paymentStatus}
@@ -502,25 +502,25 @@ export default function AppointmentsPage() {
 
       // Find the appointment in the current data
       const appointment = appointments?.find(apt => apt.id === appointmentId);
-      
+
       // Check if a bill already exists for this appointment
       if (appointment && (appointment.hasBill || appointment.billId)) {
         console.log('[BILLING] Bill already exists for appointment:', appointmentId, { 
           hasBill: appointment.hasBill, 
           billId: appointment.billId 
         });
-        
+
         toast({
           title: "Bill Already Exists",
           description: "A bill has already been generated for this appointment",
           variant: "destructive",
         });
-        
+
         // If we have a billId, navigate to it
         if (appointment.billId) {
           navigate(`/billing/${appointment.billId}`);
         }
-        
+
         setIsLoading(false);
         return;
       }
