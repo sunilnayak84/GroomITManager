@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { useBilling } from '../hooks/use-billing';
@@ -13,105 +14,35 @@ import {
 import { Button } from '../components/ui/button';
 import { Skeleton } from '../components/ui/skeleton';
 import { Badge } from '../components/ui/badge';
-import { CreditCard, ExternalLink, Calendar, User, Package, Eye, Clock } from 'lucide-react';
-
-type BillStatus = 'PENDING_PAYMENT' | 'PAID' | 'CANCELED' | 'REFUNDED';
-
-const statusColors: Record<BillStatus, string> = {
-  'PENDING_PAYMENT': 'bg-amber-100 text-amber-800 border-amber-200',
-  'PAID': 'bg-green-100 text-green-800 border-green-200',
-  'CANCELED': 'bg-gray-100 text-gray-800 border-gray-200',
-  'REFUNDED': 'bg-red-100 text-red-800 border-red-200'
-};
-
-function BillCard({ bill }: { bill: Bill }) {
-  const [, navigate] = useLocation();
-
-  // Handle Firestore timestamp conversion properly
-  const createdDate = bill.createdAt instanceof Date 
-    ? bill.createdAt 
-    : (bill.createdAt && typeof bill.createdAt === 'object' && bill.createdAt.toDate 
-      ? bill.createdAt.toDate() 
-      : new Date(bill.createdAt || Date.now()));
-
-  // Format the date with date-fns
-  const formattedDate = format(createdDate, 'dd MMM yyyy');
-
-  const invoiceId = bill.id ? bill.id.slice(0, 8) : 'N/A';
-
-  // Calculate total from items
-  const total = bill.items?.reduce((sum, item) => sum + (item.subtotal || 0), 0) || 0;
-
-  // Define status color mapping
-  const getStatusColor = (status: string) => {
-    switch(status) {
-      case 'PAID': return 'bg-green-100 text-green-800';
-      case 'PENDING_PAYMENT': return 'bg-yellow-100 text-yellow-800';
-      case 'DRAFT': return 'bg-gray-100 text-gray-800';
-      case 'FAILED': return 'bg-red-100 text-red-800';
-      default: return '';
-    }
-  };
-
-  const handleViewDetails = () => {
-    navigate(`/billing/${bill.id}`);
-  };
-
-
-  return (
-    <Card className="overflow-hidden transition-all duration-200 hover:shadow-md">
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start">
-          <CardTitle className="text-lg font-medium flex items-center">
-            <span className="truncate">Invoice #{invoiceId}</span>
-          </CardTitle>
-          <Badge className={`px-2 py-1 font-medium ${getStatusColor(bill.status)}`}>
-            {bill.status}
-          </Badge>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-2 py-2">
-          <div className="flex items-center space-x-2">
-            <User className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm">Customer: {bill.customerName || 'Unknown Customer'}</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm">{formattedDate}</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Clock className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm">{format(createdDate, 'hh:mm a')}</span>
-          </div>
-          <div className="mt-3">
-            <p className="text-lg font-bold">{formatIndianCurrency(bill.totalAmount)}</p>
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter className="pt-3 pb-3">
-        <Button 
-          variant="outline" 
-          className="w-full" 
-          onClick={handleViewDetails}
-        >
-          <Eye className="mr-2 h-4 w-4" />
-          View Details
-        </Button>
-      </CardFooter>
-    </Card>
-  );
-}
+import { 
+  CreditCard, 
+  ExternalLink, 
+  Calendar, 
+  User, 
+  Package, 
+  Eye, 
+  Clock,
+  Download,
+  ArrowRightIcon
+} from 'lucide-react';
+import { BillStatus, Bill } from '@/types/billing';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 function EmptyState() {
   return (
-    <div className="text-center py-12 border border-dashed rounded-lg">
-      <div className="mx-auto w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
-        <CreditCard className="h-6 w-6 text-gray-400" />
-      </div>
-      <h3 className="mt-4 text-lg font-medium">No bills found</h3>
-      <p className="mt-2 text-sm text-gray-500">
-        Bills will appear here once they are generated from appointments.
+    <div className="text-center py-10">
+      <CreditCard className="h-12 w-12 mx-auto text-muted-foreground" />
+      <h3 className="mt-4 text-lg font-semibold">No bills found</h3>
+      <p className="mt-2 text-sm text-muted-foreground max-w-sm mx-auto">
+        There are no bills matching your filter criteria. Try changing the filter or check back later.
       </p>
     </div>
   );
@@ -119,29 +50,28 @@ function EmptyState() {
 
 function BillSkeleton() {
   return (
-    <Card className="overflow-hidden">
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start">
-          <Skeleton className="h-6 w-36" />
-          <Skeleton className="h-6 w-24" />
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-2 py-2">
-          <Skeleton className="h-4 w-40" />
+    <div className="w-full">
+      <div className="flex items-center space-x-4 py-4 border-b">
+        <div className="space-y-2 flex-1">
           <Skeleton className="h-4 w-32" />
           <Skeleton className="h-4 w-24" />
-          <Skeleton className="h-6 w-20 mt-2" />
         </div>
-      </CardContent>
-      <CardFooter className="pt-3 pb-3">
-        <Skeleton className="h-9 w-full" />
-      </CardFooter>
-    </Card>
+        <div className="space-y-2 hidden md:block flex-1">
+          <Skeleton className="h-4 w-28" />
+        </div>
+        <div className="space-y-2 hidden md:block flex-1">
+          <Skeleton className="h-4 w-20" />
+        </div>
+        <div className="space-y-2 hidden md:block flex-1">
+          <Skeleton className="h-5 w-16" />
+        </div>
+        <div className="flex justify-end">
+          <Skeleton className="h-9 w-20" />
+        </div>
+      </div>
+    </div>
   );
 }
-
-import { Bill } from '@/types/billing';
 
 export default function BillingPage() {
   const [bills, setBills] = useState<Bill[]>([]);
@@ -160,11 +90,6 @@ export default function BillingPage() {
         setLoading(true);
         await getBills();
         // The updated bills will be available from the hookBills
-
-        // If billId is present in query param, redirect to bill details
-        if (billId) {
-          window.location.href = `/billing/${billId}`;
-        }
       } catch (error) {
         console.error('Error fetching bills:', error);
       } finally {
@@ -173,51 +98,166 @@ export default function BillingPage() {
     };
 
     fetchBills();
-  }, [getBills, billId]);
+  }, [getBills]);
 
-  // Use the bills directly from the hook instead
+  // Update local bills when hookBills changes
   useEffect(() => {
-    if (hookBills && hookBills.length > 0) {
-      setBills(hookBills);
-    }
+    setBills(hookBills || []);
   }, [hookBills]);
 
-  const filteredBills = filter === 'ALL' ? bills : (bills || []).filter(bill => bill.status === filter);
+  // Open bill directly if billId is provided
+  useEffect(() => {
+    if (billId && !loading && bills.length > 0) {
+      const bill = bills.find(b => b.id === billId);
+      if (bill) {
+        window.location.href = `/billing/${billId}`;
+      }
+    }
+  }, [billId, bills, loading]);
+
+  // Filter bills based on selected status
+  const filteredBills = filter === 'ALL'
+    ? bills
+    : bills.filter(bill => bill.status === filter);
+
+  const handleFilterChange = (newFilter: BillStatus | 'ALL') => {
+    setFilter(newFilter);
+  };
+
+  // Define status color mapping for badges
+  const getStatusColor = (status: string) => {
+    switch(status) {
+      case 'PAID': return 'bg-green-100 text-green-800';
+      case 'PENDING_PAYMENT': return 'bg-yellow-100 text-yellow-800';
+      case 'DRAFT': return 'bg-gray-100 text-gray-800';
+      case 'FAILED': return 'bg-red-100 text-red-800';
+      default: return '';
+    }
+  };
+
+  const navigateToBill = (billId: string | undefined) => {
+    if (billId) {
+      window.location.href = `/billing/${billId}`;
+    }
+  };
 
   return (
     <div className="container mx-auto py-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-        <h1 className="text-2xl font-bold">Billing & Invoices</h1>
-        <div className="flex flex-wrap gap-2">
-          {['ALL' as const, ...Object.keys(statusColors) as BillStatus[]].map(status => (
-            <Button
-              key={status}
-              variant={filter === status ? "default" : "outline"}
-              onClick={() => setFilter(status as BillStatus | 'ALL')}
-              size="sm"
-              className={filter === status && status !== 'ALL' ? statusColors[status as BillStatus] : ''}
-            >
-              {status}
-            </Button>
-          ))}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-bold">Billing</h1>
+          <p className="text-muted-foreground">Manage and view all your bills</p>
+        </div>
+        <div className="mt-4 sm:mt-0 flex flex-wrap gap-2">
+          <Button 
+            variant={filter === 'ALL' ? "default" : "outline"} 
+            size="sm" 
+            onClick={() => handleFilterChange('ALL')}
+          >
+            All
+          </Button>
+          <Button 
+            variant={filter === 'PENDING_PAYMENT' ? "default" : "outline"} 
+            size="sm" 
+            onClick={() => handleFilterChange('PENDING_PAYMENT')}
+          >
+            Pending
+          </Button>
+          <Button 
+            variant={filter === 'PAID' ? "default" : "outline"} 
+            size="sm" 
+            onClick={() => handleFilterChange('PAID')}
+          >
+            Paid
+          </Button>
+          <Button 
+            variant={filter === 'DRAFT' ? "default" : "outline"} 
+            size="sm" 
+            onClick={() => handleFilterChange('DRAFT')}
+          >
+            Draft
+          </Button>
         </div>
       </div>
 
-      {loading ? (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {[...Array(6)].map((_, i) => (
-            <BillSkeleton key={i} />
-          ))}
-        </div>
-      ) : !filteredBills || filteredBills.length === 0 ? (
-        <EmptyState />
-      ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filteredBills.map(bill => (
-            <BillCard key={bill.id} bill={bill} />
-          ))}
-        </div>
-      )}
+      <div className="responsive-table-container">
+        {loading ? (
+          <div className="space-y-4">
+            {[...Array(6)].map((_, i) => (
+              <BillSkeleton key={i} />
+            ))}
+          </div>
+        ) : !filteredBills || filteredBills.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <div className="border rounded-md overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Invoice</TableHead>
+                  <TableHead className="hidden md:table-cell">Customer</TableHead>
+                  <TableHead className="hidden md:table-cell">Date</TableHead>
+                  <TableHead className="hidden md:table-cell">Amount</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredBills.map(bill => {
+                  // Handle Firestore timestamp conversion properly
+                  const createdDate = bill.createdAt instanceof Date 
+                    ? bill.createdAt 
+                    : (bill.createdAt && typeof bill.createdAt === 'object' && bill.createdAt.toDate 
+                      ? bill.createdAt.toDate() 
+                      : new Date(bill.createdAt || Date.now()));
+
+                  // Format the date with date-fns
+                  const formattedDate = format(createdDate, 'dd MMM yyyy');
+
+                  const invoiceId = bill.id ? bill.id.slice(0, 8) : 'N/A';
+
+                  // Calculate total from items
+                  const total = bill.items?.reduce((sum, item) => sum + (item.subtotal || 0), 0) || 0;
+                  
+                  return (
+                    <TableRow key={bill.id} className="hover:bg-muted/50 cursor-pointer" onClick={() => navigateToBill(bill.id)}>
+                      <TableCell className="font-medium">
+                        <div className="flex flex-col">
+                          <span>#{invoiceId}</span>
+                          <span className="text-xs text-muted-foreground md:hidden">
+                            {bill.customerName || 'Customer'}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">{bill.customerName || 'Unknown Customer'}</TableCell>
+                      <TableCell className="hidden md:table-cell">{formattedDate}</TableCell>
+                      <TableCell className="hidden md:table-cell">{formatIndianCurrency(total)}</TableCell>
+                      <TableCell>
+                        <Badge className={`${getStatusColor(bill.status)}`}>
+                          {bill.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigateToBill(bill.id);
+                          }}
+                        >
+                          <Eye className="h-4 w-4 mr-1" />
+                          <span className="hidden sm:inline">View</span>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
