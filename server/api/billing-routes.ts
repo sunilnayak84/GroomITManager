@@ -66,7 +66,14 @@ billingRouter.get('/bills', async (req, res) => {
             logger.error('[BILLING] Bill ID missing');
             return null;
           }
-          return await billingService.getBill(bill.id);
+          const processedBill = await billingService.getBill(bill.id);
+          if (!processedBill) return null;
+          
+          return {
+            ...processedBill,
+            createdAt: new Date(processedBill.createdAt),
+            updatedAt: new Date(processedBill.updatedAt)
+          };
         } catch (error) {
           logger.error('[BILLING] Error processing bill for listing:', { billId: bill.id, error });
 
