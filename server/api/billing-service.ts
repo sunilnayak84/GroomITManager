@@ -288,7 +288,7 @@ export class BillingService {
 
       // Create bill object with full timestamp
       const now = new Date();
-      
+
       const bill: Bill = {
         appointmentId,
         customerId: customer.id, //Using customer.id directly as it's already validated in getAppointmentDetails
@@ -451,13 +451,12 @@ export class BillingService {
         return null;
       }
 
-      const billData = billDoc.data() as Bill;
-      const bill = { id: billDoc.id, ...billData };
+      const data = billDoc.data() as Bill;
+      const bill: Bill = { id: billDoc.id, ...data };
 
-      // Reset customer name if it's one of the static placeholder names
+      // Ensure we don't have placeholder names in the database
       if (bill.customerName === 'Sam Smith' || bill.customerName === 'John Doe') {
-        logger.info('[BILLING] Clearing static customer name:', { billId, customerName: bill.customerName });
-        bill.customerName = '';
+        await this.resolveAndUpdateCustomerName(billId, bill);
       }
 
       // Store all potential customer names we find to validate them later
@@ -707,6 +706,30 @@ export class BillingService {
     } catch (error) {
       logger.error('[BILLING] Error updating bill:', error);
       throw error;
+    }
+  }
+
+  private async resolveAndUpdateCustomerName(billId: string, bill: Bill) {
+    try {
+      if (bill.customerId) {
+        const customerDoc = await admin.firestore().collection('customers').doc(bill.customerId).get();
+        if (customerDoc.exists) {
+          const customer = customerDoc.data();
+          const customerName = customer?.name || `${customer?.firstName || ''} ${customer?.lastName || ''}`.trim();
+          if (customerName) {
+            await this.updateBill(billId, { customerName });
+            logger.info(`[BILLING] Updated customer name for bill ${billId} to ${customerName}`);
+          } else {
+            logger.warn(`[BILLING] Could not resolve customer name for bill ${billId}, customerId ${bill.customerId}`);
+          }
+        } else {
+          logger.warn(`[BILLING] Customer not found for bill ${billId}, customerId ${bill.customerId}`);
+        }
+      } else {
+        logger.warn(`[BILLING] customerId missing for bill ${billId}`);
+      }
+    } catch (error) {
+      logger.error(`[BILLING] Error resolving and updating customer name for bill ${billId}:`, error);
     }
   }
 }

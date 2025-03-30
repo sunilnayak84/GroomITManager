@@ -68,7 +68,7 @@ billingRouter.get('/bills', async (req, res) => {
           }
           const processedBill = await billingService.getBill(bill.id);
           if (!processedBill) return null;
-          
+
           // Ensure dates are properly converted to Date objects
           const processedBillWithDates: Bill = {
             ...processedBill,

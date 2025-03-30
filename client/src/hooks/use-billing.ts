@@ -110,7 +110,9 @@ export function useBilling(options: UseBillingOptions = {}) {
       console.log('[BILLING] Bill generated successfully:', generatedBill);
 
       // Refresh bills list
-      await getBills();
+      setTimeout(() => {
+        getBills();
+      }, 500); //Added setTimeout as per the changes
 
       if (options.onSuccess) {
         options.onSuccess();
