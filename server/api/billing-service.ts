@@ -289,9 +289,33 @@ export class BillingService {
       // Create bill object with full timestamp
       const now = new Date();
 
+      // Ensure we use the correct customerId from pet when available
+      let actualCustomerId = customer.id;
+      
+      // If we have a petId, try to get the correct customer from the pet
+      if (appointment.petId) {
+        try {
+          logger.info('[BILLING] Checking pet owner for better customerId:', appointment.petId);
+          const petDoc = await admin.firestore()
+            .collection('pets')
+            .doc(appointment.petId)
+            .get();
+            
+          if (petDoc.exists) {
+            const petData = petDoc.data();
+            if (petData?.customerId) {
+              actualCustomerId = petData.customerId;
+              logger.info('[BILLING] Using customerId from pet:', actualCustomerId);
+            }
+          }
+        } catch (error) {
+          logger.error('[BILLING] Error getting pet owner:', error);
+        }
+      }
+      
       const bill: Bill = {
         appointmentId,
-        customerId: customer.id, //Using customer.id directly as it's already validated in getAppointmentDetails
+        customerId: actualCustomerId,
         customerName: customer.name || `${customer.firstName || ''} ${customer.lastName || ''}`.trim() || '',
         items,
         subtotal,

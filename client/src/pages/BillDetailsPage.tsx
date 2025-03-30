@@ -65,24 +65,63 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
           // Always attempt to get the latest customer details
           try {
             const fetchCustomer = async () => {
-              // Direct customer data fetch attempt
-              const response = await fetch(`/api/customers/${billData.customerId}`, {
+              // First try with the customerId from the bill
+              let response = await fetch(`/api/customers/${billData.customerId}`, {
                 headers: {
                   'Authorization': `Bearer ${await getIdToken()}`
                 }
               });
 
-              if (response.ok) {
-                const customerData: CustomerData = await response.json();
-                if (customerData) {
-                  // Update the customer name from the direct customer data
-                  billData.customerName = customerData.name ||
-                    `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim() ||
-                    customerData.displayName ||
-                    billData.customerName || 'Unknown Customer';
+              let customerData = null;
 
-                  console.log('[BILLING] Updated customer name from customer data:', billData.customerName);
+              if (response.ok) {
+                customerData = await response.json();
+                const customerName = customerData.name || `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim();
+
+                // If we got a placeholder name like "Sam Smith", try the pet's owner instead
+                if (customerName === 'Sam Smith' && billData.petCustomerId) {
+                  console.log('[BILLING] Got placeholder name, trying pet owner instead:', billData.petCustomerId);
+                  const petOwnerResponse = await fetch(`/api/customers/${billData.petCustomerId}`, {
+                    headers: {
+                      'Authorization': `Bearer ${await getIdToken()}`
+                    }
+                  });
+
+                  if (petOwnerResponse.ok) {
+                    const petOwnerData = await petOwnerResponse.json();
+                    const petOwnerName = petOwnerData.name || 
+                      `${petOwnerData.firstName || ''} ${petOwnerData.lastName || ''}`.trim();
+
+                    if (petOwnerName && petOwnerName !== 'Sam Smith') {
+                      console.log('[BILLING] Using pet owner name instead:', petOwnerName);
+                      customerData = petOwnerData;
+                    }
+                  }
                 }
+
+                console.log('[BILLING] Final customer data:', customerData);
+                billData.customerName = customerData.name || `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim();
+
+              } else if (billData.petCustomerId) {
+                // If initial customer lookup failed, try pet owner
+                console.log('[BILLING] First lookup failed, trying pet owner:', billData.petCustomerId);
+                const petOwnerResponse = await fetch(`/api/customers/${billData.petCustomerId}`, {
+                  headers: {
+                    'Authorization': `Bearer ${await getIdToken()}`
+                  }
+                });
+
+                if (petOwnerResponse.ok) {
+                  customerData = await petOwnerResponse.json();
+                  console.log('[BILLING] Pet owner data loaded:', customerData);
+                  billData.customerName = customerData.name || `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim();
+                } else {
+                  console.error('[BILLING] Error fetching pet owner:', petOwnerResponse.status);
+                  
+                }
+              } else {
+                console.error('[BILLING] Error fetching customer:', response.status);
+                
               }
             };
             await fetchCustomer();

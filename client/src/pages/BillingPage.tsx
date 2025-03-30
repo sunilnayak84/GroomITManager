@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { useBilling } from '../hooks/use-billing';
@@ -210,14 +209,14 @@ export default function BillingPage() {
                     if (bill.createdAt instanceof Date) {
                       return bill.createdAt;
                     }
-                    
+
                     if (bill.createdAt && typeof bill.createdAt === 'object') {
                       // Handle Firestore Timestamp objects that have toDate method
                       if (typeof (bill.createdAt as any).toDate === 'function') {
                         return (bill.createdAt as any).toDate();
                       }
                     }
-                    
+
                     // Handle string dates or use current date as fallback
                     return new Date(bill.createdAt || Date.now());
                   })();
@@ -229,18 +228,20 @@ export default function BillingPage() {
 
                   // Calculate total from items
                   const total = bill.items?.reduce((sum, item) => sum + (item.subtotal || 0), 0) || 0;
-                  
+
+                  let customerName = bill.customerName; // Use existing customerName as a fallback
+
                   return (
                     <TableRow key={bill.id} className="hover:bg-muted/50 cursor-pointer" onClick={() => navigateToBill(bill.id)}>
                       <TableCell className="font-medium">
                         <div className="flex flex-col">
                           <span>#{invoiceId}</span>
                           <span className="text-xs text-muted-foreground md:hidden">
-                            {bill.customerName || 'Customer'}
+                            {customerName || 'Customer'}
                           </span>
                         </div>
                       </TableCell>
-                      <TableCell className="hidden md:table-cell">{bill.customerName || 'Unknown Customer'}</TableCell>
+                      <TableCell className="hidden md:table-cell">{customerName || 'Unknown Customer'}</TableCell>
                       <TableCell className="hidden md:table-cell">{formattedDate}</TableCell>
                       <TableCell className="hidden md:table-cell">{formatIndianCurrency(total)}</TableCell>
                       <TableCell>
