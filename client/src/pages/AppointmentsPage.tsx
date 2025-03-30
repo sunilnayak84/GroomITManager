@@ -420,14 +420,37 @@ export default function AppointmentsPage() {
         let statusColor = "bg-gray-100 text-gray-800";
         
         if (billGenerated) {
-          paymentStatus = "Generated";
-          statusColor = "bg-green-100 text-green-800";
+          // If we have a bill, check for its status
+          if (appointment.billStatus) {
+            paymentStatus = appointment.billStatus.replace("_", " ").toUpperCase();
+            
+            // Set color based on bill status
+            if (paymentStatus.includes("PAID")) {
+              statusColor = "bg-green-100 text-green-800";
+            } else if (paymentStatus.includes("PENDING")) {
+              statusColor = "bg-yellow-100 text-yellow-800";
+            } else if (paymentStatus.includes("OVERDUE")) {
+              statusColor = "bg-red-100 text-red-800";
+            } else {
+              statusColor = "bg-blue-100 text-blue-800";
+            }
+          } else {
+            // Default status for bills without explicit status
+            paymentStatus = "PENDING PAYMENT";
+            statusColor = "bg-yellow-100 text-yellow-800";
+          }
         } else if (appointment.status !== 'completed') {
           paymentStatus = "Pending";
           statusColor = "bg-yellow-100 text-yellow-800";
         }
         
-        console.log('[BILLING] Appointment bill status:', appointment.id, { billGenerated, hasBill: appointment.hasBill, billId: appointment.billId, status: appointment.status });
+        console.log('[BILLING] Appointment bill status:', appointment.id, { 
+          billGenerated, 
+          hasBill: appointment.hasBill, 
+          billId: appointment.billId, 
+          status: appointment.status,
+          billStatus: appointment.billStatus
+        });
         
         return (
           <Badge className={statusColor}>

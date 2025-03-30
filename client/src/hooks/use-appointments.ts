@@ -48,6 +48,7 @@ interface FirestoreAppointmentData {
     auto_deducted: boolean;
     service_name?: string;
   }>;
+  billId?: string; // Added billId to FirestoreAppointmentData
 }
 
 const timestampToISOString = (timestamp: Timestamp | null | undefined): string => {
@@ -89,7 +90,8 @@ const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppoi
       afterImages: [],
       observations: null,
       recommendations: null,
-      cancellationReason: null
+      cancellationReason: null,
+      billId: data.billId //Added billId to createFirestoreAppointmentData
     };
   };
 
@@ -110,6 +112,7 @@ export interface AppointmentWithRelations extends AppointmentData {
   services?: ServiceData[];
   allServices?: ServiceData[];
   paymentStatus?: 'paid' | 'pending';
+  billStatus?: 'paid' | 'pending_payment' | 'generated'; // Added billStatus
 }
 
 export function useAppointments() {
@@ -274,6 +277,23 @@ export function useAppointments() {
               console.warn('FETCH_APPOINTMENTS: No services array for appointment:', appointmentDoc.id);
             }
 
+            let billStatus = null;
+
+            // If appointment has billId, fetch bill status
+            if (rawData.billId) {
+              try {
+                const billRef = doc(db, 'bills', rawData.billId);
+                const billDoc = await getDoc(billRef);
+                if (billDoc.exists()) {
+                  const billData = billDoc.data();
+                  billStatus = billData.status || 'pending_payment';
+                }
+              } catch (billError) {
+                console.error('[APPOINTMENTS] Error fetching bill status:', billError);
+              }
+            }
+
+
             const appointment: AppointmentWithRelations = {
               id: appointmentDoc.id,
               petId: rawData.petId,
@@ -331,7 +351,8 @@ export function useAppointments() {
                 service_linked: usage.service_linked,
                 auto_deducted: usage.auto_deducted,
                 service_name: usage.service_name || ''
-              }))
+              })),
+              billStatus: billStatus // Added billStatus
             };
 
             appointments.push(appointment);
