@@ -414,6 +414,7 @@ export default function AppointmentsPage() {
       cell: (appointment) => {
         // Check if bill is already generated for this appointment
         const billGenerated = appointment.hasBill === true || appointment.billId;
+        console.log('[BILLING] Appointment bill status:', appointment.id, { billGenerated, hasBill: appointment.hasBill, billId: appointment.billId });
 
         return (
           <div className="flex justify-start">
@@ -447,6 +448,31 @@ export default function AppointmentsPage() {
     try {
       console.log('[BILLING] Initiating bill generation for:', appointmentId);
       setIsLoading(true);
+
+      // Find the appointment in the current data
+      const appointment = appointments?.find(apt => apt.id === appointmentId);
+      
+      // Check if a bill already exists for this appointment
+      if (appointment && (appointment.hasBill || appointment.billId)) {
+        console.log('[BILLING] Bill already exists for appointment:', appointmentId, { 
+          hasBill: appointment.hasBill, 
+          billId: appointment.billId 
+        });
+        
+        toast({
+          title: "Bill Already Exists",
+          description: "A bill has already been generated for this appointment",
+          variant: "destructive",
+        });
+        
+        // If we have a billId, navigate to it
+        if (appointment.billId) {
+          navigate(`/billing/${appointment.billId}`);
+        }
+        
+        setIsLoading(false);
+        return;
+      }
 
       const user = auth.currentUser;
       if (!user) {

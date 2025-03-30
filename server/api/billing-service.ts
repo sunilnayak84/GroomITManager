@@ -271,6 +271,15 @@ export class BillingService {
       // Get appointment details
       const { appointment, customer, services, doc } = await this.getAppointmentDetails(appointmentId);
 
+      // Check if a bill already exists for this appointment
+      if (appointment.hasBill === true || appointment.billId) {
+        logger.warn('[BILLING] Attempted to generate duplicate bill for appointment', {
+          appointmentId,
+          existingBillId: appointment.billId,
+          hasBill: appointment.hasBill
+        });
+        throw new Error('A bill has already been generated for this appointment');
+      }
 
       // Create bill items from services
       const items: BillItem[] = services.map(service => ({
