@@ -42,8 +42,16 @@ export function useBilling(options: UseBillingOptions = {}) {
 
       const billsData = await response.json();
       console.log('[BILLING] Fetched bills:', billsData);
-      setBills(billsData);
-      return billsData;
+      // Ensure we have consistent date handling
+      const processedBills = (billsData || []).map(bill => {
+        // If createdAt exists as a timestamp object with toDate method, convert it
+        if (bill.createdAt && typeof bill.createdAt.toDate === 'function') {
+          return { ...bill, createdAt: bill.createdAt.toDate().toISOString() };
+        }
+        return bill;
+      });
+      setBills(processedBills);
+      return processedBills;
     } catch (error) {
       console.error('[BILLING] Error fetching bills:', error);
       toast({

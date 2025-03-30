@@ -254,9 +254,9 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
         ? new Date(bill.createdAt)
         : new Date();
 
-  // Format the date and time
-  const formattedDate = format(billDate, 'dd MMM yyyy');
-  const formattedTime = format(billDate, 'hh:mm a');
+  // Format the date and time - prioritizing createdAt
+  const formattedDate = billDate ? format(billDate, 'dd MMMM yyyy') : 'Date not available';
+  const formattedTime = billDate ? format(billDate, 'hh:mm a') : 'Time not available';
 
   // Get customer display name - improved handling of nullish values
   const customerDisplayName = bill?.customerName ?? (bill?.customerId ? `Customer ${bill.customerId.slice(0, 8)}...` : 'N/A');
