@@ -413,8 +413,8 @@ export default function AppointmentsPage() {
       header: 'Payment Status',
       cell: (appointment) => {
         // Check if bill is already generated for this appointment
-        const billGenerated = appointment.hasBill === true || appointment.billId;
-
+        const billGenerated = Boolean(appointment.billId);
+        
         // Get the payment status
         let paymentStatus = "Not Generated";
         let statusColor = "bg-gray-100 text-gray-800";
@@ -423,6 +423,11 @@ export default function AppointmentsPage() {
           // If the bill has a specific status, show that
           if (appointment.billStatus) {
             paymentStatus = appointment.billStatus;
+            // Format the status for display
+            if (paymentStatus === "PENDING_PAYMENT") {
+              paymentStatus = "PENDING PAYMENT";
+            }
+            
             if (paymentStatus === "PAID") {
               statusColor = "bg-green-100 text-green-800";
             } else if (paymentStatus === "PENDING_PAYMENT") {
@@ -464,8 +469,8 @@ export default function AppointmentsPage() {
       header: 'Billing',
       cell: (appointment) => {
         // Check if bill is already generated for this appointment
-        const billGenerated = appointment.hasBill === true || appointment.billId;
-        console.log('[BILLING] Appointment bill status:', appointment.id, { billGenerated, hasBill: appointment.hasBill, billId: appointment.billId });
+        const billGenerated = Boolean(appointment.billId);
+        console.log('[BILLING] Appointment bill status:', appointment.id, { billGenerated, billId: appointment.billId, billStatus: appointment.billStatus });
 
         return (
           <div className="flex justify-start">
@@ -504,10 +509,10 @@ export default function AppointmentsPage() {
       const appointment = appointments?.find(apt => apt.id === appointmentId);
 
       // Check if a bill already exists for this appointment
-      if (appointment && (appointment.hasBill || appointment.billId)) {
+      if (appointment && appointment.billId) {
         console.log('[BILLING] Bill already exists for appointment:', appointmentId, { 
-          hasBill: appointment.hasBill, 
-          billId: appointment.billId 
+          billId: appointment.billId,
+          billStatus: appointment.billStatus
         });
 
         toast({
