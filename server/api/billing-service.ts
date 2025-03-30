@@ -884,6 +884,43 @@ export class BillingService {
       throw new Error(`Failed to create bill: ${error.message}`);
     }
   }
+
+  // Check if a bill exists for an appointment
+  async checkBillExists(appointmentId: string): Promise<{ billGenerated: boolean, billId?: string }> {
+    try {
+      logger.info('[BILLING] Checking if bill exists for appointment:', { appointmentId });
+      const billsRef = admin.firestore().collection('bills');
+      const snapshot = await billsRef.where('appointmentId', '==', appointmentId).limit(1).get();
+
+      if (!snapshot.empty) {
+        const billDoc = snapshot.docs[0];
+        logger.info('[BILLING] Bill found for appointment:', { appointmentId, billId: billDoc.id });
+        return { billGenerated: true, billId: billDoc.id };
+      }
+
+      logger.info('[BILLING] No bill found for appointment:', { appointmentId });      return { billGenerated: false };
+    } catch (error) {
+      logger.error('[BILLING] Error checking if bill exists:', { appointmentId, error });
+      return { billGenerated: false };
+    }
+  }
+
+  // Update appointment with billing information
+  async updateAppointmentWithBillInfo(appointmentId: string, billId: string): Promise<void> {
+    try {
+      logger.info('[BILLING] Updating appointment with bill info:', { appointmentId, billId });
+      const appointmentRef = admin.firestore().collection('appointments').doc(appointmentId);
+      await appointmentRef.update({
+        hasBill: true,
+        billId: billId,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+      logger.info('[BILLING] Successfully updated appointment with bill info');
+    } catch (error) {
+      logger.error('[BILLING] Error updating appointment with bill info:', { error });
+      throw error;
+    }
+  }
 }
 
 interface BillCreateInput {

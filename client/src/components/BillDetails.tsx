@@ -107,24 +107,43 @@ export function BillDetails({ appointmentId, onBillGenerated }: BillDetailsProps
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Generate Bill</CardTitle>
+          <CardTitle>Bill Generation</CardTitle>
         </CardHeader>
         <CardContent>
-          <Button 
-            onClick={handleGenerateBill} 
-            disabled={loading || billGenerated} // Disable button if loading or bill already generated
-            className="w-full"
-          >
-            {loading ? (
-              <>
-                <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          {billGenerated ? (
+            <div className="text-center">
+              <div className="flex items-center justify-center text-green-600 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
                 </svg>
-                Generating...
-              </>
-            ) : "Generate Bill"}
-          </Button>
+                <span>Bill already generated</span>
+              </div>
+              <Button 
+                onClick={() => window.location.href = `/billing/${appointmentId}`}
+                className="w-full"
+                variant="outline"
+              >
+                View Bill
+              </Button>
+            </div>
+          ) : (
+            <Button 
+              onClick={handleGenerateBill} 
+              disabled={loading} 
+              className="w-full"
+            >
+              {loading ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Generating...
+                </>
+              ) : "Generate Bill"}
+            </Button>
+          )}
         </CardContent>
       </Card>
 

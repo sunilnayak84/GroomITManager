@@ -392,21 +392,53 @@ export default function AppointmentsPage() {
     },
     {
       header: "Actions",
-      cell: (row: AppointmentWithRelations) => (
-        <ActionButtons
-          appointment={row}
-          onView={() => {
-            console.log("View button clicked for appointment:", row.id);
-            setSelectedAppointment(row);
-            setOpenDetails(true);
-          }}
-          onEdit={() => {
-            console.log("Edit button clicked for appointment:", row.id);
-            setSelectedAppointment(row);
-            setOpenEdit(true);
-          }}
-        />
-      ),
+      cell: ({ row }) => {
+        const appointment = row.original;
+        // Check if bill is already generated for this appointment
+        const billGenerated = appointment.hasBill === true || appointment.billId;
+
+        return (
+          <div className="flex space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setSelectedAppointment(appointment);
+                setOpenDetails(true);
+              }}
+            >
+              Details
+            </Button>
+
+            {billGenerated ? (
+              <Button
+                variant="outline"
+                size="sm"
+                className="bg-green-50 text-green-600 border-green-200 hover:bg-green-100 hover:text-green-700"
+                onClick={() => navigate(`/billing/${appointment.billId}`)}
+              >
+                View Bill
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm" 
+                onClick={() => handleGenerateBill(appointment.id)}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <span className="flex items-center">
+                    <span className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-b-transparent"></span>
+                    Processing
+                  </span>
+                ) : (
+                  "Generate Bill"
+                )}
+              </Button>
+            )}
+          </div>
+        );
+      },
     },
     {
       id: 'billing',
@@ -821,7 +853,7 @@ export default function AppointmentsPage() {
                       Pay Now
                     </Button>
                   )}
-                  <Button onClick={() => window.open(`/billing?billId=${billPreview.id}`, '_blank')}>
+                  <Button onClick={() => window.open`/billing?billId=${billPreview.id}`, '_blank')}>
                     <ExternalLink className="mr-2 h-4 w-4" />
                     View Full Bill
                   </Button>
