@@ -495,6 +495,15 @@ export default function AppointmentsPage() {
       const bill = await response.json();
       console.log('[BILLING] Bill generated:', bill);
 
+      toast({
+        title: "Success",
+        description: "Bill generated successfully",
+      });
+
+      if (fetchAppointments) {
+        await fetchAppointments();
+      }
+
       if (bill.id) {
         // Fetch latest bills before showing modal
         try {
@@ -506,27 +515,16 @@ export default function AppointmentsPage() {
           console.error('Error refreshing bills:', error);
         }
 
-        // Refresh appointments list to update UI
-        if (fetchAppointments) {
-          console.log('[BILLING] Refreshing appointments to update UI');
-          await fetchAppointments();
-        }
-
-        // Show success message
-        toast({
-          title: "Success",
-          description: "Bill generated successfully and ready to view",
-        });
-
-        // Navigate to bill details
-        navigate(`/billing/${bill.id}`);
+        // Store bill preview and show modal
+        setBillPreview(bill);
+        setShowBillModal(true);
       }
     } catch (error) {
-      console.error('[BILLING] Error generating bill:', error);
+      console.log('[BILLING] Error generating bill:', error);
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to generate bill",
         variant: "destructive",
+        title: "Bill Generation Failed",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
       });
     } finally {
       setIsLoading(false);
