@@ -205,11 +205,22 @@ export default function BillingPage() {
               <TableBody>
                 {filteredBills.map(bill => {
                   // Handle Firestore timestamp conversion properly
-                  const createdDate = bill.createdAt instanceof Date 
-                    ? bill.createdAt 
-                    : (bill.createdAt && typeof bill.createdAt === 'object' && bill.createdAt.toDate 
-                      ? bill.createdAt.toDate() 
-                      : new Date(bill.createdAt || Date.now()));
+                  // Safely handle various date formats
+                  const createdDate = (() => {
+                    if (bill.createdAt instanceof Date) {
+                      return bill.createdAt;
+                    }
+                    
+                    if (bill.createdAt && typeof bill.createdAt === 'object') {
+                      // Handle Firestore Timestamp objects that have toDate method
+                      if (typeof (bill.createdAt as any).toDate === 'function') {
+                        return (bill.createdAt as any).toDate();
+                      }
+                    }
+                    
+                    // Handle string dates or use current date as fallback
+                    return new Date(bill.createdAt || Date.now());
+                  })();
 
                   // Format the date with date-fns
                   const formattedDate = format(createdDate, 'dd MMM yyyy');

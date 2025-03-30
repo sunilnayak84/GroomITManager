@@ -7,7 +7,7 @@ export interface Bill extends BaseBill {
 }
 import { useToast } from './use-toast';
 import { auth } from '@/lib/firebase';
-import { useRouter } from 'next/router'; // Added import for useRouter
+import { useLocation } from 'wouter'; // Use wouter instead of Next.js router
 
 
 interface UseBillingOptions {
@@ -258,8 +258,8 @@ export function useBilling(options: UseBillingOptions = {}) {
 
 // Added useBillingOperations hook based on the changes provided.  Assumes getToken() exists.
 export const useBillingOperations = () => {
-  const { showToast } = useToast();
-  const router = useRouter();
+  const { toast } = useToast();
+  const [, navigate] = useLocation();
 
   const generateBill = async (appointmentId: string): Promise<string | null> => {
     try {
@@ -310,9 +310,9 @@ export const useBillingOperations = () => {
       return billId;
     } catch (error) {
       console.error('Error generating bill:', error);
-      showToast({
+      toast({
         title: 'Error',
-        description: error.message || 'Failed to generate bill',
+        description: error instanceof Error ? error.message : 'Failed to generate bill',
         variant: 'destructive'
       });
       return null;
