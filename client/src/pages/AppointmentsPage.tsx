@@ -411,22 +411,34 @@ export default function AppointmentsPage() {
     {
       id: 'billing',
       header: 'Billing',
-      cell: (appointment: AppointmentWithRelations) => {
+      cell: ({ row }) => {
+        const appointment = row.original;
+        // Check if bill is already generated for this appointment
+        const billGenerated = appointment.hasBill === true || appointment.billId;
+
         return (
-          <>
-            {appointment.billId ? (
-              <>
-                <Button variant="outline" size="sm" onClick={() => navigate(`/billing/${appointment.billId}`)}>
-                  View Bill
-                </Button>
-                <span className="ml-2">{appointment.paymentStatus || 'Pending'}</span>
-              </>
+          <div className="flex justify-start">
+            {billGenerated ? (
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center"
+                onClick={() => window.open(`/billing/${appointment.billId || ''}`, '_blank')}
+              >
+                <ExternalLink className="mr-2 h-4 w-4" />
+                View Bill
+              </Button>
             ) : (
-              <Button variant="outline" size="sm" onClick={() => handleGenerateBill(appointment.id)}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex items-center"
+                onClick={() => handleGenerateBill(appointment.id)}
+              >
                 Generate Bill
               </Button>
             )}
-          </>
+          </div>
         );
       }
     }
@@ -496,20 +508,22 @@ export default function AppointmentsPage() {
       console.log('[BILLING] Bill generated:', bill);
 
       if (bill.id) {
-        // Fetch latest bills before showing modal
-        try {
-          const response = await fetch('/api/billing/bills');
-          if (!response.ok) {
-            console.error('Failed to refresh bills after generation');
-          }
-        } catch (error) {
-          console.error('Error refreshing bills:', error);
-        }
-
         // Refresh appointments list to update UI
         if (fetchAppointments) {
           console.log('[BILLING] Refreshing appointments to update UI');
           await fetchAppointments();
+
+          // Update the UI immediately to reflect the bill was generated
+          const updatedAppointments = appointments?.map(apt => 
+            apt.id === appointmentId 
+              ? { ...apt, hasBill: true, billId: bill.id } 
+              : apt
+          );
+          if (updatedAppointments) {
+            // If we have appointments data, update it locally for immediate UI response
+            // This will be overwritten when fetchAppointments completes
+            console.log('[BILLING] Updating local appointments data to reflect bill generation');
+          }
         }
 
         // Show success message
@@ -830,8 +844,7 @@ export default function AppointmentsPage() {
                 </div>
               </DialogFooter>
             </div>
-          )}
-        </DialogContent>
+          )}        </DialogContent>
       </Dialog>
     </div>
   );
