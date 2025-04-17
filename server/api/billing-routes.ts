@@ -106,7 +106,7 @@ billingRouter.get('/bills', async (req, res) => {
       })
     );
 
-    bills = processedBills.filter((bill): bill is Bill => bill !== null) as Bill[];
+    bills = processedBills.filter((bill): bill is any => bill !== null);
     logger.info('[BILLING] Successfully fetched bills:', { count: bills.length });
     res.json(bills);
   } catch (error) {

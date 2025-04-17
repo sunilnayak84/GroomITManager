@@ -19,6 +19,7 @@ export interface Bill {
   appointmentId: string;
   customerId: string;
   customerName?: string;
+  petId?: string;
   items: BillItem[];
   subtotal: number;
   tax: number;
@@ -30,3 +31,12 @@ export interface Bill {
   paymentDate?: Date;
   paymentLink?: string;
 }
+
+export type BillDraft = Omit<Bill, 
+  'id' | 
+  'status' | 
+  'paymentId' | 
+  'paymentLink' | 
+  'createdAt' | 
+  'updatedAt'
+>;

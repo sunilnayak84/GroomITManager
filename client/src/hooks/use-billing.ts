@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Bill as BaseBill, BillDraft, BillStatus } from '@/types/billing';
+import { Bill, BillDraft, BillStatus } from '@/types/billing';
 import { useToast } from './use-toast';
 import { auth } from '@/lib/firebase';
 import { useLocation } from 'wouter';
@@ -8,7 +8,6 @@ import { collection, getDocs, doc, getDoc, addDoc, updateDoc, serverTimestamp, T
 import { db } from '@/lib/firebase';
 import { useFirebaseAuth } from '@/hooks/use-firebase-auth';
 import { useUser } from '@/hooks/use-user';
-import { Bill } from '@/types/billing';
 
 export interface BillItem {
   id: string;
