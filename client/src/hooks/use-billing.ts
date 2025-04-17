@@ -70,6 +70,7 @@ export function useBilling() {
         subtotal: data.subtotal || 0,
         tax: data.tax || 0,
         totalAmount: data.totalAmount || 0,
+        currency: data.currency || "INR", // Set default currency to INR for India
         paymentId: data.paymentId,
         paymentMethod: data.paymentMethod,
         notes: data.notes,
