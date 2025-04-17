@@ -1,53 +1,32 @@
 import { z } from 'zod';
 
-export const BillStatusSchema = z.enum([
-  'DRAFT',
-  'PENDING_PAYMENT',
-  'PAID',
-  'FAILED'
-]);
+export type BillStatus = "DRAFT" | "PENDING_PAYMENT" | "PAID" | "FAILED" | "CANCELED" | "REFUNDED";
 
-export type BillStatus = z.infer<typeof BillStatusSchema>;
+export interface BillItem {
+  id: string;
+  serviceName: string;
+  price: number;
+  quantity: number;
+  subtotal: number;
+  description?: string;
+}
 
-export const BillItemSchema = z.object({
-  id: z.string(),
-  serviceName: z.string(),
-  description: z.string().optional(),
-  price: z.number(),
-  quantity: z.number(),
-  subtotal: z.number()
-});
-
-export type BillItem = z.infer<typeof BillItemSchema>;
-
-export const BillSchema = z.object({
-  id: z.string().optional(),
-  appointmentId: z.string(),
-  customerId: z.string(),
-  customerName: z.string().optional(),
-  petId: z.string().optional(),
-  items: z.array(BillItemSchema),
-  subtotal: z.number(),
-  tax: z.number(),
-  totalAmount: z.number(),
-  status: BillStatusSchema,
-  paymentId: z.string().optional(),
-  paymentLink: z.string().optional(),
-  paymentMethod: z.string().optional(),
-  notes: z.string().optional(),
-  createdAt: z.union([z.date(), z.string()]), // Support both date objects and string dates
-  updatedAt: z.union([z.date(), z.string()])
-});
-
-export type Bill = z.infer<typeof BillSchema>;
-
-export const BillDraftSchema = BillSchema.omit({ 
-  id: true,
-  status: true,
-  paymentId: true,
-  paymentLink: true,
-  createdAt: true,
-  updatedAt: true
-});
-
-export type BillDraft = z.infer<typeof BillDraftSchema>;
+export interface Bill {
+  id: string;
+  status: BillStatus;
+  createdAt: Date;
+  updatedAt: Date;
+  appointmentId: string;
+  customerId: string;
+  customerName?: string;
+  items: BillItem[];
+  subtotal: number;
+  tax: number;
+  totalAmount: number;
+  currency: string;
+  notes?: string;
+  paymentMethod?: string;
+  paymentId?: string;
+  paymentDate?: Date;
+  paymentLink?: string;
+}

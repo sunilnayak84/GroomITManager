@@ -414,6 +414,8 @@ export type AppointmentWithRelations = {
   groomerId: string;
   branchId: string;
   billId?: string;
+  billStatus?: string;
+  hasBill?: boolean;
   date: string;
   status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
   notes: string | null;
