@@ -16,6 +16,8 @@ export interface Appointment {
   customerName?: string;
   petName?: string;
   groomerName?: string;
+  billStatus?: string;
+  hasBill?: boolean;
 }
 
 export interface AppointmentWithRelations extends Appointment {
@@ -23,5 +25,6 @@ export interface AppointmentWithRelations extends Appointment {
   petName: string;
   groomerName: string;
   billId?: string;
-  billStatus?: 'paid' | 'pending_payment' | 'generated';
+  billStatus?: string;
+  hasBill?: boolean;
 }

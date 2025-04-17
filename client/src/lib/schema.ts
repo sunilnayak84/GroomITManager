@@ -503,9 +503,10 @@ export type InsertAppointment = {
   branchId: string;
   date: string;
   time: string;
-  status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
+  status: "pending" | "confirmed" | "completed" | "cancelled" | "in_progress";
   notes: string | null;
   productsUsed?: string | null;
   totalPrice?: number;
   totalDuration?: number;
+  billId?: string;
 };

@@ -1,7 +1,6 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from './use-user';
-import type { AppointmentWithRelations, AppointmentImage } from "@/lib/schema";
 import { 
   collection, doc, setDoc, getDoc, getDocs, query, 
   where, DocumentData, CollectionReference, runTransaction,
@@ -9,6 +8,7 @@ import {
   FieldValue, serverTimestamp, Timestamp, updateDoc, arrayUnion
 } from 'firebase/firestore';
 import { db } from "../lib/firebase";
+import type { AppointmentImage, InsertAppointment } from "@/lib/schema";
 
 // Define the missing types
 type CustomerData = {
@@ -73,6 +73,7 @@ interface AppointmentData {
     service_name?: string;
   }>;
   billId?: string;
+  billStatus?: string;
 }
 
 interface FirestoreAppointmentData {
@@ -114,60 +115,7 @@ interface FirestoreAppointmentData {
     auto_deducted: boolean;
     service_name?: string;
   }>;
-  billId?: string; // Added billId to FirestoreAppointmentData
-}
-
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useUser } from './use-user';
-import type { AppointmentWithRelations, InsertAppointment, AppointmentImage } from "@/lib/schema";
-import { 
-  collection, doc, setDoc, getDoc, getDocs, query, 
-  where, DocumentData, CollectionReference, runTransaction,
-  QuerySnapshot, DocumentSnapshot, WithFieldValue, 
-  FieldValue, serverTimestamp, Timestamp, updateDoc, arrayUnion
-} from 'firebase/firestore';
-import { db } from "../lib/firebase";
-
-interface FirestoreAppointmentData {
-  petId: string;
-  services: string[];
-  groomerId: string;
-  branchId: string;
-  date: Timestamp;
-  status: "pending" | "confirmed" | "completed" | "cancelled" | "in_progress";
-  notes: string | null;
-  productsUsed: string | null;
-  totalPrice: number;
-  totalDuration: number;
-  createdAt: Timestamp;
-  updatedAt: Timestamp | null;
-  deletedAt: Timestamp | null;
-  cancellationReason?: "no_show" | "rescheduled" | "other" | null;
-  beforeImage?: string | null;
-  beforeImages: Array<{
-    id: string;
-    url: string;
-    type: 'before';
-    timestamp: Timestamp;
-  }>;
-  afterImages: Array<{
-    id: string;
-    url: string;
-    type: 'after';
-    timestamp: Timestamp;
-  }>;
-  observations?: string | null;
-  recommendations?: string | null;
-  inventoryUsage?: Array<{
-    item_id: string;
-    quantity_used: number;
-    service_id: string;
-    notes: string;
-    service_linked: boolean;
-    auto_deducted: boolean;
-    service_name?: string;
-  }>;
-  billId?: string; // Added billId to FirestoreAppointmentData
+  billId?: string;
 }
 
 const timestampToISOString = (timestamp: Timestamp | null | undefined): string => {
@@ -210,28 +158,18 @@ const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppoi
       observations: null,
       recommendations: null,
       cancellationReason: null,
-      billId: data.billId //Added billId to createFirestoreAppointmentData
+      billId: data.billId
     };
   };
-
-interface InventoryUsageData {
-  item_id: string;
-  quantity_used: number;
-  service_id: string;
-  notes: string;
-  service_linked: boolean;
-  auto_deducted: boolean;
-  service_name: string;
-}
 
 export interface AppointmentWithRelations extends AppointmentData {
   customer?: CustomerData;
   groomer?: GroomerData;
   pet?: PetData;
-  services?: ServiceData[];
+  service?: ServiceData[];
   allServices?: ServiceData[];
   paymentStatus?: 'paid' | 'pending';
-  billStatus?: 'paid' | 'pending_payment' | 'generated';
+  hasBill?: boolean;
 }
 
 export function useAppointments() {
@@ -412,7 +350,6 @@ export function useAppointments() {
               }
             }
 
-
             const appointment: AppointmentWithRelations = {
               id: appointmentDoc.id,
               petId: rawData.petId,
@@ -471,7 +408,9 @@ export function useAppointments() {
                 auto_deducted: usage.auto_deducted,
                 service_name: usage.service_name || ''
               })),
-              billStatus: billStatus // Added billStatus
+              billId: rawData.billId,
+              billStatus: billStatus,
+              hasBill: Boolean(rawData.billId)
             };
 
             appointments.push(appointment);
