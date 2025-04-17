@@ -44,6 +44,7 @@ export function useBilling() {
 
   const getBillById = async (id: string): Promise<Bill | null> => {
     try {
+      console.log(`[BILLING] Getting bill with ID: ${id}`);
       const billRef = doc(db, 'bills', id);
       const billDoc = await getDoc(billRef);
 
@@ -52,6 +53,7 @@ export function useBilling() {
         return null;
       }
 
+      console.log(`[BILLING] Bill document found: ${id}`);
       const data = billDoc.data();
 
       // Convert timestamps to Dates for consistent handling

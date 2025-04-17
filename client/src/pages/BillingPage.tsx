@@ -138,6 +138,7 @@ export default function BillingPage() {
 
   const navigateToBill = (billId: string | undefined) => {
     if (billId) {
+      // Use wouter's navigation instead of direct window.location
       window.location.href = `/billing/${billId}`;
     }
   };

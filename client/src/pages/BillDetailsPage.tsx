@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useRoute } from 'wouter';
 import { format } from 'date-fns';
-import { ArrowLeft, Download, CreditCard, User, Calendar, Tag, Clock } from 'lucide-react';
+import { ArrowLeft, Download, CreditCard, User, Calendar, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -117,11 +117,11 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
                   billData.customerName = customerData.name || `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim();
                 } else {
                   console.error('[BILLING] Error fetching pet owner:', petOwnerResponse.status);
-                  
+
                 }
               } else {
                 console.error('[BILLING] Error fetching customer:', response.status);
-                
+
               }
             };
             await fetchCustomer();
@@ -312,6 +312,10 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
       default: return '';
     }
   };
+
+  useEffect(() => {
+    console.log('[BILLING] BillDetailsPage mounted, billId:', billId);
+  }, [billId]);
 
   if (loading) {
     return (
