@@ -28,13 +28,14 @@ export function useBilling() {
 
     const idToken = await getIdToken();
     const apiBaseUrl = import.meta.env.VITE_API_URL || '';
-    const response = await fetch(`${apiBaseUrl}/api/billing/all`, {
+    const response = await fetch(`${apiBaseUrl}/api/billing/bills`, {
       headers: {
         Authorization: `Bearer ${idToken}`
       }
     });
 
     if (!response.ok) {
+      console.error('[BILLING] Failed to fetch bills:', await response.text());
       throw new Error('Failed to fetch bills');
     }
 
@@ -94,6 +95,7 @@ export function useBilling() {
       const idToken = await getIdToken();
       const apiBaseUrl = import.meta.env.VITE_API_URL || '';
 
+      console.log('[BILLING] Creating bill for appointment:', data.appointmentId);
       const response = await fetch(`${apiBaseUrl}/api/billing/generate/${data.appointmentId}`, {
         method: 'POST',
         headers: {
@@ -105,15 +107,22 @@ export function useBilling() {
 
       if (!response.ok) {
         const errorText = await response.text();
+        console.error('[BILLING] Failed to create bill:', errorText);
         throw new Error(`Failed to create bill: ${errorText}`);
       }
 
-      return await response.json();
+      const result = await response.json();
+      console.log('[BILLING] Bill created successfully:', result);
+      return result;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('[BILLING] Invalidating queries after bill creation:', data);
       queryClient.invalidateQueries({ queryKey: ['bills'] });
       queryClient.invalidateQueries({ queryKey: ['appointments'] });
     },
+    onError: (error) => {
+      console.error('[BILLING] Error in create bill mutation:', error);
+    }
   });
 
   return {

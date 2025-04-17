@@ -87,10 +87,11 @@ export default function BillingPage() {
     const fetchBills = async () => {
       try {
         setLoading(true);
+        console.log('[BILLING] Fetching bills...');
         await refetch();
-        // The updated bills will be available from the hookBills
+        console.log('[BILLING] Bills fetched successfully');
       } catch (error) {
-        console.error('Error fetching bills:', error);
+        console.error('[BILLING] Error fetching bills:', error);
       } finally {
         setLoading(false);
       }
@@ -101,6 +102,7 @@ export default function BillingPage() {
 
   // Update local bills when hookBills changes
   useEffect(() => {
+    console.log('[BILLING] Hook bills updated:', hookBills?.length);
     setBills(hookBills || []);
   }, [hookBills]);
 
