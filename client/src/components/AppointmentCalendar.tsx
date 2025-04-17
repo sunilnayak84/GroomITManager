@@ -48,7 +48,7 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
     start: new Date(appointment.date),
     end: (() => {
       const end = new Date(appointment.date);
-      const duration = appointment.service?.reduce((total, service) => total + (service?.duration || 0), 0) || 30;
+      const duration = appointment.service?.reduce((total: number, service: any) => total + (service?.duration || 0), 0) || 30;
       end.setMinutes(end.getMinutes() + duration);
       return end;
     })(),
