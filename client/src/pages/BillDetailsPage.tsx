@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useRoute } from 'wouter';
 import { format } from 'date-fns';
-import { ArrowLeft, Download, CreditCard, User, Calendar, Clock } from 'lucide-react';
+import { ArrowLeft, Download, CreditCard, User, Calendar, Clock, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
