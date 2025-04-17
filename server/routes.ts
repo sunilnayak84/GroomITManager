@@ -47,6 +47,35 @@ export async function registerRoutes(app: Express.Application) {
   logger.info('[ROUTES] Registering staff management routes');
   app.use('/api/staff', staffManagementRouter);
   
+  // Register customer routes
+  logger.info('[ROUTES] Registering customer routes');
+  app.use('/api/customers/:id', authenticateFirebase, async (req: Request, res: Response) => {
+    try {
+      const customerId = req.params.id;
+      if (!customerId) {
+        return res.status(400).json({ error: 'Bad Request', message: 'Customer ID is required' });
+      }
+      
+      logger.info('[CUSTOMERS] Fetching customer by ID:', { customerId });
+      const customerDoc = await admin.firestore().collection('customers').doc(customerId).get();
+      
+      if (!customerDoc.exists) {
+        logger.warn('[CUSTOMERS] Customer not found:', { customerId });
+        return res.status(404).json({ error: 'Not Found', message: 'Customer not found' });
+      }
+      
+      const customerData = customerDoc.data();
+      logger.info('[CUSTOMERS] Customer found:', { customerId });
+      return res.json({ id: customerDoc.id, ...customerData });
+    } catch (error) {
+      logger.error('[CUSTOMERS] Error fetching customer:', error);
+      return res.status(500).json({ 
+        error: 'Internal Server Error', 
+        message: error instanceof Error ? error.message : 'Unknown error' 
+      });
+    }
+  });
+  
   // Debug routes
   logger.info('[ROUTES] Registering debug routes');
   app.use('/api/debug', authenticateFirebase, async (req: Request, res: Response) => {

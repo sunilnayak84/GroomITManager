@@ -72,16 +72,18 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
               }
               
               console.log('[BILLING] Attempting to fetch customer details with ID:', billData.customerId);
-              // First try with the customerId from the bill
-              let response = await fetch(`/api/customers/${billData.customerId}`, {
-                headers: {
-                  'Authorization': `Bearer ${await getIdToken()}`
-                }
-              });
+              
+              try {
+                // First try with the customerId from the bill
+                let response = await fetch(`/api/customers/${billData.customerId}`, {
+                  headers: {
+                    'Authorization': `Bearer ${await getIdToken()}`
+                  }
+                });
 
-              let customerData = null;
+                let customerData = null;
 
-              if (response.ok) {
+                if (response.ok) {
                 customerData = await response.json();
                 const customerName = customerData.name || `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim();
 
@@ -129,6 +131,10 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
               } else {
                 console.log('[BILLING] Error fetching customer:', response.status, '- continuing with available data');
                 // Continue with existing data, don't block the bill display
+              }
+              } catch (error) {
+                console.error('[BILLING] Network error fetching customer details:', error);
+                // Continue with existing data even when network errors occur
               }
             };
             await fetchCustomer();
