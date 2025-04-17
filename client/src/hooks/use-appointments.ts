@@ -137,7 +137,7 @@ const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppoi
       throw new Error('Invalid appointment date');
     }
 
-    return {
+    const appointmentData = {
       petId: data.petId,
       services: data.services,
       groomerId: data.groomerId,
@@ -156,9 +156,15 @@ const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppoi
       afterImages: [],
       observations: null,
       recommendations: null,
-      cancellationReason: null,
-      billId: data.billId
+      cancellationReason: null
     };
+    
+    // Only add billId if it's defined
+    if (data.billId) {
+      appointmentData.billId = data.billId;
+    }
+    
+    return appointmentData;
   };
 
 export interface AppointmentWithRelations extends AppointmentData {
