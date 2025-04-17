@@ -334,7 +334,6 @@ export class BillingService {
         status: 'PENDING_PAYMENT',
         createdAt: now,
         updatedAt: now,
-        createdTime: now.toISOString(), // Store ISO string for consistent time representation
         petId: appointment.petId,
         paymentStatus: 'PENDING_PAYMENT' // added paymentStatus
       };
@@ -890,7 +889,7 @@ export class BillingService {
       return billId;
     } catch (error) {
       logger.error('[BILLING] Error creating bill:', error);
-      throw new Error(`Failed to create bill: ${error.message}`);
+      throw new Error(`Failed to create bill: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 }

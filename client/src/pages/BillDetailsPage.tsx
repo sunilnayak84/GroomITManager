@@ -79,9 +79,9 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
                 const customerName = customerData.name || `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim();
 
                 // If we got a placeholder name like "Sam Smith", try the pet's owner instead
-                if (customerName === 'Sam Smith' && billData.petCustomerId) {
-                  console.log('[BILLING] Got placeholder name, trying pet owner instead:', billData.petCustomerId);
-                  const petOwnerResponse = await fetch(`/api/customers/${billData.petCustomerId}`, {
+                if (customerName === 'Sam Smith' && billData.customerId) {
+                  console.log('[BILLING] Got placeholder name, trying pet owner instead:', billData.customerId);
+                  const petOwnerResponse = await fetch(`/api/customers/${billData.customerId}`, {
                     headers: {
                       'Authorization': `Bearer ${await getIdToken()}`
                     }
@@ -102,10 +102,10 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
                 console.log('[BILLING] Final customer data:', customerData);
                 billData.customerName = customerData.name || `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim();
 
-              } else if (billData.petCustomerId) {
+              } else if (billData.customerId) {
                 // If initial customer lookup failed, try pet owner
-                console.log('[BILLING] First lookup failed, trying pet owner:', billData.petCustomerId);
-                const petOwnerResponse = await fetch(`/api/customers/${billData.petCustomerId}`, {
+                console.log('[BILLING] First lookup failed, trying pet owner:', billData.customerId);
+                const petOwnerResponse = await fetch(`/api/customers/${billData.customerId}`, {
                   headers: {
                     'Authorization': `Bearer ${await getIdToken()}`
                   }
@@ -287,8 +287,8 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
   // Convert Firestore timestamp to Date object properly
   const billDate = bill?.createdAt instanceof Date
     ? bill.createdAt
-    : bill?.createdAt && typeof bill.createdAt === 'object' && bill.createdAt.toDate
-      ? bill.createdAt.toDate()
+    : bill?.createdAt && typeof bill.createdAt === 'object' && typeof (bill.createdAt as any).toDate === 'function'
+      ? (bill.createdAt as any).toDate()
       : bill?.createdAt
         ? new Date(bill.createdAt)
         : new Date();

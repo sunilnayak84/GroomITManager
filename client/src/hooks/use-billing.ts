@@ -45,7 +45,7 @@ export function useBilling(options: UseBillingOptions = {}) {
       const billsData = await response.json();
       console.log('[BILLING] Fetched bills:', billsData);
       // Ensure we have consistent date handling
-      const processedBills = (billsData || []).map(bill => {
+      const processedBills = (billsData || []).map((bill: any) => {
         // If createdAt exists as a timestamp object with toDate method, convert it
         if (bill.createdAt && typeof bill.createdAt.toDate === 'function') {
           return { ...bill, createdAt: bill.createdAt.toDate().toISOString() };
@@ -283,10 +283,10 @@ export const useBillingOperations = () => {
       const { billId } = await response.json();
       console.log('[BILLING] Bill successfully generated with ID:', billId);
 
-      showToast({
+      toast({
         title: 'Bill Generated',
         description: 'The bill has been successfully generated.',
-        variant: 'success'
+        variant: 'default'
       });
 
       // Fetch the bill to verify it has the customer name

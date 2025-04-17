@@ -411,7 +411,7 @@ export default function AppointmentsPage() {
     {
       id: 'payment_status',
       header: 'Payment Status',
-      cell: (appointment) => {
+      cell: (appointment: AppointmentWithRelations) => {
         // Check if bill is already generated for this appointment
         const billGenerated = Boolean(appointment.billId);
         
@@ -467,7 +467,7 @@ export default function AppointmentsPage() {
     {
       id: 'billing',
       header: 'Billing',
-      cell: (appointment) => {
+      cell: (appointment: AppointmentWithRelations) => {
         // Check if bill is already generated for this appointment
         const billGenerated = Boolean(appointment.billId);
         console.log('[BILLING] Appointment bill status:', appointment.id, { billGenerated, billId: appointment.billId, billStatus: appointment.billStatus });

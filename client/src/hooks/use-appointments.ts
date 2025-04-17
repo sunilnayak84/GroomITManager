@@ -1,3 +1,122 @@
+
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useUser } from './use-user';
+import type { AppointmentWithRelations, AppointmentImage } from "@/lib/schema";
+import { 
+  collection, doc, setDoc, getDoc, getDocs, query, 
+  where, DocumentData, CollectionReference, runTransaction,
+  QuerySnapshot, DocumentSnapshot, WithFieldValue, 
+  FieldValue, serverTimestamp, Timestamp, updateDoc, arrayUnion
+} from 'firebase/firestore';
+import { db } from "../lib/firebase";
+
+// Define the missing types
+type CustomerData = {
+  firstName: string;
+  lastName: string;
+};
+
+type GroomerData = {
+  name: string;
+};
+
+type PetData = {
+  name: string;
+  breed: string;
+  image: string | null;
+};
+
+type ServiceData = {
+  service_id: string;
+  name: string;
+  duration: number;
+  price: number;
+  description: string | null;
+  category: string;
+  discount_percentage: number;
+  consumables: string[];
+  selectedServices?: Array<{
+    consumables?: string[];
+  }>;
+  selectedAddons?: Array<{
+    consumables?: string[];
+  }>;
+};
+
+interface AppointmentData {
+  id: string;
+  petId: string;
+  services: string[];
+  groomerId: string;
+  branchId: string;
+  date: string;
+  status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
+  notes: string | null;
+  productsUsed: string | null;
+  totalPrice: number;
+  totalDuration: number;
+  createdAt: string;
+  updatedAt: string | null;
+  cancellationReason?: "no_show" | "rescheduled" | "other" | null;
+  beforeImage?: string | null;
+  beforeImages: AppointmentImage[];
+  afterImages: AppointmentImage[];
+  observations?: string | null;
+  recommendations?: string | null;
+  inventoryUsage?: Array<{
+    item_id: string;
+    quantity_used: number;
+    service_id: string;
+    notes: string;
+    service_linked: boolean;
+    auto_deducted: boolean;
+    service_name?: string;
+  }>;
+  billId?: string;
+}
+
+interface FirestoreAppointmentData {
+  petId: string;
+  services: string[];
+  groomerId: string;
+  branchId: string;
+  date: Timestamp;
+  status: "pending" | "confirmed" | "completed" | "cancelled" | "in_progress";
+  notes: string | null;
+  productsUsed: string | null;
+  totalPrice: number;
+  totalDuration: number;
+  createdAt: Timestamp;
+  updatedAt: Timestamp | null;
+  deletedAt: Timestamp | null;
+  cancellationReason?: "no_show" | "rescheduled" | "other" | null;
+  beforeImage?: string | null;
+  beforeImages: Array<{
+    id: string;
+    url: string;
+    type: 'before';
+    timestamp: Timestamp;
+  }>;
+  afterImages: Array<{
+    id: string;
+    url: string;
+    type: 'after';
+    timestamp: Timestamp;
+  }>;
+  observations?: string | null;
+  recommendations?: string | null;
+  inventoryUsage?: Array<{
+    item_id: string;
+    quantity_used: number;
+    service_id: string;
+    notes: string;
+    service_linked: boolean;
+    auto_deducted: boolean;
+    service_name?: string;
+  }>;
+  billId?: string; // Added billId to FirestoreAppointmentData
+}
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from './use-user';
 import type { AppointmentWithRelations, InsertAppointment, AppointmentImage } from "@/lib/schema";
@@ -112,7 +231,7 @@ export interface AppointmentWithRelations extends AppointmentData {
   services?: ServiceData[];
   allServices?: ServiceData[];
   paymentStatus?: 'paid' | 'pending';
-  billStatus?: 'paid' | 'pending_payment' | 'generated'; // Added billStatus
+  billStatus?: 'paid' | 'pending_payment' | 'generated';
 }
 
 export function useAppointments() {

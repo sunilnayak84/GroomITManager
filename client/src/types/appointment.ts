@@ -23,4 +23,5 @@ export interface AppointmentWithRelations extends Appointment {
   petName: string;
   groomerName: string;
   billId?: string;
+  billStatus?: 'paid' | 'pending_payment' | 'generated';
 }
