@@ -65,6 +65,13 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
           // Always attempt to get the latest customer details
           try {
             const fetchCustomer = async () => {
+              // Check if we have a customerId before attempting to fetch
+              if (!billData.customerId) {
+                console.log('[BILLING] No customerId available for customer lookup, using existing data');
+                return;
+              }
+              
+              console.log('[BILLING] Attempting to fetch customer details with ID:', billData.customerId);
               // First try with the customerId from the bill
               let response = await fetch(`/api/customers/${billData.customerId}`, {
                 headers: {
@@ -116,12 +123,12 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
                   console.log('[BILLING] Pet owner data loaded:', customerData);
                   billData.customerName = customerData.name || `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim();
                 } else {
-                  console.error('[BILLING] Error fetching pet owner:', petOwnerResponse.status);
-
+                  console.log('[BILLING] Error fetching pet owner:', petOwnerResponse.status, '- continuing with available data');
+                  // Continue with existing data, don't block the bill display
                 }
               } else {
-                console.error('[BILLING] Error fetching customer:', response.status);
-
+                console.log('[BILLING] Error fetching customer:', response.status, '- continuing with available data');
+                // Continue with existing data, don't block the bill display
               }
             };
             await fetchCustomer();
@@ -267,8 +274,11 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
 
         // If we still don't have a name after all attempts
         if (!billData.customerName || billData.customerName.trim() === '') {
-          billData.customerName = 'Unknown Customer';
-          console.log('[BILLING] Using fallback customer name after all attempts failed');
+          // Add customer ID to fallback name if available
+          billData.customerName = billData.customerId 
+            ? `Customer (ID: ${billData.customerId.slice(0, 6)}...)` 
+            : 'Unknown Customer';
+          console.log('[BILLING] Using fallback customer name after all attempts failed:', billData.customerName);
         }
 
         console.log('[BILLING] Final customer name:', billData.customerName);
