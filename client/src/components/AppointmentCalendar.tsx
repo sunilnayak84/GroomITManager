@@ -26,7 +26,7 @@ const viewOptions = [
 ];
 
 interface AppointmentCalendarProps {
-  setSelectedAppointment: (appointment: AppointmentWithRelations | null) => void;
+  setSelectedAppointment: (appointment: any | null) => void;
   setOpenDetails: (open: boolean) => void;
 }
 
@@ -42,7 +42,7 @@ export default function AppointmentCalendar({ setSelectedAppointment, setOpenDet
   const { data: workingHours } = useWorkingHours();
 
   // Convert appointments to calendar events
-  const events: EventInput[] = appointments?.map((appointment: AppointmentWithRelations) => ({
+  const events: EventInput[] = appointments?.map((appointment: any) => ({
     id: appointment.id,
     title: `${appointment.pet.name} - ${appointment.customer.firstName} ${appointment.customer.lastName}`,
     start: new Date(appointment.date),

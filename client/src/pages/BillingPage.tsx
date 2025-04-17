@@ -76,7 +76,7 @@ export default function BillingPage() {
   const [bills, setBills] = useState<Bill[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<BillStatus | 'ALL'>('ALL');
-  const { bills: hookBills, getBills, isLoading } = useBilling();
+  const { bills: hookBills, refetch, isLoading } = useBilling();
   const [, params] = useLocation();
 
   // Get query parameters (for direct bill opening)
@@ -87,7 +87,7 @@ export default function BillingPage() {
     const fetchBills = async () => {
       try {
         setLoading(true);
-        await getBills();
+        await refetch();
         // The updated bills will be available from the hookBills
       } catch (error) {
         console.error('Error fetching bills:', error);
@@ -97,7 +97,7 @@ export default function BillingPage() {
     };
 
     fetchBills();
-  }, [getBills]);
+  }, [refetch]);
 
   // Update local bills when hookBills changes
   useEffect(() => {

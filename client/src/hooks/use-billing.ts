@@ -123,6 +123,7 @@ export function useBilling() {
     error: billsQuery.error,
     createBill: createBillMutation.mutateAsync,
     refetch: billsQuery.refetch,
+    getBills: fetchBills,
     getBillById,
   };
 }

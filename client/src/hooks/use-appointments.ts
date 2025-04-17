@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from './use-user';
 import { 
@@ -169,6 +168,7 @@ export interface AppointmentWithRelations extends AppointmentData {
   service?: ServiceData[];
   allServices?: ServiceData[];
   paymentStatus?: 'paid' | 'pending';
+  billStatus?: string;
   hasBill?: boolean;
 }
 

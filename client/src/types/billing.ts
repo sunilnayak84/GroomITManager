@@ -33,8 +33,10 @@ export const BillSchema = z.object({
   status: BillStatusSchema,
   paymentId: z.string().optional(),
   paymentLink: z.string().optional(),
-  createdAt: z.date().or(z.string()), // Support both date objects and string dates
-  updatedAt: z.date().or(z.string())
+  paymentMethod: z.string().optional(),
+  notes: z.string().optional(),
+  createdAt: z.union([z.date(), z.string()]), // Support both date objects and string dates
+  updatedAt: z.union([z.date(), z.string()])
 });
 
 export type Bill = z.infer<typeof BillSchema>;
