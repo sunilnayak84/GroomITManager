@@ -8,7 +8,7 @@ channel = "stable-24_05"
 [deployment]
 deploymentTarget = "cloudrun"
 build = ["sh", "-c", "npm run build"]
-run = ["sh", "-c", "npx concurrently -n frontend,backend &quot;cd client && npm run dev -- --port 5174 --host 0.0.0.0&quot; &quot;cd server && tsx watch --clear-screen=false index.ts&quot;"]
+run = ["sh", "-c", "npx concurrently -n frontend,backend \"cd client && npm run dev -- --port 3000 --host 0.0.0.0\" \"cd server && tsx watch --clear-screen=false index.ts\""]
 
 [[ports]]
 localPort = 3000
