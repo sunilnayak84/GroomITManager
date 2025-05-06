@@ -4,29 +4,48 @@
   "type": "light",
   "appearance": "light",
   "colors": {
-    "primary": "267 75% 40%",
-    "primary-foreground": "0 0% 98%",
-    "secondary": "267 60% 35%",
-    "secondary-foreground": "0 0% 98%",
-    "background": "0 0% 100%",
-    "foreground": "240 10% 3.9%",
-    "muted": "267 10% 96%",
-    "muted-foreground": "267 30% 46%",
-    "accent": "267 59% 94%",
-    "accent-foreground": "267 75% 40%",
-    "destructive": "0 84.2% 60.2%",
-    "destructive-foreground": "0 0% 98%",
-    "card": "0 0% 100%",
-    "card-foreground": "240 10% 3.9%",
-    "popover": "0 0% 100%",
-    "popover-foreground": "240 10% 3.9%",
+    "primary": {
+      "DEFAULT": "267 75% 40%",
+      "foreground": "0 0% 98%"
+    },
+    "secondary": {
+      "DEFAULT": "267 60% 35%",
+      "foreground": "0 0% 98%"
+    },
+    "background": {
+      "DEFAULT": "0 0% 100%",
+      "foreground": "240 10% 3.9%"
+    },
+    "muted": {
+      "DEFAULT": "267 10% 96%",
+      "foreground": "267 30% 46%"
+    },
+    "accent": {
+      "DEFAULT": "267 59% 94%",
+      "foreground": "267 75% 40%"
+    },
+    "destructive": {
+      "DEFAULT": "0 84.2% 60.2%",
+      "foreground": "0 0% 98%"
+    },
+    "card": {
+      "DEFAULT": "0 0% 100%",
+      "foreground": "240 10% 3.9%"
+    },
+    "popover": {
+      "DEFAULT": "0 0% 100%",
+      "foreground": "240 10% 3.9%",
+      "background": "0 0% 100%"
+    },
+    "dialog": {
+      "DEFAULT": "0 0% 100%",
+      "foreground": "240 10% 3.9%",
+      "background": "0 0% 100%",
+      "overlay": "0 0% 0% / 0.50"
+    },
     "border": "267 20% 91%",
     "input": "267 20% 91%",
-    "ring": "267 75% 40%",
-    "success": "142.1 76.2% 36.3%",
-    "success-foreground": "0 0% 98%",
-    "warning": "38 92% 50%",
-    "warning-foreground": "0 0% 98%"
+    "ring": "267 75% 40%"
   },
   "borderRadius": {
     "lg": "0.5rem",

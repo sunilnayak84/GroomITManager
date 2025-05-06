@@ -9,8 +9,7 @@
     "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
     "start": "NODE_ENV=production node dist/index.js",
     "check": "tsc",
-    "db:push": "drizzle-kit push",
-    "deploy": "node deploy.js"
+    "db:push": "drizzle-kit push"
   },
   "dependencies": {
     "@firebase/auth": "^1.8.1",
@@ -52,6 +51,7 @@
     "@radix-ui/react-toggle": "^1.1.0",
     "@radix-ui/react-toggle-group": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.4",
+    "@replit/vite-plugin-shadcn-theme-json": "^0.0.4",
     "@tailwindcss/forms": "^0.5.9",
     "@tanstack/react-query": "^5.62.7",
     "@tanstack/react-table": "^8.20.5",
@@ -74,7 +74,6 @@
     "input-otp": "^1.4.1",
     "lucide-react": "^0.474.0",
     "memorystore": "^1.6.7",
-    "open": "^10.1.2",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "razorpay": "^2.9.5",
@@ -98,7 +97,6 @@
   },
   "devDependencies": {
     "@replit/vite-plugin-runtime-error-modal": "^0.0.3",
-    "@replit/vite-plugin-shadcn-theme-json": "^0.0.4",
     "@tailwindcss/typography": "^0.5.15",
     "@types/express": "^4.17.21",
     "@types/express-session": "^1.18.1",
