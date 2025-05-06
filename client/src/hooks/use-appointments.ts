@@ -115,6 +115,7 @@ interface FirestoreAppointmentData {
     service_name?: string;
   }>;
   billId?: string;
+  billStatus?: string;
 }
 
 const timestampToISOString = (timestamp: Timestamp | null | undefined): string => {

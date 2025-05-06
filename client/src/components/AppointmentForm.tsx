@@ -443,6 +443,8 @@ export default function AppointmentForm({ setOpen, selectedDate, selectedPet }: 
         ...data,
         date: appointmentDateTime.toISOString(),
         status: "pending" as const,
+        totalPrice: form.getValues('totalPrice') || 0,
+        totalDuration: form.getValues('totalDuration') || 0
       };
 
       const result = await addAppointment(appointmentData);
