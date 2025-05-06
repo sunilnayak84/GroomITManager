@@ -10,21 +10,25 @@ async function deploy() {
   try {
     // Build the client application
     console.log('📦 Building client application...');
-    await execAsync('cd client && npm run build', { stdio: 'inherit' });
+    const clientBuild = await execAsync('cd client && npm run build');
+    console.log(clientBuild.stdout);
     console.log('✅ Client build complete');
 
-    // Login to Firebase (if not already logged in)
+    // Check Firebase project
     try {
-      console.log('🔑 Checking Firebase login status...');
-      await execAsync('firebase projects:list', { stdio: 'inherit' });
+      console.log('🔍 Checking Firebase project...');
+      const projectList = await execAsync('firebase projects:list');
+      console.log('Current Firebase projects:');
+      console.log(projectList.stdout);
     } catch (error) {
       console.log('🔑 Please log in to Firebase:');
       await execAsync('firebase login', { stdio: 'inherit' });
     }
 
-    // Deploy to Firebase
-    console.log('🚀 Deploying to Firebase...');
-    await execAsync('firebase deploy --only hosting', { stdio: 'inherit' });
+    // Deploy to Firebase Hosting
+    console.log('🚀 Deploying to Firebase Hosting...');
+    const deployResult = await execAsync('firebase deploy --only hosting');
+    console.log(deployResult.stdout);
 
     console.log('✅ Deployment completed successfully!');
     console.log('Your app is now live on Firebase Hosting.');
