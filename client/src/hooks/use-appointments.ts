@@ -138,7 +138,7 @@ const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppoi
       throw new Error('Invalid appointment date');
     }
 
-    const appointmentData = {
+    const appointmentData: FirestoreAppointmentData = {
       petId: data.petId,
       services: data.services,
       groomerId: data.groomerId,
