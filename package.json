@@ -75,6 +75,7 @@
     "input-otp": "^1.4.1",
     "lucide-react": "^0.474.0",
     "memorystore": "^1.6.7",
+    "open": "^10.1.2",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "razorpay": "^2.9.5",
