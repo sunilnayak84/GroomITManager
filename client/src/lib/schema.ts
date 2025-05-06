@@ -288,6 +288,20 @@ export interface ToastProps {
   error: (message: string) => void;
 }
 
+export interface InsertAppointment {
+  petId: string;
+  services: string[];
+  groomerId: string;
+  branchId: string;
+  date: string;
+  status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
+  notes: string | null;
+  productsUsed: string | null;
+  totalPrice: number;
+  totalDuration: number;
+  billId?: string;
+}
+
 export type Pet = z.infer<typeof petSchema>;
 export type InsertPet = z.infer<typeof insertPetSchema>;
 export type User = z.infer<typeof userSchema>;

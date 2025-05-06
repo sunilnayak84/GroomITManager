@@ -158,12 +158,12 @@ const createFirestoreAppointmentData = (data: InsertAppointment): FirestoreAppoi
       recommendations: null,
       cancellationReason: null
     };
-    
+
     // Only add billId if it's defined
     if (data.billId) {
       appointmentData.billId = data.billId;
     }
-    
+
     return appointmentData;
   };
 
