@@ -2,7 +2,7 @@
 {
   "name": "groomit-purple",
   "type": "light",
-  "variant": "themed",
+  "variant": "solid",
   "appearance": "light",
   "colors": {
     "primary": {
