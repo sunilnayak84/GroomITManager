@@ -2,8 +2,7 @@
 {
   "name": "Groomit",
   "primary": "#4d935e",
-  "variant": "solid",
-  "appearance": "light",
+  "variant": "default",
   "radius": 0.5,
   "light": {
     "background": "#ffffff",
