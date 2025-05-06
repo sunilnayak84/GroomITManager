@@ -1,9 +1,10 @@
+
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import checker from "vite-plugin-checker";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
-import { shadcnThemeJson } from '@replit/vite-plugin-shadcn-theme-json';
+import { themeJson } from '@replit/vite-plugin-shadcn-theme-json';
 
 export default defineConfig({
   plugins: [
@@ -14,7 +15,7 @@ export default defineConfig({
       enableBuild: false 
     }),
     runtimeErrorOverlay(),
-    shadcnThemeJson(),
+    themeJson(),
   ],
   resolve: {
     alias: {

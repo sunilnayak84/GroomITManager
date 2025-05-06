@@ -42,7 +42,7 @@
   }
 
   body {
-    @apply h-full bg-background text-foreground font-sans text-sm leading-relaxed tracking-tight;
+    @apply h-full bg-[hsl(var(--background))] text-[hsl(var(--foreground))] font-sans text-sm leading-relaxed tracking-tight;
   }
 
   #root {
