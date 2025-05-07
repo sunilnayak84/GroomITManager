@@ -2,6 +2,7 @@
 {
   "name": "groomit-purple",
   "type": "light",
+  "appearance": "light",
   "variant": "default",
   "colors": {
     "primary": {
