@@ -1,52 +1,48 @@
 
 {
-  "name": "Groomit",
-  "primary": "#4d935e",
-  "variant": "default",
-  "appearance": "light",
-  "radius": 0.5,
-  "light": {
-    "background": "#ffffff",
-    "foreground": "#1c1c1c",
-    "card": "#f9fafb",
-    "card-foreground": "#1c1c1c",
-    "popover": "#ffffff",
-    "popover-foreground": "#1c1c1c",
-    "primary": "#4d935e",
-    "primary-foreground": "#ffffff",
-    "secondary": "#f1f5f9",
-    "secondary-foreground": "#1c1c1c",
-    "muted": "#f1f5f9",
-    "muted-foreground": "#64748b",
-    "accent": "#f1f5f9",
-    "accent-foreground": "#1c1c1c",
-    "destructive": "#ef4444",
-    "destructive-foreground": "#ffffff",
-    "border": "#e2e8f0",
-    "input": "#e2e8f0",
-    "ring": "#94a3b8",
-    "radius": "0.5rem"
+  "name": "groomit",
+  "type": "light",
+  "colors": {
+    "primary": {
+      "DEFAULT": "142 71% 45%",
+      "foreground": "0 0% 98%"
+    },
+    "secondary": {
+      "DEFAULT": "240 4.8% 95.9%",
+      "foreground": "240 5.9% 10%"
+    },
+    "destructive": {
+      "DEFAULT": "0 84.2% 60.2%",
+      "foreground": "0 0% 98%"
+    },
+    "muted": {
+      "DEFAULT": "240 4.8% 95.9%",
+      "foreground": "240 3.8% 46.1%"
+    },
+    "accent": {
+      "DEFAULT": "240 4.8% 95.9%",
+      "foreground": "240 5.9% 10%"
+    },
+    "popover": {
+      "DEFAULT": "0 0% 100%",
+      "foreground": "240 10% 3.9%"
+    },
+    "card": {
+      "DEFAULT": "0 0% 100%",
+      "foreground": "240 10% 3.9%"
+    },
+    "success": {
+      "DEFAULT": "142.1 76.2% 36.3%",
+      "foreground": "0 0% 98%"
+    },
+    "warning": {
+      "DEFAULT": "38 92% 50%",
+      "foreground": "0 0% 98%"
+    }
   },
-  "dark": {
-    "background": "#0c0a09",
-    "foreground": "#e5e7eb",
-    "card": "#1c1917",
-    "card-foreground": "#e5e7eb",
-    "popover": "#0c0a09",
-    "popover-foreground": "#e5e7eb",
-    "primary": "#4d935e",
-    "primary-foreground": "#ffffff",
-    "secondary": "#27272a",
-    "secondary-foreground": "#e5e7eb",
-    "muted": "#27272a",
-    "muted-foreground": "#a1a1aa",
-    "accent": "#27272a",
-    "accent-foreground": "#e5e7eb",
-    "destructive": "#7f1d1d",
-    "destructive-foreground": "#e5e7eb",
-    "border": "#27272a",
-    "input": "#27272a",
-    "ring": "#4d935e",
-    "radius": "0.5rem"
+  "borderRadius": {
+    "lg": "0.5rem",
+    "md": "0.4rem",
+    "sm": "0.25rem"
   }
 }
