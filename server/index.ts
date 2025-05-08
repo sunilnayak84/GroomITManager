@@ -17,8 +17,11 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.set('trust proxy', 1);
 
 // CORS configuration
+const isDevelopment = process.env.NODE_ENV === 'development';
 app.use(cors({
-  origin: true,
+  origin: isDevelopment 
+    ? 'http://localhost:5174' 
+    : ['https://groomery.replit.app', 'https://*.replit.dev', 'https://*.repl.co'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']

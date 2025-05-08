@@ -558,3 +558,25 @@ export async function setupAuth(app: Express) {
     }
   }
 }
+
+export const initializeAuth = (app: admin.app.App) => {
+  console.log('[AUTH] Setting up authentication middleware');
+
+  try {
+    const auth = admin.auth(app);
+    console.log('[AUTH] Firebase Admin initialized successfully');
+
+    // Set session cookie settings for deployed environment
+    const SESSION_COOKIE_OPTIONS = {
+      maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days in milliseconds
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const
+    };
+
+    return auth;
+  } catch (error) {
+    console.error('[AUTH] Error initializing authentication:', error);
+    throw error;
+  }
+};

@@ -1,4 +1,3 @@
-
 import { initializeApp } from "firebase/app";
 import { getAuth as firebaseGetAuth, browserLocalPersistence } from "firebase/auth";
 import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "firebase/firestore";
@@ -60,8 +59,11 @@ export const db = initializeFirestore(app, {
   })
 });
 
-// Set auth persistence to local
+// Set auth persistence to local -  This ensures the auth token persists across page reloads.
 auth.setPersistence(browserLocalPersistence)
+  .then(() => {
+    console.log("Authentication persistence set successfully.");
+  })
   .catch((error) => {
     console.error('Auth persistence error:', error);
   });
