@@ -70,5 +70,23 @@ auth.setPersistence(browserLocalPersistence)
     console.error('Auth persistence error:', error);
   });
 
+// Get the app
+export const getApp = () => {
+  if (!app) {
+    app = initializeApp(firebaseConfig);
+
+    // Enable IndexedDB persistence for Firestore in production
+    const isProduction = import.meta.env.PROD;
+    if (isProduction) {
+      const { getFirestore, enableIndexedDbPersistence } = require('firebase/firestore');
+      const db = getFirestore(app);
+      enableIndexedDbPersistence(db).catch((err) => {
+        console.error("Firestore persistence error:", err);
+      });
+    }
+  }
+  return app;
+};
+
 // Export the app instance for use in other parts of the application
 export default app;

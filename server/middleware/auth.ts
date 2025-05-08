@@ -175,7 +175,7 @@ export function requirePermission(permission: string) {
 
     const hasPermission = req.user.permissions?.includes(permission) || 
                          req.user.permissions?.includes('all');
-    
+
     if (!hasPermission) {
       return res.status(403).json({
         message: `Access denied. Missing required permission: ${permission}`,
@@ -242,7 +242,7 @@ export function validateManagerOperation(operation: Permission | Permission[]) {
     const missingPermissions = requiredOperations.filter(
       op => !req.user?.permissions.includes(op) && !req.user?.permissions.includes('all')
     );
-    
+
     if (missingPermissions.length > 0) {
       return res.status(403).json({
         message: 'Insufficient permissions for this operation',

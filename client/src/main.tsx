@@ -84,7 +84,7 @@ function setupErrorHandlers() {
 
 function Router() {
   const { user, isLoading } = useUser();
-  
+
   // Handle URL parameters by cleaning them if present
   useEffect(() => {
     const url = new URL(window.location.href);
@@ -127,9 +127,9 @@ function Router() {
             <Route path="/settings/staff" component={StaffManagementPage} />
             <Route path="/staff-availability" component={lazy(() => import('./pages/staff-availability'))} />
             <Route path="/billing" component={lazy(() => import('./pages/BillingPage'))} />
-<Route path="/billing/:id">{(params) => <React.Suspense fallback={<div>Loading...</div>}>
-  {React.createElement(React.lazy(() => import('./pages/BillDetailsPage')), { billId: params.id })}
-</React.Suspense>}</Route>
+            <Route path="/billing/:id">{(params) => <React.Suspense fallback={<div>Loading...</div>}>
+              {React.createElement(React.lazy(() => import('./pages/BillDetailsPage')), { billId: params.id })}
+            </React.Suspense>}</Route>
             <Route>404 Page Not Found</Route>
           </Switch>
         </Suspense>
@@ -138,8 +138,13 @@ function Router() {
   );
 }
 
-// Initialize error handlers
+// Global error handler setup
 setupErrorHandlers();
+
+// Configure API URL based on environment
+window.API_BASE_URL = import.meta.env.PROD
+  ? "" // Empty string means relative to current domain
+  : "http://localhost:3000";
 
 // Create root and render app
 createRoot(document.getElementById("root")!).render(

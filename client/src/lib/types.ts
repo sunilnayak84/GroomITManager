@@ -1,3 +1,9 @@
+declare global {
+  interface Window {
+    API_BASE_URL: string;
+  }
+}
+
 import { z } from "zod";
 import { Timestamp, FieldValue, DocumentData } from 'firebase/firestore';
 
@@ -303,3 +309,10 @@ export type AppointmentWithRelations = {
   updatedAt: string | null;
   inProgressAt?: string | null;
 };
+
+export interface User {
+  uid: string;
+  email: string;
+  displayName: string;
+  photoURL: string | null;
+}
