@@ -38,7 +38,14 @@
     "warning": {
       "DEFAULT": "38 92% 50%",
       "foreground": "0 0% 98%"
-    }
+    },
+    "background": {
+      "DEFAULT": "0 0% 100%",
+      "foreground": "240 10% 3.9%"
+    },
+    "border": "240 5.9% 90%",
+    "input": "240 5.9% 90%",
+    "ring": "142 71% 45%"
   },
   "borderRadius": {
     "lg": "0.5rem",
