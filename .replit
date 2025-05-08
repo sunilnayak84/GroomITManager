@@ -10,6 +10,14 @@ deploymentTarget = "cloudrun"
 build = ["sh", "-c", "npm run build"]
 run = ["sh", "-c", "NODE_ENV=production node dist/index.js"]
 
+[[deployment.rewrites]]
+from = "/api/*"
+to = "/api/*"
+
+[[deployment.rewrites]]
+from = "/*"
+to = "/index.html"
+
 [[ports]]
 localPort = 3000
 externalPort = 3000

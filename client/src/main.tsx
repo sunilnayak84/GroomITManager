@@ -143,8 +143,11 @@ setupErrorHandlers();
 
 // Configure API URL based on environment
 window.API_BASE_URL = import.meta.env.PROD
-  ? "" // Empty string means relative to current domain
+  ? "/api" // Use relative path in production
   : "http://localhost:3000";
+
+// Log API configuration
+console.log(`API configured with base URL: ${window.API_BASE_URL}`);
 
 // Create root and render app
 createRoot(document.getElementById("root")!).render(
