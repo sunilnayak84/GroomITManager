@@ -1,0 +1,60 @@
+[frontend] 
+[frontend] > groom-it-manager-client@0.1.0 dev
+[frontend] > vite --port 5174 --host 0.0.0.0 --port 5174 --host 0.0.0.0
+[frontend] 
+[frontend] 
+[frontend]   VITE v5.4.11  ready in 471 ms
+[frontend] 
+[frontend]   ➜  Local:   http://localhost:5174/
+[frontend]   ➜  Network: http://172.31.128.4:5174/
+[backend] [FIREBASE] Starting Firebase Admin initialization...
+[backend] [FIREBASE] Using service account from environment variable
+[backend] [FIREBASE] Initializing with service account for project: replit-5ac6a
+[backend] [FIREBASE] Production initialization successful
+[backend] [PORT_CLEANUP] Attempting to clean up port 3000...
+[backend] [PORT_CLEANUP] Unix method failed, trying Windows method...
+[backend] [PORT_CLEANUP] Windows method failed
+[frontend] Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+[frontend]   npx update-browserslist-db@latest
+[frontend]   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[backend] [PORT_CLEANUP] Port 3000 is now available
+[backend] info: Firebase Admin initialized successfully {"timestamp":"2025-05-08T12:29:18.391Z"}
+[backend] [AUTH] Setting up authentication middleware in production mode
+[backend] [AUTH] Firebase Admin initialized successfully
+[backend] [AUTH] Authentication middleware setup completed
+[backend] info: Authentication setup completed {"timestamp":"2025-05-08T12:29:18.394Z"}
+[backend] info: [ROUTES] Registering billing routes {"timestamp":"2025-05-08T12:29:18.395Z"}
+[backend] info: [ROUTES] Registering general API routes {"timestamp":"2025-05-08T12:29:18.395Z"}
+[backend] info: [ROUTES] Registering staff management routes {"timestamp":"2025-05-08T12:29:18.396Z"}
+[backend] info: [ROUTES] Registering customer routes {"timestamp":"2025-05-08T12:29:18.397Z"}
+[backend] info: [ROUTES] Registering debug routes {"timestamp":"2025-05-08T12:29:18.398Z"}
+[backend] info: API routes registered {"timestamp":"2025-05-08T12:29:18.398Z"}
+[backend] AssertError: Expected required property
+[backend]     at AssertValue (file:///home/runner/workspace/node_modules/@sinclair/typebox/build/esm/value/assert/assert.mjs:44:11)
+[backend]     at Assert (file:///home/runner/workspace/node_modules/@sinclair/typebox/build/esm/value/assert/assert.mjs:48:32)
+[backend]     at file:///home/runner/workspace/node_modules/@sinclair/typebox/build/esm/value/parse/parse.mjs:13:38
+[backend]     at file:///home/runner/workspace/node_modules/@sinclair/typebox/build/esm/value/parse/parse.mjs:20:52
+[backend]     at Array.reduce (<anonymous>)
+[backend]     at ParseValue (file:///home/runner/workspace/node_modules/@sinclair/typebox/build/esm/value/parse/parse.mjs:20:25)
+[backend]     at Module.Parse (file:///home/runner/workspace/node_modules/@sinclair/typebox/build/esm/value/parse/parse.mjs:24:72)
+[backend]     at safeParseThemeJson (/home/runner/workspace/node_modules/@replit/vite-plugin-shadcn-theme-json/src/schemas.ts:25:26)
+[backend]     at PluginContext.buildStart (/home/runner/workspace/node_modules/@replit/vite-plugin-shadcn-theme-json/src/index.ts:35:43)
+[backend]     at async Promise.all (index 6) {
+[backend]   error: {
+[backend]     type: 45,
+[backend]     schema: { type: 'string', [Symbol(TypeBox.Kind)]: 'String' },
+[backend]     path: '/primary',
+[backend]     value: undefined,
+[backend]     message: 'Expected required property',
+[backend]     errors: []
+[backend]   }
+[backend] }
+[backend] info: Vite middleware setup completed {"timestamp":"2025-05-08T12:29:19.292Z"}
+[backend] info: Server started on port 3000 {"timestamp":"2025-05-08T12:29:19.303Z"}
+[frontend] 
+[frontend] [TypeScript] Found 0 errors. Watching for file changes.
+[backend] 
+[backend] [TypeScript] Found 0 errors. Watching for file changes.
+[backend] info: Incoming GET request to /api/stats {"body":{},"headers":{"accept":"*/*","accept-encoding":"gzip, deflate, br","accept-language":"en-US,en;q=0.9","connection":"close","host":"localhost:3000","referer":"https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Google Chrome\";v=\"134\"","sec-ch-ua-mobile":"?0","sec-ch-ua-platform":"\"Windows\"","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-fetch-storage-access":"active","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36","x-forwarded-for":"103.241.226.132, 163.116.214.47, 10.84.1.187","x-forwarded-proto":"https","x-replit-user-bio":"","x-replit-user-id":"","x-replit-user-name":"","x-replit-user-profile-image":"","x-replit-user-roles":"","x-replit-user-teams":"","x-replit-user-url":""},"query":{},"timestamp":"2025-05-08T12:29:27.532Z"}
+[backend] info: Incoming GET request to /api/stats {"body":{},"headers":{"accept":"*/*","accept-encoding":"gzip, deflate, br","accept-language":"en-US,en;q=0.9","connection":"close","host":"localhost:3000","referer":"https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Google Chrome\";v=\"134\"","sec-ch-ua-mobile":"?0","sec-ch-ua-platform":"\"Windows\"","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-fetch-storage-access":"active","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36","x-forwarded-for":"103.241.226.132, 163.116.214.47, 10.84.1.187","x-forwarded-proto":"https","x-replit-user-bio":"","x-replit-user-id":"","x-replit-user-name":"","x-replit-user-profile-image":"","x-replit-user-roles":"","x-replit-user-teams":"","x-replit-user-url":""},"query":{},"timestamp":"2025-05-08T12:29:28.748Z"}
+[backend] info: Incoming GET request to /api/stats {"body":{},"headers":{"accept":"*/*","accept-encoding":"gzip, deflate, br","accept-language":"en-US,en;q=0.9","connection":"close","host":"localhost:3000","referer":"https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Google Chrome\";v=\"134\"","sec-ch-ua-mobile":"?0","sec-ch-ua-platform":"\"Windows\"","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-fetch-storage-access":"active","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36","x-forwarded-for":"103.241.226.132, 163.116.214.47, 10.84.1.187","x-forwarded-proto":"https","x-replit-user-bio":"","x-replit-user-id":"","x-replit-user-name":"","x-replit-user-profile-image":"","x-replit-user-roles":"","x-replit-user-teams":"","x-replit-user-url":""},"query":{},"timestamp":"2025-05-08T12:29:30.834Z"}
