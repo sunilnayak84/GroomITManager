@@ -30,7 +30,9 @@ const firebaseConfig = {
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
   experimentalForceLongPolling: true,
-  experimentalAutoDetectLongPolling: true
+  experimentalAutoDetectLongPolling: true,
+  // Enable persistent authentication in deployment
+  persistence: true
 };
 
 let app;

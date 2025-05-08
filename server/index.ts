@@ -21,7 +21,7 @@ const isDevelopment = process.env.NODE_ENV === 'development';
 app.use(cors({
   origin: isDevelopment 
     ? 'http://localhost:5174' 
-    : ['https://groomery.replit.app', 'https://*.replit.dev', 'https://*.repl.co'],
+    : ['https://groomery.replit.app', 'https://*.replit.dev', 'https://*.repl.co', 'https://*.sisko.replit.dev'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
