@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, FirebaseApp } from "firebase/app";
 import { getAuth as firebaseGetAuth, browserLocalPersistence } from "firebase/auth";
 import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
@@ -35,7 +35,7 @@ const firebaseConfig = {
   persistence: true
 };
 
-let app;
+let app: FirebaseApp;
 try {
   console.log('FIREBASE_INIT: Initializing Firebase with config:', {
     ...firebaseConfig,
@@ -80,7 +80,7 @@ export const getApp = () => {
     if (isProduction) {
       const { getFirestore, enableIndexedDbPersistence } = require('firebase/firestore');
       const db = getFirestore(app);
-      enableIndexedDbPersistence(db).catch((err) => {
+      enableIndexedDbPersistence(db).catch((err: Error) => {
         console.error("Firestore persistence error:", err);
       });
     }
