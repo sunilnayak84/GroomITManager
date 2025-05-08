@@ -102,6 +102,35 @@ export async function registerRoutes(app: Express.Application) {
     }
   });
 
+  // Health check endpoint
+  app.get('/api/health', (req, res) => {
+    res.status(200).json({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      version: process.env.npm_package_version || '0.1.0',
+      environment: process.env.NODE_ENV || 'development'
+    });
+  });
+  
+  // Server status endpoint
+  app.get('/api/status', (req, res) => {
+    const firebaseApp = admin.apps.length > 0 ? admin.apps[0] : null;
+    
+    res.status(200).json({
+      status: 'ok',
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString(),
+      firebase: {
+        initialized: !!firebaseApp,
+        appName: firebaseApp?.name || 'none',
+        projectId: firebaseApp?.options?.projectId || 'unknown'
+      },
+      memory: process.memoryUsage(),
+      environment: process.env.NODE_ENV || 'development',
+      version: process.env.npm_package_version || '0.1.0'
+    });
+  });
+  
   // API 404 handler
   app.use('/api/*', (req, res) => {
     logger.warn(`API route not found: ${req.method} ${req.path}`);
