@@ -1,50 +1,51 @@
+
 {
-  "name": "groomit-purple",
+  "name": "groomit-green",
   "type": "light",
   "colors": {
     "primary": {
-      "DEFAULT": "267 75% 40%",
-      "foreground": "0 0% 98%"
+      "DEFAULT": "hsl(142 71% 45%)",
+      "foreground": "hsl(0 0% 98%)"
     },
     "secondary": {
-      "DEFAULT": "240 4.8% 95.9%",
-      "foreground": "240 5.9% 10%"
+      "DEFAULT": "hsl(240 4.8% 95.9%)",
+      "foreground": "hsl(240 5.9% 10%)"
     },
     "destructive": {
-      "DEFAULT": "0 84.2% 60.2%",
-      "foreground": "0 0% 98%"
+      "DEFAULT": "hsl(0 84.2% 60.2%)",
+      "foreground": "hsl(0 0% 98%)"
     },
     "muted": {
-      "DEFAULT": "240 4.8% 95.9%",
-      "foreground": "240 3.8% 46.1%"
+      "DEFAULT": "hsl(240 4.8% 95.9%)",
+      "foreground": "hsl(240 3.8% 46.1%)"
     },
     "accent": {
-      "DEFAULT": "240 4.8% 95.9%",
-      "foreground": "240 5.9% 10%"
+      "DEFAULT": "hsl(240 4.8% 95.9%)",
+      "foreground": "hsl(240 5.9% 10%)"
     },
     "popover": {
-      "DEFAULT": "0 0% 100%",
-      "foreground": "240 10% 3.9%"
+      "DEFAULT": "hsl(0 0% 100%)",
+      "foreground": "hsl(240 10% 3.9%)"
     },
     "card": {
-      "DEFAULT": "0 0% 100%",
-      "foreground": "240 10% 3.9%"
+      "DEFAULT": "hsl(0 0% 100%)",
+      "foreground": "hsl(240 10% 3.9%)"
     },
     "success": {
-      "DEFAULT": "142.1 76.2% 36.3%",
-      "foreground": "0 0% 98%"
+      "DEFAULT": "hsl(142.1 76.2% 36.3%)",
+      "foreground": "hsl(0 0% 98%)"
     },
     "warning": {
-      "DEFAULT": "38 92% 50%",
-      "foreground": "0 0% 98%"
+      "DEFAULT": "hsl(38 92% 50%)",
+      "foreground": "hsl(0 0% 98%)"
     },
     "background": {
-      "DEFAULT": "0 0% 100%",
-      "foreground": "240 10% 3.9%"
+      "DEFAULT": "hsl(0 0% 100%)",
+      "foreground": "hsl(240 10% 3.9%)"
     },
-    "border": "267 20% 91%",
-    "input": "267 20% 91%",
-    "ring": "267 75% 40%"
+    "border": "hsl(240 5.9% 90%)",
+    "input": "hsl(240 5.9% 90%)",
+    "ring": "hsl(142 71% 45%)"
   },
   "borderRadius": {
     "lg": "0.5rem",
