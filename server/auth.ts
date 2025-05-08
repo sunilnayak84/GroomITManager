@@ -380,14 +380,11 @@ async function setupDevelopmentAdmin() {
 }
 
 // Health check configuration
-const HEALTH_CHECK_INTERVAL = 60000; // 60 seconds (increased to reduce frequency)
-const MAX_RETRIES = 5; // Increased retry count
+const HEALTH_CHECK_INTERVAL = 30000; // 30 seconds
+const MAX_RETRIES = 3;
 let retryCount = 0;
 let lastHealthCheckTime = 0;
-const MIN_CHECK_INTERVAL = 15000; // Increased to 15 seconds between checks
-let consecutiveFailures = 0;
-const MAX_CONSECUTIVE_FAILURES = 10;
-let isInitializing = false;
+const MIN_CHECK_INTERVAL = 5000; // Minimum 5 seconds between checks
 
 export async function setupAuth(app: Express) {
   const isDevelopment = process.env.NODE_ENV === 'development';
@@ -396,12 +393,6 @@ export async function setupAuth(app: Express) {
   // Setup connection health monitoring
   let isHealthy = true;
   const checkConnectionHealth = async () => {
-    // Skip if another initialization is in progress
-    if (isInitializing) {
-      console.log('[AUTH] Skipping health check - initialization in progress');
-      return;
-    }
-
     const now = Date.now();
     if (now - lastHealthCheckTime < MIN_CHECK_INTERVAL) {
       return; // Prevent too frequent checks
@@ -409,78 +400,34 @@ export async function setupAuth(app: Express) {
     lastHealthCheckTime = now;
 
     try {
-      // In development mode, we can be more lenient with checks
-      if (isDevelopment) {
-        // Only do a real check occasionally in dev mode
-        if (Math.random() > 0.3) {
-          return;
-        }
-      }
-
       const auth = getAuth();
       await auth.listUsers(1); // Light query to check connection
-      
       if (!isHealthy) {
         console.log('[AUTH] Connection restored');
         isHealthy = true;
         retryCount = 0; // Reset retry count on successful connection
-        consecutiveFailures = 0;
       }
     } catch (error) {
-      consecutiveFailures++;
-      const errorCode = (error as any).code;
-      
-      // Only log the first failure or periodic failures to avoid log spam
-      if (isHealthy || consecutiveFailures % 5 === 0) {
-        console.error(`[AUTH] Connection health check failed (failure #${consecutiveFailures}):`, 
-          error instanceof Error ? error.message : error);
+      if (isHealthy) {
+        console.error('[AUTH] Connection health check failed:', error);
         isHealthy = false;
       }
 
       // Handle credential errors specifically
-      if ((errorCode === 'app/invalid-credential' || 
-           errorCode === 'auth/invalid-credential' ||
-           errorCode === 'app/unauthorized-app') && 
-          retryCount < MAX_RETRIES) {
-        
+      if ((error as any).code === 'app/invalid-credential' && retryCount < MAX_RETRIES) {
         retryCount++;
         console.log(`[AUTH] Attempting to reinitialize Firebase Admin (Attempt ${retryCount}/${MAX_RETRIES})`);
-        
         try {
-          isInitializing = true;
-          // Delete existing apps first
-          for (const app of admin.apps) {
-            if (app) {
-              try {
-                await app.delete().catch(() => {});
-              } catch (e) {
-                // Ignore errors during deletion
-              }
-            }
-          }
-          
           await initializeFirebaseAdmin();
           console.log('[AUTH] Successfully reinitialized Firebase Admin');
           isHealthy = true; // Mark as healthy if reinitialization succeeds
-          consecutiveFailures = 0;
         } catch (reinitError) {
-          console.error('[AUTH] Failed to reinitialize Firebase Admin:', 
-            reinitError instanceof Error ? reinitError.message : reinitError);
-            
+          console.error('[AUTH] Failed to reinitialize Firebase Admin:', reinitError);
           if (isDevelopment) {
             console.warn('[AUTH] Development mode: Continuing with limited functionality');
             isHealthy = true; // Force healthy in development
           }
-        } finally {
-          isInitializing = false;
         }
-      }
-      
-      // If we've had too many consecutive failures, force health in development
-      if (isDevelopment && consecutiveFailures > MAX_CONSECUTIVE_FAILURES) {
-        console.warn(`[AUTH] Too many consecutive failures (${consecutiveFailures}). Forcing healthy state in development mode.`);
-        isHealthy = true;
-        consecutiveFailures = 0;
       }
     }
   };
@@ -488,7 +435,7 @@ export async function setupAuth(app: Express) {
   // Start health monitoring with a delayed initial check
   setTimeout(() => {
     setInterval(checkConnectionHealth, HEALTH_CHECK_INTERVAL);
-  }, 10000); // Increased initial delay to 10 seconds
+  }, 5000);
 
   try {
     // Initialize Firebase Admin
@@ -497,34 +444,14 @@ export async function setupAuth(app: Express) {
 
     // Add authentication middleware
     app.use(async (req, res, next) => {
-      // Skip authentication for health check, options requests, and public API endpoints
-      if (req.path === '/api/health' || 
-          req.path === '/api/status' || 
-          req.method === 'OPTIONS' ||
-          req.path.startsWith('/api/public/')) {
+      // Skip authentication for health check and options requests
+      if (req.path === '/api/health' || req.method === 'OPTIONS') {
         return next();
       }
 
       try {
         const authHeader = req.headers.authorization;
-        
-        // In development mode, missing auth header can use a default test user
         if (!authHeader?.startsWith('Bearer ')) {
-          if (isDevelopment) {
-            console.log('[AUTH] No auth token in development mode, using test admin user');
-            const devUser: FirebaseUser = {
-              id: 'dev-admin-user',
-              uid: 'dev-admin-user',
-              email: 'admin@example.com',
-              name: 'Dev Admin',
-              role: 'admin',
-              permissions: ['all'],
-              displayName: 'Dev Admin'
-            };
-            req.user = devUser;
-            return next();
-          }
-          
           return res.status(401).json({
             message: "Not authenticated",
             code: "NO_TOKEN"
@@ -532,10 +459,7 @@ export async function setupAuth(app: Express) {
         }
 
         // In development mode, allow test token
-        if (isDevelopment && 
-            (authHeader === 'Bearer test-token' || 
-             authHeader === 'Bearer dev-token' ||
-             authHeader === 'Bearer admin-token')) {
+        if (isDevelopment && authHeader === 'Bearer test-token') {
           const devUser: FirebaseUser = {
             id: 'MjQnuZnthzUIh2huoDpqCSMMvxe2',
             uid: 'MjQnuZnthzUIh2huoDpqCSMMvxe2',
@@ -550,85 +474,35 @@ export async function setupAuth(app: Express) {
         }
 
         const token = authHeader.split('Bearer ')[1];
-        
-        // Handle token verification with retry logic
-        let decodedToken;
-        try {
-          const auth = getAuth();
-          decodedToken = await auth.verifyIdToken(token);
-        } catch (tokenError) {
-          console.error('[AUTH] Token verification failed:', tokenError instanceof Error ? tokenError.message : tokenError);
-          
-          // In development mode, we can allow bypassing token verification errors
-          if (isDevelopment) {
-            console.warn('[AUTH] Development mode: Using default admin user due to token verification failure');
-            const devUser: FirebaseUser = {
-              id: 'dev-token-error-user',
-              uid: 'dev-token-error-user',
-              email: 'admin@example.com',
-              name: 'Dev Admin',
-              role: 'admin',
-              permissions: ['all'],
-              displayName: 'Dev Admin (Token Error)'
-            };
-            req.user = devUser;
-            return next();
-          }
-          
-          return res.status(401).json({
-            message: "Invalid authentication token",
-            error: tokenError instanceof Error ? tokenError.message : "Token verification failed",
-            code: "INVALID_TOKEN"
-          });
+        const auth = getAuth();
+        const decodedToken = await auth.verifyIdToken(token);
+
+        // Get role and permissions from Firebase Realtime Database
+        const db = getDatabase();
+        const userRoleSnapshot = await db.ref(`roles/${decodedToken.uid}`).once('value');
+        const userRole = userRoleSnapshot.val() || { role: 'staff', permissions: [] };
+
+        // Get user from Firebase database or create if doesn't exist
+        const dbRef = getDatabase();
+        const userRef = dbRef.ref(`users/${decodedToken.uid}`);
+        const snapshot = await userRef.once('value');
+        const existingUser = snapshot.val();
+
+        if (!existingUser) {
+          const newUser = {
+            id: decodedToken.uid,
+            email: decodedToken.email || '',
+            name: decodedToken.displayName || decodedToken.email || '',
+            displayName: decodedToken.displayName || decodedToken.email?.split('@')[0] || 'Unknown User',
+            role: userRole.role as keyof typeof RoleTypes,
+            permissions: userRole.permissions || [],
+            createdAt: Date.now(),
+            lastUpdated: Date.now()
+          };
+          await userRef.set(newUser);
+          console.log('[AUTH] Created new user in Firebase:', newUser);
         }
 
-        // Get role and permissions with error handling
-        let userRole = { role: 'staff', permissions: [] };
-        try {
-          const db = getDatabase();
-          const userRoleSnapshot = await db.ref(`roles/${decodedToken.uid}`).once('value');
-          userRole = userRoleSnapshot.val() || userRole;
-        } catch (roleError) {
-          console.error('[AUTH] Error fetching user role:', roleError instanceof Error ? roleError.message : roleError);
-          // Continue with default role
-        }
-
-        // Create or get user with error handling
-        let existingUser = null;
-        try {
-          const db = getDatabase();
-          const userRef = db.ref(`users/${decodedToken.uid}`);
-          const snapshot = await userRef.once('value');
-          existingUser = snapshot.val();
-          
-          if (!existingUser) {
-            const newUser = {
-              id: decodedToken.uid,
-              email: decodedToken.email || '',
-              name: decodedToken.displayName || decodedToken.email || '',
-              displayName: decodedToken.displayName || decodedToken.email?.split('@')[0] || 'Unknown User',
-              role: userRole.role as keyof typeof RoleTypes,
-              permissions: userRole.permissions || [],
-              createdAt: Date.now(),
-              lastUpdated: Date.now()
-            };
-            
-            try {
-              await userRef.set(newUser);
-              console.log('[AUTH] Created new user in Firebase:', newUser);
-            } catch (createError) {
-              console.error('[AUTH] Failed to create user in database:', 
-                createError instanceof Error ? createError.message : createError);
-              // Continue without creating user
-            }
-          }
-        } catch (userError) {
-          console.error('[AUTH] Error fetching/creating user:', 
-            userError instanceof Error ? userError.message : userError);
-          // Continue with token data only
-        }
-
-        // Set user on request
         req.user = {
           id: decodedToken.uid,
           uid: decodedToken.uid,
@@ -641,23 +515,7 @@ export async function setupAuth(app: Express) {
 
         next();
       } catch (error) {
-        console.error('[AUTH] Authentication error:', error instanceof Error ? error.message : error);
-
-        // In development mode, we can allow requests to proceed with a default user
-        if (isDevelopment) {
-          console.warn('[AUTH] Development mode: Using default admin user due to authentication error');
-          const devUser: FirebaseUser = {
-            id: 'dev-error-user',
-            uid: 'dev-error-user',
-            email: 'admin@example.com',
-            name: 'Dev Admin',
-            role: 'admin',
-            permissions: ['all'],
-            displayName: 'Dev Admin (Error)'
-          };
-          req.user = devUser;
-          return next();
-        }
+        console.error('[AUTH] Authentication error:', error);
 
         if (error instanceof Error) {
           return res.status(401).json({
