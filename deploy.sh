@@ -65,6 +65,10 @@ if ! node deploy-build.js; then
   echo "=== Installing client dependencies ==="
   (cd client && npm install)
   
+  # Explicitly install vite and other dev dependencies
+  echo "=== Installing Vite and TypeScript explicitly ==="
+  (cd client && npm install --save-dev vite typescript @vitejs/plugin-react)
+  
   echo "=== Building client manually ==="
   if ! (cd client && npx vite build); then
     echo "Manual client build failed, creating minimal fallback"

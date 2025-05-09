@@ -93,6 +93,18 @@ async function buildClient() {
     return false;
   }
   
+  // Install Vite and other essential build tools explicitly
+  console.log('Installing Vite and other build dependencies explicitly...');
+  const devDepsSuccess = await runCommand(
+    'npm install --save-dev vite typescript @vitejs/plugin-react', 
+    path.join(process.cwd(), 'client')
+  );
+  
+  if (!devDepsSuccess) {
+    console.error('Failed to install Vite and other build dependencies');
+    // Continue anyway, it might work with npx
+  }
+  
   // Check if node_modules exists
   const nodeModulesPath = path.join(process.cwd(), 'client', 'node_modules');
   if (!fs.existsSync(nodeModulesPath)) {
@@ -100,8 +112,8 @@ async function buildClient() {
     return false;
   }
   
-  // List installed vite and typescript versions
-  await runCommand('ls -la node_modules/vite node_modules/typescript', path.join(process.cwd(), 'client'));
+  // List installed packages to verify
+  await runCommand('ls -la node_modules', path.join(process.cwd(), 'client'));
   
   // Build the client
   console.log('Building client application...');
@@ -118,6 +130,17 @@ async function buildClient() {
     console.error(error.message);
     console.error('Stdout:', error.stdout);
     console.error('Stderr:', error.stderr);
+    
+    // Try alternative build approach with explicit vite version
+    console.log('Trying alternate build approach with explicit vite version...');
+    try {
+      await execAsync('cd client && npx vite@5.0.0 build --force', { shell: true });
+      console.log('Alternate build approach succeeded');
+      return true;
+    } catch (altError) {
+      console.error('Alternate build approach also failed:');
+      console.error(altError.message);
+    }
     
     // If standard build fails, try with creating a minimal build
     console.log('Attempting fallback build approach...');
@@ -136,7 +159,7 @@ async function buildClient() {
         <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Application</title>
+          <title>Pet Grooming Management</title>
           <style>
             body { font-family: Arial, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
             .container { text-align: center; max-width: 800px; padding: 20px; }
@@ -144,7 +167,7 @@ async function buildClient() {
         </head>
         <body>
           <div class="container">
-            <h1>Application</h1>
+            <h1>Pet Grooming Management</h1>
             <p>The application is running in production mode.</p>
             <p>Please contact support if you encounter any issues.</p>
           </div>

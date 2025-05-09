@@ -1,0 +1,312 @@
+2025-05-09T18:25:21Z info: Deployment: 82d49ab9-ff33-45d5-aa26-289965158796
+2025-05-09T18:25:21Z info: Build: fea3f0d3-a1fd-49cd-a31d-6f12c1dff71d
+2025-05-09T18:25:21Z info: Connecting to builder
+2025-05-09T18:25:25Z info: Builder connected
+2025-05-09T18:25:29Z info: Installing packages
+--> npm install
+
+
+up to date, audited 1073 packages in 3s
+
+110 packages are looking for funding
+
+  run `npm fund` for details
+
+
+5 vulnerabilities (2 moderate, 3 high)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.3.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.3.0
+npm notice To update run: npm install -g npm@11.3.0
+npm notice
+
+2025-05-09T18:25:33Z info: Starting Build
+=== Starting deployment process ===
+
+Node version: v20.18.1
+
+NPM version: 10.8.2
+
+=== Installing root dependencies ===
+
+
+up to date, audited 1073 packages in 2s
+
+110 packages are looking for funding
+
+  run `npm fund` for details
+
+
+5 vulnerabilities (2 moderate, 3 high)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+
+=== Running deployment build script ===
+
+Starting deployment build process...
+
+=== Building client ===
+
+=== Checking client package.json ===
+
+Client package.json found and parsed successfully
+
+Installing client dependencies...
+
+Running command: npm install in /home/runner/workspace/client
+
+
+added 101 packages, and audited 102 packages in 1m
+
+7 packages are looking for funding
+  run `npm fund` for details
+
+10 moderate severity vulnerabilities
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+
+
+Running command: ls -la node_modules/vite node_modules/typescript in /home/runner/workspace/client
+
+Command failed: ls -la node_modules/vite node_modules/typescript
+
+Command failed: ls -la node_modules/vite node_modules/typescript
+ls: cannot access 'node_modules/vite': No such file or directory
+ls: cannot access 'node_modules/typescript': No such file or directory
+
+
+Building client application...
+
+Client build failed with error:
+
+Command failed: cd client && npx vite build
+npm warn exec The following package was not found and will be installed: vite@6.3.5
+failed to load config from /home/runner/workspace/client/vite.config.ts
+error during build:
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /home/runner/workspace/client/node_modules/.vite-temp/vite.config.ts.timestamp-1746815227001-ff477766c267c.mjs
+    at packageResolve (node:internal/modules/esm/resolve:854:9)
+    at moduleResolve (node:internal/modules/esm/resolve:927:18)
+    at defaultResolve (node:internal/modules/esm/resolve:1169:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:542:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:510:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:239:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:96:40)
+    at link (node:internal/modules/esm/module_job:95:36)
+
+
+Stdout: 
+
+Stderr: npm warn exec The following package was not found and will be installed: vite@6.3.5
+failed to load config from /home/runner/workspace/client/vite.config.ts
+error during build:
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /home/runner/workspace/client/node_modules/.vite-temp/vite.config.ts.timestamp-1746815227001-ff477766c267c.mjs
+    at packageResolve (node:internal/modules/esm/resolve:854:9)
+    at moduleResolve (node:internal/modules/esm/resolve:927:18)
+    at defaultResolve (node:internal/modules/esm/resolve:1169:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:542:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:510:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:239:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:96:40)
+    at link (node:internal/modules/esm/module_job:95:36)
+
+
+Attempting fallback build approach...
+
+Created fallback minimal build
+
+=== Copying client build to dist/client ===
+
+Running command: cp -r /home/runner/workspace/client/dist/* /home/runner/workspace/dist/client in /home/runner/workspace
+
+Client build copied successfully
+
+Deployment build completed successfully
+
+Deployment build script succeeded
+
+=== Checking deployment structure ===
+
+Deployment structure verified
+=== Deployment preparation completed ===
+
+The application is ready to be deployed
+
+2025-05-09T18:27:08Z info: Pushing pid1 binary layer...
+2025-05-09T18:27:12Z info: Pushing Repl layer...
+2025-05-09T18:27:12Z info: Pushing hosting layer...
+2025-05-09T18:27:13Z info: Retrieved cached nix layer
+2025-05-09T18:27:14Z info: Created hosting layer
+2025-05-09T18:27:16Z info: Created pid1 binary layer
+2025-05-09T18:31:35Z info: Created Repl layer
+2025-05-09T18:31:36Z info: Pushed image manifest
+2025-05-09T18:31:38Z info: Pushed soci index manifest
+2025-05-09T18:31:43Z info: Creating Autoscale service
+2025-05-09T18:25:21Z info: Deployment: 82d49ab9-ff33-45d5-aa26-289965158796
+2025-05-09T18:25:21Z info: Build: fea3f0d3-a1fd-49cd-a31d-6f12c1dff71d
+2025-05-09T18:25:21Z info: Connecting to builder
+2025-05-09T18:25:25Z info: Builder connected
+2025-05-09T18:25:29Z info: Installing packages
+--> npm install
+
+
+up to date, audited 1073 packages in 3s
+
+110 packages are looking for funding
+
+  run `npm fund` for details
+
+
+5 vulnerabilities (2 moderate, 3 high)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.3.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.3.0
+npm notice To update run: npm install -g npm@11.3.0
+npm notice
+
+2025-05-09T18:25:33Z info: Starting Build
+=== Starting deployment process ===
+
+Node version: v20.18.1
+
+NPM version: 10.8.2
+
+=== Installing root dependencies ===
+
+
+up to date, audited 1073 packages in 2s
+
+110 packages are looking for funding
+
+  run `npm fund` for details
+
+
+5 vulnerabilities (2 moderate, 3 high)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+
+=== Running deployment build script ===
+
+Starting deployment build process...
+
+=== Building client ===
+
+=== Checking client package.json ===
+
+Client package.json found and parsed successfully
+
+Installing client dependencies...
+
+Running command: npm install in /home/runner/workspace/client
+
+
+added 101 packages, and audited 102 packages in 1m
+
+7 packages are looking for funding
+  run `npm fund` for details
+
+10 moderate severity vulnerabilities
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+
+
+Running command: ls -la node_modules/vite node_modules/typescript in /home/runner/workspace/client
+
+Command failed: ls -la node_modules/vite node_modules/typescript
+
+Command failed: ls -la node_modules/vite node_modules/typescript
+ls: cannot access 'node_modules/vite': No such file or directory
+ls: cannot access 'node_modules/typescript': No such file or directory
+
+
+Building client application...
+
+Client build failed with error:
+
+Command failed: cd client && npx vite build
+npm warn exec The following package was not found and will be installed: vite@6.3.5
+failed to load config from /home/runner/workspace/client/vite.config.ts
+error during build:
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /home/runner/workspace/client/node_modules/.vite-temp/vite.config.ts.timestamp-1746815227001-ff477766c267c.mjs
+    at packageResolve (node:internal/modules/esm/resolve:854:9)
+    at moduleResolve (node:internal/modules/esm/resolve:927:18)
+    at defaultResolve (node:internal/modules/esm/resolve:1169:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:542:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:510:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:239:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:96:40)
+    at link (node:internal/modules/esm/module_job:95:36)
+
+
+Stdout: 
+
+Stderr: npm warn exec The following package was not found and will be installed: vite@6.3.5
+failed to load config from /home/runner/workspace/client/vite.config.ts
+error during build:
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /home/runner/workspace/client/node_modules/.vite-temp/vite.config.ts.timestamp-1746815227001-ff477766c267c.mjs
+    at packageResolve (node:internal/modules/esm/resolve:854:9)
+    at moduleResolve (node:internal/modules/esm/resolve:927:18)
+    at defaultResolve (node:internal/modules/esm/resolve:1169:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:542:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:510:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:239:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:96:40)
+    at link (node:internal/modules/esm/module_job:95:36)
+
+
+Attempting fallback build approach...
+
+Created fallback minimal build
+
+=== Copying client build to dist/client ===
+
+Running command: cp -r /home/runner/workspace/client/dist/* /home/runner/workspace/dist/client in /home/runner/workspace
+
+Client build copied successfully
+
+Deployment build completed successfully
+
+Deployment build script succeeded
+
+=== Checking deployment structure ===
+
+Deployment structure verified
+=== Deployment preparation completed ===
+
+The application is ready to be deployed
+
+2025-05-09T18:27:08Z info: Pushing pid1 binary layer...
+2025-05-09T18:27:12Z info: Pushing Repl layer...
+2025-05-09T18:27:12Z info: Pushing hosting layer...
+2025-05-09T18:27:13Z info: Retrieved cached nix layer
+2025-05-09T18:27:14Z info: Created hosting layer
+2025-05-09T18:27:16Z info: Created pid1 binary layer
+2025-05-09T18:31:35Z info: Created Repl layer
+2025-05-09T18:31:36Z info: Pushed image manifest
+2025-05-09T18:31:38Z info: Pushed soci index manifest
+2025-05-09T18:31:43Z info: Creating Autoscale service
+2025-05-09T18:32:44Z info: Waiting for service to be ready
+2025-05-09T18:32:46Z info: Deployment successful
