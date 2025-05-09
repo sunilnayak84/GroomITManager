@@ -153,6 +153,9 @@
   </div>
 
   <script>
+    // WebSocket connection
+    let socket = null;
+    
     // Simple page navigation
     document.querySelectorAll('.nav-link').forEach(link => {
       link.addEventListener('click', (e) => {
@@ -189,12 +192,24 @@
       fetch('/api/status')
         .then(response => response.json())
         .then(data => {
-          statusElement.innerHTML = `
-            <p><strong>Status:</strong> ${data.status}</p>
-            <p><strong>Environment:</strong> ${data.environment}</p>
-            <p><strong>Version:</strong> ${data.version}</p>
-            <p><strong>Timestamp:</strong> ${data.timestamp}</p>
-          `;
+          let statusHtml = '';
+          
+          // Create a formatted display of the status data
+          for (const [key, value] of Object.entries(data)) {
+            if (key === 'memory') {
+              statusHtml += `<p><strong>Memory:</strong></p>`;
+              statusHtml += `<ul style="margin-left: 1rem;">`;
+              for (const [memKey, memValue] of Object.entries(value)) {
+                const memInMB = (memValue / 1024 / 1024).toFixed(2);
+                statusHtml += `<li>${memKey}: ${memInMB} MB</li>`;
+              }
+              statusHtml += `</ul>`;
+            } else {
+              statusHtml += `<p><strong>${key}:</strong> ${value}</p>`;
+            }
+          }
+          
+          statusElement.innerHTML = statusHtml;
           statusElement.classList.add('success');
         })
         .catch(error => {
@@ -204,6 +219,63 @@
           `;
           statusElement.classList.add('error');
         });
+    }
+    
+    // Test WebSocket connection
+    function testWebSocket() {
+      const wsStatusElement = document.getElementById('websocket-status');
+      wsStatusElement.innerHTML = 'Connecting to WebSocket...';
+      wsStatusElement.classList.remove('hidden', 'success', 'error');
+      
+      // Close existing connection if any
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.close();
+      }
+      
+      try {
+        // Create WebSocket connection
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/ws`;
+        socket = new WebSocket(wsUrl);
+        
+        // Connection opened
+        socket.addEventListener('open', (event) => {
+          wsStatusElement.innerHTML = `<p>Connected to WebSocket server</p>`;
+          wsStatusElement.classList.add('success');
+          
+          // Send a test message
+          socket.send(JSON.stringify({ 
+            type: 'ping', 
+            message: 'Hello from fallback client',
+            timestamp: new Date().toISOString()
+          }));
+        });
+        
+        // Listen for messages
+        socket.addEventListener('message', (event) => {
+          const data = JSON.parse(event.data);
+          let messageHtml = `
+            <p><strong>Message received:</strong></p>
+            <pre style="background-color: #f3f4f6; padding: 0.5rem; border-radius: 0.25rem; overflow: auto; max-height: 200px;">${JSON.stringify(data, null, 2)}</pre>
+          `;
+          wsStatusElement.innerHTML += messageHtml;
+        });
+        
+        // Listen for connection closing
+        socket.addEventListener('close', (event) => {
+          wsStatusElement.innerHTML += `<p>Connection closed. Code: ${event.code}</p>`;
+        });
+        
+        // Listen for connection errors
+        socket.addEventListener('error', (error) => {
+          wsStatusElement.innerHTML = `<p>WebSocket error: ${error}</p>`;
+          wsStatusElement.classList.add('error');
+        });
+        
+      } catch (error) {
+        wsStatusElement.innerHTML = `<p>Error creating WebSocket: ${error.message}</p>`;
+        wsStatusElement.classList.add('error');
+      }
     }
 
     // Handle login form submission
