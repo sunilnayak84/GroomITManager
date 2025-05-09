@@ -1,0 +1,241 @@
+2025-05-09T18:40:57Z info: Deployment: 82d49ab9-ff33-45d5-aa26-289965158796
+2025-05-09T18:40:57Z info: Build: f4256e78-c324-46ba-8de7-741ed834702c
+2025-05-09T18:40:57Z info: Connecting to builder
+2025-05-09T18:40:57Z info: Deployment: 82d49ab9-ff33-45d5-aa26-289965158796
+2025-05-09T18:40:57Z info: Build: f4256e78-c324-46ba-8de7-741ed834702c
+2025-05-09T18:40:57Z info: Connecting to builder
+2025-05-09T18:41:01Z info: Builder connected
+2025-05-09T18:41:04Z info: Installing packages
+--> npm install
+
+
+up to date, audited 1073 packages in 3s
+
+110 packages are looking for funding
+
+  run `npm fund` for details
+
+
+5 vulnerabilities (2 moderate, 3 high)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.3.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.3.0
+npm notice To update run: npm install -g npm@11.3.0
+npm notice
+
+2025-05-09T18:41:08Z info: Starting Build
+=== Starting deployment process ===
+
+Node version: v20.18.1
+
+NPM version: 10.8.2
+
+=== Installing root dependencies ===
+
+
+up to date, audited 1073 packages in 2s
+
+110 packages are looking for funding
+
+  run `npm fund` for details
+
+
+5 vulnerabilities (2 moderate, 3 high)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+
+=== Running deployment build script ===
+
+Starting deployment build process...
+
+=== Building client ===
+
+=== Checking client package.json ===
+
+Client package.json found and parsed successfully
+
+Installing client dependencies...
+
+Running command: npm install in /home/runner/workspace/client
+
+
+up to date, audited 102 packages in 1m
+
+7 packages are looking for funding
+  run `npm fund` for details
+
+10 moderate severity vulnerabilities
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+
+
+Installing Vite and other build dependencies explicitly...
+
+Running command: npm install --save-dev vite typescript @vitejs/plugin-react in /home/runner/workspace/client
+
+
+up to date, audited 102 packages in 4s
+
+7 packages are looking for funding
+  run `npm fund` for details
+
+10 moderate severity vulnerabilities
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+
+
+Running command: ls -la node_modules in /home/runner/workspace/client
+
+total 48
+drwxr-xr-x 1 runner runner   202 May  9 18:42 .
+drwxr-xr-x 1 runner runner    82 May  9 18:26 ..
+drwxr-xr-x 1 runner runner     0 May  9 18:42 @alloc
+drwxr-xr-x 1 runner runner     0 May  9 18:42 @ampproject
+drwxr-xr-x 1 runner runner     0 May  9 18:42 @babel
+drwxr-xr-x 1 runner runner    68 May  9 18:26 .bin
+drwxr-xr-x 1 runner runner   140 May  9 18:25 cliui
+drwxr-xr-x 1 runner runner   140 May  9 18:25 color-convert
+drwxr-xr-x 1 runner runner    72 May  9 18:25 color-name
+drwxr-xr-x 1 runner runner     0 May  9 18:42 @esbuild
+drwxr-xr-x 1 runner runner   114 May  9 18:25 escalade
+drwxr-xr-x 1 runner runner    92 May  9 18:25 faye-websocket
+drwxr-xr-x 1 runner runner  1156 May  9 18:25 @firebase
+drwxr-xr-x 1 runner runner  3978 May  9 18:25 firebase
+drwxr-xr-x 1 runner runner   122 May  9 18:25 get-caller-file
+drwxr-xr-x 1 runner runner    38 May  9 18:25 @grpc
+drwxr-xr-x 1 runner runner    18 May  9 18:25 @hookform
+drwxr-xr-x 1 runner runner   122 May  9 18:25 http-parser-js
+drwxr-xr-x 1 runner runner   204 May  9 18:25 idb
+drwxr-xr-x 1 runner runner     0 May  9 18:42 @isaacs
+drwxr-xr-x 1 runner runner    92 May  9 18:25 is-fullwidth-code-point
+drwxr-xr-x 1 runner runner     0 May  9 18:42 @jridgewell
+drwxr-xr-x 1 runner runner    96 May  9 18:25 js-tokens
+drwxr-xr-x 1 runner runner    72 May  9 18:25 lodash.camelcase
+drwxr-xr-x 1 runner runner   118 May  9 18:25 long
+drwxr-xr-x 1 runner runner   152 May  9 18:25 loose-envify
+drwxr-xr-x 1 runner runner     0 May  9 18:42 @nodelib
+-rw-r--r-- 1 runner runner 47389 May  9 18:42 .package-lock.json
+drwxr-xr-x 1 runner runner     0 May  9 18:42 @pkgjs
+drwxr-xr-x 1 runner runner   126 May  9 18:25 @protobufjs
+drwxr-xr-x 1 runner runner   244 May  9 18:25 protobufjs
+drwxr-xr-x 1 runner runner   192 May  9 18:25 react
+drwxr-xr-x 1 runner runner   232 May  9 18:25 react-dom
+drwxr-xr-x 1 runner runner    64 May  9 18:25 react-hook-form
+drwxr-xr-x 1 runner runner   144 May  9 18:25 require-directory
+drwxr-xr-x 1 runner runner     0 May  9 18:42 @rollup
+drwxr-xr-x 1 runner runner    92 May  9 18:25 safe-buffer
+drwxr-xr-x 1 runner runner   158 May  9 18:25 scheduler
+drwxr-xr-x 1 runner runner    42 May  9 18:25 @tanstack
+drwxr-xr-x 1 runner runner   272 May  9 18:25 tslib
+drwxr-xr-x 1 runner runner     0 May  9 18:42 @types
+drwxr-xr-x 1 runner runner   158 May  9 18:25 undici
+drwxr-xr-x 1 runner runner  1140 May  9 18:25 undici-types
+drwxr-xr-x 1 runner runner  1548 May  9 17:55 .vite
+drwxr-xr-x 1 runner runner     0 May  9 18:42 @vitejs
+drwxr-xr-x 1 runner runner    92 May  9 18:25 websocket-driver
+drwxr-xr-x 1 runner runner    92 May  9 18:25 websocket-extensions
+drwxr-xr-x 1 runner runner   108 May  9 18:25 y18n
+drwxr-xr-x 1 runner runner   234 May  9 18:25 yargs
+drwxr-xr-x 1 runner runner   118 May  9 18:25 yargs-parser
+drwxr-xr-x 1 runner runner    82 May  9 18:25 zod
+
+
+Building client application...
+
+Client build failed with error:
+
+Command failed: cd client && npx vite build
+npm warn exec The following package was not found and will be installed: vite@6.3.5
+failed to load config from /home/runner/workspace/client/vite.config.ts
+error during build:
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /home/runner/workspace/client/node_modules/.vite-temp/vite.config.ts.timestamp-1746816143803-f44ee98c2a3db.mjs
+    at packageResolve (node:internal/modules/esm/resolve:854:9)
+    at moduleResolve (node:internal/modules/esm/resolve:927:18)
+    at defaultResolve (node:internal/modules/esm/resolve:1169:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:542:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:510:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:239:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:96:40)
+    at link (node:internal/modules/esm/module_job:95:36)
+
+
+Stdout: 
+
+Stderr: npm warn exec The following package was not found and will be installed: vite@6.3.5
+failed to load config from /home/runner/workspace/client/vite.config.ts
+error during build:
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /home/runner/workspace/client/node_modules/.vite-temp/vite.config.ts.timestamp-1746816143803-f44ee98c2a3db.mjs
+    at packageResolve (node:internal/modules/esm/resolve:854:9)
+    at moduleResolve (node:internal/modules/esm/resolve:927:18)
+    at defaultResolve (node:internal/modules/esm/resolve:1169:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:542:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:510:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:239:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:96:40)
+    at link (node:internal/modules/esm/module_job:95:36)
+
+
+Trying alternate build approach with explicit vite version...
+
+Alternate build approach also failed:
+
+Command failed: cd client && npx vite@5.0.0 build --force
+npm warn exec The following package was not found and will be installed: vite@5.0.0
+failed to load config from /home/runner/workspace/client/vite.config.ts
+error during build:
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /home/runner/workspace/client/vite.config.ts.timestamp-1746816147295-4eaaeddaa4413.mjs
+    at packageResolve (node:internal/modules/esm/resolve:854:9)
+    at moduleResolve (node:internal/modules/esm/resolve:927:18)
+    at defaultResolve (node:internal/modules/esm/resolve:1169:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:542:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:510:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:239:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:96:40)
+    at link (node:internal/modules/esm/module_job:95:36)
+
+
+Attempting fallback build approach...
+
+Created fallback minimal build
+
+=== Copying client build to dist/client ===
+
+Running command: cp -r /home/runner/workspace/client/dist/* /home/runner/workspace/dist/client in /home/runner/workspace
+
+Client build copied successfully
+Deployment build completed successfully
+
+Deployment build script succeeded
+
+=== Checking deployment structure ===
+
+Deployment structure verified
+
+WARNING: Using fallback page instead of real build
+This is a minimal version to ensure the site works
+
+=== Deployment preparation completed ===
+
+The application is ready to be deployed
+
+2025-05-09T18:42:29Z info: Pushing pid1 binary layer...
+2025-05-09T18:42:33Z info: Pushing Repl layer...
+2025-05-09T18:42:33Z info: Pushing hosting layer...
+2025-05-09T18:42:33Z info: Retrieved cached nix layer
+2025-05-09T18:42:34Z info: Created hosting layer
+2025-05-09T18:42:37Z info: Created pid1 binary layer

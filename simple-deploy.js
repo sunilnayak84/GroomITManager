@@ -3,6 +3,9 @@ import express from 'express';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import http from 'http';
+import { WebSocketServer } from 'ws';
+import { WebSocket } from 'ws';
 
 // Set production environment
 process.env.NODE_ENV = 'production';
@@ -11,6 +14,51 @@ process.env.NODE_ENV = 'production';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Create HTTP server for WebSocket support
+const server = http.createServer(app);
+
+// Create WebSocket server
+const wss = new WebSocketServer({ server, path: '/ws' });
+
+// Handle WebSocket connections
+wss.on('connection', (ws) => {
+  console.log('WebSocket client connected');
+  
+  // Send a welcome message
+  ws.send(JSON.stringify({ 
+    type: 'welcome', 
+    message: 'Connected to WebSocket server',
+    timestamp: new Date().toISOString()
+  }));
+  
+  // Handle messages
+  ws.on('message', (message) => {
+    try {
+      const data = JSON.parse(message);
+      console.log('WebSocket received:', data);
+      
+      // Echo the message back
+      ws.send(JSON.stringify({ 
+        type: 'echo', 
+        data,
+        timestamp: new Date().toISOString()
+      }));
+    } catch (error) {
+      console.error('Error parsing WebSocket message:', error);
+      ws.send(JSON.stringify({ 
+        type: 'error', 
+        message: 'Invalid JSON',
+        timestamp: new Date().toISOString()
+      }));
+    }
+  });
+  
+  // Handle disconnection
+  ws.on('close', () => {
+    console.log('WebSocket client disconnected');
+  });
+});
 
 // Basic middleware
 app.use(express.json());
@@ -58,14 +106,31 @@ app.use(express.static(clientBuildPath, {
   }
 }));
 
-// Basic API status endpoint
+// Enhanced API status endpoint
 app.get('/api/status', (req, res) => {
-  res.json({
+  const statusInfo = {
     status: 'online',
     version: '1.0.0',
     environment: process.env.NODE_ENV,
-    timestamp: new Date().toISOString()
-  });
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    memory: process.memoryUsage(),
+    nodeVersion: process.version,
+    platform: process.platform,
+    deploymentType: fs.existsSync(path.join(clientBuildPath, 'assets')) ? 'full' : 'fallback'
+  };
+  
+  // Check if this is our enhanced fallback page
+  const indexHtml = fs.readFileSync(path.join(clientBuildPath, 'index.html'), 'utf8');
+  if (indexHtml.includes('Pet Grooming Management System</h1>')) {
+    statusInfo.clientType = 'enhanced-fallback';
+  } else if (indexHtml.includes('The application is running in production mode')) {
+    statusInfo.clientType = 'basic-fallback';
+  } else {
+    statusInfo.clientType = 'production-build';
+  }
+  
+  res.json(statusInfo);
 });
 
 // Important: Catch-all route AFTER API routes for SPA routing
@@ -110,11 +175,12 @@ app.get('/api/debug', (req, res) => {
   }
 });
 
-// Start server
-app.listen(PORT, '0.0.0.0', () => {
+// Start server using the HTTP server for WebSocket support
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`Simple deployment server running on port ${PORT}`);
   console.log(`Static files served from: ${clientBuildPath}`);
   console.log(`Environment: ${process.env.NODE_ENV}`);
+  console.log(`WebSocket server enabled on path: /ws`);
   
   // List all environment variables that might affect client app
   const clientEnvVars = [
@@ -140,4 +206,10 @@ app.listen(PORT, '0.0.0.0', () => {
       console.log(`  ${key}: not set`);
     }
   });
+  
+  // Setup health check interval for WebSocket
+  setInterval(() => {
+    const clientCount = wss.clients.size;
+    console.log(`[Health Check] WebSocket clients connected: ${clientCount}`);
+  }, 60000); // Check every minute
 });

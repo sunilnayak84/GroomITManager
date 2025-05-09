@@ -151,29 +151,37 @@ async function buildClient() {
         fs.mkdirSync(publicDir, { recursive: true });
       }
       
-      // Create a minimal index.html
-      fs.writeFileSync(
-        path.join(publicDir, 'index.html'),
-        `<!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Pet Grooming Management</title>
-          <style>
-            body { font-family: Arial, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-            .container { text-align: center; max-width: 800px; padding: 20px; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <h1>Pet Grooming Management</h1>
-            <p>The application is running in production mode.</p>
-            <p>Please contact support if you encounter any issues.</p>
-          </div>
-        </body>
-        </html>`
-      );
+      // Copy the enhanced fallback HTML file if it exists
+      const enhancedFallbackPath = path.join(process.cwd(), 'enhanced-fallback.html');
+      if (fs.existsSync(enhancedFallbackPath)) {
+        console.log('Using enhanced fallback page');
+        fs.copyFileSync(enhancedFallbackPath, path.join(publicDir, 'index.html'));
+      } else {
+        // Create a minimal index.html as a final fallback
+        console.log('Enhanced fallback not found, using basic fallback');
+        fs.writeFileSync(
+          path.join(publicDir, 'index.html'),
+          `<!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Pet Grooming Management</title>
+            <style>
+              body { font-family: Arial, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+              .container { text-align: center; max-width: 800px; padding: 20px; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <h1>Pet Grooming Management</h1>
+              <p>The application is running in production mode.</p>
+              <p>Please contact support if you encounter any issues.</p>
+            </div>
+          </body>
+          </html>`
+        );
+      }
       
       console.log('Created fallback minimal build');
       return true;

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pet Grooming Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/firebase@9.22.0/firebase-app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/firebase@9.22.0/firebase-auth.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f3f4f6;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    .card {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 0.25rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-primary {
+      background-color: #4f46e5;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: #4338ca;
+    }
+    .api-status {
+      padding: 0.5rem;
+      border-radius: 0.25rem;
+      margin-top: 1rem;
+    }
+    .api-status.success {
+      background-color: #ecfdf5;
+      color: #047857;
+    }
+    .api-status.error {
+      background-color: #fef2f2;
+      color: #b91c1c;
+    }
+    .nav-link {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      margin-right: 0.5rem;
+      color: #4b5563;
+      text-decoration: none;
+      border-radius: 0.25rem;
+    }
+    .nav-link:hover {
+      background-color: #f3f4f6;
+    }
+    .nav-link.active {
+      color: #4f46e5;
+      font-weight: 500;
+    }
+    .login-form {
+      max-width: 400px;
+      margin: 2rem auto;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    .form-input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="mb-8">
+      <h1 class="text-4xl font-bold mb-4">Pet Grooming Management System</h1>
+      <p class="text-gray-600">Simplified deployment version</p>
+      
+      <nav class="mt-4">
+        <a href="#" class="nav-link active" data-page="home">Home</a>
+        <a href="#" class="nav-link" data-page="login">Login</a>
+        <a href="#" class="nav-link" data-page="status">API Status</a>
+      </nav>
+    </header>
+
+    <main>
+      <div id="home-page" class="page">
+        <div class="card">
+          <h2 class="text-2xl font-semibold mb-4">Welcome to the Pet Grooming Management System</h2>
+          <p class="mb-4">
+            This is a simplified version of the application. The full version provides comprehensive 
+            pet grooming business management with features for appointment scheduling, inventory 
+            management, customer records, and more.
+          </p>
+          <p class="mb-4">
+            The application is currently running in deployment mode. Some features may be limited.
+          </p>
+          <div class="mt-4">
+            <button class="btn btn-primary" onclick="checkApiStatus()">Check API Status</button>
+            <button class="btn btn-primary ml-2" onclick="testWebSocket()">Test WebSocket</button>
+          </div>
+          <div id="websocket-status" class="mt-4 hidden"></div>
+        </div>
+      </div>
+
+      <div id="login-page" class="page hidden">
+        <div class="card login-form">
+          <h2 class="text-2xl font-semibold mb-4">Login</h2>
+          <form id="login-form" onsubmit="handleLogin(event)">
+            <div class="form-group">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" id="email" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" id="password" class="form-input" required>
+            </div>
+            <div class="mt-4">
+              <button type="submit" class="btn btn-primary w-full">Login</button>
+            </div>
+          </form>
+          <div id="login-message" class="mt-4 hidden"></div>
+        </div>
+      </div>
+
+      <div id="status-page" class="page hidden">
+        <div class="card">
+          <h2 class="text-2xl font-semibold mb-4">API Status</h2>
+          <p>Check the status of the API and backend services.</p>
+          <div id="api-status-container" class="mt-4">
+            <button class="btn btn-primary" onclick="checkApiStatus()">Check Status</button>
+            <div id="api-status" class="api-status hidden"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Simple page navigation
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const pageId = link.getAttribute('data-page');
+        showPage(pageId);
+      });
+    });
+
+    function showPage(pageId) {
+      // Hide all pages
+      document.querySelectorAll('.page').forEach(page => {
+        page.classList.add('hidden');
+      });
+      
+      // Show selected page
+      document.getElementById(pageId + '-page').classList.remove('hidden');
+      
+      // Update active link
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('data-page') === pageId) {
+          link.classList.add('active');
+        }
+      });
+    }
+
+    // Check API status
+    function checkApiStatus() {
+      const statusElement = document.getElementById('api-status');
+      statusElement.innerHTML = 'Checking API status...';
+      statusElement.classList.remove('hidden', 'success', 'error');
+      
+      fetch('/api/status')
+        .then(response => response.json())
+        .then(data => {
+          statusElement.innerHTML = `
+            <p><strong>Status:</strong> ${data.status}</p>
+            <p><strong>Environment:</strong> ${data.environment}</p>
+            <p><strong>Version:</strong> ${data.version}</p>
+            <p><strong>Timestamp:</strong> ${data.timestamp}</p>
+          `;
+          statusElement.classList.add('success');
+        })
+        .catch(error => {
+          statusElement.innerHTML = `
+            <p><strong>Error:</strong> Could not connect to API</p>
+            <p>${error.message}</p>
+          `;
+          statusElement.classList.add('error');
+        });
+    }
+
+    // Handle login form submission
+    function handleLogin(event) {
+      event.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const messageElement = document.getElementById('login-message');
+      
+      messageElement.innerHTML = 'Logging in...';
+      messageElement.classList.remove('hidden', 'success', 'error');
+      
+      // In a real app, this would connect to an authentication service
+      setTimeout(() => {
+        if (email === 'admin@example.com' && password === 'password') {
+          messageElement.innerHTML = 'Login successful! However, this is just a fallback page with limited functionality.';
+          messageElement.classList.add('success');
+        } else {
+          messageElement.innerHTML = 'Login failed. This is a fallback page with limited functionality. Try admin@example.com / password for demo.';
+          messageElement.classList.add('error');
+        }
+      }, 1000);
+    }
+
+    // Initialize - Check API status on load
+    window.onload = function() {
+      // Show home page by default
+      showPage('home');
+      
+      // Check API status
+      checkApiStatus();
+    };
+  </script>
+</body>
+</html>

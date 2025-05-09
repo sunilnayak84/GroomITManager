@@ -15,7 +15,14 @@ npm install
 create_fallback_client() {
   echo "=== Creating fallback client build ==="
   mkdir -p dist/client
-  cat > dist/client/index.html << 'EOL'
+  
+  # Check if enhanced fallback exists
+  if [ -f "enhanced-fallback.html" ]; then
+    echo "Using enhanced fallback page"
+    cp enhanced-fallback.html dist/client/index.html
+  else
+    echo "Enhanced fallback not found, using basic fallback"
+    cat > dist/client/index.html << 'EOL'
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -53,6 +60,7 @@ create_fallback_client() {
 </body>
 </html>
 EOL
+  fi
   echo "Created fallback client build"
 }
 
