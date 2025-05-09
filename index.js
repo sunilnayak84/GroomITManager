@@ -1,11 +1,9 @@
-// This is the root entry point for Replit Deployments
-// It will be used if no other entry point is specified
-
-// Set to production mode
+// Deployment entry point for Replit
+// This file ensures the correct production server is loaded
 process.env.NODE_ENV = 'production';
 
-// Import the production server
-import('./server.js').catch(err => {
-  console.error('Failed to start production server:', err);
+// Import the deployment-specific server implementation
+import('./replit_deployment.js').catch(err => {
+  console.error('Failed to start deployment server:', err);
   process.exit(1);
 });
