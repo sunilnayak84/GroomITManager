@@ -7,7 +7,7 @@ channel = "stable-24_05"
 
 [deployment]
 deploymentTarget = "cloudrun"
-build = ["sh", "-c", "npm install && npm run build && node scripts/prepare-deploy.js"]
+build = ["sh", "-c", "./deploy.sh"]
 run = ["sh", "-c", "NODE_ENV=production node index.js"]
 
 [[deployment.rewrites]]
