@@ -29,6 +29,11 @@ const WebSocketNotifications: React.FC<WebSocketNotificationsProps> = ({
       case 'connection':
       case 'broadcast':
       case 'appointment-update':
+      case 'customer-update':
+      case 'pet-update':
+      case 'service-update':
+      case 'billing-event':
+      case 'staff-notification':
         // Add new notification
         const newNotification: Notification = {
           id: `notification-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -56,11 +61,33 @@ const WebSocketNotifications: React.FC<WebSocketNotificationsProps> = ({
     switch (message.type) {
       case 'connection':
         return 'Connected to notification server';
+        
       case 'broadcast':
         return message.content || 'New broadcast message';
+        
       case 'appointment-update':
-        const action = message.action || 'updated';
-        return `Appointment ${action}: ${message.appointmentId?.substring(0, 8) || 'Unknown'}`;
+        const apptAction = message.action || 'updated';
+        return `Appointment ${apptAction}: ${message.appointmentId?.substring(0, 8) || 'Unknown'}`;
+        
+      case 'customer-update':
+        const custAction = message.action || 'updated';
+        return `Customer ${custAction}: ${message.customerId?.substring(0, 8) || 'Unknown'}`;
+        
+      case 'pet-update':
+        const petAction = message.action || 'updated';
+        return `Pet ${petAction}: ${message.petId?.substring(0, 8) || 'Unknown'}`;
+        
+      case 'service-update':
+        const svcAction = message.action || 'updated';
+        return `Service ${svcAction}: ${message.serviceId?.substring(0, 8) || 'Unknown'}`;
+        
+      case 'billing-event':
+        const billAction = message.action || 'updated';
+        return `Billing ${billAction}: ${message.billId?.substring(0, 8) || 'Unknown'}`;
+        
+      case 'staff-notification':
+        return message.message || `Staff notification: ${message.notificationType || 'alert'}`;
+        
       default:
         return 'New notification received';
     }
@@ -206,10 +233,15 @@ const WebSocketNotifications: React.FC<WebSocketNotificationsProps> = ({
                         notification.type === 'connection' ? 'bg-green-100 text-green-800' :
                         notification.type === 'broadcast' ? 'bg-blue-100 text-blue-800' :
                         notification.type === 'appointment-update' ? 'bg-purple-100 text-purple-800' :
+                        notification.type === 'customer-update' ? 'bg-indigo-100 text-indigo-800' :
+                        notification.type === 'pet-update' ? 'bg-amber-100 text-amber-800' :
+                        notification.type === 'service-update' ? 'bg-cyan-100 text-cyan-800' :
+                        notification.type === 'billing-event' ? 'bg-emerald-100 text-emerald-800' :
+                        notification.type === 'staff-notification' ? 'bg-orange-100 text-orange-800' :
                         notification.type === 'error' ? 'bg-red-100 text-red-800' :
                         'bg-gray-100 text-gray-800'
                       }`}>
-                        {notification.type}
+                        {notification.type.split('-')[0]}
                       </span>
                       <span className="text-xs text-gray-500">
                         {new Date(notification.timestamp).toLocaleTimeString()}

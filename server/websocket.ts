@@ -130,6 +130,62 @@ export function notifyAppointmentUpdate(appointmentId: string, action: 'created'
   });
 }
 
+// Notify about customer updates
+export function notifyCustomerUpdate(customerId: string, action: 'created' | 'updated' | 'deleted', data: any) {
+  return broadcastMessage({
+    type: 'customer-update',
+    customerId,
+    action,
+    data,
+    timestamp: new Date().toISOString()
+  });
+}
+
+// Notify about pet updates
+export function notifyPetUpdate(petId: string, action: 'created' | 'updated' | 'deleted', data: any) {
+  return broadcastMessage({
+    type: 'pet-update',
+    petId,
+    action,
+    data,
+    timestamp: new Date().toISOString()
+  });
+}
+
+// Notify about service updates
+export function notifyServiceUpdate(serviceId: string, action: 'created' | 'updated' | 'deleted', data: any) {
+  return broadcastMessage({
+    type: 'service-update',
+    serviceId,
+    action,
+    data,
+    timestamp: new Date().toISOString()
+  });
+}
+
+// Notify about billing events
+export function notifyBillingEvent(billId: string, action: 'created' | 'paid' | 'cancelled' | 'refunded', data: any) {
+  return broadcastMessage({
+    type: 'billing-event',
+    billId,
+    action,
+    data,
+    timestamp: new Date().toISOString()
+  });
+}
+
+// Notify staff members about specific events
+export function notifyStaff(staffId: string, notificationType: string, message: string, data: any = {}) {
+  return broadcastMessage({
+    type: 'staff-notification',
+    staffId,
+    notificationType,
+    message,
+    data,
+    timestamp: new Date().toISOString()
+  });
+}
+
 // Get active connections count
 export function getActiveConnectionsCount() {
   return clients.size;
