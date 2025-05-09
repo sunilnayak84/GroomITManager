@@ -24,6 +24,7 @@ import WorkingHoursPage from "./pages/WorkingHoursPage";
 import LoyaltyProgramPage from "./pages/settings/LoyaltyProgramPage";
 import DogWalkingPage from "./pages/DogWalkingPage";
 import StaffManagementPage from "./pages/StaffManagementPage";
+import WebSocketDemoPage from "./pages/WebSocketDemoPage";
 
 // Loading component for suspense fallback
 function LoadingSpinner() {
@@ -131,6 +132,7 @@ function Router() {
             <Route path="/billing/:id">{(params) => <React.Suspense fallback={<div>Loading...</div>}>
               {React.createElement(React.lazy(() => import('./pages/BillDetailsPage')), { billId: params.id })}
             </React.Suspense>}</Route>
+            <Route path="/websocket-demo" component={WebSocketDemoPage} />
             <Route>404 Page Not Found</Route>
           </Switch>
         </Suspense>

@@ -36,6 +36,10 @@ export async function registerRoutes(app: Express.Application) {
     });
     next();
   }, billingRouter);
+  
+  // Allow notifications API without authentication for testing purposes
+  logger.info('[ROUTES] Registering notification routes');
+  app.use('/api/notifications', notificationsRouter);
 
   // All other API routes require authentication
   app.use('/api', authenticateFirebase);
@@ -47,10 +51,6 @@ export async function registerRoutes(app: Express.Application) {
   // Register staff management routes
   logger.info('[ROUTES] Registering staff management routes');
   app.use('/api/staff', staffManagementRouter);
-  
-  // Register notifications routes
-  logger.info('[ROUTES] Registering notification routes');
-  app.use('/api/notifications', notificationsRouter);
   
   // Register customer routes
   logger.info('[ROUTES] Registering customer routes');

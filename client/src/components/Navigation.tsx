@@ -1,4 +1,4 @@
-import { Home, Calendar, Users, PawPrint, LogOut, Package, Shield, Gift, PersonStanding, Clock, CreditCard } from "lucide-react";
+import { Home, Calendar, Users, PawPrint, LogOut, Package, Shield, Gift, PersonStanding, Clock, CreditCard, Radio } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useUser } from "../hooks/use-user";
 import { Button } from "./ui/button";
@@ -39,6 +39,7 @@ export default function Navigation() {
     { href: "/staff", icon: Users, label: "Staff Management" },
     { href: "/staff-availability", icon: Clock, label: "Staff Availability" },
     { href: "/settings/role-management", icon: Shield, label: "Role Management" },
+    { href: "/websocket-demo", icon: Radio, label: "WebSocket Demo" },
   ];
 
   return (
