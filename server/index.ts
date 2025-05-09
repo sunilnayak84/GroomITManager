@@ -7,6 +7,7 @@ import { setupAuth } from "./auth.js";
 import cors from 'cors';
 import { logger } from "./utils/logger.js";
 import { setupVite } from "./vite.js";
+import { setupStaticFileServing } from "./static-server.js";
 
 // Configure Express app
 const app = express();
@@ -50,14 +51,34 @@ async function startServer(port: number) {
     await setupAuth(app);
     logger.info('Authentication setup completed');
 
-    // Register API routes before Vite middleware to ensure proper routing
+    // Register API routes before client-side routing to ensure proper API handling
     await registerRoutes(app);
     logger.info('API routes registered');
-
-    // Setup Vite after API routes
-    const server = createServer(app); // Moved createServer here
-    await setupVite(app, server);
-    logger.info('Vite middleware setup completed');
+    
+    // Create HTTP server
+    const server = createServer(app);
+    
+    // In production, serve static files, otherwise use Vite dev server
+    const isProduction = process.env.NODE_ENV === 'production';
+    if (isProduction) {
+      try {
+        const success = setupStaticFileServing(app);
+        if (success) {
+          logger.info('Static file serving enabled for production');
+        } else {
+          logger.warn('Could not set up static file serving, falling back to Vite');
+          await setupVite(app, server);
+          logger.info('Vite middleware setup completed as fallback');
+        }
+      } catch (error) {
+        logger.error('Failed to serve static files:', error);
+        await setupVite(app, server);
+        logger.info('Vite middleware setup completed as fallback after error');
+      }
+    } else {
+      await setupVite(app, server);
+      logger.info('Vite development middleware setup completed');
+    }
 
     // Start listening
     server.listen(port, '0.0.0.0', () => {
