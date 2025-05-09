@@ -3,8 +3,10 @@ import { admin } from './firebase';
 import * as Express from 'express';
 import { staffManagementRouter } from './api/staff-management';
 import { authenticateFirebase } from './middleware/auth';
+import { allowPublicAccess } from './middleware/public-access';
 import { billingRouter } from './api/billing-routes';
 import { notificationsRouter } from './api/notifications-routes';
+import { demoRouter } from './api/demo-routes';
 import { logger } from './utils/logger';
 
 const router = Router();
@@ -40,7 +42,11 @@ export async function registerRoutes(app: Express.Application) {
   // IMPORTANT: Register notification routes BEFORE setting up the authentication middleware
   // This allows testing WebSocket functionality without authentication
   logger.info('[ROUTES] Registering notification routes');
-  app.use('/api/notifications', notificationsRouter);
+  app.use('/api/notifications', allowPublicAccess, notificationsRouter);
+  
+  // Register demo routes for WebSocket testing (publicly accessible)
+  logger.info('[ROUTES] Registering demo routes');
+  app.use('/api/demo', allowPublicAccess, demoRouter);
 
   // All other API routes require authentication
   app.use('/api', authenticateFirebase);
