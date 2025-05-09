@@ -3,11 +3,10 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "NODE_ENV=production node replit_deployment.js",
+    "start": "NODE_ENV=production node server.js",
     "build": "cd client && npm run build && cd .. && mkdir -p dist/client && cp -r client/dist/* dist/client/"
   },
   "engines": {
     "node": ">=18.0.0"
-  },
-  "main": "replit_deployment.js"
+  }
 }

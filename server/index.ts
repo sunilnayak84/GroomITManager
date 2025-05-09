@@ -8,6 +8,7 @@ import cors from 'cors';
 import { logger } from "./utils/logger.js";
 import { setupVite } from "./vite.js";
 import { setupProductionMiddleware } from "./production-middleware.js";
+import { setupWebSocketServer } from "./websocket.js";
 
 // Configure Express app
 const app = express();
@@ -74,9 +75,14 @@ async function startServer(port: number) {
       logger.info('Vite development middleware setup completed');
     }
 
+    // Set up WebSocket server
+    const wss = setupWebSocketServer(server);
+    logger.info('WebSocket server initialized');
+
     // Start listening
     server.listen(port, '0.0.0.0', () => {
       logger.info(`Server started on port ${port}`);
+      logger.info(`WebSocket server available at ws://localhost:${port}/ws`);
     });
 
     // Handle server errors
