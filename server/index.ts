@@ -7,7 +7,7 @@ import { setupAuth } from "./auth.js";
 import cors from 'cors';
 import { logger } from "./utils/logger.js";
 import { setupVite } from "./vite.js";
-import { setupStaticFileServing } from "./static-server.js";
+import { setupProductionMiddleware } from "./production-middleware.js";
 
 // Configure Express app
 const app = express();
@@ -62,14 +62,8 @@ async function startServer(port: number) {
     const isProduction = process.env.NODE_ENV === 'production';
     if (isProduction) {
       try {
-        const success = setupStaticFileServing(app);
-        if (success) {
-          logger.info('Static file serving enabled for production');
-        } else {
-          logger.warn('Could not set up static file serving, falling back to Vite');
-          await setupVite(app, server);
-          logger.info('Vite middleware setup completed as fallback');
-        }
+        setupProductionMiddleware(app);
+        logger.info('Static file serving enabled for production');
       } catch (error) {
         logger.error('Failed to serve static files:', error);
         await setupVite(app, server);
