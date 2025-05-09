@@ -88,6 +88,21 @@ fi
 echo "=== Checking deployment structure ==="
 if [ -d "dist/client" ] && [ -f "dist/client/index.html" ]; then
   echo "Deployment structure verified"
+  
+  # Check if this is our fallback page or the real build
+  if grep -q "The application is running in production mode" dist/client/index.html; then
+    echo "WARNING: Using fallback page instead of real build"
+    echo "This is a minimal version to ensure the site works"
+  else
+    echo "SUCCESS: Using real application build"
+    
+    # Check if assets directory exists and contains JS files
+    if [ -d "dist/client/assets" ] && [ "$(find dist/client/assets -name "*.js" | wc -l)" -gt 0 ]; then
+      echo "Assets verified: $(find dist/client/assets -name "*.js" | wc -l) JavaScript files found"
+    else
+      echo "WARNING: Assets may be missing or incomplete"
+    fi
+  fi
 else
   echo "ERROR: Deployment structure verification failed"
   exit 1
