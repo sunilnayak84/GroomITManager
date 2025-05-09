@@ -2,8 +2,9 @@
 // This file ensures the correct production server is loaded
 process.env.NODE_ENV = 'production';
 
-// Import the deployment-specific server implementation
-import('./replit_deployment.js').catch(err => {
-  console.error('Failed to start deployment server:', err);
+// Use the simple deployment file that focuses just on serving static files
+import('./simple-deploy.js').catch(err => {
+  console.error('Failed to start simple deployment server:', err);
+  console.error('Error details:', err.stack);
   process.exit(1);
 });
