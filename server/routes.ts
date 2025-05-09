@@ -37,7 +37,8 @@ export async function registerRoutes(app: Express.Application) {
     next();
   }, billingRouter);
   
-  // Allow notifications API without authentication for testing purposes
+  // IMPORTANT: Register notification routes BEFORE setting up the authentication middleware
+  // This allows testing WebSocket functionality without authentication
   logger.info('[ROUTES] Registering notification routes');
   app.use('/api/notifications', notificationsRouter);
 
