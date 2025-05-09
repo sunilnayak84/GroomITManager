@@ -1,0 +1,155 @@
+2025-05-09T15:51:36Z info: Deployment: 7def0ffe-6e59-447d-8eb9-dab7a5a39c00
+2025-05-09T15:51:36Z info: Build: 16162d4f-c39b-4617-9956-64f1cce96714
+2025-05-09T15:51:36Z info: Connecting to builder
+2025-05-09T15:51:36Z info: Deployment: 7def0ffe-6e59-447d-8eb9-dab7a5a39c00
+2025-05-09T15:51:36Z info: Build: 16162d4f-c39b-4617-9956-64f1cce96714
+2025-05-09T15:51:36Z info: Connecting to builder
+2025-05-09T15:51:41Z info: Builder connected
+2025-05-09T15:51:44Z info: Installing packages
+--> npm install
+
+
+up to date, audited 1153 packages in 5s
+
+
+119 packages are looking for funding
+  run `npm fund` for details
+
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.3.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.3.0
+npm notice To update run: npm install -g npm@11.3.0
+npm notice
+
+2025-05-09T15:51:50Z info: Starting Build
+
+up to date, audited 1153 packages in 2s
+
+119 packages are looking for funding
+  run `npm fund` for details
+
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+
+> rest-express@1.0.0 build
+> npm run build:client && npm run build:server
+
+
+
+> rest-express@1.0.0 build:client
+> cd client && vite build
+
+
+vite v5.4.11 building for production...
+
+transforming...
+
+✓ 3476 modules transformed.
+
+rendering chunks...
+
+[plugin:vite:reporter] [plugin vite:reporter] 
+(!) /home/runner/workspace/client/src/lib/storage.ts is dynamically imported by /home/runner/workspace/client/src/components/AppointmentDetails.tsx, /home/runner/workspace/client/src/components/AppointmentDetails.tsx but also statically imported by /home/runner/workspace/client/src/hooks/use-pets.ts, /home/runner/workspace/client/src/hooks/use-rewards.ts, dynamic import will not move module into another chunk.
+
+
+computing gzip size...
+
+dist/index.html                                    0.63 kB │ gzip:   0.37 kB
+
+dist/assets/index-BB6SPRtb.css                    97.83 kB │ gzip:  15.10 kB
+
+dist/assets/CategoriesPage-pBHRd0Fe.js             2.12 kB │ gzip:   0.94 kB │ map:     7.27 kB
+
+dist/assets/use-billing-BAD4YKPG.js                2.55 kB │ gzip:   1.15 kB │ map:     8.03 kB
+
+dist/assets/RewardsManagementPage-CoBpAV0p.js      4.99 kB │ gzip:   1.76 kB │ map:    16.65 kB
+
+dist/assets/BillingPage-D7Q3wJi4.js                5.33 kB │ gzip:   2.04 kB │ map:    16.33 kB
+
+dist/assets/index-BP1MMe79.js                      6.16 kB │ gzip:   2.18 kB │ map:    21.32 kB
+dist/assets/BreedsPage-BZIa2de1.js                 8.12 kB │ gzip:   3.15 kB │ map:    20.35 kB
+dist/assets/StaffPage-Csc9MZhC.js                  8.27 kB │ gzip:   2.67 kB │ map:    27.84 kB
+
+dist/assets/BillDetailsPage-B4YuUIZd.js           13.59 kB │ gzip:   3.72 kB │ map:    39.67 kB
+dist/assets/vendor-BtIrUdbE.js                   141.46 kB │ gzip:  45.51 kB │ map:   344.55 kB
+
+dist/assets/index-CWPe-K36.js                  1,898.20 kB │ gzip: 508.59 kB │ map: 7,770.29 kB
+
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+
+✓ built in 20.48s
+
+
+> rest-express@1.0.0 build:server
+> esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+
+
+  dist/index.js  79.1kb
+
+⚡ Done in 462ms
+
+2025-05-09T15:52:18Z info: Pushing pid1 binary layer...
+2025-05-09T15:52:23Z info: Pushing Repl layer...
+2025-05-09T15:52:23Z info: Pushing hosting layer...
+2025-05-09T15:52:24Z info: Retrieved cached nix layer
+2025-05-09T15:52:25Z info: Created hosting layer
+2025-05-09T15:52:27Z info: Created pid1 binary layer
+2025-05-09T15:56:24Z info: Created Repl layer
+2025-05-09T15:56:26Z info: Pushed image manifest
+2025-05-09T15:56:27Z info: Pushed soci index manifest
+2025-05-09T15:56:32Z info: Creating Autoscale service
+info: Firebase Admin initialized successfully {"timestamp":"2025-05-09T15:58:22.705Z"}
+[FIREBASE] Using service account from environment variable
+forwarding local port 5174 to external port 80 (mapped as 1104)
+info: [ROUTES] Registering billing routes {"timestamp":"2025-05-09T15:58:22.727Z"}
+info: [ROUTES] Registering debug routes {"timestamp":"2025-05-09T15:58:22.728Z"}
+[PORT_CLEANUP] Port 5174 is now available
+[PORT_CLEANUP] Unix method failed, trying Windows method...
+info: [ROUTES] Registering staff management routes {"timestamp":"2025-05-09T15:58:22.727Z"}
+info: Setting up production static file serving from: /home/runner/workspace/client/dist {"timestamp":"2025-05-09T15:58:22.729Z"}
+info: API routes registered {"timestamp":"2025-05-09T15:58:22.728Z"}
+[AUTH] Setting up authentication middleware in production mode
+[FIREBASE] Initializing with service account for project: replit-5ac6a
+[FIREBASE] Production initialization successful
+[PORT_CLEANUP] Attempting to clean up port 5174...
+info: WebSocket server initialized {"timestamp":"2025-05-09T15:58:22.731Z"}
+[AUTH] Authentication middleware setup completed
+info: [WebSocket] Server initialized on path: /ws {"timestamp":"2025-05-09T15:58:22.731Z"}
+info: Authentication setup completed {"timestamp":"2025-05-09T15:58:22.726Z"}
+info: Static file serving enabled for production {"timestamp":"2025-05-09T15:58:22.730Z"}
+[AUTH] Firebase Admin initialized successfully
+starting up user application
+info: [ROUTES] Registering customer routes {"timestamp":"2025-05-09T15:58:22.727Z"}
+info: Server started on port 5174 {"timestamp":"2025-05-09T15:58:22.734Z"}
+[FIREBASE] Starting Firebase Admin initialization...
+[PORT_CLEANUP] Windows method failed
+info: [ROUTES] Registering general API routes {"timestamp":"2025-05-09T15:58:22.727Z"}
+info: WebSocket server available at ws://localhost:5174/ws {"timestamp":"2025-05-09T15:58:22.734Z"}
+2025-05-09T15:58:26Z info: Waiting for service to be ready
+info: Incoming GET request to / {"body":{},"headers":{"accept-encoding":"gzip","host":"127.0.0.1:1104","server-timing":"pid1req;dur=1746806304328","user-agent":"Go-http-client/1.1","x-replit-healthcheck":"1","x-replit-user-bio":"","x-replit-user-id":"","x-replit-user-name":"","x-replit-user-profile-image":"","x-replit-user-roles":"","x-replit-user-teams":"","x-replit-user-url":""},"query":{},"timestamp":"2025-05-09T15:58:24.334Z"}
+2025-05-09T15:58:28Z info: Deployment successful

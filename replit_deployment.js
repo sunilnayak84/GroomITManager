@@ -110,11 +110,23 @@ if (!clientBuildPath) {
   fs.writeFileSync(path.join(clientBuildPath, 'index.html'), placeholderHtml);
 }
 
+// Special handler for the root path to ensure we serve the frontend
+app.get('/', (req, res) => {
+  res.sendFile(path.join(clientBuildPath, 'index.html'));
+});
+
+// Serve static files from the client build directory FIRST, before any API routes
+console.log('Setting up static file serving from:', clientBuildPath);
+app.use(express.static(clientBuildPath, {
+  maxAge: '1d', // Add caching for static assets
+  etag: true
+}));
+
 // Try to initialize the full server with API functionality
 let serverInitialized = false;
 try {
   if (serverModules.registerRoutes && typeof serverModules.registerRoutes === 'function') {
-    // Register API routes
+    // Register API routes after static files
     await serverModules.registerRoutes(app);
     console.log('API routes registered successfully');
     serverInitialized = true;
@@ -122,18 +134,6 @@ try {
 } catch (error) {
   console.error('Failed to register API routes:', error);
 }
-
-// Special handler for the root path to ensure we serve the frontend
-app.get('/', (req, res) => {
-  res.sendFile(path.join(clientBuildPath, 'index.html'));
-});
-
-// Serve static files from the client build directory
-console.log('Setting up static file serving from:', clientBuildPath);
-app.use(express.static(clientBuildPath, {
-  maxAge: '1d', // Add caching for static assets
-  etag: true
-}));
 
 // If server initialization failed, provide a fallback API endpoint with an informative message
 if (!serverInitialized) {
