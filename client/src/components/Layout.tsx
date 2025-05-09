@@ -7,8 +7,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import Navigation from "./Navigation";
-import {Toaster} from "@/components/ui/toaster";
-import WebSocketNotifications from "./WebSocketNotifications";
+import {Toaster} from "@/components/ui/toaster"; // Assuming Toaster component is in this location
 
 export default function Layout({ children }: PropsWithChildren) {
   return (
@@ -24,9 +23,7 @@ export default function Layout({ children }: PropsWithChildren) {
           <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="flex h-14 items-center justify-between gap-4 px-4">
               <SidebarTrigger />
-              <div className="flex items-center gap-4">
-                <WebSocketNotifications maxNotifications={10} />
-              </div>
+              <div className="flex items-center gap-4" />
             </div>
           </header>
 
