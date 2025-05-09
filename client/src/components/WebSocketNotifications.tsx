@@ -1,262 +1,137 @@
-import React, { useState, useEffect } from 'react';
-import { useWebSocketContext } from '../contexts/websocket-context';
+import React, { useEffect, useState } from 'react';
+import { useWebSocketContext } from '@/contexts/websocket-context';
+import { Toast, ToastAction, ToastClose, ToastDescription, ToastProvider, ToastTitle, ToastViewport } from '@/components/ui/toast';
+import { Bell, Check, Calendar, Users, Paw, CreditCard } from 'lucide-react';
 
 interface Notification {
   id: string;
   type: string;
-  message: string;
+  title: string;
+  description: string;
   timestamp: string;
-  read: boolean;
+  action?: string;
+  actionLabel?: string;
+  actionFn?: () => void;
 }
 
-interface WebSocketNotificationsProps {
-  maxNotifications?: number;
-}
-
-const WebSocketNotifications: React.FC<WebSocketNotificationsProps> = ({
-  maxNotifications = 5,
-}) => {
+export function WebSocketNotifications() {
+  const websocket = useWebSocketContext();
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const { connected, connectionStatus, lastMessage, sendMessage } = useWebSocketContext();
 
-  // Handle incoming WebSocket messages
+  // Process incoming WebSocket messages
   useEffect(() => {
-    if (!lastMessage) return;
+    if (!websocket || !websocket.lastMessage) return;
 
-    // Process different message types
-    switch (lastMessage.type) {
-      case 'connection':
-      case 'broadcast':
-      case 'appointment-update':
-      case 'customer-update':
-      case 'pet-update':
-      case 'service-update':
-      case 'billing-event':
-      case 'staff-notification':
-        // Add new notification
-        const newNotification: Notification = {
-          id: `notification-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          type: lastMessage.type,
-          message: lastMessage.message || getMessageForType(lastMessage),
-          timestamp: lastMessage.timestamp || new Date().toISOString(),
-          read: false,
-        };
-        
-        setNotifications(prev => [newNotification, ...prev].slice(0, maxNotifications));
-        break;
-        
-      case 'pong':
-        // We don't need to show pong messages as notifications
-        console.log('[WebSocket] Received pong from server');
-        break;
-        
-      default:
-        console.log('[WebSocket] Unhandled message type:', lastMessage.type);
-    }
-  }, [lastMessage, maxNotifications]);
-
-  // Helper function to generate message text based on message type
-  const getMessageForType = (message: any): string => {
-    switch (message.type) {
-      case 'connection':
-        return 'Connected to notification server';
-        
-      case 'broadcast':
-        return message.content || 'New broadcast message';
-        
-      case 'appointment-update':
-        const apptAction = message.action || 'updated';
-        return `Appointment ${apptAction}: ${message.appointmentId?.substring(0, 8) || 'Unknown'}`;
-        
-      case 'customer-update':
-        const custAction = message.action || 'updated';
-        return `Customer ${custAction}: ${message.customerId?.substring(0, 8) || 'Unknown'}`;
-        
-      case 'pet-update':
-        const petAction = message.action || 'updated';
-        return `Pet ${petAction}: ${message.petId?.substring(0, 8) || 'Unknown'}`;
-        
-      case 'service-update':
-        const svcAction = message.action || 'updated';
-        return `Service ${svcAction}: ${message.serviceId?.substring(0, 8) || 'Unknown'}`;
-        
-      case 'billing-event':
-        const billAction = message.action || 'updated';
-        return `Billing ${billAction}: ${message.billId?.substring(0, 8) || 'Unknown'}`;
-        
-      case 'staff-notification':
-        return message.message || `Staff notification: ${message.notificationType || 'alert'}`;
-        
-      default:
-        return 'New notification received';
-    }
-  };
-
-  // Mark all notifications as read
-  const markAllAsRead = () => {
-    setNotifications(prev => 
-      prev.map(notification => ({ ...notification, read: true }))
-    );
-  };
-
-  // Get unread count
-  const unreadCount = notifications.filter(n => !n.read).length;
-
-  // Send a test notification
-  const sendTestNotification = () => {
-    if (connected) {
-      sendMessage({
-        type: 'broadcast',
-        content: 'Test notification from client',
-        timestamp: new Date().toISOString()
-      });
-    } else {
-      console.warn('[WebSocket] Cannot send test notification - not connected');
+    // Handle different message types
+    const msg = websocket.lastMessage;
+    
+    if (msg.type === 'appointment' || 
+        msg.type === 'customer' || 
+        msg.type === 'pet' || 
+        msg.type === 'billing' ||
+        msg.type === 'broadcast') {
       
-      // Add local notification about connection status
-      const newNotification: Notification = {
-        id: `notification-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        type: 'error',
-        message: 'Cannot send notification - WebSocket disconnected',
-        timestamp: new Date().toISOString(),
-        read: false,
+      const notification: Notification = {
+        id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        type: msg.type,
+        title: msg.title || getDefaultTitle(msg),
+        description: msg.content || msg.message || getDefaultDescription(msg),
+        timestamp: msg.timestamp || new Date().toISOString()
       };
       
-      setNotifications(prev => [newNotification, ...prev].slice(0, maxNotifications));
+      // Add to notifications (newest first)
+      setNotifications(prev => [notification, ...prev.slice(0, 9)]);
+    }
+  }, [websocket?.lastMessage]);
+
+  // Helper functions to generate default notification content
+  const getDefaultTitle = (msg: any): string => {
+    const action = msg.action || 'updated';
+    
+    switch (msg.type) {
+      case 'appointment':
+        return `Appointment ${action}`;
+      case 'customer':
+        return `Customer ${action}`;
+      case 'pet':
+        return `Pet ${action}`;
+      case 'billing':
+        return 'Billing notification';
+      case 'broadcast':
+        return 'Broadcast message';
+      default:
+        return 'New notification';
+    }
+  };
+  
+  const getDefaultDescription = (msg: any): string => {
+    const action = msg.action || 'updated';
+    const itemId = msg.id || '';
+    
+    switch (msg.type) {
+      case 'appointment':
+        return `Appointment ${itemId} has been ${action}`;
+      case 'customer':
+        return `Customer profile ${itemId} has been ${action}`;
+      case 'pet':
+        return `Pet profile ${itemId} has been ${action}`;
+      case 'billing':
+        return `Billing notification for ${itemId}`;
+      default:
+        return 'You have a new notification';
     }
   };
 
-  // Get status indicator class
-  const getStatusClass = () => {
-    switch (connectionStatus) {
-      case 'connected':
-        return 'bg-green-500';
-      case 'connecting':
-        return 'bg-yellow-500 animate-pulse';
-      case 'disconnected':
-        return 'bg-red-500';
-      case 'error':
-        return 'bg-red-700';
+  // Remove a notification by ID
+  const removeNotification = (id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  };
+
+  // Get icon based on notification type
+  const getIcon = (type: string) => {
+    switch (type) {
+      case 'appointment':
+        return <Calendar className="h-5 w-5" />;
+      case 'customer':
+        return <Users className="h-5 w-5" />;
+      case 'pet':
+        return <Paw className="h-5 w-5" />;
+      case 'billing':
+        return <CreditCard className="h-5 w-5" />;
+      case 'broadcast':
+        return <Bell className="h-5 w-5" />;
       default:
-        return 'bg-gray-500';
+        return <Bell className="h-5 w-5" />;
     }
   };
 
   return (
-    <div className="relative">
-      {/* Notification bell icon with status indicator */}
-      <button
-        className="relative p-2 text-gray-700 hover:text-gray-900 focus:outline-none"
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label="Notifications"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-          />
-        </svg>
-        
-        {/* Status indicator */}
-        <span
-          className={`absolute top-1 right-1 w-2 h-2 rounded-full ${getStatusClass()}`}
-          title={`WebSocket: ${connectionStatus}`}
-        ></span>
-        
-        {/* Unread count badge */}
-        {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-            {unreadCount}
-          </span>
-        )}
-      </button>
-
-      {/* Notification dropdown */}
-      {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg z-50 overflow-hidden">
-          <div className="p-3 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-            <h3 className="text-sm font-semibold">Notifications</h3>
-            <div className="flex space-x-2">
-              <button
-                onClick={markAllAsRead}
-                className="text-xs text-blue-500 hover:text-blue-700"
-              >
-                Mark all as read
-              </button>
-              <button
-                onClick={sendTestNotification}
-                className="text-xs text-green-500 hover:text-green-700"
-                title="Send test notification"
-              >
-                Test
-              </button>
+    <ToastProvider>
+      {notifications.map(notification => (
+        <Toast key={notification.id} onOpenChange={() => removeNotification(notification.id)}>
+          <div className="flex gap-3">
+            <div className="mt-1 text-muted-foreground">
+              {getIcon(notification.type)}
+            </div>
+            <div className="grid gap-1">
+              <ToastTitle className="flex items-center gap-2">
+                {notification.title}
+              </ToastTitle>
+              <ToastDescription>
+                {notification.description}
+              </ToastDescription>
             </div>
           </div>
-
-          {/* Connection status */}
-          <div className={`px-3 py-1 text-xs ${
-            connectionStatus === 'connected' ? 'bg-green-100 text-green-800' :
-            connectionStatus === 'connecting' ? 'bg-yellow-100 text-yellow-800' :
-            'bg-red-100 text-red-800'
-          }`}>
-            WebSocket: {connectionStatus}
-          </div>
-          
-          <div className="max-h-80 overflow-y-auto">
-            {notifications.length === 0 ? (
-              <p className="p-4 text-sm text-gray-500 text-center">No notifications</p>
-            ) : (
-              <ul>
-                {notifications.map((notification) => (
-                  <li
-                    key={notification.id}
-                    className={`p-3 border-b border-gray-100 hover:bg-gray-50 ${
-                      !notification.read ? 'bg-blue-50' : ''
-                    }`}
-                    onClick={() => {
-                      setNotifications(prev =>
-                        prev.map(n => (n.id === notification.id ? { ...n, read: true } : n))
-                      );
-                    }}
-                  >
-                    <div className="flex justify-between items-start">
-                      <span className={`text-xs px-1.5 py-0.5 rounded ${
-                        notification.type === 'connection' ? 'bg-green-100 text-green-800' :
-                        notification.type === 'broadcast' ? 'bg-blue-100 text-blue-800' :
-                        notification.type === 'appointment-update' ? 'bg-purple-100 text-purple-800' :
-                        notification.type === 'customer-update' ? 'bg-indigo-100 text-indigo-800' :
-                        notification.type === 'pet-update' ? 'bg-amber-100 text-amber-800' :
-                        notification.type === 'service-update' ? 'bg-cyan-100 text-cyan-800' :
-                        notification.type === 'billing-event' ? 'bg-emerald-100 text-emerald-800' :
-                        notification.type === 'staff-notification' ? 'bg-orange-100 text-orange-800' :
-                        notification.type === 'error' ? 'bg-red-100 text-red-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                        {notification.type.split('-')[0]}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        {new Date(notification.timestamp).toLocaleTimeString()}
-                      </span>
-                    </div>
-                    <p className="mt-1 text-sm">{notification.message}</p>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
+          {notification.action && (
+            <ToastAction altText={notification.actionLabel || 'Action'} onClick={notification.actionFn || (() => {})}>
+              <Check className="h-4 w-4 mr-1" />
+              {notification.actionLabel || 'OK'}
+            </ToastAction>
+          )}
+          <ToastClose />
+        </Toast>
+      ))}
+      <ToastViewport className="p-4" />
+    </ToastProvider>
   );
-};
-
-export default WebSocketNotifications;
+}

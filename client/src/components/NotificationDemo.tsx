@@ -1,181 +1,213 @@
 import React, { useState } from 'react';
-import { useWebSocketNotifications } from '../utils/websocket-helpers';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 
-/**
- * NotificationDemo - A simple component to demonstrate WebSocket notification functionality
- * 
- * This component allows users to send test notifications through WebSockets.
- * It can be placed anywhere in the application to test the notification system.
- */
-const NotificationDemo: React.FC = () => {
-  const [message, setMessage] = useState('');
-  const [appointmentId, setAppointmentId] = useState('test-appointment-123');
-  const [customerId, setCustomerId] = useState('test-customer-123');
-  const { 
-    connected, 
-    broadcastMessage,
-    sendAppointmentNotification,
-    sendCustomerNotification 
-  } = useWebSocketNotifications();
+type NotificationType = 'appointment' | 'customer' | 'pet' | 'billing';
+type Action = 'created' | 'updated' | 'deleted' | 'status-changed' | 'payment' | 'reminder';
 
-  // Handle sending a broadcast message
-  const handleBroadcast = () => {
-    if (!message.trim()) {
-      alert('Please enter a message to broadcast');
+export const NotificationDemo: React.FC = () => {
+  const [loading, setLoading] = useState(false);
+  const [apiResponse, setApiResponse] = useState<any>(null);
+  const [type, setType] = useState<NotificationType>('appointment');
+  const [action, setAction] = useState<Action>('created');
+  const [id, setId] = useState('');
+  const [jsonData, setJsonData] = useState('{\n  "title": "Test notification",\n  "message": "This is a test notification"\n}');
+
+  const sendNotification = async () => {
+    if (!id.trim()) {
+      alert('Please enter an ID');
       return;
     }
-    
-    broadcastMessage(message);
-    setMessage('');
+
+    let parsedData: any = {};
+    try {
+      parsedData = JSON.parse(jsonData);
+    } catch (error) {
+      alert('Please enter valid JSON data');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      const endpoint = `/api/demo/${type}/${id}`;
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          action,
+          data: parsedData
+        })
+      });
+      
+      const data = await response.json();
+      setApiResponse(data);
+    } catch (error) {
+      console.error(`Error sending ${type} notification:`, error);
+      setApiResponse({ error: `Failed to send ${type} notification` });
+    } finally {
+      setLoading(false);
+    }
   };
-  
-  // Handle appointment notification
-  const handleAppointmentNotification = (action: 'created' | 'updated' | 'deleted' | 'status-changed') => {
-    if (!appointmentId.trim()) {
-      alert('Please enter an appointment ID');
-      return;
+
+  const actionOptions = (): Action[] => {
+    switch (type) {
+      case 'appointment':
+        return ['created', 'updated', 'deleted', 'status-changed'];
+      case 'customer':
+      case 'pet':
+        return ['created', 'updated', 'deleted'];
+      case 'billing':
+        return ['payment', 'reminder'];
+      default:
+        return ['created', 'updated', 'deleted'];
     }
-    
-    sendAppointmentNotification(action, appointmentId, {
-      date: new Date().toISOString(),
-      service: 'Test Service',
-      customer: 'Test Customer'
-    });
   };
-  
-  // Handle customer notification
-  const handleCustomerNotification = (action: 'created' | 'updated' | 'deleted') => {
-    if (!customerId.trim()) {
-      alert('Please enter a customer ID');
-      return;
+
+  const getPlaceholderData = (): string => {
+    switch (type) {
+      case 'appointment':
+        return JSON.stringify({
+          title: `Appointment ${action}`,
+          message: `Appointment #${id} has been ${action}`,
+          status: action === 'status-changed' ? 'completed' : 'pending',
+          date: new Date().toISOString(),
+          customer: {
+            id: 'customer123',
+            name: 'John Doe'
+          }
+        }, null, 2);
+      case 'customer':
+        return JSON.stringify({
+          title: `Customer ${action}`,
+          message: `Customer profile has been ${action}`,
+          name: 'John Doe',
+          email: 'john.doe@example.com',
+          phone: '+1234567890'
+        }, null, 2);
+      case 'pet':
+        return JSON.stringify({
+          title: `Pet ${action}`,
+          message: `Pet profile has been ${action}`,
+          name: 'Fluffy',
+          breed: 'Golden Retriever',
+          owner: {
+            id: 'customer123',
+            name: 'John Doe'
+          }
+        }, null, 2);
+      case 'billing':
+        return JSON.stringify({
+          title: action === 'payment' ? 'Payment processed' : 'Payment reminder',
+          message: action === 'payment' ? 'Payment has been processed successfully' : 'Payment is due soon',
+          amount: 500,
+          currency: 'INR',
+          dueDate: new Date().toISOString()
+        }, null, 2);
+      default:
+        return '{\n  "title": "Test notification",\n  "message": "This is a test notification"\n}';
     }
-    
-    sendCustomerNotification(action, customerId, {
-      name: 'Test Customer',
-      email: 'test@example.com',
-      phone: '1234567890'
-    });
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 max-w-2xl mx-auto my-8">
-      <h2 className="text-2xl font-bold mb-6">WebSocket Notification Demo</h2>
-      
-      <div className="mb-6">
-        <div className="flex items-center mb-2">
-          <span className={`h-3 w-3 rounded-full mr-2 ${connected ? 'bg-green-500' : 'bg-red-500'}`}></span>
-          <span className="text-sm">WebSocket Status: {connected ? 'Connected' : 'Disconnected'}</span>
+    <Card>
+      <CardHeader>
+        <CardTitle>Notification Tester</CardTitle>
+        <CardDescription>
+          Send test notifications through the WebSocket system
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="notification-type">Notification Type</Label>
+            <Select 
+              value={type} 
+              onValueChange={(value) => {
+                setType(value as NotificationType);
+                setAction(actionOptions()[0]);
+                setJsonData(getPlaceholderData());
+              }}
+            >
+              <SelectTrigger id="notification-type">
+                <SelectValue placeholder="Select notification type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="appointment">Appointment</SelectItem>
+                <SelectItem value="customer">Customer</SelectItem>
+                <SelectItem value="pet">Pet</SelectItem>
+                <SelectItem value="billing">Billing</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="action-type">Action</Label>
+            <Select 
+              value={action} 
+              onValueChange={(value) => {
+                setAction(value as Action);
+                setJsonData(getPlaceholderData());
+              }}
+            >
+              <SelectTrigger id="action-type">
+                <SelectValue placeholder="Select action" />
+              </SelectTrigger>
+              <SelectContent>
+                {actionOptions().map(action => (
+                  <SelectItem key={action} value={action}>
+                    {action}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-        <p className="text-sm text-gray-600">
-          Use this demo component to test sending real-time notifications through WebSockets.
-          Make sure to check the notification bell in the header.
-        </p>
-      </div>
-      
-      {/* Broadcast Message Section */}
-      <div className="mb-6 p-4 bg-gray-50 rounded-md">
-        <h3 className="font-semibold mb-3">Broadcast Message</h3>
-        <div className="flex gap-2">
-          <Input
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Enter a message to broadcast"
-            className="flex-grow"
+        
+        <div className="space-y-2">
+          <Label htmlFor="item-id">ID</Label>
+          <Input 
+            id="item-id"
+            value={id} 
+            onChange={(e) => setId(e.target.value)}
+            placeholder={`Enter ${type} ID`}
           />
-          <Button 
-            onClick={handleBroadcast}
-            disabled={!connected}
-          >
-            Send
-          </Button>
         </div>
-      </div>
-      
-      {/* Appointment Notifications Section */}
-      <div className="mb-6 p-4 bg-blue-50 rounded-md">
-        <h3 className="font-semibold mb-3">Appointment Notifications</h3>
-        <Input
-          value={appointmentId}
-          onChange={(e) => setAppointmentId(e.target.value)}
-          placeholder="Appointment ID"
-          className="mb-3"
-        />
-        <div className="flex flex-wrap gap-2">
-          <Button 
-            onClick={() => handleAppointmentNotification('created')}
-            disabled={!connected}
-            variant="outline"
-            className="bg-green-100 hover:bg-green-200"
-          >
-            Created
-          </Button>
-          <Button 
-            onClick={() => handleAppointmentNotification('updated')}
-            disabled={!connected}
-            variant="outline"
-            className="bg-blue-100 hover:bg-blue-200"
-          >
-            Updated
-          </Button>
-          <Button 
-            onClick={() => handleAppointmentNotification('status-changed')}
-            disabled={!connected}
-            variant="outline"
-            className="bg-amber-100 hover:bg-amber-200"
-          >
-            Status Changed
-          </Button>
-          <Button 
-            onClick={() => handleAppointmentNotification('deleted')}
-            disabled={!connected}
-            variant="outline"
-            className="bg-red-100 hover:bg-red-200"
-          >
-            Deleted
-          </Button>
+        
+        <div className="space-y-2">
+          <Label htmlFor="json-data">Data (JSON)</Label>
+          <Textarea 
+            id="json-data"
+            value={jsonData} 
+            onChange={(e) => setJsonData(e.target.value)}
+            placeholder="Enter notification data as JSON"
+            className="font-mono h-40"
+          />
         </div>
-      </div>
-      
-      {/* Customer Notifications Section */}
-      <div className="p-4 bg-purple-50 rounded-md">
-        <h3 className="font-semibold mb-3">Customer Notifications</h3>
-        <Input
-          value={customerId}
-          onChange={(e) => setCustomerId(e.target.value)}
-          placeholder="Customer ID"
-          className="mb-3"
-        />
-        <div className="flex flex-wrap gap-2">
-          <Button 
-            onClick={() => handleCustomerNotification('created')}
-            disabled={!connected}
-            variant="outline"
-            className="bg-green-100 hover:bg-green-200"
-          >
-            Created
-          </Button>
-          <Button 
-            onClick={() => handleCustomerNotification('updated')}
-            disabled={!connected}
-            variant="outline"
-            className="bg-blue-100 hover:bg-blue-200"
-          >
-            Updated
-          </Button>
-          <Button 
-            onClick={() => handleCustomerNotification('deleted')}
-            disabled={!connected}
-            variant="outline"
-            className="bg-red-100 hover:bg-red-200"
-          >
-            Deleted
-          </Button>
-        </div>
-      </div>
-    </div>
+        
+        <Button 
+          onClick={sendNotification} 
+          disabled={loading || !id.trim()}
+          className="w-full"
+        >
+          {loading ? 'Sending...' : 'Send Notification'}
+        </Button>
+        
+        {apiResponse && (
+          <div className="mt-4 space-y-2">
+            <h3 className="font-medium">API Response</h3>
+            <pre className="p-3 bg-muted rounded-md text-sm whitespace-pre-wrap overflow-x-auto">
+              {JSON.stringify(apiResponse, null, 2)}
+            </pre>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 };
-
-export default NotificationDemo;
