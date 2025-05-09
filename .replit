@@ -82,13 +82,7 @@ args = "Development Servers"
 name = "Development Servers"
 author = "agent"
 
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "packager.installForAll"
-
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npx concurrently -n frontend,backend 'cd client && npm run dev -- --port 5174 --host 0.0.0.0' 'cd server && tsx watch --clear-screen=false index.ts'"
+args = "cd client && npm run dev & cd server && npm run dev"
 waitForPort = 5174

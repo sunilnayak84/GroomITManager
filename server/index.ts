@@ -100,13 +100,16 @@ async function startServer(port: number) {
 // Start the server
 const PORT = parseInt(process.env.PORT || '3000', 10);
 
-// Clean up port before starting
-await terminateProcessOnPort(PORT).catch(error => {
-  logger.warn('Port cleanup warning:', error.message);
-});
+// Using an immediately invoked async function to handle top-level await
+(async () => {
+  // Clean up port before starting
+  await terminateProcessOnPort(PORT).catch(error => {
+    logger.warn('Port cleanup warning:', error.message);
+  });
 
-// Start server
-startServer(PORT);
+  // Start server
+  startServer(PORT);
+})();
 
 // Handle process signals
 process.on('SIGTERM', () => {
