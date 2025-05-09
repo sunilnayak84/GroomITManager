@@ -1,0 +1,118 @@
+modules = ["web", "nodejs-20", "postgresql-16"]
+run = "npm run dev"
+hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+deploymentTarget = "cloudrun"
+build = ["sh", "-c", "npm install && npm run build"]
+run = ["sh", "-c", "NODE_ENV=production node dist/index.js"]
+
+[[deployment.rewrites]]
+from = "/api/*"
+to = "/api/*"
+
+[[deployment.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[[ports]]
+localPort = 3000
+externalPort = 3000
+
+[[ports]]
+localPort = 3001
+externalPort = 5000
+
+[[ports]]
+localPort = 5174
+externalPort = 80
+
+[[ports]]
+localPort = 5177
+externalPort = 3002
+
+[[ports]]
+localPort = 9005
+externalPort = 3001
+
+[[ports]]
+localPort = 9006
+externalPort = 3003
+
+[[ports]]
+localPort = 24678
+externalPort = 4200
+
+[env]
+PORT = "3000"
+VITE_PORT = "5174"
+
+[[hints]]
+regex = "Error: "
+allowIn = ["DevLogs"]
+command = "npm run dev"
+name = "Error"
+
+[processes]
+dev = "npm run dev"
+
+[workflow]
+defaultTask = "dev"
+
+[[workflow.tasks]]
+name = "dev"
+command = "concurrently \"cd server && tsx watch --clear-screen=false index.ts\" \"cd client && npm run dev\""
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Development Servers"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Prepare Deployment"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Build and Prepare for Deployment"
+
+[[workflows.workflow]]
+name = "Development Servers"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx concurrently -n frontend,backend 'cd client && npm run dev -- --port 5174 --host 0.0.0.0' 'cd server && tsx watch --clear-screen=false index.ts'"
+waitForPort = 5174
+
+[[workflows.workflow]]
+name = "Prepare Deployment"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node scripts/prepare-deploy.js"
+
+[[workflows.workflow]]
+name = "Build and Prepare for Deployment"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run build && node scripts/prepare-deploy.js"
