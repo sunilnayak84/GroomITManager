@@ -7,8 +7,12 @@ channel = "stable-24_05"
 
 [deployment]
 deploymentTarget = "cloudrun"
-build = ["sh", "-c", "./deploy.sh"]
-run = ["sh", "-c", "NODE_ENV=production node index.js"]
+build = ["sh", "-c", "npm install && npm run build"]
+run = ["sh", "-c", "NODE_ENV=production node dist/index.js"]
+
+[[deployment.rewrites]]
+from = "/api/*"
+to = "/api/*"
 
 [[deployment.rewrites]]
 from = "/*"
@@ -19,17 +23,38 @@ localPort = 3000
 externalPort = 3000
 
 [[ports]]
-localPort = 5000
+localPort = 3001
 externalPort = 5000
 
 [[ports]]
 localPort = 5174
 externalPort = 80
 
+[[ports]]
+localPort = 5177
+externalPort = 3002
+
+[[ports]]
+localPort = 9005
+externalPort = 3001
+
+[[ports]]
+localPort = 9006
+externalPort = 3003
+
+[[ports]]
+localPort = 24678
+externalPort = 4200
+
 [env]
 PORT = "3000"
-NODE_ENV = "production"
 VITE_PORT = "5174"
+
+[[hints]]
+regex = "Error: "
+allowIn = ["DevLogs"]
+command = "npm run dev"
+name = "Error"
 
 [processes]
 dev = "npm run dev"
@@ -51,13 +76,19 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Deployment Server"
+args = "Development Servers"
 
 [[workflows.workflow]]
-name = "Deployment Server"
+name = "Development Servers"
 author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "PORT=5000 NODE_ENV=production node index.js"
-waitForPort = 5000
+args = "npx concurrently -n frontend,backend 'cd client && npm run dev -- --port 5174 --host 0.0.0.0' 'cd server && tsx watch --clear-screen=false index.ts'"
+waitForPort = 5174

@@ -1,125 +1,34 @@
 #!/bin/bash
 
-# Deployment script for Replit
-# This script is used for Replit deployments
+# This script builds the application for production deployment
+echo "Starting deployment build process..."
 
-echo "=== Starting deployment process ==="
-echo "Node version: $(node -v)"
-echo "NPM version: $(npm -v)"
+# Set environment to production
+export NODE_ENV=production
 
-# Install root dependencies
-echo "=== Installing root dependencies ==="
-npm install
+# Build the client
+echo "Building client..."
+cd client
+npm run build
+cd ..
 
-# Function to create fallback client if build fails
-create_fallback_client() {
-  echo "=== Creating fallback client build ==="
-  mkdir -p dist/client
-  
-  # Check if enhanced fallback exists
-  if [ -f "enhanced-fallback.html" ]; then
-    echo "Using enhanced fallback page"
-    cp enhanced-fallback.html dist/client/index.html
-  else
-    echo "Enhanced fallback not found, using basic fallback"
-    cat > dist/client/index.html << 'EOL'
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pet Grooming Management</title>
-  <style>
-    body { font-family: Arial, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-    .container { text-align: center; max-width: 800px; padding: 20px; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>Pet Grooming Management</h1>
-    <p>The application is running in production mode.</p>
-    <p>The application is loading. Please wait...</p>
-    <script>
-      // Redirect to API status endpoint to check if backend is running
-      setTimeout(() => {
-        fetch('/api/status')
-          .then(response => response.json())
-          .then(data => {
-            document.querySelector('.container').innerHTML += 
-              '<p>Backend status: ' + data.status + '</p>' +
-              '<p>Version: ' + data.version + '</p>' +
-              '<p>Environment: ' + data.environment + '</p>';
-          })
-          .catch(err => {
-            document.querySelector('.container').innerHTML += 
-              '<p>Error connecting to backend. Please refresh or contact support.</p>';
-          });
-      }, 1000);
-    </script>
-  </div>
-</body>
-</html>
-EOL
-  fi
-  echo "Created fallback client build"
-}
+# Create the dist/client directory if it doesn't exist
+echo "Setting up dist directory structure..."
+mkdir -p dist/client
 
-# Try to run the deployment build script
-echo "=== Running deployment build script ==="
-if ! node deploy-build.js; then
-  echo "Deployment build script failed, trying fallback approach"
-  
-  # Create client build directory manually
-  echo "=== Installing client dependencies ==="
-  (cd client && npm install)
-  
-  # Explicitly install vite and other dev dependencies
-  echo "=== Installing Vite and TypeScript explicitly ==="
-  (cd client && npm install --save-dev vite typescript @vitejs/plugin-react)
-  
-  echo "=== Building client manually ==="
-  if ! (cd client && npx vite build); then
-    echo "Manual client build failed, creating minimal fallback"
-    create_fallback_client
-  else
-    echo "Manual client build succeeded"
-    mkdir -p dist/client
-    cp -r client/dist/* dist/client/
-  fi
-else
-  echo "Deployment build script succeeded"
+# Copy the client build to the dist/client directory
+echo "Copying client build to dist/client..."
+cp -r client/dist/* dist/client/
+
+# Build the server
+echo "Building server..."
+npm run build:server
+
+# Create a .env file for production if it doesn't exist
+if [ ! -f .env ]; then
+  echo "Creating production .env file..."
+  echo "NODE_ENV=production" > .env
 fi
 
-# Final checks - ensure the dist/client directory exists with at least an index.html
-if [ ! -d "dist/client" ] || [ ! -f "dist/client/index.html" ]; then
-  echo "Final check failed - creating fallback client"
-  create_fallback_client
-fi
-
-# Check if the deployment structure is correct
-echo "=== Checking deployment structure ==="
-if [ -d "dist/client" ] && [ -f "dist/client/index.html" ]; then
-  echo "Deployment structure verified"
-  
-  # Check if this is our fallback page or the real build
-  if grep -q "The application is running in production mode" dist/client/index.html; then
-    echo "WARNING: Using fallback page instead of real build"
-    echo "This is a minimal version to ensure the site works"
-  else
-    echo "SUCCESS: Using real application build"
-    
-    # Check if assets directory exists and contains JS files
-    if [ -d "dist/client/assets" ] && [ "$(find dist/client/assets -name "*.js" | wc -l)" -gt 0 ]; then
-      echo "Assets verified: $(find dist/client/assets -name "*.js" | wc -l) JavaScript files found"
-    else
-      echo "WARNING: Assets may be missing or incomplete"
-    fi
-  fi
-else
-  echo "ERROR: Deployment structure verification failed"
-  exit 1
-fi
-
-# Inform about success
-echo "=== Deployment preparation completed ==="
-echo "The application is ready to be deployed"
+echo "Build complete! To start the application in production mode:"
+echo "NODE_ENV=production node dist/index.js"
