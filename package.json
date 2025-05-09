@@ -73,6 +73,7 @@
     "firebase": "^11.0.2",
     "firebase-admin": "^13.0.1",
     "firebase-functions": "^6.3.1",
+    "firebase-tools": "^14.3.0",
     "input-otp": "^1.4.1",
     "lucide-react": "^0.474.0",
     "memorystore": "^1.6.7",
