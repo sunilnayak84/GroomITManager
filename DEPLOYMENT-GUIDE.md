@@ -60,9 +60,18 @@ To deploy to Replit:
 
 1. Click the "Deploy" button in the Replit interface
 2. Select the appropriate deployment settings:
-   - Build command: `npm install && cd client && npm install && npm run build`
+   - Build command: `./deploy.sh`
    - Run command: `NODE_ENV=production node index.js`
 3. Click "Deploy"
+
+**Important Note**: If the deployment fails in the build phase, you may need to run the build process manually:
+```bash
+# Run deployment script to build and prepare assets
+./deploy.sh
+
+# Verify that the dist/client directory exists and contains the built assets
+ls -la dist/client
+```
 
 ## Troubleshooting
 

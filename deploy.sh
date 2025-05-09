@@ -1,34 +1,48 @@
 #!/bin/bash
 
-# This script builds the application for production deployment
-echo "Starting deployment build process..."
+# Deployment script for Replit
+# This script is used for Replit deployments
 
-# Set environment to production
-export NODE_ENV=production
+# Ensure we exit on any error
+set -e
 
-# Build the client
-echo "Building client..."
-cd client
-npm run build
-cd ..
+echo "=== Starting deployment process ==="
+echo "Node version: $(node -v)"
+echo "NPM version: $(npm -v)"
 
-# Create the dist/client directory if it doesn't exist
-echo "Setting up dist directory structure..."
-mkdir -p dist/client
+# Install root dependencies
+echo "=== Installing root dependencies ==="
+npm install
 
-# Copy the client build to the dist/client directory
-echo "Copying client build to dist/client..."
-cp -r client/dist/* dist/client/
+# Run the custom deployment build script
+echo "=== Running deployment build script ==="
+node deploy-build.js
 
-# Build the server
-echo "Building server..."
-npm run build:server
-
-# Create a .env file for production if it doesn't exist
-if [ ! -f .env ]; then
-  echo "Creating production .env file..."
-  echo "NODE_ENV=production" > .env
+# Make sure the dist directory exists
+if [ ! -d "dist" ]; then
+  echo "Creating dist directory"
+  mkdir -p dist
+  
+  # If there's no client build, try to copy from client/dist
+  if [ -d "client/dist" ]; then
+    echo "Copying client build from client/dist"
+    mkdir -p dist/client
+    cp -r client/dist/* dist/client/
+  fi
 fi
 
-echo "Build complete! To start the application in production mode:"
-echo "NODE_ENV=production node dist/index.js"
+# Ensure the proper directory structure exists
+if [ ! -d "dist/client" ]; then
+  echo "Creating dist/client directory"
+  mkdir -p dist/client
+  
+  # If there's no client build, try to copy from client/dist
+  if [ -d "client/dist" ]; then
+    echo "Copying client build from client/dist"
+    cp -r client/dist/* dist/client/
+  fi
+fi
+
+# Inform about success
+echo "=== Deployment preparation completed ==="
+echo "The application is ready to be deployed"
