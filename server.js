@@ -1,71 +1,43 @@
+
+// This is a simple Express server to serve static files in production
 import express from 'express';
 import path from 'path';
-import cors from 'cors';
-import http from 'http';
-import { WebSocketServer } from 'ws';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
-// Get __dirname equivalent in ES modules
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-// Set production mode
-process.env.NODE_ENV = 'production';
-
-// Create Express app
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-// Create HTTP server
-const server = http.createServer(app);
+// Find the client build directory
+let clientBuildPath = '';
+const possiblePaths = [
+  path.join(__dirname, 'client/dist'),
+  path.join(__dirname, 'dist/client'),
+  path.join(process.cwd(), 'client/dist'),
+  path.join(process.cwd(), 'dist/client')
+];
 
-// Create WebSocket server
-const wss = new WebSocketServer({ server, path: '/ws' });
+for (const pathToCheck of possiblePaths) {
+  if (fs.existsSync(pathToCheck) && fs.existsSync(path.join(pathToCheck, 'index.html'))) {
+    clientBuildPath = pathToCheck;
+    console.log('Found client build at:', clientBuildPath);
+    break;
+  }
+}
 
-// Basic middleware
-app.use(cors());
-app.use(express.json());
+if (!clientBuildPath) {
+  throw new Error('Could not find client build directory. Please run the build process first.');
+}
 
-// IMPORTANT: Serve static files first
-console.log('Serving static files from:', path.join(__dirname, 'client/dist'));
-app.use(express.static(path.join(__dirname, 'client/dist')));
+// Serve static files
+app.use(express.static(clientBuildPath));
 
-// Basic API routes
-app.get('/api/status', (req, res) => {
-  res.json({
-    status: 'online',
-    environment: process.env.NODE_ENV,
-    timestamp: new Date().toISOString()
-  });
-});
-
-// Handle WebSockets
-wss.on('connection', (ws) => {
-  console.log('WebSocket client connected');
-  
-  ws.on('message', (message) => {
-    try {
-      const data = JSON.parse(message);
-      console.log('WebSocket message received:', data);
-      ws.send(JSON.stringify({ type: 'response', data, timestamp: new Date().toISOString() }));
-    } catch (error) {
-      console.error('Error processing WebSocket message:', error);
-    }
-  });
-  
-  ws.on('close', () => {
-    console.log('WebSocket client disconnected');
-  });
-});
-
-// IMPORTANT: Place API endpoints before the catch-all route
-// Any other API routes go here...
-
-// Catch-all route to handle client-side routing
+// All routes redirect to index.html (SPA client-side routing)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client/dist', 'index.html'));
+  res.sendFile(path.join(clientBuildPath, 'index.html'));
 });
 
-// Start the server
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Production server running on port ${PORT}`);
 });
