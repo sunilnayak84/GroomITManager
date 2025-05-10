@@ -33,7 +33,11 @@ export default defineConfig({
     hmr: {
       clientPort: 443,
       protocol: 'wss',
-    }
+    },
+    fs: {
+      strict: false,
+    },
+    allowedHosts: 'all'
   },
   build: {
     sourcemap: true,
