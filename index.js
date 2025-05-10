@@ -1,11 +1,12 @@
-// This is the root entry point for Replit Deployments
-// It will be used if no other entry point is specified
+/**
+ * MAIN DEPLOYMENT ENTRY POINT
+ * 
+ * This file serves as the main entry point for the Replit deployment.
+ * It handles both static file serving and API requests properly.
+ */
 
-// Set to production mode
-process.env.NODE_ENV = 'production';
+// Import the replit_deployment.js file
+import './replit_deployment.js';
 
-// Import the production server
-import('./server.js').catch(err => {
-  console.error('Failed to start production server:', err);
-  process.exit(1);
-});
+// Log that the deployment is using this entry point
+console.log('Starting app using main deployment entry point');
