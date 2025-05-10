@@ -95,12 +95,13 @@ app.get('/', (req, res) => {
 console.log('Setting up static file serving from:', clientBuildPath);
 app.use(express.static(clientBuildPath));
 
-// Special handler for API requests to return a meaningful error
-app.use('/api/*', (req, res) => {
-  res.status(200).json({
-    message: "API endpoint",
-    note: "This is from the simplified production server. The full API is not available in this simplified deployment."
-  });
+// Import your server module directly to handle API requests
+import './server/index.js';
+
+// Special handler for API requests - redirects to the imported server module
+app.use('/api/*', (req, res, next) => {
+  // This will be handled by the imported server module
+  next();
 });
 
 // All other routes redirect to index.html (SPA client-side routing)
