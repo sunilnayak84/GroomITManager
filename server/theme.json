@@ -1,55 +1,17 @@
-
 {
-  "name": "groomit-green",
-  "type": "light",
+  "name": "zinc",
+  "appearance": "light",
   "colors": {
     "primary": {
-      "DEFAULT": "hsl(142 71% 45%)",
-      "foreground": "hsl(0 0% 98%)"
-    },
-    "secondary": {
-      "DEFAULT": "hsl(240 4.8% 95.9%)",
-      "foreground": "hsl(240 5.9% 10%)"
-    },
-    "destructive": {
-      "DEFAULT": "hsl(0 84.2% 60.2%)",
-      "foreground": "hsl(0 0% 98%)"
-    },
-    "muted": {
-      "DEFAULT": "hsl(240 4.8% 95.9%)",
-      "foreground": "hsl(240 3.8% 46.1%)"
-    },
-    "accent": {
-      "DEFAULT": "hsl(240 4.8% 95.9%)",
-      "foreground": "hsl(240 5.9% 10%)"
-    },
-    "popover": {
-      "DEFAULT": "hsl(0 0% 100%)",
-      "foreground": "hsl(240 10% 3.9%)"
-    },
-    "card": {
-      "DEFAULT": "hsl(0 0% 100%)",
-      "foreground": "hsl(240 10% 3.9%)"
-    },
-    "success": {
-      "DEFAULT": "hsl(142.1 76.2% 36.3%)",
-      "foreground": "hsl(0 0% 98%)"
-    },
-    "warning": {
-      "DEFAULT": "hsl(38 92% 50%)",
-      "foreground": "hsl(0 0% 98%)"
+      "DEFAULT": "hsl(142 76% 36%)",
+      "foreground": "hsl(0 0% 100%)"
     },
     "background": {
       "DEFAULT": "hsl(0 0% 100%)",
-      "foreground": "hsl(240 10% 3.9%)"
-    },
-    "border": "hsl(240 5.9% 90%)",
-    "input": "hsl(240 5.9% 90%)",
-    "ring": "hsl(142 71% 45%)"
+      "foreground": "hsl(240 10% 4%)"
+    }
   },
   "borderRadius": {
-    "lg": "0.5rem",
-    "md": "0.4rem",
-    "sm": "0.25rem"
+    "lg": "0.5rem"
   }
 }

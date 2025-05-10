@@ -23,11 +23,18 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 5174,
     strictPort: true,
+    cors: true,
     proxy: {
       '/api': {
         target: 'http://localhost:3000',
         changeOrigin: true,
         secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      },
+      '/ws': {
+        target: 'ws://localhost:3000',
+        ws: true,
+        secure: false
       }
     },
     hmr: {
@@ -37,7 +44,7 @@ export default defineConfig({
     fs: {
       strict: false,
     },
-    allowedHosts: 'all'
+    allowedHosts: true
   },
   build: {
     sourcemap: true,
