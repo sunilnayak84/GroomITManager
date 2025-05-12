@@ -44,18 +44,7 @@ for (const pathToCheck of possiblePaths) {
   }
 }
 
-// CRITICAL PRIORITY: Serve frontend for root '/' route
-// This must come BEFORE all other routes to ensure frontend is prioritized
-if (clientBuildPath) {
-  app.get('/', (req, res) => {
-    console.log('Serving frontend index.html for root path');
-    res.sendFile(path.join(clientBuildPath, 'index.html'));
-  });
-} else {
-  console.error('WARNING: No client build found for serving frontend at root path');
-}
-
-// Define API routes AFTER the root route but BEFORE static file serving
+// Define API routes - create the router but don't mount it yet
 const apiRouter = express.Router();
 
 // Define your API endpoints here
@@ -84,6 +73,27 @@ apiRouter.get('/customers', (req, res) => {
   });
 });
 
+// CRITICAL: Serve static files FIRST - this is the key fix
+if (clientBuildPath) {
+  console.log('Setting up static file serving from:', clientBuildPath);
+  
+  // Serve static files
+  app.use(express.static(clientBuildPath));
+}
+
+// IMPORTANT: First handle known frontend routes
+const clientRoutes = ['/', '/dashboard', '/appointments', '/customers', '/inventory', '/settings'];
+clientRoutes.forEach(route => {
+  app.get(route, (req, res) => {
+    if (clientBuildPath) {
+      console.log('Serving frontend for route:', route);
+      res.sendFile(path.join(clientBuildPath, 'index.html'));
+    } else {
+      res.status(500).send('Client build not found');
+    }
+  });
+});
+
 // Handle unauthenticated API calls
 app.use((req, res, next) => {
   // Only check authentication for API routes
@@ -100,42 +110,19 @@ app.use((req, res, next) => {
   next();
 });
 
-// Mount API routes - MUST be before static file handling
+// Now mount API routes AFTER frontend routes
 app.use('/api', apiRouter);
 
-// Then serve static files AFTER API routes
+// Finally, add a catch-all route for client-side routing
+// This must be the LAST route
 if (clientBuildPath) {
-  console.log('Setting up static file serving from:', clientBuildPath);
-  
-  // Serve static files - this will handle most assets
-  app.use(express.static(clientBuildPath));
-  
-  // Explicit handler for the home route
-  app.get('/', (req, res) => {
-    console.log('Request for home route - serving index.html');
-    res.sendFile(path.join(clientBuildPath, 'index.html'));
-  });
-  
-  // Handle client-side routing for specific known routes
-  const clientRoutes = ['/dashboard', '/appointments', '/customers', '/inventory', '/settings'];
-  clientRoutes.forEach(route => {
-    app.get(route, (req, res) => {
-      console.log('Serving frontend for route:', route);
-      res.sendFile(path.join(clientBuildPath, 'index.html'));
-    });
-  });
-  
-  // Finally, handle all other client-side routing - this must be the LAST route
   app.get('*', (req, res) => {
     // Skip API routes (but they should already be handled above)
     if (req.path.startsWith('/api/')) {
       return res.status(404).json({ message: 'API endpoint not found' });
     }
     
-    // Log the request for debugging
     console.log('Catch-all route serving frontend for:', req.path);
-    
-    // Send the React frontend for all other routes
     res.sendFile(path.join(clientBuildPath, 'index.html'));
   });
 } else {

@@ -1,9 +1,6 @@
-/**
- * FRONTEND-FIRST DEPLOYMENT ENTRY POINT
- * 
- * This file is specifically designed for deployment, prioritizing
- * the frontend application above all else.
- */
 
-// Import the deployment server for production
-import './deploy.js';
+// Main entry point for production deployment
+// This file imports server.js which handles both frontend and API routes
+import './server.js';
+
+console.log('GroomIT Manager starting in production mode...');
