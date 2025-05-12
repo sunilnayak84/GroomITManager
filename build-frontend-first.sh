@@ -22,12 +22,16 @@ echo "✅ Client build successful"
 # Step 2: Build the server with the deployment index
 echo "Building server with frontend-first configuration..."
 cd server
-cp deployment-index.ts index.ts.deployment
+# Copy the deployment index to a temporary file with proper .ts extension
+cp deployment-index.ts temp-deployment-index.ts
 echo "✅ Created deployment-specific server entrypoint"
 
 # Build the server
 echo "Building server..."
-npx esbuild index.ts.deployment --platform=node --packages=external --bundle --format=esm --outfile=../dist/index.js
+npx esbuild temp-deployment-index.ts --platform=node --packages=external --bundle --format=esm --outfile=../dist/index.js
+
+# Clean up temporary file
+rm temp-deployment-index.ts
 if [ $? -ne 0 ]; then
   echo "❌ Server build failed"
   exit 1

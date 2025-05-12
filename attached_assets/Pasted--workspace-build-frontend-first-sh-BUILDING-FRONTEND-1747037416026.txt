@@ -1,0 +1,40 @@
+~/workspace$ ./build-frontend-first.sh
+=========================================
+BUILDING FRONTEND-FIRST DEPLOYMENT
+=========================================
+Building client...
+
+> groom-it-manager-client@0.1.0 build
+> tsc && vite build
+
+vite v5.4.19 building for production...
+✓ 3477 modules transformed.
+[plugin:vite:reporter] [plugin vite:reporter] 
+(!) /home/runner/workspace/client/src/lib/storage.ts is dynamically imported by /home/runner/workspace/client/src/components/AppointmentDetails.tsx, /home/runner/workspace/client/src/components/AppointmentDetails.tsx but also statically imported by /home/runner/workspace/client/src/hooks/use-pets.ts, /home/runner/workspace/client/src/hooks/use-rewards.ts, dynamic import will not move module into another chunk.
+
+dist/index.html                                    0.63 kB │ gzip:   0.37 kB
+dist/assets/index-BB6SPRtb.css                    97.83 kB │ gzip:  15.10 kB
+dist/assets/CategoriesPage-igPm07Ed.js             2.12 kB │ gzip:   0.94 kB │ map:     7.27 kB
+dist/assets/use-billing-mcR1699x.js                2.55 kB │ gzip:   1.15 kB │ map:     8.03 kB
+dist/assets/RewardsManagementPage-CYn_-HI4.js      4.99 kB │ gzip:   1.77 kB │ map:    16.65 kB
+dist/assets/BillingPage-C3GJoUPH.js                5.33 kB │ gzip:   2.04 kB │ map:    16.33 kB
+dist/assets/index-GlL1F3RU.js                      6.16 kB │ gzip:   2.18 kB │ map:    21.32 kB
+dist/assets/BreedsPage-D2Ox3pzB.js                 8.12 kB │ gzip:   3.15 kB │ map:    20.35 kB
+dist/assets/StaffPage-ByNyXU7I.js                  8.27 kB │ gzip:   2.67 kB │ map:    27.84 kB
+dist/assets/BillDetailsPage-D-ohNMSQ.js           13.59 kB │ gzip:   3.71 kB │ map:    39.67 kB
+dist/assets/vendor-BtIrUdbE.js                   141.46 kB │ gzip:  45.51 kB │ map:   344.53 kB
+dist/assets/index-B85AdscT.js                  1,895.64 kB │ gzip: 508.21 kB │ map: 7,809.32 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 14.32s
+✅ Client build successful
+Building server with frontend-first configuration...
+✅ Created deployment-specific server entrypoint
+Building server...
+✘ [ERROR] No loader is configured for ".deployment" files: index.ts.deployment
+
+1 error
+❌ Server build failed
