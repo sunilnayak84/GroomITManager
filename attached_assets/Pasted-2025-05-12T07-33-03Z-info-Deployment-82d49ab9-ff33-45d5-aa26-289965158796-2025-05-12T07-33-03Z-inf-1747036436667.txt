@@ -1,0 +1,136 @@
+2025-05-12T07:33:03Z info: Deployment: 82d49ab9-ff33-45d5-aa26-289965158796
+2025-05-12T07:33:03Z info: Build: da69b42f-a65d-4cc6-90e6-fefc940fedfe
+2025-05-12T07:33:03Z info: Connecting to builder
+2025-05-12T07:33:07Z info: Builder connected
+2025-05-12T07:33:11Z info: Installing packages
+2025-05-12T07:33:13Z info: Starting Build
+
+up to date, audited 1209 packages in 8s
+
+119 packages are looking for funding
+
+  run `npm fund` for details
+
+
+6 vulnerabilities (3 moderate, 3 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.3.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.3.0
+npm notice To update run: npm install -g npm@11.3.0
+npm notice
+
+
+> rest-express@1.0.0 build
+> npm run build:client && npm run build:server
+
+
+
+> rest-express@1.0.0 build:client
+> cd client && vite build
+
+
+vite v5.4.19 building for production...
+
+transforming...
+
+✓ 3477 modules transformed.
+
+rendering chunks...
+
+[plugin:vite:reporter] [plugin vite:reporter] 
+(!) /home/runner/workspace/client/src/lib/storage.ts is dynamically imported by /home/runner/workspace/client/src/components/AppointmentDetails.tsx, /home/runner/workspace/client/src/components/AppointmentDetails.tsx but also statically imported by /home/runner/workspace/client/src/hooks/use-pets.ts, /home/runner/workspace/client/src/hooks/use-rewards.ts, dynamic import will not move module into another chunk.
+
+
+computing gzip size...
+
+dist/index.html                                    0.63 kB │ gzip:   0.37 kB
+
+dist/assets/index-BB6SPRtb.css                    97.83 kB │ gzip:  15.10 kB
+
+dist/assets/CategoriesPage-igPm07Ed.js             2.12 kB │ gzip:   0.94 kB │ map:     7.27 kB
+
+dist/assets/use-billing-mcR1699x.js                2.55 kB │ gzip:   1.15 kB │ map:     8.03 kB
+
+dist/assets/RewardsManagementPage-CYn_-HI4.js      4.99 kB │ gzip:   1.77 kB │ map:    16.65 kB
+
+dist/assets/BillingPage-C3GJoUPH.js                5.33 kB │ gzip:   2.04 kB │ map:    16.33 kB
+
+dist/assets/index-GlL1F3RU.js                      6.16 kB │ gzip:   2.18 kB │ map:    21.32 kB
+
+dist/assets/BreedsPage-D2Ox3pzB.js                 8.12 kB │ gzip:   3.15 kB │ map:    20.35 kB
+
+dist/assets/StaffPage-ByNyXU7I.js                  8.27 kB │ gzip:   2.67 kB │ map:    27.84 kB
+
+dist/assets/BillDetailsPage-D-ohNMSQ.js           13.59 kB │ gzip:   3.71 kB │ map:    39.67 kB
+
+dist/assets/vendor-BtIrUdbE.js                   141.46 kB │ gzip:  45.51 kB │ map:   344.53 kB
+
+dist/assets/index-B85AdscT.js                  1,895.64 kB │ gzip: 508.21 kB │ map: 7,809.32 kB
+
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+
+✓ built in 15.36s
+
+
+> rest-express@1.0.0 build:server
+> esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+
+
+  dist/index.js  79.2kb
+
+⚡ Done in 193ms
+
+2025-05-12T07:33:41Z info: Pushing pid1 binary layer...
+2025-05-12T07:33:46Z info: Pushing hosting layer...
+2025-05-12T07:33:46Z info: Pushing Repl layer...
+2025-05-12T07:33:46Z info: Retrieved cached nix layer
+2025-05-12T07:33:48Z info: Created hosting layer
+2025-05-12T07:33:51Z info: Created pid1 binary layer
+2025-05-12T07:36:57Z info: Created Repl layer
+2025-05-12T07:36:58Z info: Pushed image manifest
+2025-05-12T07:37:00Z info: Pushed soci index manifest
+2025-05-12T07:37:05Z info: Creating Autoscale service
+[FIREBASE] Initializing with service account for project: replit-5ac6a
+starting up user application
+forwarding local port 5174 to external port 80 (mapped as 1104)
+[PORT_CLEANUP] Unix method failed, trying Windows method...
+[AUTH] Firebase Admin initialized successfully
+[AUTH] Authentication middleware setup completed
+[FIREBASE] Starting Firebase Admin initialization...
+info: [ROUTES] Registering customer routes {"timestamp":"2025-05-12T07:38:00.764Z"}
+[FIREBASE] Production initialization successful
+info: [WebSocket] Server initialized on path: /ws {"timestamp":"2025-05-12T07:38:00.767Z"}
+[PORT_CLEANUP] Port 5174 is now available
+info: API routes registered {"timestamp":"2025-05-12T07:38:00.765Z"}
+info: Setting up production static file serving from: /home/runner/workspace/client/dist {"timestamp":"2025-05-12T07:38:00.766Z"}
+[FIREBASE] Using service account from environment variable
+info: Authentication setup completed {"timestamp":"2025-05-12T07:38:00.764Z"}
+info: Static file serving enabled for production {"timestamp":"2025-05-12T07:38:00.766Z"}
+[PORT_CLEANUP] Windows method failed
+info: WebSocket server initialized {"timestamp":"2025-05-12T07:38:00.767Z"}
+info: [ROUTES] Registering debug routes {"timestamp":"2025-05-12T07:38:00.765Z"}
+info: [ROUTES] Registering staff management routes {"timestamp":"2025-05-12T07:38:00.764Z"}
+info: Server started on port 5174 {"timestamp":"2025-05-12T07:38:00.769Z"}
+info: Firebase Admin initialized successfully {"timestamp":"2025-05-12T07:38:00.737Z"}
+info: [ROUTES] Registering general API routes {"timestamp":"2025-05-12T07:38:00.764Z"}
+[AUTH] Setting up authentication middleware in production mode
+[PORT_CLEANUP] Attempting to clean up port 5174...
+info: [ROUTES] Registering billing routes {"timestamp":"2025-05-12T07:38:00.764Z"}
+info: WebSocket server available at ws://localhost:5174/ws {"timestamp":"2025-05-12T07:38:00.770Z"}
+info: Incoming GET request to / {"body":{},"headers":{"accept-encoding":"gzip","host":"127.0.0.1:1104","server-timing":"pid1req;dur=1747035481534","user-agent":"Go-http-client/1.1","x-replit-healthcheck":"1","x-replit-user-bio":"","x-replit-user-id":"","x-replit-user-name":"","x-replit-user-profile-image":"","x-replit-user-roles":"","x-replit-user-teams":"","x-replit-user-url":""},"query":{},"timestamp":"2025-05-12T07:38:01.539Z"}
+2025-05-12T07:38:05Z info: Waiting for service to be ready
+2025-05-12T07:38:07Z info: Deployment successful

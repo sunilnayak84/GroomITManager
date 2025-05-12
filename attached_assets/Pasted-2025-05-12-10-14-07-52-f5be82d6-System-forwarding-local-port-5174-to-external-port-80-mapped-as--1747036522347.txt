@@ -1,0 +1,128 @@
+2025-05-12 10:14:07.52
+f5be82d6
+System
+forwarding local port 5174 to external port 80 (mapped as 1104)
+2025-05-12 10:14:09.34
+f5be82d6
+User
+[FIREBASE] Starting Firebase Admin initialization...
+2025-05-12 10:14:09.34
+f5be82d6
+User
+[FIREBASE] Using service account from environment variable
+2025-05-12 10:14:09.34
+f5be82d6
+User
+[FIREBASE] Initializing with service account for project: replit-5ac6a
+2025-05-12 10:14:09.45
+f5be82d6
+User
+[FIREBASE] Production initialization successful
+2025-05-12 10:14:09.55
+f5be82d6
+User
+[PORT_CLEANUP] Attempting to clean up port 5174...
+2025-05-12 10:14:09.57
+f5be82d6
+User
+[PORT_CLEANUP] Unix method failed, trying Windows method...
+2025-05-12 10:14:09.59
+f5be82d6
+User
+[PORT_CLEANUP] Windows method failed
+2025-05-12 10:14:10.60
+f5be82d6
+User
+[PORT_CLEANUP] Port 5174 is now available
+2025-05-12 10:14:10.62
+f5be82d6
+User
+info: Firebase Admin initialized successfully {"timestamp":"2025-05-12T04:44:10.604Z"}
+2025-05-12 10:14:10.62
+f5be82d6
+User
+[AUTH] Setting up authentication middleware in production mode
+2025-05-12 10:14:10.62
+f5be82d6
+User
+[AUTH] Firebase Admin initialized successfully
+2025-05-12 10:14:10.62
+f5be82d6
+User
+[AUTH] Authentication middleware setup completed
+2025-05-12 10:14:10.62
+f5be82d6
+User
+info: Authentication setup completed {"timestamp":"2025-05-12T04:44:10.627Z"}
+2025-05-12 10:14:10.62
+f5be82d6
+User
+info: [ROUTES] Registering billing routes {"timestamp":"2025-05-12T04:44:10.628Z"}
+2025-05-12 10:14:10.62
+f5be82d6
+User
+info: [ROUTES] Registering general API routes {"timestamp":"2025-05-12T04:44:10.628Z"}
+2025-05-12 10:14:10.62
+f5be82d6
+User
+info: [ROUTES] Registering staff management routes {"timestamp":"2025-05-12T04:44:10.628Z"}
+2025-05-12 10:14:10.62
+f5be82d6
+User
+info: [ROUTES] Registering customer routes {"timestamp":"2025-05-12T04:44:10.629Z"}
+2025-05-12 10:14:10.62
+f5be82d6
+User
+info: [ROUTES] Registering debug routes {"timestamp":"2025-05-12T04:44:10.629Z"}
+2025-05-12 10:14:10.62
+f5be82d6
+User
+info: API routes registered {"timestamp":"2025-05-12T04:44:10.629Z"}
+2025-05-12 10:14:10.63
+f5be82d6
+User
+info: Setting up production static file serving from: /home/runner/workspace/client/dist {"timestamp":"2025-05-12T04:44:10.631Z"}
+2025-05-12 10:14:10.63
+f5be82d6
+User
+info: Static file serving enabled for production {"timestamp":"2025-05-12T04:44:10.631Z"}
+2025-05-12 10:14:10.63
+f5be82d6
+User
+info: [WebSocket] Server initialized on path: /ws {"timestamp":"2025-05-12T04:44:10.632Z"}
+2025-05-12 10:14:10.63
+f5be82d6
+User
+info: WebSocket server initialized {"timestamp":"2025-05-12T04:44:10.632Z"}
+2025-05-12 10:14:10.63
+f5be82d6
+User
+info: Server started on port 5174 {"timestamp":"2025-05-12T04:44:10.635Z"}
+2025-05-12 10:14:10.63
+f5be82d6
+User
+info: WebSocket server available at ws://localhost:5174/ws {"timestamp":"2025-05-12T04:44:10.636Z"}
+2025-05-12 10:14:11.07
+f5be82d6
+User
+info: Incoming GET request to / {"body":{},"headers":{"accept-encoding":"gzip","host":"127.0.0.1:1104","server-timing":"pid1req;dur=1747025051069","user-agent":"Go-http-client/1.1","x-replit-healthcheck":"1","x-replit-user-bio":"","x-replit-user-id":"","x-replit-user-name":"","x-replit-user-profile-image":"","x-replit-user-roles":"","x-replit-user-teams":"","x-replit-user-url":""},"query":{},"timestamp":"2025-05-12T04:44:11.074Z"}
+2025-05-12 10:14:11.43
+f5be82d6
+User
+info: Incoming GET request to / {"body":{},"headers":{"accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7","accept-encoding":"gzip, deflate, br","accept-language":"en-US,en;q=0.9","host":"groomery.replit.app","if-modified-since":"Fri, 09 May 2025 18:27:08 GMT","if-none-match":"W/\"2eb-196b64d1860\"","referer":"https://replit.com/","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Google Chrome\";v=\"134\"","sec-ch-ua-mobile":"?0","sec-ch-ua-platform":"\"Windows\"","sec-fetch-dest":"document","sec-fetch-mode":"navigate","sec-fetch-site":"cross-site","sec-fetch-user":"?1","server-timing":"depproxy;dur=1747025044863, pid1req;dur=1747025051431","traceparent":"00-406b85456742d11b18d14467623105f3-62c85e98f8561311-01","upgrade-insecure-requests":"1","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36","via":"1.1 google","x-cloud-trace-context":"406b85456742d11b18d14467623105f3/7118043222153499409;o=1","x-forwarded-for":"106.215.177.88, 163.116.195.124, 34.117.33.233, 35.191.31.99,34.46.100.90","x-forwarded-host":"groomery.replit.app","x-forwarded-proto":"https","x-replit-user-bio":"","x-replit-user-id":"","x-replit-user-name":"","x-replit-user-profile-image":"","x-replit-user-roles":"","x-replit-user-teams":"","x-replit-user-url":""},"query":{},"timestamp":"2025-05-12T04:44:11.432Z"}
+2025-05-12 10:16:38.14
+f5be82d6
+User
+info: Incoming GET request to / {"body":{},"headers":{"accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7","accept-encoding":"gzip, deflate, br","accept-language":"en-US,en;q=0.9","host":"groomery.replit.app","if-modified-since":"Fri, 09 May 2025 18:27:08 GMT","if-none-match":"W/\"2eb-196b64d1860\"","referer":"https://replit.com/","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Google Chrome\";v=\"134\"","sec-ch-ua-mobile":"?0","sec-ch-ua-platform":"\"Windows\"","sec-fetch-dest":"document","sec-fetch-mode":"navigate","sec-fetch-site":"cross-site","sec-fetch-user":"?1","server-timing":"depproxy;dur=1747025198091, pid1req;dur=1747025198147","traceparent":"00-cff5f03beee11ecd33b1bdc47fffaa00-3beba0d053355a49-01","upgrade-insecure-requests":"1","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36","via":"1.1 google","x-cloud-trace-context":"cff5f03beee11ecd33b1bdc47fffaa00/4317721484374399561;o=1","x-forwarded-for":"106.215.177.88, 163.116.195.124, 34.117.33.233, 35.191.2.93,35.188.87.224","x-forwarded-host":"groomery.replit.app","x-forwarded-proto":"https","x-replit-user-bio":"","x-replit-user-id":"","x-replit-user-name":"","x-replit-user-profile-image":"","x-replit-user-roles":"","x-replit-user-teams":"","x-replit-user-url":""},"query":{},"timestamp":"2025-05-12T04:46:38.149Z"}
+2025-05-12 10:41:08.80
+e83ad9fd
+System
+starting up user application
+2025-05-12 10:41:09.07
+e83ad9fd
+System
+forwarding local port 5174 to external port 80 (mapped as 1104)
+2025-05-12 10:41:11.19
+e83ad9fd
+User
+[FIREBASE] Starting Firebase Admin initialization...
