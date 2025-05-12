@@ -90,6 +90,54 @@ if (!clientBuildPath) {
   fs.writeFileSync(path.join(clientBuildPath, 'index.html'), placeholderHtml);
 }
 
+// Check if we need to build the client before deploying
+// This is important for making sure the client build exists
+if (process.env.BUILDING_FOR_REPLIT_DEPLOYMENT === 'true') {
+  console.log('Building client for deployment...');
+  const { execSync } = require('child_process');
+  try {
+    // Run the client build process
+    execSync('cd client && npm run build', { stdio: 'inherit' });
+    console.log('Client build completed successfully.');
+    
+    // Make sure the dist directory exists
+    if (!fs.existsSync(path.join(__dirname, 'dist'))) {
+      fs.mkdirSync(path.join(__dirname, 'dist'), { recursive: true });
+    }
+    
+    // Copy the client build to the deployment location
+    const distClientDir = path.join(__dirname, 'dist/client');
+    if (!fs.existsSync(distClientDir)) {
+      fs.mkdirSync(distClientDir, { recursive: true });
+    }
+    
+    // Check if client/dist exists and has files to copy
+    const clientDistDir = path.join(__dirname, 'client/dist');
+    if (fs.existsSync(clientDistDir)) {
+      execSync(`cp -r ${clientDistDir}/* ${distClientDir}/`, { stdio: 'inherit' });
+      console.log('Copied client build to deployment directory.');
+    } else {
+      console.error('Client build directory not found after build process.');
+    }
+  } catch (error) {
+    console.error('Error building client:', error);
+  }
+}
+
+// First check if the path exists and is accessible
+if (clientBuildPath) {
+  try {
+    const stat = fs.statSync(clientBuildPath);
+    if (!stat.isDirectory()) {
+      console.error(`Client build path ${clientBuildPath} is not a directory`);
+      clientBuildPath = '';
+    }
+  } catch (error) {
+    console.error(`Error accessing client build path ${clientBuildPath}:`, error.message);
+    clientBuildPath = '';
+  }
+}
+
 // Create a separate router for API requests
 const apiRouter = express.Router();
 
@@ -130,26 +178,51 @@ apiRouter.get('/appointments', (req, res) => {
   });
 });
 
-// Mount the API router
+// Important: Route order matters!
+// 1. First define explicit API routes
 app.use('/api', apiRouter);
 
-// Serve static files from the client build directory
+// 2. Then serve static files
 console.log('Setting up static file serving from:', clientBuildPath);
-app.use(express.static(clientBuildPath));
+if (clientBuildPath) {
+  app.use(express.static(clientBuildPath));
+}
 
-// Special handler for the root path to ensure we serve the frontend
-app.get('/', (req, res) => {
-  res.sendFile(path.join(clientBuildPath, 'index.html'));
+// 3. Then handle WebSocket route if needed
+app.get('/ws', (req, res) => {
+  res.status(400).send('WebSocket endpoint - use a WebSocket client to connect');
 });
 
-// All other routes redirect to index.html (SPA client-side routing)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(clientBuildPath, 'index.html'));
-});
+// 4. Finally, catch-all route for SPA client-side routing
+// This must be AFTER API routes to prevent API routes from being caught
+if (clientBuildPath) {
+  app.get('*', (req, res) => {
+    // Skip API routes (should already be handled, but just in case)
+    if (req.path.startsWith('/api/')) {
+      return res.status(404).json({ 
+        status: 'error', 
+        message: 'API endpoint not found'
+      });
+    }
+    
+    res.sendFile(path.join(clientBuildPath, 'index.html'));
+  });
+} else {
+  // Fallback if no client build is found
+  app.get('*', (req, res) => {
+    if (!req.path.startsWith('/api/')) {
+      res.status(500).send('Client build not found. Please rebuild the application.');
+    }
+  });
+}
 
 // Start the server
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Replit Deployment Server running on port ${PORT}`);
-  console.log(`Static files served from: ${clientBuildPath}`);
+  if (clientBuildPath) {
+    console.log(`Static files served from: ${clientBuildPath}`);
+  } else {
+    console.log(`WARNING: No static files being served - client build not found!`);
+  }
   console.log(`API endpoints available at /api/*`);
 });
