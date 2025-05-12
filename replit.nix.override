@@ -1,0 +1,14 @@
+# Replit Nix Configuration Override
+# This is a reference for how your replit.nix should be configured
+# You'll need to copy these settings to your actual replit.nix file
+
+{
+  pkgs = import <nixpkgs> { };
+  deps = [
+    pkgs.nodejs-18_x
+    pkgs.nodePackages.typescript-language-server
+    pkgs.yarn
+    pkgs.replitPackages.jest
+    pkgs.esbuild
+  ];
+}
