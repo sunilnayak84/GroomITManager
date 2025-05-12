@@ -1,34 +1,50 @@
 #!/bin/bash
 
-# This script builds the application for production deployment
-echo "Starting deployment build process..."
+# Deployment script for GroomIT Manager
+# This script ensures the client is built and deployed correctly
 
-# Set environment to production
+echo "======================================"
+echo "PREPARING DEPLOYMENT FOR GROOMIT MANAGER"
+echo "======================================"
+
+# Set production mode
 export NODE_ENV=production
 
 # Build the client
 echo "Building client..."
-cd client
-npm run build
+cd client && npm install && npm run build
+if [ $? -ne 0 ]; then
+  echo "❌ Client build failed. Aborting deployment."
+  exit 1
+fi
 cd ..
 
-# Create the dist/client directory if it doesn't exist
-echo "Setting up dist directory structure..."
+echo "✅ Client build successful."
+
+# Ensure client build is available
+if [ ! -f "client/dist/index.html" ]; then
+  echo "❌ Error: client/dist/index.html not found after build."
+  exit 1
+fi
+
+echo "Checking dist directory..."
 mkdir -p dist/client
 
-# Copy the client build to the dist/client directory
 echo "Copying client build to dist/client..."
 cp -r client/dist/* dist/client/
 
-# Build the server
-echo "Building server..."
-npm run build:server
+echo "Creating production environment file..."
+echo "NODE_ENV=production" > .env
 
-# Create a .env file for production if it doesn't exist
-if [ ! -f .env ]; then
-  echo "Creating production .env file..."
-  echo "NODE_ENV=production" > .env
-fi
-
-echo "Build complete! To start the application in production mode:"
-echo "NODE_ENV=production node dist/index.js"
+echo "======================================"
+echo "DEPLOYMENT PREPARATION COMPLETE"
+echo "======================================"
+echo "You can now deploy the application via Replit Deployments."
+echo ""
+echo "To test the deployment server, run:"
+echo "  node index.js"
+echo ""
+echo "For the official deployment:"
+echo "1. Go to the Deployments tab in Replit"
+echo "2. Click Deploy"
+echo "======================================"

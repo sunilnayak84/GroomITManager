@@ -2,12 +2,17 @@
  * MAIN DEPLOYMENT ENTRY POINT
  * 
  * This is the primary entry point that Replit uses for deployment.
- * For better reliability, we're using a standalone deployment server.
+ * It directs to server.js which prioritizes the frontend.
  */
 
-console.log('Starting GroomIT Manager deployment...');
-console.log('NODE_ENV:', process.env.NODE_ENV);
-console.log('PORT:', process.env.PORT);
+// Set environment to production
+process.env.NODE_ENV = 'production';
 
-// Use the standalone deployment server instead of replit_deployment.js
-import './deploy.js';
+console.log('========================');
+console.log('DEPLOYMENT ENTRY POINT');
+console.log('========================');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('PORT:', process.env.PORT || 3000);
+
+// Use the optimized server.js deployment file
+import './server.js';
