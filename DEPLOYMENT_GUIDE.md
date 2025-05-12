@@ -1,73 +1,67 @@
-# GroomIT Manager Deployment Guide
+# Deployment Guide for GroomIT Manager
 
-## Deployment Issue Fix
+## Issue: Backend API Shows Instead of Frontend
 
-If you're experiencing the issue where the deployment shows the backend API instead of the frontend, follow these steps:
+If your deployment is showing the backend API response instead of the frontend, we need to ensure the frontend routes have priority over the backend routes.
 
-## Option 1: Quick Deploy Method
+## Solution: Frontend-First Deployment
 
-1. Make sure the client is built:
-   ```
-   cd client
-   npm run build
-   cd ..
-   ```
+This guide uses a frontend-first deployment approach which prioritizes the frontend routes over the backend API routes.
 
-2. Run the standalone deployment server:
-   ```
-   node deploy.js
-   ```
+## Step 1: Build the Application with Frontend Priority
 
-3. Then test it by visiting your deployment URL.
+Run the following command to build both the frontend and backend with frontend-priority settings:
 
-## Option 2: Modify Replit Deployment Settings
-
-Since we can't directly edit the `.replit` file through the API, you'll need to manually update it in the Replit interface:
-
-1. Open the `.replit` file in the Replit editor
-2. Replace the deployment section with:
-   ```
-   [deployment]
-   deploymentTarget = "cloudrun"
-   build = ["sh", "-c", "npm install && cd client && npm install && npm run build && cd .. && node prepare-deployment.js"]
-   run = ["sh", "-c", "NODE_ENV=production node deploy.js"]
-   ```
-
-3. Update the `run = ` line to use the new deployment server:
-   ```
-   run = "node deploy.js"
-   ```
-
-4. Keep the existing port mappings.
-
-## Troubleshooting the Deployment
-
-When deploying, make sure:
-
-1. The client build exists at `client/dist/index.html`
-2. The deployment is using `deploy.js` as its entry point
-3. The `NODE_ENV` is set to `production`
-
-If you continue to have issues, run:
-```
-node test-static-paths.js
+```bash
+./build-frontend-first.sh
 ```
 
-This will diagnose any issues with the client build paths and deployment configuration.
+This script will:
+1. Build the client application
+2. Create a special deployment-specific server entry point
+3. Build the server with the frontend-first configuration
+4. Set up the correct file structure for deployment
 
-## Understanding the Issue
+## Step 2: Deploy the Application
 
-The problem is likely due to a route order issue in the deployment server. The backend API routes need to be defined BEFORE the static file serving middleware to ensure proper routing.
+1. Go to the Replit "Deployments" tab
+2. Click "Deploy"
+3. Wait for the deployment to complete (this may take a few minutes)
 
-In the improved deployment server (`deploy.js`), we've:
-1. Clearly separated API routes from static file serving
-2. Ensured API routes are registered first
-3. Added a specific handling for the root route to ensure the frontend is served
-4. Added better error handling and logging
+## Step 3: Verify the Deployment
 
-## Reference Files
+When the deployment is complete:
+1. Visit your deployment URL (e.g., `https://groomery.replit.app`)
+2. You should see the frontend application instead of the backend API
 
-- `deploy.js`: Standalone deployment server that prioritizes the frontend
-- `prepare-deployment.js`: Prepares the application for deployment
-- `test-static-paths.js`: Diagnoses issues with client build paths and deployment configuration
-- `DEPLOYMENT_GUIDE.md`: This guide
+## How This Works
+
+The normal server configuration registers API routes first, and then adds the frontend static file serving afterward. In some environments, this can cause the API routes to take precedence.
+
+Our frontend-first approach:
+1. Sets up the static file serving BEFORE registering API routes
+2. Uses a special catch-all route for non-API paths that serves the frontend
+3. Only allows API routes to be matched if the frontend doesn't handle the route
+
+## Troubleshooting
+
+If you're still seeing the backend API instead of the frontend:
+
+1. Verify that the frontend build was successful:
+   ```bash
+   ls -la client/dist
+   ```
+   
+2. Check the logs after deployment to see which routes are being matched:
+   - Look for log messages that show which paths are being requested
+   - Check for any error messages about missing files
+
+3. Make a request to the deployed API health endpoint:
+   ```
+   curl https://your-deployment-url.replit.app/api/health
+   ```
+   This should return a JSON response indicating the server is running in frontend-first mode.
+
+## For Development
+
+Your local development server will continue to work normally with the original configuration. These changes only affect the deployment.
