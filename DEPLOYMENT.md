@@ -1,36 +1,42 @@
 # Deployment Guide for GroomIT Manager
 
-## Steps to deploy this application
+## Important: Fixing Frontend Deployment
 
-1. Make sure you've built both client and server:
+If your deployment shows backend API responses instead of the frontend UI, follow these steps:
+
+1. Build the client before deploying:
    ```
    # Build the client
    cd client
    npm run build
    cd ..
-   
-   # Create the dist/client directory
-   mkdir -p dist/client
-   
-   # Copy client build to dist/client
-   cp -r client/dist/* dist/client/
    ```
 
-2. To deploy on Replit:
-   - Go to "Deployments" tab in the Replit interface
+2. Run the deployment script to set up everything correctly:
+   ```
+   node fix-deployment.js
+   ```
+
+3. Deploy on Replit:
+   - Go to the "Deployments" tab in the Replit interface
    - Click "Deploy"
-   - Replit will build and deploy your application
 
-## Production Configuration
+## Deployment Configuration
 
-In production, the application should:
-- Use the `dist/client` directory for serving static files
-- Default to production mode with `NODE_ENV=production`
-- Serve the frontend for all routes that aren't API routes
+The deployment configuration in the `.replit` file should have:
 
-## Troubleshooting
+```
+[deployment]
+deploymentTarget = "cloudrun"
+build = ["sh", "-c", "npm install && cd client && npm install && npm run build && cd .. && node fix-deployment.js"]
+run = ["sh", "-c", "NODE_ENV=production node index.js"]
+```
+
+## Deployment Troubleshooting
 
 If you see API responses instead of the UI:
-- Make sure the client has been built (`cd client && npm run build`)
-- Ensure the server is configured to serve static files
-- Check that the static file middleware is registered AFTER API routes
+1. Make sure the client is built (`cd client && npm run build`)
+2. Check that the `replit_deployment.js` has the correct route order (API routes first, then static files, then catch-all)
+3. Verify the client build files exist in one of these locations:
+   - `client/dist/`
+   - `dist/client/`
