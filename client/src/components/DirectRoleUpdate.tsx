@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from '@/components/ui/use-toast';
 import { getFirestore, doc, updateDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
@@ -49,7 +49,7 @@ const ROLE_PERMISSIONS = {
 export function DirectRoleUpdate() {
   const [selectedRole, setSelectedRole] = useState<string>('');
   const [isUpdating, setIsUpdating] = useState(false);
-  const { toast } = useToast();
+
   const db = getFirestore();
 
   const updateCherylRole = async () => {
