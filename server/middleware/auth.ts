@@ -75,7 +75,7 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
       // Use database role if available
       else if (userRole) {
         console.log('[AUTH] User has role from database:', userRole);
-        role = userRole.role;
+        role = userRole.role as keyof typeof RoleTypes;
         permissions = userRole.permissions;
       }
 

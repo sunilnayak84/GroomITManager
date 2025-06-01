@@ -576,8 +576,8 @@ export default function ServicesPage() {
                     <FormControl>
                       <Input
                         type="number"
-                        min="15"
-                        step="15"
+                        min="1"
+                        step="1"
                         {...field}
                         value={field.value || ""}
                         onChange={(e) => {

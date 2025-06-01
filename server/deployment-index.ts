@@ -2,7 +2,7 @@ import express, { type Request, type Response } from "express";
 import { createServer } from "http";
 import { terminateProcessOnPort } from "./utils/port_cleanup.js";
 import { initializeFirebaseAdmin } from "./firebase.js";
-import { setupAuth } from "./auth.js";
+import { setupAuthenticationFirestore } from "./auth-firestore.js";
 import cors from 'cors';
 import { logger } from "./utils/logger.js";
 import { setupFrontendFirstMiddleware } from "./frontend-first-middleware.js";
