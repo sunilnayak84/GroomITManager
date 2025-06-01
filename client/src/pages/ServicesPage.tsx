@@ -920,67 +920,89 @@ export default function ServicesPage() {
                 </div>
               </div>
 
-              <FormField
-                control={form.control}
-                name="discount_percentage"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Discount Percentage (%)</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        min="0"
-                        max="100"
-                        step="1"
-                        placeholder="Enter discount percentage"
-                        {...field}
-                        value={field.value ? (field.value * 100).toString() : "0"}
-                        onChange={(e) => {
-                          const inputValue = e.target.value === '' ? 0 : parseFloat(e.target.value);
-                          if (isNaN(inputValue)) return;
-                          
-                          // Store as decimal (e.g., 10% -> 0.10)
-                          const decimalValue = Math.min(Math.max(inputValue / 100, 0), 1);
-                          field.onChange(decimalValue);
-                          
-                          // Calculate and set package price based on discount
-                          const selectedItems = [
-                            ...(form.getValues("selectedServices") || []),
-                            ...(form.getValues("selectedAddons") || [])
-                          ];
-                          const totalPrice = selectedItems.reduce((sum, item) => sum + (item?.price || 0), 0);
-                          const discountedPrice = Math.round(totalPrice * (1 - decimalValue));
-                          form.setValue("price", discountedPrice);
-                          form.trigger();
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="discount_percentage"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Discount Percentage (%)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min="0"
+                          max="100"
+                          step="0.01"
+                          placeholder="Enter discount percentage"
+                          {...field}
+                          value={field.value ? (field.value * 100).toFixed(2) : "0"}
+                          onChange={(e) => {
+                            const inputValue = e.target.value === '' ? 0 : parseFloat(e.target.value);
+                            if (isNaN(inputValue)) return;
+                            
+                            // Store as decimal (e.g., 10.5% -> 0.105)
+                            const decimalValue = Math.min(Math.max(inputValue / 100, 0), 1);
+                            field.onChange(decimalValue);
+                            
+                            // Calculate and set package price based on discount
+                            const selectedItems = [
+                              ...(form.getValues("selectedServices") || []),
+                              ...(form.getValues("selectedAddons") || [])
+                            ];
+                            const totalPrice = selectedItems.reduce((sum, item) => sum + (item?.price || 0), 0);
+                            if (totalPrice > 0) {
+                              const discountedPrice = Math.round(totalPrice * (1 - decimalValue));
+                              form.setValue("price", discountedPrice);
+                              form.trigger();
+                            }
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="price"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Package Price (₹)</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        min="0"
-                        step="1"
-                        placeholder="Package price will be calculated automatically"
-                        {...field}
-                        readOnly
-                        disabled
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Package Price (₹)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="1"
+                          placeholder="Enter package price directly"
+                          {...field}
+                          onChange={(e) => {
+                            const inputValue = e.target.value === '' ? 0 : parseFloat(e.target.value);
+                            if (isNaN(inputValue)) return;
+                            
+                            field.onChange(inputValue);
+                            
+                            // Calculate and set discount percentage based on price
+                            const selectedItems = [
+                              ...(form.getValues("selectedServices") || []),
+                              ...(form.getValues("selectedAddons") || [])
+                            ];
+                            const totalPrice = selectedItems.reduce((sum, item) => sum + (item?.price || 0), 0);
+                            
+                            if (totalPrice > 0 && inputValue > 0) {
+                              const discountAmount = totalPrice - inputValue;
+                              const discountPercentage = Math.max(0, Math.min(1, discountAmount / totalPrice));
+                              form.setValue("discount_percentage", discountPercentage);
+                              form.trigger();
+                            }
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <div className="flex justify-end gap-2 mt-4">
                 <Button
