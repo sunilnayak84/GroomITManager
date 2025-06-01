@@ -38,7 +38,7 @@ export function useServices() {
               name: data.name || 'Unnamed Service',
               description: data.description || null,
               category: data.category || ServiceCategory.SERVICE,
-              duration: Math.max(Number(data.duration) || 15, 15),
+              duration: Number(data.duration) || 1,
               price: Number(data.price) || 0,
               discount_percentage: data.discount_percentage || 0,
               consumables: data.consumables || [],
@@ -167,7 +167,6 @@ export function useServices() {
 
   const updateService = async (service_id: string, updateData: UpdateService) => {
     try {
-      console.log('UPDATE_SERVICE: Starting update with data:', updateData);
       const serviceRef = doc(servicesCollection, service_id);
       const timestamp = new Date();
 
@@ -175,8 +174,6 @@ export function useServices() {
         ...updateData,
         updated_at: timestamp.toISOString()
       };
-      
-      console.log('UPDATE_SERVICE: Final payload to Firestore:', updatePayload);
 
       if (updateData.consumables) {
         console.log('Processing consumables for update:', updateData.consumables);
