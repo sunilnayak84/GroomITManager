@@ -1,10 +1,10 @@
 {
   "hashes": {
-    "client": "0de6268352c0c3e7f302782d52344509",
-    "server": "e4cd87f55d4aef7b5f87449be57e9990",
+    "client": "aba0502394b17e3cd60039d27f10ba8a",
+    "server": "56fba76b6004b9b0764f198e76377877",
     "config": "70cc6a6505aa7b018ef011d3023ee025",
     "clientConfig": "714d032c622a990d3163227a63c8a6a8",
     "deployment": "59dd48fdfde1f67f7345d6497d9320f1"
   },
-  "lastDeploy": "2025-06-01T18:26:59.206Z"
+  "lastDeploy": "2025-06-01T18:37:54.864Z"
 }
