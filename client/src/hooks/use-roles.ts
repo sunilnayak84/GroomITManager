@@ -109,13 +109,26 @@ async function updateRole({ roleId, ...data }: { roleId: string; name: string; p
 
 async function updateUserRole(params: { userId: string; role: string }): Promise<void> {
   try {
-    console.log('[USERS] Updating user role:', params);
-    const userRef = doc(db, 'users', params.userId);
-    await updateDoc(userRef, {
-      role: params.role,
-      updatedAt: new Date().toISOString()
+    console.log('[USERS] Updating user role via backend API:', params);
+    
+    // Use backend API to properly sync both Firestore and Firebase Auth custom claims
+    const response = await fetch('/api/auth/update-user-role', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: params.userId,
+        role: params.role
+      })
     });
-    console.log('[USERS] Updated user role successfully');
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to update user role');
+    }
+
+    console.log('[USERS] Updated user role successfully via backend');
   } catch (error) {
     console.error('[USERS] Error updating user role:', error);
     throw error;
@@ -183,12 +196,36 @@ export function useRoles() {
 
   const updateUserRoleMutation = useMutation({
     mutationFn: updateUserRole,
-    onSuccess: () => {
+    onSuccess: async (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
-      toast({
-        title: 'Success',
-        description: 'User role updated successfully'
-      });
+      
+      // If the current user's role was updated, force token refresh
+      const currentUser = auth.currentUser;
+      if (currentUser && currentUser.uid === variables.userId) {
+        try {
+          // Force token refresh to get updated custom claims
+          await currentUser.getIdToken(true);
+          // Refresh user data in the cache
+          queryClient.invalidateQueries({ queryKey: ['user'] });
+          
+          toast({
+            title: 'Success',
+            description: 'Your role has been updated. Please refresh the page to see the changes.'
+          });
+        } catch (error) {
+          console.error('Failed to refresh token:', error);
+          toast({
+            title: 'Role Updated',
+            description: 'Role updated successfully. Please log out and log back in to see the changes.',
+            variant: 'default'
+          });
+        }
+      } else {
+        toast({
+          title: 'Success',
+          description: 'User role updated successfully'
+        });
+      }
     },
     onError: (error: Error) => {
       toast({

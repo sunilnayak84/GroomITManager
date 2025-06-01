@@ -254,5 +254,45 @@ export function setupAuthenticationFirestore(app: Express) {
     }
   });
 
+  // Add user role update endpoint
+  app.post('/api/auth/update-user-role', async (req, res) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ message: 'Not authenticated' });
+      }
+
+      // Check if user has permission to update roles
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Insufficient permissions to update user roles' });
+      }
+
+      const { userId, role } = req.body;
+
+      if (!userId || !role) {
+        return res.status(400).json({ message: 'userId and role are required' });
+      }
+
+      // Validate role
+      if (!Object.values(RoleTypes).includes(role)) {
+        return res.status(400).json({ message: 'Invalid role specified' });
+      }
+
+      // Update user role using the existing function
+      await setUserRole(userId, role, req.user.id);
+
+      res.json({ 
+        message: 'User role updated successfully',
+        userId,
+        role
+      });
+    } catch (error) {
+      console.error('[AUTH] Role update error:', error);
+      res.status(500).json({ 
+        message: 'Failed to update user role',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
   console.log('[AUTH] Firestore authentication middleware setup completed');
 }
