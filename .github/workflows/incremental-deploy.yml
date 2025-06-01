@@ -1,0 +1,97 @@
+name: Incremental CI/CD Deployment
+
+on:
+  push:
+    branches: [main, live-june01-features]
+  pull_request:
+    branches: [main]
+
+env:
+  NODE_VERSION: '20'
+  CACHE_VERSION: v1
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      client-changed: ${{ steps.changes.outputs.client }}
+      server-changed: ${{ steps.changes.outputs.server }}
+      dependencies-changed: ${{ steps.changes.outputs.dependencies }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      
+      - name: Detect changes
+        id: changes
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            client:
+              - 'client/src/**'
+              - 'client/public/**'
+            server:
+              - 'server/**'
+              - 'index.js'
+            dependencies:
+              - 'package.json'
+              - 'client/package.json'
+
+  build-client:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.client-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'client/package-lock.json'
+      
+      - name: Cache build
+        uses: actions/cache@v3
+        with:
+          path: client/dist
+          key: client-build-${{ hashFiles('client/src/**') }}
+      
+      - name: Install and build
+        run: |
+          cd client
+          npm ci --prefer-offline
+          npm run build
+      
+      - name: Upload build
+        uses: actions/upload-artifact@v3
+        with:
+          name: client-build
+          path: client/dist/
+
+  deploy:
+    needs: [detect-changes, build-client]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download client build
+        if: needs.detect-changes.outputs.client-changed == 'true'
+        uses: actions/download-artifact@v3
+        with:
+          name: client-build
+          path: client/dist/
+      
+      - name: Deploy client only
+        if: needs.detect-changes.outputs.client-changed == 'true' && needs.detect-changes.outputs.server-changed == 'false'
+        run: |
+          echo "Deploying only client changes"
+          # Deploy to Firebase hosting only
+          firebase deploy --only hosting --token ${{ secrets.FIREBASE_TOKEN }}
+      
+      - name: Deploy server only
+        if: needs.detect-changes.outputs.server-changed == 'true' && needs.detect-changes.outputs.client-changed == 'false'
+        run: |
+          echo "Deploying only server changes"
+          # Deploy to Firebase functions only
+          firebase deploy --only functions --token ${{ secrets.FIREBASE_TOKEN }}

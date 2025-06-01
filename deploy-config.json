@@ -1,0 +1,44 @@
+{
+  "deployment": {
+    "strategy": "incremental",
+    "caching": {
+      "enabled": true,
+      "clientBuild": {
+        "ttl": "24h",
+        "invalidateOn": ["client/src/**", "client/package.json"]
+      },
+      "serverBuild": {
+        "ttl": "24h", 
+        "invalidateOn": ["server/**", "index.js", "package.json"]
+      },
+      "dependencies": {
+        "ttl": "7d",
+        "invalidateOn": ["package.json", "client/package.json"]
+      }
+    },
+    "buildOptimization": {
+      "parallelBuilds": true,
+      "skipUnchanged": true,
+      "incrementalCompilation": true,
+      "treeshaking": true
+    },
+    "environments": {
+      "development": {
+        "hotReload": true,
+        "minification": false,
+        "sourceMaps": true
+      },
+      "production": {
+        "hotReload": false,
+        "minification": true,
+        "sourceMaps": false,
+        "compression": true
+      }
+    }
+  },
+  "monitoring": {
+    "buildTime": true,
+    "deploymentSize": true,
+    "changeDetection": true
+  }
+}

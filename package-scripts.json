@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "deploy:incremental": "node scripts/deploy-incremental.js",
+    "deploy:client-only": "cd client && npm run build && firebase deploy --only hosting",
+    "deploy:server-only": "npm run build:server && firebase deploy --only functions",
+    "deploy:fast": "npm run build:client:fast && npm run build:server && node index.js",
+    "build:client:fast": "cd client && vite build --mode production --minify esbuild",
+    "build:server:fast": "esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist --minify",
+    "deploy:check": "node scripts/check-changes.js",
+    "cache:clear": "rm -rf client/dist client/node_modules/.vite node_modules/.cache"
+  }
+}
