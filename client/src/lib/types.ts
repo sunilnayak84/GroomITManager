@@ -197,6 +197,9 @@ export interface PetInput {
   weight?: number | null;
   weightUnit?: WeightUnit;
   notes?: string | null;
+  temperamentCategory?: string | null;
+  temperamentTags?: string[];
+  temperamentNotes?: string | null;
   image?: string | File | null;
   submissionId?: string;
   owner?: {
