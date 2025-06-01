@@ -710,6 +710,9 @@ export default function CustomersPage() {
                       weightUnit: data.weightUnit || "kg",
                       image: data.image,
                       notes: data.notes,
+                      temperamentCategory: data.temperamentCategory,
+                      temperamentTags: data.temperamentTags,
+                      temperamentNotes: data.temperamentNotes,
                       owner: {
                         id: selectedCustomer.id.toString(),
                         name: `${selectedCustomer.firstName} ${selectedCustomer.lastName}`,
