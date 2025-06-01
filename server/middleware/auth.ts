@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { getUserRole, RoleTypes, DefaultPermissions, admin, getFirebaseAdmin } from '../firebase';
-import { FirebaseUser } from '../auth';
+import { RoleTypes, DefaultPermissions, getFirebaseAdmin } from '../firebase.js';
+import { FirebaseUser, getUserRole } from '../auth-firestore.js';
 
 export async function authenticateFirebase(req: Request, res: Response, next: NextFunction) {
   // Skip authentication for OPTIONS requests (CORS preflight)
