@@ -105,6 +105,8 @@ export default function ServicesPage() {
         selectedAddons: []
       };
 
+
+
       if (data.category === ServiceCategory.PACKAGE) {
         const selectedServices = form.getValues("selectedServices") || [];
         const selectedAddons = form.getValues("selectedAddons") || [];
@@ -212,7 +214,7 @@ export default function ServicesPage() {
       } else {
         // For regular services and add-ons
         // Validate required fields
-        if (!formattedData.name || !formattedData.category || !formattedData.duration || formattedData.price === undefined) {
+        if (!formattedData.name || !formattedData.category || formattedData.duration <= 0 || formattedData.price === undefined) {
           toast({
             title: "Validation Error",
             description: "Please fill in all required fields",
