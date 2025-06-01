@@ -127,7 +127,7 @@ export function requireRole(allowedRoles: Array<keyof typeof RoleTypes>) {
       path: req.path
     });
 
-    if (req.user.role === 'admin' || allowedRoles.includes(req.user.role)) {
+    if (req.user.role === 'admin' || allowedRoles.includes(req.user.role as keyof typeof RoleTypes)) {
       return next();
     }
 

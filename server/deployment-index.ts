@@ -45,7 +45,7 @@ async function startDeploymentServer(port: number) {
     logger.info('Firebase Admin initialized successfully');
 
     // Setup authentication
-    await setupAuth(app);
+    await setupAuthenticationFirestore(app);
     logger.info('Authentication setup completed');
 
     // Create HTTP server
