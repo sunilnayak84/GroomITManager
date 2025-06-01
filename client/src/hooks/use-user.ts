@@ -68,10 +68,46 @@ async function loginWithFirebase(credentials: { email: string; password: string 
       credentials.password
     );
 
-    // Get role from ID token
-    const idTokenResult = await user.getIdTokenResult();
-    const role = idTokenResult.claims.role as UserRole;
+    // Get role from ID token first
+    let idTokenResult = await user.getIdTokenResult();
+    let role = idTokenResult.claims.role as UserRole;
 
+    // If role is not found in custom claims, force token refresh to get updated claims
+    if (!role) {
+      console.log('Role not found in custom claims, forcing token refresh...');
+      await user.getIdToken(true); // Force refresh
+      idTokenResult = await user.getIdTokenResult();
+      role = idTokenResult.claims.role as UserRole;
+    }
+
+    // If still no role, try to sync with backend
+    if (!role) {
+      console.log('Role still not found, attempting backend sync...');
+      try {
+        const token = await user.getIdToken();
+        const response = await fetch('/api/auth/sync-role', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.role) {
+            // Force another token refresh after backend sync
+            await user.getIdToken(true);
+            idTokenResult = await user.getIdTokenResult();
+            role = idTokenResult.claims.role as UserRole || data.role;
+          }
+        }
+      } catch (syncError) {
+        console.error('Role sync error:', syncError);
+      }
+    }
+
+    // If we still don't have a role, throw an error
     if (!role) {
       throw new Error('User role not found. Please contact administrator.');
     }
@@ -81,7 +117,7 @@ async function loginWithFirebase(credentials: { email: string; password: string 
       email: user.email!,
       name: user.displayName || user.email!,
       role: role,
-      permissions: idTokenResult.claims.permissions as string[] || [],
+      permissions: idTokenResult.claims.permissions as string[] || RolePermissions[role] || [],
       branchId: idTokenResult.claims.branchId as number | undefined
     };
 

@@ -3,7 +3,7 @@ import { registerRoutes } from "./routes.js";
 import { createServer } from "http";
 import { terminateProcessOnPort } from "./utils/port_cleanup.js";
 import { initializeFirebaseAdmin } from "./firebase.js";
-import { setupAuth } from "./auth.js";
+import { setupAuthenticationFirestore } from "./auth-firestore.js";
 import cors from 'cors';
 import { logger } from "./utils/logger.js";
 import { setupVite } from "./vite.js";
@@ -49,7 +49,7 @@ async function startServer(port: number) {
     logger.info('Firebase Admin initialized successfully');
 
     // Setup authentication
-    await setupAuth(app);
+    setupAuthenticationFirestore(app);
     logger.info('Authentication setup completed');
 
     // Register API routes before client-side routing to ensure proper API handling

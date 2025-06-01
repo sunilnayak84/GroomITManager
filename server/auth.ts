@@ -8,7 +8,7 @@ import {
   initializeFirebaseAdmin
 } from "./firebase";
 import { getAuth } from "firebase-admin/auth";
-import { getDatabase } from "firebase-admin/database";
+import { getFirestore } from "firebase-admin/firestore";
 
 // Type for our Firebase auth user
 export interface FirebaseUser {
