@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useRoles } from '@/hooks/use-roles';
 import type { UserRole } from '@/hooks/use-user';
 import { useForm } from 'react-hook-form';
@@ -55,37 +55,64 @@ type RoleFormValues = z.infer<typeof roleSchema>;
 const permissionCategories = {
   appointments: [
     'manage_appointments',
-    'view_appointments',
+    'view_appointments', 
     'create_appointments',
     'cancel_appointments',
+    'reschedule_appointments',
+    'assign_groomers',
   ],
   customers: [
     'manage_customers',
     'view_customers',
     'create_customers',
     'edit_customer_info',
+    'delete_customers',
+    'view_customer_history',
   ],
   services: [
     'manage_services',
     'view_services',
     'create_services',
     'edit_services',
+    'delete_services',
+    'manage_pricing',
   ],
   inventory: [
     'manage_inventory',
     'view_inventory',
     'update_stock',
     'manage_consumables',
+    'view_inventory_reports',
+    'manage_suppliers',
   ],
   staff: [
+    'manage_staff',
+    'view_staff',
     'manage_staff_schedule',
     'view_staff_schedule',
     'manage_own_schedule',
+    'view_staff_performance',
+  ],
+  billing: [
+    'manage_billing',
+    'view_billing',
+    'process_payments',
+    'view_financial_reports',
+    'manage_discounts',
+    'generate_invoices',
   ],
   reports: [
     'view_analytics',
     'view_reports',
-    'view_financial_reports',
+    'export_reports',
+    'view_business_insights',
+  ],
+  system: [
+    'manage_roles',
+    'view_roles',
+    'manage_settings',
+    'view_audit_logs',
+    'backup_data',
   ],
 };
 
@@ -116,6 +143,7 @@ export function RoleManagement() {
   }, [error]);
 
   const [editingRole, setEditingRole] = useState<string | null>(null);
+  const formRef = useRef<HTMLDivElement>(null);
 
   const form = useForm<RoleFormValues>({
     resolver: zodResolver(roleSchema),
@@ -125,6 +153,16 @@ export function RoleManagement() {
       description: '',
     },
   });
+
+  // Scroll to form when editing
+  useEffect(() => {
+    if (editingRole && formRef.current) {
+      formRef.current.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    }
+  }, [editingRole]);
 
   const onSubmit = async (data: RoleFormValues) => {
     try {
@@ -216,21 +254,43 @@ export function RoleManagement() {
                     requiredPermissions={['manage_roles']}
                     fallback={null}
                   >
-                    <Button
-                      variant="outline"
-                      className="mt-4"
-                      onClick={() => {
-                        console.log('Editing role:', role);
-                        setEditingRole(role.name);
-                        form.reset({
-                          name: role.name,
-                          permissions: Array.isArray(role.permissions) ? role.permissions : [],
-                          description: '',
-                        });
-                      }}
-                    >
-                      Edit Role
-                    </Button>
+                    <div className="flex gap-2 mt-4">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          console.log('Editing role:', role);
+                          setEditingRole(role.name);
+                          form.reset({
+                            name: role.name,
+                            permissions: Array.isArray(role.permissions) ? role.permissions : [],
+                            description: role.description || '',
+                          });
+                          toast({
+                            title: "Edit Mode",
+                            description: `Now editing ${role.name} role. Scroll down to modify permissions.`,
+                          });
+                        }}
+                      >
+                        Edit Permissions
+                      </Button>
+                      {editingRole === role.name && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setEditingRole(null);
+                            form.reset();
+                            toast({
+                              title: "Edit Cancelled",
+                              description: "Role editing cancelled",
+                            });
+                          }}
+                        >
+                          Cancel Edit
+                        </Button>
+                      )}
+                    </div>
                   </ProtectedElement>
                 )}
                 {isUpdating && editingRole === role.name && (
@@ -249,11 +309,11 @@ export function RoleManagement() {
         requiredPermissions={['manage_roles']}
         fallback={<div className="text-muted-foreground text-center py-4">You don't have permission to manage roles.</div>}
       >
-        <Card>
+        <Card ref={formRef}>
           <CardHeader>
-            <CardTitle>{editingRole ? 'Edit Role' : 'Create New Role'}</CardTitle>
+            <CardTitle>{editingRole ? `Edit Role: ${editingRole}` : 'Create New Role'}</CardTitle>
             <CardDescription>
-              Define role permissions to control access to different features
+              {editingRole ? `Modify permissions for the ${editingRole} role` : 'Define role permissions to control access to different features'}
             </CardDescription>
           </CardHeader>
           <CardContent>
