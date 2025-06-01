@@ -78,6 +78,10 @@ author = "agent"
 task = "workflow.run"
 args = "Development Servers"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Quick Deploy"
+
 [[workflows.workflow]]
 name = "Development Servers"
 author = "agent"
@@ -86,3 +90,12 @@ author = "agent"
 task = "shell.exec"
 args = "cd client && npm run dev & cd server && npm run dev"
 waitForPort = 5174
+
+[[workflows.workflow]]
+name = "Quick Deploy"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node quick-deploy.js"
+waitForPort = 5000
