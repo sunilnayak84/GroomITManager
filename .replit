@@ -82,6 +82,10 @@ args = "Development Servers"
 task = "workflow.run"
 args = "Quick Deploy"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Smart Deploy"
+
 [[workflows.workflow]]
 name = "Development Servers"
 author = "agent"
@@ -99,3 +103,11 @@ author = "agent"
 task = "shell.exec"
 args = "node quick-deploy.js"
 waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Smart Deploy"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node scripts/smart-deploy.js"
