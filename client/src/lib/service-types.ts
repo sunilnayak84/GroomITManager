@@ -28,7 +28,7 @@ export type PackageItem = {
 
 // Enhanced walking service schema with route tracking
 export const walkingServiceSchema = z.object({
-  duration: z.number().min(15, "Walk must be at least 15 minutes"),
+  duration: z.number().min(1, "Walk must be at least 1 minute"),
   distance: z.number().optional(),
   route: z.array(z.object({
     lat: z.number(),
@@ -66,7 +66,7 @@ export const walkingServiceSchema = z.object({
 export const baseServiceSchema = {
   name: z.string().min(2, "Service name must be at least 2 characters"),
   category: z.enum([ServiceCategory.SERVICE, ServiceCategory.ADDON, ServiceCategory.PACKAGE, ServiceCategory.WALKING]),
-  duration: z.number().min(15, "Duration must be at least 15 minutes"),
+  duration: z.number().min(1, "Duration must be at least 1 minute"),
   price: z.number().min(0, "Price cannot be negative"),
   description: z.string().nullable().default(null),
 };
