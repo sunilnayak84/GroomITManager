@@ -255,6 +255,9 @@ export default function ServicesPage() {
               isActive: formattedData.isActive
             };
             
+            console.log('FORM: Sending update data to service:', updateData);
+            console.log('FORM: Duration value being sent:', updateData.duration, typeof updateData.duration);
+            
             await updateService(selectedService.service_id, updateData);
             toast({
               title: "Success",
