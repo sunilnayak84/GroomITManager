@@ -51,10 +51,25 @@ export async function getUserRole(userId: string): Promise<{ role: string; permi
     
     if (userDoc.exists) {
       const userData = userDoc.data();
-      return {
-        role: userData?.role || 'staff',
-        permissions: userData?.permissions || DefaultPermissions.staff
-      };
+      const userRole = userData?.role || 'staff';
+      
+      // Get permissions from the role definition, not from user document
+      const roleDoc = await db.collection('roles').doc(userRole).get();
+      
+      if (roleDoc.exists) {
+        const roleData = roleDoc.data();
+        console.log(`[AUTH] Found role definition for ${userRole}:`, roleData);
+        return {
+          role: userRole,
+          permissions: roleData?.permissions || DefaultPermissions[userRole as keyof typeof DefaultPermissions] || DefaultPermissions.staff
+        };
+      } else {
+        console.log(`[AUTH] No role definition found for ${userRole}, using defaults`);
+        return {
+          role: userRole,
+          permissions: DefaultPermissions[userRole as keyof typeof DefaultPermissions] || DefaultPermissions.staff
+        };
+      }
     }
     
     // Default role if user doesn't exist

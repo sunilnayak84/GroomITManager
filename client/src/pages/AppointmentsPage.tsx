@@ -18,6 +18,7 @@ import { appointmentSchema, type Appointment, type AppointmentWithRelations } fr
 import AppointmentDetails from "../components/AppointmentDetails";
 import AppointmentCalendar from "../components/AppointmentCalendar";
 import AppointmentEditForm from "../components/AppointmentEditForm";
+import { ProtectedElement } from "../components/ProtectedElement";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PetDetails } from "../components/PetDetails";
 import { Link, useLocation as useReactRouterLocation } from "react-router-dom";
@@ -82,7 +83,7 @@ function ActionButtons({ appointment, onView, onEdit }: ActionButtonsProps) {
       >
         View
       </Button>
-      {user?.role === 'admin' && (
+      {(user?.role === 'admin' || user?.role === 'manager' || user?.permissions?.includes('manage_appointments')) && (
         <>
           <Button
             variant="outline"
