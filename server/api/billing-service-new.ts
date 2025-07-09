@@ -56,9 +56,21 @@ export class BillingService {
       query = query.orderBy('createdAt', 'desc');
 
       const snapshot = await query.get();
-      const bills = snapshot.docs.map((doc: any) => 
-        this.convertFirestoreDocToBill(doc.id, doc.data())
-      );
+      const bills = await Promise.all(snapshot.docs.map(async (doc: any) => {
+        const billData = this.convertFirestoreDocToBill(doc.id, doc.data());
+        
+        // Resolve customer name if missing or incorrect
+        if (billData.customerId && (!billData.customerName || billData.customerName.includes('??'))) {
+          const customer = await this.getCustomerById(billData.customerId);
+          if (customer) {
+            billData.customerName = customer.firstName && customer.lastName 
+              ? `${customer.firstName} ${customer.lastName}`.trim()
+              : customer.name || customer.firstName || customer.lastName || 'Unknown Customer';
+          }
+        }
+        
+        return billData;
+      }));
 
       logger.info(`[BILLING] Successfully fetched ${bills.length} bills`);
       return bills;
@@ -84,6 +96,17 @@ export class BillingService {
       }
 
       const bill = this.convertFirestoreDocToBill(doc.id, doc.data()!);
+      
+      // Resolve customer name if missing or incorrect
+      if (bill.customerId && (!bill.customerName || bill.customerName.includes('??'))) {
+        const customer = await this.getCustomerById(bill.customerId);
+        if (customer) {
+          bill.customerName = customer.firstName && customer.lastName 
+            ? `${customer.firstName} ${customer.lastName}`.trim()
+            : customer.name || customer.firstName || customer.lastName || 'Unknown Customer';
+        }
+      }
+      
       logger.info('[BILLING] Successfully fetched bill:', billId);
       return bill;
     } catch (error) {
