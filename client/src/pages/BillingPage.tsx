@@ -38,6 +38,7 @@ import { Input } from "@/components/ui/input";
 import { BillStatus, Bill, GSTConfiguration, PaymentInfo, DiscountApplication } from '@/types/billing';
 import { useBilling, formatIndianCurrency } from '@/hooks/use-billing';
 import { useLocation } from 'wouter';
+import { auth } from '@/lib/firebase';
 import GSTConfigDialog from '@/components/GSTConfigDialog';
 import PaymentDialog from '@/components/PaymentDialog';
 import BillDiscountDialog from '@/components/BillDiscountDialog';
@@ -204,8 +205,43 @@ export default function BillingPage() {
     try {
       if (!selectedBillForPayment) return;
       
-      // Here we would send the payment information to the backend
-      // For now, just show a success message
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error("Authentication required");
+      }
+
+      const token = await user.getIdToken();
+      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+
+      const response = await fetch(
+        `${apiBaseUrl}/api/billing/bills/${selectedBillForPayment.id}/payment`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            method: paymentInfo.method,
+            amount: paymentInfo.amount,
+            transactionId: paymentInfo.transactionId,
+            notes: paymentInfo.notes,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        let errorMessage = `Server returned ${response.status} ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (parseError) {
+          console.error("Failed to parse error response:", parseError);
+        }
+        throw new Error(errorMessage);
+      }
+
+      const result = await response.json();
       
       toast({
         title: "Payment Recorded",
@@ -220,7 +256,7 @@ export default function BillingPage() {
       console.error('Error recording payment:', error);
       toast({
         title: "Error",
-        description: "Failed to record payment. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to record payment. Please try again.",
         variant: "destructive",
       });
     }
@@ -403,7 +439,7 @@ export default function BillingPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center gap-2">
-                      {/* Discount Button - Only for Admin/Manager */}
+                      {/* Discount Button - Only for Admin/Manager with PENDING_PAYMENT status */}
                       {bill.status === 'PENDING_PAYMENT' && (
                         <Button
                           variant="outline"
@@ -446,19 +482,6 @@ export default function BillingPage() {
                         <Eye className="h-4 w-4 mr-1" />
                         View
                       </Button>
-                      {bill.status === 'PENDING_PAYMENT' && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handlePaymentClick(bill);
-                          }}
-                        >
-                          <CreditCard className="h-4 w-4 mr-1" />
-                          Pay
-                        </Button>
-                      )}
                     </div>
                   </TableCell>
                 </TableRow>
