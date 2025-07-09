@@ -476,46 +476,48 @@ export default function BillingPage() {
   }
 
   return (
-    <div className="container mx-auto py-6">
+    <div className="container mx-auto mobile-padding">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+      <div className="mobile-stack items-start sm:items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Bills & Invoices</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-xl sm:text-2xl font-bold">Bills & Invoices</h1>
+          <p className="text-sm sm:text-base text-muted-foreground mobile-hidden">
             Manage billing and payment records
           </p>
         </div>
-        <div className="mt-4 sm:mt-0 flex gap-2">
-          <Button variant="outline" onClick={() => setShowGSTConfig(true)}>
-            <Settings className="h-4 w-4 mr-2" />
-            GST Config
+        <div className="responsive-button-group">
+          <Button variant="outline" onClick={() => setShowGSTConfig(true)} className="mobile-full-width">
+            <Settings className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+            <span className="text-sm sm:text-base">GST Config</span>
           </Button>
-          <Button variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Export
+          <Button variant="outline" className="mobile-full-width">
+            <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+            <span className="text-sm sm:text-base">Export</span>
           </Button>
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Create Bill
+          <Button className="mobile-full-width">
+            <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+            <span className="text-sm sm:text-base">Create Bill</span>
           </Button>
         </div>
       </div>
 
       {/* Filters and Search */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+      <div className="mobile-stack gap-2 sm:gap-4 mb-6">
         <div className="flex-1">
           <Input
             placeholder="Search bills by customer, bill number, or ID..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="max-w-md"
+            className="w-full sm:max-w-md"
           />
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline">
-              <Filter className="h-4 w-4 mr-2" />
-              {STATUS_OPTIONS.find(option => option.value === statusFilter)?.label}
+            <Button variant="outline" className="mobile-full-width">
+              <Filter className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+              <span className="text-sm sm:text-base">
+                {STATUS_OPTIONS.find(option => option.value === statusFilter)?.label}
+              </span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

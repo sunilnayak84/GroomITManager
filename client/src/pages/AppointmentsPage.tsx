@@ -783,45 +783,45 @@ export default function AppointmentsPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-7xl space-y-6 px-6">
-      <div className="relative h-48 rounded-xl overflow-hidden bg-black/50 mb-6">
+    <div className="container mx-auto max-w-7xl responsive-space-y mobile-padding">
+      <div className="relative h-32 sm:h-48 rounded-xl overflow-hidden bg-black/50 mb-6">
         <img
           src="https://images.unsplash.com/photo-1727681200732-0086492c217d"
           alt="Pet Grooming"
           className="w-full h-full object-cover opacity-50"
         />
-        <div className="absolute inset-0 flex items-center p-8">
-          <div className="flex items-center justify-between w-full">
+        <div className="absolute inset-0 flex items-center p-3 sm:p-8">
+          <div className="mobile-stack items-start sm:items-center justify-between w-full">
             <div className="text-white">
-              <h1 className="text-2xl font-bold">Appointments</h1>
-              <p className="text-white/80">Manage your pet grooming appointments</p>
+              <h1 className="text-xl sm:text-2xl font-bold">Appointments</h1>
+              <p className="text-sm sm:text-base text-white/80 mobile-hidden">Manage your pet grooming appointments</p>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="mobile-stack items-start sm:items-center gap-2 sm:gap-4">
               <div className="flex rounded-lg bg-white/10 p-1">
                 <Button
                   variant="ghost"
                   size="sm"
-                  className={`${view === 'list' ? 'bg-white text-purple-950' : 'text-white hover:bg-white/20'}`}
+                  className={`text-xs sm:text-sm ${view === 'list' ? 'bg-white text-purple-950' : 'text-white hover:bg-white/20'}`}
                   onClick={() => setView('list')}
                 >
-                  <List className="mr-2 h-4 w-4" />
-                  List
+                  <List className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="mobile-hidden">List</span>
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className={`${view === 'calendar' ? 'bg-white text-purple-950' : 'text-white hover:bg-white/20'}`}
+                  className={`text-xs sm:text-sm ${view === 'calendar' ? 'bg-white text-purple-950' : 'text-white hover:bg-white/20'}`}
                   onClick={() => setView('calendar')}
                 >
-                  <Calendar className="mr-2 h-4 w-4" />
-                  Calendar
+                  <Calendar className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="mobile-hidden">Calendar</span>
                 </Button>
               </div>
               <Dialog open={openNewForm} onOpenChange={setOpenNewForm}>
                 <DialogTrigger asChild>
-                  <Button variant="secondary">
-                    <Plus className="mr-2 h-4 w-4" />
-                    New Appointment
+                  <Button variant="secondary" size="sm" className="mobile-full-width">
+                    <Plus className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                    <span className="text-xs sm:text-sm">New Appointment</span>
                   </Button>
                 </DialogTrigger>
                 <AppointmentForm setOpen={setOpenNewForm} />
@@ -832,12 +832,12 @@ export default function AppointmentsPage() {
       </div>
 
       {view === 'list' && (
-        <div className="flex gap-4 mb-4 px-6">
+        <div className="mobile-stack gap-2 sm:gap-4 mb-4 px-2 sm:px-6">
           <Select
             value={dateFilter}
             onValueChange={(value: any) => setDateFilter(value)}
           >
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Select date range" />
             </SelectTrigger>
             <SelectContent>
@@ -853,7 +853,7 @@ export default function AppointmentsPage() {
             value={statusFilter}
             onValueChange={(value: any) => setStatusFilter(value)}
           >
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
             <SelectContent>
@@ -870,17 +870,17 @@ export default function AppointmentsPage() {
       {view === 'list' ? (
         <div className="bg-white rounded-lg border shadow-sm">
           {/* Pagination Controls - Top */}
-          <div className="flex items-center justify-between px-6 py-4 border-b">
-            <div className="flex items-center gap-4">
-              <div className="text-sm text-muted-foreground">
+          <div className="mobile-stack items-start sm:items-center justify-between px-3 sm:px-6 py-4 border-b">
+            <div className="mobile-stack items-start sm:items-center gap-2 sm:gap-4">
+              <div className="text-xs sm:text-sm text-muted-foreground">
                 Showing {totalItems === 0 ? 0 : startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} appointments
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">Items per page:</span>
+            <div className="mobile-stack items-start sm:items-center gap-2 sm:gap-4">
+              <div className="mobile-stack items-start sm:items-center gap-2">
+                <span className="text-xs sm:text-sm text-muted-foreground mobile-hidden">Items per page:</span>
                 <Select value={itemsPerPage.toString()} onValueChange={(value) => setItemsPerPage(parseInt(value))}>
-                  <SelectTrigger className="w-20">
+                  <SelectTrigger className="w-16 sm:w-20">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

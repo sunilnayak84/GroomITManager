@@ -264,38 +264,40 @@ export default function PaymentDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="responsive-dialog-large">
         <DialogHeader>
           <DialogTitle>Record Payment</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="responsive-space-y">
           {/* Payment Amount */}
-          <div className="p-4 bg-green-50 rounded-lg">
-            <div className="flex justify-between items-center">
-              <span className="text-lg font-medium">Amount to Pay:</span>
-              <span className="text-2xl font-bold text-green-600">
+          <div className="mobile-padding bg-green-50 rounded-lg">
+            <div className="mobile-stack items-start sm:items-center justify-between">
+              <span className="text-base sm:text-lg font-medium">Amount to Pay:</span>
+              <span className="text-xl sm:text-2xl font-bold text-green-600">
                 {formatIndianCurrency(billAmount)}
               </span>
             </div>
           </div>
 
           {/* Razorpay Option */}
-          <div className="p-4 border rounded-lg">
-            <div className="flex justify-between items-center">
+          <div className="mobile-padding border rounded-lg">
+            <div className="mobile-stack items-start sm:items-center justify-between">
               <div>
-                <h3 className="font-medium">Online Payment (Razorpay)</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="font-medium text-sm sm:text-base">Online Payment (Razorpay)</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   UPI, Cards, Net Banking, Wallets - All secure online payments
                 </p>
               </div>
               <Button 
                 onClick={handleRazorpayPayment} 
                 disabled={isRazorpayLoading}
-                className="gap-2"
+                className="gap-2 mobile-full-width"
               >
-                <ExternalLink className="h-4 w-4" />
-                {isRazorpayLoading ? 'Processing...' : 'Process Online Payment'}
+                <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="text-xs sm:text-sm">
+                  {isRazorpayLoading ? 'Processing...' : 'Process Online Payment'}
+                </span>
               </Button>
             </div>
           </div>

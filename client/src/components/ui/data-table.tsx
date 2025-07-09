@@ -30,27 +30,29 @@ export function DataTable<T>({ columns, data, isLoading }: DataTableProps<T>) {
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          {columns.map((column, index) => (
-            <TableHead key={typeof column.header === 'string' ? column.header : `header-${index}`}>
-              {typeof column.header === 'function' ? column.header() : column.header}
-            </TableHead>
-          ))}
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {data.map((row, i) => (
-          <TableRow key={i}>
+    <div className="responsive-table-container">
+      <Table className="responsive-table">
+        <TableHeader>
+          <TableRow>
             {columns.map((column, index) => (
-              <TableCell key={typeof column.header === 'string' ? column.header : `cell-${index}`}>
-                {column.cell(row)}
-              </TableCell>
+              <TableHead key={typeof column.header === 'string' ? column.header : `header-${index}`} className="responsive-table-header">
+                {typeof column.header === 'function' ? column.header() : column.header}
+              </TableHead>
             ))}
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {data.map((row, i) => (
+            <TableRow key={i}>
+              {columns.map((column, index) => (
+                <TableCell key={typeof column.header === 'string' ? column.header : `cell-${index}`} className="responsive-table-cell">
+                  {column.cell(row)}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }

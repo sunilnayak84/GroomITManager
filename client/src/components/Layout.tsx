@@ -21,14 +21,14 @@ export default function Layout({ children }: PropsWithChildren) {
 
         <SidebarInset className="flex w-full flex-col">
           <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="flex h-14 items-center justify-between gap-4 px-4">
-              <SidebarTrigger />
-              <div className="flex items-center gap-4" />
+            <div className="flex h-12 sm:h-14 items-center justify-between gap-2 sm:gap-4 px-2 sm:px-4">
+              <SidebarTrigger className="h-8 w-8 sm:h-10 sm:w-10" />
+              <div className="flex items-center gap-2 sm:gap-4" />
             </div>
           </header>
 
           <main className="flex-1 overflow-auto w-full">
-            <div className="container mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-4">
+            <div className="container mx-auto mobile-padding">
               {children}
             </div>
           </main>
