@@ -1,0 +1,148 @@
+Toast action: ADD_TOAST Toast data: {title: 'Updating role...', description: "Please wait while we update the user's role", id: '9', open: true, onOpenChange: ƒ}description: "Please wait while we update the user's role"id: "9"onOpenChange: (open) => {         if (!open) dismiss();       }open: truetitle: "Updating role..."[[Prototype]]: Object
+use-toast.tsx:77 Toast state after update: {toasts: Array(1)}
+use-roles.ts:118 [USERS] Updating user role via backend API: {userId: 'bEWrvBuCjcaS81IPqzBpApXnRyy1', role: 'receptionist'}role: "receptionist"userId: "bEWrvBuCjcaS81IPqzBpApXnRyy1"[[Prototype]]: Object
+use-roles.ts:120 
+            
+            
+           POST https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/api/auth/update-user-role 500 (Internal Server Error)
+updateUserRole @ use-roles.ts:120
+await in updateUserRole
+fn @ @tanstack_react-query.js?v=debd195d:1203
+run @ @tanstack_react-query.js?v=debd195d:500
+start @ @tanstack_react-query.js?v=debd195d:542
+execute @ @tanstack_react-query.js?v=debd195d:1239
+await in execute
+mutate @ @tanstack_react-query.js?v=debd195d:2655
+(anonymous) @ @tanstack_react-query.js?v=debd195d:3371
+onValueChange @ RoleManagement.tsx:500
+(anonymous) @ chunk-UNAO6IS5.js?v=debd195d:99
+(anonymous) @ chunk-XW3XUEIQ.js?v=debd195d:38
+handleSelect @ @radix-ui_react-select.js?v=debd195d:867
+(anonymous) @ @radix-ui_react-select.js?v=debd195d:913
+handleEvent @ chunk-XW3XUEIQ.js?v=debd195d:16
+callCallback2 @ chunk-RPCDYKBN.js?v=debd195d:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=debd195d:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=debd195d:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=debd195d:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=debd195d:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=debd195d:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=debd195d:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=debd195d:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=debd195d:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=debd195d:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=debd195d:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=debd195d:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=debd195d:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=debd195d:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=debd195d:5449Understand this error
+use-roles.ts:139 [USERS] Error updating user role: Error: Failed to update user role
+    at Object.updateUserRole [as mutationFn] (use-roles.ts:134:13)
+updateUserRole @ use-roles.ts:139
+await in updateUserRole
+fn @ @tanstack_react-query.js?v=debd195d:1203
+run @ @tanstack_react-query.js?v=debd195d:500
+start @ @tanstack_react-query.js?v=debd195d:542
+execute @ @tanstack_react-query.js?v=debd195d:1239
+await in execute
+mutate @ @tanstack_react-query.js?v=debd195d:2655
+(anonymous) @ @tanstack_react-query.js?v=debd195d:3371
+onValueChange @ RoleManagement.tsx:500
+(anonymous) @ chunk-UNAO6IS5.js?v=debd195d:99
+(anonymous) @ chunk-XW3XUEIQ.js?v=debd195d:38
+handleSelect @ @radix-ui_react-select.js?v=debd195d:867
+(anonymous) @ @radix-ui_react-select.js?v=debd195d:913
+handleEvent @ chunk-XW3XUEIQ.js?v=debd195d:16
+callCallback2 @ chunk-RPCDYKBN.js?v=debd195d:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=debd195d:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=debd195d:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=debd195d:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=debd195d:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=debd195d:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=debd195d:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=debd195d:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=debd195d:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=debd195d:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=debd195d:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=debd195d:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=debd195d:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=debd195d:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=debd195d:5449Understand this error
+use-roles.ts:118 [USERS] Updating user role via backend API: {userId: 'bEWrvBuCjcaS81IPqzBpApXnRyy1', role: 'receptionist'}role: "receptionist"userId: "bEWrvBuCjcaS81IPqzBpApXnRyy1"[[Prototype]]: Object
+use-roles.ts:120 
+            
+            
+           POST https://c2ee078f-4b26-4083-bd08-de31e29653e1-00-348t03dcz03jn.sisko.replit.dev/api/auth/update-user-role 500 (Internal Server Error)
+updateUserRole @ use-roles.ts:120
+await in updateUserRole
+fn @ @tanstack_react-query.js?v=debd195d:1203
+run @ @tanstack_react-query.js?v=debd195d:500
+(anonymous) @ @tanstack_react-query.js?v=debd195d:525
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=debd195d:521
+Promise.catch
+run @ @tanstack_react-query.js?v=debd195d:504
+start @ @tanstack_react-query.js?v=debd195d:542
+execute @ @tanstack_react-query.js?v=debd195d:1239
+await in execute
+mutate @ @tanstack_react-query.js?v=debd195d:2655
+(anonymous) @ @tanstack_react-query.js?v=debd195d:3371
+onValueChange @ RoleManagement.tsx:500
+(anonymous) @ chunk-UNAO6IS5.js?v=debd195d:99
+(anonymous) @ chunk-XW3XUEIQ.js?v=debd195d:38
+handleSelect @ @radix-ui_react-select.js?v=debd195d:867
+(anonymous) @ @radix-ui_react-select.js?v=debd195d:913
+handleEvent @ chunk-XW3XUEIQ.js?v=debd195d:16
+callCallback2 @ chunk-RPCDYKBN.js?v=debd195d:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=debd195d:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=debd195d:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=debd195d:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=debd195d:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=debd195d:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=debd195d:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=debd195d:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=debd195d:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=debd195d:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=debd195d:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=debd195d:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=debd195d:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=debd195d:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=debd195d:5449Understand this error
+use-roles.ts:139 [USERS] Error updating user role: Error: Failed to update user role
+    at Object.updateUserRole [as mutationFn] (use-roles.ts:134:13)
+updateUserRole @ use-roles.ts:139
+await in updateUserRole
+fn @ @tanstack_react-query.js?v=debd195d:1203
+run @ @tanstack_react-query.js?v=debd195d:500
+(anonymous) @ @tanstack_react-query.js?v=debd195d:525
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=debd195d:521
+Promise.catch
+run @ @tanstack_react-query.js?v=debd195d:504
+start @ @tanstack_react-query.js?v=debd195d:542
+execute @ @tanstack_react-query.js?v=debd195d:1239
+await in execute
+mutate @ @tanstack_react-query.js?v=debd195d:2655
+(anonymous) @ @tanstack_react-query.js?v=debd195d:3371
+onValueChange @ RoleManagement.tsx:500
+(anonymous) @ chunk-UNAO6IS5.js?v=debd195d:99
+(anonymous) @ chunk-XW3XUEIQ.js?v=debd195d:38
+handleSelect @ @radix-ui_react-select.js?v=debd195d:867
+(anonymous) @ @radix-ui_react-select.js?v=debd195d:913
+handleEvent @ chunk-XW3XUEIQ.js?v=debd195d:16
+callCallback2 @ chunk-RPCDYKBN.js?v=debd195d:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=debd195d:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=debd195d:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=debd195d:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=debd195d:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=debd195d:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=debd195d:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=debd195d:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=debd195d:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=debd195d:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=debd195d:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=debd195d:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=debd195d:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=debd195d:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=debd195d:5449Understand this error
+use-toast.tsx:72 Toast action: ADD_TOAST Toast data: {title: 'Error', description: 'Failed to update user role', variant: 'destructive', id: '10', open: true, …}description: "Failed to update user role"id: "10"onOpenChange: (open) => {         if (!open) dismiss();       }open: truetitle: "Error"variant: "destructive"[[Prototype]]: Object
+use-toast.tsx:77 Toast state after update: {toasts: Array(1)}

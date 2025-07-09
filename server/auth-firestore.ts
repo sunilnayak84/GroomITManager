@@ -102,7 +102,8 @@ export async function setUserRole(userId: string, role: keyof typeof RoleTypes, 
     }, { merge: true });
     
     // Set custom claims in Firebase Auth
-    await admin.auth().setCustomUserClaims(userId, {
+    const auth = getAuth();
+    await auth.setCustomUserClaims(userId, {
       role: role,
       permissions: permissions,
       isAdmin: role === 'admin',
@@ -155,7 +156,8 @@ export async function createUserInFirestore(user: FirebaseUser): Promise<boolean
     console.log('[AUTH] Created new user in Firestore:', userData);
 
     // Set custom claims
-    await admin.auth().setCustomUserClaims(user.id, {
+    const auth = getAuth();
+    await auth.setCustomUserClaims(user.id, {
       role: user.role,
       permissions: user.permissions
     });
@@ -173,7 +175,8 @@ export async function syncUserRole(userId: string): Promise<{ role: string; perm
     const userRole = await getUserRole(userId);
     
     // Update custom claims to match Firestore data
-    await admin.auth().setCustomUserClaims(userId, {
+    const auth = getAuth();
+    await auth.setCustomUserClaims(userId, {
       role: userRole.role,
       permissions: userRole.permissions
     });
