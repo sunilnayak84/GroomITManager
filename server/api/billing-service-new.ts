@@ -143,16 +143,31 @@ export class BillingService {
         services: appointment.services?.length || 0
       });
 
-      // Determine customer ID from various possible fields
-      let customerId = appointment.customerId;
-      if (!customerId && appointment.customerReference) {
-        customerId = appointment.customerReference.id || appointment.customerReference;
+      // Get customer ID through pet relationship (primary method)
+      let customerId = null;
+      
+      if (appointment.petId) {
+        // Get pet data to find customer ID
+        const petDoc = await this.db.collection('pets').doc(appointment.petId).get();
+        if (petDoc.exists) {
+          const petData = petDoc.data();
+          customerId = petData?.customerId;
+          logger.info('[BILLING] Found customer ID through pet:', { petId: appointment.petId, customerId });
+        }
       }
-      if (!customerId && appointment.customerRef) {
-        customerId = appointment.customerRef.id || appointment.customerRef;
-      }
-      if (!customerId && appointment.customer) {
-        customerId = appointment.customer.id || appointment.customer;
+
+      // Fallback: Try direct customer references in appointment
+      if (!customerId) {
+        customerId = appointment.customerId;
+        if (!customerId && appointment.customerReference) {
+          customerId = appointment.customerReference.id || appointment.customerReference;
+        }
+        if (!customerId && appointment.customerRef) {
+          customerId = appointment.customerRef.id || appointment.customerRef;
+        }
+        if (!customerId && appointment.customer) {
+          customerId = appointment.customer.id || appointment.customer;
+        }
       }
 
       logger.info('[BILLING] Resolved customer ID:', customerId);
