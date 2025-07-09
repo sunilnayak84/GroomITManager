@@ -296,13 +296,13 @@ export class BillingService {
         logger.info('[BILLING] Processing discount update:', { discount, currentSubtotal: currentBill.subtotal });
 
         // Calculate discount based on type from the frontend
-        if (discount.percentage > 0) {
+        if (discount.percentage && discount.percentage > 0) {
           discountAmount = (currentBill.subtotal * discount.percentage) / 100;
           // Apply max amount if specified
           if (discount.maxAmount && discountAmount > discount.maxAmount) {
             discountAmount = discount.maxAmount;
           }
-        } else if (discount.fixedAmount > 0) {
+        } else if (discount.fixedAmount && discount.fixedAmount > 0) {
           // For fixed amount discounts
           discountAmount = Math.min(discount.fixedAmount, currentBill.subtotal);
         }

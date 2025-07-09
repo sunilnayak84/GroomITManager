@@ -330,7 +330,7 @@ export default function BillingPage() {
       });
       
       // Refresh the bills list
-      refetch();
+      await refetch();
       setShowDiscountDialog(false);
       setSelectedBillForDiscount(null);
     } catch (error) {
