@@ -737,16 +737,22 @@ export class BillingService {
         throw new Error(`Bill not found: ${billId}`);
       }
 
-      // Prepare the payment record
-      const paymentRecord = {
+      // Prepare the payment record, filtering out undefined values
+      const paymentRecord: any = {
         method: paymentDetails.method,
         amount: paymentDetails.amount,
-        transactionId: paymentDetails.transactionId,
-        notes: paymentDetails.notes,
         status: paymentDetails.status,
         paidAt: admin.firestore.Timestamp.fromDate(paymentDetails.paidAt),
         recordedAt: admin.firestore.FieldValue.serverTimestamp(),
       };
+
+      // Only add optional fields if they have values
+      if (paymentDetails.transactionId !== undefined && paymentDetails.transactionId !== null) {
+        paymentRecord.transactionId = paymentDetails.transactionId;
+      }
+      if (paymentDetails.notes !== undefined && paymentDetails.notes !== null) {
+        paymentRecord.notes = paymentDetails.notes;
+      }
 
       // Update bill with payment information
       const updateData: any = {
