@@ -272,7 +272,7 @@ export default function BillingPage() {
     setShowDiscountDialog(true);
   };
 
-  const handleDiscountApply = async (discountApplication: any) => {
+  const handleDiscountApply = async (discountApplication: DiscountApplication) => {
     try {
       if (!selectedBillForDiscount) return;
 
@@ -692,7 +692,7 @@ export default function BillingPage() {
           onOpenChange={setShowDiscountDialog}
           billSubtotal={calculateTotal(selectedBillForDiscount)}
           currentDiscount={undefined}
-          onApply={(discount) => handleDiscountApply(discount.percentage || 0)}
+          onApply={handleDiscountApply}
         />
       )}
     </div>
