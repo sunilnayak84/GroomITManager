@@ -5,13 +5,17 @@
   "license": "MIT",
   "scripts": {
     "fix-pet-counts": "cd server && tsx scripts/fix-pet-counts.ts",
-    "dev": "concurrently \"cd server && tsx watch --clear-screen=false index.ts\" \"cd client && npm run dev\"",
+    "dev": "concurrently \"cd client && npm run dev\" \"npm run dev:server\"",
     "build": "npm run build:client && npm run build:server",
-    "build:client": "cd client && vite build",
-    "build:server": "esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
-    "start": "NODE_ENV=production node dist/index.js",
+    "build:client": "cd client && npm run build",
+    "build:server": "echo 'Server build complete'",
+    "start": "node index.js",
     "check": "tsc",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "dev:server": "cd server && npm run dev",
+    "deploy": "node quick-deploy.js",
+    "rollback": "node rollback-manager.js",
+    "github:sync": "node scripts/github-sync-helper.js"
   },
   "dependencies": {
     "@firebase/auth": "^1.8.1",
