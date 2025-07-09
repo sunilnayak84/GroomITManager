@@ -351,6 +351,61 @@ export default function BillingPage() {
     }
   };
 
+  const handleDiscountRemove = async (bill: Bill) => {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error("Authentication required");
+      }
+
+      const token = await user.getIdToken();
+      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+
+      console.log('[DISCOUNT] Removing discount for bill:', bill.id);
+
+      // Remove discount via backend API
+      const response = await fetch(
+        `${apiBaseUrl}/api/billing/bills/${bill.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            discount: null
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        let errorMessage = `Server returned ${response.status} ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (parseError) {
+          console.error("Failed to parse error response:", parseError);
+        }
+        throw new Error(errorMessage);
+      }
+
+      toast({
+        title: "Discount Removed",
+        description: `Discount has been removed from bill ${bill.billNumber}`,
+      });
+      
+      // Refresh the bills list
+      await refetch();
+    } catch (error) {
+      console.error('Error removing discount:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to remove discount. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleFinalizeDraft = async (bill: Bill) => {
     try {
       const user = auth.currentUser;
@@ -534,7 +589,15 @@ export default function BillingPage() {
                     {formatDate(bill.createdAt)}
                   </TableCell>
                   <TableCell className="hidden md:table-cell font-medium">
-                    {formatIndianCurrency(calculateTotal(bill))}
+                    <div className="flex flex-col">
+                      <span>{formatIndianCurrency(calculateTotal(bill))}</span>
+                      {bill.discount && bill.discountAmount > 0 && (
+                        <span className="text-xs text-orange-600 flex items-center gap-1">
+                          <Percent className="h-3 w-3" />
+                          {formatIndianCurrency(bill.discountAmount)} discount
+                        </span>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <Badge className={`${getStatusColor(bill.status)} flex items-center gap-1 w-fit`}>
@@ -562,18 +625,39 @@ export default function BillingPage() {
                       
                       {/* Discount Button - Only for Admin/Manager with PENDING_PAYMENT status */}
                       {bill.status === 'PENDING_PAYMENT' && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDiscountClick(bill);
-                          }}
-                          className="text-orange-600 hover:text-orange-700"
-                        >
-                          <Percent className="h-3 w-3 mr-1" />
-                          Discount
-                        </Button>
+                        <>
+                          {/* Show Apply Discount button if no discount is applied */}
+                          {(!bill.discount || bill.discountAmount === 0) && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDiscountClick(bill);
+                              }}
+                              className="text-orange-600 hover:text-orange-700"
+                            >
+                              <Percent className="h-3 w-3 mr-1" />
+                              Discount
+                            </Button>
+                          )}
+                          
+                          {/* Show Remove Discount button if discount is applied */}
+                          {bill.discount && bill.discountAmount > 0 && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDiscountRemove(bill);
+                              }}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              <XCircle className="h-3 w-3 mr-1" />
+                              Remove Discount
+                            </Button>
+                          )}
+                        </>
                       )}
                       
                       {/* Payment Button - Only for pending bills */}

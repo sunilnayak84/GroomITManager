@@ -289,52 +289,61 @@ export class BillingService {
       const { id, createdAt, createdBy, ...updateData } = updates as any;
       
       // If discount is being updated, recalculate totals
-      if (updateData.discount) {
+      if (updateData.hasOwnProperty('discount')) {
         const discount = updateData.discount;
         let discountAmount = 0;
 
-        logger.info('[BILLING] Processing discount update:', { 
-          discount, 
-          currentSubtotal: currentBill.subtotal,
-          discountPercentage: discount.percentage,
-          discountFixedAmount: discount.fixedAmount 
-        });
-
-        // Calculate discount based on type from the frontend
-        if (discount.percentage !== undefined && discount.percentage > 0) {
-          discountAmount = (currentBill.subtotal * discount.percentage) / 100;
-          logger.info('[BILLING] Calculated percentage discount:', {
-            subtotal: currentBill.subtotal,
-            percentage: discount.percentage,
-            calculatedAmount: discountAmount
+        if (discount === null) {
+          // Remove discount
+          logger.info('[BILLING] Removing discount from bill');
+          updateData.discountAmount = 0;
+          updateData.totalAmount = currentBill.subtotal + (currentBill.totalTaxAmount || 0);
+          updateData.discount = null;
+        } else if (discount) {
+          // Apply discount
+          logger.info('[BILLING] Processing discount update:', { 
+            discount, 
+            currentSubtotal: currentBill.subtotal,
+            discountPercentage: discount.percentage,
+            discountFixedAmount: discount.fixedAmount 
           });
-          // Apply max amount if specified
-          if (discount.maxAmount && discountAmount > discount.maxAmount) {
-            discountAmount = discount.maxAmount;
-            logger.info('[BILLING] Applied max amount cap:', { originalAmount: (currentBill.subtotal * discount.percentage) / 100, cappedAmount: discountAmount });
+
+          // Calculate discount based on type from the frontend
+          if (discount.percentage !== undefined && discount.percentage > 0) {
+            discountAmount = (currentBill.subtotal * discount.percentage) / 100;
+            logger.info('[BILLING] Calculated percentage discount:', {
+              subtotal: currentBill.subtotal,
+              percentage: discount.percentage,
+              calculatedAmount: discountAmount
+            });
+            // Apply max amount if specified
+            if (discount.maxAmount && discountAmount > discount.maxAmount) {
+              discountAmount = discount.maxAmount;
+              logger.info('[BILLING] Applied max amount cap:', { originalAmount: (currentBill.subtotal * discount.percentage) / 100, cappedAmount: discountAmount });
+            }
+          } else if (discount.fixedAmount !== undefined && discount.fixedAmount > 0) {
+            // For fixed amount discounts
+            discountAmount = Math.min(discount.fixedAmount, currentBill.subtotal);
+            logger.info('[BILLING] Calculated fixed discount:', {
+              subtotal: currentBill.subtotal,
+              fixedAmount: discount.fixedAmount,
+              calculatedAmount: discountAmount
+            });
+          } else {
+            logger.warn('[BILLING] No valid discount amount found:', { discount });
           }
-        } else if (discount.fixedAmount !== undefined && discount.fixedAmount > 0) {
-          // For fixed amount discounts
-          discountAmount = Math.min(discount.fixedAmount, currentBill.subtotal);
-          logger.info('[BILLING] Calculated fixed discount:', {
-            subtotal: currentBill.subtotal,
-            fixedAmount: discount.fixedAmount,
-            calculatedAmount: discountAmount
-          });
-        } else {
-          logger.warn('[BILLING] No valid discount amount found:', { discount });
-        }
 
-        updateData.discountAmount = discountAmount;
-        updateData.totalAmount = currentBill.subtotal - discountAmount + (currentBill.totalTaxAmount || 0);
-        
-        logger.info('[BILLING] Recalculated totals for discount:', {
-          subtotal: currentBill.subtotal,
-          discountPercentage: discount.percentage,
-          fixedAmount: discount.fixedAmount,
-          discountAmount,
-          totalAmount: updateData.totalAmount
-        });
+          updateData.discountAmount = discountAmount;
+          updateData.totalAmount = currentBill.subtotal - discountAmount + (currentBill.totalTaxAmount || 0);
+          
+          logger.info('[BILLING] Recalculated totals for discount:', {
+            subtotal: currentBill.subtotal,
+            discountPercentage: discount.percentage,
+            fixedAmount: discount.fixedAmount,
+            discountAmount,
+            totalAmount: updateData.totalAmount
+          });
+        }
       }
       
       // Add update metadata
