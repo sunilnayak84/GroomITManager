@@ -284,6 +284,10 @@ export default function BillingPage() {
       const token = await user.getIdToken();
       const apiBaseUrl = import.meta.env.VITE_API_URL || '';
 
+      console.log('[DISCOUNT] Sending to backend:', JSON.stringify({
+        discount: discountApplication
+      }, null, 2));
+
       // Apply discount via backend API
       const response = await fetch(
         `${apiBaseUrl}/api/billing/bills/${selectedBillForDiscount.id}`,

@@ -293,18 +293,36 @@ export class BillingService {
         const discount = updateData.discount;
         let discountAmount = 0;
 
-        logger.info('[BILLING] Processing discount update:', { discount, currentSubtotal: currentBill.subtotal });
+        logger.info('[BILLING] Processing discount update:', { 
+          discount, 
+          currentSubtotal: currentBill.subtotal,
+          discountPercentage: discount.percentage,
+          discountFixedAmount: discount.fixedAmount 
+        });
 
         // Calculate discount based on type from the frontend
-        if (discount.percentage && discount.percentage > 0) {
+        if (discount.percentage !== undefined && discount.percentage > 0) {
           discountAmount = (currentBill.subtotal * discount.percentage) / 100;
+          logger.info('[BILLING] Calculated percentage discount:', {
+            subtotal: currentBill.subtotal,
+            percentage: discount.percentage,
+            calculatedAmount: discountAmount
+          });
           // Apply max amount if specified
           if (discount.maxAmount && discountAmount > discount.maxAmount) {
             discountAmount = discount.maxAmount;
+            logger.info('[BILLING] Applied max amount cap:', { originalAmount: (currentBill.subtotal * discount.percentage) / 100, cappedAmount: discountAmount });
           }
-        } else if (discount.fixedAmount && discount.fixedAmount > 0) {
+        } else if (discount.fixedAmount !== undefined && discount.fixedAmount > 0) {
           // For fixed amount discounts
           discountAmount = Math.min(discount.fixedAmount, currentBill.subtotal);
+          logger.info('[BILLING] Calculated fixed discount:', {
+            subtotal: currentBill.subtotal,
+            fixedAmount: discount.fixedAmount,
+            calculatedAmount: discountAmount
+          });
+        } else {
+          logger.warn('[BILLING] No valid discount amount found:', { discount });
         }
 
         updateData.discountAmount = discountAmount;

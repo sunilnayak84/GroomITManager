@@ -140,6 +140,7 @@ export default function BillDiscountDialog({
       };
 
       console.log('[DISCOUNT] Applying discount:', discountApplication);
+      console.log('[DISCOUNT] Data being sent:', JSON.stringify(discountApplication, null, 2));
 
       await onApply(discountApplication);
       
