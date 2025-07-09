@@ -178,6 +178,21 @@ export class BillingService {
         throw new Error(`Customer not found: ${customerId}`);
       }
 
+      // Ensure customer name is properly formatted
+      const customerName = customer.firstName && customer.lastName 
+        ? `${customer.firstName} ${customer.lastName}`.trim()
+        : customer.name || customer.firstName || customer.lastName || 'Unknown Customer';
+
+      logger.info('[BILLING] Customer details:', {
+        customerId,
+        customerName,
+        rawCustomer: { 
+          name: customer.name, 
+          firstName: customer.firstName, 
+          lastName: customer.lastName 
+        }
+      });
+
       // Calculate bill items from services
       const billItems = await this.calculateBillItems(appointment.services || []);
       
@@ -204,7 +219,7 @@ export class BillingService {
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         customerId: customer.id,
-        customerName: customer.name,
+        customerName,
         appointmentId,
         petId: appointment.petId,
         items: billItems,
