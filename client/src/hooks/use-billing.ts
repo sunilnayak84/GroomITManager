@@ -100,6 +100,53 @@ export function useBilling() {
     });
   };
 
+  // Delete bill mutation (admin only)
+  const deleteBillMutation = useMutation({
+    mutationFn: async (billId: string) => {
+      if (!user) {
+        throw new Error('Authentication required');
+      }
+
+      const idToken = await getIdToken();
+      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+      
+      console.log('[BILLING] Deleting bill:', billId);
+      const response = await fetch(`${apiBaseUrl}/api/billing/bills/${billId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('[BILLING] Failed to delete bill:', errorText);
+        throw new Error(`Failed to delete bill: ${response.status} ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      console.log('[BILLING] Successfully deleted bill:', result);
+      return result;
+    },
+    onSuccess: () => {
+      // Invalidate bills query to refetch data
+      queryClient.invalidateQueries({ queryKey: ['bills'] });
+      toast({
+        title: "Bill Deleted",
+        description: "Bill has been deleted successfully",
+      });
+    },
+    onError: (error) => {
+      console.error('[BILLING] Error deleting bill:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to delete bill",
+        variant: "destructive",
+      });
+    },
+  });
+
   // Create bill mutation
   const createBillMutation = useMutation({
     mutationFn: async (input: BillCreateInput) => {
@@ -206,12 +253,14 @@ export function useBilling() {
     // Actions
     createBill: createBillMutation.mutateAsync,
     updateBill: updateBillMutation.mutateAsync,
+    deleteBill: deleteBillMutation.mutateAsync,
     refetch: billsQuery.refetch,
     
     // Utilities
     useBillQuery,
     isCreating: createBillMutation.isPending,
     isUpdating: updateBillMutation.isPending,
+    isDeleting: deleteBillMutation.isPending,
     getBillById: fetchBillById,
   };
 }

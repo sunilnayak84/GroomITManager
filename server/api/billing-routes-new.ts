@@ -546,6 +546,79 @@ router.post('/razorpay/create-order', async (req, res) => {
 });
 
 /**
+ * DELETE /api/billing/bills/:billId
+ * Delete a bill (admin only)
+ */
+router.delete('/bills/:billId', async (req, res) => {
+  try {
+    const { billId } = req.params;
+    
+    logger.info(`[BILLING_ROUTES] DELETE /bills/${billId}`, { 
+      user: req.user?.email,
+      role: req.user?.role
+    });
+
+    // Check admin permissions
+    if (req.user?.role !== 'admin') {
+      return res.status(403).json({
+        error: 'Forbidden',
+        message: 'Only admin users can delete bills'
+      });
+    }
+
+    if (!billId) {
+      return res.status(400).json({
+        error: 'Bad Request',
+        message: 'Bill ID is required'
+      });
+    }
+
+    // Get the bill to find associated appointment
+    const bill = await billingService.getBillById(billId);
+    if (!bill) {
+      return res.status(404).json({
+        error: 'Bill not found',
+        billId
+      });
+    }
+
+    // Delete the bill from Firestore
+    const db = admin.firestore();
+    await db.collection('bills').doc(billId).delete();
+    
+    // Reset the appointment's payment status if there's an associated appointment
+    if (bill.appointmentId) {
+      const appointmentRef = db.collection('appointments').doc(bill.appointmentId);
+      const appointmentDoc = await appointmentRef.get();
+      
+      if (appointmentDoc.exists) {
+        await appointmentRef.update({
+          paymentStatus: 'pending',
+          billId: admin.firestore.FieldValue.delete(),
+          updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+        logger.info(`[BILLING_ROUTES] Reset payment status for appointment: ${bill.appointmentId}`);
+      }
+    }
+
+    logger.info(`[BILLING_ROUTES] Successfully deleted bill: ${billId}`);
+    res.json({ 
+      success: true,
+      message: 'Bill deleted successfully',
+      billId,
+      appointmentReset: !!bill.appointmentId
+    });
+
+  } catch (error) {
+    logger.error(`[BILLING_ROUTES] Error deleting bill ${req.params.billId}:`, error);
+    res.status(500).json({ 
+      error: 'Failed to delete bill',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+/**
  * POST /api/billing/razorpay/verify-payment
  * Verify Razorpay payment and update bill status
  */

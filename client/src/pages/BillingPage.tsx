@@ -13,7 +13,9 @@ import {
   XCircle,
   Settings,
   Percent,
-  IndianRupee
+  IndianRupee,
+  Trash2,
+  MoreHorizontal
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -151,7 +153,26 @@ export default function BillingPage() {
   const [selectedBillForDiscount, setSelectedBillForDiscount] = useState<Bill | null>(null);
   const [showDiscountDialog, setShowDiscountDialog] = useState(false);
   const [gstConfiguration, setGstConfiguration] = useState<GSTConfiguration | undefined>();
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const { toast } = useToast();
+
+  // Get current user and role
+  React.useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        const token = await user.getIdTokenResult();
+        setCurrentUser({
+          email: user.email,
+          role: token.claims.role || 'staff',
+          isAdmin: token.claims.role === 'admin'
+        });
+      } else {
+        setCurrentUser(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   // Filter bills based on status and search term
   const filteredBills = bills.filter(bill => {
@@ -401,6 +422,66 @@ export default function BillingPage() {
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to remove discount. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteBill = async (bill: Bill) => {
+    try {
+      if (!currentUser?.isAdmin) {
+        throw new Error("Only admin users can delete bills");
+      }
+
+      // Confirm deletion
+      if (!confirm(`Are you sure you want to delete bill ${bill.billNumber}? This action cannot be undone.`)) {
+        return;
+      }
+
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error("Authentication required");
+      }
+
+      const token = await user.getIdToken();
+      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+
+      const response = await fetch(
+        `${apiBaseUrl}/api/billing/bills/${bill.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        let errorMessage = `Server returned ${response.status} ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (parseError) {
+          console.error("Failed to parse error response:", parseError);
+        }
+        throw new Error(errorMessage);
+      }
+
+      const result = await response.json();
+      
+      toast({
+        title: "Bill Deleted",
+        description: `Bill ${bill.billNumber} has been deleted successfully`,
+      });
+      
+      // Refresh the bills list
+      refetch();
+    } catch (error) {
+      console.error('Error deleting bill:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to delete bill. Please try again.",
         variant: "destructive",
       });
     }
@@ -674,10 +755,41 @@ export default function BillingPage() {
                           className="text-green-600 hover:text-green-700"
                         >
                           <CreditCard className="h-3 w-3 mr-1" />
-                          Pay
+                          Payment
                         </Button>
                       )}
-                      
+
+                      {/* Delete Button - Only for admin users */}
+                      {currentUser?.isAdmin && (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => e.stopPropagation()}
+                              className="h-8 w-8 p-0"
+                            >
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Admin Actions</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteBill(bill);
+                              }}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Delete Bill
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )}
+
+                      {/* View Button - Always available */}
                       <Button
                         variant="ghost"
                         size="sm"
@@ -686,7 +798,7 @@ export default function BillingPage() {
                           handleViewBill(bill.id);
                         }}
                       >
-                        <Eye className="h-4 w-4 mr-1" />
+                        <Eye className="h-3 w-3 mr-1" />
                         View
                       </Button>
                     </div>
