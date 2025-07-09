@@ -359,7 +359,7 @@ export default function AppointmentsPage() {
     {
       header: createSortableHeader("Date", "date"),
       cell: ({ date }: AppointmentWithRelations) => (
-        <div className="whitespace-nowrap text-sm">
+        <div className="whitespace-nowrap text-xs">
           {format(new Date(date), "MMM d, h:mm a")}
         </div>
       ),
@@ -787,8 +787,8 @@ export default function AppointmentsPage() {
   };
 
   return (
-    <div className="w-full max-w-none px-2 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6">
-      <div className="relative h-32 sm:h-48 rounded-xl overflow-hidden bg-black/50 mb-6">
+    <div className="w-full max-w-none px-2 sm:px-4 py-3 sm:py-4 space-y-3 sm:space-y-4">
+      <div className="relative h-24 sm:h-36 rounded-xl overflow-hidden bg-black/50 mb-4">
         <img
           src="https://images.unsplash.com/photo-1727681200732-0086492c217d"
           alt="Pet Grooming"
@@ -836,7 +836,7 @@ export default function AppointmentsPage() {
       </div>
 
       {view === 'list' && (
-        <div className="mobile-stack gap-2 sm:gap-4 mb-4 px-2 sm:px-4">
+        <div className="mobile-stack gap-2 sm:gap-3 mb-3 px-2 sm:px-4">
           <Select
             value={dateFilter}
             onValueChange={(value: any) => setDateFilter(value)}
