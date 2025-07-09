@@ -272,16 +272,49 @@ export default function BillingPage() {
     setShowDiscountDialog(true);
   };
 
-  const handleDiscountApply = async (discountPercentage: number) => {
+  const handleDiscountApply = async (discountApplication: any) => {
     try {
       if (!selectedBillForDiscount) return;
-      
-      // Here we would send the discount information to the backend
-      // For now, just show a success message
+
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error("Authentication required");
+      }
+
+      const token = await user.getIdToken();
+      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+
+      // Apply discount via backend API
+      const response = await fetch(
+        `${apiBaseUrl}/api/billing/bills/${selectedBillForDiscount.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            discount: discountApplication
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        let errorMessage = `Server returned ${response.status} ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (parseError) {
+          console.error("Failed to parse error response:", parseError);
+        }
+        throw new Error(errorMessage);
+      }
+
+      const discountAmount = selectedBillForDiscount.subtotal * (discountApplication.percentage / 100);
       
       toast({
         title: "Discount Applied",
-        description: `${discountPercentage}% discount applied to bill ${selectedBillForDiscount.billNumber}`,
+        description: `${discountApplication.percentage}% discount (₹${discountAmount.toFixed(2)}) applied to bill ${selectedBillForDiscount.billNumber}`,
       });
       
       // Refresh the bills list
@@ -292,7 +325,7 @@ export default function BillingPage() {
       console.error('Error applying discount:', error);
       toast({
         title: "Error",
-        description: "Failed to apply discount. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to apply discount. Please try again.",
         variant: "destructive",
       });
     }

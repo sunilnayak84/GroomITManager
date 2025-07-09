@@ -24,6 +24,12 @@ const discountSchema = z.object({
   value: z.number().min(0.01, 'Discount value must be greater than 0'),
   reason: z.string().min(3, 'Reason is required (minimum 3 characters)'),
   maxAmount: z.number().optional(),
+}).refine((data) => {
+  // For percentage discounts, maxAmount is always optional
+  // For fixed amount discounts, maxAmount is not used
+  return true;
+}, {
+  message: "Invalid discount configuration",
 });
 
 type DiscountForm = z.infer<typeof discountSchema>;
@@ -251,7 +257,10 @@ export default function BillDiscountDialog({
                 type="number"
                 step="1"
                 min="0"
-                {...form.register('maxAmount', { valueAsNumber: true })}
+                {...form.register('maxAmount', { 
+                  valueAsNumber: true,
+                  setValueAs: (value) => value === '' ? undefined : Number(value)
+                })}
                 placeholder="500"
               />
               <p className="text-xs text-muted-foreground">
