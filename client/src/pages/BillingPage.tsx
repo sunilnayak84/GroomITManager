@@ -298,6 +298,58 @@ export default function BillingPage() {
     }
   };
 
+  const handleFinalizeDraft = async (bill: Bill) => {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error("Authentication required");
+      }
+
+      const token = await user.getIdToken();
+      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+
+      const response = await fetch(
+        `${apiBaseUrl}/api/billing/bills/${bill.id}/status`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            status: 'PENDING_PAYMENT'
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        let errorMessage = `Server returned ${response.status} ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (parseError) {
+          console.error("Failed to parse error response:", parseError);
+        }
+        throw new Error(errorMessage);
+      }
+
+      toast({
+        title: "Bill Finalized",
+        description: "Bill is now ready for payment and discount options",
+      });
+
+      // Refresh the bills list
+      refetch();
+    } catch (error) {
+      console.error('Error finalizing bill:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to finalize bill. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (isError) {
     return (
       <div className="container mx-auto py-6">
@@ -439,6 +491,22 @@ export default function BillingPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center gap-2">
+                      {/* Finalize Draft Button - Only for DRAFT bills */}
+                      {bill.status === 'DRAFT' && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleFinalizeDraft(bill);
+                          }}
+                          className="text-blue-600 hover:text-blue-700"
+                        >
+                          <CheckCircle className="h-3 w-3 mr-1" />
+                          Finalize
+                        </Button>
+                      )}
+                      
                       {/* Discount Button - Only for Admin/Manager with PENDING_PAYMENT status */}
                       {bill.status === 'PENDING_PAYMENT' && (
                         <Button

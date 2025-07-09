@@ -215,7 +215,7 @@ export class BillingService {
       // Create bill document
       const billData = {
         billNumber,
-        status: 'DRAFT' as BillStatus,
+        status: 'PENDING_PAYMENT' as BillStatus,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         customerId: customer.id,
