@@ -45,7 +45,10 @@ interface ServiceData {
   price: number;
 }
 
-const TAX_RATE = 0.18; // 18% GST
+const GST_RATE = 0.18; // 18% GST for India
+const CGST_RATE = 0.09; // 9% Central GST
+const SGST_RATE = 0.09; // 9% State GST
+const IGST_RATE = 0.18; // 18% Integrated GST (for inter-state transactions)
 
 export class BillingService {
   private async getAppointmentDetails(appointmentId: string) {
@@ -264,7 +267,7 @@ export class BillingService {
     }
   }
 
-  async generateBill(appointmentId: string): Promise<Bill> {
+  async generateBillWithDiscount(appointmentId: string, discountInput?: any, notes?: string, billingAddress?: any): Promise<Bill> {
     try {
       logger.info('[BILLING] Generating bill for appointment:', appointmentId);
 
@@ -293,7 +296,7 @@ export class BillingService {
 
       // Calculate totals
       const subtotal = items.reduce((sum, item) => sum + item.subtotal, 0);
-      const tax = subtotal * TAX_RATE;
+      const tax = subtotal * GST_RATE;
       const totalAmount = subtotal + tax;
 
       // Create bill object with full timestamp

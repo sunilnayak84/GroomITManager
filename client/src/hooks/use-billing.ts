@@ -60,8 +60,10 @@ export function useBilling() {
       const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt);
       const updatedAt = data.updatedAt?.toDate ? data.updatedAt.toDate() : data.updatedAt ? new Date(data.updatedAt) : null;
 
+      // Handle both old and new bill structures for backward compatibility
       const bill: Bill = {
         id: billDoc.id,
+        billNumber: data.billNumber,
         status: data.status,
         createdAt,
         updatedAt,
@@ -71,13 +73,29 @@ export function useBilling() {
         petId: data.petId,
         items: data.items || [],
         subtotal: data.subtotal || 0,
-        tax: data.tax || 0,
+        discount: data.discount,
+        discountAmount: data.discountAmount || 0,
+        // Handle GST details (new structure) or fallback to old tax field
+        gstDetails: data.gstDetails || {
+          cgst: (data.tax || 0) / 2,
+          sgst: (data.tax || 0) / 2,
+          igst: 0,
+          totalGST: data.tax || 0,
+          gstNumber: data.gstNumber
+        },
+        totalTaxAmount: data.totalTaxAmount || data.tax || 0,
         totalAmount: data.totalAmount || 0,
-        currency: data.currency || "INR", // Set default currency to INR for India
+        currency: data.currency || "INR",
         paymentId: data.paymentId,
         paymentMethod: data.paymentMethod,
+        paymentDate: data.paymentDate,
         notes: data.notes,
-        paymentLink: data.paymentLink
+        paymentLink: data.paymentLink,
+        billingAddress: data.billingAddress,
+        shippingAddress: data.shippingAddress,
+        termsAndConditions: data.termsAndConditions,
+        createdBy: data.createdBy,
+        updatedBy: data.updatedBy
       };
 
       return bill;

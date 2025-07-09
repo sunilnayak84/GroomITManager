@@ -69,11 +69,31 @@ billingRouter.get('/bills', async (req, res) => {
           const processedBill = await billingService.getBill(bill.id);
           if (!processedBill) return null;
 
-          // Ensure dates are properly converted to Date objects
+          // Convert old bill items to new structure
+          const convertedItems = (processedBill as any).items?.map((item: any) => ({
+            ...item,
+            taxRate: item.taxRate || 18, // Default to 18% GST
+            taxAmount: item.taxAmount || (item.price * 0.18),
+            discount: item.discount || undefined
+          })) || [];
+
+          // Ensure dates are properly converted to Date objects and handle new structure
           const processedBillWithDates: Bill = {
             ...processedBill,
             createdAt: processedBill.createdAt instanceof Date ? processedBill.createdAt : new Date(processedBill.createdAt),
-            updatedAt: processedBill.updatedAt instanceof Date ? processedBill.updatedAt : new Date(processedBill.updatedAt)
+            updatedAt: processedBill.updatedAt instanceof Date ? processedBill.updatedAt : new Date(processedBill.updatedAt),
+            items: convertedItems,
+            // Add default values for new required fields
+            discountAmount: (processedBill as any).discountAmount || 0,
+            gstDetails: (processedBill as any).gstDetails || {
+              cgst: ((processedBill as any).tax || 0) / 2,
+              sgst: ((processedBill as any).tax || 0) / 2,
+              igst: 0,
+              totalGST: (processedBill as any).tax || 0,
+              gstNumber: (processedBill as any).gstNumber
+            },
+            totalTaxAmount: (processedBill as any).totalTaxAmount || (processedBill as any).tax || 0,
+            currency: (processedBill as any).currency || 'INR'
           };
           return processedBillWithDates;
         } catch (error) {
@@ -95,12 +115,32 @@ billingRouter.get('/bills', async (req, res) => {
                 : new Date(firestoreBill.updatedAt as any))
             : new Date();
 
-          // If there's an error, return the bill with basic processing
+          // Convert old bill items to new structure for fallback
+          const fallbackItems = (firestoreBill as any).items?.map((item: any) => ({
+            ...item,
+            taxRate: item.taxRate || 18,
+            taxAmount: item.taxAmount || (item.price * 0.18),
+            discount: item.discount || undefined
+          })) || [];
+
+          // If there's an error, return the bill with basic processing and new structure defaults
           return {
             ...firestoreBill,
             customerName: firestoreBill.customerName || 'Unknown Customer',
             createdAt,
-            updatedAt
+            updatedAt,
+            items: fallbackItems,
+            // Add default values for new required fields
+            discountAmount: firestoreBill.discountAmount || 0,
+            gstDetails: firestoreBill.gstDetails || {
+              cgst: ((firestoreBill as any).tax || 0) / 2,
+              sgst: ((firestoreBill as any).tax || 0) / 2,
+              igst: 0,
+              totalGST: (firestoreBill as any).tax || 0,
+              gstNumber: firestoreBill.gstNumber
+            },
+            totalTaxAmount: firestoreBill.totalTaxAmount || (firestoreBill as any).tax || 0,
+            currency: firestoreBill.currency || 'INR'
           } as Bill;
         }
       })
@@ -233,7 +273,7 @@ billingRouter.post('/generate/:appointmentId', async (req, res) => {
       });
     }
 
-    const bill = await billingService.generateBill(appointmentId.trim());
+    const bill = await billingService.generateBillWithDiscount(appointmentId.trim());
     logger.info('[BILLING] Bill generated successfully:', { billId: bill.id });
     res.json(bill);
   } catch (error) {

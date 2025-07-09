@@ -469,8 +469,8 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
                 <span>{formatIndianCurrency(bill.subtotal || 0)}</span>
               </div>
               <div className="flex justify-between">
-                <span>Tax:</span>
-                <span>{formatIndianCurrency(bill.tax || 0)}</span>
+                <span>GST (Tax):</span>
+                <span>{formatIndianCurrency(bill.totalTaxAmount || 0)}</span>
               </div>
               <div className="flex justify-between text-lg font-bold pt-2">
                 <span>Total:</span>
