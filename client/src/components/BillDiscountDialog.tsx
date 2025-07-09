@@ -1,255 +1,316 @@
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { useToast } from '@/hooks/use-toast';
 import { useUser } from '@/hooks/use-user';
-import { Percent, IndianRupee, AlertTriangle } from 'lucide-react';
+import { DiscountApplication } from '@/types/billing';
 import { formatIndianCurrency } from '@/lib/utils';
-import { Discount } from '@/types/billing';
+
+const discountSchema = z.object({
+  type: z.enum(['PERCENTAGE', 'FIXED_AMOUNT']),
+  value: z.number().min(0.01, 'Discount value must be greater than 0'),
+  reason: z.string().min(3, 'Reason is required (minimum 3 characters)'),
+  maxAmount: z.number().optional(),
+});
+
+type DiscountForm = z.infer<typeof discountSchema>;
 
 interface BillDiscountDialogProps {
-  children: React.ReactNode;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   billSubtotal: number;
-  onApplyDiscount: (discount: Discount) => void;
-  isOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
+  currentDiscount?: DiscountApplication;
+  onApply: (discount: DiscountApplication) => void;
 }
 
-const DISCOUNT_REASONS = [
-  'Senior Citizen Discount',
-  'Regular Customer Discount',
-  'Loyalty Program',
-  'First Time Customer',
-  'Multiple Pet Discount',
-  'Service Issue Compensation',
-  'Promotional Offer',
-  'Special Occasion',
-  'Other'
-];
-
 export default function BillDiscountDialog({ 
-  children, 
-  billSubtotal, 
-  onApplyDiscount,
-  isOpen,
-  onOpenChange 
+  open, 
+  onOpenChange, 
+  billSubtotal,
+  currentDiscount,
+  onApply 
 }: BillDiscountDialogProps) {
+  const { toast } = useToast();
   const { user } = useUser();
-  const [open, setOpen] = useState(false);
-  const [discountType, setDiscountType] = useState<'PERCENTAGE' | 'FIXED_AMOUNT'>('PERCENTAGE');
-  const [discountValue, setDiscountValue] = useState<string>('');
-  const [reason, setReason] = useState<string>('');
-  const [customReason, setCustomReason] = useState<string>('');
-  const [maxAmount, setMaxAmount] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Check if user has permission to apply discounts
-  const canApplyDiscount = user?.role === 'admin' || user?.role === 'manager';
+  const form = useForm<DiscountForm>({
+    resolver: zodResolver(discountSchema),
+    defaultValues: {
+      type: 'PERCENTAGE',
+      value: 0,
+      reason: '',
+      maxAmount: undefined,
+    },
+  });
 
-  if (!canApplyDiscount) {
-    return null;
-  }
+  const watchType = form.watch('type');
+  const watchValue = form.watch('value');
 
-  const handleOpenChange = (newOpen: boolean) => {
-    setOpen(newOpen);
-    onOpenChange?.(newOpen);
-  };
-
-  const calculateDiscountAmount = (): number => {
-    const value = parseFloat(discountValue) || 0;
-    if (discountType === 'PERCENTAGE') {
-      const percentage = Math.min(value, 100); // Cap at 100%
-      const discountAmount = (billSubtotal * percentage) / 100;
-      const maxAmountValue = parseFloat(maxAmount) || Infinity;
-      return Math.min(discountAmount, maxAmountValue);
-    } else {
-      return Math.min(value, billSubtotal); // Cannot exceed bill amount
+  // Calculate discount preview
+  const calculateDiscountAmount = () => {
+    const value = watchValue || 0;
+    if (watchType === 'PERCENTAGE') {
+      const discountAmount = (billSubtotal * value) / 100;
+      const maxAmount = form.getValues('maxAmount');
+      return maxAmount ? Math.min(discountAmount, maxAmount) : discountAmount;
     }
+    return Math.min(value, billSubtotal);
   };
 
   const discountAmount = calculateDiscountAmount();
   const finalAmount = billSubtotal - discountAmount;
 
-  const handleApplyDiscount = () => {
-    const value = parseFloat(discountValue);
-    if (!value || value <= 0) return;
+  // Check if user can apply discount
+  const canApplyDiscount = user?.role === 'admin' || user?.role === 'manager';
+  const requiresApproval = user?.role === 'staff';
 
-    const finalReason = reason === 'Other' ? customReason : reason;
-    if (!finalReason.trim()) return;
+  const onSubmit = async (data: DiscountForm) => {
+    try {
+      setIsLoading(true);
 
-    const discount: Discount = {
-      type: discountType,
-      value,
-      reason: finalReason,
-      appliedBy: user?.id || '',
-      appliedAt: new Date(),
-      ...(discountType === 'PERCENTAGE' && maxAmount ? { maxAmount: parseFloat(maxAmount) } : {})
-    };
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "User information not available",
+          variant: "destructive",
+        });
+        return;
+      }
 
-    onApplyDiscount(discount);
-    handleOpenChange(false);
-    
-    // Reset form
-    setDiscountValue('');
-    setReason('');
-    setCustomReason('');
-    setMaxAmount('');
+      // Validate discount limits based on role
+      if (user.role === 'staff') {
+        if (data.type === 'PERCENTAGE' && data.value > 10) {
+          toast({
+            title: "Discount Limit Exceeded",
+            description: "Staff can only apply up to 10% discount",
+            variant: "destructive",
+          });
+          return;
+        }
+        if (data.type === 'FIXED_AMOUNT' && data.value > 500) {
+          toast({
+            title: "Discount Limit Exceeded",
+            description: "Staff can only apply up to ₹500 discount",
+            variant: "destructive",
+          });
+          return;
+        }
+      }
+
+      if (user.role === 'manager') {
+        if (data.type === 'PERCENTAGE' && data.value > 25) {
+          toast({
+            title: "Discount Limit Exceeded",
+            description: "Managers can only apply up to 25% discount",
+            variant: "destructive",
+          });
+          return;
+        }
+      }
+
+      const discountApplication: DiscountApplication = {
+        percentage: data.type === 'PERCENTAGE' ? data.value : (data.value / billSubtotal) * 100,
+        maxAmount: data.maxAmount,
+        reason: data.reason,
+        appliedBy: user.id || user.email || 'unknown',
+        appliedByRole: user.role as 'admin' | 'manager' | 'staff',
+        requiresApproval: requiresApproval,
+        appliedAt: new Date(),
+      };
+
+      await onApply(discountApplication);
+      
+      toast({
+        title: requiresApproval ? "Discount Applied (Pending Approval)" : "Discount Applied",
+        description: requiresApproval 
+          ? "Discount has been applied and is pending manager approval"
+          : `Discount of ${formatIndianCurrency(discountAmount)} applied successfully`,
+      });
+      
+      onOpenChange(false);
+      form.reset();
+    } catch (error) {
+      console.error('Error applying discount:', error);
+      toast({
+        title: "Error",
+        description: "Failed to apply discount. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const isValid = discountValue && parseFloat(discountValue) > 0 && 
-    (reason !== 'Other' ? reason : customReason.trim());
+  const getDiscountLimits = () => {
+    switch (user?.role) {
+      case 'admin':
+        return "Unlimited discount (Admin privilege)";
+      case 'manager':
+        return "Up to 25% or unlimited amount";
+      case 'staff':
+        return "Up to 10% or ₹500 (requires approval)";
+      default:
+        return "No discount privileges";
+    }
+  };
+
+  if (!canApplyDiscount && !requiresApproval) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Access Denied</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-muted-foreground">
+              You don't have permission to apply discounts. Only Managers and Admins can apply discounts.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => onOpenChange(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
-    <Dialog open={isOpen ?? open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Percent className="h-5 w-5" />
-            Apply Discount
-          </DialogTitle>
-          <DialogDescription>
-            Add a discount to this bill. Only Managers and Admins can apply discounts.
-          </DialogDescription>
+          <DialogTitle>Apply Discount</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {/* Role-based limits info */}
+          <div className="p-3 bg-blue-50 rounded-lg">
+            <p className="text-sm text-blue-700">
+              <strong>Your Limits:</strong> {getDiscountLimits()}
+            </p>
+          </div>
+
           {/* Discount Type */}
           <div className="space-y-3">
-            <Label className="text-sm font-medium">Discount Type</Label>
+            <Label>Discount Type</Label>
             <RadioGroup
-              value={discountType}
-              onValueChange={(value) => setDiscountType(value as 'PERCENTAGE' | 'FIXED_AMOUNT')}
-              className="flex space-x-6"
+              value={form.watch('type')}
+              onValueChange={(value) => form.setValue('type', value as 'PERCENTAGE' | 'FIXED_AMOUNT')}
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="PERCENTAGE" id="percentage" />
-                <label htmlFor="percentage" className="flex items-center gap-1 text-sm">
-                  <Percent className="h-4 w-4" />
-                  Percentage
-                </label>
+                <Label htmlFor="percentage">Percentage (%)</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="FIXED_AMOUNT" id="fixed" />
-                <label htmlFor="fixed" className="flex items-center gap-1 text-sm">
-                  <IndianRupee className="h-4 w-4" />
-                  Fixed Amount
-                </label>
+                <Label htmlFor="fixed">Fixed Amount (₹)</Label>
               </div>
             </RadioGroup>
           </div>
 
           {/* Discount Value */}
           <div className="space-y-2">
-            <Label htmlFor="discount-value">
-              {discountType === 'PERCENTAGE' ? 'Percentage (%)' : 'Amount (₹)'}
+            <Label htmlFor="value">
+              {watchType === 'PERCENTAGE' ? 'Discount Percentage' : 'Discount Amount'}
             </Label>
             <Input
-              id="discount-value"
+              id="value"
               type="number"
-              placeholder={discountType === 'PERCENTAGE' ? '10' : '100'}
-              value={discountValue}
-              onChange={(e) => setDiscountValue(e.target.value)}
+              step={watchType === 'PERCENTAGE' ? '0.01' : '1'}
               min="0"
-              max={discountType === 'PERCENTAGE' ? '100' : billSubtotal.toString()}
-              step={discountType === 'PERCENTAGE' ? '0.1' : '1'}
+              max={watchType === 'PERCENTAGE' ? '100' : billSubtotal.toString()}
+              {...form.register('value', { valueAsNumber: true })}
+              placeholder={watchType === 'PERCENTAGE' ? '10' : '100'}
             />
+            {form.formState.errors.value && (
+              <p className="text-sm text-red-500">
+                {form.formState.errors.value.message}
+              </p>
+            )}
           </div>
 
-          {/* Max Amount for Percentage Discounts */}
-          {discountType === 'PERCENTAGE' && (
+          {/* Max Amount for Percentage */}
+          {watchType === 'PERCENTAGE' && (
             <div className="space-y-2">
-              <Label htmlFor="max-amount">Maximum Discount Amount (₹) - Optional</Label>
+              <Label htmlFor="maxAmount">Maximum Amount (Optional)</Label>
               <Input
-                id="max-amount"
+                id="maxAmount"
                 type="number"
-                placeholder="500"
-                value={maxAmount}
-                onChange={(e) => setMaxAmount(e.target.value)}
+                step="1"
                 min="0"
+                {...form.register('maxAmount', { valueAsNumber: true })}
+                placeholder="500"
               />
+              <p className="text-xs text-muted-foreground">
+                Cap the percentage discount at this amount
+              </p>
             </div>
           )}
 
           {/* Reason */}
           <div className="space-y-2">
             <Label htmlFor="reason">Reason for Discount</Label>
-            <Select value={reason} onValueChange={setReason}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a reason" />
-              </SelectTrigger>
-              <SelectContent>
-                {DISCOUNT_REASONS.map((discountReason) => (
-                  <SelectItem key={discountReason} value={discountReason}>
-                    {discountReason}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Textarea
+              id="reason"
+              {...form.register('reason')}
+              placeholder="e.g., First-time customer, loyalty discount, service issue compensation..."
+              rows={3}
+            />
+            {form.formState.errors.reason && (
+              <p className="text-sm text-red-500">
+                {form.formState.errors.reason.message}
+              </p>
+            )}
           </div>
 
-          {/* Custom Reason */}
-          {reason === 'Other' && (
-            <div className="space-y-2">
-              <Label htmlFor="custom-reason">Custom Reason</Label>
-              <Textarea
-                id="custom-reason"
-                placeholder="Please specify the reason for this discount..."
-                value={customReason}
-                onChange={(e) => setCustomReason(e.target.value)}
-                rows={3}
-              />
-            </div>
-          )}
-
-          {/* Preview */}
-          {discountValue && parseFloat(discountValue) > 0 && (
-            <div className="bg-blue-50 p-4 rounded-lg space-y-2">
-              <div className="flex justify-between text-sm">
-                <span>Original Amount:</span>
-                <span>{formatIndianCurrency(billSubtotal)}</span>
-              </div>
-              <div className="flex justify-between text-sm text-green-600">
-                <span>Discount:</span>
-                <span>-{formatIndianCurrency(discountAmount)}</span>
-              </div>
-              <div className="flex justify-between font-semibold border-t pt-2">
-                <span>Final Amount:</span>
-                <span>{formatIndianCurrency(finalAmount)}</span>
+          {/* Discount Preview */}
+          {watchValue > 0 && (
+            <div className="p-4 bg-gray-50 rounded-lg space-y-2">
+              <h4 className="font-medium">Discount Preview</h4>
+              <div className="text-sm space-y-1">
+                <div className="flex justify-between">
+                  <span>Subtotal:</span>
+                  <span>{formatIndianCurrency(billSubtotal)}</span>
+                </div>
+                <div className="flex justify-between text-green-600">
+                  <span>Discount:</span>
+                  <span>-{formatIndianCurrency(discountAmount)}</span>
+                </div>
+                <div className="flex justify-between font-medium border-t pt-1">
+                  <span>New Total:</span>
+                  <span>{formatIndianCurrency(finalAmount)}</span>
+                </div>
               </div>
             </div>
           )}
 
-          {/* Warning for high discounts */}
-          {discountAmount > billSubtotal * 0.5 && (
-            <div className="flex items-center gap-2 text-amber-600 text-sm bg-amber-50 p-3 rounded-lg">
-              <AlertTriangle className="h-4 w-4" />
-              <span>High discount amount. Please ensure this is authorized.</span>
-            </div>
-          )}
-        </div>
-
-        <DialogFooter>
-          <Button variant="outline" onClick={() => handleOpenChange(false)}>
-            Cancel
-          </Button>
-          <Button onClick={handleApplyDiscount} disabled={!isValid}>
-            Apply Discount
-          </Button>
-        </DialogFooter>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={isLoading}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isLoading || !watchValue}>
+              {isLoading ? 'Applying...' : requiresApproval ? 'Apply (Pending Approval)' : 'Apply Discount'}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

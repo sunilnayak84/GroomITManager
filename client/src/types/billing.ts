@@ -96,6 +96,65 @@ export type BillDraft = Omit<Bill,
   'updatedAt'
 >;
 
+// System Configuration for Indian Billing
+export interface GSTConfiguration {
+  enabled: boolean;
+  companyGSTNumber: string;
+  companyName: string;
+  companyAddress: Address;
+  defaultGSTRate: number; // Usually 18% for pet services
+  cgstRate: number; // Usually 9%
+  sgstRate: number; // Usually 9%
+  igstRate: number; // Usually 18% for inter-state
+  stateCode: string; // For GST state identification
+}
+
+// Payment Methods for Indian market
+export type PaymentMethod = 
+  | 'CASH' 
+  | 'UPI_QR' 
+  | 'UPI_ID' 
+  | 'CARD' 
+  | 'NET_BANKING' 
+  | 'WALLET' 
+  | 'RAZORPAY' 
+  | 'BANK_TRANSFER';
+
+// Payment Status
+export type PaymentStatus = 'PENDING' | 'SUCCESS' | 'FAILED' | 'REFUNDED';
+
+export interface PaymentInfo {
+  method: PaymentMethod;
+  status: PaymentStatus;
+  amount: number;
+  transactionId?: string;
+  razorpayPaymentId?: string;
+  razorpayOrderId?: string;
+  razorpaySignature?: string;
+  paidAt?: Date;
+  paidBy?: string; // User who marked as paid
+  notes?: string;
+}
+
+// Enhanced Bill with payment info
+export interface BillWithPayment extends Bill {
+  paymentInfo?: PaymentInfo;
+  isGSTApplicable: boolean;
+  customerGSTNumber?: string;
+}
+
+// Discount Management with role restrictions
+export interface DiscountApplication {
+  percentage: number;
+  maxAmount?: number;
+  reason: string;
+  appliedBy: string;
+  appliedByRole: 'admin' | 'manager' | 'staff';
+  requiresApproval: boolean;
+  approvedBy?: string;
+  appliedAt: Date;
+}
+
 // Bill generation input with discount support
 export interface BillCreateInput {
   appointmentId: string;

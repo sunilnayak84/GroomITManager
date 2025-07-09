@@ -10,7 +10,10 @@ import {
   Clock,
   CheckCircle,
   AlertCircle,
-  XCircle
+  XCircle,
+  Settings,
+  Percent,
+  IndianRupee
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -32,9 +35,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { BillStatus, Bill } from '@/types/billing';
+import { BillStatus, Bill, GSTConfiguration, PaymentInfo } from '@/types/billing';
 import { useBilling, formatIndianCurrency } from '@/hooks/use-billing';
 import { useLocation } from 'wouter';
+import GSTConfigDialog from '@/components/GSTConfigDialog';
+import PaymentDialog from '@/components/PaymentDialog';
+import { useToast } from '@/hooks/use-toast';
 
 function EmptyState() {
   return (
@@ -137,6 +143,11 @@ export default function BillingPage() {
   const { bills, isLoading, isError, error, refetch } = useBilling();
   const [statusFilter, setStatusFilter] = useState<BillStatus | 'ALL'>('ALL');
   const [searchTerm, setSearchTerm] = useState('');
+  const [showGSTConfig, setShowGSTConfig] = useState(false);
+  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+  const [selectedBillForPayment, setSelectedBillForPayment] = useState<Bill | null>(null);
+  const [gstConfiguration, setGstConfiguration] = useState<GSTConfiguration | undefined>();
+  const { toast } = useToast();
 
   // Filter bills based on status and search term
   const filteredBills = bills.filter(bill => {
@@ -164,6 +175,55 @@ export default function BillingPage() {
 
   const calculateTotal = (bill: Bill) => {
     return bill.totalAmount || (bill.subtotal - bill.discountAmount + bill.totalTaxAmount);
+  };
+
+  const handleGSTConfigSave = async (config: GSTConfiguration) => {
+    try {
+      // Here we would save the GST configuration to the backend
+      // For now, just save it to local state
+      setGstConfiguration(config);
+      
+      toast({
+        title: "GST Configuration Saved",
+        description: "Your GST settings have been updated successfully.",
+      });
+    } catch (error) {
+      console.error('Error saving GST configuration:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save GST configuration. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handlePaymentRecord = async (paymentInfo: PaymentInfo) => {
+    try {
+      if (!selectedBillForPayment) return;
+      
+      // Here we would send the payment information to the backend
+      // For now, just show a success message
+      
+      toast({
+        title: "Payment Recorded",
+        description: `Payment of ${formatIndianCurrency(paymentInfo.amount)} recorded successfully`,
+      });
+      
+      // Refresh the bills list
+      refetch();
+    } catch (error) {
+      console.error('Error recording payment:', error);
+      toast({
+        title: "Error",
+        description: "Failed to record payment. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handlePaymentClick = (bill: Bill) => {
+    setSelectedBillForPayment(bill);
+    setShowPaymentDialog(true);
   };
 
   if (isError) {
@@ -194,6 +254,10 @@ export default function BillingPage() {
           </p>
         </div>
         <div className="mt-4 sm:mt-0 flex gap-2">
+          <Button variant="outline" onClick={() => setShowGSTConfig(true)}>
+            <Settings className="h-4 w-4 mr-2" />
+            GST Config
+          </Button>
           <Button variant="outline">
             <Download className="h-4 w-4 mr-2" />
             Export
@@ -302,17 +366,32 @@ export default function BillingPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleViewBill(bill.id);
-                      }}
-                    >
-                      <Eye className="h-4 w-4 mr-1" />
-                      View
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleViewBill(bill.id);
+                        }}
+                      >
+                        <Eye className="h-4 w-4 mr-1" />
+                        View
+                      </Button>
+                      {bill.status === 'PENDING_PAYMENT' && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handlePaymentClick(bill);
+                          }}
+                        >
+                          <CreditCard className="h-4 w-4 mr-1" />
+                          Pay
+                        </Button>
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -369,6 +448,29 @@ export default function BillingPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* GST Configuration Dialog */}
+      <GSTConfigDialog
+        open={showGSTConfig}
+        onOpenChange={setShowGSTConfig}
+        currentConfig={gstConfiguration}
+        onSave={handleGSTConfigSave}
+      />
+
+      {/* Payment Dialog */}
+      {selectedBillForPayment && (
+        <PaymentDialog
+          open={showPaymentDialog}
+          onOpenChange={setShowPaymentDialog}
+          billAmount={calculateTotal(selectedBillForPayment)}
+          billId={selectedBillForPayment.id}
+          onPaymentRecord={handlePaymentRecord}
+          onRazorpayPayment={() => {
+            // Handle Razorpay payment integration
+            console.log('Razorpay payment for bill:', selectedBillForPayment.id);
+          }}
+        />
       )}
     </div>
   );

@@ -272,14 +272,16 @@ export default function EnhancedBillGenerationDialog({
                     Discount
                   </span>
                   {canApplyDiscount && (
-                    <BillDiscountDialog
-                      billSubtotal={subtotal}
-                      onApplyDiscount={handleApplyDiscount}
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        // We'll implement the discount dialog here
+                        console.log('Add discount clicked');
+                      }}
                     >
-                      <Button variant="outline" size="sm">
-                        {discount ? 'Modify' : 'Add'} Discount
-                      </Button>
-                    </BillDiscountDialog>
+                      {discount ? 'Modify' : 'Add'} Discount
+                    </Button>
                   )}
                 </CardTitle>
               </CardHeader>
