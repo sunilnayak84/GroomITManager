@@ -331,8 +331,21 @@ export class BillingService {
       };
 
       if (metadata) {
-        Object.assign(updateData, metadata);
+        // Filter out undefined values from metadata
+        Object.keys(metadata).forEach(key => {
+          const value = (metadata as any)[key];
+          if (value !== undefined) {
+            updateData[key] = value;
+          }
+        });
       }
+
+      // Remove any undefined values from updateData before sending to Firestore
+      Object.keys(updateData).forEach(key => {
+        if (updateData[key] === undefined) {
+          delete updateData[key];
+        }
+      });
 
       const docRef = this.db.collection(this.billsCollection).doc(billId);
       await docRef.update(updateData);

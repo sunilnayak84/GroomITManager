@@ -257,11 +257,11 @@ router.patch('/bills/:billId/status', async (req, res) => {
 
     const updatedBy = req.user?.email || req.user?.uid || 'system';
     
-    const paymentDetails = {
-      paymentId,
-      paymentMethod,
-      paymentDate: paymentDate ? new Date(paymentDate) : undefined,
-    };
+    // Only include payment details that are defined
+    const paymentDetails: any = {};
+    if (paymentId !== undefined) paymentDetails.paymentId = paymentId;
+    if (paymentMethod !== undefined) paymentDetails.paymentMethod = paymentMethod;
+    if (paymentDate !== undefined) paymentDetails.paymentDate = new Date(paymentDate);
 
     const bill = await billingService.updateBillStatus(
       billId,
