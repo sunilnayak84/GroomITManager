@@ -126,6 +126,7 @@ While the application currently uses Firebase Firestore, the architecture suppor
 - ✅ **Simplified UI**: Clean payment dialog with only two options: "Online Payment (Razorpay)" for all digital payments and "Cash Payment" for in-person transactions
 - ✅ **User Experience**: Clear descriptions showing Razorpay covers "UPI, Cards, Net Banking, Wallets - All secure online payments"
 - ✅ **Production Ready**: Integration uses existing Razorpay API keys and follows Indian payment standards
+- ✅ **UI Optimization**: Removed "Pay Now" button from bill preview modal to prevent confusion - payment processing now centralized in appointments list view
 
 ### Comprehensive Discount System Implementation (July 9, 2025)
 - ✅ **Discount Data Corruption Fixed**: Resolved critical bug where frontend was sending only percentage value instead of full DiscountApplication object

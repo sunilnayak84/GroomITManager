@@ -1144,45 +1144,10 @@ export default function AppointmentsPage() {
                 <Button variant="outline" onClick={() => setShowBillModal(false)}>
                   Close
                 </Button>
-                <div className="flex gap-2">
-                  {billPreview.status === 'PENDING_PAYMENT' && (
-                    <Button 
-                      onClick={() => {
-                        console.log('Pay Now clicked. Looking for appointment with billId:', billPreview.id);
-                        console.log('Available appointments:', appointments?.map(apt => ({ id: apt.id, billId: apt.billId })));
-                        
-                        // Find the appointment that matches this bill
-                        const appointment = appointments?.find(apt => apt.billId === billPreview.id);
-                        console.log('Found appointment:', appointment);
-                        
-                        if (appointment) {
-                          setSelectedAppointmentForPayment(appointment as any);
-                          setShowPaymentDialog(true);
-                          setShowBillModal(false); // Close the bill modal
-                        } else {
-                          // Fallback: Create a minimal appointment object for payment
-                          const fallbackAppointment = {
-                            id: billPreview.appointmentId || '',
-                            billId: billPreview.id,
-                            totalPrice: billPreview.totalAmount || 0,
-                            // Add other required fields as needed
-                          };
-                          setSelectedAppointmentForPayment(fallbackAppointment as any);
-                          setShowPaymentDialog(true);
-                          setShowBillModal(false);
-                        }
-                      }} 
-                      className="bg-green-600 hover:bg-green-700"
-                    >
-                      <CreditCard className="mr-2 h-4 w-4" />
-                      Pay Now
-                    </Button>
-                  )}
-                  <Button onClick={() => window.open(`/billing?billId=${billPreview.id}`, '_blank')}>
-                    <ExternalLink className="mr-2 h-4 w-4" />
-                    View Full Bill
-                  </Button>
-                </div>
+                <Button onClick={() => window.open(`/billing?billId=${billPreview.id}`, '_blank')}>
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  View Full Bill
+                </Button>
               </DialogFooter>
             </div>
           )}        </DialogContent>
