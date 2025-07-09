@@ -761,11 +761,8 @@ export default function BillingPage() {
           onOpenChange={setShowPaymentDialog}
           billAmount={calculateTotal(selectedBillForPayment)}
           billId={selectedBillForPayment.id}
+          customerName={selectedBillForPayment.customerName}
           onPaymentRecord={handlePaymentRecord}
-          onRazorpayPayment={() => {
-            // Handle Razorpay payment integration
-            console.log('Razorpay payment for bill:', selectedBillForPayment.id);
-          }}
         />
       )}
 

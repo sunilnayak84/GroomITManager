@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { billingService } from './billing-service-new.js';
+import { razorpayService } from './razorpay-service.js';
 import { BillCreateInputSchema, BillStatusSchema } from '../types/billing.js';
 import logger from '../utils/logger.js';
 
@@ -415,6 +416,138 @@ router.post('/bills/:billId/payment', async (req, res) => {
     logger.error(`[BILLING_ROUTES] Error recording payment for bill ${req.params.billId}:`, error);
     res.status(500).json({ 
       error: 'Failed to record payment',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+/**
+ * POST /api/billing/razorpay/create-order
+ * Create a Razorpay order for online payment
+ */
+router.post('/razorpay/create-order', async (req, res) => {
+  try {
+    const { billId } = req.body;
+    
+    logger.info(`[BILLING_ROUTES] POST /razorpay/create-order`, { 
+      billId,
+      user: req.user?.email 
+    });
+
+    if (!billId) {
+      return res.status(400).json({
+        error: 'Bad Request',
+        message: 'Bill ID is required'
+      });
+    }
+
+    // Get the bill first
+    const bill = await billingService.getBillById(billId);
+    if (!bill) {
+      return res.status(404).json({
+        error: 'Bill not found',
+        billId
+      });
+    }
+
+    // Create Razorpay order
+    const receiptId = `bill_${bill.billNumber || bill.id}`;
+    const order = await razorpayService.createOrder(
+      bill.totalAmount,
+      'INR',
+      receiptId,
+      {
+        billId: bill.id || '',
+        billNumber: bill.billNumber || '',
+        customerName: bill.customerName || ''
+      }
+    );
+
+    logger.info(`[BILLING_ROUTES] Razorpay order created successfully: ${order.id}`);
+    res.json({
+      orderId: order.id,
+      amount: order.amount,
+      currency: order.currency,
+      keyId: process.env.RAZORPAY_KEY_ID
+    });
+
+  } catch (error) {
+    logger.error('[BILLING_ROUTES] Error creating Razorpay order:', error);
+    res.status(500).json({ 
+      error: 'Failed to create payment order',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+/**
+ * POST /api/billing/razorpay/verify-payment
+ * Verify Razorpay payment and update bill status
+ */
+router.post('/razorpay/verify-payment', async (req, res) => {
+  try {
+    const { 
+      razorpay_order_id, 
+      razorpay_payment_id, 
+      razorpay_signature,
+      billId 
+    } = req.body;
+    
+    logger.info(`[BILLING_ROUTES] POST /razorpay/verify-payment`, { 
+      orderId: razorpay_order_id,
+      paymentId: razorpay_payment_id,
+      billId,
+      user: req.user?.email 
+    });
+
+    // Validate required fields
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !billId) {
+      return res.status(400).json({
+        error: 'Bad Request',
+        message: 'Missing required payment verification fields'
+      });
+    }
+
+    // Verify payment signature
+    const isValidSignature = razorpayService.verifyPaymentSignature(
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature
+    );
+
+    if (!isValidSignature) {
+      logger.error('[BILLING_ROUTES] Invalid payment signature');
+      return res.status(400).json({
+        error: 'Payment verification failed',
+        message: 'Invalid payment signature'
+      });
+    }
+
+    // Get payment details from Razorpay
+    const paymentDetails = await razorpayService.getPayment(razorpay_payment_id);
+
+    // Record payment in our system
+    const updatedBill = await billingService.recordPayment(billId, {
+      method: 'RAZORPAY',
+      amount: Number(paymentDetails.amount) / 100, // Convert from paise to rupees
+      transactionId: razorpay_payment_id,
+      notes: `Razorpay Order: ${razorpay_order_id}`,
+      status: 'SUCCESS',
+      paidAt: new Date(),
+    });
+
+    logger.info(`[BILLING_ROUTES] Payment verified and recorded successfully for bill: ${billId}`);
+    res.json({
+      success: true,
+      bill: updatedBill,
+      paymentId: razorpay_payment_id,
+      orderId: razorpay_order_id
+    });
+
+  } catch (error) {
+    logger.error('[BILLING_ROUTES] Error verifying Razorpay payment:', error);
+    res.status(500).json({ 
+      error: 'Failed to verify payment',
       message: error instanceof Error ? error.message : 'Unknown error'
     });
   }

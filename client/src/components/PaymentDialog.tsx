@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { auth } from '@/lib/firebase';
 import {
   Dialog,
   DialogContent,
@@ -36,13 +37,22 @@ const paymentSchema = z.object({
 
 type PaymentForm = z.infer<typeof paymentSchema>;
 
+// Declare Razorpay types for TypeScript
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
+
 interface PaymentDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   billAmount: number;
   billId: string;
+  customerName?: string;
+  customerPhone?: string;
+  customerEmail?: string;
   onPaymentRecord: (paymentInfo: PaymentInfo) => void;
-  onRazorpayPayment?: () => void;
 }
 
 export default function PaymentDialog({ 
@@ -50,11 +60,14 @@ export default function PaymentDialog({
   onOpenChange, 
   billAmount,
   billId,
-  onPaymentRecord,
-  onRazorpayPayment 
+  customerName,
+  customerPhone,
+  customerEmail,
+  onPaymentRecord
 }: PaymentDialogProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [isRazorpayLoading, setIsRazorpayLoading] = useState(false);
 
   const form = useForm<PaymentForm>({
     resolver: zodResolver(paymentSchema),
@@ -121,6 +134,132 @@ export default function PaymentDialog({
 
   const selectedMethodInfo = paymentMethods.find(m => m.id === selectedMethod);
 
+  // Load Razorpay script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+    
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  const handleRazorpayPayment = async () => {
+    try {
+      setIsRazorpayLoading(true);
+
+      // Get auth token
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error("Authentication required");
+      }
+
+      const token = await user.getIdToken();
+      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+
+      // Create Razorpay order
+      const orderResponse = await fetch(`${apiBaseUrl}/api/billing/razorpay/create-order`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ billId }),
+      });
+
+      if (!orderResponse.ok) {
+        throw new Error('Failed to create payment order');
+      }
+
+      const orderData = await orderResponse.json();
+
+      // Configure Razorpay options
+      const options = {
+        key: orderData.keyId,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: 'GroomIT Manager',
+        description: `Payment for Bill #${billId}`,
+        order_id: orderData.orderId,
+        prefill: {
+          name: customerName || '',
+          email: customerEmail || '',
+          contact: customerPhone || '',
+        },
+        theme: {
+          color: '#3B82F6',
+        },
+        handler: async (response: any) => {
+          try {
+            // Verify payment
+            const verifyResponse = await fetch(`${apiBaseUrl}/api/billing/razorpay/verify-payment`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                billId,
+              }),
+            });
+
+            if (!verifyResponse.ok) {
+              throw new Error('Payment verification failed');
+            }
+
+            const verifyData = await verifyResponse.json();
+
+            toast({
+              title: "Payment Successful",
+              description: `Payment of ${formatIndianCurrency(billAmount)} completed successfully`,
+            });
+
+            onOpenChange(false);
+            
+            // Trigger a refresh of the bills list
+            window.location.reload();
+
+          } catch (error) {
+            console.error('Payment verification error:', error);
+            toast({
+              title: "Payment Verification Failed",
+              description: "Payment was processed but verification failed. Please contact support.",
+              variant: "destructive",
+            });
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            toast({
+              title: "Payment Cancelled",
+              description: "Payment was cancelled by the user",
+              variant: "destructive",
+            });
+          }
+        }
+      };
+
+      // Open Razorpay checkout
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+
+    } catch (error) {
+      console.error('Razorpay payment error:', error);
+      toast({
+        title: "Payment Error",
+        description: error instanceof Error ? error.message : "Failed to process online payment",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRazorpayLoading(false);
+    }
+  };
+
   const onSubmit = async (data: PaymentForm) => {
     try {
       setIsLoading(true);
@@ -165,10 +304,7 @@ export default function PaymentDialog({
     }
   };
 
-  const handleRazorpayPayment = () => {
-    onOpenChange(false);
-    onRazorpayPayment?.();
-  };
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -189,22 +325,24 @@ export default function PaymentDialog({
           </div>
 
           {/* Razorpay Option */}
-          {onRazorpayPayment && (
-            <div className="p-4 border rounded-lg">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h3 className="font-medium">Online Payment (Razorpay)</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Send payment link to customer or process online payment
-                  </p>
-                </div>
-                <Button onClick={handleRazorpayPayment} className="gap-2">
-                  <ExternalLink className="h-4 w-4" />
-                  Process Online Payment
-                </Button>
+          <div className="p-4 border rounded-lg">
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="font-medium">Online Payment (Razorpay)</h3>
+                <p className="text-sm text-muted-foreground">
+                  Process secure online payment via Razorpay
+                </p>
               </div>
+              <Button 
+                onClick={handleRazorpayPayment} 
+                disabled={isRazorpayLoading}
+                className="gap-2"
+              >
+                <ExternalLink className="h-4 w-4" />
+                {isRazorpayLoading ? 'Processing...' : 'Process Online Payment'}
+              </Button>
             </div>
-          )}
+          </div>
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">

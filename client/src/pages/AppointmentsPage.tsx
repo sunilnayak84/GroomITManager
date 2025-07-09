@@ -1169,10 +1169,6 @@ export default function AppointmentsPage() {
           billId={selectedAppointmentForPayment.billId || ''}
           billAmount={selectedAppointmentForPayment.totalPrice || 0}
           onPaymentRecord={handlePaymentRecord}
-          onRazorpayPayment={() => {
-            // Handle Razorpay payment if needed
-            console.log('Razorpay payment initiated');
-          }}
         />
       )}
     </div>

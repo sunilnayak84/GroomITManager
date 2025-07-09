@@ -1,133 +1,131 @@
 import Razorpay from 'razorpay';
-import { admin } from '../firebase';
 import crypto from 'crypto';
+import { logger } from '../utils/logger.js';
 
-export class RazorpayService {
+export interface RazorpayOrder {
+  id: string;
+  amount: string | number;
+  currency: string;
+  status: string;
+  created_at: number;
+}
+
+export interface RazorpayPaymentVerification {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}
+
+class RazorpayService {
   private razorpay: Razorpay;
 
   constructor() {
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+      throw new Error('Razorpay credentials not found in environment variables');
+    }
+
     this.razorpay = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID!,
-      key_secret: process.env.RAZORPAY_KEY_SECRET!
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
     });
+
+    logger.info('[RAZORPAY] Service initialized successfully');
   }
 
-  async createOrder(appointmentId: string): Promise<any> {
+  /**
+   * Create a Razorpay order
+   */
+  async createOrder(
+    amount: number,
+    currency: string = 'INR',
+    receiptId: string,
+    notes?: Record<string, string>
+  ): Promise<RazorpayOrder> {
     try {
-      console.log('[RAZORPAY] Starting order creation for appointment:', appointmentId);
+      logger.info('[RAZORPAY] Creating order:', { amount, currency, receiptId });
 
-      // Get appointment details from Firestore
-      const appointmentDoc = await admin.firestore()
-        .collection('appointments')
-        .doc(appointmentId)
-        .get();
-
-      if (!appointmentDoc.exists) {
-        console.error('[RAZORPAY] Appointment not found:', appointmentId);
-        throw new Error('Appointment not found');
-      }
-
-      const appointmentData = appointmentDoc.data();
-      if (!appointmentData) {
-        console.error('[RAZORPAY] Appointment data is empty:', appointmentId);
-        throw new Error('Appointment data is empty');
-      }
-
-      console.log('[RAZORPAY] Processing appointment data:', {
-        id: appointmentId,
-        services: appointmentData.service,
-        customer: appointmentData.customer
-      });
-
-      // Calculate total amount from services
-      const amount = appointmentData.service.reduce((total: number, service: any) => 
-        total + (service.price || 0), 0);
-
-      if (amount <= 0) {
-        console.error('[RAZORPAY] Invalid amount calculated:', amount);
-        throw new Error('Invalid amount for payment');
-      }
-
-      console.log('[RAZORPAY] Calculated amount:', amount);
-
-      // Create Razorpay order
-      const order = await this.razorpay.orders.create({
-        amount: amount * 100, // Convert to paise
-        currency: 'INR',
-        receipt: `receipt_${appointmentId}`,
-        notes: {
-          appointmentId,
-          customerName: `${appointmentData.customer.firstName} ${appointmentData.customer.lastName}`,
-          services: appointmentData.service.map((s: any) => s.name).join(', ')
-        }
-      });
-
-      console.log('[RAZORPAY] Order created successfully:', order);
-
-      // Store order details in Firestore
-      await admin.firestore()
-        .collection('payments')
-        .doc(order.id)
-        .set({
-          orderId: order.id,
-          appointmentId,
-          amount: amount * 100,
-          status: 'created',
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
-          customer: appointmentData.customer,
-          services: appointmentData.service
-        });
-
-      return {
-        orderId: order.id,
-        amount: amount * 100,
-        currency: 'INR',
-        keyId: process.env.RAZORPAY_KEY_ID
+      const orderOptions = {
+        amount: Math.round(amount * 100), // Convert to paise
+        currency,
+        receipt: receiptId,
+        notes: notes || {},
       };
+
+      const order = await this.razorpay.orders.create(orderOptions);
+      
+      logger.info('[RAZORPAY] Order created successfully:', order.id);
+      return order;
     } catch (error) {
-      console.error('[RAZORPAY] Error creating order:', error);
+      logger.error('[RAZORPAY] Error creating order:', error);
       throw error;
     }
   }
 
-  verifyPayment(paymentId: string, orderId: string, signature: string): boolean {
+  /**
+   * Verify payment signature
+   */
+  verifyPaymentSignature(
+    orderId: string,
+    paymentId: string,
+    signature: string
+  ): boolean {
     try {
-      // Generate signature verification string
-      const text = orderId + "|" + paymentId;
+      logger.info('[RAZORPAY] Verifying payment signature for order:', orderId);
 
-      // Create HMAC SHA256 hash
-      const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!);
-      hmac.update(text);
-      const generated_signature = hmac.digest('hex');
+      const body = orderId + '|' + paymentId;
+      const expectedSignature = crypto
+        .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
+        .update(body.toString())
+        .digest('hex');
 
-      // Compare signatures
-      const isValid = generated_signature === signature;
-
-      if (!isValid) {
-        throw new Error('Invalid payment signature');
-      }
-
-      return true;
+      const isValid = expectedSignature === signature;
+      
+      logger.info('[RAZORPAY] Payment signature verification:', { 
+        orderId, 
+        paymentId, 
+        isValid 
+      });
+      
+      return isValid;
     } catch (error) {
-      console.error('[RAZORPAY] Payment verification failed:', error);
+      logger.error('[RAZORPAY] Error verifying payment signature:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Fetch payment details
+   */
+  async getPayment(paymentId: string) {
+    try {
+      logger.info('[RAZORPAY] Fetching payment details:', paymentId);
+      
+      const payment = await this.razorpay.payments.fetch(paymentId);
+      
+      logger.info('[RAZORPAY] Payment details fetched successfully');
+      return payment;
+    } catch (error) {
+      logger.error('[RAZORPAY] Error fetching payment details:', error);
       throw error;
     }
   }
 
-  async updatePaymentStatus(orderId: string, paymentId: string, signature: string): Promise<void> {
+  /**
+   * Fetch order details
+   */
+  async getOrder(orderId: string) {
     try {
-      await admin.firestore()
-        .collection('payments')
-        .doc(orderId)
-        .update({
-          paymentId,
-          status: 'completed',
-          completedAt: admin.firestore.FieldValue.serverTimestamp(),
-          signature
-        });
+      logger.info('[RAZORPAY] Fetching order details:', orderId);
+      
+      const order = await this.razorpay.orders.fetch(orderId);
+      
+      logger.info('[RAZORPAY] Order details fetched successfully');
+      return order;
     } catch (error) {
-      console.error('[RAZORPAY] Error updating payment status:', error);
+      logger.error('[RAZORPAY] Error fetching order details:', error);
       throw error;
     }
   }
 }
+
+export const razorpayService = new RazorpayService();
