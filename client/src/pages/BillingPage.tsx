@@ -73,37 +73,28 @@ function BillSkeleton() {
 }
 
 export default function BillingPage() {
-  const [bills, setBills] = useState<Bill[]>([]);
   const [filter, setFilter] = useState<BillStatus | 'ALL'>('ALL');
-  const { bills: hookBills, refetch, isLoading } = useBilling();
+  const { bills, isLoading } = useBilling();
   const [, params] = useLocation();
 
   // Get query parameters (for direct bill opening)
   const queryParams = new URLSearchParams(window.location.search);
   const billId = queryParams.get('billId');
 
-  // Update bills from hook and handle loading state
+  // Open bill directly if billId is provided (only run once)
   useEffect(() => {
-    if (hookBills) {
-      console.log('[BILLING] Hook bills updated:', hookBills?.length);
-      setBills(hookBills || []);
-    }
-  }, [hookBills]);
-
-  // Open bill directly if billId is provided
-  useEffect(() => {
-    if (billId && !isLoading && bills.length > 0) {
+    if (billId && bills && bills.length > 0) {
       const bill = bills.find(b => b.id === billId);
       if (bill) {
         window.location.href = `/billing/${billId}`;
       }
     }
-  }, [billId, bills, isLoading]);
+  }, [billId]); // Only depend on billId, not bills
 
   // Filter bills based on selected status
   const filteredBills = filter === 'ALL'
-    ? bills
-    : bills.filter(bill => bill.status === filter);
+    ? (bills || [])
+    : (bills || []).filter(bill => bill.status === filter);
 
   const handleFilterChange = (newFilter: BillStatus | 'ALL') => {
     setFilter(newFilter);
