@@ -4,7 +4,7 @@ import * as Express from 'express';
 import { staffManagementRouter } from './api/staff-management';
 import { authenticateFirebase } from './middleware/auth';
 import { billingRouter } from './api/billing-routes';
-import authRouter from './api/auth-routes';
+import { authRouter } from './api/auth-routes';
 import { logger } from './utils/logger';
 
 const router = Router();
