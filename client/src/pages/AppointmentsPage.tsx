@@ -23,6 +23,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { PetDetails } from "../components/PetDetails";
 import { Link, useLocation as useReactRouterLocation } from "react-router-dom";
 import { useLocation } from 'wouter';
+import PaymentDialog from '@/components/PaymentDialog';
+import { PaymentInfo } from '@/types/billing';
 
 
 // Get status type from the schema
@@ -158,6 +160,8 @@ export default function AppointmentsPage() {
   const [isLoading, setIsLoading] = useState(false); // Added loading state
   const [billPreview, setBillPreview] = useState<any>(null);
   const [showBillModal, setShowBillModal] = useState(false);
+  const [selectedAppointmentForPayment, setSelectedAppointmentForPayment] = useState<AppointmentWithRelations | null>(null);
+  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [, navigate] = useLocation(); // Using wouter's useLocation for navigation
   const { data: appointments, isLoading: appointmentsLoading, error, refetch: fetchAppointments } = useAppointments();
 
@@ -548,17 +552,33 @@ export default function AppointmentsPage() {
         console.log('[BILLING] Appointment bill status:', appointment.id, { billGenerated, billId: appointment.billId, billStatus: appointment.billStatus });
 
         return (
-          <div className="flex justify-start">
+          <div className="flex justify-start gap-2">
             {billGenerated ? (
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex items-center"
-                onClick={() => window.open(`/billing/${appointment.billId || ''}`, '_blank')}
-              >
-                <ExternalLink className="mr-2 h-4 w-4" />
-                View Bill
-              </Button>
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center"
+                  onClick={() => window.open(`/billing/${appointment.billId || ''}`, '_blank')}
+                >
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  View Bill
+                </Button>
+                {appointment.billStatus === 'PENDING_PAYMENT' && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center text-green-600 hover:text-green-700"
+                    onClick={() => {
+                      setSelectedAppointmentForPayment(appointment);
+                      setShowPaymentDialog(true);
+                    }}
+                  >
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Record Payment
+                  </Button>
+                )}
+              </>
             ) : (
               <Button
                 variant="ghost"
@@ -703,6 +723,64 @@ export default function AppointmentsPage() {
     }
   };
 
+  const handlePaymentRecord = async (paymentInfo: PaymentInfo) => {
+    try {
+      if (!selectedAppointmentForPayment?.billId) {
+        throw new Error("No bill ID found for payment recording");
+      }
+
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error("Authentication required");
+      }
+
+      const token = await user.getIdToken();
+      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+
+      const response = await fetch(
+        `${apiBaseUrl}/api/billing/bills/${selectedAppointmentForPayment.billId}/payment`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            method: paymentInfo.method,
+            amount: paymentInfo.amount,
+            transactionId: paymentInfo.transactionId,
+            notes: paymentInfo.notes,
+            status: paymentInfo.status,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to record payment");
+      }
+
+      // Refresh appointments to update payment status
+      if (fetchAppointments) {
+        await fetchAppointments();
+      }
+
+      toast({
+        title: "Payment Recorded",
+        description: `Payment of ₹${paymentInfo.amount.toFixed(2)} recorded successfully`,
+      });
+
+      setSelectedAppointmentForPayment(null);
+      setShowPaymentDialog(false);
+    } catch (error) {
+      console.error('Error recording payment:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to record payment",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="container mx-auto max-w-7xl space-y-6 px-6">
@@ -1082,6 +1160,21 @@ export default function AppointmentsPage() {
             </div>
           )}        </DialogContent>
       </Dialog>
+
+      {/* Payment Dialog */}
+      {selectedAppointmentForPayment && (
+        <PaymentDialog
+          open={showPaymentDialog}
+          onOpenChange={setShowPaymentDialog}
+          billId={selectedAppointmentForPayment.billId || ''}
+          billAmount={selectedAppointmentForPayment.totalPrice || 0}
+          onPaymentRecord={handlePaymentRecord}
+          onRazorpayPayment={() => {
+            // Handle Razorpay payment if needed
+            console.log('Razorpay payment initiated');
+          }}
+        />
+      )}
     </div>
   );
 }

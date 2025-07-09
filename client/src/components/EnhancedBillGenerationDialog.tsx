@@ -29,7 +29,7 @@ import {
   Mail
 } from 'lucide-react';
 import { formatIndianCurrency } from '@/lib/utils';
-import { Discount, Address, BillCreateInput } from '@/types/billing';
+import { Discount, Address, BillCreateInput, DiscountApplication } from '@/types/billing';
 import BillDiscountDialog from './BillDiscountDialog';
 
 interface AppointmentData {
@@ -81,6 +81,7 @@ export default function EnhancedBillGenerationDialog({
   const [loading, setLoading] = useState(false);
   const [discount, setDiscount] = useState<Discount | null>(null);
   const [notes, setNotes] = useState('');
+  const [showDiscountDialog, setShowDiscountDialog] = useState(false);
   const [billingAddress, setBillingAddress] = useState<Address>({
     line1: '',
     line2: '',
@@ -127,11 +128,21 @@ export default function EnhancedBillGenerationDialog({
     }
   }
 
-  const handleApplyDiscount = (newDiscount: Discount) => {
+  const handleApplyDiscount = (discountApplication: DiscountApplication) => {
+    // Convert DiscountApplication to Discount format
+    const newDiscount: Discount = {
+      type: 'PERCENTAGE', // Based on the DiscountApplication, it only has percentage
+      value: discountApplication.percentage,
+      reason: discountApplication.reason,
+      appliedBy: user?.email || '',
+      appliedAt: new Date(),
+      maxAmount: discountApplication.maxAmount
+    };
+
     setDiscount(newDiscount);
     toast({
       title: "Discount Applied",
-      description: `${newDiscount.type === 'PERCENTAGE' ? newDiscount.value + '%' : '₹' + newDiscount.value} discount has been applied.`,
+      description: `${discountApplication.percentage}% discount has been applied.`,
     });
   };
 
@@ -275,10 +286,7 @@ export default function EnhancedBillGenerationDialog({
                     <Button 
                       variant="outline" 
                       size="sm"
-                      onClick={() => {
-                        // We'll implement the discount dialog here
-                        console.log('Add discount clicked');
-                      }}
+                      onClick={() => setShowDiscountDialog(true)}
                     >
                       {discount ? 'Modify' : 'Add'} Discount
                     </Button>
@@ -451,6 +459,23 @@ export default function EnhancedBillGenerationDialog({
           </Button>
         </DialogFooter>
       </DialogContent>
+
+      {/* Discount Dialog */}
+      <BillDiscountDialog
+        open={showDiscountDialog}
+        onOpenChange={setShowDiscountDialog}
+        billSubtotal={subtotal}
+        currentDiscount={discount ? {
+          percentage: discount.type === 'PERCENTAGE' ? discount.value : 0,
+          maxAmount: discount.maxAmount,
+          reason: discount.reason || '',
+          appliedBy: discount.appliedBy,
+          appliedByRole: user?.role as 'admin' | 'manager' | 'staff' || 'staff',
+          requiresApproval: false,
+          appliedAt: discount.appliedAt
+        } : undefined}
+        onApply={handleApplyDiscount}
+      />
     </Dialog>
   );
 }

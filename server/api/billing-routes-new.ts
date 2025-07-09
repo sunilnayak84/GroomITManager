@@ -373,4 +373,49 @@ router.post('/fix-appointment-links', async (req, res) => {
   }
 });
 
+/**
+ * POST /api/billing/bills/:billId/payment
+ * Record payment for a bill
+ */
+router.post('/bills/:billId/payment', async (req, res) => {
+  try {
+    const { billId } = req.params;
+    const { method, amount, transactionId, notes, status } = req.body;
+    
+    logger.info(`[BILLING_ROUTES] POST /bills/${billId}/payment`, { 
+      method, 
+      amount, 
+      user: req.user?.email 
+    });
+
+    // Validate required fields
+    if (!method || !amount) {
+      return res.status(400).json({
+        error: 'Bad Request',
+        message: 'Payment method and amount are required'
+      });
+    }
+
+    // Record the payment
+    const result = await billingService.recordPayment(billId, {
+      method,
+      amount: parseFloat(amount),
+      transactionId: transactionId || undefined,
+      notes: notes || undefined,
+      status: status || 'SUCCESS',
+      paidAt: new Date(),
+    });
+
+    logger.info(`[BILLING_ROUTES] Payment recorded successfully for bill: ${billId}`);
+    res.json(result);
+
+  } catch (error) {
+    logger.error(`[BILLING_ROUTES] Error recording payment for bill ${req.params.billId}:`, error);
+    res.status(500).json({ 
+      error: 'Failed to record payment',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
 export default router;

@@ -634,6 +634,74 @@ export class BillingService {
       throw error;
     }
   }
+
+  /**
+   * Record payment for a bill
+   */
+  async recordPayment(
+    billId: string,
+    paymentDetails: {
+      method: string;
+      amount: number;
+      transactionId?: string;
+      notes?: string;
+      status: string;
+      paidAt: Date;
+    }
+  ): Promise<Bill> {
+    try {
+      logger.info('[BILLING] Recording payment for bill:', { billId, paymentDetails });
+
+      // Get the bill first to check current status
+      const bill = await this.getBillById(billId);
+      if (!bill) {
+        throw new Error(`Bill not found: ${billId}`);
+      }
+
+      // Prepare the payment record
+      const paymentRecord = {
+        method: paymentDetails.method,
+        amount: paymentDetails.amount,
+        transactionId: paymentDetails.transactionId,
+        notes: paymentDetails.notes,
+        status: paymentDetails.status,
+        paidAt: admin.firestore.Timestamp.fromDate(paymentDetails.paidAt),
+        recordedAt: admin.firestore.FieldValue.serverTimestamp(),
+      };
+
+      // Update bill with payment information
+      const updateData: any = {
+        'payment': paymentRecord,
+        status: 'PAID',
+        paidAt: admin.firestore.Timestamp.fromDate(paymentDetails.paidAt),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      };
+
+      const docRef = this.db.collection(this.billsCollection).doc(billId);
+      await docRef.update(updateData);
+
+      // Also update the appointment status if needed
+      if (bill.appointmentId) {
+        const appointmentRef = this.db.collection(this.appointmentsCollection).doc(bill.appointmentId);
+        await appointmentRef.update({
+          billStatus: 'PAID',
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+      }
+
+      // Get the updated bill
+      const updatedBill = await this.getBillById(billId);
+      if (!updatedBill) {
+        throw new Error(`Failed to retrieve updated bill: ${billId}`);
+      }
+
+      logger.info('[BILLING] Payment recorded successfully:', billId);
+      return updatedBill;
+    } catch (error) {
+      logger.error('[BILLING] Error recording payment:', error);
+      throw error;
+    }
+  }
 }
 
 export const billingService = new BillingService();
