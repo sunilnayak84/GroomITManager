@@ -268,8 +268,10 @@ export function useAppointments() {
             const groomerDoc = await getDoc(doc(db, 'users', rawData.groomerId));
             if (groomerDoc.exists()) {
               const rawGroomerData = groomerDoc.data();
+              const groomerName = rawGroomerData.name || 'Unknown Groomer';
+              
               groomerData = {
-                name: rawGroomerData.name || 'Unknown Groomer'
+                name: groomerName
               };
             } else {
               console.error('Groomer not found for ID:', rawData.groomerId);

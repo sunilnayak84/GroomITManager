@@ -63,6 +63,56 @@ export async function registerRoutes(app: Express.Application) {
         return res.json(users);
       }
       
+      if (req.path === '/fix-test-groomer' && req.method === 'POST') {
+        // Fix Test Groomer by updating it to Siddharth's correct name
+        const testGroomerSnapshot = await admin.firestore().collection('users')
+          .where('uid', '==', 'bEWrvBuCjcaS81IPqzBpApXnRyy1').get();
+        
+        if (testGroomerSnapshot.empty) {
+          return res.status(404).json({ error: 'Test Groomer user not found' });
+        }
+        
+        const testGroomerDoc = testGroomerSnapshot.docs[0];
+        const testGroomerData = testGroomerDoc.data();
+        
+        logger.info('[DEBUG] Current Test Groomer data:', {
+          id: testGroomerDoc.id,
+          name: testGroomerData.name,
+          displayName: testGroomerData.displayName,
+          email: testGroomerData.email
+        });
+        
+        // Update to Siddharth's correct name
+        const correctName = 'Siddharth Basodiya';
+        const correctEmail = 'siddharth@groomery.in';
+        await admin.firestore().collection('users').doc(testGroomerDoc.id).update({
+          name: correctName,
+          displayName: correctName,
+          email: correctEmail,
+          isGroomer: true,
+          role: 'staff',
+          specialties: ['groomer'],
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          fixApplied: true,
+          fixDate: admin.firestore.FieldValue.serverTimestamp()
+        });
+        
+        return res.json({
+          success: true,
+          message: 'Test Groomer updated to Siddharth Basodiya successfully',
+          before: {
+            name: testGroomerData.name,
+            displayName: testGroomerData.displayName,
+            email: testGroomerData.email
+          },
+          after: {
+            name: correctName,
+            displayName: correctName,
+            email: correctEmail
+          }
+        });
+      }
+      
       if (req.path === '/fix-siddharth' && req.method === 'POST') {
         // Fix Siddharth's name
         const usersSnapshot = await admin.firestore().collection('users')
