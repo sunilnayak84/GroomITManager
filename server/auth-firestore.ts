@@ -54,7 +54,7 @@ export async function getUserRole(userId: string): Promise<{ role: string; permi
       const userRole = userData?.role || 'staff';
       
       // Get permissions from the role definition, not from user document
-      const roleDoc = await db.collection('roles').doc(userRole).get();
+      const roleDoc = await db.collection('role-definitions').doc(userRole).get();
       
       if (roleDoc.exists) {
         const roleData = roleDoc.data();
