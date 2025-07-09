@@ -205,6 +205,8 @@ router.patch('/bills/:billId', async (req, res) => {
     
     logger.info(`[BILLING_ROUTES] PATCH /bills/${billId}`, { 
       body: req.body,
+      bodyKeys: Object.keys(req.body),
+      discountData: req.body.discount,
       user: req.user?.email 
     });
 

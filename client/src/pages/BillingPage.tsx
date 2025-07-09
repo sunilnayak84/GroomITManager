@@ -284,6 +284,7 @@ export default function BillingPage() {
       const token = await user.getIdToken();
       const apiBaseUrl = import.meta.env.VITE_API_URL || '';
 
+      console.log('[DISCOUNT] About to send:', discountApplication);
       console.log('[DISCOUNT] Sending to backend:', JSON.stringify({
         discount: discountApplication
       }, null, 2));
@@ -302,6 +303,9 @@ export default function BillingPage() {
           }),
         }
       );
+
+      console.log('[DISCOUNT] Response status:', response.status);
+      console.log('[DISCOUNT] Response ok:', response.ok);
 
       if (!response.ok) {
         let errorMessage = `Server returned ${response.status} ${response.statusText}`;
