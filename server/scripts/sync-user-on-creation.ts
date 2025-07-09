@@ -140,7 +140,7 @@ class UserSyncService {
       
       // Get all Firestore users
       const usersSnapshot = await this.db.collection('users').get();
-      const firestoreUserIds = new Set(usersSnapshot.docs.map(doc => doc.id));
+      const firestoreUserIds = new Set(usersSnapshot.docs.map((doc: any) => doc.id));
 
       // Find missing users
       const missingUsers = authResult.users.filter((user: any) => 

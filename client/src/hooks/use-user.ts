@@ -135,10 +135,30 @@ function useFirebaseUser() {
     queryKey: ['user'],
     queryFn: () => {
       return new Promise<AuthUser | null>((resolve) => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
           unsubscribe();
           if (user) {
-            user.getIdTokenResult().then(tokenResult => {
+            try {
+              // Force token refresh to get latest custom claims
+              console.log('[USER] Getting fresh token to ensure latest role data...');
+              await user.getIdToken(true); // Force refresh
+              const tokenResult = await user.getIdTokenResult();
+              
+              const role = (tokenResult.claims.role as UserRole) || 'staff';
+              console.log('[USER] Current role from token:', role);
+              
+              resolve({
+                id: user.uid,
+                email: user.email!,
+                name: user.displayName || user.email!,
+                role,
+                permissions: tokenResult.claims.permissions as string[],
+                branchId: tokenResult.claims.branchId as number
+              });
+            } catch (error) {
+              console.error('[USER] Error getting token result:', error);
+              // Fallback without forcing refresh
+              const tokenResult = await user.getIdTokenResult();
               const role = (tokenResult.claims.role as UserRole) || 'staff';
               resolve({
                 id: user.uid,
@@ -148,7 +168,7 @@ function useFirebaseUser() {
                 permissions: tokenResult.claims.permissions as string[],
                 branchId: tokenResult.claims.branchId as number
               });
-            })
+            }
           } else {
             resolve(null);
           }

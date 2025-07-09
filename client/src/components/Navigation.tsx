@@ -105,14 +105,26 @@ export default function Navigation() {
           <p className="font-medium">{user?.name}</p>
           <p className="text-sm text-muted-foreground capitalize">{user?.role}</p>
         </div>
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={() => logout()}
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          Logout
-        </Button>
+        <div className="flex flex-col gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full text-xs"
+            onClick={() => {
+              window.location.reload();
+            }}
+          >
+            Refresh Role
+          </Button>
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => logout()}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
+          </Button>
+        </div>
       </SidebarFooter>
     </>
   );
