@@ -102,6 +102,9 @@ export default function PaymentDialog({
   const handleRazorpayPayment = async () => {
     try {
       setIsRazorpayLoading(true);
+      
+      // Close the payment dialog to avoid confusion
+      onOpenChange(false);
 
       // Get auth token
       const user = auth.currentUser;

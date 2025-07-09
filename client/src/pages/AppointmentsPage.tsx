@@ -1145,8 +1145,19 @@ export default function AppointmentsPage() {
                   Close
                 </Button>
                 <div className="flex gap-2">
-                  {billPreview.paymentLink && (
-                    <Button onClick={() => window.open(billPreview.paymentLink, '_blank')} className="bg-green-600 hover:bg-green-700">
+                  {billPreview.status === 'PENDING_PAYMENT' && (
+                    <Button 
+                      onClick={() => {
+                        // Find the appointment that matches this bill
+                        const appointment = appointments?.find(apt => apt.billId === billPreview.id);
+                        if (appointment) {
+                          setSelectedAppointmentForPayment(appointment as any);
+                          setShowPaymentDialog(true);
+                          setShowBillModal(false); // Close the bill modal
+                        }
+                      }} 
+                      className="bg-green-600 hover:bg-green-700"
+                    >
                       <CreditCard className="mr-2 h-4 w-4" />
                       Pay Now
                     </Button>
