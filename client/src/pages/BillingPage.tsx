@@ -74,7 +74,6 @@ function BillSkeleton() {
 
 export default function BillingPage() {
   const [bills, setBills] = useState<Bill[]>([]);
-  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<BillStatus | 'ALL'>('ALL');
   const { bills: hookBills, refetch, isLoading } = useBilling();
   const [, params] = useLocation();
@@ -83,38 +82,23 @@ export default function BillingPage() {
   const queryParams = new URLSearchParams(window.location.search);
   const billId = queryParams.get('billId');
 
+  // Update bills from hook and handle loading state
   useEffect(() => {
-    const fetchBills = async () => {
-      try {
-        setLoading(true);
-        console.log('[BILLING] Fetching bills...');
-        await refetch();
-        console.log('[BILLING] Bills fetched successfully');
-      } catch (error) {
-        console.error('[BILLING] Error fetching bills:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBills();
-  }, [refetch]);
-
-  // Update local bills when hookBills changes
-  useEffect(() => {
-    console.log('[BILLING] Hook bills updated:', hookBills?.length);
-    setBills(hookBills || []);
+    if (hookBills) {
+      console.log('[BILLING] Hook bills updated:', hookBills?.length);
+      setBills(hookBills || []);
+    }
   }, [hookBills]);
 
   // Open bill directly if billId is provided
   useEffect(() => {
-    if (billId && !loading && bills.length > 0) {
+    if (billId && !isLoading && bills.length > 0) {
       const bill = bills.find(b => b.id === billId);
       if (bill) {
         window.location.href = `/billing/${billId}`;
       }
     }
-  }, [billId, bills, loading]);
+  }, [billId, bills, isLoading]);
 
   // Filter bills based on selected status
   const filteredBills = filter === 'ALL'
@@ -183,7 +167,7 @@ export default function BillingPage() {
       </div>
 
       <div className="responsive-table-container">
-        {loading ? (
+        {isLoading ? (
           <div className="space-y-4">
             {[...Array(6)].map((_, i) => (
               <BillSkeleton key={i} />
