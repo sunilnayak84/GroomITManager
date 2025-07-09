@@ -548,7 +548,7 @@ export default function BillingPage() {
           onOpenChange={setShowDiscountDialog}
           billSubtotal={calculateTotal(selectedBillForDiscount)}
           currentDiscount={undefined}
-          onApply={(discount) => handleDiscountApply(discount.type === 'PERCENTAGE' ? discount.value : 0)}
+          onApply={(discount) => handleDiscountApply(discount.percentage || 0)}
         />
       )}
     </div>

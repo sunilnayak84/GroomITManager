@@ -145,7 +145,13 @@ export class BillingService {
       const subtotal = billItems.reduce((sum, item) => sum + item.subtotal, 0);
       const discountAmount = input.discount ? this.calculateDiscountAmount(subtotal, input.discount) : 0;
       const taxableAmount = subtotal - discountAmount;
-      const gstDetails = this.calculateGST(taxableAmount, this.DEFAULT_GST_RATE, false);
+      
+      // For now, disable GST by default until proper GST configuration is implemented
+      const gstEnabled = false; // TODO: Read from GST configuration
+      const gstDetails = gstEnabled 
+        ? this.calculateGST(taxableAmount, this.DEFAULT_GST_RATE, false)
+        : { cgst: 0, sgst: 0, igst: 0, totalGST: 0 };
+      
       const totalAmount = taxableAmount + gstDetails.totalGST;
 
       // Generate bill number
