@@ -11,7 +11,70 @@ const router = Router();
 
 // Register API routes
 export async function registerRoutes(app: Express.Application) {
-  // API request logging middleware first
+  // Admin cleanup route (FIRST - bypasses all middleware)
+  app.post('/api/billing/admin/clear-all', async (req, res) => {
+    try {
+      logger.info('[ADMIN_CLEANUP] Emergency cleanup requested');
+      
+      const { cleanupKey } = req.body;
+      if (cleanupKey !== 'CLEAR_BILLING_DATA_2025') {
+        return res.status(403).json({ 
+          error: 'Access denied',
+          message: 'Invalid cleanup authorization'
+        });
+      }
+
+      const db = admin.firestore();
+      
+      // Get all bills
+      const billsSnapshot = await db.collection('bills').get();
+      logger.info(`[ADMIN_CLEANUP] Found ${billsSnapshot.size} bills to delete`);
+      
+      // Delete all bills in batches
+      const batch = db.batch();
+      billsSnapshot.docs.forEach(doc => {
+        batch.delete(doc.ref);
+      });
+      await batch.commit();
+      
+      logger.info('[ADMIN_CLEANUP] All bills deleted successfully');
+      
+      // Reset appointment payment statuses
+      const appointmentsSnapshot = await db.collection('appointments')
+        .where('paymentStatus', '!=', 'pending')
+        .get();
+      
+      logger.info(`[ADMIN_CLEANUP] Found ${appointmentsSnapshot.size} appointments to reset`);
+      
+      if (appointmentsSnapshot.size > 0) {
+        const appointmentBatch = db.batch();
+        appointmentsSnapshot.docs.forEach(doc => {
+          appointmentBatch.update(doc.ref, {
+            paymentStatus: 'pending',
+            billId: admin.firestore.FieldValue.delete()
+          });
+        });
+        await appointmentBatch.commit();
+      }
+      
+      logger.info('[ADMIN_CLEANUP] All appointment payment statuses reset');
+      
+      res.json({ 
+        message: 'All billing data cleared successfully',
+        billsDeleted: billsSnapshot.size,
+        appointmentsReset: appointmentsSnapshot.size
+      });
+
+    } catch (error) {
+      logger.error('[ADMIN_CLEANUP] Error clearing billing data:', error);
+      res.status(500).json({ 
+        error: 'Failed to clear billing data',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
+  // API request logging middleware 
   app.use('/api', (req, res, next) => {
     logger.info('[API] Request:', {
       method: req.method,
