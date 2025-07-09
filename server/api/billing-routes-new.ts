@@ -342,4 +342,35 @@ router.get('/appointments/:appointmentId/bills', async (req, res) => {
   }
 });
 
+/**
+ * POST /api/billing/fix-appointment-links
+ * Fix appointment-bill relationships (utility endpoint)
+ */
+router.post('/fix-appointment-links', async (req, res) => {
+  try {
+    const user = req.user as any;
+
+    logger.info('[BILLING_ROUTES] POST /fix-appointment-links', {
+      timestamp: new Date().toISOString(),
+      user: user.email
+    });
+
+    const result = await billingService.fixAppointmentBillLinks();
+
+    logger.info('[BILLING_ROUTES] Successfully fixed appointment-bill links', {
+      result,
+      timestamp: new Date().toISOString()
+    });
+
+    res.json({ message: 'Successfully fixed appointment-bill links', ...result });
+  } catch (error) {
+    logger.error('[BILLING_ROUTES] Error fixing appointment-bill links:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to fix appointment-bill links';
+    res.status(500).json({ 
+      message: 'Failed to fix appointment-bill links',
+      error: errorMessage 
+    });
+  }
+});
+
 export default router;

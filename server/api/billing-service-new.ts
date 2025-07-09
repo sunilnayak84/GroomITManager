@@ -245,6 +245,18 @@ export class BillingService {
       const createdDoc = await docRef.get();
       const bill = this.convertFirestoreDocToBill(createdDoc.id, createdDoc.data()!);
 
+      // Update appointment with bill ID
+      try {
+        await this.db.collection(this.appointmentsCollection).doc(appointmentId).update({
+          billId: bill.id,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+        logger.info('[BILLING] Updated appointment with bill ID:', { appointmentId, billId: bill.id });
+      } catch (updateError) {
+        logger.error('[BILLING] Failed to update appointment with bill ID:', updateError);
+        // Don't throw error here as the bill was successfully created
+      }
+
       logger.info('[BILLING] Successfully created bill:', bill.id);
       return bill;
     } catch (error) {
@@ -542,6 +554,84 @@ export class BillingService {
       // Fallback to timestamp-based number
       const timestamp = Date.now();
       return `GROOMIT-${timestamp}`;
+    }
+  }
+
+  /**
+   * Fix appointment-bill relationships for existing bills
+   */
+  async fixAppointmentBillLinks(): Promise<{ fixed: number; total: number; errors: any[] }> {
+    try {
+      logger.info('[BILLING] Starting fix for appointment-bill links');
+      
+      const results = {
+        fixed: 0,
+        total: 0,
+        errors: [] as any[]
+      };
+
+      // Get all bills
+      const billsSnapshot = await this.db.collection(this.billsCollection).get();
+      results.total = billsSnapshot.size;
+
+      logger.info(`[BILLING] Found ${results.total} bills to check`);
+
+      for (const billDoc of billsSnapshot.docs) {
+        try {
+          const billData = billDoc.data();
+          const billId = billDoc.id;
+          const appointmentId = billData.appointmentId;
+
+          if (!appointmentId) {
+            logger.warn(`[BILLING] Bill ${billId} has no appointmentId`);
+            continue;
+          }
+
+          // Check if appointment already has billId
+          const appointmentRef = this.db.collection(this.appointmentsCollection).doc(appointmentId);
+          const appointmentDoc = await appointmentRef.get();
+
+          if (!appointmentDoc.exists) {
+            logger.warn(`[BILLING] Appointment ${appointmentId} not found for bill ${billId}`);
+            results.errors.push({
+              billId,
+              appointmentId,
+              error: 'Appointment not found'
+            });
+            continue;
+          }
+
+          const appointmentData = appointmentDoc.data();
+          
+          if (appointmentData?.billId) {
+            logger.info(`[BILLING] Appointment ${appointmentId} already has billId: ${appointmentData.billId}`);
+            continue;
+          }
+
+          // Update appointment with bill ID
+          await appointmentRef.update({
+            billId: billId,
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+          });
+
+          logger.info(`[BILLING] Fixed appointment ${appointmentId} -> bill ${billId}`);
+          results.fixed++;
+
+        } catch (error) {
+          logger.error(`[BILLING] Error fixing bill ${billDoc.id}:`, error);
+          results.errors.push({
+            billId: billDoc.id,
+            error: error instanceof Error ? error.message : 'Unknown error'
+          });
+        }
+      }
+
+      logger.info('[BILLING] Fix completed:', results);
+      return results;
+
+    } catch (error) {
+      logger.error('[BILLING] Error in fixAppointmentBillLinks:', error);
+      throw error;
     }
   }
 }
