@@ -25,13 +25,21 @@ const auth = getAuth();
 
 async function fetchRoles(): Promise<Role[]> {
   try {
-    console.log('[ROLES] Fetching roles from Firestore...');
-    const rolesSnapshot = await getDocs(collection(db, 'role-definitions'));
-    const roles = rolesSnapshot.docs.map(doc => ({
-      id: doc.id,
-      name: doc.id,
-      ...doc.data()
-    } as Role));
+    console.log('[ROLES] Fetching roles from backend API...');
+    
+    const response = await fetch('/api/auth/roles', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${await auth.currentUser?.getIdToken()}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch roles from backend');
+    }
+
+    const roles = await response.json();
     console.log('[ROLES] Fetched roles:', roles);
     return roles;
   } catch (error) {
@@ -42,23 +50,21 @@ async function fetchRoles(): Promise<Role[]> {
 
 async function fetchUsers(): Promise<User[]> {
   try {
-    console.log('[USERS] Fetching users from Firestore...');
-    const usersSnapshot = await getDocs(collection(db, 'users'));
-
-    // Map Firestore users
-    const users = usersSnapshot.docs.map(doc => {
-      const data = doc.data();
-      return {
-        uid: doc.id,
-        email: data.email,
-        displayName: data.displayName || data.email?.split('@')[0] || 'N/A',
-        role: data.role || 'user',
-        lastSignInTime: data.lastSignInTime || 'Never',
-        createdAt: data.createdAt || null,
-        disabled: data.disabled || false
-      } as User;
+    console.log('[USERS] Fetching users from backend API...');
+    
+    const response = await fetch('/api/auth/users', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${await auth.currentUser?.getIdToken()}`
+      }
     });
 
+    if (!response.ok) {
+      throw new Error('Failed to fetch users from backend');
+    }
+
+    const users = await response.json();
     console.log('[USERS] Fetched users:', users);
     return users;
   } catch (error) {
@@ -111,11 +117,11 @@ async function updateUserRole(params: { userId: string; role: string }): Promise
   try {
     console.log('[USERS] Updating user role via backend API:', params);
     
-    // Use backend API to properly sync both Firestore and Firebase Auth custom claims
     const response = await fetch('/api/auth/update-user-role', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${await auth.currentUser?.getIdToken()}`
       },
       body: JSON.stringify({
         userId: params.userId,
@@ -131,6 +137,39 @@ async function updateUserRole(params: { userId: string; role: string }): Promise
     console.log('[USERS] Updated user role successfully via backend');
   } catch (error) {
     console.error('[USERS] Error updating user role:', error);
+    throw error;
+  }
+}
+
+async function createUser(params: { 
+  email: string; 
+  password?: string; 
+  displayName?: string; 
+  role: string; 
+  phoneNumber?: string; 
+}): Promise<User> {
+  try {
+    console.log('[USERS] Creating user via backend API:', { email: params.email, role: params.role });
+    
+    const response = await fetch('/api/auth/create-user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${await auth.currentUser?.getIdToken()}`
+      },
+      body: JSON.stringify(params)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to create user');
+    }
+
+    const result = await response.json();
+    console.log('[USERS] Created user successfully via backend:', result.user);
+    return result.user;
+  } catch (error) {
+    console.error('[USERS] Error creating user:', error);
     throw error;
   }
 }
@@ -236,6 +275,24 @@ export function useRoles() {
     }
   });
 
+  const createUserMutation = useMutation({
+    mutationFn: createUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      toast({
+        title: "Success",
+        description: "User created successfully"
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
   return {
     roles: roles || [],
     isLoadingRoles,
@@ -247,6 +304,8 @@ export function useRoles() {
     isUpdating: updateRoleMutation.isPending,
     updateUserRole: updateUserRoleMutation.mutate,
     isUpdatingUserRole: updateUserRoleMutation.isPending,
+    createUser: createUserMutation.mutate,
+    isCreatingUser: createUserMutation.isPending,
     error: rolesError || usersError
   };
 }

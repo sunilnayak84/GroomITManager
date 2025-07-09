@@ -49,7 +49,17 @@ const roleSchema = z.object({
   description: z.string().optional(),
 });
 
+// Schema for user creation
+const userSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters').optional(),
+  displayName: z.string().min(2, 'Display name must be at least 2 characters').optional(),
+  role: z.string().min(1, 'Role is required'),
+  phoneNumber: z.string().optional(),
+});
+
 type RoleFormValues = z.infer<typeof roleSchema>;
+type UserFormValues = z.infer<typeof userSchema>;
 
 // Group permissions by category for better organization
 const permissionCategories = {
@@ -129,6 +139,8 @@ export function RoleManagement() {
     isLoadingUsers,
     updateUserRole,
     isUpdatingUserRole,
+    createUser,
+    isCreatingUser,
     error
   } = useRoles();
 
@@ -143,7 +155,9 @@ export function RoleManagement() {
   }, [error]);
 
   const [editingRole, setEditingRole] = useState<string | null>(null);
+  const [showCreateUser, setShowCreateUser] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
+  const userFormRef = useRef<HTMLDivElement>(null);
 
   const form = useForm<RoleFormValues>({
     resolver: zodResolver(roleSchema),
@@ -151,6 +165,17 @@ export function RoleManagement() {
       name: '',
       permissions: [],
       description: '',
+    },
+  });
+
+  const userForm = useForm<UserFormValues>({
+    resolver: zodResolver(userSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      displayName: '',
+      role: '',
+      phoneNumber: '',
     },
   });
 
@@ -212,6 +237,17 @@ export function RoleManagement() {
         description: error instanceof Error ? error.message : 'Failed to save role',
         variant: 'destructive',
       });
+    }
+  };
+
+  const onUserSubmit = async (data: UserFormValues) => {
+    try {
+      console.log('Creating user:', data);
+      await createUser(data);
+      setShowCreateUser(false);
+      userForm.reset();
+    } catch (error) {
+      console.error('Error creating user:', error);
     }
   };
 
@@ -419,6 +455,22 @@ export function RoleManagement() {
           <CardDescription>Manage user role assignments</CardDescription>
         </CardHeader>
         <CardContent>
+          <div className="flex justify-between items-center mb-4">
+            <div className="text-sm text-muted-foreground">
+              {users?.length || 0} users found
+            </div>
+            <ProtectedElement
+              requiredPermissions={['manage_staff', 'manage_roles']}
+              fallback={null}
+            >
+              <Button
+                onClick={() => setShowCreateUser(true)}
+                disabled={isCreatingUser}
+              >
+                {isCreatingUser ? 'Creating...' : 'Create User'}
+              </Button>
+            </ProtectedElement>
+          </div>
           {isLoadingUsers ? (
             <div className="text-center py-4">Loading users...</div>
           ) : (
@@ -468,6 +520,132 @@ export function RoleManagement() {
           )}
         </CardContent>
       </Card>
+
+      {/* Create User Dialog */}
+      {showCreateUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4">Create New User</h3>
+            <Form {...userForm}>
+              <form onSubmit={userForm.handleSubmit(onUserSubmit)} className="space-y-4">
+                <FormField
+                  control={userForm.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="email"
+                          placeholder="user@example.com"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={userForm.control}
+                  name="displayName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Display Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="Full Name"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={userForm.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Role</FormLabel>
+                      <FormControl>
+                        <Select value={field.value} onValueChange={field.onChange}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a role" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {roles?.map((role) => (
+                              <SelectItem key={role.id} value={role.name}>
+                                {role.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={userForm.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password (optional)</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="password"
+                          placeholder="Leave blank for default password"
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        If not provided, user will get default password: Welcome123!
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={userForm.control}
+                  name="phoneNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Number (optional)</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="+91 9999999999"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex justify-end space-x-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setShowCreateUser(false);
+                      userForm.reset();
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={isCreatingUser}>
+                    {isCreatingUser ? 'Creating...' : 'Create User'}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -4,6 +4,7 @@ import * as Express from 'express';
 import { staffManagementRouter } from './api/staff-management';
 import { authenticateFirebase } from './middleware/auth';
 import { billingRouter } from './api/billing-routes';
+import authRouter from './api/auth-routes';
 import { logger } from './utils/logger';
 
 const router = Router();
@@ -42,6 +43,10 @@ export async function registerRoutes(app: Express.Application) {
   // Register general API routes
   logger.info('[ROUTES] Registering general API routes');
   app.use('/api', router);
+
+  // Register authentication routes
+  logger.info('[ROUTES] Registering authentication routes');
+  app.use('/api/auth', authRouter);
 
   // Register staff management routes
   logger.info('[ROUTES] Registering staff management routes');
