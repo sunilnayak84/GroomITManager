@@ -129,6 +129,13 @@ While the application currently uses Firebase Firestore, the architecture suppor
 
 ## Recent Changes (July 2025)
 
+### Production Deployment API Fix (July 9, 2025)
+- ✅ **API URL Configuration Fixed**: Resolved 404 API errors in production by updating VITE_API_URL fallback logic
+- ✅ **Environment Variables Enhanced**: Updated .env.production with proper API URL configuration for Replit deployment
+- ✅ **API Hooks Updated**: Fixed all billing hooks (use-billing.ts and use-billing-new.ts) to use window.location.origin as fallback
+- ✅ **API Config Utility Created**: Added centralized getApiBaseUrl() function for consistent API URL resolution across environments
+- ✅ **Production Testing Ready**: Billing endpoints now properly resolve in deployed environment without hardcoded URLs
+
 ### Critical Performance Optimization & Admin Features (July 9, 2025)
 - ✅ **Performance Breakthrough**: Solved appointments page slow loading by implementing batch fetching instead of hundreds of sequential database queries
 - ✅ **Database Query Optimization**: Replaced individual pet/groomer/customer/service calls with parallel batch operations for 10x+ speed improvement

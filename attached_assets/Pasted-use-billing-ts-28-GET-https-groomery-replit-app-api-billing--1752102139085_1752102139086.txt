@@ -1,0 +1,226 @@
+use-billing.ts:28 
+            
+            
+           GET https://groomery.replit.app/api/billing/bills 404 (Not Found)
+i @ use-billing.ts:28
+await in i
+o @ query.js:193
+v @ retryer.js:80
+start @ retryer.js:121
+fetch @ query.js:275
+Uh @ queryObserver.js:173
+fetch @ queryObserver.js:163
+refetch @ queryObserver.js:153
+onClick @ BillingPage.tsx:551
+Pf @ react-dom.production.min.js:54
+zf @ react-dom.production.min.js:54
+Tf @ react-dom.production.min.js:55
+ui @ react-dom.production.min.js:105
+Ws @ react-dom.production.min.js:106
+(anonymous) @ react-dom.production.min.js:117
+Eo @ react-dom.production.min.js:273
+ms @ react-dom.production.min.js:52
+Rl @ react-dom.production.min.js:109
+Gu @ react-dom.production.min.js:74
+Qf @ react-dom.production.min.js:73Understand this error
+use-billing.ts:37 [BILLING] Failed to fetch bills: {"message":"API endpoint not found"}
+i @ use-billing.ts:37
+await in i
+o @ query.js:193
+v @ retryer.js:80
+start @ retryer.js:121
+fetch @ query.js:275
+Uh @ queryObserver.js:173
+fetch @ queryObserver.js:163
+refetch @ queryObserver.js:153
+onClick @ BillingPage.tsx:551
+Pf @ react-dom.production.min.js:54
+zf @ react-dom.production.min.js:54
+Tf @ react-dom.production.min.js:55
+ui @ react-dom.production.min.js:105
+Ws @ react-dom.production.min.js:106
+(anonymous) @ react-dom.production.min.js:117
+Eo @ react-dom.production.min.js:273
+ms @ react-dom.production.min.js:52
+Rl @ react-dom.production.min.js:109
+Gu @ react-dom.production.min.js:74
+Qf @ react-dom.production.min.js:73Understand this error
+use-billing.ts:45 [BILLING] Error fetching bills: Error: Failed to fetch bills: 404
+    at i (use-billing.ts:38:15)
+i @ use-billing.ts:45
+await in i
+o @ query.js:193
+v @ retryer.js:80
+start @ retryer.js:121
+fetch @ query.js:275
+Uh @ queryObserver.js:173
+fetch @ queryObserver.js:163
+refetch @ queryObserver.js:153
+onClick @ BillingPage.tsx:551
+Pf @ react-dom.production.min.js:54
+zf @ react-dom.production.min.js:54
+Tf @ react-dom.production.min.js:55
+ui @ react-dom.production.min.js:105
+Ws @ react-dom.production.min.js:106
+(anonymous) @ react-dom.production.min.js:117
+Eo @ react-dom.production.min.js:273
+ms @ react-dom.production.min.js:52
+Rl @ react-dom.production.min.js:109
+Gu @ react-dom.production.min.js:74
+Qf @ react-dom.production.min.js:73Understand this error
+use-billing.ts:27 [BILLING] Fetching bills...
+use-billing.ts:28 
+            
+            
+           GET https://groomery.replit.app/api/billing/bills 404 (Not Found)
+i @ use-billing.ts:28
+await in i
+o @ query.js:193
+v @ retryer.js:80
+(anonymous) @ retryer.js:104
+Promise.then
+(anonymous) @ retryer.js:100
+Promise.catch
+v @ retryer.js:84
+start @ retryer.js:121
+fetch @ query.js:275
+Uh @ queryObserver.js:173
+fetch @ queryObserver.js:163
+refetch @ queryObserver.js:153
+onClick @ BillingPage.tsx:551
+Pf @ react-dom.production.min.js:54
+zf @ react-dom.production.min.js:54
+Tf @ react-dom.production.min.js:55
+ui @ react-dom.production.min.js:105
+Ws @ react-dom.production.min.js:106
+(anonymous) @ react-dom.production.min.js:117
+Eo @ react-dom.production.min.js:273
+ms @ react-dom.production.min.js:52
+Rl @ react-dom.production.min.js:109
+Gu @ react-dom.production.min.js:74
+Qf @ react-dom.production.min.js:73Understand this error
+use-billing.ts:37 [BILLING] Failed to fetch bills: {"message":"API endpoint not found"}
+i @ use-billing.ts:37
+await in i
+o @ query.js:193
+v @ retryer.js:80
+(anonymous) @ retryer.js:104
+Promise.then
+(anonymous) @ retryer.js:100
+Promise.catch
+v @ retryer.js:84
+start @ retryer.js:121
+fetch @ query.js:275
+Uh @ queryObserver.js:173
+fetch @ queryObserver.js:163
+refetch @ queryObserver.js:153
+onClick @ BillingPage.tsx:551
+Pf @ react-dom.production.min.js:54
+zf @ react-dom.production.min.js:54
+Tf @ react-dom.production.min.js:55
+ui @ react-dom.production.min.js:105
+Ws @ react-dom.production.min.js:106
+(anonymous) @ react-dom.production.min.js:117
+Eo @ react-dom.production.min.js:273
+ms @ react-dom.production.min.js:52
+Rl @ react-dom.production.min.js:109
+Gu @ react-dom.production.min.js:74
+Qf @ react-dom.production.min.js:73Understand this error
+use-billing.ts:45 [BILLING] Error fetching bills: Error: Failed to fetch bills: 404
+    at i (use-billing.ts:38:15)
+i @ use-billing.ts:45
+await in i
+o @ query.js:193
+v @ retryer.js:80
+(anonymous) @ retryer.js:104
+Promise.then
+(anonymous) @ retryer.js:100
+Promise.catch
+v @ retryer.js:84
+start @ retryer.js:121
+fetch @ query.js:275
+Uh @ queryObserver.js:173
+fetch @ queryObserver.js:163
+refetch @ queryObserver.js:153
+onClick @ BillingPage.tsx:551
+Pf @ react-dom.production.min.js:54
+zf @ react-dom.production.min.js:54
+Tf @ react-dom.production.min.js:55
+ui @ react-dom.production.min.js:105
+Ws @ react-dom.production.min.js:106
+(anonymous) @ react-dom.production.min.js:117
+Eo @ react-dom.production.min.js:273
+ms @ react-dom.production.min.js:52
+Rl @ react-dom.production.min.js:109
+Gu @ react-dom.production.min.js:74
+Qf @ react-dom.production.min.js:73Understand this error
+use-billing.ts:27 [BILLING] Fetching bills...
+use-billing.ts:28 
+            
+            
+           GET https://groomery.replit.app/api/billing/bills 404 (Not Found)
+i @ use-billing.ts:28
+await in i
+o @ query.js:193
+v @ retryer.js:80
+(anonymous) @ retryer.js:104
+Promise.then
+(anonymous) @ retryer.js:100
+Promise.catch
+v @ retryer.js:84
+(anonymous) @ retryer.js:104
+Promise.then
+(anonymous) @ retryer.js:100
+Promise.catch
+v @ retryer.js:84
+start @ retryer.js:121
+fetch @ query.js:275
+Uh @ queryObserver.js:173
+fetch @ queryObserver.js:163
+refetch @ queryObserver.js:153
+onClick @ BillingPage.tsx:551
+Pf @ react-dom.production.min.js:54
+zf @ react-dom.production.min.js:54
+Tf @ react-dom.production.min.js:55
+ui @ react-dom.production.min.js:105
+Ws @ react-dom.production.min.js:106
+(anonymous) @ react-dom.production.min.js:117
+Eo @ react-dom.production.min.js:273
+ms @ react-dom.production.min.js:52
+Rl @ react-dom.production.min.js:109
+Gu @ react-dom.production.min.js:74
+Qf @ react-dom.production.min.js:73Understand this error
+use-billing.ts:37 [BILLING] Failed to fetch bills: {"message":"API endpoint not found"}
+i @ use-billing.ts:37
+await in i
+o @ query.js:193
+v @ retryer.js:80
+(anonymous) @ retryer.js:104
+Promise.then
+(anonymous) @ retryer.js:100
+Promise.catch
+v @ retryer.js:84
+(anonymous) @ retryer.js:104
+Promise.then
+(anonymous) @ retryer.js:100
+Promise.catch
+v @ retryer.js:84
+start @ retryer.js:121
+fetch @ query.js:275
+Uh @ queryObserver.js:173
+fetch @ queryObserver.js:163
+refetch @ queryObserver.js:153
+onClick @ BillingPage.tsx:551
+Pf @ react-dom.production.min.js:54
+zf @ react-dom.production.min.js:54
+Tf @ react-dom.production.min.js:55
+ui @ react-dom.production.min.js:105
+Ws @ react-dom.production.min.js:106
+(anonymous) @ react-dom.production.min.js:117
+Eo @ react-dom.production.min.js:273
+ms @ react-dom.production.min.js:52
+Rl @ react-dom.production.min.js:109
+Gu @ react-dom.production.min.js:74
+Qf @ react-dom.production.min.js:73Understand this error
+use-billing.ts:45 [BILLING] Error fetching bills: Error: Failed to fetch bills: 404
+    at i (use-billing.ts:38:15)
