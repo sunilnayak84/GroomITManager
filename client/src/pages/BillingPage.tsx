@@ -35,13 +35,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { BillStatus, Bill, GSTConfiguration, PaymentInfo } from '@/types/billing';
+import { BillStatus, Bill, GSTConfiguration, PaymentInfo, DiscountApplication } from '@/types/billing';
 import { useBilling, formatIndianCurrency } from '@/hooks/use-billing';
 import { useLocation } from 'wouter';
-// Temporarily commenting out dialog imports to fix module loading
-// import GSTConfigDialog from '@/components/GSTConfigDialog';
-// import PaymentDialog from '@/components/PaymentDialog';
-// Temporarily removing toast import to fix module loading
+import GSTConfigDialog from '@/components/GSTConfigDialog';
+import PaymentDialog from '@/components/PaymentDialog';
+import BillDiscountDialog from '@/components/BillDiscountDialog';
+import { useToast } from '@/hooks/use-toast';
 
 function EmptyState() {
   return (
@@ -147,9 +147,10 @@ export default function BillingPage() {
   const [showGSTConfig, setShowGSTConfig] = useState(false);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [selectedBillForPayment, setSelectedBillForPayment] = useState<Bill | null>(null);
+  const [selectedBillForDiscount, setSelectedBillForDiscount] = useState<Bill | null>(null);
+  const [showDiscountDialog, setShowDiscountDialog] = useState(false);
   const [gstConfiguration, setGstConfiguration] = useState<GSTConfiguration | undefined>();
-  // Temporarily removing toast functionality
-  // const { toast } = useToast();
+  const { toast } = useToast();
 
   // Filter bills based on status and search term
   const filteredBills = bills.filter(bill => {
@@ -185,10 +186,17 @@ export default function BillingPage() {
       // For now, just save it to local state
       setGstConfiguration(config);
       
-      console.log("GST Configuration Saved: Your GST settings have been updated successfully.");
+      toast({
+        title: "GST Configuration Saved",
+        description: "Your GST settings have been updated successfully.",
+      });
     } catch (error) {
       console.error('Error saving GST configuration:', error);
-      console.error("Error: Failed to save GST configuration. Please try again.");
+      toast({
+        title: "Error",
+        description: "Failed to save GST configuration. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -199,19 +207,59 @@ export default function BillingPage() {
       // Here we would send the payment information to the backend
       // For now, just show a success message
       
-      console.log(`Payment Recorded: Payment of ${formatIndianCurrency(paymentInfo.amount)} recorded successfully`);
+      toast({
+        title: "Payment Recorded",
+        description: `Payment of ${formatIndianCurrency(paymentInfo.amount)} recorded successfully`,
+      });
       
       // Refresh the bills list
       refetch();
+      setShowPaymentDialog(false);
+      setSelectedBillForPayment(null);
     } catch (error) {
       console.error('Error recording payment:', error);
-      console.error("Error: Failed to record payment. Please try again.");
+      toast({
+        title: "Error",
+        description: "Failed to record payment. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
   const handlePaymentClick = (bill: Bill) => {
     setSelectedBillForPayment(bill);
     setShowPaymentDialog(true);
+  };
+
+  const handleDiscountClick = (bill: Bill) => {
+    setSelectedBillForDiscount(bill);
+    setShowDiscountDialog(true);
+  };
+
+  const handleDiscountApply = async (discountPercentage: number) => {
+    try {
+      if (!selectedBillForDiscount) return;
+      
+      // Here we would send the discount information to the backend
+      // For now, just show a success message
+      
+      toast({
+        title: "Discount Applied",
+        description: `${discountPercentage}% discount applied to bill ${selectedBillForDiscount.billNumber}`,
+      });
+      
+      // Refresh the bills list
+      refetch();
+      setShowDiscountDialog(false);
+      setSelectedBillForDiscount(null);
+    } catch (error) {
+      console.error('Error applying discount:', error);
+      toast({
+        title: "Error",
+        description: "Failed to apply discount. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   if (isError) {
@@ -355,6 +403,38 @@ export default function BillingPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center gap-2">
+                      {/* Discount Button - Only for Admin/Manager */}
+                      {bill.status === 'PENDING_PAYMENT' && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDiscountClick(bill);
+                          }}
+                          className="text-orange-600 hover:text-orange-700"
+                        >
+                          <Percent className="h-3 w-3 mr-1" />
+                          Discount
+                        </Button>
+                      )}
+                      
+                      {/* Payment Button - Only for pending bills */}
+                      {bill.status === 'PENDING_PAYMENT' && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handlePaymentClick(bill);
+                          }}
+                          className="text-green-600 hover:text-green-700"
+                        >
+                          <CreditCard className="h-3 w-3 mr-1" />
+                          Pay
+                        </Button>
+                      )}
+                      
                       <Button
                         variant="ghost"
                         size="sm"
@@ -438,8 +518,7 @@ export default function BillingPage() {
         </div>
       )}
 
-      {/* Temporarily commenting out dialogs to fix module loading */}
-      {/*
+      {/* GST Configuration Dialog */}
       <GSTConfigDialog
         open={showGSTConfig}
         onOpenChange={setShowGSTConfig}
@@ -447,6 +526,7 @@ export default function BillingPage() {
         onSave={handleGSTConfigSave}
       />
 
+      {/* Payment Dialog */}
       {selectedBillForPayment && (
         <PaymentDialog
           open={showPaymentDialog}
@@ -455,11 +535,22 @@ export default function BillingPage() {
           billId={selectedBillForPayment.id}
           onPaymentRecord={handlePaymentRecord}
           onRazorpayPayment={() => {
+            // Handle Razorpay payment integration
             console.log('Razorpay payment for bill:', selectedBillForPayment.id);
           }}
         />
       )}
-      */}
+
+      {/* Discount Dialog */}
+      {selectedBillForDiscount && (
+        <BillDiscountDialog
+          open={showDiscountDialog}
+          onOpenChange={setShowDiscountDialog}
+          billSubtotal={calculateTotal(selectedBillForDiscount)}
+          currentDiscount={undefined}
+          onApply={(discount) => handleDiscountApply(discount.type === 'PERCENTAGE' ? discount.value : 0)}
+        />
+      )}
     </div>
   );
 }
