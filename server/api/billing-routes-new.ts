@@ -95,6 +95,57 @@ router.get('/bills/:billId', async (req, res) => {
 });
 
 /**
+ * POST /api/billing/generate/:appointmentId
+ * Generate a new bill from appointment (legacy endpoint for compatibility)
+ */
+router.post('/generate/:appointmentId', async (req, res) => {
+  try {
+    const { appointmentId } = req.params;
+    
+    logger.info(`[BILLING_ROUTES] POST /generate/${appointmentId}`, { 
+      body: req.body, 
+      user: req.user?.email 
+    });
+
+    // Create bill input with the appointment ID
+    const billInput = {
+      appointmentId,
+      ...req.body
+    };
+
+    // Validate input
+    const inputResult = BillCreateInputSchema.safeParse(billInput);
+    if (!inputResult.success) {
+      logger.warn('[BILLING_ROUTES] Invalid bill generation input:', inputResult.error);
+      return res.status(400).json({ 
+        error: 'Invalid input',
+        details: inputResult.error.issues
+      });
+    }
+
+    const input = inputResult.data;
+    const userId = req.user?.uid || req.user?.email || 'unknown';
+
+    // Create the bill
+    const bill = await billingService.createBillFromAppointment(
+      appointmentId,
+      input,
+      userId
+    );
+
+    logger.info(`[BILLING_ROUTES] Successfully generated bill from appointment: ${appointmentId} -> ${bill.id}`);
+    res.status(201).json(bill);
+
+  } catch (error) {
+    logger.error(`[BILLING_ROUTES] Error generating bill from appointment ${req.params.appointmentId}:`, error);
+    res.status(500).json({ 
+      error: 'Failed to generate bill',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+/**
  * POST /api/billing/bills
  * Create a new bill from appointment
  */
