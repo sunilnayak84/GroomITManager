@@ -229,61 +229,124 @@ export default function AppointmentsPage() {
   }, [appointments, dateFilter, statusFilter]);
 
   const [sortConfig, setSortConfig] = useState<{
-    key: 'date';
+    key: string;
     direction: 'asc' | 'desc' | null;
   }>(() => {
     const savedConfig = localStorage.getItem('appointmentSortConfig');
     return savedConfig ? JSON.parse(savedConfig) : { key: 'date', direction: null };
   });
 
-  // Save sort config when it changes
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState<number>(() => {
+    const savedPageSize = localStorage.getItem('appointmentPageSize');
+    return savedPageSize ? parseInt(savedPageSize, 10) : 20;
+  });
+
+  // Save sort config and pagination settings when they change
   useEffect(() => {
     localStorage.setItem('appointmentSortConfig', JSON.stringify(sortConfig));
   }, [sortConfig]);
+
+  useEffect(() => {
+    localStorage.setItem('appointmentPageSize', itemsPerPage.toString());
+    setCurrentPage(1); // Reset to first page when page size changes
+  }, [itemsPerPage]);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [dateFilter, statusFilter]);
 
   const sortedAppointments = useMemo(() => {
     if (!filteredAppointments || !sortConfig.direction) return filteredAppointments;
 
     return [...filteredAppointments].sort((a, b) => {
-      const dateA = new Date(a[sortConfig.key]).getTime();
-      const dateB = new Date(b[sortConfig.key]).getTime();
-      return sortConfig.direction === 'asc' ? dateA - dateB : dateB - dateA;
+      let valueA: any;
+      let valueB: any;
+
+      switch (sortConfig.key) {
+        case 'date':
+          valueA = new Date(a.date).getTime();
+          valueB = new Date(b.date).getTime();
+          break;
+        case 'pet':
+          valueA = a.pet?.name?.toLowerCase() || '';
+          valueB = b.pet?.name?.toLowerCase() || '';
+          break;
+        case 'customer':
+          valueA = `${a.customer?.firstName} ${a.customer?.lastName}`.toLowerCase();
+          valueB = `${b.customer?.firstName} ${b.customer?.lastName}`.toLowerCase();
+          break;
+        case 'groomer':
+          valueA = a.groomer?.name?.toLowerCase() || '';
+          valueB = b.groomer?.name?.toLowerCase() || '';
+          break;
+        case 'service':
+          valueA = a.service?.[0]?.name?.toLowerCase() || '';
+          valueB = b.service?.[0]?.name?.toLowerCase() || '';
+          break;
+        case 'status':
+          valueA = a.status?.toLowerCase() || '';
+          valueB = b.status?.toLowerCase() || '';
+          break;
+        default:
+          return 0;
+      }
+
+      if (sortConfig.key === 'date') {
+        return sortConfig.direction === 'asc' ? valueA - valueB : valueB - valueA;
+      } else {
+        if (valueA < valueB) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (valueA > valueB) return sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+      }
     });
   }, [filteredAppointments, sortConfig]);
 
+  // Pagination logic
+  const totalItems = sortedAppointments?.length || 0;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedAppointments = sortedAppointments?.slice(startIndex, endIndex) || [];
+
+  // Function to create sortable header
+  const createSortableHeader = (label: string, key: string) => () => (
+    <div
+      className="flex items-center cursor-pointer hover:text-primary transition-colors"
+      onClick={() => {
+        setSortConfig({
+          key,
+          direction: sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc',
+        });
+      }}
+    >
+      <span>{label}</span>
+      <svg
+        className={`w-4 h-4 ml-1 transform transition-transform ${
+          sortConfig.key === key && sortConfig.direction === 'asc' ? 'rotate-180' : ''
+        } ${sortConfig.key !== key || !sortConfig.direction ? 'opacity-50' : 'opacity-100'}`}
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="m6 9 6 6 6-6"/>
+      </svg>
+    </div>
+  );
+
   const columns = useMemo(() => [
     {
-      header: () => (
-        <div
-          className="flex items-center cursor-pointer hover:text-primary transition-colors"
-          onClick={() => {
-            setSortConfig({
-              key: 'date',
-              direction: sortConfig.direction === 'asc' ? 'desc' : 'asc',
-            });
-          }}
-        >
-          <span>Date</span>
-          <svg
-            className={`w-4 h-4 ml-1 transform transition-transform ${
-              sortConfig.direction === 'asc' ? 'rotate-180' : ''
-            } ${!sortConfig.direction ? 'opacity-0' : 'opacity-100'}`}
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="m6 9 6 6 6-6"/>
-          </svg>
-        </div>
-      ),
+      header: createSortableHeader("Date", "date"),
       cell: ({ date }: AppointmentWithRelations) => format(new Date(date), "PPp"),
     },
     {
-      header: "Pet",
+      header: createSortableHeader("Pet", "pet"),
       cell: ({ pet, petId }: AppointmentWithRelations) => (
         <div className="flex items-center gap-2 cursor-pointer" onClick={async () => {
           if (!petId) return;
@@ -330,7 +393,7 @@ export default function AppointmentsPage() {
       ),
     },
     {
-      header: "Customer",
+      header: createSortableHeader("Customer", "customer"),
       cell: (row: AppointmentWithRelations) => (
         <div className="font-medium cursor-pointer" onClick={async () => {
           const petDoc = await getDoc(doc(db, 'pets', row.petId));
@@ -356,11 +419,11 @@ export default function AppointmentsPage() {
       ),
     },
     {
-      header: "Groomer",
+      header: createSortableHeader("Groomer", "groomer"),
       cell: (row: AppointmentWithRelations) => row.groomer.name,
     },
     {
-      header: "Service",
+      header: createSortableHeader("Service", "service"),
       cell: (row: AppointmentWithRelations) => (
         <div>
           {row.service && row.service.length > 1 ? (
@@ -384,7 +447,7 @@ export default function AppointmentsPage() {
       ),
     },
     {
-      header: "Status",
+      header: createSortableHeader("Status", "status"),
       cell: ({ status }: AppointmentWithRelations) => (
         <Badge className={statusColors[status]}>
           {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -717,11 +780,91 @@ export default function AppointmentsPage() {
 
       {view === 'list' ? (
         <div className="bg-white rounded-lg border shadow-sm">
+          {/* Pagination Controls - Top */}
+          <div className="flex items-center justify-between px-6 py-4 border-b">
+            <div className="flex items-center gap-4">
+              <div className="text-sm text-muted-foreground">
+                Showing {totalItems === 0 ? 0 : startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} appointments
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Items per page:</span>
+                <Select value={itemsPerPage.toString()} onValueChange={(value) => setItemsPerPage(parseInt(value))}>
+                  <SelectTrigger className="w-20">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+
           <DataTable
             columns={columns}
-            data={sortedAppointments as AppointmentWithRelations[]}
-            isLoading={appointmentsLoading || isLoading} // Combine loading states
+            data={paginatedAppointments as AppointmentWithRelations[]}
+            isLoading={appointmentsLoading || isLoading}
           />
+
+          {/* Pagination Controls - Bottom */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between px-6 py-4 border-t">
+              <div className="text-sm text-muted-foreground">
+                Page {currentPage} of {totalPages}
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </Button>
+                
+                {/* Page numbers */}
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum;
+                    if (totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i;
+                    } else {
+                      pageNum = currentPage - 2 + i;
+                    }
+                    
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={currentPage === pageNum ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCurrentPage(pageNum)}
+                        className="w-8 h-8 p-0"
+                      >
+                        {pageNum}
+                      </Button>
+                    );
+                  })}
+                </div>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <AppointmentCalendar
