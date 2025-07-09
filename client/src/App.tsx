@@ -31,8 +31,8 @@ export default function App() {
             <BillingPage />
           </ProtectedRoute>
         )} />
-        <Route path="/billing/:billId">
-          {(params) => <BillDetailsPage billId={params.billId} />}
+        <Route path="/billing/:id">
+          {(params) => <BillDetailsPage billId={params.id} />}
         </Route>
         <Route>
           <div className="flex items-center justify-center min-h-screen">
