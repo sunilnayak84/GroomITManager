@@ -132,10 +132,35 @@ export class BillingService {
         throw new Error(`Appointment not found: ${appointmentId}`);
       }
 
+      // Log appointment data for debugging
+      logger.info('[BILLING] Appointment data:', {
+        id: appointment.id,
+        customerId: appointment.customerId,
+        customerReference: appointment.customerReference,
+        customerRef: appointment.customerRef,
+        customer: appointment.customer,
+        petId: appointment.petId,
+        services: appointment.services?.length || 0
+      });
+
+      // Determine customer ID from various possible fields
+      let customerId = appointment.customerId;
+      if (!customerId && appointment.customerReference) {
+        customerId = appointment.customerReference.id || appointment.customerReference;
+      }
+      if (!customerId && appointment.customerRef) {
+        customerId = appointment.customerRef.id || appointment.customerRef;
+      }
+      if (!customerId && appointment.customer) {
+        customerId = appointment.customer.id || appointment.customer;
+      }
+
+      logger.info('[BILLING] Resolved customer ID:', customerId);
+
       // Get customer details
-      const customer = await this.getCustomerById(appointment.customerId);
+      const customer = await this.getCustomerById(customerId);
       if (!customer) {
-        throw new Error(`Customer not found: ${appointment.customerId}`);
+        throw new Error(`Customer not found: ${customerId}`);
       }
 
       // Calculate bill items from services
@@ -379,6 +404,11 @@ export class BillingService {
   }
 
   private async getCustomerById(customerId: string): Promise<any> {
+    if (!customerId || customerId.trim() === '') {
+      logger.error('[BILLING] Customer ID is empty or null');
+      throw new Error('Customer ID is required but not provided');
+    }
+    
     const doc = await this.db.collection(this.customersCollection).doc(customerId).get();
     return doc.exists ? { id: doc.id, ...doc.data() } : null;
   }
