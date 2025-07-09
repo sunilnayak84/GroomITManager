@@ -35,7 +35,8 @@ Preferred communication style: Simple, everyday language.
 - **Services**: Grooming services with pricing and duration
 - **Appointments**: Scheduled grooming sessions with services and status tracking
 - **Inventory**: Product tracking with usage monitoring
-- **Billing**: Invoice generation and payment tracking
+- **Billing**: Invoice generation and payment tracking with comprehensive discount system
+- **Discounts**: Role-based discount application with percentage/fixed amount support and removal capability
 - **Notifications**: System alerts and reminders
 
 ### Core Features
@@ -44,8 +45,9 @@ Preferred communication style: Simple, everyday language.
 3. **Appointment Scheduling**: Calendar-based booking with service selection
 4. **Service Catalog**: Define grooming services with flexible pricing
 5. **Inventory Tracking**: Monitor product usage and stock levels
-6. **Billing System**: Generate invoices and track payments
-7. **Dashboard Analytics**: Business insights and performance metrics
+6. **Billing System**: Generate invoices and track payments with comprehensive discount management
+7. **Discount Management**: Role-based discount application (percentage/fixed amount) with removal capability
+8. **Dashboard Analytics**: Business insights and performance metrics
 
 ## Data Flow
 
@@ -114,6 +116,17 @@ The application includes several deployment scripts and configurations to handle
 While the application currently uses Firebase Firestore, the architecture supports migration to PostgreSQL with Drizzle ORM if needed for enhanced relational data management.
 
 ## Recent Changes (July 2025)
+
+### Comprehensive Discount System Implementation (July 9, 2025)
+- ✅ **Discount Data Corruption Fixed**: Resolved critical bug where frontend was sending only percentage value instead of full DiscountApplication object
+- ✅ **Root Cause Resolution**: Fixed callback in BillingPage.tsx that was extracting `discount.percentage || 0` instead of passing complete object
+- ✅ **Backend Discount Handling**: Enhanced updateBill method to properly handle both discount application and removal
+- ✅ **Discount Removal Feature**: Added complete discount removal functionality with `discount: null` support
+- ✅ **Smart UI Updates**: Implemented dynamic button switching between "Discount" and "Remove Discount" based on current state
+- ✅ **Visual Indicators**: Added discount amount display in bill table Amount column with percentage icon
+- ✅ **Type Safety**: Updated function signatures to use proper DiscountApplication type instead of any
+- ✅ **User Experience**: Added comprehensive success messages and automatic bill refresh after discount changes
+- ✅ **Complete Lifecycle**: Full discount workflow now functional - apply, display, modify, and remove discounts
 
 ### Comprehensive Authentication & Role Management Fix (July 9, 2025)
 - ✅ **Data Structure Audit**: Completed comprehensive audit of authentication and role management system
