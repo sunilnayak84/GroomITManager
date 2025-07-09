@@ -404,34 +404,36 @@
     @apply text-xs sm:text-sm px-2 sm:px-4 py-3 sm:py-4;
   }
 
-  /* Specific column width adjustments for appointments table */
+  /* Dynamic column width adjustments based on sidebar state */
+  
+  /* Default widths when sidebar is closed */
   .responsive-table th:nth-child(1) { /* Date */
-    width: 12%;
+    width: 11%;
     min-width: 100px;
   }
 
   .responsive-table th:nth-child(2) { /* Pet */
-    width: 15%;
+    width: 13%;
     min-width: 120px;
   }
 
   .responsive-table th:nth-child(3) { /* Customer */
-    width: 15%;
+    width: 13%;
     min-width: 120px;
   }
 
   .responsive-table th:nth-child(4) { /* Groomer */
-    width: 12%;
+    width: 11%;
     min-width: 100px;
   }
 
   .responsive-table th:nth-child(5) { /* Service */
-    width: 18%;
+    width: 16%;
     min-width: 140px;
   }
 
   .responsive-table th:nth-child(6) { /* Status */
-    width: 10%;
+    width: 9%;
     min-width: 80px;
   }
 
@@ -446,8 +448,46 @@
   }
 
   .responsive-table th:nth-child(9) { /* Billing */
-    width: 12%;
+    width: 9%;
     min-width: 100px;
+  }
+
+  /* Responsive column width adjustments */
+  @media (max-width: 1200px) {
+    .responsive-table th:nth-child(1) { /* Date */
+      width: 14%;
+      min-width: 100px;
+    }
+
+    .responsive-table th:nth-child(2) { /* Pet */
+      width: 16%;
+      min-width: 120px;
+    }
+
+    .responsive-table th:nth-child(3) { /* Customer */
+      width: 16%;
+      min-width: 120px;
+    }
+
+    .responsive-table th:nth-child(4) { /* Groomer */
+      width: 14%;
+      min-width: 100px;
+    }
+
+    .responsive-table th:nth-child(5) { /* Service */
+      width: 20%;
+      min-width: 140px;
+    }
+
+    .responsive-table th:nth-child(6) { /* Status */
+      width: 12%;
+      min-width: 80px;
+    }
+
+    .responsive-table th:nth-child(7) { /* Actions */
+      width: 8%;
+      min-width: 80px;
+    }
   }
 
   /* Full width table layout */
@@ -460,7 +500,9 @@
     min-width: 100%;
   }
 
-  /* Mobile table optimizations - show fewer columns on small screens */
+  /* Responsive table optimizations with sidebar awareness */
+  
+  /* Mobile optimizations (same for both sidebar states) */
   @media (max-width: 640px) {
     .responsive-table th:nth-child(n+4),
     .responsive-table td:nth-child(n+4) {
@@ -468,6 +510,7 @@
     }
   }
 
+  /* Tablet optimizations */
   @media (max-width: 768px) {
     .responsive-table th:nth-child(n+6),
     .responsive-table td:nth-child(n+6) {
@@ -475,10 +518,27 @@
     }
   }
 
+  /* Medium desktop - more conservative column hiding */
   @media (max-width: 1024px) {
     .responsive-table th:nth-child(n+8),
     .responsive-table td:nth-child(n+8) {
       display: none;
+    }
+  }
+
+  /* Large desktop - hide last column only on constrained width */
+  @media (max-width: 1200px) {
+    .responsive-table th:nth-child(n+9),
+    .responsive-table td:nth-child(n+9) {
+      display: none;
+    }
+  }
+
+  /* Extra large desktop - show all columns */
+  @media (min-width: 1400px) {
+    .responsive-table th,
+    .responsive-table td {
+      display: table-cell;
     }
   }
 

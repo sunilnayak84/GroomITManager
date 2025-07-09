@@ -783,7 +783,7 @@ export default function AppointmentsPage() {
   };
 
   return (
-    <div className="w-full max-w-none px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
+    <div className="w-full max-w-none px-2 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6">
       <div className="relative h-32 sm:h-48 rounded-xl overflow-hidden bg-black/50 mb-6">
         <img
           src="https://images.unsplash.com/photo-1727681200732-0086492c217d"
@@ -832,7 +832,7 @@ export default function AppointmentsPage() {
       </div>
 
       {view === 'list' && (
-        <div className="mobile-stack gap-2 sm:gap-4 mb-4 px-2 sm:px-6">
+        <div className="mobile-stack gap-2 sm:gap-4 mb-4 px-2 sm:px-4">
           <Select
             value={dateFilter}
             onValueChange={(value: any) => setDateFilter(value)}
@@ -893,12 +893,14 @@ export default function AppointmentsPage() {
             </div>
           </div>
 
-          <div className="w-full overflow-x-auto">
-            <DataTable
-              columns={columns}
-              data={paginatedAppointments as AppointmentWithRelations[]}
-              isLoading={appointmentsLoading || isLoading}
-            />
+          <div className="w-full overflow-x-auto min-w-0">
+            <div className="min-w-[800px]">
+              <DataTable
+                columns={columns}
+                data={paginatedAppointments as AppointmentWithRelations[]}
+                isLoading={appointmentsLoading || isLoading}
+              />
+            </div>
           </div>
 
           {/* Pagination Controls - Bottom */}
