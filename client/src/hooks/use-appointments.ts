@@ -191,7 +191,7 @@ export function useAppointments() {
     queryKey: ["appointments"],
     queryFn: async () => {
       try {
-        console.log('FETCH_APPOINTMENTS: Starting appointment fetch');
+        console.log('FETCH_APPOINTMENTS: Starting optimized appointment fetch');
 
         if (!db) {
           console.error('FETCH_APPOINTMENTS: Firebase not initialized');
@@ -224,102 +224,150 @@ export function useAppointments() {
           return [];
         }
 
+        // PERFORMANCE OPTIMIZATION: Batch fetch all related data first
+        console.log('FETCH_APPOINTMENTS: Starting batch data collection...');
+        
+        // Collect all unique IDs
+        const petIds = new Set<string>();
+        const groomerIds = new Set<string>();
+        const serviceIds = new Set<string>();
+        const billIds = new Set<string>();
+        
+        const appointmentDataArray: Array<{ id: string; data: FirestoreAppointmentData }> = [];
+        
+        querySnapshot.forEach(appointmentDoc => {
+          const rawData = appointmentDoc.data() as FirestoreAppointmentData;
+          appointmentDataArray.push({ id: appointmentDoc.id, data: rawData });
+          
+          if (rawData.petId) petIds.add(rawData.petId);
+          if (rawData.groomerId) groomerIds.add(rawData.groomerId);
+          if (rawData.services) rawData.services.forEach(serviceId => serviceIds.add(serviceId));
+          if (rawData.billId) billIds.add(rawData.billId);
+        });
+
+        console.log('FETCH_APPOINTMENTS: Batch fetching', {
+          pets: petIds.size,
+          groomers: groomerIds.size, 
+          services: serviceIds.size,
+          bills: billIds.size
+        });
+
+        // Batch fetch all related data in parallel
+        const [petsData, groomersData, servicesData, billsData] = await Promise.all([
+          // Fetch all pets
+          Promise.all(Array.from(petIds).map(async petId => {
+            try {
+              const petDoc = await getDoc(doc(db, 'pets', petId));
+              return { id: petId, data: petDoc.exists() ? petDoc.data() : null };
+            } catch (error) {
+              console.error('Error fetching pet:', petId, error);
+              return { id: petId, data: null };
+            }
+          })),
+          // Fetch all groomers
+          Promise.all(Array.from(groomerIds).map(async groomerId => {
+            try {
+              const groomerDoc = await getDoc(doc(db, 'users', groomerId));
+              return { id: groomerId, data: groomerDoc.exists() ? groomerDoc.data() : null };
+            } catch (error) {
+              console.error('Error fetching groomer:', groomerId, error);
+              return { id: groomerId, data: null };
+            }
+          })),
+          // Fetch all services
+          Promise.all(Array.from(serviceIds).map(async serviceId => {
+            try {
+              const serviceDoc = await getDoc(doc(db, 'services', serviceId));
+              return { id: serviceId, data: serviceDoc.exists() ? serviceDoc.data() : null };
+            } catch (error) {
+              console.error('Error fetching service:', serviceId, error);
+              return { id: serviceId, data: null };
+            }
+          })),
+          // Fetch all bills
+          Promise.all(Array.from(billIds).map(async billId => {
+            try {
+              const billDoc = await getDoc(doc(db, 'bills', billId));
+              return { id: billId, data: billDoc.exists() ? billDoc.data() : null };
+            } catch (error) {
+              console.error('Error fetching bill:', billId, error);
+              return { id: billId, data: null };
+            }
+          }))
+        ]);
+
+        // Create lookup maps for fast access
+        const petsMap = new Map(petsData.map(p => [p.id, p.data]));
+        const groomersMap = new Map(groomersData.map(g => [g.id, g.data]));
+        const servicesMap = new Map(servicesData.map(s => [s.id, s.data]));
+        const billsMap = new Map(billsData.map(b => [b.id, b.data]));
+
+        // Collect unique customer IDs from pets
+        const customerIds = new Set<string>();
+        petsData.forEach(pet => {
+          if (pet.data?.customerId) customerIds.add(pet.data.customerId);
+        });
+
+        // Batch fetch all customers
+        const customersData = await Promise.all(Array.from(customerIds).map(async customerId => {
+          try {
+            const customerDoc = await getDoc(doc(db, 'customers', customerId));
+            return { id: customerId, data: customerDoc.exists() ? customerDoc.data() : null };
+          } catch (error) {
+            console.error('Error fetching customer:', customerId, error);
+            return { id: customerId, data: null };
+          }
+        }));
+        
+        const customersMap = new Map(customersData.map(c => [c.id, c.data]));
+
+        console.log('FETCH_APPOINTMENTS: Batch fetching completed, processing appointments...');
+
+        // Now process appointments using cached data
         const appointments: AppointmentWithRelations[] = [];
         let successCount = 0;
         let errorCount = 0;
 
-        for (const appointmentDoc of querySnapshot.docs) {
+        for (const { id: appointmentId, data: rawData } of appointmentDataArray) {
           try {
-            console.log('FETCH_APPOINTMENTS: Processing appointment', appointmentDoc.id);
-            const rawData = appointmentDoc.data() as FirestoreAppointmentData;
+            // Removed individual appointment logging for better performance
 
             if (!rawData.petId || !rawData.groomerId) {
-              console.error('FETCH_APPOINTMENTS: Missing required fields in appointment:', appointmentDoc.id);
+              console.error('FETCH_APPOINTMENTS: Missing required fields in appointment:', appointmentId);
               errorCount++;
               continue;
             }
 
-            // Get pet data
-            const petDocRef = doc(db, 'pets', rawData.petId);
-            const petDoc = await getDoc(petDocRef);
-
-            let petData = {
-              name: 'Unknown Pet',
-              breed: 'Unknown Breed',
-              image: null as string | null,
-              customerId: 'unknown'
+            // Get pet data from cache
+            const rawPetData = petsMap.get(rawData.petId);
+            const petData = {
+              name: rawPetData?.name || 'Unknown Pet',
+              breed: rawPetData?.breed || 'Unknown Breed',
+              image: rawPetData?.image || null,
+              customerId: rawPetData?.customerId || 'unknown'
             };
 
-            if (petDoc.exists()) {
-              const rawPetData = petDoc.data();
-              petData = {
-                name: rawPetData.name || 'Unknown Pet',
-                breed: rawPetData.breed || 'Unknown Breed',
-                image: rawPetData.image || null,
-                customerId: rawPetData.customerId || 'unknown'
-              };
-            }
-
-            // Get groomer data
-            let groomerData = {
-              name: 'Unknown Groomer'
+            // Get groomer data from cache
+            const rawGroomerData = groomersMap.get(rawData.groomerId);
+            const groomerData = {
+              name: rawGroomerData?.name || 'Unknown Groomer'
             };
 
-            const groomerDoc = await getDoc(doc(db, 'users', rawData.groomerId));
-            if (groomerDoc.exists()) {
-              const rawGroomerData = groomerDoc.data();
-              const groomerName = rawGroomerData.name || 'Unknown Groomer';
-              
-              groomerData = {
-                name: groomerName
-              };
-            } else {
-              console.error('Groomer not found for ID:', rawData.groomerId);
-            }
-
-            // Get customer data
-            let customerData = {
-              firstName: 'Unknown',
-              lastName: 'Customer'
+            // Get customer data from cache
+            const rawCustomerData = customersMap.get(petData.customerId);
+            const customerData = {
+              firstName: rawCustomerData?.firstName || 'Unknown',
+              lastName: rawCustomerData?.lastName || 'Customer'
             };
 
-            if (petData.customerId !== 'unknown') {
-              const customerDoc = await getDoc(doc(db, 'customers', petData.customerId));
-              if (customerDoc.exists()) {
-                const rawCustomerData = customerDoc.data();
-                customerData = {
-                  firstName: rawCustomerData.firstName || 'Unknown',
-                  lastName: rawCustomerData.lastName || 'Customer'
-                };
-              } else {
-                console.error('Customer not found for ID:', petData.customerId);
-              }
-            }
-
-            // Get service data
-            let serviceData = [];
-
+            // Get service data from cache
+            const serviceData = [];
             if (rawData.services && Array.isArray(rawData.services)) {
-              console.log('FETCH_APPOINTMENTS: Processing services for appointment:', appointmentDoc.id, 'Services:', rawData.services);
-
               for (const serviceId of rawData.services) {
-                if (!serviceId) {
-                  console.error('FETCH_APPOINTMENTS: Invalid service ID in array');
-                  continue;
-                }
-
-                console.log('FETCH_APPOINTMENTS: Fetching service data for ID:', serviceId);
-                const serviceDoc = await getDoc(doc(db, 'services', serviceId));
-
-                if (serviceDoc.exists()) {
-                  const rawServiceData = serviceDoc.data();
-                  console.log('FETCH_APPOINTMENTS: Raw service data for', serviceId, ':', rawServiceData);
-
-                  if (!rawServiceData.name) {
-                    console.error('FETCH_APPOINTMENTS: Service name missing for ID:', serviceId);
-                  }
-
-                  // Map all required service fields
+                if (!serviceId) continue;
+                
+                const rawServiceData = servicesMap.get(serviceId);
+                if (rawServiceData) {
                   const processedService = {
                     service_id: serviceId,
                     name: rawServiceData.name || 'Unknown Service',
@@ -332,35 +380,17 @@ export function useAppointments() {
                     selectedServices: rawServiceData.selectedServices || [],
                     selectedAddons: rawServiceData.selectedAddons || []
                   };
-
                   serviceData.push(processedService);
-                  console.log('FETCH_APPOINTMENTS: Processed service:', processedService);
-                } else {
-                  console.error('FETCH_APPOINTMENTS: Service not found for ID:', serviceId);
                 }
               }
-            } else {
-              console.warn('FETCH_APPOINTMENTS: No services array for appointment:', appointmentDoc.id);
             }
 
-            let billStatus = null;
-
-            // If appointment has billId, fetch bill status
-            if (rawData.billId) {
-              try {
-                const billRef = doc(db, 'bills', rawData.billId);
-                const billDoc = await getDoc(billRef);
-                if (billDoc.exists()) {
-                  const billData = billDoc.data();
-                  billStatus = billData.status || 'pending_payment';
-                }
-              } catch (billError) {
-                console.error('[APPOINTMENTS] Error fetching bill status:', billError);
-              }
-            }
+            // Get bill status from cache
+            const billData = rawData.billId ? billsMap.get(rawData.billId) : null;
+            const billStatus = billData?.status || null;
 
             const appointment: AppointmentWithRelations = {
-              id: appointmentDoc.id,
+              id: appointmentId,
               petId: rawData.petId,
               services: rawData.services,
               groomerId: rawData.groomerId,
@@ -426,19 +456,23 @@ export function useAppointments() {
             successCount++;
 
           } catch (error) {
-            console.error('FETCH_APPOINTMENTS: Error processing appointment:', appointmentDoc.id, error);
+            console.error('FETCH_APPOINTMENTS: Error processing appointment:', appointmentId, error);
             errorCount++;
             continue;
           }
         }
 
-        console.log(`FETCH_APPOINTMENTS: Processed ${querySnapshot.size} appointments. Success: ${successCount}, Errors: ${errorCount}`);
+        console.log(`FETCH_APPOINTMENTS: Batch processing completed - ${successCount} appointments loaded in optimized mode (${errorCount} errors)`);
         return appointments;
       } catch (error) {
         console.error('Error fetching appointments:', error);
         throw error;
       }
-    }
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes - appointments don't change that frequently
+    gcTime: 10 * 60 * 1000, // 10 minutes garbage collection time
+    refetchOnWindowFocus: false, // Don't refetch on window focus for better performance
+    refetchOnMount: false, // Don't refetch on mount if data is fresh
   });
 
   const addAppointmentMutation = useMutation({
