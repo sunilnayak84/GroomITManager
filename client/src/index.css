@@ -397,11 +397,11 @@
 
   /* Enhanced table responsiveness */
   .responsive-table-header {
-    @apply text-xs sm:text-sm font-medium px-2 sm:px-4 py-3 sm:py-4 whitespace-nowrap;
+    @apply text-xs sm:text-sm font-medium px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap;
   }
 
   .responsive-table-cell {
-    @apply text-xs sm:text-sm px-2 sm:px-4 py-3 sm:py-4;
+    @apply text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3;
   }
 
   /* Dynamic column width adjustments based on sidebar state */

@@ -358,7 +358,11 @@ export default function AppointmentsPage() {
   const columns = useMemo(() => [
     {
       header: createSortableHeader("Date", "date"),
-      cell: ({ date }: AppointmentWithRelations) => format(new Date(date), "PPp"),
+      cell: ({ date }: AppointmentWithRelations) => (
+        <div className="whitespace-nowrap text-sm">
+          {format(new Date(date), "MMM d, h:mm a")}
+        </div>
+      ),
     },
     {
       header: createSortableHeader("Pet", "pet"),
