@@ -310,11 +310,23 @@ export default function BillingPage() {
         throw new Error(errorMessage);
       }
 
-      const discountAmount = selectedBillForDiscount.subtotal * (discountApplication.percentage / 100);
+      let discountAmount = 0;
+      let description = '';
+
+      if (discountApplication.percentage) {
+        discountAmount = selectedBillForDiscount.subtotal * (discountApplication.percentage / 100);
+        if (discountApplication.maxAmount && discountAmount > discountApplication.maxAmount) {
+          discountAmount = discountApplication.maxAmount;
+        }
+        description = `${discountApplication.percentage}% discount (₹${discountAmount.toFixed(2)}) applied to bill ${selectedBillForDiscount.billNumber}`;
+      } else if (discountApplication.fixedAmount) {
+        discountAmount = Math.min(discountApplication.fixedAmount, selectedBillForDiscount.subtotal);
+        description = `₹${discountAmount.toFixed(2)} discount applied to bill ${selectedBillForDiscount.billNumber}`;
+      }
       
       toast({
         title: "Discount Applied",
-        description: `${discountApplication.percentage}% discount (₹${discountAmount.toFixed(2)}) applied to bill ${selectedBillForDiscount.billNumber}`,
+        description,
       });
       
       // Refresh the bills list

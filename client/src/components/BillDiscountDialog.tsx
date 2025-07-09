@@ -129,7 +129,8 @@ export default function BillDiscountDialog({
       }
 
       const discountApplication: DiscountApplication = {
-        percentage: data.type === 'PERCENTAGE' ? data.value : (data.value / billSubtotal) * 100,
+        percentage: data.type === 'PERCENTAGE' ? data.value : undefined,
+        fixedAmount: data.type === 'FIXED_AMOUNT' ? data.value : undefined,
         maxAmount: data.maxAmount,
         reason: data.reason,
         appliedBy: user.id || user.email || 'unknown',
@@ -137,6 +138,8 @@ export default function BillDiscountDialog({
         requiresApproval: requiresApproval,
         appliedAt: new Date(),
       };
+
+      console.log('[DISCOUNT] Applying discount:', discountApplication);
 
       await onApply(discountApplication);
       
@@ -258,8 +261,7 @@ export default function BillDiscountDialog({
                 step="1"
                 min="0"
                 {...form.register('maxAmount', { 
-                  valueAsNumber: true,
-                  setValueAs: (value) => value === '' ? undefined : Number(value)
+                  setValueAs: (value) => value === '' || value === null ? undefined : Number(value)
                 })}
                 placeholder="500"
               />

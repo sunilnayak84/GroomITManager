@@ -145,7 +145,8 @@ export interface BillWithPayment extends Bill {
 
 // Discount Management with role restrictions
 export interface DiscountApplication {
-  percentage: number;
+  percentage?: number;
+  fixedAmount?: number;
   maxAmount?: number;
   reason: string;
   appliedBy: string;

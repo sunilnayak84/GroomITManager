@@ -276,8 +276,48 @@ export class BillingService {
     try {
       logger.info('[BILLING] Updating bill:', billId);
 
+      // Get current bill first
+      const docRef = this.db.collection(this.billsCollection).doc(billId);
+      const currentDoc = await docRef.get();
+      if (!currentDoc.exists) {
+        throw new Error(`Bill not found: ${billId}`);
+      }
+
+      const currentBill = this.convertFirestoreDocToBill(currentDoc.id, currentDoc.data()!);
+
       // Remove system fields that shouldn't be updated directly
       const { id, createdAt, createdBy, ...updateData } = updates as any;
+      
+      // If discount is being updated, recalculate totals
+      if (updateData.discount) {
+        const discount = updateData.discount;
+        let discountAmount = 0;
+
+        logger.info('[BILLING] Processing discount update:', { discount, currentSubtotal: currentBill.subtotal });
+
+        // Calculate discount based on type from the frontend
+        if (discount.percentage > 0) {
+          discountAmount = (currentBill.subtotal * discount.percentage) / 100;
+          // Apply max amount if specified
+          if (discount.maxAmount && discountAmount > discount.maxAmount) {
+            discountAmount = discount.maxAmount;
+          }
+        } else if (discount.fixedAmount > 0) {
+          // For fixed amount discounts
+          discountAmount = Math.min(discount.fixedAmount, currentBill.subtotal);
+        }
+
+        updateData.discountAmount = discountAmount;
+        updateData.totalAmount = currentBill.subtotal - discountAmount + (currentBill.totalTaxAmount || 0);
+        
+        logger.info('[BILLING] Recalculated totals for discount:', {
+          subtotal: currentBill.subtotal,
+          discountPercentage: discount.percentage,
+          fixedAmount: discount.fixedAmount,
+          discountAmount,
+          totalAmount: updateData.totalAmount
+        });
+      }
       
       // Add update metadata
       updateData.updatedAt = admin.firestore.FieldValue.serverTimestamp();
@@ -289,7 +329,6 @@ export class BillingService {
       );
 
       // Update document
-      const docRef = this.db.collection(this.billsCollection).doc(billId);
       await docRef.update(updateData);
 
       // Get updated document

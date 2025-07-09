@@ -130,20 +130,45 @@ export default function EnhancedBillGenerationDialog({
 
   const handleApplyDiscount = (discountApplication: DiscountApplication) => {
     // Convert DiscountApplication to Discount format
-    const newDiscount: Discount = {
-      type: 'PERCENTAGE', // Based on the DiscountApplication, it only has percentage
-      value: discountApplication.percentage,
-      reason: discountApplication.reason,
-      appliedBy: user?.email || '',
-      appliedAt: new Date(),
-      maxAmount: discountApplication.maxAmount
-    };
+    let newDiscount: Discount;
+
+    if (discountApplication.percentage) {
+      newDiscount = {
+        type: 'PERCENTAGE',
+        value: discountApplication.percentage,
+        reason: discountApplication.reason,
+        appliedBy: user?.email || '',
+        appliedAt: new Date(),
+        maxAmount: discountApplication.maxAmount
+      };
+
+      toast({
+        title: "Discount Applied",
+        description: `${discountApplication.percentage}% discount has been applied.`,
+      });
+    } else if (discountApplication.fixedAmount) {
+      newDiscount = {
+        type: 'FIXED_AMOUNT',
+        value: discountApplication.fixedAmount,
+        reason: discountApplication.reason,
+        appliedBy: user?.email || '',
+        appliedAt: new Date()
+      };
+
+      toast({
+        title: "Discount Applied",
+        description: `₹${discountApplication.fixedAmount} discount has been applied.`,
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: "Invalid discount application - no percentage or fixed amount specified.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setDiscount(newDiscount);
-    toast({
-      title: "Discount Applied",
-      description: `${discountApplication.percentage}% discount has been applied.`,
-    });
   };
 
   const handleRemoveDiscount = () => {
