@@ -33,8 +33,8 @@ export function DataTable<T>({ columns, data, isLoading }: DataTableProps<T>) {
     <Table>
       <TableHeader>
         <TableRow>
-          {columns.map((column) => (
-            <TableHead key={typeof column.header === 'string' ? column.header : 'header'}>
+          {columns.map((column, index) => (
+            <TableHead key={typeof column.header === 'string' ? column.header : `header-${index}`}>
               {typeof column.header === 'function' ? column.header() : column.header}
             </TableHead>
           ))}

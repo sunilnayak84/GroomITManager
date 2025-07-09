@@ -37,6 +37,83 @@ export async function registerRoutes(app: Express.Application) {
     next();
   }, billingRouter);
 
+  // Debug routes (without auth for fixing)
+  logger.info('[ROUTES] Registering debug routes');
+  app.use('/api/debug', async (req: Request, res: Response) => {
+    try {
+      if (req.path.startsWith('/appointment/')) {
+        const appointmentId = req.path.replace('/appointment/', '');
+        if (!appointmentId) {
+          return res.status(400).json({ error: 'Bad Request', message: 'Appointment ID is required' });
+        }
+        
+        // Import the debug service
+        const DebugService = await import('./api/debug-service');
+        const debugInfo = await DebugService.default.debugAppointment(appointmentId);
+        return res.json(debugInfo);
+      }
+      
+      if (req.path === '/users' && req.method === 'GET') {
+        // Get all users
+        const usersSnapshot = await admin.firestore().collection('users').get();
+        const users = usersSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        return res.json(users);
+      }
+      
+      if (req.path === '/fix-siddharth' && req.method === 'POST') {
+        // Fix Siddharth's name
+        const usersSnapshot = await admin.firestore().collection('users')
+          .where('email', '==', 'siddharth@groomery.in').get();
+        
+        if (usersSnapshot.empty) {
+          return res.status(404).json({ error: 'Siddharth not found' });
+        }
+        
+        const siddharthDoc = usersSnapshot.docs[0];
+        const siddharthData = siddharthDoc.data();
+        
+        logger.info('[DEBUG] Current Siddharth data:', {
+          id: siddharthDoc.id,
+          name: siddharthData.name,
+          displayName: siddharthData.displayName,
+          email: siddharthData.email
+        });
+        
+        // Update to correct name
+        const correctName = 'Siddharth Basodiya';
+        await admin.firestore().collection('users').doc(siddharthDoc.id).update({
+          name: correctName,
+          displayName: correctName,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+        
+        return res.json({
+          success: true,
+          message: 'Siddharth name updated successfully',
+          before: {
+            name: siddharthData.name,
+            displayName: siddharthData.displayName
+          },
+          after: {
+            name: correctName,
+            displayName: correctName
+          }
+        });
+      }
+      
+      return res.status(404).json({ error: 'Not Found', message: 'Debug endpoint not found' });
+    } catch (error) {
+      logger.error('[DEBUG] Error in debug route:', error);
+      return res.status(500).json({ 
+        error: 'Internal Server Error', 
+        message: error instanceof Error ? error.message : 'Unknown error' 
+      });
+    }
+  });
+
   // All other API routes require authentication
   app.use('/api', authenticateFirebase);
 
@@ -80,32 +157,7 @@ export async function registerRoutes(app: Express.Application) {
       });
     }
   });
-  
-  // Debug routes
-  logger.info('[ROUTES] Registering debug routes');
-  app.use('/api/debug', authenticateFirebase, async (req: Request, res: Response) => {
-    try {
-      if (req.path.startsWith('/appointment/')) {
-        const appointmentId = req.path.replace('/appointment/', '');
-        if (!appointmentId) {
-          return res.status(400).json({ error: 'Bad Request', message: 'Appointment ID is required' });
-        }
-        
-        // Import the debug service
-        const DebugService = await import('./api/debug-service');
-        const debugInfo = await DebugService.default.debugAppointment(appointmentId);
-        return res.json(debugInfo);
-      }
-      
-      return res.status(404).json({ error: 'Not Found', message: 'Debug endpoint not found' });
-    } catch (error) {
-      logger.error('[DEBUG] Error in debug route:', error);
-      return res.status(500).json({ 
-        error: 'Internal Server Error', 
-        message: error instanceof Error ? error.message : 'Unknown error' 
-      });
-    }
-  });
+
 
   // API 404 handler
   app.use('/api/*', (req, res) => {

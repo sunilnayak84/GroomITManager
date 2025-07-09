@@ -316,9 +316,20 @@ export default function AppointmentsPage() {
     <div
       className="flex items-center cursor-pointer hover:text-primary transition-colors"
       onClick={() => {
-        setSortConfig({
-          key,
-          direction: sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc',
+        setSortConfig(prevConfig => {
+          if (prevConfig.key === key) {
+            // Same column: toggle direction or reset
+            if (prevConfig.direction === 'asc') {
+              return { key, direction: 'desc' };
+            } else if (prevConfig.direction === 'desc') {
+              return { key, direction: 'asc' };
+            } else {
+              return { key, direction: 'asc' };
+            }
+          } else {
+            // Different column: start with ascending
+            return { key, direction: 'asc' };
+          }
         });
       }}
     >
