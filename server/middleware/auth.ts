@@ -54,15 +54,15 @@ export async function authenticateFirebase(req: Request, res: Response, next: Ne
       let role: keyof typeof RoleTypes = 'staff';
       let permissions: string[] = [];
 
-      // Special handling for development admin
-      if (process.env.NODE_ENV === 'development' && user.email === 'admin@groomery.in') {
-        console.log('[AUTH] Development admin user detected');
+      // Check custom claims first (highest priority)
+      if (customClaims.isAdmin === true || customClaims.role === 'admin') {
+        console.log('[AUTH] User has admin claims:', customClaims);
         role = 'admin';
         permissions = DefaultPermissions.admin;
       }
-      // Check custom claims
-      else if (customClaims.isAdmin === true || customClaims.role === 'admin') {
-        console.log('[AUTH] User has admin claims:', customClaims);
+      // Special handling for development admin
+      else if (user.email === 'admin@groomery.in') {
+        console.log('[AUTH] Development admin user detected');
         role = 'admin';
         permissions = DefaultPermissions.admin;
       }

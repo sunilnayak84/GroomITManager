@@ -104,7 +104,9 @@ export async function setUserRole(userId: string, role: keyof typeof RoleTypes, 
     // Set custom claims in Firebase Auth
     await admin.auth().setCustomUserClaims(userId, {
       role: role,
-      permissions: permissions
+      permissions: permissions,
+      isAdmin: role === 'admin',
+      updatedAt: Date.now()
     });
     
     // Create role history entry

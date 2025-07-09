@@ -32,11 +32,20 @@ authRouter.get('/users', async (req: Request, res: Response) => {
           const userDoc = await db.collection('users').doc(userRecord.uid).get();
           const userData = userDoc.exists ? userDoc.data() : null;
           
+          // Check custom claims for role if database doesn't have it
+          const customClaims = userRecord.customClaims || {};
+          let userRole = userData?.role || 'staff';
+          
+          // If user has admin custom claims but database shows staff, use custom claims
+          if (customClaims.isAdmin === true || customClaims.role === 'admin') {
+            userRole = 'admin';
+          }
+          
           return {
             uid: userRecord.uid,
             email: userRecord.email || null,
             displayName: userRecord.displayName || userRecord.email?.split('@')[0] || 'Unknown User',
-            role: userData?.role || 'staff',
+            role: userRole,
             disabled: userRecord.disabled || false,
             lastSignInTime: userRecord.metadata.lastSignInTime || 'Never',
             createdAt: userRecord.metadata.creationTime || null,
