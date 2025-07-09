@@ -783,7 +783,7 @@ export default function AppointmentsPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-7xl responsive-space-y mobile-padding">
+    <div className="w-full max-w-none px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
       <div className="relative h-32 sm:h-48 rounded-xl overflow-hidden bg-black/50 mb-6">
         <img
           src="https://images.unsplash.com/photo-1727681200732-0086492c217d"
@@ -868,9 +868,9 @@ export default function AppointmentsPage() {
       )}
 
       {view === 'list' ? (
-        <div className="bg-white rounded-lg border shadow-sm">
+        <div className="w-full bg-white rounded-lg border shadow-sm overflow-hidden">
           {/* Pagination Controls - Top */}
-          <div className="mobile-stack items-start sm:items-center justify-between px-3 sm:px-6 py-4 border-b">
+          <div className="mobile-stack items-start sm:items-center justify-between px-3 sm:px-6 py-4 border-b bg-gray-50/50">
             <div className="mobile-stack items-start sm:items-center gap-2 sm:gap-4">
               <div className="text-xs sm:text-sm text-muted-foreground">
                 Showing {totalItems === 0 ? 0 : startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} appointments
@@ -893,11 +893,13 @@ export default function AppointmentsPage() {
             </div>
           </div>
 
-          <DataTable
-            columns={columns}
-            data={paginatedAppointments as AppointmentWithRelations[]}
-            isLoading={appointmentsLoading || isLoading}
-          />
+          <div className="w-full overflow-x-auto">
+            <DataTable
+              columns={columns}
+              data={paginatedAppointments as AppointmentWithRelations[]}
+              isLoading={appointmentsLoading || isLoading}
+            />
+          </div>
 
           {/* Pagination Controls - Bottom */}
           {totalPages > 1 && (

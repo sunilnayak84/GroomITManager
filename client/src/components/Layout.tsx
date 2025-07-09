@@ -28,7 +28,7 @@ export default function Layout({ children }: PropsWithChildren) {
           </header>
 
           <main className="flex-1 overflow-auto w-full">
-            <div className="container mx-auto mobile-padding">
+            <div className="w-full max-w-none">
               {children}
             </div>
           </main>

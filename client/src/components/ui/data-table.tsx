@@ -33,9 +33,12 @@ export function DataTable<T>({ columns, data, isLoading }: DataTableProps<T>) {
     <div className="responsive-table-container">
       <Table className="responsive-table">
         <TableHeader>
-          <TableRow>
+          <TableRow className="border-b bg-muted/30">
             {columns.map((column, index) => (
-              <TableHead key={typeof column.header === 'string' ? column.header : `header-${index}`} className="responsive-table-header">
+              <TableHead 
+                key={typeof column.header === 'string' ? column.header : `header-${index}`} 
+                className="responsive-table-header font-semibold text-left"
+              >
                 {typeof column.header === 'function' ? column.header() : column.header}
               </TableHead>
             ))}
@@ -43,9 +46,12 @@ export function DataTable<T>({ columns, data, isLoading }: DataTableProps<T>) {
         </TableHeader>
         <TableBody>
           {data.map((row, i) => (
-            <TableRow key={i}>
+            <TableRow key={i} className="border-b hover:bg-muted/20 transition-colors">
               {columns.map((column, index) => (
-                <TableCell key={typeof column.header === 'string' ? column.header : `cell-${index}`} className="responsive-table-cell">
+                <TableCell 
+                  key={typeof column.header === 'string' ? column.header : `cell-${index}`} 
+                  className="responsive-table-cell align-top"
+                >
                   {column.cell(row)}
                 </TableCell>
               ))}

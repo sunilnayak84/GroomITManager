@@ -397,24 +397,87 @@
 
   /* Enhanced table responsiveness */
   .responsive-table-header {
-    @apply text-xs sm:text-sm font-medium px-2 sm:px-4 py-2 sm:py-3;
+    @apply text-xs sm:text-sm font-medium px-2 sm:px-4 py-3 sm:py-4 whitespace-nowrap;
   }
 
   .responsive-table-cell {
-    @apply text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3;
+    @apply text-xs sm:text-sm px-2 sm:px-4 py-3 sm:py-4;
   }
 
-  /* Mobile table optimizations */
+  /* Specific column width adjustments for appointments table */
+  .responsive-table th:nth-child(1) { /* Date */
+    width: 12%;
+    min-width: 100px;
+  }
+
+  .responsive-table th:nth-child(2) { /* Pet */
+    width: 15%;
+    min-width: 120px;
+  }
+
+  .responsive-table th:nth-child(3) { /* Customer */
+    width: 15%;
+    min-width: 120px;
+  }
+
+  .responsive-table th:nth-child(4) { /* Groomer */
+    width: 12%;
+    min-width: 100px;
+  }
+
+  .responsive-table th:nth-child(5) { /* Service */
+    width: 18%;
+    min-width: 140px;
+  }
+
+  .responsive-table th:nth-child(6) { /* Status */
+    width: 10%;
+    min-width: 80px;
+  }
+
+  .responsive-table th:nth-child(7) { /* Actions */
+    width: 8%;
+    min-width: 80px;
+  }
+
+  .responsive-table th:nth-child(8) { /* Payment Status */
+    width: 10%;
+    min-width: 90px;
+  }
+
+  .responsive-table th:nth-child(9) { /* Billing */
+    width: 12%;
+    min-width: 100px;
+  }
+
+  /* Full width table layout */
+  .responsive-table-container {
+    @apply w-full overflow-auto;
+  }
+
+  .responsive-table {
+    @apply w-full table-auto;
+    min-width: 100%;
+  }
+
+  /* Mobile table optimizations - show fewer columns on small screens */
   @media (max-width: 640px) {
-    .responsive-table th:nth-child(n+3),
-    .responsive-table td:nth-child(n+3) {
+    .responsive-table th:nth-child(n+4),
+    .responsive-table td:nth-child(n+4) {
       display: none;
     }
   }
 
   @media (max-width: 768px) {
-    .responsive-table th:nth-child(n+5),
-    .responsive-table td:nth-child(n+5) {
+    .responsive-table th:nth-child(n+6),
+    .responsive-table td:nth-child(n+6) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .responsive-table th:nth-child(n+8),
+    .responsive-table td:nth-child(n+8) {
       display: none;
     }
   }
