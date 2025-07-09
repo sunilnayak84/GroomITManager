@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { BillStatus, Bill } from '@/types/billing';
-import { useBilling, formatIndianCurrency } from '@/hooks/use-billing';
+import { useBilling, formatIndianCurrency } from '@/hooks/use-billing-new';
 import { useLocation } from 'wouter';
 
 function EmptyState() {

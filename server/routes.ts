@@ -3,7 +3,7 @@ import { admin } from './firebase';
 import * as Express from 'express';
 import { staffManagementRouter } from './api/staff-management';
 import { authenticateFirebase } from './middleware/auth';
-import { billingRouter } from './api/billing-routes';
+import billingRoutes from './api/billing-routes-new.js';
 import { authRouter } from './api/auth-routes';
 import { logger } from './utils/logger';
 
@@ -35,7 +35,7 @@ export async function registerRoutes(app: Express.Application) {
       params: req.params
     });
     next();
-  }, billingRouter);
+  }, authenticateFirebase, billingRoutes);
 
   // Debug routes (without auth for fixing)
   logger.info('[ROUTES] Registering debug routes');

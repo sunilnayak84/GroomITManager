@@ -5,8 +5,6 @@ import { useFirebaseAuth } from '@/hooks/use-firebase-auth';
 import { useUser } from '@/hooks/use-user';
 import { useToast } from './use-toast';
 
-// This file has been completely rewritten for the new billing system
-
 export function useBilling() {
   const queryClient = useQueryClient();
   const { getIdToken } = useFirebaseAuth();
@@ -212,7 +210,6 @@ export function useBilling() {
     useBillQuery,
     isCreating: createBillMutation.isPending,
     isUpdating: updateBillMutation.isPending,
-    getBillById: fetchBillById,
   };
 }
 

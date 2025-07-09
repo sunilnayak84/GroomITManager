@@ -27,6 +27,10 @@ localPort = 3001
 externalPort = 5000
 
 [[ports]]
+localPort = 5000
+externalPort = 5173
+
+[[ports]]
 localPort = 5174
 externalPort = 80
 
@@ -82,6 +86,10 @@ args = "Development Servers"
 task = "workflow.run"
 args = "Smart Deploy"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Full Stack Server"
+
 [[workflows.workflow]]
 name = "Development Servers"
 author = "agent"
@@ -98,3 +106,12 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node scripts/smart-deploy.js"
+
+[[workflows.workflow]]
+name = "Full Stack Server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd client && npm run dev -- --port 5000 --host 0.0.0.0 & cd server && npm run dev"
+waitForPort = 5000
