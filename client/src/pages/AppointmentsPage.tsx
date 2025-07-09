@@ -797,8 +797,8 @@ export default function AppointmentsPage() {
         <div className="absolute inset-0 flex items-center p-3 sm:p-8">
           <div className="mobile-stack items-start sm:items-center justify-between w-full">
             <div className="text-white">
-              <h1 className="text-xl sm:text-2xl font-bold">Appointments</h1>
-              <p className="text-sm sm:text-base text-white/80 mobile-hidden">Manage your pet grooming appointments</p>
+              <h1 className="text-sm sm:text-lg font-bold">Appointments</h1>
+              <p className="text-xs text-white/80 mobile-hidden">Manage your pet grooming appointments</p>
             </div>
             <div className="mobile-stack items-start sm:items-center gap-2 sm:gap-4">
               <div className="flex rounded-lg bg-white/10 p-1">
