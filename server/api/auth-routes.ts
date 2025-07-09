@@ -109,6 +109,11 @@ authRouter.get('/roles', async (req: Request, res: Response) => {
 authRouter.post('/update-user-role', async (req: Request, res: Response) => {
   try {
     logger.info('[AUTH-ROUTES] Role update request:', req.body);
+    logger.info('[AUTH-ROUTES] Request user data:', { 
+      email: req.user?.email, 
+      role: req.user?.role, 
+      permissions: req.user?.permissions?.length || 0 
+    });
 
     if (!req.user) {
       return res.status(401).json({ message: 'Not authenticated' });
@@ -116,6 +121,11 @@ authRouter.post('/update-user-role', async (req: Request, res: Response) => {
 
     // Check if user has permission to update roles
     if (req.user.role !== 'admin' && req.user.role !== 'manager') {
+      logger.warn('[AUTH-ROUTES] User lacks permission to update roles:', {
+        userRole: req.user.role,
+        userEmail: req.user.email,
+        requiredRoles: ['admin', 'manager']
+      });
       return res.status(403).json({ 
         message: 'Insufficient permissions to update user roles' 
       });
