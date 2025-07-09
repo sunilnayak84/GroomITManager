@@ -20,17 +20,12 @@ import { useToast } from '@/hooks/use-toast';
 import { PaymentMethod, PaymentInfo } from '@/types/billing';
 import { formatIndianCurrency } from '@/lib/utils';
 import { 
-  CreditCard, 
-  Smartphone, 
-  Banknote, 
-  Wallet,
-  Building,
-  QrCode,
+  Banknote,
   ExternalLink 
 } from 'lucide-react';
 
 const paymentSchema = z.object({
-  method: z.enum(['CASH', 'UPI_QR', 'UPI_ID', 'CARD', 'NET_BANKING', 'WALLET', 'RAZORPAY', 'BANK_TRANSFER']),
+  method: z.enum(['CASH']),
   transactionId: z.string().optional(),
   notes: z.string().optional(),
 });
@@ -87,48 +82,6 @@ export default function PaymentDialog({
       description: 'Customer paid in cash',
       icon: Banknote,
       requiresTransactionId: false,
-    },
-    {
-      id: 'UPI_QR' as PaymentMethod,
-      label: 'UPI QR Code',
-      description: 'Customer scanned QR code',
-      icon: QrCode,
-      requiresTransactionId: true,
-    },
-    {
-      id: 'UPI_ID' as PaymentMethod,
-      label: 'UPI ID Transfer',
-      description: 'Direct UPI transfer',
-      icon: Smartphone,
-      requiresTransactionId: true,
-    },
-    {
-      id: 'CARD' as PaymentMethod,
-      label: 'Card Payment',
-      description: 'Credit/Debit card',
-      icon: CreditCard,
-      requiresTransactionId: true,
-    },
-    {
-      id: 'NET_BANKING' as PaymentMethod,
-      label: 'Net Banking',
-      description: 'Online banking transfer',
-      icon: Building,
-      requiresTransactionId: true,
-    },
-    {
-      id: 'WALLET' as PaymentMethod,
-      label: 'Digital Wallet',
-      description: 'Paytm, PhonePe, etc.',
-      icon: Wallet,
-      requiresTransactionId: true,
-    },
-    {
-      id: 'BANK_TRANSFER' as PaymentMethod,
-      label: 'Bank Transfer',
-      description: 'Direct bank transfer',
-      icon: Building,
-      requiresTransactionId: true,
     },
   ];
 
@@ -330,7 +283,7 @@ export default function PaymentDialog({
               <div>
                 <h3 className="font-medium">Online Payment (Razorpay)</h3>
                 <p className="text-sm text-muted-foreground">
-                  Process secure online payment via Razorpay
+                  UPI, Cards, Net Banking, Wallets - All secure online payments
                 </p>
               </div>
               <Button 
@@ -350,7 +303,7 @@ export default function PaymentDialog({
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-muted-foreground">
-                Or record offline payment
+                Or record cash payment
               </span>
             </div>
           </div>
@@ -361,9 +314,9 @@ export default function PaymentDialog({
               <Label>Payment Method</Label>
               <RadioGroup
                 value={selectedMethod}
-                onValueChange={(value) => form.setValue('method', value as PaymentMethod)}
+                onValueChange={(value) => form.setValue('method', value as 'CASH')}
               >
-                <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-3">
                   {paymentMethods.map((method) => {
                     const Icon = method.icon;
                     return (
@@ -375,20 +328,15 @@ export default function PaymentDialog({
                         />
                         <Label
                           htmlFor={method.id}
-                          className="flex flex-col items-start space-y-2 rounded-lg border-2 border-muted p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+                          className="flex items-center space-x-3 rounded-lg border-2 border-muted p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
                         >
-                          <div className="flex items-center gap-2">
-                            <Icon className="h-5 w-5" />
+                          <Icon className="h-5 w-5" />
+                          <div className="flex-1">
                             <span className="font-medium">{method.label}</span>
+                            <p className="text-sm text-muted-foreground">
+                              {method.description}
+                            </p>
                           </div>
-                          <span className="text-sm text-muted-foreground">
-                            {method.description}
-                          </span>
-                          {method.requiresTransactionId && (
-                            <Badge variant="outline" className="text-xs">
-                              Requires Transaction ID
-                            </Badge>
-                          )}
                         </Label>
                       </div>
                     );
