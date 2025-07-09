@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useLocation, useRoute } from 'wouter';
 import { format } from 'date-fns';
 import { ArrowLeft, Download, CreditCard, User, Calendar, Clock, Tag } from 'lucide-react';
@@ -6,10 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useBilling } from '@/hooks/use-billing';
+import { useQuery } from '@tanstack/react-query';
 import { formatIndianCurrency } from '@/lib/utils';
 import { Bill } from '@/types/billing';
 import { Separator } from '@/components/ui/separator';
+import { useFirebaseAuth } from '@/hooks/use-firebase-auth';
+import { useUser } from '@/hooks/use-user';
 
 interface BillDetailsPageProps {
   billId?: string;
@@ -19,43 +21,53 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
   const [, setLocation] = useLocation();
   const [matched, params] = useRoute('/billing/:id');
   const billId = params?.id || propBillId;
-  const [bill, setBill] = useState<Bill | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const { getBillById } = useBilling();
+  const { getIdToken } = useFirebaseAuth();
+  const { user } = useUser();
 
+  // Redirect if no billId
   useEffect(() => {
     if (!billId) {
       setLocation('/billing');
-      return;
     }
+  }, [billId, setLocation]);
 
-    const fetchBill = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        console.log('[BILLING] Fetching bill with ID:', billId);
-        const billData = await getBillById(billId);
-        
-        if (!billData) {
-          setError('Bill not found');
-          console.error('[BILLING] Bill not found:', billId);
-          return;
+  // Fetch bill data with React Query
+  const {
+    data: bill,
+    isLoading: loading,
+    error,
+    isError
+  } = useQuery<Bill | null>({
+    queryKey: ['bill', billId],
+    queryFn: async () => {
+      if (!billId || !user) return null;
+
+      const idToken = await getIdToken();
+      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+      
+      console.log('[BILLING] Fetching bill by ID:', billId);
+      const response = await fetch(`${apiBaseUrl}/api/billing/bills/${billId}`, {
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+          'Content-Type': 'application/json'
         }
+      });
 
-        setBill(billData);
-        console.log('[BILLING] Bill loaded successfully:', billData);
-      } catch (err) {
-        console.error('[BILLING] Error fetching bill:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load bill');
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error('Bill not found');
+        }
+        throw new Error(`Failed to fetch bill: ${response.status}`);
       }
-    };
 
-    fetchBill();
-  }, [billId, getBillById, setLocation]);
+      const billData = await response.json();
+      console.log('[BILLING] Successfully fetched bill:', billData.id);
+      return billData;
+    },
+    enabled: !!billId && !!user,
+    staleTime: 60000, // 1 minute
+    refetchOnWindowFocus: false,
+  });
 
   const handleGoBack = () => {
     setLocation('/billing');
@@ -133,7 +145,9 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
         </div>
         <Card>
           <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">{error || 'Bill not found'}</p>
+            <p className="text-muted-foreground">
+              {error instanceof Error ? error.message : error || 'Bill not found'}
+            </p>
             <Button variant="outline" className="mt-4" onClick={handleGoBack}>
               Return to Bills
             </Button>
