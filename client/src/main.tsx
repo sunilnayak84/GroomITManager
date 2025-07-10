@@ -23,6 +23,7 @@ import WorkingHoursPage from "./pages/WorkingHoursPage";
 import LoyaltyProgramPage from "./pages/settings/LoyaltyProgramPage";
 import DogWalkingPage from "./pages/DogWalkingPage";
 import StaffManagementPage from "./pages/StaffManagementPage";
+import BillingPage from "./pages/BillingPage";
 
 // Loading component for suspense fallback
 function LoadingSpinner() {
@@ -126,7 +127,7 @@ function Router() {
             <Route path="/settings/rewards" component={lazy(() => import('./pages/settings/RewardsManagementPage'))} />
             <Route path="/settings/staff" component={StaffManagementPage} />
             <Route path="/staff-availability" component={lazy(() => import('./pages/staff-availability'))} />
-            <Route path="/billing" component={lazy(() => import('./pages/BillingPage'))} />
+            <Route path="/billing" component={BillingPage} />
             <Route path="/billing/:id">{(params) => <React.Suspense fallback={<div>Loading...</div>}>
               {React.createElement(React.lazy(() => import('./pages/BillDetailsPage')), { billId: params.id })}
             </React.Suspense>}</Route>
