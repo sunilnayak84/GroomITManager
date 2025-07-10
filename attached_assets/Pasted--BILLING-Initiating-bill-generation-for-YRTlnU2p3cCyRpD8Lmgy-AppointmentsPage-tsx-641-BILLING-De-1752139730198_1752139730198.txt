@@ -1,0 +1,145 @@
+[BILLING] Initiating bill generation for: YRTlnU2p3cCyRpD8Lmgy
+AppointmentsPage.tsx:641 [BILLING] Debugging appointment data before bill generation
+api/debug/appointment/YRTlnU2p3cCyRpD8Lmgy:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()Understand this error
+AppointmentsPage.tsx:658 [BILLING] Failed to debug appointment
+Qe @ AppointmentsPage.tsx:658Understand this error
+AppointmentsPage.tsx:661 [BILLING] Authentication token obtained, making request
+AppointmentsPage.tsx:664 [BILLING] Using API base URL: https://groomery.replit.app
+api/billing/generate/YRTlnU2p3cCyRpD8Lmgy:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()Understand this error
+AppointmentsPage.tsx:683 [BILLING] Failed to parse error response: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+Qe @ AppointmentsPage.tsx:683Understand this error
+AppointmentsPage.tsx:720 [BILLING] Error generating bill: Error: Server returned 404 
+    at Qe (AppointmentsPage.tsx:685:15)
+Qe @ AppointmentsPage.tsx:720Understand this error
+use-toast.ts:132 Toast dispatch: ADD_TOAST Object
+use-toast.ts:134 Toast state after dispatch: Object
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: YRTlnU2p3cCyRpD8Lmgy Object
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: YRTlnU2p3cCyRpD8Lmgy Object
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: CUpbMZMzLehuwlTwyoBU Object
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: CUpbMZMzLehuwlTwyoBU Object
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: 8nNSi9FavrK8F2cNIEH6 Object
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: 8nNSi9FavrK8F2cNIEH6 Object
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: Ci5LmcSGlx45ILVChcRK Object
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: Ci5LmcSGlx45ILVChcRK Object
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: g8KwzpKqv3FlPc1bmEhD Object
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: g8KwzpKqv3FlPc1bmEhD Object
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: ASOgDChlq25GTMNvv5iL Object
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: ASOgDChlq25GTMNvv5iL Object
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: W9ftqAATOZrRVDReo99t Object
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: W9ftqAATOZrRVDReo99t Object
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: 2hHbAFAEepLvGPCh8zGd Object
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: 2hHbAFAEepLvGPCh8zGd Object
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: mlzp0fgzhmuDqTa8uXp3 Object
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: mlzp0fgzhmuDqTa8uXp3 Object
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: 0Z06p6J6kEdsBZMZSEIg Object
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: 0Z06p6J6kEdsBZMZSEIg Object
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: CpMRgddlwhST9GPjMXyr Object
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: CpMRgddlwhST9GPjMXyr Object
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: NxY2PgrwKqKz6k8AhVV6 Object
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: NxY2PgrwKqKz6k8AhVV6 Object
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: tkfPK697geU0XVDYQPWH Object
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: tkfPK697geU0XVDYQPWH Object
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: uvQu9pRDDILFyO6uQKvM Object
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: uvQu9pRDDILFyO6uQKvM Object
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: BZ2OnsxLytM132ZOhn99 Object
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: BZ2OnsxLytM132ZOhn99 Object
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: PxjeoGPKKvUMTEm8mby9 Object
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: PxjeoGPKKvUMTEm8mby9 Object
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: 9nPyvPvfesLmd9gfdvhx Object
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: 9nPyvPvfesLmd9gfdvhx Object
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: rE4zdxPvm0gPxxeuQcPJ Object
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: rE4zdxPvm0gPxxeuQcPJ Object
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: CdsAOuDUkC6commyq0G5 Object
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: CdsAOuDUkC6commyq0G5 Object
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: 3D2xPZwgpauu54m5Prha Object
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: 3D2xPZwgpauu54m5Prha Object
+use-toast.ts:132 Toast dispatch: DISMISS_TOAST {type: 'DISMISS_TOAST', toastId: '6'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(1)}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: YRTlnU2p3cCyRpD8Lmgy {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: YRTlnU2p3cCyRpD8Lmgy {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: CUpbMZMzLehuwlTwyoBU {billGenerated: false, hasBill: false, billId: undefined, status: 'pending', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: CUpbMZMzLehuwlTwyoBU {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: 8nNSi9FavrK8F2cNIEH6 {billGenerated: false, hasBill: false, billId: undefined, status: 'pending', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: 8nNSi9FavrK8F2cNIEH6 {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: Ci5LmcSGlx45ILVChcRK {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: Ci5LmcSGlx45ILVChcRK {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: g8KwzpKqv3FlPc1bmEhD {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: g8KwzpKqv3FlPc1bmEhD {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: ASOgDChlq25GTMNvv5iL {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: ASOgDChlq25GTMNvv5iL {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: W9ftqAATOZrRVDReo99t {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: W9ftqAATOZrRVDReo99t {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: 2hHbAFAEepLvGPCh8zGd {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: 2hHbAFAEepLvGPCh8zGd {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: mlzp0fgzhmuDqTa8uXp3 {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: mlzp0fgzhmuDqTa8uXp3 {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: 0Z06p6J6kEdsBZMZSEIg {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: 0Z06p6J6kEdsBZMZSEIg {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: CpMRgddlwhST9GPjMXyr {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: CpMRgddlwhST9GPjMXyr {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: NxY2PgrwKqKz6k8AhVV6 {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: NxY2PgrwKqKz6k8AhVV6 {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: tkfPK697geU0XVDYQPWH {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: tkfPK697geU0XVDYQPWH {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: uvQu9pRDDILFyO6uQKvM {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: uvQu9pRDDILFyO6uQKvM {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: BZ2OnsxLytM132ZOhn99 {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: BZ2OnsxLytM132ZOhn99 {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: PxjeoGPKKvUMTEm8mby9 {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: PxjeoGPKKvUMTEm8mby9 {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: 9nPyvPvfesLmd9gfdvhx {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: 9nPyvPvfesLmd9gfdvhx {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: rE4zdxPvm0gPxxeuQcPJ {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: rE4zdxPvm0gPxxeuQcPJ {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: CdsAOuDUkC6commyq0G5 {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: CdsAOuDUkC6commyq0G5 {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: 3D2xPZwgpauu54m5Prha {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: 3D2xPZwgpauu54m5Prha {billGenerated: false, billId: undefined, billStatus: null}
+use-toast.ts:132 Toast dispatch: REMOVE_TOAST {type: 'REMOVE_TOAST', toastId: '6'}
+use-toast.ts:134 Toast state after dispatch: {toasts: Array(0)}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: YRTlnU2p3cCyRpD8Lmgy {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: YRTlnU2p3cCyRpD8Lmgy {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: CUpbMZMzLehuwlTwyoBU {billGenerated: false, hasBill: false, billId: undefined, status: 'pending', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: CUpbMZMzLehuwlTwyoBU {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: 8nNSi9FavrK8F2cNIEH6 {billGenerated: false, hasBill: false, billId: undefined, status: 'pending', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: 8nNSi9FavrK8F2cNIEH6 {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: Ci5LmcSGlx45ILVChcRK {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: Ci5LmcSGlx45ILVChcRK {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: g8KwzpKqv3FlPc1bmEhD {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: g8KwzpKqv3FlPc1bmEhD {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: ASOgDChlq25GTMNvv5iL {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: ASOgDChlq25GTMNvv5iL {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: W9ftqAATOZrRVDReo99t {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: W9ftqAATOZrRVDReo99t {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: 2hHbAFAEepLvGPCh8zGd {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: 2hHbAFAEepLvGPCh8zGd {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: mlzp0fgzhmuDqTa8uXp3 {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: mlzp0fgzhmuDqTa8uXp3 {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: 0Z06p6J6kEdsBZMZSEIg {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: 0Z06p6J6kEdsBZMZSEIg {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: CpMRgddlwhST9GPjMXyr {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: CpMRgddlwhST9GPjMXyr {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: NxY2PgrwKqKz6k8AhVV6 {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: NxY2PgrwKqKz6k8AhVV6 {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: tkfPK697geU0XVDYQPWH {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: tkfPK697geU0XVDYQPWH {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: uvQu9pRDDILFyO6uQKvM {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: uvQu9pRDDILFyO6uQKvM {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: BZ2OnsxLytM132ZOhn99 {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: BZ2OnsxLytM132ZOhn99 {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: PxjeoGPKKvUMTEm8mby9 {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: PxjeoGPKKvUMTEm8mby9 {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: 9nPyvPvfesLmd9gfdvhx {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: 9nPyvPvfesLmd9gfdvhx {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: rE4zdxPvm0gPxxeuQcPJ {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: rE4zdxPvm0gPxxeuQcPJ {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: CdsAOuDUkC6commyq0G5 {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: CdsAOuDUkC6commyq0G5 {billGenerated: false, billId: undefined, billStatus: null}
+AppointmentsPage.tsx:536 [BILLING] Appointment bill status: 3D2xPZwgpauu54m5Prha {billGenerated: false, hasBill: false, billId: undefined, status: 'completed', billStatus: null}
+AppointmentsPage.tsx:557 [BILLING] Appointment bill status: 3D2xPZwgpauu54m5Prha {billGenerated: false, billId: undefined, billStatus: null}
