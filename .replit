@@ -88,7 +88,7 @@ args = "Backend"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Production Ready"
+args = "Stable Production"
 
 [[workflows.workflow]]
 name = "Smart Deploy"
@@ -109,10 +109,10 @@ args = "npm run dev"
 waitForPort = 3000
 
 [[workflows.workflow]]
-name = "Production Ready"
+name = "Stable Production"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "PORT=5000 NODE_ENV=production concurrently \"cd client && VITE_API_URL= npm run dev -- --port 5000 --host 0.0.0.0\" \"cd server && PORT=5000 npm run dev\""
+args = "cd server && PORT=5000 npm run dev"
 waitForPort = 5000
