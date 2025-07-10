@@ -76,7 +76,8 @@ app.get('*', (req, res) => {
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 GroomIT Manager Simple Production Server running on port ${PORT}`);
+  console.log(`🚀 GroomIT Manager Production Server running on port ${PORT}`);
   console.log(`📍 Frontend: http://localhost:${PORT}`);
   console.log(`🏥 Health check: http://localhost:${PORT}/api/health`);
+  console.log(`✅ Deployment ready - no more build delays!`);
 });

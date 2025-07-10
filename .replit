@@ -84,10 +84,6 @@ args = "Development Servers"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Smart Deploy"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
 args = "Development App"
 
 [[workflows.workflow.tasks]]
@@ -104,15 +100,6 @@ args = "cd client && npm run dev & cd server && npm run dev"
 waitForPort = 5174
 
 [[workflows.workflow]]
-name = "Smart Deploy"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd client && npm run build && cd ../server && npm run dev"
-waitForPort = 3000
-
-[[workflows.workflow]]
 name = "Development App"
 author = "agent"
 
@@ -127,5 +114,5 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node production-deployment-server.js"
-waitForPort = 3000
+args = "NODE_ENV=production PORT=3001 node index.js"
+waitForPort = 3001
