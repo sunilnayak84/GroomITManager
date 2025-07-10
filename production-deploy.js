@@ -12,11 +12,11 @@ import { fileURLToPath } from 'url';
 import cors from 'cors';
 import { createServer } from 'http';
 
-// Import the backend server components
-import { initializeFirebaseAdmin } from './server/firebase.js';
-import { setupAuthenticationFirestore } from './server/auth-firestore.js';
-import { registerRoutes } from './server/routes.js';
-import { logger } from './server/utils/logger.js';
+// Import the backend server components from TypeScript source
+import { initializeFirebaseAdmin } from './server/firebase.ts';
+import { setupAuthenticationFirestore } from './server/auth-firestore.ts';
+import { registerRoutes } from './server/routes.ts';
+import { logger } from './server/utils/logger.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();

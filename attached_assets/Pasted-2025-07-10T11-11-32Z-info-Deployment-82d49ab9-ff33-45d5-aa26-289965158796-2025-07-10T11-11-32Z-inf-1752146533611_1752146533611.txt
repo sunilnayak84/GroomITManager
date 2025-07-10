@@ -1,0 +1,121 @@
+2025-07-10T11:11:32Z info: Deployment: 82d49ab9-ff33-45d5-aa26-289965158796
+2025-07-10T11:11:32Z info: Build: 3f0f25ae-4884-47f3-8a3a-c6e82f9a4e4f
+2025-07-10T11:11:32Z info: Connecting to builder
+2025-07-10T11:11:34Z info: Builder connected
+2025-07-10T11:11:37Z info: Installing packages
+--> npm install
+
+
+up to date, audited 1209 packages in 5s
+
+119 packages are looking for funding
+
+  run `npm fund` for details
+
+
+7 vulnerabilities (1 low, 3 moderate, 3 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.4.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.4.2
+npm notice To update run: npm install -g npm@11.4.2
+npm notice
+
+2025-07-10T11:11:43Z info: Starting Build
+
+> groom-it-manager-client@0.1.0 build
+> tsc && vite build
+
+
+vite v5.4.19 building for production...
+
+transforming...
+
+✓ 3485 modules transformed.
+
+rendering chunks...
+
+[plugin:vite:reporter] [plugin vite:reporter] 
+(!) /home/runner/workspace/client/src/lib/storage.ts is dynamically imported by /home/runner/workspace/client/src/components/AppointmentDetails.tsx, /home/runner/workspace/client/src/components/AppointmentDetails.tsx but also statically imported by /home/runner/workspace/client/src/hooks/use-pets.ts, /home/runner/workspace/client/src/hooks/use-rewards.ts, dynamic import will not move module into another chunk.
+
+
+computing gzip size...
+
+dist/index.html                                    0.63 kB │ gzip:   0.38 kB
+
+dist/assets/index-DU6_Po6c.css                   109.27 kB │ gzip:  16.73 kB
+
+dist/assets/use-firebase-auth-B8N0uOdy.js          0.75 kB │ gzip:   0.52 kB │ map:     1.95 kB
+
+dist/assets/CategoriesPage-a051EyhQ.js             2.12 kB │ gzip:   0.95 kB │ map:     7.27 kB
+
+dist/assets/RewardsManagementPage-Cxb8Vsw5.js      4.97 kB │ gzip:   1.76 kB │ map:    16.62 kB
+
+dist/assets/index-BDZSPXmp.js                      6.16 kB │ gzip:   2.18 kB │ map:    21.32 kB
+
+dist/assets/BreedsPage-BzUBk1KK.js                 8.12 kB │ gzip:   3.15 kB │ map:    20.35 kB
+
+dist/assets/StaffPage-zNCAK_vY.js                  8.26 kB │ gzip:   2.66 kB │ map:    27.82 kB
+
+dist/assets/BillDetailsPage-DTRm_tSR.js            8.81 kB │ gzip:   2.49 kB │ map:    23.45 kB
+
+dist/assets/BillingPage-CvCxn3Z6.js               58.82 kB │ gzip:  14.91 kB │ map:   200.41 kB
+
+dist/assets/vendor-BqSMHcVE.js                   141.46 kB │ gzip:  45.50 kB │ map:   344.49 kB
+
+dist/assets/index-kO9k_9Hy.js                  1,920.48 kB │ gzip: 515.35 kB │ map: 7,891.90 kB
+
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+
+✓ built in 15.25s
+
+2025-07-10T11:12:42Z info: Pushing pid1 binary layer...
+2025-07-10T11:12:47Z info: Pushing Repl layer...
+2025-07-10T11:12:47Z info: Pushing hosting layer...
+2025-07-10T11:12:48Z info: Retrieved cached nix layer
+2025-07-10T11:12:49Z info: Created hosting layer
+2025-07-10T11:12:51Z info: Created pid1 binary layer
+2025-07-10T11:20:05Z info: Created Repl layer
+2025-07-10T11:20:06Z info: Pushed image manifest
+2025-07-10T11:20:08Z info: Pushed soci index manifest
+2025-07-10T11:20:08Z info: Pushed referrer manifest
+2025-07-10T11:20:12Z info: Creating Autoscale service
+error proxying request error=dial tcp 127.0.0.1:5174: connect: connection refused
+error proxying request error=dial tcp 127.0.0.1:5174: connect: connection refused
+error proxying request error=dial tcp 127.0.0.1:5174: connect: connection refused
+node:internal/modules/esm/resolve:265
+    at defaultResolve (node:internal/modules/esm/resolve:1169:11)
+    throw new ERR_MODULE_NOT_FOUND(
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:239:38)
+error proxying request error=dial tcp 127.0.0.1:5174: connect: connection refused
+
+error proxying request error=dial tcp 127.0.0.1:5174: connect: connection refused
+error proxying request error=dial tcp 127.0.0.1:5174: connect: connection refused
+node:internal/modules/esm/resolve:265
+error proxying request error=dial tcp 127.0.0.1:5174: connect: connection refused
+  url: 'file:///home/runner/workspace/server/firebase.js'
+error proxying request error=dial tcp 127.0.0.1:5174: connect: connection refused
+error proxying request error=dial tcp 127.0.0.1:5174: connect: connection refused
+error proxying request error=dial tcp 127.0.0.1:5174: connect: connection refused
+
+    at moduleResolve (node:internal/modules/esm/resolve:933:10)
+    at link (node:internal/modules/esm/module_job:95:36) {
+    at finalizeResolution (node:internal/modules/esm/resolve:265:11)
+error proxying request error=dial tcp 127.0.0.1:5174: connect: connection refused
+error proxying request error=dial tcp 127.0.0.1:5174: connect: connection refused
+error proxying request error=dial tcp 127.0.0.1:5174: connect: connection refused
+error proxying request error=dial tcp 127.0.0.1:5174: connect: connection refused
+error proxying request error=dial tcp 127.0.0.1:5174: connect: connection refused
+2025-07-10T11:21:58Z error: The deployment is crash looping. This can happen if the run command fails or exits immediately after starting. Check the logs for more information.

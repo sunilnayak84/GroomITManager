@@ -1,6 +1,6 @@
 
 // PRODUCTION DEPLOYMENT ENTRY POINT
-// This imports the full-stack production server with real Firebase backend
-import './simple-deploy.js';
+// This imports the fixed deployment server
+import './deployment-server.js';
 
-console.log('GroomIT Manager starting with full backend API in production mode...');
+console.log('GroomIT Manager starting with fixed deployment server...');
