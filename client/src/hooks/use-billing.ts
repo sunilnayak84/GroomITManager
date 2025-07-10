@@ -22,7 +22,7 @@ export function useBilling() {
 
     try {
       const idToken = await getIdToken();
-      const apiBaseUrl = window.location.origin;
+      const apiBaseUrl = import.meta.env.VITE_API_URL || window.location.origin;
       
       console.log('[BILLING] Fetching bills...');
       const response = await fetch(`${apiBaseUrl}/api/billing/bills`, {
@@ -38,12 +38,8 @@ export function useBilling() {
         throw new Error(`Failed to fetch bills: ${response.status}`);
       }
 
-      const data = await response.json();
-      console.log('[BILLING] Successfully fetched bills response:', data);
-      
-      // Handle both {bills: [...]} and [...] response formats
-      const bills = Array.isArray(data) ? data : (data.bills || []);
-      console.log('[BILLING] Processed bills array:', bills.length);
+      const bills = await response.json();
+      console.log('[BILLING] Successfully fetched bills:', bills.length);
       return bills;
     } catch (error) {
       console.error('[BILLING] Error fetching bills:', error);
@@ -57,7 +53,7 @@ export function useBilling() {
 
     try {
       const idToken = await getIdToken();
-      const apiBaseUrl = window.location.origin;
+      const apiBaseUrl = import.meta.env.VITE_API_URL || window.location.origin;
       
       console.log('[BILLING] Fetching bill by ID:', billId);
       const response = await fetch(`${apiBaseUrl}/api/billing/bills/${billId}`, {
@@ -112,7 +108,7 @@ export function useBilling() {
       }
 
       const idToken = await getIdToken();
-      const apiBaseUrl = window.location.origin;
+      const apiBaseUrl = import.meta.env.VITE_API_URL || window.location.origin;
       
       console.log('[BILLING] Deleting bill:', billId);
       const response = await fetch(`${apiBaseUrl}/api/billing/bills/${billId}`, {
@@ -157,7 +153,7 @@ export function useBilling() {
       if (!user) throw new Error('User not authenticated');
 
       const idToken = await getIdToken();
-      const apiBaseUrl = window.location.origin;
+      const apiBaseUrl = import.meta.env.VITE_API_URL || window.location.origin;
 
       console.log('[BILLING] Creating bill for appointment:', input.appointmentId);
       const response = await fetch(`${apiBaseUrl}/api/billing/bills`, {
@@ -205,7 +201,7 @@ export function useBilling() {
       if (!user) throw new Error('User not authenticated');
 
       const idToken = await getIdToken();
-      const apiBaseUrl = window.location.origin;
+      const apiBaseUrl = import.meta.env.VITE_API_URL || window.location.origin;
 
       console.log('[BILLING] Updating bill:', billId);
       const response = await fetch(`${apiBaseUrl}/api/billing/bills/${billId}`, {

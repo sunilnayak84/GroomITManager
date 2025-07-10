@@ -176,7 +176,7 @@ export default function BillingPage() {
   }, []);
 
   // Filter bills based on status and search term
-  const filteredBills = (bills || []).filter(bill => {
+  const filteredBills = bills.filter(bill => {
     const matchesStatus = statusFilter === 'ALL' || bill.status === statusFilter;
     const matchesSearch = !searchTerm || 
       bill.customerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||

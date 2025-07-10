@@ -1,11 +1,6 @@
 
-// ULTIMATE DEPLOYMENT ENTRY POINT
-// This is the most reliable deployment solution
+// Main entry point for production deployment
+// This file imports server.js which handles both frontend and API routes
+import './server.js';
 
-console.log('GroomIT Manager - Ultimate Deploy Starting...');
-
-// Use the most reliable deployment server
-import('./ultimate-deploy.js').catch(err => {
-  console.error('Failed to start deployment server:', err);
-  process.exit(1);
-});
+console.log('GroomIT Manager starting in production mode...');

@@ -39,10 +39,6 @@ localPort = 5177
 externalPort = 3002
 
 [[ports]]
-localPort = 8080
-externalPort = 8080
-
-[[ports]]
 localPort = 9005
 externalPort = 3001
 
@@ -88,11 +84,11 @@ args = "Development Servers"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Development App"
+args = "Smart Deploy"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Ultimate Deploy"
+args = "Development App"
 
 [[workflows.workflow]]
 name = "Development Servers"
@@ -104,6 +100,15 @@ args = "cd client && npm run dev & cd server && npm run dev"
 waitForPort = 5174
 
 [[workflows.workflow]]
+name = "Smart Deploy"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd client && npm run build && cd ../server && npm run dev"
+waitForPort = 3000
+
+[[workflows.workflow]]
 name = "Development App"
 author = "agent"
 
@@ -111,12 +116,3 @@ author = "agent"
 task = "shell.exec"
 args = "cd client && npm run dev -- --port 5000 --host 0.0.0.0"
 waitForPort = 5000
-
-[[workflows.workflow]]
-name = "Ultimate Deploy"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "NODE_ENV=production PORT=8080 node ultimate-deploy.js"
-waitForPort = 8080

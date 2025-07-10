@@ -12,11 +12,11 @@ import { fileURLToPath } from 'url';
 import cors from 'cors';
 import { createServer } from 'http';
 
-// Import the backend server components from TypeScript source
-import { initializeFirebaseAdmin } from './server/firebase.ts';
-import { setupAuthenticationFirestore } from './server/auth-firestore.ts';
-import { registerRoutes } from './server/routes.ts';
-import { logger } from './server/utils/logger.ts';
+// Import the backend server components
+import { initializeFirebaseAdmin } from './server/firebase.js';
+import { setupAuthenticationFirestore } from './server/auth-firestore.js';
+import { registerRoutes } from './server/routes.js';
+import { logger } from './server/utils/logger.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -50,14 +50,12 @@ app.use((req, res, next) => {
   next();
 });
 
-// Find the client build directory (check optimized build path first)
+// Find the client build directory
 let clientBuildPath = '';
 const possiblePaths = [
-  path.join(__dirname, 'client/dist'),  // Standard build output
-  path.join(__dirname, 'dist/public'),  // Optimized build output  
+  path.join(__dirname, 'client/dist'),
   path.join(__dirname, 'dist/client'),
-  path.join(process.cwd(), 'client/dist'),
-  path.join(process.cwd(), 'dist/public')
+  path.join(process.cwd(), 'client/dist')
 ];
 
 for (const pathToCheck of possiblePaths) {
@@ -77,11 +75,7 @@ if (!clientBuildPath) {
   
   try {
     const { execSync } = await import('child_process');
-    console.log('🚀 Building with optimized chunking for faster deployment...');
-    execSync('cd client && npm run build', { 
-      stdio: 'inherit',
-      env: { ...process.env, NODE_ENV: 'production' }
-    });
+    execSync('cd client && npm run build', { stdio: 'inherit' });
     
     // Check again after building
     for (const pathToCheck of possiblePaths) {
