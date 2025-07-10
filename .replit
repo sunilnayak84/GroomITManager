@@ -127,5 +127,5 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node deployment-server.js"
+args = "node production-deployment-server.js"
 waitForPort = 3000

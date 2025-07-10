@@ -64,6 +64,44 @@ app.get('/api/status', (req, res) => {
   });
 });
 
+// Billing API endpoints (mock for deployment)
+app.post('/api/billing/generate', (req, res) => {
+  console.log('Billing API called - generating bill for appointment:', req.body.appointmentId);
+  
+  // Mock successful bill generation
+  res.json({
+    success: true,
+    bill: {
+      bill_id: 'mock_' + Date.now(),
+      appointment_id: req.body.appointmentId,
+      customer_name: 'Mock Customer',
+      total_amount: 100.00,
+      status: 'generated',
+      payment_method: 'cash',
+      created_at: new Date().toISOString()
+    }
+  });
+});
+
+// Other API endpoints that might be needed
+app.get('/api/*', (req, res) => {
+  console.log('API request received:', req.path);
+  res.status(404).json({ 
+    error: 'API endpoint not found in deployment server',
+    path: req.path,
+    message: 'This is a simplified deployment server'
+  });
+});
+
+app.post('/api/*', (req, res) => {
+  console.log('API POST request received:', req.path);
+  res.status(404).json({ 
+    error: 'API endpoint not found in deployment server',
+    path: req.path,
+    message: 'This is a simplified deployment server'
+  });
+});
+
 // Catch-all handler for SPA routing
 app.get('*', (req, res) => {
   res.sendFile(path.join(clientBuildPath, 'index.html'));
