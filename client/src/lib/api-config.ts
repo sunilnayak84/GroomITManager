@@ -5,9 +5,15 @@
  */
 
 export function getApiBaseUrl(): string {
-  // In development, use the env variable if set, otherwise use localhost
+  // In development, use the proxy (empty string means same origin, proxy will handle /api routes)
   if (import.meta.env.DEV) {
-    return import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    // If we have a VITE_API_URL, use it
+    if (import.meta.env.VITE_API_URL) {
+      return import.meta.env.VITE_API_URL;
+    }
+    
+    // Use current origin in development - Vite proxy will handle /api routes
+    return window.location.origin;
   }
   
   // In production, if VITE_API_URL is empty or not set, use the current origin
