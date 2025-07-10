@@ -112,6 +112,7 @@ export interface GSTConfiguration {
 // Payment Methods for Indian market
 export type PaymentMethod = 
   | 'CASH' 
+  | 'MANUAL_UPI'
   | 'UPI_QR' 
   | 'UPI_ID' 
   | 'CARD' 

@@ -129,6 +129,16 @@ While the application currently uses Firebase Firestore, the architecture suppor
 
 ## Recent Changes (July 2025)
 
+### Manual UPI Payment Method Implementation (July 10, 2025)
+- ✅ **New Payment Option Added**: Implemented "Manual UPI" payment method alongside existing "Cash Payment" option
+- ✅ **UPI QR Code Support**: Added payment method for customers who manually scan available UPI QR codes and pay independently
+- ✅ **Transaction ID Validation**: Required transaction ID field for Manual UPI payments with proper frontend validation
+- ✅ **Smart UI Integration**: Added smartphone icon and clear description "Customer scanned UPI QR code and paid manually"
+- ✅ **Type Safety Enhanced**: Updated PaymentMethod type in both frontend and backend to include MANUAL_UPI
+- ✅ **Form Validation**: Implemented proper form validation requiring transaction ID for Manual UPI payments
+- ✅ **Backend Compatibility**: Ensured server-side billing routes properly handle MANUAL_UPI payment method
+- ✅ **Production Ready**: Both development and production environments support the new payment method
+
 ### Production Deployment API Fix (July 10, 2025) 
 - ✅ **Root Cause Identified**: Deployed app was using mock deployment server instead of real backend with billing APIs
 - ✅ **API URL Configuration Fixed**: Resolved 404 API errors by removing empty VITE_API_URL from .env.production

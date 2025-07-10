@@ -22,11 +22,12 @@ import { PaymentMethod, PaymentInfo } from '@/types/billing';
 import { formatIndianCurrency } from '@/lib/utils';
 import { 
   Banknote,
-  ExternalLink 
+  ExternalLink,
+  Smartphone
 } from 'lucide-react';
 
 const paymentSchema = z.object({
-  method: z.enum(['CASH']),
+  method: z.enum(['CASH', 'MANUAL_UPI']),
   transactionId: z.string().optional(),
   notes: z.string().optional(),
 });
@@ -83,6 +84,13 @@ export default function PaymentDialog({
       description: 'Customer paid in cash',
       icon: Banknote,
       requiresTransactionId: false,
+    },
+    {
+      id: 'MANUAL_UPI' as PaymentMethod,
+      label: 'Manual UPI',
+      description: 'Customer scanned UPI QR code and paid manually',
+      icon: Smartphone,
+      requiresTransactionId: true,
     },
   ];
 
@@ -309,7 +317,7 @@ export default function PaymentDialog({
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-muted-foreground">
-                Or record cash payment
+                Or record manual payment
               </span>
             </div>
           </div>
@@ -320,7 +328,7 @@ export default function PaymentDialog({
               <Label>Payment Method</Label>
               <RadioGroup
                 value={selectedMethod}
-                onValueChange={(value) => form.setValue('method', value as 'CASH')}
+                onValueChange={(value) => form.setValue('method', value as 'CASH' | 'MANUAL_UPI')}
               >
                 <div className="space-y-3">
                   {paymentMethods.map((method) => {
