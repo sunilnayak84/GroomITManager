@@ -45,6 +45,7 @@ import GSTConfigDialog from '@/components/GSTConfigDialog';
 import PaymentDialog from '@/components/PaymentDialog';
 import BillDiscountDialog from '@/components/BillDiscountDialog';
 import { useToast } from '@/hooks/use-toast';
+import { getApiBaseUrl } from '@/lib/api-config';
 
 function EmptyState() {
   return (
@@ -232,7 +233,7 @@ export default function BillingPage() {
       }
 
       const token = await user.getIdToken();
-      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+      const apiBaseUrl = getApiBaseUrl();
 
       const response = await fetch(
         `${apiBaseUrl}/api/billing/bills/${selectedBillForPayment.id}/payment`,
@@ -303,7 +304,7 @@ export default function BillingPage() {
       }
 
       const token = await user.getIdToken();
-      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+      const apiBaseUrl = getApiBaseUrl();
 
       console.log('[DISCOUNT] About to send:', discountApplication);
       console.log('[DISCOUNT] Sending to backend:', JSON.stringify({
@@ -380,7 +381,7 @@ export default function BillingPage() {
       }
 
       const token = await user.getIdToken();
-      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+      const apiBaseUrl = getApiBaseUrl();
 
       console.log('[DISCOUNT] Removing discount for bill:', bill.id);
 
@@ -444,7 +445,7 @@ export default function BillingPage() {
       }
 
       const token = await user.getIdToken();
-      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+      const apiBaseUrl = getApiBaseUrl();
 
       const response = await fetch(
         `${apiBaseUrl}/api/billing/bills/${bill.id}`,
@@ -495,7 +496,7 @@ export default function BillingPage() {
       }
 
       const token = await user.getIdToken();
-      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+      const apiBaseUrl = getApiBaseUrl();
 
       const response = await fetch(
         `${apiBaseUrl}/api/billing/bills/${bill.id}/status`,

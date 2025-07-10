@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { getApiBaseUrl } from "@/lib/api-config";
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -113,7 +114,7 @@ export default function PaymentDialog({
       }
 
       const token = await user.getIdToken();
-      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+      const apiBaseUrl = getApiBaseUrl();
 
       // Create Razorpay order
       const orderResponse = await fetch(`${apiBaseUrl}/api/billing/razorpay/create-order`, {

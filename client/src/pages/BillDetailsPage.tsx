@@ -12,6 +12,7 @@ import { Bill } from '@/types/billing';
 import { Separator } from '@/components/ui/separator';
 import { useFirebaseAuth } from '@/hooks/use-firebase-auth';
 import { useUser } from '@/hooks/use-user';
+import { getApiBaseUrl } from '@/lib/api-config';
 
 interface BillDetailsPageProps {
   billId?: string;
@@ -43,7 +44,7 @@ export default function BillDetailsPage({ billId: propBillId }: BillDetailsPageP
       if (!billId || !user) return null;
 
       const idToken = await getIdToken();
-      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+      const apiBaseUrl = getApiBaseUrl();
       
       console.log('[BILLING] Fetching bill by ID:', billId);
       const response = await fetch(`${apiBaseUrl}/api/billing/bills/${billId}`, {

@@ -25,6 +25,7 @@ import { Link, useLocation as useReactRouterLocation } from "react-router-dom";
 import { useLocation } from 'wouter';
 import PaymentDialog from '@/components/PaymentDialog';
 import { PaymentInfo } from '@/types/billing';
+import { getApiBaseUrl } from "@/lib/api-config";
 
 
 // Get status type from the schema
@@ -639,7 +640,7 @@ export default function AppointmentsPage() {
       const token = await user.getIdToken();
       console.log("[BILLING] Debugging appointment data before bill generation");
 
-      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+      const apiBaseUrl = getApiBaseUrl();
       const debugResponse = await fetch(
         `${apiBaseUrl}/api/debug/appointment/${appointmentId}`,
         {
@@ -739,7 +740,7 @@ export default function AppointmentsPage() {
       }
 
       const token = await user.getIdToken();
-      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+      const apiBaseUrl = getApiBaseUrl();
 
       const response = await fetch(
         `${apiBaseUrl}/api/billing/bills/${selectedAppointmentForPayment.billId}/payment`,
