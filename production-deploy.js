@@ -53,8 +53,8 @@ app.use((req, res, next) => {
 // Find the client build directory (check optimized build path first)
 let clientBuildPath = '';
 const possiblePaths = [
-  path.join(__dirname, 'dist/public'),  // Optimized build output
-  path.join(__dirname, 'client/dist'),
+  path.join(__dirname, 'client/dist'),  // Standard build output
+  path.join(__dirname, 'dist/public'),  // Optimized build output  
   path.join(__dirname, 'dist/client'),
   path.join(process.cwd(), 'client/dist'),
   path.join(process.cwd(), 'dist/public')
@@ -78,7 +78,7 @@ if (!clientBuildPath) {
   try {
     const { execSync } = await import('child_process');
     console.log('🚀 Building with optimized chunking for faster deployment...');
-    execSync('npx vite build --config vite.config.prod.ts', { 
+    execSync('cd client && npm run build', { 
       stdio: 'inherit',
       env: { ...process.env, NODE_ENV: 'production' }
     });
