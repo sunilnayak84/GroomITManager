@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { BillingService } from './billing-service';
-import { logger } from '../utils/logger';
-import { authenticateFirebase } from '../middleware/auth';
+import { BillingService } from './billing-service.js';
+import { logger } from '../utils/logger.js';
+import { authenticateFirebase } from '../middleware/auth.js';
 import * as admin from 'firebase-admin';
 
 // Define types for Firestore timestamp objects
@@ -10,7 +10,7 @@ interface FirestoreTimestamp {
 }
 
 // Import Bill type
-import { Bill } from '../types/billing';
+import { Bill } from '../types/billing.js';
 
 // Define a type for bills that may have Firestore timestamps
 interface FirestoreBill extends Omit<Bill, 'createdAt' | 'updatedAt' | 'id'> {

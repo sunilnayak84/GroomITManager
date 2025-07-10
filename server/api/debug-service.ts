@@ -1,6 +1,6 @@
 import express from 'express';
-import { logger } from '../utils/logger';
-import { admin } from '../firebase';
+import { logger } from '../utils/logger.js';
+import { admin } from '../firebase.js';
 
 class DebugService {
   async getFirestoreDocument(collection: string, id: string) {

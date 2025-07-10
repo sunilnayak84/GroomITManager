@@ -1,6 +1,6 @@
 import Razorpay from 'razorpay';
-import { admin } from '../firebase';
-import { logger } from '../utils/logger';
+import { admin } from '../firebase.js';
+import { logger } from '../utils/logger.js';
 import crypto from 'crypto';
 
 // Initialize Razorpay

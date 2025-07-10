@@ -1,11 +1,11 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { admin } from './firebase';
+import { admin } from './firebase.js';
 import * as Express from 'express';
-import { staffManagementRouter } from './api/staff-management';
-import { authenticateFirebase } from './middleware/auth';
+import { staffManagementRouter } from './api/staff-management.js';
+import { authenticateFirebase } from './middleware/auth.js';
 import billingRoutes from './api/billing-routes-new.js';
-import { authRouter } from './api/auth-routes';
-import { logger } from './utils/logger';
+import { authRouter } from './api/auth-routes.js';
+import { logger } from './utils/logger.js';
 
 const router = Router();
 
@@ -111,7 +111,7 @@ export async function registerRoutes(app: Express.Application) {
         }
         
         // Import the debug service
-        const DebugService = await import('./api/debug-service');
+        const DebugService = await import('./api/debug-service.js');
         const debugInfo = await DebugService.default.debugAppointment(appointmentId);
         return res.json(debugInfo);
       }
