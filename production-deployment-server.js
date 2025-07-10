@@ -87,10 +87,16 @@ app.get('/api/status', (req, res) => {
   });
 });
 
-// Billing API endpoints
-app.post('/api/billing/generate', async (req, res) => {
+// Billing API endpoints - support both URL patterns
+app.post('/api/billing/generate/:appointmentId?', async (req, res) => {
   try {
-    console.log('Billing API called - generating bill for appointment:', req.body.appointmentId);
+    // Get appointment ID from either URL parameter or request body
+    const appointmentId = req.params.appointmentId || req.body.appointmentId;
+    console.log('Billing API called - generating bill for appointment:', appointmentId);
+    
+    if (!appointmentId) {
+      return res.status(400).json({ error: 'Appointment ID is required' });
+    }
     
     if (!firebaseApp) {
       // Mock response when Firebase is not available
@@ -99,7 +105,7 @@ app.post('/api/billing/generate', async (req, res) => {
         success: true,
         bill: {
           bill_id: 'mock_' + Date.now(),
-          appointment_id: req.body.appointmentId,
+          appointment_id: appointmentId,
           customer_name: 'Mock Customer',
           total_amount: 100.00,
           status: 'generated',
@@ -111,7 +117,6 @@ app.post('/api/billing/generate', async (req, res) => {
 
     // Real Firebase implementation
     const firestore = admin.firestore();
-    const appointmentId = req.body.appointmentId;
     
     // Get appointment data
     const appointmentDoc = await firestore.collection('appointments').doc(appointmentId).get();
@@ -173,13 +178,36 @@ app.post('/api/billing/generate', async (req, res) => {
   }
 });
 
+// Debug endpoint for appointments
+app.get('/api/debug/appointment/:appointmentId', async (req, res) => {
+  try {
+    if (!firebaseApp) {
+      return res.json({ error: 'Firebase not connected', mock: true });
+    }
+    
+    const firestore = admin.firestore();
+    const appointmentDoc = await firestore.collection('appointments').doc(req.params.appointmentId).get();
+    
+    if (!appointmentDoc.exists) {
+      return res.status(404).json({ error: 'Appointment not found' });
+    }
+    
+    res.json({
+      exists: true,
+      data: appointmentDoc.data()
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Other API endpoints
 app.get('/api/*', (req, res) => {
   console.log('API request received:', req.path);
   res.status(404).json({ 
     error: 'API endpoint not found in deployment server',
     path: req.path,
-    message: 'This is a simplified deployment server'
+    message: 'Available endpoints: /api/health, /api/status, /api/billing/generate, /api/debug/appointment/:id'
   });
 });
 
@@ -188,7 +216,7 @@ app.post('/api/*', (req, res) => {
   res.status(404).json({ 
     error: 'API endpoint not found in deployment server',
     path: req.path,
-    message: 'This is a simplified deployment server'
+    message: 'Available endpoints: /api/billing/generate/:appointmentId'
   });
 });
 
