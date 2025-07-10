@@ -80,24 +80,15 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Development Servers"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
 args = "Smart Deploy"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Development App"
-
-[[workflows.workflow]]
-name = "Development Servers"
-author = "agent"
+args = "Backend"
 
 [[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd client && npm run dev & cd server && npm run dev"
-waitForPort = 5174
+task = "workflow.run"
+args = "Development App"
 
 [[workflows.workflow]]
 name = "Smart Deploy"
@@ -106,6 +97,15 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd client && npm run build && cd ../server && npm run dev"
+waitForPort = 3000
+
+[[workflows.workflow]]
+name = "Backend"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
 waitForPort = 3000
 
 [[workflows.workflow]]
