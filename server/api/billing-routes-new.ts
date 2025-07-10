@@ -179,13 +179,20 @@ router.post('/generate/:appointmentId', async (req, res) => {
       ...req.body
     };
 
+    logger.info('[BILLING_ROUTES] Bill input being validated:', billInput);
+
     // Validate input
     const inputResult = BillCreateInputSchema.safeParse(billInput);
     if (!inputResult.success) {
-      logger.warn('[BILLING_ROUTES] Invalid bill generation input:', inputResult.error);
+      logger.warn('[BILLING_ROUTES] Invalid bill generation input:', {
+        input: billInput,
+        error: inputResult.error,
+        details: inputResult.error.issues
+      });
       return res.status(400).json({ 
         error: 'Invalid input',
-        details: inputResult.error.issues
+        details: inputResult.error.issues,
+        receivedInput: billInput
       });
     }
 
