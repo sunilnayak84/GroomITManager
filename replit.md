@@ -149,7 +149,7 @@ While the application currently uses Firebase Firestore, the architecture suppor
 ### Ultimate Deployment Solution Complete (July 10, 2025)
 - ✅ **Deployment Timeouts Eliminated**: Created ultimate-deploy.js as completely self-contained deployment server
 - ✅ **CORS Issues Resolved**: Fixed production API configuration to use current origin instead of Firebase Cloud Functions
-- ✅ **API URL Detection Enhanced**: Updated getApiBaseUrl() to automatically detect Replit deployment domains
+- ✅ **API URL Detection Enhanced**: Updated getApiBaseUrl() to automatically detect Replit deployment domains and force current origin usage
 - ✅ **Complete Endpoint Coverage**: Ultimate Deploy server includes all required endpoints - health, debug, billing CRUD operations
 - ✅ **Port Management Fixed**: Ultimate Deploy on port 8080, Development App on 5000, Development Servers on 3000
 - ✅ **Mock Billing System**: Production-ready mock billing endpoints with proper logging and response structure
@@ -157,6 +157,8 @@ While the application currently uses Firebase Firestore, the architecture suppor
 - ✅ **Frontend Configuration**: Updated all billing hooks to use window.location.origin for deployment compatibility
 - ✅ **Production Environment**: NODE_ENV=production with comprehensive CORS, static file serving, and error handling
 - ✅ **Zero-Timeout Deployment**: Ultimate Deploy workflow starts instantly without build delays or port conflicts
+- ✅ **Theme Configuration Fixed**: Resolved TypeBox validation errors by updating theme.json with complete property structure
+- ✅ **Production Billing Working**: Bill generation successfully working in production deployment with proper API routing
 
 ### Critical Performance Optimization & Admin Features (July 9, 2025)
 - ✅ **Performance Breakthrough**: Solved appointments page slow loading by implementing batch fetching instead of hundreds of sequential database queries
