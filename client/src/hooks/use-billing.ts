@@ -38,8 +38,12 @@ export function useBilling() {
         throw new Error(`Failed to fetch bills: ${response.status}`);
       }
 
-      const bills = await response.json();
-      console.log('[BILLING] Successfully fetched bills:', bills.length);
+      const data = await response.json();
+      console.log('[BILLING] Successfully fetched bills response:', data);
+      
+      // Handle both {bills: [...]} and [...] response formats
+      const bills = Array.isArray(data) ? data : (data.bills || []);
+      console.log('[BILLING] Processed bills array:', bills.length);
       return bills;
     } catch (error) {
       console.error('[BILLING] Error fetching bills:', error);
