@@ -22,7 +22,10 @@ export function useBilling() {
 
     try {
       const idToken = await getIdToken();
-      const apiBaseUrl = window.location.origin; // Always use current origin for Ultimate Deploy
+      // Force Ultimate Deploy server for production billing
+      const apiBaseUrl = window.location.port === '5000' 
+        ? 'http://localhost:8080'  // Ultimate Deploy server
+        : window.location.origin;
       
       console.log('[BILLING] Fetching bills...');
       const response = await fetch(`${apiBaseUrl}/api/billing/bills`, {
@@ -57,7 +60,10 @@ export function useBilling() {
 
     try {
       const idToken = await getIdToken();
-      const apiBaseUrl = window.location.origin; // Always use current origin for Ultimate Deploy
+      // Force Ultimate Deploy server for production billing
+      const apiBaseUrl = window.location.port === '5000' 
+        ? 'http://localhost:8080'  // Ultimate Deploy server
+        : window.location.origin;
       
       console.log('[BILLING] Fetching bill by ID:', billId);
       const response = await fetch(`${apiBaseUrl}/api/billing/bills/${billId}`, {
@@ -112,7 +118,10 @@ export function useBilling() {
       }
 
       const idToken = await getIdToken();
-      const apiBaseUrl = window.location.origin; // Always use current origin for Ultimate Deploy
+      // Force Ultimate Deploy server for production billing
+      const apiBaseUrl = window.location.port === '5000' 
+        ? 'http://localhost:8080'  // Ultimate Deploy server
+        : window.location.origin;
       
       console.log('[BILLING] Deleting bill:', billId);
       const response = await fetch(`${apiBaseUrl}/api/billing/bills/${billId}`, {
@@ -157,7 +166,10 @@ export function useBilling() {
       if (!user) throw new Error('User not authenticated');
 
       const idToken = await getIdToken();
-      const apiBaseUrl = window.location.origin; // Always use current origin for Ultimate Deploy
+      // Force Ultimate Deploy server for production billing
+      const apiBaseUrl = window.location.port === '5000' 
+        ? 'http://localhost:8080'  // Ultimate Deploy server
+        : window.location.origin;
 
       console.log('[BILLING] Creating bill for appointment:', input.appointmentId);
       const response = await fetch(`${apiBaseUrl}/api/billing/bills`, {
@@ -205,7 +217,10 @@ export function useBilling() {
       if (!user) throw new Error('User not authenticated');
 
       const idToken = await getIdToken();
-      const apiBaseUrl = window.location.origin; // Always use current origin for Ultimate Deploy
+      // Force Ultimate Deploy server for production billing
+      const apiBaseUrl = window.location.port === '5000' 
+        ? 'http://localhost:8080'  // Ultimate Deploy server
+        : window.location.origin;
 
       console.log('[BILLING] Updating bill:', billId);
       const response = await fetch(`${apiBaseUrl}/api/billing/bills/${billId}`, {

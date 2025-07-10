@@ -16,8 +16,13 @@ export function getApiBaseUrl(): string {
     hostname: window.location.hostname
   });
 
-  // Force use of current origin for ALL cases to ensure Ultimate Deploy server is used
-  // This prevents any hardcoded Firebase URLs from being used
-  console.log('[API_CONFIG] Using current origin (Ultimate Deploy server)');
+  // Force Ultimate Deploy server when running on development port
+  if (window.location.port === '5000') {
+    console.log('[API_CONFIG] Using Ultimate Deploy server for billing');
+    return 'http://localhost:8080';
+  }
+
+  // For production deployment, use current origin
+  console.log('[API_CONFIG] Using current origin (production deployment)');
   return window.location.origin;
 }
