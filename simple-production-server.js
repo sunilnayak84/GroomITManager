@@ -39,6 +39,19 @@ app.get('/api/status', (req, res) => {
   });
 });
 
+// Debug endpoint for appointment data
+app.get('/api/debug/appointment/:appointmentId', (req, res) => {
+  const { appointmentId } = req.params;
+  res.json({
+    success: true,
+    appointment: {
+      id: appointmentId,
+      status: 'found',
+      message: 'Debug endpoint working'
+    }
+  });
+});
+
 // Mock billing endpoints for deployment (will be replaced with real Firebase)
 app.get('/api/billing/bills', (req, res) => {
   res.json({ bills: [] });
