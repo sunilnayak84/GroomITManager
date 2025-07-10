@@ -143,12 +143,14 @@ app.get('/api/stats', (req, res) => {
 const clientDistPath = path.join(__dirname, 'client', 'dist');
 app.use(express.static(clientDistPath));
 
-// Fallback to index.html for SPA routing
+// Fallback to development server for frontend
 app.get('*', (req, res) => {
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ error: 'API endpoint not found' });
   }
-  res.sendFile(path.join(clientDistPath, 'index.html'));
+  // Redirect to development server for frontend
+  console.log('[ULTIMATE_DEPLOY] Redirecting frontend request to development server');
+  res.redirect('http://localhost:5000');
 });
 
 // Error handling
