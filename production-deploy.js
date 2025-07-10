@@ -75,7 +75,11 @@ if (!clientBuildPath) {
   
   try {
     const { execSync } = await import('child_process');
-    execSync('cd client && npm run build', { stdio: 'inherit' });
+    console.log('🚀 Building with optimized chunking for faster deployment...');
+    execSync('cd client && npx vite build --config ../vite.config.prod.ts', { 
+      stdio: 'inherit',
+      env: { ...process.env, NODE_ENV: 'production' }
+    });
     
     // Check again after building
     for (const pathToCheck of possiblePaths) {
