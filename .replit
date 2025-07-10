@@ -84,11 +84,11 @@ args = "Development Servers"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Full Stack Server"
+args = "Smart Deploy"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Smart Deploy"
+args = "Development App"
 
 [[workflows.workflow]]
 name = "Development Servers"
@@ -100,15 +100,6 @@ args = "cd client && npm run dev & cd server && npm run dev"
 waitForPort = 5174
 
 [[workflows.workflow]]
-name = "Full Stack Server"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd client && npm run dev -- --port 5000 --host 0.0.0.0 & cd server && npm run dev"
-waitForPort = 5000
-
-[[workflows.workflow]]
 name = "Smart Deploy"
 author = "agent"
 
@@ -116,3 +107,12 @@ author = "agent"
 task = "shell.exec"
 args = "cd client && npm run build && cd ../server && npm run dev"
 waitForPort = 3000
+
+[[workflows.workflow]]
+name = "Development App"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd client && npm run dev -- --port 5000 --host 0.0.0.0"
+waitForPort = 5000

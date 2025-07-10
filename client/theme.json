@@ -1,17 +1,15 @@
 {
-  "name": "zinc",
-  "appearance": "light",
+  "name": "groomit",
+  "type": "light",
   "colors": {
-    "primary": {
-      "DEFAULT": "hsl(142 76% 36%)",
-      "foreground": "hsl(0 0% 100%)"
-    },
-    "background": {
-      "DEFAULT": "hsl(0 0% 100%)",
-      "foreground": "hsl(240 10% 4%)"
-    }
+    "primary": "hsl(142 71% 45%)",
+    "primary-foreground": "hsl(0 0% 98%)",
+    "background": "hsl(0 0% 100%)",
+    "foreground": "hsl(240 10% 3.9%)"
   },
   "borderRadius": {
-    "lg": "0.5rem"
+    "lg": "0.5rem",
+    "md": "0.4rem",
+    "sm": "0.25rem"
   }
 }
