@@ -12,18 +12,24 @@ export function getApiBaseUrl(): string {
     VITE_API_URL: import.meta.env.VITE_API_URL,
     VITE_API_BASE_URL: import.meta.env.VITE_API_BASE_URL,
     origin: window.location.origin,
-    port: window.location.port
+    port: window.location.port,
+    hostname: window.location.hostname
   });
 
-  // Force use current origin for development to avoid hardcoded URLs
-  if (import.meta.env.DEV || window.location.port === '5000') {
-    console.log('[API_CONFIG] Using development mode - current origin');
+  // Always use current origin for Replit deployments or development
+  // This ensures Ultimate Deploy server endpoints are used instead of Firebase
+  const isReplitDeploy = window.location.hostname.includes('repl.run') || 
+                        window.location.hostname.includes('replit.dev') ||
+                        window.location.hostname.includes('sisko.prod.repl.run');
+  
+  if (import.meta.env.DEV || window.location.port === '5000' || isReplitDeploy) {
+    console.log('[API_CONFIG] Using current origin (development or Replit deployment)');
     return window.location.origin;
   }
   
-  // In production, check for API URL environment variables
+  // Only use Firebase URLs for external deployments
   const apiUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL;
   const result = apiUrl || window.location.origin;
-  console.log('[API_CONFIG] Using production mode:', result);
+  console.log('[API_CONFIG] Using external API:', result);
   return result;
 }
