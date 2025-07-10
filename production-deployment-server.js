@@ -178,6 +178,73 @@ app.post('/api/billing/generate/:appointmentId?', async (req, res) => {
   }
 });
 
+// Fetch all bills endpoint
+app.get('/api/billing/bills', async (req, res) => {
+  try {
+    if (!firebaseApp) {
+      return res.json({ bills: [] });
+    }
+    
+    const firestore = admin.firestore();
+    const billsSnapshot = await firestore.collection('bills').orderBy('created_at', 'desc').get();
+    
+    const bills = [];
+    billsSnapshot.forEach(doc => {
+      bills.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+    
+    res.json({ bills });
+  } catch (error) {
+    console.error('Error fetching bills:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update bill endpoint
+app.put('/api/billing/bills/:billId', async (req, res) => {
+  try {
+    if (!firebaseApp) {
+      return res.status(500).json({ error: 'Firebase not connected' });
+    }
+    
+    const firestore = admin.firestore();
+    const billId = req.params.billId;
+    const updateData = req.body;
+    
+    await firestore.collection('bills').doc(billId).update({
+      ...updateData,
+      updated_at: new Date().toISOString()
+    });
+    
+    res.json({ success: true, message: 'Bill updated successfully' });
+  } catch (error) {
+    console.error('Error updating bill:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Delete bill endpoint
+app.delete('/api/billing/bills/:billId', async (req, res) => {
+  try {
+    if (!firebaseApp) {
+      return res.status(500).json({ error: 'Firebase not connected' });
+    }
+    
+    const firestore = admin.firestore();
+    const billId = req.params.billId;
+    
+    await firestore.collection('bills').doc(billId).delete();
+    
+    res.json({ success: true, message: 'Bill deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting bill:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Debug endpoint for appointments
 app.get('/api/debug/appointment/:appointmentId', async (req, res) => {
   try {
@@ -207,7 +274,7 @@ app.get('/api/*', (req, res) => {
   res.status(404).json({ 
     error: 'API endpoint not found in deployment server',
     path: req.path,
-    message: 'Available endpoints: /api/health, /api/status, /api/billing/generate, /api/debug/appointment/:id'
+    message: 'Available endpoints: /api/health, /api/status, /api/billing/bills, /api/billing/generate, /api/debug/appointment/:id'
   });
 });
 
@@ -217,6 +284,24 @@ app.post('/api/*', (req, res) => {
     error: 'API endpoint not found in deployment server',
     path: req.path,
     message: 'Available endpoints: /api/billing/generate/:appointmentId'
+  });
+});
+
+app.put('/api/*', (req, res) => {
+  console.log('API PUT request received:', req.path);
+  res.status(404).json({ 
+    error: 'API endpoint not found in deployment server',
+    path: req.path,
+    message: 'Available endpoints: /api/billing/bills/:billId'
+  });
+});
+
+app.delete('/api/*', (req, res) => {
+  console.log('API DELETE request received:', req.path);
+  res.status(404).json({ 
+    error: 'API endpoint not found in deployment server',
+    path: req.path,
+    message: 'Available endpoints: /api/billing/bills/:billId'
   });
 });
 

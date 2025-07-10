@@ -1,0 +1,45 @@
+Failed to load resource: the server responded with a status of 404 ()Understand this error
+use-billing.ts:37 [BILLING] Failed to fetch bills: {"error":"API endpoint not found in deployment server","path":"/api/billing/bills","message":"Available endpoints: /api/health, /api/status, /api/billing/generate, /api/debug/appointment/:id"}
+i @ use-billing.ts:37Understand this error
+use-billing.ts:45 [BILLING] Error fetching bills: Error: Failed to fetch bills: 404
+    at i (use-billing.ts:38:15)
+i @ use-billing.ts:45Understand this error
+use-billing.ts:27 [BILLING] Fetching bills...
+api/billing/bills:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()Understand this error
+use-billing.ts:37 [BILLING] Failed to fetch bills: {"error":"API endpoint not found in deployment server","path":"/api/billing/bills","message":"Available endpoints: /api/health, /api/status, /api/billing/generate, /api/debug/appointment/:id"}
+i @ use-billing.ts:37Understand this error
+use-billing.ts:45 [BILLING] Error fetching bills: Error: Failed to fetch bills: 404
+    at i (use-billing.ts:38:15)
+i @ use-billing.ts:45Understand this error
+use-billing.ts:27 [BILLING] Fetching bills...
+api/billing/bills:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()Understand this error
+use-billing.ts:37 [BILLING] Failed to fetch bills: {"error":"API endpoint not found in deployment server","path":"/api/billing/bills","message":"Available endpoints: /api/health, /api/status, /api/billing/generate, /api/debug/appointment/:id"}
+i @ use-billing.ts:37Understand this error
+use-billing.ts:45 [BILLING] Error fetching bills: Error: Failed to fetch bills: 404
+    at i (use-billing.ts:38:15)
+i @ use-billing.ts:45Understand this error
+use-billing.ts:27 [BILLING] Fetching bills...
+api/billing/bills:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()Understand this error
+use-billing.ts:37 [BILLING] Failed to fetch bills: {"error":"API endpoint not found in deployment server","path":"/api/billing/bills","message":"Available endpoints: /api/health, /api/status, /api/billing/generate, /api/debug/appointment/:id"}
+i @ use-billing.ts:37Understand this error
+use-billing.ts:45 [BILLING] Error fetching bills: Error: Failed to fetch bills: 404
+    at i (use-billing.ts:38:15)
+i @ use-billing.ts:45Understand this error
+use-billing.ts:27 [BILLING] Fetching bills...
+api/billing/bills:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()Understand this error
+use-billing.ts:37 [BILLING] Failed to fetch bills: {"error":"API endpoint not found in deployment server","path":"/api/billing/bills","message":"Available endpoints: /api/health, /api/status, /api/billing/generate, /api/debug/appointment/:id"}
+i @ use-billing.ts:37Understand this error
+use-billing.ts:45 [BILLING] Error fetching bills: Error: Failed to fetch bills: 404
+    at i (use-billing.ts:38:15)
