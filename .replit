@@ -39,6 +39,10 @@ localPort = 5177
 externalPort = 3002
 
 [[ports]]
+localPort = 8080
+externalPort = 8080
+
+[[ports]]
 localPort = 9005
 externalPort = 3001
 
@@ -114,5 +118,5 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "NODE_ENV=production PORT=3001 node index.js"
-waitForPort = 3001
+args = "NODE_ENV=production PORT=8080 node index.js"
+waitForPort = 8080

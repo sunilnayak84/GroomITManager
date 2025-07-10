@@ -13,7 +13,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3001; // Use 3001 to avoid conflicts
+const PORT = process.env.PORT || 8080; // Use 8080 for production deployment
 
 // Middleware
 app.use(cors());
