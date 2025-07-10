@@ -92,7 +92,7 @@ args = "Development App"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Production Deploy"
+args = "Ultimate Deploy"
 
 [[workflows.workflow]]
 name = "Development Servers"
@@ -113,10 +113,10 @@ args = "cd client && npm run dev -- --port 5000 --host 0.0.0.0"
 waitForPort = 5000
 
 [[workflows.workflow]]
-name = "Production Deploy"
+name = "Ultimate Deploy"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "NODE_ENV=production PORT=8080 node index.js"
+args = "NODE_ENV=production PORT=8080 node ultimate-deploy.js"
 waitForPort = 8080

@@ -1,11 +1,11 @@
 
-// PRODUCTION DEPLOYMENT ENTRY POINT
-// This runs a reliable production server for Replit deployments
+// ULTIMATE DEPLOYMENT ENTRY POINT
+// This is the most reliable deployment solution
 
-console.log('GroomIT Manager starting production server...');
+console.log('GroomIT Manager - Ultimate Deploy Starting...');
 
-// Use dynamic import for ES module compatibility
-import('./simple-production-server.js').catch(err => {
-  console.error('Failed to start production server:', err);
+// Use the most reliable deployment server
+import('./ultimate-deploy.js').catch(err => {
+  console.error('Failed to start deployment server:', err);
   process.exit(1);
 });
