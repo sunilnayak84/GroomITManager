@@ -1,27 +1,28 @@
 /**
  * PRODUCTION ENTRY POINT FOR REPLIT DEPLOYMENT
  * 
- * This file starts the Express server with all API routes for production deployment.
- * It ensures all billing, authentication, and database APIs are available.
+ * This deployment approach uses the working development setup but configured for production.
+ * It starts both the client (Vite dev server) and server concurrently for full functionality.
  */
 
 import { spawn } from 'child_process';
-import { join, dirname } from 'path';
+import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = path.dirname(__filename);
 
-console.log('[DEPLOYMENT] Starting production server with full API support...');
+console.log('[DEPLOYMENT] Starting GroomIT Manager with full billing functionality...');
 
-// Start the server from the server directory
+// Start the full development server which includes both frontend and backend
 const serverProcess = spawn('npm', ['run', 'dev'], {
-  cwd: join(__dirname, 'server'),
+  cwd: __dirname,
   stdio: 'inherit',
   env: {
     ...process.env,
     NODE_ENV: 'production',
-    PORT: process.env.PORT || '3000'
+    PORT: process.env.PORT || '3000',
+    VITE_PORT: '5174'
   }
 });
 
@@ -45,3 +46,5 @@ process.on('SIGINT', () => {
   console.log('[DEPLOYMENT] Received SIGINT, shutting down gracefully...');
   serverProcess.kill('SIGINT');
 });
+
+console.log('[DEPLOYMENT] Full stack GroomIT Manager with billing functionality starting...');
