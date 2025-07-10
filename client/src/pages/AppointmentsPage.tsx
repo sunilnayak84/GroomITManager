@@ -898,8 +898,14 @@ export default function AppointmentsPage() {
             </div>
           </div>
 
-          <div className="w-full overflow-x-auto min-w-0">
-            <div className="min-w-[800px]">
+          {/* Mobile scroll hint */}
+          <div className="md:hidden text-xs text-muted-foreground px-3 py-2 bg-blue-50 border-l-4 border-blue-400">
+            💡 Swipe left/right to see all columns
+          </div>
+          
+          {/* Horizontal scrolling container with enhanced mobile support */}
+          <div className="horizontal-scroll-container">
+            <div className="appointment-table-wrapper">
               <DataTable
                 columns={columns}
                 data={paginatedAppointments as AppointmentWithRelations[]}

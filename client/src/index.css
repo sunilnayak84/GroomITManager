@@ -348,6 +348,53 @@
     @apply flex flex-col gap-2 sm:flex-row sm:gap-4;
   }
 
+  /* Enhanced Horizontal Scrolling for Mobile */
+  .horizontal-scroll-container {
+    @apply w-full overflow-x-auto overflow-y-hidden;
+    -webkit-overflow-scrolling: touch; /* iOS smooth scrolling */
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: rgba(0, 0, 0, 0.3) rgba(0, 0, 0, 0.1); /* Firefox */
+  }
+
+  /* Webkit scrollbar styling */
+  .horizontal-scroll-container::-webkit-scrollbar {
+    height: 8px; /* Horizontal scrollbar height */
+  }
+
+  .horizontal-scroll-container::-webkit-scrollbar-track {
+    @apply bg-gray-100 rounded-full;
+  }
+
+  .horizontal-scroll-container::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full;
+  }
+
+  .horizontal-scroll-container::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
+  }
+
+  /* Mobile-specific scrollbar improvements */
+  @media (max-width: 768px) {
+    .horizontal-scroll-container::-webkit-scrollbar {
+      height: 6px; /* Thinner on mobile */
+    }
+    
+    .horizontal-scroll-container {
+      scrollbar-width: auto; /* Show scrollbar on mobile */
+    }
+  }
+
+  /* Table minimum widths for proper horizontal scrolling */
+  .appointment-table-wrapper {
+    min-width: 1200px; /* Minimum width to trigger horizontal scroll */
+  }
+
+  @media (min-width: 1024px) {
+    .appointment-table-wrapper {
+      min-width: 1400px; /* Larger minimum width on desktop */
+    }
+  }
+
   .responsive-button-group > * {
     @apply w-full sm:w-auto;
   }
