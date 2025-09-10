@@ -1,0 +1,321 @@
+declare global {
+  interface Window {
+    API_BASE_URL: string;
+  }
+}
+
+import { z } from "zod";
+import { Timestamp, FieldValue, DocumentData } from 'firebase/firestore';
+
+// Enhanced Firestore date types
+export type FirestoreTimestamp = Timestamp;
+export type FirestoreDate = FirestoreTimestamp;
+
+// Type guards and utility functions
+export function isFirestoreTimestamp(value: unknown): value is FirestoreTimestamp {
+  return value instanceof Timestamp;
+}
+
+export function isFirestoreDate(value: unknown): value is FirestoreDate {
+  return Boolean(
+    value &&
+    typeof value === 'object' &&
+    value instanceof Timestamp
+  );
+}
+
+// Helper to safely convert any value to a Date
+export function toDate(value: unknown): Date | null {
+  if (!value) return null;
+  if (value instanceof Date) return value;
+  if (value instanceof Timestamp) return value.toDate();
+  if (typeof value === 'string') {
+    const date = new Date(value);
+    return isNaN(date.getTime()) ? null : date;
+  }
+  return null;
+}
+
+// Helper to convert any value to an ISO string
+export function toISOString(value: unknown): string | null {
+  const date = toDate(value);
+  return date ? date.toISOString() : null;
+}
+
+export type WithFirestoreTimestamp<T> = {
+  [K in keyof T]: T[K] extends Date 
+    ? FirestoreTimestamp | string | null 
+    : T[K] extends Date | null 
+      ? FirestoreTimestamp | string | null 
+      : T[K];
+};
+
+// Type for Firestore document with optional ID
+export type WithOptionalId<T extends DocumentData> = Omit<T, 'id'> & {
+  id?: string;
+};
+
+// Helper type for Firestore operations
+export type FirestoreData<T> = Omit<T, 'id'> & {
+  id?: string;
+  createdAt?: FirestoreTimestamp | string;
+  updatedAt?: FirestoreTimestamp | string | null;
+};
+
+// Helper to convert Firestore timestamp to ISO string
+export function timestampToString(timestamp: FirestoreTimestamp | string | null | undefined): string | null {
+  if (!timestamp) return null;
+  if (typeof timestamp === 'string') return timestamp;
+  return timestamp.toDate().toISOString();
+}
+
+export function convertToFirestoreTimestamp(date: Date | string | Timestamp | null): Timestamp | null {
+  if (!date) return null;
+  if (date instanceof Timestamp) return date;
+  if (date instanceof Date) return Timestamp.fromDate(date);
+  try {
+    return Timestamp.fromDate(new Date(date));
+  } catch {
+    return null;
+  }
+}
+
+// Customer schemas and types
+export const customerSchema = z.object({
+  id: z.string(),
+  firebaseId: z.string().nullable(),
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  email: z.string().email("Invalid email format"),
+  phone: z.string().regex(/^[0-9]{10,}$/, "Phone number must be at least 10 digits"),
+  address: z.string().nullable(),
+  gender: z.enum(["male", "female", "other"]).nullable(),
+  petCount: z.number().default(0),
+  loyaltyTier: z.enum(["bronze", "silver", "gold", "platinum"]).default("bronze"),
+  pointsHistory: z.array(z.object({
+    points: z.number(),
+    type: z.enum(["earned", "redeemed"]),
+    source: z.string(),
+    timestamp: z.string()
+  })).default([]),
+  createdAt: z.union([
+    z.string(),
+    z.custom<FirestoreTimestamp>((data) => data instanceof Timestamp),
+    z.date()
+  ]).transform(value => {
+    if (typeof value === 'string') return value;
+    if (value instanceof Date) return value.toISOString();
+    return value.toDate().toISOString();
+  }),
+  updatedAt: z.union([
+    z.string(),
+    z.custom<FirestoreTimestamp>((data) => data instanceof Timestamp),
+    z.date(),
+    z.null()
+  ]).transform(value => {
+    if (!value) return null;
+    if (typeof value === 'string') return value;
+    if (value instanceof Date) return value.toISOString();
+    return value.toDate().toISOString();
+  }).nullable(),
+});
+
+export interface Customer {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string | null;
+  gender: "male" | "female" | "other" | null;
+  petCount: number;
+  createdAt: string;
+  updatedAt: string | null;
+  firebaseId: string | null;
+  name?: string;
+  pointsHistory: Array<{
+    points: number;
+    type: "earned" | "redeemed";
+    source: string;
+    timestamp: string;
+  }>;
+  loyaltyTier: "bronze" | "silver" | "gold" | "platinum";
+  loyaltyPoints: number;
+}
+
+// Update WithFieldValue type to use pointsHistory for calculations
+export type WithFieldValue<T> = T & {
+  pointsHistory: Array<{
+    points: number;
+    type: "earned" | "redeemed";
+    source: string;
+    timestamp: string;
+  }>;
+  loyaltyTier: "bronze" | "silver" | "gold" | "platinum";
+};
+
+export type InsertCustomer = Omit<Customer, "id" | "firebaseId" | "petCount" | "createdAt" | "updatedAt" | "loyaltyTier" | "pointsHistory">;
+
+// Helper type for Firestore data with proper timestamp handling
+export type FirestoreCustomerData = Omit<Customer, "id" | "createdAt" | "updatedAt"> & {
+  id?: string;
+  createdAt: FirestoreTimestamp | string;
+  updatedAt: FirestoreTimestamp | string | null;
+  pointsHistory: Array<{
+    points: number;
+    type: "earned" | "redeemed";
+    source: string;
+    timestamp: string;
+  }>;
+  loyaltyTier: "bronze" | "silver" | "gold" | "platinum";
+};
+
+export type CustomerWithTimestamp = Omit<Customer, "createdAt" | "updatedAt"> & {
+  createdAt: FirestoreTimestamp | string;
+  updatedAt: FirestoreTimestamp | string | null;
+  pointsHistory: Array<{
+    points: number;
+    type: "earned" | "redeemed";
+    source: string;
+    timestamp: string;
+  }>;
+  loyaltyTier: "bronze" | "silver" | "gold" | "platinum";
+};
+
+export type PetType = "dog" | "cat" | "bird" | "fish" | "other";
+export type Gender = "male" | "female" | "unknown" | "other";
+export type WeightUnit = "kg" | "lbs";
+
+export interface PetInput {
+  name: string;
+  type: PetType;
+  breed: string;
+  customerId: string;
+  dateOfBirth?: string | null;
+  age?: number | null;
+  gender?: Gender | null;
+  weight?: number | null;
+  weightUnit?: WeightUnit;
+  notes?: string | null;
+  temperamentCategory?: string | null;
+  temperamentTags?: string[];
+  temperamentNotes?: string | null;
+  image?: string | File | null;
+  submissionId?: string;
+  owner?: {
+    id: string;
+    name: string;
+    email: string | null;
+  } | null;
+}
+
+export const petSchema = z.object({
+  id: z.string(),
+  firebaseId: z.string().nullable(),
+  image: z.string().nullable(),
+  type: z.enum(["dog", "cat", "bird", "fish", "other"]),
+  name: z.string().min(1, "Name is required"),
+  customerId: z.string(),
+  breed: z.string().min(1, "Breed is required"),
+  dateOfBirth: z.string().nullable(),
+  age: z.number().nullable(),
+  gender: z.enum(["male", "female", "unknown", "other"]).nullable(),
+  weight: z.union([z.number(), z.string()]).transform(val => 
+    typeof val === 'string' ? parseFloat(val) || null : val
+  ).nullable(),
+  weightUnit: z.enum(["kg", "lbs"]).default("kg"),
+  notes: z.string().nullable(),
+  createdAt: z.string(),
+  updatedAt: z.string().nullable(),
+  submissionId: z.string().optional(),
+  owner: z.object({
+    id: z.string(),
+    name: z.string(),
+    email: z.string().nullable()
+  }).nullable()
+});
+
+export type Pet = z.infer<typeof petSchema> & {
+  deletedAt?: string | null;
+  temperamentCategory?: "easy_to_groom" | "mildly_challenging" | "anxiety_fear" | "difficult_to_handle" | "aggression" | "special_case" | null;
+  temperamentTags?: string[];
+  temperamentNotes?: string | null;
+};
+export type InsertPet = Omit<PetInput, "id" | "submissionId"> & {
+  submissionId?: string;
+  firebaseId?: string | null;
+  deletedAt?: string | null;
+  temperamentCategory?: string | null;
+  temperamentTags?: string[];
+  temperamentNotes?: string | null;
+};
+
+export type FirestorePet = {
+  id: string;
+  firebaseId: string | null;
+  name: string;
+  type: PetType;
+  breed: string;
+  customerId: string;
+  dateOfBirth: string | null;
+  age: number | null;
+  gender: Gender | null;
+  weight: number | null;
+  weightUnit: WeightUnit;
+  notes: string | null;
+  image: string | null;
+  createdAt: FirestoreTimestamp | string;
+  updatedAt: FirestoreTimestamp | string | null;
+  submissionId?: string;
+  owner: {
+    id: string;
+    name: string;
+    email: string | null;
+  } | null;
+  temperamentCategory?: string | null;
+  temperamentTags?: string[];
+  temperamentNotes?: string | null;
+};
+
+export type FirestoreCustomer = {
+  id: string;
+  firebaseId: string | null;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string | null;
+  gender: "male" | "female" | "other" | null;
+  petCount: number;
+  createdAt: FirestoreTimestamp;
+  updatedAt: FirestoreTimestamp | null;
+};
+
+export type AppointmentWithRelations = {
+  id: string;
+  petId: string;
+  groomerId: string;
+  branchId: string;
+  status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
+  date: string;
+  beforeImage: string | null;
+  notes: string | null;
+  pet: { name: string; breed: string; image: string | null };
+  customer: { firstName: string; lastName: string };
+  groomer: { name: string };
+  service?: { service_id: string; name: string; duration: number; price: number }[];
+  cancellationReason?: "no_show" | "rescheduled" | "other" | null;
+  productsUsed: string | null;
+  totalPrice: number;
+  totalDuration: number;
+  createdAt: string;
+  updatedAt: string | null;
+  inProgressAt?: string | null;
+};
+
+export interface User {
+  uid: string;
+  email: string;
+  displayName: string;
+  photoURL: string | null;
+}

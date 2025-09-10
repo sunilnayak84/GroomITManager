@@ -1,0 +1,258 @@
+import { Request, Response, NextFunction } from 'express';
+import { RoleTypes, DefaultPermissions, getFirebaseAdmin } from '../firebase.js';
+import { FirebaseUser, getUserRole } from '../auth-firestore.js';
+
+export async function authenticateFirebase(req: Request, res: Response, next: NextFunction) {
+  // Skip authentication for OPTIONS requests (CORS preflight)
+  if (req.method === 'OPTIONS') {
+    return next();
+  }
+
+  try {
+    console.log('[AUTH] Starting authentication for request:', {
+      method: req.method,
+      path: req.path,
+      url: req.url,
+      originalUrl: req.originalUrl
+    });
+
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) {
+      console.log('[AUTH] No bearer token found in request');
+      return res.status(401).json({ 
+        message: 'No token provided',
+        code: 'NO_TOKEN'
+      });
+    }
+
+    const idToken = authHeader.split('Bearer ')[1];
+    console.log('[AUTH] Token extracted, verifying...');
+
+    const firebaseApp = await getFirebaseAdmin();
+    if (!firebaseApp) {
+      console.error('[AUTH] Firebase Admin not initialized');
+      return res.status(500).json({ 
+        message: 'Authentication service unavailable',
+        code: 'AUTH_SERVICE_ERROR'
+      });
+    }
+
+    try {
+      const auth = firebaseApp.auth();
+      const decodedToken = await auth.verifyIdToken(idToken);
+      const user = await auth.getUser(decodedToken.uid);
+
+      console.log(`[AUTH] Token verified for user ${user.email}`);
+
+      // Get role and permissions
+      const userRole = await getUserRole(user.uid);
+      console.log('[AUTH] User role data:', userRole);
+
+      const customClaims = user.customClaims || {};
+      console.log('[AUTH] Custom claims:', customClaims);
+
+      let role: keyof typeof RoleTypes = 'staff';
+      let permissions: string[] = [];
+
+      // Special handling for development admin
+      if (process.env.NODE_ENV === 'development' && user.email === 'admin@groomery.in') {
+        console.log('[AUTH] Development admin user detected');
+        role = 'admin';
+        permissions = DefaultPermissions.admin;
+      }
+      // Check custom claims
+      else if (customClaims.isAdmin === true || customClaims.role === 'admin') {
+        console.log('[AUTH] User has admin claims:', customClaims);
+        role = 'admin';
+        permissions = DefaultPermissions.admin;
+      }
+      // Check database role
+      else if (userRole?.role === 'admin') {
+        console.log('[AUTH] User has admin role in database');
+        role = 'admin';
+        permissions = DefaultPermissions.admin;
+      }
+      // Use database role if available
+      else if (userRole) {
+        console.log('[AUTH] User has role from database:', userRole);
+        role = userRole.role as keyof typeof RoleTypes;
+        permissions = userRole.permissions;
+      }
+
+      req.user = {
+        id: user.uid,
+        uid: user.uid,
+        email: user.email || '',
+        name: user.displayName || user.email?.split('@')[0] || 'Unknown User',
+        displayName: user.displayName || user.email?.split('@')[0] || 'Unknown User',
+        role,
+        permissions
+      };
+
+      console.log(`[AUTH] Authentication successful:`, {
+        email: req.user.email,
+        role: req.user.role,
+        permissions: req.user.permissions.length
+      });
+
+      next();
+    } catch (verifyError) {
+      console.error('[AUTH] Token verification failed:', verifyError);
+      return res.status(401).json({ 
+        message: 'Invalid token',
+        code: 'INVALID_TOKEN'
+      });
+    }
+  } catch (error) {
+    console.error('[AUTH] Authentication error:', error);
+    return res.status(500).json({ 
+      message: 'Authentication failed',
+      code: 'AUTH_ERROR'
+    });
+  }
+}
+
+export function requireRole(allowedRoles: Array<keyof typeof RoleTypes>) {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return res.status(401).json({ 
+        message: 'Authentication required',
+        code: 'AUTH_REQUIRED'
+      });
+    }
+
+    console.log('[AUTH] Checking role access:', {
+      userRole: req.user.role,
+      allowedRoles,
+      path: req.path
+    });
+
+    if (req.user.role === 'admin' || allowedRoles.includes(req.user.role as keyof typeof RoleTypes)) {
+      return next();
+    }
+
+    return res.status(403).json({
+      message: `Access denied. Required roles: ${allowedRoles.join(', ')}`,
+      code: 'INSUFFICIENT_ROLE',
+      requiredRoles: allowedRoles,
+      currentRole: req.user.role
+    });
+  };
+}
+
+// User management restricted paths
+const userManagementPaths = [
+  '/api/users',
+  '/api/setup-admin',
+  '/api/roles',
+  '/api/auth/roles',
+  '/api/users/role',
+  '/api/staff/role',
+  '/api/staff/permissions',
+  '/api/auth/admin',
+  '/api/auth/setup',
+  '/api/auth/permissions'
+];
+
+// Helper function to check if a path is restricted
+const isRestrictedPath = (path: string) => 
+  userManagementPaths.some(restrictedPath => path.startsWith(restrictedPath));
+
+// Permission-based access control middleware
+export function requirePermission(permission: string) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return res.status(401).json({ 
+        message: 'Authentication required',
+        code: 'AUTH_REQUIRED'
+      });
+    }
+
+    // Admin has all permissions
+    if (req.user.role === 'admin') {
+      return next();
+    }
+
+    const hasPermission = req.user.permissions?.includes(permission) || 
+                         req.user.permissions?.includes('all');
+
+    if (!hasPermission) {
+      return res.status(403).json({
+        message: `Access denied. Missing required permission: ${permission}`,
+        code: 'INSUFFICIENT_PERMISSION',
+        requiredPermission: permission,
+        userPermissions: req.user.permissions
+      });
+    }
+
+    next();
+  };
+}
+
+// User management middleware
+export function validateUserManagement(req: Request, res: Response, next: NextFunction) {
+  if (!req.user) {
+    return res.status(401).json({ 
+      message: 'Authentication required',
+      code: 'AUTH_REQUIRED'
+    });
+  }
+
+  // Only admin can manage users
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({
+      message: 'Only administrators can manage users',
+      code: 'ADMIN_REQUIRED',
+      currentRole: req.user.role
+    });
+  }
+
+  next();
+}
+
+// Manager operation validation middleware
+type Permission = string;
+
+export function validateManagerOperation(operation: Permission | Permission[]) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return res.status(401).json({ 
+        message: 'Authentication required',
+        code: 'AUTH_REQUIRED'
+      });
+    }
+
+    // Admin has full access
+    if (req.user.role === 'admin') {
+      return next();
+    }
+
+    // Enforce manager role
+    if (req.user.role !== 'manager') {
+      return res.status(403).json({
+        message: 'This operation requires manager privileges',
+        code: 'MANAGER_REQUIRED',
+        requiredRole: RoleTypes.manager,
+        currentRole: req.user.role
+      });
+    }
+
+    // Check required permissions
+    const requiredOperations = Array.isArray(operation) ? operation : [operation];
+    const missingPermissions = requiredOperations.filter(
+      op => !req.user?.permissions.includes(op) && !req.user?.permissions.includes('all')
+    );
+
+    if (missingPermissions.length > 0) {
+      return res.status(403).json({
+        message: 'Insufficient permissions for this operation',
+        code: 'INSUFFICIENT_MANAGER_PERMISSION',
+        requiredOperations,
+        missingPermissions,
+        userPermissions: req.user.permissions
+      });
+    }
+
+    next();
+  };
+}

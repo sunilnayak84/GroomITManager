@@ -1,0 +1,62 @@
+{
+  "timestamp": "2025-07-09T13:07:44.156Z",
+  "version": "rollback-2025-07-09T13-07-44-150Z",
+  "files": [
+    {
+      "path": "client/src",
+      "type": "directory",
+      "size": 873356
+    },
+    {
+      "path": "server",
+      "type": "directory",
+      "size": 158695
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "size": 4345
+    },
+    {
+      "path": "client/package.json",
+      "type": "file",
+      "size": 827
+    },
+    {
+      "path": "replit.md",
+      "type": "file",
+      "size": 5040
+    },
+    {
+      "path": "index.js",
+      "type": "file",
+      "size": 207
+    },
+    {
+      "path": "replit_deployment.js",
+      "type": "file",
+      "size": 7077
+    },
+    {
+      "path": ".replit",
+      "type": "file",
+      "size": 1944
+    },
+    {
+      "path": "vite.config.ts",
+      "type": "file",
+      "size": 858
+    },
+    {
+      "path": "postcss.config.js",
+      "type": "file",
+      "size": 161
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "size": 692
+    }
+  ],
+  "description": "Automatic rollback point before GitHub sync"
+}

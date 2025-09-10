@@ -1,0 +1,868 @@
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { insertAppointmentSchema, type InsertAppointment } from "@/lib/schema";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useAppointments } from "../hooks/use-appointments";
+import { usePets } from "../hooks/use-pets";
+import { useToast } from "@/hooks/use-toast";
+import { useServices } from '../hooks/use-services';
+import { useStaff } from '../hooks/use-staff';
+import { useWorkingHours } from '../hooks/use-working-hours';
+import { useStaffAvailability } from '../hooks/use-staff-availability';
+import type { WorkingDays } from "@/lib/schema";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { format } from 'date-fns';
+import type { Pet } from "@/lib/types";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogFooter,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
+
+
+interface AppointmentFormProps {
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  selectedDate?: Date | null;
+  selectedPet?: Pet;
+}
+
+export default function AppointmentForm({ setOpen, selectedDate, selectedPet }: AppointmentFormProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [confirmationData, setConfirmationData] = useState<{
+    petName?: string;
+    groomerName?: string;
+    dateTime?: string;
+    services?: string;
+    duration?: number;
+    price?: number;
+  }>({});
+  const { data: appointments, addAppointment, isTimeSlotAvailable } = useAppointments();
+  const { pets } = usePets();
+  const { services } = useServices();
+  const { toast } = useToast();
+  const { staffMembers } = useStaff();
+  const availableGroomers = staffMembers.filter(user => user.specialties?.includes('groomer') && user.isActive);
+  const { data: workingHours } = useWorkingHours();
+  const [selectedService, setSelectedService] = useState<{ duration: number } | null>(null);
+  const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
+
+  const form = useForm<z.infer<typeof insertAppointmentSchema>>({
+    resolver: zodResolver(insertAppointmentSchema),
+    defaultValues: {
+      petId: selectedPet?.id || "",
+      services: [],
+      groomerId: "",
+      branchId: "1",
+      date: selectedDate ? format(selectedDate, "yyyy-MM-dd") : "",
+      status: "pending" as const,
+      notes: null,
+      productsUsed: null,
+      time: selectedDate ? format(selectedDate, "HH:mm") : "",
+      totalPrice: 0,
+      totalDuration: 0
+    }
+  });
+
+  // Update form fields when selectedDate changes
+  useEffect(() => {
+    if (selectedDate) {
+      const formattedDate = format(selectedDate, "yyyy-MM-dd");
+      const formattedTime = format(selectedDate, "HH:mm");
+
+      // Get the day of week for the selected date
+      const dayOfWeek = selectedDate.getDay();
+      const daySchedule = workingHours?.find(
+        (schedule) => schedule.dayOfWeek === dayOfWeek
+      );
+
+      if (daySchedule) {
+        const slots = generateTimeSlots(
+          daySchedule.openingTime,
+          daySchedule.closingTime,
+          daySchedule.breakStart || null,
+          daySchedule.breakEnd || null,
+          selectedService?.duration || 30
+        );
+        setAvailableTimeSlots(slots);
+      }
+
+      form.reset({
+        ...form.getValues(),
+        date: formattedDate,
+        time: formattedTime
+      });
+    }
+  }, [selectedDate, workingHours, selectedService]);
+
+  // Helper function to generate time slots
+  const generateTimeSlots = (
+    openingTime: string,
+    closingTime: string,
+    breakStart: string | null,
+    breakEnd: string | null,
+    serviceDuration: number = 30
+  ) => {
+    const slots: string[] = [];
+    const [openHour, openMinute] = openingTime.split(':').map(Number);
+    const [closeHour, closeMinute] = closingTime.split(':').map(Number);
+
+    let currentMinutes = openMinute;
+    let currentHour = openHour;
+
+    currentMinutes = Math.ceil(currentMinutes / 15) * 15;
+    if (currentMinutes >= 60) {
+      currentHour += Math.floor(currentMinutes / 60);
+      currentMinutes = currentMinutes % 60;
+    }
+
+    const breakStartMinutes = breakStart ? 
+      (parseInt(breakStart.split(':')[0]) * 60 + parseInt(breakStart.split(':')[1])) : null;
+    const breakEndMinutes = breakEnd ?
+      (parseInt(breakEnd.split(':')[0]) * 60 + parseInt(breakEnd.split(':')[1])) : null;
+
+    while (currentHour < closeHour || (currentHour === closeHour && currentMinutes < closeMinute)) {
+      const currentTimeMinutes = currentHour * 60 + currentMinutes;
+      const slotEndMinutes = currentTimeMinutes + serviceDuration;
+
+      if (slotEndMinutes <= (closeHour * 60 + closeMinute)) {
+        const isInBreakTime = breakStartMinutes !== null && breakEndMinutes !== null &&
+          currentTimeMinutes >= breakStartMinutes && currentTimeMinutes < breakEndMinutes;
+
+        if (!isInBreakTime) {
+          const timeString = `${String(currentHour).padStart(2, '0')}:${String(currentMinutes).padStart(2, '0')}`;
+          slots.push(timeString);
+        }
+      }
+
+      currentMinutes += 15;
+      if (currentMinutes >= 60) {
+        currentHour += Math.floor(currentMinutes / 60);
+        currentMinutes = currentMinutes % 60;
+      }
+    }
+
+    return slots;
+  };
+
+  useEffect(() => {
+    const selectedServices = form.watch("services");
+    if (selectedServices && selectedServices.length > 0) {
+      const lastServiceId = selectedServices[selectedServices.length - 1];
+      const service = services?.find(s => s.service_id === lastServiceId);
+      setSelectedService(service || null);
+    } else {
+      setSelectedService(null);
+    }
+  }, [form.watch("services"), services]);
+
+  const validateTimeSlot = (
+    date: string,
+    time: string,
+    daySchedule: WorkingDays | undefined,
+    groomerId: string
+  ): { isValid: boolean; error?: string } => {
+    setValidationError(null); // Clear previous errors
+
+    if (!daySchedule || !daySchedule.isOpen) {
+      return { isValid: false, error: "This day is not available for appointments" };
+    }
+
+    const [hours, minutes] = time.split(':').map(Number);
+    const appointmentStartTime = new Date(date);
+    appointmentStartTime.setHours(hours, minutes, 0, 0);
+
+    // Calculate end time based on selected service duration
+    const appointmentEndTime = new Date(appointmentStartTime);
+    appointmentEndTime.setMinutes(appointmentEndTime.getMinutes() + (selectedService?.duration || 60));
+
+    if (appointmentStartTime < new Date()) {
+      return { isValid: false, error: "Cannot schedule appointments in the past" };
+    }
+
+    // Convert opening and closing times to Date objects for comparison
+    const openingTime = new Date(date);
+    const [openHours, openMinutes] = daySchedule.openingTime.split(':').map(Number);
+    openingTime.setHours(openHours, openMinutes, 0, 0);
+
+    const closingTime = new Date(date);
+    const [closeHours, closeMinutes] = daySchedule.closingTime.split(':').map(Number);
+    closingTime.setHours(closeHours, closeMinutes, 0, 0);
+
+    if (appointmentStartTime < openingTime || appointmentEndTime > closingTime) {
+      return {
+        isValid: false,
+        error: `Please select a time between ${daySchedule.openingTime} and ${daySchedule.closingTime}`
+      };
+    }
+
+    if (selectedService) {
+      const appointmentEndTime = new Date(appointmentStartTime);
+      appointmentEndTime.setMinutes(appointmentEndTime.getMinutes() + selectedService.duration);
+      const endTimeStr = `${String(appointmentEndTime.getHours()).padStart(2, '0')}:${String(appointmentEndTime.getMinutes()).padStart(2, '0')}`;
+
+      if (endTimeStr > daySchedule.closingTime) {
+        return {
+          isValid: false,
+          error: "The appointment duration exceeds closing time"
+        };
+      }
+
+      if (daySchedule.breakStart && daySchedule.breakEnd) {
+        const breakStart = new Date(date);
+        const [breakStartHour, breakStartMin] = daySchedule.breakStart.split(':').map(Number);
+        breakStart.setHours(breakStartHour, breakStartMin, 0, 0);
+
+        const breakEnd = new Date(date);
+        const [breakEndHour, breakEndMin] = daySchedule.breakEnd.split(':').map(Number);
+        breakEnd.setHours(breakEndHour, breakEndMin, 0, 0);
+
+        if (
+          (appointmentStartTime < breakEnd && appointmentEndTime > breakStart) ||
+          (appointmentStartTime >= breakStart && appointmentStartTime < breakEnd)
+        ) {
+          const breakStartTime = daySchedule.breakStart.split(':')
+            .map(n => parseInt(n))
+            .reduce((acc, n, i) => i === 0 ? n : acc + (n/60), 0);
+          const breakEndTime = daySchedule.breakEnd.split(':')
+            .map(n => parseInt(n))
+            .reduce((acc, n, i) => i === 0 ? n : acc + (n/60), 0);
+
+          const breakDuration = breakEndTime - breakStartTime;
+          const breakEndHour = Math.floor(breakEndTime);
+          const breakEndMinute = Math.round((breakEndTime - breakEndHour) * 60);
+
+          return {
+            isValid: false,
+            error: `This time conflicts with our ${breakDuration === 1 ? '1 hour' : `${breakDuration} hours`} break period (until ${breakEndHour}:${String(breakEndMinute).padStart(2, '0')})`
+          };
+        }
+      }
+
+      // Check for overlapping appointments
+      if (!isTimeSlotAvailable(appointmentStartTime, groomerId, selectedService.duration)) {
+        // Find the conflicting appointment for a more specific error message
+        const conflictingAppointment = appointments?.find(a => {
+          if (a.groomerId !== groomerId) return false;
+          const existingStart = new Date(a.date);
+          const existingEnd = new Date(existingStart);
+          const existingDuration = a.service?.[0]?.duration || 60;
+          existingEnd.setMinutes(existingEnd.getMinutes() + existingDuration);
+
+          return (
+            // New appointment starts during existing appointment
+            (appointmentStartTime >= existingStart && appointmentStartTime < existingEnd) ||
+            // New appointment ends during existing appointment
+            (appointmentEndTime > existingStart && appointmentEndTime <= existingEnd) ||
+            // New appointment completely contains existing appointment
+            (appointmentStartTime <= existingStart && appointmentEndTime >= existingEnd) ||
+            // Existing appointment completely contains new appointment
+            (existingStart <= appointmentStartTime && existingEnd >= appointmentEndTime)
+          );
+        });
+
+        return {
+          isValid: false,
+          error: conflictingAppointment 
+            ? `This time slot conflicts with an existing appointment from ${format(new Date(conflictingAppointment.date), 'h:mm a')} to ${format((() => {
+                const end = new Date(conflictingAppointment.date);
+                end.setMinutes(end.getMinutes() + (conflictingAppointment.service?.[0]?.duration || 60));
+                return end;
+              })(), 'h:mm a')}`
+            : "The selected groomer is not available during this time. Please choose another time slot."
+        };
+      }
+    }
+
+    return { isValid: true };
+  };
+
+  const { availability } = useStaffAvailability(form.watch("groomerId"));
+
+  async function onSubmit(data: z.infer<typeof insertAppointmentSchema>) {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    setValidationError(null);
+
+    try {
+      if (!data.petId || !data.services || data.services.length === 0) {
+        throw new Error("Please select both pet and at least one service");
+      }
+
+      if (!data.groomerId) {
+        throw new Error("Please select a groomer");
+      }
+
+      const formDate = form.getValues('date');
+      const formTime = form.getValues('time');
+
+      if (!formDate || !formTime) {
+        throw new Error("Please select both date and time");
+      }
+
+      const appointmentDateTime = new Date(formDate);
+      const [timeHours, timeMinutes] = formTime.split(':').map(Number);
+      appointmentDateTime.setHours(timeHours, timeMinutes, 0, 0);
+
+      if (isNaN(appointmentDateTime.getTime())) {
+        throw new Error("Invalid appointment date and time");
+      }
+
+      const now = new Date();
+      if (appointmentDateTime < now) {
+        throw new Error("Appointment must be in the future");
+      }
+
+      // Validate against working hours
+      const dayOfWeek = appointmentDateTime.getDay();
+      const daySchedule = workingHours?.find(
+        (schedule) => schedule.dayOfWeek === dayOfWeek
+      );
+
+      // Check staff availability first
+      const staffDayAvailability = availability?.find(
+        a => a.dayOfWeek === appointmentDateTime.getDay()
+      );
+
+      if (!staffDayAvailability?.isAvailable) {
+        const errorMessage = "Staff member is not available on this day";
+        setValidationError(errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      // Check for break time conflicts
+      if (staffDayAvailability.breakStart && staffDayAvailability.breakEnd) {
+        const appointmentEndTime = new Date(appointmentDateTime);
+        appointmentEndTime.setMinutes(appointmentEndTime.getMinutes() + (selectedService?.duration || 0));
+        
+        const [breakStartHour, breakStartMin] = staffDayAvailability.breakStart.split(':').map(Number);
+        const [breakEndHour, breakEndMin] = staffDayAvailability.breakEnd.split(':').map(Number);
+        
+        const breakStart = new Date(appointmentDateTime);
+        breakStart.setHours(breakStartHour, breakStartMin, 0, 0);
+        
+        const breakEnd = new Date(appointmentDateTime);
+        breakEnd.setHours(breakEndHour, breakEndMin, 0, 0);
+
+        if (
+          (appointmentDateTime <= breakEnd && appointmentEndTime >= breakStart) ||
+          (appointmentDateTime >= breakStart && appointmentDateTime < breakEnd)
+        ) {
+          const errorMessage = `This time conflicts with the groomer's break time (${staffDayAvailability.breakStart} - ${staffDayAvailability.breakEnd})`;
+          setValidationError(errorMessage);
+          throw new Error(errorMessage);
+        }
+      }
+
+      if (!staffDayAvailability?.isAvailable) {
+        const errorMessage = "Staff member is not available on this day";
+        setValidationError(errorMessage);
+        form.setError('time', {
+          type: 'manual',
+          message: errorMessage
+        });
+        return;
+      }
+
+      // Check if appointment time is within staff working hours
+      const [appointmentHour, appointmentMinute] = formTime.split(':').map(Number);
+      const [startHour, startMinute] = staffDayAvailability.startTime.split(':').map(Number);
+      const [endHour, endMinute] = staffDayAvailability.endTime.split(':').map(Number);
+
+      const appointmentTime = appointmentHour * 60 + appointmentMinute;
+      const startTime = startHour * 60 + startMinute;
+      const endTime = endHour * 60 + endMinute;
+
+      if (appointmentTime < startTime || appointmentTime > endTime) {
+        const errorMessage = `Staff member is only available between ${staffDayAvailability.startTime} and ${staffDayAvailability.endTime}`;
+        setValidationError(errorMessage);
+        form.setError('time', {
+          type: 'manual',
+          message: errorMessage
+        });
+        return;
+      }
+
+      // Then check general working hours
+      const validation = validateTimeSlot(formDate, formTime, daySchedule, data.groomerId);
+      if (!validation.isValid) {
+        const errorMessage = validation.error || "This time slot is not available";
+        setValidationError(errorMessage);
+        form.setError('time', {
+          type: 'manual',
+          message: errorMessage
+        });
+
+        form.setError('groomerId', {
+          type: 'manual',
+          message: "Groomer is not available at this time"
+        });
+
+        toast({
+          variant: "destructive",
+          title: "Scheduling Error",
+          description: errorMessage,
+          duration: 5000,
+        });
+
+        setIsSubmitting(false);
+        return;
+      }
+
+      const appointmentData: InsertAppointment = {
+        ...data,
+        date: appointmentDateTime.toISOString(),
+        status: "pending" as const,
+        totalPrice: form.getValues('totalPrice') || 0,
+        totalDuration: form.getValues('totalDuration') || 0
+      };
+
+      const result = await addAppointment(appointmentData);
+
+      if (result) {
+        const selectedPetDetails = pets.find(p => p.id === appointmentData.petId);
+        const selectedGroomer = availableGroomers.find(g => g.id === appointmentData.groomerId);
+        const selectedServiceDetails = services
+          .filter(s => appointmentData.services.includes(String(s.service_id)))
+          .map(s => s.name)
+          .join(', ');
+        const appointmentDateTime = new Date(appointmentData.date);
+        const formattedDateTime = format(appointmentDateTime, "PPP 'at' p");
+
+        setConfirmationData({
+          petName: selectedPetDetails?.name,
+          groomerName: selectedGroomer?.name,
+          dateTime: formattedDateTime,
+          services: selectedServiceDetails,
+          duration: form.getValues('totalDuration'),
+          price: form.getValues('totalPrice')
+        });
+        setShowConfirmation(true);
+        form.reset();
+      } else {
+        throw new Error("Failed to schedule appointment");
+      }
+
+      form.reset();
+    } catch (error) {
+      console.error('Failed to schedule appointment:', error);
+      const errorMessage = error instanceof Error ? error.message : "Failed to schedule appointment";
+      setValidationError(errorMessage);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: errorMessage,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  return (
+    <>
+      <AlertDialog open={showConfirmation} onOpenChange={setShowConfirmation}>
+        <AlertDialogContent className="sm:max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Appointment Scheduled Successfully</AlertDialogTitle>
+            <div className="space-y-3">
+              <p className="flex justify-between">
+                <span className="font-medium">Pet:</span> 
+                <span>{confirmationData.petName}</span>
+              </p>
+              <p className="flex justify-between">
+                <span className="font-medium">Groomer:</span> 
+                <span>{confirmationData.groomerName}</span>
+              </p>
+              <p className="flex justify-between">
+                <span className="font-medium">Date & Time:</span> 
+                <span>{confirmationData.dateTime}</span>
+              </p>
+              <p className="flex justify-between">
+                <span className="font-medium">Services:</span> 
+                <span>{confirmationData.services}</span>
+              </p>
+              <p className="flex justify-between">
+                <span className="font-medium">Total Duration:</span> 
+                <span>{confirmationData.duration} minutes</span>
+              </p>
+              <p className="flex justify-between">
+                <span className="font-medium">Total Price:</span> 
+                <span>₹{confirmationData.price}</span>
+              </p>
+            </div>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => {
+              setShowConfirmation(false);
+              setOpen(false);
+            }} className="w-full">
+              Okay
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <DialogContent className="sm:max-w-[800px]">
+      <DialogHeader>
+        <DialogTitle>Schedule Appointment</DialogTitle>
+        <DialogDescription>
+          Book a new appointment for pet grooming services.
+        </DialogDescription>
+      </DialogHeader>
+      {validationError && (
+        <Alert variant="destructive">
+          <AlertDescription>{validationError}</AlertDescription>
+        </Alert>
+      )}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <FormField
+              control={form.control}
+              name="petId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Pet</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a pet" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {(pets || [])
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map((pet) => (
+                          <SelectItem 
+                            key={String(pet.id)} 
+                            value={String(pet.id)}
+                          >
+                            {pet.name} - {pet.breed}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Date</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="date"
+                      {...field}
+                      min={new Date().toISOString().split('T')[0]}
+                      onChange={(e) => {
+                        field.onChange(e.target.value);
+                        const selectedDate = new Date(e.target.value);
+                        const dayOfWeek = selectedDate.getDay();
+
+                        const daySchedule = workingHours?.find(
+                          (schedule) => schedule.dayOfWeek === dayOfWeek
+                        );
+
+                        if (!daySchedule) {
+                          toast({
+                            title: "Invalid Day Selected",
+                            description: "Working hours haven't been configured for this day. Please select another date.",
+                            variant: "destructive"
+                          });
+                          setAvailableTimeSlots([]);
+                          field.onChange('');
+                          form.setValue('time', '');
+                          return;
+                        }
+
+                        if (!daySchedule.isOpen) {
+                          toast({
+                            title: "Business Closed",
+                            description: `Sorry, we're closed on ${selectedDate.toLocaleDateString('en-US', { weekday: 'long' })}s. Please select another date.`,
+                            variant: "destructive"
+                          });
+                          setAvailableTimeSlots([]);
+                          field.onChange('');
+                          form.setValue('time', '');
+                          return;
+                        }
+
+                        const slots = generateTimeSlots(
+                          daySchedule.openingTime,
+                          daySchedule.closingTime,
+                          daySchedule.breakStart || null,
+                          daySchedule.breakEnd || null,
+                          selectedService?.duration || 30
+                        );
+
+                        setAvailableTimeSlots(slots);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="time"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Time</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a time" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {availableTimeSlots.map((timeSlot) => (
+                        <SelectItem key={timeSlot} value={timeSlot}>
+                          {timeSlot}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="services"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Select Services</FormLabel>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Services Column */}
+                    <div className="space-y-2">
+                      <h3 className="font-semibold mb-4">Services</h3>
+                      {(services || [])
+                        .filter(service => service.category === 'Service')
+                        .map((service) => (
+                          <div key={service.service_id} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded-lg">
+                            <Checkbox
+                              checked={field.value.includes(String(service.service_id))}
+                              onCheckedChange={(checked) => {
+                                const serviceId = String(service.service_id);
+                                const updatedServices = checked
+                                  ? [...field.value, serviceId]
+                                  : field.value.filter((id) => id !== serviceId);
+                                field.onChange(updatedServices);
+
+                                const selectedServices = services.filter((s) => 
+                                  updatedServices.includes(String(s.service_id))
+                                );
+                                const totalDuration = selectedServices.reduce(
+                                  (sum, s) => sum + (s.duration || 0), 
+                                  0
+                                );
+                                const totalPrice = selectedServices.reduce(
+                                  (sum, s) => sum + (s.price || 0), 
+                                  0
+                                );
+
+                                form.setValue('totalDuration', totalDuration);
+                                form.setValue('totalPrice', totalPrice);
+                              }}
+                            />
+                            <div>
+                              <p className="font-medium">{service.name}</p>
+                              <p className="text-sm text-gray-500">₹{service.price} • {service.duration} minutes</p>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+
+                    {/* Add-ons Column */}
+                    <div className="space-y-2">
+                      <h3 className="font-semibold mb-4">Add-ons</h3>
+                      {(services || [])
+                        .filter(service => service.category === 'Addon')
+                        .map((service) => (
+                          <div key={service.service_id} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded-lg">
+                            <Checkbox
+                              checked={field.value.includes(String(service.service_id))}
+                              onCheckedChange={(checked) => {
+                                const serviceId = String(service.service_id);
+                                const updatedServices = checked
+                                  ? [...field.value, serviceId]
+                                  : field.value.filter((id) => id !== serviceId);
+                                field.onChange(updatedServices);
+
+                                const selectedServices = services.filter((s) => 
+                                  updatedServices.includes(String(s.service_id))
+                                );
+                                const totalDuration = selectedServices.reduce(
+                                  (sum, s) => sum + (s.duration || 0), 
+                                  0
+                                );
+                                const totalPrice = selectedServices.reduce(
+                                  (sum, s) => sum + (s.price || 0), 
+                                  0
+                                );
+
+                                form.setValue('totalDuration', totalDuration);
+                                form.setValue('totalPrice', totalPrice);
+                              }}
+                            />
+                            <div>
+                              <p className="font-medium">{service.name}</p>
+                              <p className="text-sm text-gray-500">₹{service.price} • {service.duration} minutes</p>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+
+                    {/* Packages Column */}
+                    <div className="space-y-2">
+                      <h3 className="font-semibold mb-4">Packages</h3>
+                      {(services || [])
+                        .filter(service => service.category === 'Package')
+                        .map((service) => (
+                          <div key={service.service_id} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded-lg">
+                            <Checkbox
+                              checked={field.value.includes(String(service.service_id))}
+                              onCheckedChange={(checked) => {
+                                const serviceId = String(service.service_id);
+                                const updatedServices = checked
+                                  ? [...field.value, serviceId]
+                                  : field.value.filter((id) => id !== serviceId);
+                                field.onChange(updatedServices);
+
+                                const selectedServices = services.filter((s) => 
+                                  updatedServices.includes(String(s.service_id))
+                                );
+                                const totalDuration = selectedServices.reduce(
+                                  (sum, s) => sum + (s.duration || 0), 
+                                  0
+                                );
+                                const totalPrice = selectedServices.reduce(
+                                  (sum, s) => sum + (s.price || 0), 
+                                  0
+                                );
+
+                                form.setValue('totalDuration', totalDuration);
+                                form.setValue('totalPrice', totalPrice);
+                              }}
+                            />
+                            <div>
+                              <p className="font-medium">{service.name}</p>
+                              <p className="text-sm text-gray-500">₹{service.price} • {service.duration} minutes</p>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                  {field.value.length > 0 && (
+                    <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                      <div className="font-medium">Selected Services Summary</div>
+                      <div className="text-sm text-gray-500">
+                        Total Duration: {form.watch('totalDuration')} minutes
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        Total Price: ₹{form.watch('totalPrice')}
+                      </div>
+                    </div>
+                  )}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <FormField
+            control={form.control}
+            name="groomerId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Groomer</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a groomer" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {availableGroomers.map((groomer) => (
+                      <SelectItem 
+                        key={groomer.id} 
+                        value={groomer.id}
+                      >
+                        {groomer.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="notes"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Notes</FormLabel>
+                <FormControl>
+                  <Input {...field} value={field.value ?? ''} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* Customer ID is now handled in form's defaultValues */}
+          <Button 
+            type="submit" 
+            className="w-full col-span-full"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Scheduling..." : "Schedule Appointment"}
+          </Button>
+        </form>
+      </Form>
+    </DialogContent>
+    </>
+  );
+}

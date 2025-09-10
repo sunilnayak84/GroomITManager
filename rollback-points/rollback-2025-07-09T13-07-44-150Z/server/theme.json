@@ -1,0 +1,17 @@
+{
+  "name": "zinc",
+  "appearance": "light",
+  "colors": {
+    "primary": {
+      "DEFAULT": "hsl(142 76% 36%)",
+      "foreground": "hsl(0 0% 100%)"
+    },
+    "background": {
+      "DEFAULT": "hsl(0 0% 100%)",
+      "foreground": "hsl(240 10% 4%)"
+    }
+  },
+  "borderRadius": {
+    "lg": "0.5rem"
+  }
+}

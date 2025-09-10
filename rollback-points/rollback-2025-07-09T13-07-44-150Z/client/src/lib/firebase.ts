@@ -1,0 +1,92 @@
+import { initializeApp, FirebaseApp } from "firebase/app";
+import { getAuth as firebaseGetAuth, browserLocalPersistence } from "firebase/auth";
+import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+
+export const getAuth = firebaseGetAuth;
+
+// Validate required environment variables
+const requiredEnvVars = [
+  'VITE_FIREBASE_API_KEY',
+  'VITE_FIREBASE_AUTH_DOMAIN',
+  'VITE_FIREBASE_PROJECT_ID',
+  'VITE_FIREBASE_STORAGE_BUCKET',
+  'VITE_FIREBASE_MESSAGING_SENDER_ID',
+  'VITE_FIREBASE_APP_ID'
+];
+
+console.log('Checking Firebase environment variables...');
+const missingEnvVars = requiredEnvVars.filter(varName => !import.meta.env[varName]);
+if (missingEnvVars.length > 0) {
+  console.error(`Missing required Firebase environment variables: ${missingEnvVars.join(', ')}`);
+  throw new Error('Firebase configuration is incomplete. Check the console for details.');
+}
+
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  experimentalForceLongPolling: true,
+  experimentalAutoDetectLongPolling: true,
+  // Enable persistent authentication in deployment
+  persistence: true
+};
+
+let app: FirebaseApp;
+try {
+  console.log('FIREBASE_INIT: Initializing Firebase with config:', {
+    ...firebaseConfig,
+    apiKey: '***'
+  });
+  app = initializeApp(firebaseConfig);
+  console.log('FIREBASE_INIT: Firebase initialized successfully');
+} catch (error) {
+  console.error('FIREBASE_INIT: Error initializing Firebase:', error);
+  throw new Error(`Failed to initialize Firebase: ${error instanceof Error ? error.message : 'Unknown error'}`);
+}
+
+export const auth = getAuth(app);
+export const storage = getStorage(app);
+storage.maxOperationRetryTime = 10000;
+storage.maxUploadRetryTime = 10000;
+
+// Initialize Firestore with persistence and settings
+export const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({
+    tabManager: persistentMultipleTabManager(),
+    cacheSizeBytes: 40000000 // 40 MB
+  })
+});
+
+// Set auth persistence to local -  This ensures the auth token persists across page reloads.
+auth.setPersistence(browserLocalPersistence)
+  .then(() => {
+    console.log("Authentication persistence set successfully.");
+  })
+  .catch((error) => {
+    console.error('Auth persistence error:', error);
+  });
+
+// Get the app
+export const getApp = () => {
+  if (!app) {
+    app = initializeApp(firebaseConfig);
+
+    // Enable IndexedDB persistence for Firestore in production
+    const isProduction = import.meta.env.PROD;
+    if (isProduction) {
+      const { getFirestore, enableIndexedDbPersistence } = require('firebase/firestore');
+      const db = getFirestore(app);
+      enableIndexedDbPersistence(db).catch((err: Error) => {
+        console.error("Firestore persistence error:", err);
+      });
+    }
+  }
+  return app;
+};
+
+// Export the app instance for use in other parts of the application
+export default app;
